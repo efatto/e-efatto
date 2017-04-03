@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data noupdate="1">
+    <delete id="web_debranding.new_name" model="ir.config_parameter"/>
+    <delete id="web_debranding.custom_title" model="ir.config_parameter"/>
+    <delete search="[('key', 'ilike', 'web_debranding.new_name')]" model="ir.config_parameter"/>
+    <delete search="[('key', 'ilike', 'web_debranding.custom_title')]" model="ir.config_parameter"/>
+
+    <record id="web_debranding.new_name" model="ir.config_parameter">
+        <field name="key">web_debranding.new_name</field>
+        <field name="value">Efatto</field>
+    </record>
+
+    <record id="web_debranding.custom_title" model="ir.config_parameter">
+        <field name="key">web_debranding.new_title</field>
+        <field name="value">Efatto</field>
+    </record>
+</data>
+<data>
+    <template id="web_debranding.web_layout" inherit_id="web.layout">
+       <xpath expr="//title" position="replace"></xpath>
+       <xpath expr="//link[@rel='shortcut icon']" position="replace">
+           <t t-set="favicon" t-value="request and request.env['ir.config_parameter'].get_param('web_debranding.favicon_url', '').strip() or ''"/>
+           <t t-if="favicon">
+               <link rel="shortcut icon" t-att-href="favicon" type="image/x-icon"/>
+           </t>
+           <t t-if="not favicon">
+               <link rel="shortcut icon" href="/web_debranding_efatto/static/src/img/favicon.ico" type="image/x-icon"/>
+           </t>
+       </xpath>
+    </template>
+
+ </data>
+</openerp>
