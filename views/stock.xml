@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="ddt_stock_picking_package_preparation_search_invoiced" model="ir.ui.view">
+            <field name="name">ddt.stock.picking.package.preparation.invoiced.search</field>
+            <field name="model">stock.picking.package.preparation</field>
+            <field name="inherit_id" ref="l10n_it_ddt.ddt_stock_picking_package_preparation_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/filter[@name='to_be_invoiced']" position="replace">
+                    <filter string="To be invoiced" domain="[('picking_ids.invoice_state', '=', '2binvoiced')]" name="to_be_invoiced"/>
+                </xpath>
+                <xpath expr="//search/filter[@name='invoiced']" position="replace">
+                    <filter string="Invoiced or not invoiceable" domain="[('picking_ids.invoice_state', '!=', '2binvoiced')]" name="invoiced"/>
+                    <filter string="Without transfer" domain="[('picking_ids', '=', False)]" name="without_transfer"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="ddt_stock_picking_package_preparation_form_invoiced" model="ir.ui.view">
+            <field name="name">ddt.stock.picking.package.preparation.form.invoiced</field>
+            <field name="model">stock.picking.package.preparation</field>
+            <field name="inherit_id" ref="stock_picking_package_preparation.stock_picking_package_preparation_form"/>
+            <field name="arch" type="xml">
+                <field name="company_id" position="after">
+                    <field name="tobeinvoiced" invisible="1"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>
