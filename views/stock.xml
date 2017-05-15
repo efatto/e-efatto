@@ -7,7 +7,8 @@
             <field name="inherit_id" ref="l10n_it_ddt.ddt_stock_picking_package_preparation_search"/>
             <field name="arch" type="xml">
                 <xpath expr="//search/filter[@name='to_be_invoiced']" position="replace">
-                    <filter string="To be invoiced" domain="[('picking_ids.invoice_state', '=', '2binvoiced')]" name="to_be_invoiced"/>
+                    <filter string="To be invoiced" domain="[('picking_ids.invoice_state', '=', '2binvoiced'),
+                    ('state','not in', ['draft',])]" name="to_be_invoiced"/>
                 </xpath>
                 <xpath expr="//search/filter[@name='invoiced']" position="replace">
                     <filter string="Invoiced or not invoiceable" domain="[('picking_ids.invoice_state', '!=', '2binvoiced')]" name="invoiced"/>
