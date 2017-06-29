@@ -17,7 +17,16 @@
             <field name="inherit_id" ref="stock_picking_package_preparation.stock_picking_package_preparation_form"/>
             <field name="arch" type="xml">
                 <field name="invoice_id" position="after">
-                    <field name="sale_ids" widget="many2many_tags"/>
+                    <separator string="Sale Orders"/>
+                    <field name="sale_ids" nolabel="1">
+                        <tree string="Sale Orders">
+                            <field name="name"/>
+                            <field name="date_order"/>
+                            <field name="client_order_ref"/>
+                            <field name="amount_untaxed"/>
+                            <field name="state"/>
+                        </tree>
+                    </field>
                 </field>
             </field>
         </record>
