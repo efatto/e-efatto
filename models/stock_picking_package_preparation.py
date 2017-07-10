@@ -17,4 +17,5 @@ class StockPickingPackagePreparation(models.Model):
     sale_ids = fields.Many2many(
         comodel_name='sale.order',
         compute=_get_related_sales,
+        string='Sale Orders',
     )
