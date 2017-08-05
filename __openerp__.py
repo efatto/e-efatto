@@ -18,13 +18,13 @@
 #
 #
 {
-    'name': 'DDT fix invoiced filter',
+    'name': 'DDT linked sales',
     'version': '8.0.1.0.0',
     'category': 'other',
     'author': 'Sergio Corato',
     'website': 'http://www.efatto.it',
     'license': 'AGPL-3',
-    'description': '''Fix invoiced filter.''',
+    'description': 'Show sales linked to ddt in ddt tree.',
     'depends': [
         'l10n_it_ddt',
     ],
