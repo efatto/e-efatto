@@ -18,6 +18,7 @@ addon | version | summary
 [account_bank_import](account_bank_import/) | 8.0.0.0.0 | Dati bancari delle banche italiane
 [account_invoice_sequential_dates_all](account_invoice_sequential_dates_all/) | 8.0.1.0.0 | Verifica completa della progressività sulle fatture con blocco all'inserimento errato
 [account_vat_period_end_statement_ivp](account_vat_period_end_statement_ivp/) | 8.0.1.0.0 | Invio della liquidazione periodica IVA (compatibile con localizzazione ufficiale OCA)
+[product_template_listprice_zero_default](product_template_listprice_zero_default/) | 8.0.1.0.0 | Impostazione di default prezzo prodotto a zero invece di 1,00 nella creazione
 
 Contributors
 ------------
