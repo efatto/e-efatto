@@ -229,7 +229,7 @@ class WizardInvoiceStatement(models.TransientModel):
                 _("XML SDI validation error"),
                 (unicode(e)))
         view_rec = self.env['ir.model.data'].get_object_reference(
-            'account_invoice_statement',
+            'l10n_it_account_invoice_statement',
             'view_invoice_statement_attachment_form')
         if view_rec:
             view_id = view_rec and view_rec[1] or False
