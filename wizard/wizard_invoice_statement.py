@@ -4,6 +4,7 @@
 ##############################################################################
 from openerp import fields, models, api, exceptions, _
 from ..bindings.invoice_statement_v_2_0 import (
+    Amount2DecimalType,
     AltriDatiIdentificativiNoCAPType,
     AltriDatiIdentificativiNoSedeType,
     CaricaType,
@@ -79,14 +80,16 @@ class WizardInvoiceStatement(models.TransientModel):
                                                DEFAULT_SERVER_DATE_FORMAT)
         return date_start, date_stop
 
-    def saveAttachment(self, company_vat, statement_id):
+    def saveAttachment(self, sender_fiscalcode, statement_id):
         attach_obj = self.env['invoice.statement.attachment']
+        xml = self.statement.toDOM().toprettyxml(
+            encoding="latin1")
         attach_vals = {
-            'name': '%s_%s.xml' % (company_vat, str(
+            'name': 'IT%s_DF_%s.xml' % (sender_fiscalcode, str(
                 statement_id.progressive_number)),
-            'datas_fname': '%s_%s.xml' % (company_vat, str(
+            'datas_fname': 'IT%s_DF_%s.xml' % (sender_fiscalcode, str(
                 statement_id.progressive_number)),
-            'datas': base64.encodestring(self.statement.toxml("latin1")),
+            'datas': base64.encodestring(xml),
             'res_model': 'invoice.statement',
             'res_id': statement_id.id,
         }
@@ -99,7 +102,12 @@ class WizardInvoiceStatement(models.TransientModel):
         invoice_statement_obj = self.env['invoice.statement']
         statement_id = invoice_statement_obj.browse(
             self._context.get('active_id', False))
-
+        sender_fiscalcode = statement_id.sender_partner_id.fiscalcode
+        if len(sender_fiscalcode) == 13:
+            if sender_fiscalcode[:2].lower() == 'it':
+                sender_fiscalcode = sender_fiscalcode[2:]
+        elif len(sender_fiscalcode) != 16 or len(sender_fiscalcode) != 11:
+            raise exceptions.ValidationError('Sender fiscalcode invalid')
         # get company vat and fiscalcode
         company = statement_id.company_id
         if company.partner_id.vat[:2].lower() == 'it':
@@ -124,7 +132,6 @@ class WizardInvoiceStatement(models.TransientModel):
         self.statement.DatiFatturaHeader = (DatiFatturaHeaderType())
         self.statement.DatiFatturaHeader.ProgressivoInvio = str(
             progressive_number + 1)
-
         #get invoice for date of period selected
 
         ###### DTR - INVOICE RECEIVED ######
@@ -140,7 +147,7 @@ class WizardInvoiceStatement(models.TransientModel):
             if partner_ids:
                 #### CESSIONARIO - COMMITTENTE DTR ####
                 self.statement.DTR = (DTRType())
-                #TODO INSERIRE I DATI DEL MITTENTE - 1 BLOCCO SINGOLO
+                # INSERIRE I DATI DEL MITTENTE - 1 BLOCCO SINGOLO
                 self.statement.DTR.CessionarioCommittenteDTR = (CessionarioCommittenteDTRType())
                 self.statement.DTR.CessionarioCommittenteDTR.IdentificativiFiscali = (IdentificativiFiscaliITType())
                 self.statement.DTR.CessionarioCommittenteDTR.IdentificativiFiscali.IdFiscaleIVA = (IdFiscaleITType())
@@ -160,7 +167,6 @@ class WizardInvoiceStatement(models.TransientModel):
                 CedentePrestatoreDTR.IdentificativiFiscali = (IdentificativiFiscaliType())
                 CedentePrestatoreDTR.IdentificativiFiscali.IdFiscaleIVA = (IdFiscaleType())
                 # butta li tanto per fare
-
                 CedentePrestatoreDTR.IdentificativiFiscali.IdFiscaleIVA.IdPaese = partner.vat[:2]
                 CedentePrestatoreDTR.IdentificativiFiscali.IdFiscaleIVA.IdCodice = partner.vat[2:]
                 fiscalcode = False
@@ -194,13 +200,14 @@ class WizardInvoiceStatement(models.TransientModel):
                     DatiFatturaBodyDTR.DatiGenerali.DataRegistrazione = invoice.registration_date
                     for invoice_tax in invoice.tax_line:
                         #todo add line...
-                        #  : allora l'aliquota va presa dal padre e sono piu righe di iva
+                        #TODO  : allora l'aliquota va presa dal padre e sono piu righe di iva
                         DatiRiepilogo = DatiRiepilogoType()
                         DatiRiepilogo.ImponibileImporto = '%.2f' % invoice_tax.base
                         DatiRiepilogo.DatiIVA = (DatiIVAType())
                         DatiRiepilogo.DatiIVA.Imposta = '%.2f' % invoice_tax.amount
                         tax_id = invoice_tax.tax_code_id.tax_ids[0]
-                        if invoice_tax.tax_code_id.parent_id:
+                        # if tax_id is a child of other tax, use it for aliquota
+                        if invoice_tax.tax_code_id.tax_ids[0].parent_id.child_depend:
                             tax_id = invoice_tax.tax_code_id.tax_ids[0].parent_id
                         DatiRiepilogo.DatiIVA.Aliquota = '%.2f' % (tax_id.amount * 100)
                         # DatiRiepilogo.Natura = se non iva
@@ -223,7 +230,7 @@ class WizardInvoiceStatement(models.TransientModel):
         statement_id.write(
             {'progressive_number': progressive_number})
         try:
-            attach_id = self.saveAttachment(company_vat, statement_id)
+            attach_id = self.saveAttachment(sender_fiscalcode, statement_id)
         except (SimpleFacetValueError, SimpleTypeValueError) as e:
             raise exceptions.ValidationError(
                 _("XML SDI validation error"),

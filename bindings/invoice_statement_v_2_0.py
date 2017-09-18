@@ -1,7 +1,7 @@
 # ../bindings/invoice_statement_v_2_0.py
 # -*- coding: utf-8 -*-
 # PyXB bindings for NM:c8403c44c9a54a32bd3b5aec75a6504db99822c4
-# Generated 2017-09-07 09:50:51.020396 by PyXB version 1.2.4 using Python 2.7.12.final.0
+# Generated 2017-09-18 21:23:40.032285 by PyXB version 1.2.4 using Python 2.7.12.final.0
 # Namespace http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0
 
 from __future__ import unicode_literals
@@ -22,7 +22,7 @@ except ImportError as err:
     _logger.debug(err)
 
 # Unique identifier for bindings created at the same time
-_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:3b888444-93a1-11e7-abb4-b05adae3c683')
+_GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:d6e1454e-9ca6-11e7-8965-b05adae3c683')
 
 # Version of PyXB used to generate the bindings
 _PyXBVersion = '1.2.4'
@@ -387,14 +387,14 @@ EsigibilitaIVAType._InitializeFacetMap(EsigibilitaIVAType._CF_minLength,
 Namespace.addCategoryObject('typeBinding', 'EsigibilitaIVAType', EsigibilitaIVAType)
 
 # Atomic simple type: {http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0}RateType
-class RateType (pyxb.binding.datatypes.decimal):
+class RateType (pyxb.binding.datatypes.string):
 
     """An atomic simple type."""
 
     _ExpandedName = pyxb.namespace.ExpandedName(Namespace, 'RateType')
     _XSDLocation = pyxb.utils.utility.Location('../common/main/DatiFatturav2.0.xsd', 493, 3)
     _Documentation = None
-RateType._CF_maxInclusive = pyxb.binding.facets.CF_maxInclusive(value_datatype=RateType, value=pyxb.binding.datatypes.decimal('100.0'))
+RateType._CF_maxInclusive = pyxb.binding.facets.CF_maxInclusive(value_datatype=RateType, value=pyxb.binding.datatypes.string('100.00'))
 RateType._CF_pattern = pyxb.binding.facets.CF_pattern()
 RateType._CF_pattern.addPattern(pattern='[0-9]{1,3}\\.[0-9]{2}')
 RateType._InitializeFacetMap(RateType._CF_maxInclusive,
@@ -402,7 +402,7 @@ RateType._InitializeFacetMap(RateType._CF_maxInclusive,
 Namespace.addCategoryObject('typeBinding', 'RateType', RateType)
 
 # Atomic simple type: {http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v2.0}Amount2DecimalType
-class Amount2DecimalType (pyxb.binding.datatypes.decimal):
+class Amount2DecimalType (pyxb.binding.datatypes.string):
 
     """An atomic simple type."""
 
