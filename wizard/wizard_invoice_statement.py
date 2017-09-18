@@ -97,6 +97,79 @@ class WizardInvoiceStatement(models.TransientModel):
 
         return attach_id
 
+    def setCedPrestDTECesComDTR(self, obj, partner_id):
+        if partner_id.vat[:2].upper() != 'IT':
+            raise exceptions.ValidationError(
+                _('No partner != IT allowed'))
+        if not partner_id.vat and not partner_id.fiscalcode:
+            raise exceptions.ValidationError(
+                _('Partner VAT and Fiscalcode not set.'))
+        obj.IdentificativiFiscali = (IdentificativiFiscaliITType())
+        obj.IdentificativiFiscali.IdFiscaleIVA = (IdFiscaleITType(
+            IdPaese=partner_id.vat[:2], IdCodice=partner_id.vat[2:]
+        ))
+
+    def setCedPrestDTRCesComDTE(self, obj, partner_id):
+        if partner_id.vat[:2].upper() != 'IT':
+            raise exceptions.ValidationError(
+                _('No partner != IT allowed'))
+        if not partner_id.vat and not partner_id.fiscalcode:
+            raise exceptions.ValidationError(
+                _('Partner VAT and Fiscalcode not set.'))
+        obj.IdentificativiFiscali = (IdentificativiFiscaliType())
+        obj.IdentificativiFiscali.IdFiscaleIVA = (
+            IdFiscaleType(
+                IdPaese=partner_id.vat[:2], IdCodice=partner_id.vat[2:]))
+        fiscalcode = False
+        if partner_id.fiscalcode:
+            if len(partner_id.fiscalcode) == 16:
+                fiscalcode = partner_id.fiscalcode
+            if len(partner_id.fiscalcode) == 13:
+                fiscalcode = partner_id.fiscalcode[2:]
+        if fiscalcode:
+            obj.IdentificativiFiscali.CodiceFiscale = fiscalcode
+        obj.AltriDatiIdentificativi = (AltriDatiIdentificativiNoCAPType())
+
+        # get partner name in case of natural person
+        if not partner_id.is_company:
+            obj.AltriDatiIdentificativi.Nome = partner_id.first_name
+            obj.AltriDatiIdentificativi.Cognome = partner_id.last_name
+        else:
+            obj.AltriDatiIdentificativi.Denominazione = partner_id.name
+
+        obj.AltriDatiIdentificativi.Sede = (IndirizzoNoCAPType())
+        obj.AltriDatiIdentificativi.Sede.Indirizzo = partner_id.street or ''
+        obj.AltriDatiIdentificativi.Sede.CAP = partner_id.zip or ''
+        obj.AltriDatiIdentificativi.Sede.Comune = partner_id.city or ''
+        obj.AltriDatiIdentificativi.Sede.Provincia = partner_id.state_id.code if partner_id.state_id else ''
+        obj.AltriDatiIdentificativi.Sede.Nazione = partner_id.country_id.code if partner_id.country_id else 'IT'
+        obj.IdentificativiFiscali = (IdentificativiFiscaliType())
+        obj.IdentificativiFiscali.IdFiscaleIVA = (IdFiscaleType(
+            IdPaese=partner_id.vat[:2], IdCodice=partner_id.vat[2:]
+        ))
+        return obj
+
+    def get_dati_riepilogo(self, invoice, invoice_tax):
+        DatiRiepilogo = DatiRiepilogoType()
+        DatiRiepilogo.ImponibileImporto = '%.2f' % invoice_tax.base
+        DatiRiepilogo.DatiIVA = (DatiIVAType())
+        DatiRiepilogo.DatiIVA.Imposta = '%.2f' % invoice_tax.amount
+        tax_id = invoice_tax.tax_code_id.tax_ids[0]
+        # if tax_id is a child of other tax, use it for aliquota
+        if invoice_tax.tax_code_id.tax_ids[0].parent_id.child_depend:
+            tax_id = invoice_tax.tax_code_id.tax_ids[0].parent_id
+        DatiRiepilogo.DatiIVA.Aliquota = '%.2f' % (tax_id.amount * 100)
+        # DatiRiepilogo.Natura = se non iva
+        esigibilitaIva = 'I'
+        if self._check_installed_module('l10n_it_split_payment'):
+            if invoice.split_payment:
+                esigibilitaIva = 'S'
+        if self._check_installed_module('account_vat_on_payment'):
+            if invoice.vat_on_payment:
+                esigibilitaIva = 'D'
+        DatiRiepilogo.EsigibilitaIVA = esigibilitaIva
+        return DatiRiepilogo
+
     @api.multi
     def export_invoice_statement(self):
         invoice_statement_obj = self.env['invoice.statement']
@@ -108,19 +181,6 @@ class WizardInvoiceStatement(models.TransientModel):
                 sender_fiscalcode = sender_fiscalcode[2:]
         elif len(sender_fiscalcode) != 16 or len(sender_fiscalcode) != 11:
             raise exceptions.ValidationError('Sender fiscalcode invalid')
-        # get company vat and fiscalcode
-        company = statement_id.company_id
-        if company.partner_id.vat[:2].lower() == 'it':
-            company_vat = company.partner_id.vat[2:]
-        else:
-            company_vat = company.partner_id.vat
-        if company.partner_id.fiscalcode:
-            if len(company.partner_id.fiscalcode) == 16:
-                company_fiscalcode = company.partner_id.fiscalcode
-            else:
-                company_fiscalcode = company.partner_id.fiscalcode[2:]
-        else:
-            company_fiscalcode = company_vat
 
         # get data for statement
         date_start, date_stop = self.get_date_start_stop(statement_id)
@@ -132,9 +192,8 @@ class WizardInvoiceStatement(models.TransientModel):
         self.statement.DatiFatturaHeader = (DatiFatturaHeaderType())
         self.statement.DatiFatturaHeader.ProgressivoInvio = str(
             progressive_number + 1)
-        #get invoice for date of period selected
 
-        ###### DTR - INVOICE RECEIVED ######
+        # DTR - INVOICE RECEIVED
         if statement_id.type == 'DTR':
             invoice_ids = self.env['account.invoice'].search([
                 # ('period_id', 'in', statement_id.period_ids)
@@ -142,86 +201,51 @@ class WizardInvoiceStatement(models.TransientModel):
                 ('registration_date', '<=', date_stop),
                 ('type', 'in', ['in_invoice', 'in_refund']),
             ])
-            #todo group invoices by partner (limit 1000)
+            # todo group invoices by partner (limit 1000)
             partner_ids = invoice_ids.mapped('partner_id')
             if partner_ids:
-                #### CESSIONARIO - COMMITTENTE DTR ####
+                # CREATE CESSIONARIO - COMMITTENTE DTR
                 self.statement.DTR = (DTRType())
+
                 # INSERIRE I DATI DEL MITTENTE - 1 BLOCCO SINGOLO
-                self.statement.DTR.CessionarioCommittenteDTR = (CessionarioCommittenteDTRType())
-                self.statement.DTR.CessionarioCommittenteDTR.IdentificativiFiscali = (IdentificativiFiscaliITType())
-                self.statement.DTR.CessionarioCommittenteDTR.IdentificativiFiscali.IdFiscaleIVA = (IdFiscaleITType())
-                self.statement.DTR.CessionarioCommittenteDTR.IdentificativiFiscali.IdFiscaleIVA.IdPaese = 'IT'
-                self.statement.DTR.CessionarioCommittenteDTR.IdentificativiFiscali.IdFiscaleIVA.IdCodice = company_vat
+                self.statement.DTR.CessionarioCommittenteDTR = (
+                    CessionarioCommittenteDTRType())
+                self.setCedPrestDTECesComDTR(
+                    self.statement.DTR.CessionarioCommittenteDTR,
+                    statement_id.company_id.partner_id)
+
             missing_vat_partners = []
-            for partner in partner_ids:
+            for partner_id in partner_ids:
                 # report this to the user to fix partners
-                if not partner.vat:
-                    missing_vat_partners.append(partner.name)
+                if not partner_id.vat:
+                    missing_vat_partners.append(partner_id.name)
                     continue
-                # exclude vat != it
-                if partner.vat and partner.vat[:2].upper() != 'IT':
+                # exclude vat != IT
+                if partner_id.vat and partner_id.vat[:2].upper() != 'IT':
                     continue
-                # TODO qui si creano piu blocchi, uno per ogni partner
-                CedentePrestatoreDTR = CedentePrestatoreDTRType()
-                CedentePrestatoreDTR.IdentificativiFiscali = (IdentificativiFiscaliType())
-                CedentePrestatoreDTR.IdentificativiFiscali.IdFiscaleIVA = (IdFiscaleType())
-                # butta li tanto per fare
-                CedentePrestatoreDTR.IdentificativiFiscali.IdFiscaleIVA.IdPaese = partner.vat[:2]
-                CedentePrestatoreDTR.IdentificativiFiscali.IdFiscaleIVA.IdCodice = partner.vat[2:]
-                fiscalcode = False
-                if partner.fiscalcode:
-                    if len(partner.fiscalcode) == 16:
-                        fiscalcode = partner.fiscalcode
-                    if len(partner.fiscalcode) == 13:
-                        fiscalcode = partner.fiscalcode[2:]
-                if fiscalcode:
-                    CedentePrestatoreDTR.IdentificativiFiscali.CodiceFiscale = fiscalcode
-                CedentePrestatoreDTR.AltriDatiIdentificativi = (AltriDatiIdentificativiNoCAPType())
-                if not partner.is_company:
-                    CedentePrestatoreDTR.AltriDatiIdentificativi.Nome = partner.first_name
-                    CedentePrestatoreDTR.AltriDatiIdentificativi.Cognome = partner.last_name
-                else:
-                    CedentePrestatoreDTR.AltriDatiIdentificativi.Denominazione = partner.name
-                CedentePrestatoreDTR.AltriDatiIdentificativi.Sede = (IndirizzoNoCAPType())
-                CedentePrestatoreDTR.AltriDatiIdentificativi.Sede.Indirizzo = partner.street or ''
-                CedentePrestatoreDTR.AltriDatiIdentificativi.Sede.CAP = partner.zip or ''
-                CedentePrestatoreDTR.AltriDatiIdentificativi.Sede.Comune = partner.city or ''
-                CedentePrestatoreDTR.AltriDatiIdentificativi.Sede.Provincia = partner.state_id.code if partner.state_id else ''
-                CedentePrestatoreDTR.AltriDatiIdentificativi.Sede.Nazione = partner.country_id.code if partner.country_id else 'IT'
+                # qui si creano piu blocchi, uno per ogni partner
+                CedentePrestatoreDTR = self.setCedPrestDTRCesComDTE(
+                    CedentePrestatoreDTRType(), partner_id)
+
                 for invoice in invoice_ids.filtered(
-                        lambda x: x.partner_id == partner):
-                    #todo get invoice tax
+                        lambda x: x.partner_id == partner_id):
+                    # set invoice body
                     DatiFatturaBodyDTR = DatiFatturaBodyDTRType()
-                    DatiFatturaBodyDTR.DatiGenerali = (DatiGeneraliDTRType())
-                    DatiFatturaBodyDTR.DatiGenerali.TipoDocumento = invoice.fiscal_document_type_id.code
-                    DatiFatturaBodyDTR.DatiGenerali.Data = invoice.date_invoice
-                    DatiFatturaBodyDTR.DatiGenerali.Numero = invoice.supplier_invoice_number
-                    DatiFatturaBodyDTR.DatiGenerali.DataRegistrazione = invoice.registration_date
+                    DatiFatturaBodyDTR.DatiGenerali = (
+                        DatiGeneraliDTRType(
+                            TipoDocumento=invoice.fiscal_document_type_id.code,
+                            Data=invoice.date_invoice,
+                            Numero=invoice.supplier_invoice_number,
+                            DataRegistrazione=invoice.registration_date))
+                    # SET lines - tax with child and without child
                     for invoice_tax in invoice.tax_line:
-                        #todo add line...
-                        #TODO  : allora l'aliquota va presa dal padre e sono piu righe di iva
-                        DatiRiepilogo = DatiRiepilogoType()
-                        DatiRiepilogo.ImponibileImporto = '%.2f' % invoice_tax.base
-                        DatiRiepilogo.DatiIVA = (DatiIVAType())
-                        DatiRiepilogo.DatiIVA.Imposta = '%.2f' % invoice_tax.amount
-                        tax_id = invoice_tax.tax_code_id.tax_ids[0]
-                        # if tax_id is a child of other tax, use it for aliquota
-                        if invoice_tax.tax_code_id.tax_ids[0].parent_id.child_depend:
-                            tax_id = invoice_tax.tax_code_id.tax_ids[0].parent_id
-                        DatiRiepilogo.DatiIVA.Aliquota = '%.2f' % (tax_id.amount * 100)
-                        # DatiRiepilogo.Natura = se non iva
-                        esigibilitaIva = 'I'
-                        if self._check_installed_module('l10n_it_split_payment'):
-                            if invoice.split_payment:
-                                esigibilitaIva = 'S'
-                        if self._check_installed_module('account_vat_on_payment'):
-                            if invoice.vat_on_payment:
-                                esigibilitaIva = 'D'
-                        DatiRiepilogo.EsigibilitaIVA = esigibilitaIva
+                        DatiRiepilogo = self.get_dati_riepilogo(
+                            invoice, invoice_tax)
                         DatiFatturaBodyDTR.DatiRiepilogo.append(DatiRiepilogo)
-                    CedentePrestatoreDTR.DatiFatturaBodyDTR.append(DatiFatturaBodyDTR)
-                self.statement.DTR.CedentePrestatoreDTR.append(CedentePrestatoreDTR)
+                    CedentePrestatoreDTR.DatiFatturaBodyDTR.append(
+                        DatiFatturaBodyDTR)
+                self.statement.DTR.CedentePrestatoreDTR.append(
+                    CedentePrestatoreDTR)
 
         #('type', 'in', ['out_invoice', 'out_refund']),
         # todo ESCLUDERE AUTOFATTURE
