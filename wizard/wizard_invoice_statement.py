@@ -38,6 +38,7 @@ except ImportError as err:
     _logger.debug(err)
 
 import datetime
+import re
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
 
 
@@ -110,9 +111,9 @@ class WizardInvoiceStatement(models.TransientModel):
         ))
 
     def setCedPrestDTRCesComDTE(self, obj, partner_id):
-        if partner_id.vat[:2].upper() != 'IT':
-            raise exceptions.ValidationError(
-                _('No partner != IT allowed'))
+        # if partner_id.vat[:2].upper() != 'IT': ? quando?
+        #     raise exceptions.ValidationError(
+        #         _('No partner != IT allowed'))
         if not partner_id.vat and not partner_id.fiscalcode:
             raise exceptions.ValidationError(
                 _('Partner VAT and Fiscalcode not set.'))
@@ -139,10 +140,12 @@ class WizardInvoiceStatement(models.TransientModel):
 
         obj.AltriDatiIdentificativi.Sede = (IndirizzoNoCAPType())
         obj.AltriDatiIdentificativi.Sede.Indirizzo = partner_id.street
-        obj.AltriDatiIdentificativi.Sede.CAP = partner_id.zip
+        if re.match('^[0-9]{5}$', partner_id.zip):
+            obj.AltriDatiIdentificativi.Sede.CAP = partner_id.zip
         obj.AltriDatiIdentificativi.Sede.Comune = partner_id.city
-        obj.AltriDatiIdentificativi.Sede.Provincia = partner_id.state_id.code\
-            if partner_id.state_id else ''
+        if partner_id.state_id:
+            obj.AltriDatiIdentificativi.Sede.Provincia = partner_id.state_id.\
+                code
         obj.AltriDatiIdentificativi.Sede.Nazione = partner_id.country_id.code\
             if partner_id.country_id else 'IT'
         obj.IdentificativiFiscali = (IdentificativiFiscaliType())
@@ -155,14 +158,25 @@ class WizardInvoiceStatement(models.TransientModel):
         DatiRiepilogo = DatiRiepilogoType()
         DatiRiepilogo.ImponibileImporto = '%.2f' % invoice_tax.base
         DatiRiepilogo.DatiIVA = (DatiIVAType())
-        DatiRiepilogo.DatiIVA.Imposta = '%.2f' % invoice_tax.amount
-        tax_id = invoice_tax.tax_code_id.tax_ids[0]
-        # if tax_id is a child of other tax, use it for aliquota
-        if invoice_tax.tax_code_id.tax_ids[0].parent_id.child_depend:
-            tax_id = invoice_tax.tax_code_id.tax_ids[0].parent_id
-        DatiRiepilogo.DatiIVA.Aliquota = '%.2f' % (tax_id.amount * 100)
+        if invoice_tax.tax_code_id and not invoice_tax.tax_code_id.\
+                exclude_from_registries:
+            tax_id = invoice_tax.tax_code_id.tax_ids[0]
+            # if tax_id is a child of other tax, use it for aliquota
+            if tax_id.parent_id and tax_id.parent_id.child_depend:
+                tax_id = tax_id.parent_id
+            if invoice_tax.amount == 0:
+                DatiRiepilogo.Natura = tax_id.kind_id.code
+            else:
+                DatiRiepilogo.DatiIVA.Imposta = '%.2f' % invoice_tax.amount
+                DatiRiepilogo.DatiIVA.Aliquota = '%.2f' % (tax_id.amount * 100)
+        else:
+            if invoice_tax.base_code_id and not invoice_tax.base_code_id.\
+                    exclude_from_registries:
+                base_tax_id = invoice_tax.base_code_id.base_tax_ids[0]
+                DatiRiepilogo.Natura = base_tax_id.base_code_id.kind_id.code
         # DatiRiepilogo.Natura = se non iva
         esigibilitaIva = 'I'
+        # nb solo per fatture di vendita questi check funzionano
         if self._check_installed_module('l10n_it_split_payment'):
             if invoice.split_payment:
                 esigibilitaIva = 'S'
@@ -170,7 +184,30 @@ class WizardInvoiceStatement(models.TransientModel):
             if invoice.vat_on_payment:
                 esigibilitaIva = 'D'
         DatiRiepilogo.EsigibilitaIVA = esigibilitaIva
+
         return DatiRiepilogo
+
+    @staticmethod
+    def _get_fiscal_document_type(invoice):
+        res = False
+        if invoice.type in ['out_invoice', 'in_invoice']:
+            res = 'TD01'  # fattura
+        elif invoice.type in ['out_refund', 'in_refund']:
+            res = 'TD04'  # nota di credito
+        # TD05 nota di debito NOT DEFINED IN ODOO
+        # TD07 fattura semplificata NOT DEFINED IN ODOO
+        # TD08 nota di credito semplificata NOT DEFINED IN ODOO
+        if 'CEE' in invoice.journal_id.name.upper() and invoice.type == 'in_invoice':
+            res = 'TD10'  # fattura di acquisto intracomunitario beni
+            service_amount = sum(
+                x.price_subtotal for x in invoice.invoice_line if
+                x.product_id.type == 'service')
+            product_amount = sum(
+                x.price_subtotal for x in invoice.invoice_line if
+                x.product_id.type in ['consu', 'product'])
+            if service_amount > product_amount:
+                res = 'TD11'  # fattura di acquisto intracomunitario servizi
+        return res
 
     @api.multi
     def export_invoice_statement(self):
@@ -204,6 +241,7 @@ class WizardInvoiceStatement(models.TransientModel):
                 ('registration_date', '>=', date_start),
                 ('registration_date', '<=', date_stop),
                 ('type', 'in', ['in_invoice', 'in_refund']),
+                ('state', 'in', ['open', 'paid']),
             ])
             # todo group invoices by partner (limit 1000)
             partner_ids = invoice_ids.mapped('partner_id')
@@ -229,7 +267,8 @@ class WizardInvoiceStatement(models.TransientModel):
                     DatiFatturaBodyDTR = DatiFatturaBodyDTRType()
                     DatiFatturaBodyDTR.DatiGenerali = (
                         DatiGeneraliDTRType(
-                            TipoDocumento=invoice.fiscal_document_type_id.code,
+                            TipoDocumento=self._get_fiscal_document_type(
+                                invoice),
                             Data=invoice.date_invoice,
                             Numero=invoice.supplier_invoice_number,
                             DataRegistrazione=invoice.registration_date))
