@@ -138,11 +138,13 @@ class WizardInvoiceStatement(models.TransientModel):
             obj.AltriDatiIdentificativi.Denominazione = partner_id.name
 
         obj.AltriDatiIdentificativi.Sede = (IndirizzoNoCAPType())
-        obj.AltriDatiIdentificativi.Sede.Indirizzo = partner_id.street or ''
-        obj.AltriDatiIdentificativi.Sede.CAP = partner_id.zip or ''
-        obj.AltriDatiIdentificativi.Sede.Comune = partner_id.city or ''
-        obj.AltriDatiIdentificativi.Sede.Provincia = partner_id.state_id.code if partner_id.state_id else ''
-        obj.AltriDatiIdentificativi.Sede.Nazione = partner_id.country_id.code if partner_id.country_id else 'IT'
+        obj.AltriDatiIdentificativi.Sede.Indirizzo = partner_id.street
+        obj.AltriDatiIdentificativi.Sede.CAP = partner_id.zip
+        obj.AltriDatiIdentificativi.Sede.Comune = partner_id.city
+        obj.AltriDatiIdentificativi.Sede.Provincia = partner_id.state_id.code\
+            if partner_id.state_id else ''
+        obj.AltriDatiIdentificativi.Sede.Nazione = partner_id.country_id.code\
+            if partner_id.country_id else 'IT'
         obj.IdentificativiFiscali = (IdentificativiFiscaliType())
         obj.IdentificativiFiscali.IdFiscaleIVA = (IdFiscaleType(
             IdPaese=partner_id.vat[:2], IdCodice=partner_id.vat[2:]
@@ -175,6 +177,8 @@ class WizardInvoiceStatement(models.TransientModel):
         invoice_statement_obj = self.env['invoice.statement']
         statement_id = invoice_statement_obj.browse(
             self._context.get('active_id', False))
+
+        # Check sender fiscalcode
         sender_fiscalcode = statement_id.sender_partner_id.fiscalcode
         if len(sender_fiscalcode) == 13:
             if sender_fiscalcode[:2].lower() == 'it':
@@ -214,15 +218,7 @@ class WizardInvoiceStatement(models.TransientModel):
                     self.statement.DTR.CessionarioCommittenteDTR,
                     statement_id.company_id.partner_id)
 
-            missing_vat_partners = []
             for partner_id in partner_ids:
-                # report this to the user to fix partners
-                if not partner_id.vat:
-                    missing_vat_partners.append(partner_id.name)
-                    continue
-                # exclude vat != IT
-                if partner_id.vat and partner_id.vat[:2].upper() != 'IT':
-                    continue
                 # qui si creano piu blocchi, uno per ogni partner
                 CedentePrestatoreDTR = self.setCedPrestDTRCesComDTE(
                     CedentePrestatoreDTRType(), partner_id)
