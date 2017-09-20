@@ -155,36 +155,41 @@ class WizardInvoiceStatement(models.TransientModel):
         return obj
 
     def get_dati_riepilogo(self, invoice, invoice_tax):
-        DatiRiepilogo = DatiRiepilogoType()
-        DatiRiepilogo.ImponibileImporto = '%.2f' % invoice_tax.base
-        DatiRiepilogo.DatiIVA = (DatiIVAType())
+        DatiRiepilogo = False
         if invoice_tax.tax_code_id and not invoice_tax.tax_code_id.\
                 exclude_from_registries:
             tax_id = invoice_tax.tax_code_id.tax_ids[0]
             # if tax_id is a child of other tax, use it for aliquota
             if tax_id.parent_id and tax_id.parent_id.child_depend:
                 tax_id = tax_id.parent_id
-            if invoice_tax.amount == 0:
-                DatiRiepilogo.Natura = tax_id.kind_id.code
-            else:
-                DatiRiepilogo.DatiIVA.Imposta = '%.2f' % invoice_tax.amount
-                DatiRiepilogo.DatiIVA.Aliquota = '%.2f' % (tax_id.amount * 100)
+            # if invoice_tax.amount == 0:
+            #     DatiRiepilogo.Natura = tax_id.kind_id.code
+            # else:
+            DatiRiepilogo = DatiRiepilogoType()
+            DatiRiepilogo.ImponibileImporto = '%.2f' % invoice_tax.base
+            DatiRiepilogo.DatiIVA = (DatiIVAType())
+            DatiRiepilogo.DatiIVA.Imposta = '%.2f' % invoice_tax.amount
+            DatiRiepilogo.DatiIVA.Aliquota = '%.2f' % (tax_id.amount * 100)
+            # DatiRiepilogo.Natura = se non iva
+            esigibilitaIva = 'I'
+            # nb solo per fatture di vendita questi check funzionano
+            if self._check_installed_module('l10n_it_split_payment'):
+                if invoice.split_payment:
+                    esigibilitaIva = 'S'
+            if self._check_installed_module('account_vat_on_payment'):
+                if invoice.vat_on_payment:
+                    esigibilitaIva = 'D'
+            DatiRiepilogo.EsigibilitaIVA = esigibilitaIva
         else:
             if invoice_tax.base_code_id and not invoice_tax.base_code_id.\
                     exclude_from_registries:
-                base_tax_id = invoice_tax.base_code_id.base_tax_ids[0]
-                DatiRiepilogo.Natura = base_tax_id.base_code_id.kind_id.code
-        # DatiRiepilogo.Natura = se non iva
-        esigibilitaIva = 'I'
-        # nb solo per fatture di vendita questi check funzionano
-        if self._check_installed_module('l10n_it_split_payment'):
-            if invoice.split_payment:
-                esigibilitaIva = 'S'
-        if self._check_installed_module('account_vat_on_payment'):
-            if invoice.vat_on_payment:
-                esigibilitaIva = 'D'
-        DatiRiepilogo.EsigibilitaIVA = esigibilitaIva
-
+                tax_id = invoice_tax.base_code_id.base_tax_ids[0]
+                DatiRiepilogo = DatiRiepilogoType()
+                DatiRiepilogo.ImponibileImporto = '%.2f' % invoice_tax.base
+                DatiRiepilogo.DatiIVA = (DatiIVAType())
+                DatiRiepilogo.Natura = tax_id.kind_id.code
+                DatiRiepilogo.DatiIVA.Imposta = '%.2f' % invoice_tax.amount
+                DatiRiepilogo.DatiIVA.Aliquota = '%.2f' % (tax_id.amount * 100)
         return DatiRiepilogo
 
     @staticmethod
@@ -276,7 +281,9 @@ class WizardInvoiceStatement(models.TransientModel):
                     for invoice_tax in invoice.tax_line:
                         DatiRiepilogo = self.get_dati_riepilogo(
                             invoice, invoice_tax)
-                        DatiFatturaBodyDTR.DatiRiepilogo.append(DatiRiepilogo)
+                        if DatiRiepilogo:
+                            DatiFatturaBodyDTR.DatiRiepilogo.append(
+                                DatiRiepilogo)
                     CedentePrestatoreDTR.DatiFatturaBodyDTR.append(
                         DatiFatturaBodyDTR)
                 self.statement.DTR.CedentePrestatoreDTR.append(
