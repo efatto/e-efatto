@@ -13,7 +13,10 @@
                 <newline/>
                 <separator string="Invoice Statement"/>
                 <newline/>
-                <field name="invoice_statement_id" nolabel="1"/>
+                <field name="dtr_statement_id" nolabel="1"/>
+                <field name="dte_statement_id" nolabel="1"/>
+                <field name="ann_dtr_statement_id" nolabel="1"/>
+                <field name="ann_dte_statement_id" nolabel="1"/>
                 <newline/>
                 <group groups="base.group_no_one" string="History">
                     <field name="create_uid" readonly="1"/>
@@ -45,9 +48,12 @@
                     <field name="statement_partner_id"/>
                     <field name="sender_partner_id"/>
                     <field name="sender_date_commitment"/>
-                    <field name="attachment_id"/>
                     <button type='action' name="%(action_add_period)d" string="Add period" colspan="2"></button>
                     <button type='action' name="%(action_remove_period)d" string="Remove period" colspan="2"></button>
+                    <field name="dtr_attachment_id"/>
+                    <field name="dte_attachment_id"/>
+                    <field name="ann_dtr_attachment_id"/>
+                    <field name="ann_dte_attachment_id"/>
                     <field name="period_ids"/>
                     <field name="company_id"/>
                 </group>

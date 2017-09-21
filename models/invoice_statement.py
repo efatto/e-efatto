@@ -19,10 +19,35 @@ class InvoiceStatement(models.Model):
         comodel_name='res.partner',
         help="Partner who send the statement")
     sender_date_commitment = fields.Date(required=True)
-    attachment_id = fields.Many2one(
-        comodel_name='invoice.statement.attachment',
-        string='Invoice Statement Export File',
-        readonly=True)
+    # attachment_id = fields.Many2one(
+    #     comodel_name='invoice.statement.attachment',
+    #     string='Invoice Statement Export File',
+    #     readonly=True)
+    dtr_attachment_id = fields.Many2one(
+        'invoice.statement.attachment',
+        'DTR Export File',
+        readonly=True
+    )
+    dte_attachment_id = fields.Many2one(
+        'invoice.statement.attachment',
+        'DTE Export File',
+        readonly=True
+    )
+    ann_dtr_attachment_id = fields.Many2one(
+        'invoice.statement.attachment',
+        'ANN DTR Export File',
+        readonly=True
+    )
+    ann_dte_attachment_id = fields.Many2one(
+        'invoice.statement.attachment',
+        'ANN DTE Export File',
+        readonly=True
+    )
+    # attachment_ids = fields.One2many(
+    #     comodel_name='invoice.statement.attachment',
+    #     inverse_name='statement_id',
+    #     string='Sent statements',
+    #     help="Sent statements.")
     period_ids = fields.One2many(
         comodel_name='account.period',
         inverse_name='invoice_statement_id',

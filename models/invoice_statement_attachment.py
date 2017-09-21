@@ -13,8 +13,27 @@ class InvoiceStatementAttachment(models.Model):
 
     ir_attachment_id = fields.Many2one(
         'ir.attachment', 'Attachment', required=True, ondelete="cascade")
-    invoice_statement_id = fields.One2many(
+    dtr_statement_id = fields.One2many(
         comodel_name='invoice.statement',
-        inverse_name='attachment_id',
+        inverse_name='dtr_attachment_id',
         string="Invoice Statement",
         readonly=True)
+    dte_statement_id = fields.One2many(
+        comodel_name='invoice.statement',
+        inverse_name='dte_attachment_id',
+        string="Invoice Statement",
+        readonly=True)
+    ann_dtr_statement_id = fields.One2many(
+        comodel_name='invoice.statement',
+        inverse_name='ann_dtr_attachment_id',
+        string="Invoice Statement",
+        readonly=True)
+    ann_dte_statement_id = fields.One2many(
+        comodel_name='invoice.statement',
+        inverse_name='ann_dte_attachment_id',
+        string="Invoice Statement",
+        readonly=True)
+    # name = fields.Char()
+    # type = fields.Selection(
+    #     related='statement_id.type'
+    # )

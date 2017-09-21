@@ -35,7 +35,7 @@
         'l10n_it_codici_carica',
         'l10n_it_account_tax_kind',
         'l10n_it_esigibilita_iva',
-        # 'l10n_it_fiscal_document_type',
+        'l10n_it_fiscal_document_type',
     ],
     'data': [
         'wizard/add_period.xml',

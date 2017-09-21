@@ -4,16 +4,19 @@
 ##############################################################################
 from openerp import fields, models, api, exceptions, _
 from ..bindings.invoice_statement_v_2_0 import (
-    Amount2DecimalType,
     AltriDatiIdentificativiNoCAPType,
     AltriDatiIdentificativiNoSedeType,
     CaricaType,
+    CedentePrestatoreDTEType,
     CedentePrestatoreDTRType,
+    CessionarioCommittenteDTEType,
     CessionarioCommittenteDTRType,
     DatiFattura,
+    DatiFatturaBodyDTEType,
     DatiFatturaBodyDTRType,
     DatiFatturaHeaderType,
     DatiFatturaType,
+    DatiGeneraliType,
     DatiGeneraliDTRType,
     DatiIVAType,
     DatiRiepilogoType,
@@ -22,9 +25,11 @@ from ..bindings.invoice_statement_v_2_0 import (
     DTRType,
     IdentificativiFiscaliType,
     IdentificativiFiscaliITType,
+    IdentificativiFiscaliNoIVAType,
     IdFiscaleITType,
     IdFiscaleType,
     IndirizzoNoCAPType,
+    IndirizzoType,
     TipoDocumentoType,
 )
 import base64
@@ -110,14 +115,36 @@ class WizardInvoiceStatement(models.TransientModel):
             IdPaese=partner_id.vat[:2], IdCodice=partner_id.vat[2:]
         ))
 
-    def setCedPrestDTRCesComDTE(self, obj, partner_id):
+        obj.AltriDatiIdentificativi = (AltriDatiIdentificativiNoSedeType())
+        # get partner name in case of natural person
+        if not partner_id.is_company:
+            obj.AltriDatiIdentificativi.Nome = partner_id.first_name
+            obj.AltriDatiIdentificativi.Cognome = partner_id.last_name
+        else:
+            obj.AltriDatiIdentificativi.Denominazione = partner_id.name
+
+        obj.AltriDatiIdentificativi.Sede = (IndirizzoType())
+        obj.AltriDatiIdentificativi.Sede.Indirizzo = partner_id.street
+        if re.match('^[0-9]{5}$', partner_id.zip):
+            obj.AltriDatiIdentificativi.Sede.CAP = partner_id.zip
+        else:
+            raise exceptions.ValidationError(
+                'Malformed zip for %s' % partner_id.name)
+        obj.AltriDatiIdentificativi.Sede.Comune = partner_id.city
+        if partner_id.state_id:
+            obj.AltriDatiIdentificativi.Sede.Provincia = partner_id.state_id.\
+                code
+        obj.AltriDatiIdentificativi.Sede.Nazione = partner_id.country_id.code\
+            if partner_id.country_id else 'IT'
+
+    def setCedPrestDTRCesComDTE(self, obj, id_fiscali, partner_id):
         # if partner_id.vat[:2].upper() != 'IT': ? quando?
         #     raise exceptions.ValidationError(
         #         _('No partner != IT allowed'))
         if not partner_id.vat and not partner_id.fiscalcode:
             raise exceptions.ValidationError(
                 _('Partner VAT and Fiscalcode not set.'))
-        obj.IdentificativiFiscali = (IdentificativiFiscaliType())
+        obj.IdentificativiFiscali = (id_fiscali)
         obj.IdentificativiFiscali.IdFiscaleIVA = (
             IdFiscaleType(
                 IdPaese=partner_id.vat[:2], IdCodice=partner_id.vat[2:]))
@@ -129,8 +156,8 @@ class WizardInvoiceStatement(models.TransientModel):
                 fiscalcode = partner_id.fiscalcode[2:]
         if fiscalcode:
             obj.IdentificativiFiscali.CodiceFiscale = fiscalcode
-        obj.AltriDatiIdentificativi = (AltriDatiIdentificativiNoCAPType())
 
+        obj.AltriDatiIdentificativi = (AltriDatiIdentificativiNoCAPType())
         # get partner name in case of natural person
         if not partner_id.is_company:
             obj.AltriDatiIdentificativi.Nome = partner_id.first_name
@@ -148,10 +175,7 @@ class WizardInvoiceStatement(models.TransientModel):
                 code
         obj.AltriDatiIdentificativi.Sede.Nazione = partner_id.country_id.code\
             if partner_id.country_id else 'IT'
-        obj.IdentificativiFiscali = (IdentificativiFiscaliType())
-        obj.IdentificativiFiscali.IdFiscaleIVA = (IdFiscaleType(
-            IdPaese=partner_id.vat[:2], IdCodice=partner_id.vat[2:]
-        ))
+
         return obj
 
     def get_dati_riepilogo(self, invoice, invoice_tax):
@@ -171,15 +195,11 @@ class WizardInvoiceStatement(models.TransientModel):
             DatiRiepilogo.DatiIVA.Imposta = '%.2f' % invoice_tax.amount
             DatiRiepilogo.DatiIVA.Aliquota = '%.2f' % (tax_id.amount * 100)
             # DatiRiepilogo.Natura = se non iva
-            esigibilitaIva = 'I'
-            # nb solo per fatture di vendita questi check funzionano
-            if self._check_installed_module('l10n_it_split_payment'):
-                if invoice.split_payment:
-                    esigibilitaIva = 'S'
-            if self._check_installed_module('account_vat_on_payment'):
-                if invoice.vat_on_payment:
-                    esigibilitaIva = 'D'
-            DatiRiepilogo.EsigibilitaIVA = esigibilitaIva
+            esigibilita_iva = 'I'
+            if tax_id.payability:
+                esigibilita_iva = tax_id.payability
+            #TODO 6.1 get info from tax type
+            DatiRiepilogo.EsigibilitaIVA = esigibilita_iva
         else:
             if invoice_tax.base_code_id and not invoice_tax.base_code_id.\
                     exclude_from_registries:
@@ -188,12 +208,24 @@ class WizardInvoiceStatement(models.TransientModel):
                 DatiRiepilogo.ImponibileImporto = '%.2f' % invoice_tax.base
                 DatiRiepilogo.DatiIVA = (DatiIVAType())
                 DatiRiepilogo.Natura = tax_id.kind_id.code
+                # N.B. Imposta and Aliquota will be zero here
                 DatiRiepilogo.DatiIVA.Imposta = '%.2f' % invoice_tax.amount
                 DatiRiepilogo.DatiIVA.Aliquota = '%.2f' % (tax_id.amount * 100)
         return DatiRiepilogo
 
+    def _get_fiscal_document_type(self, invoice):
+        res = False
+        if self._check_installed_module('l10n_it_fiscal_document_type'):
+            if invoice.fiscal_document_type_id:
+                res = invoice.fiscal_document_type_id.code
+            else:
+                res = self._find_fiscal_document_type(invoice)
+        else:
+            res = self._find_fiscal_document_type(invoice)
+        return res
+
     @staticmethod
-    def _get_fiscal_document_type(invoice):
+    def _find_fiscal_document_type(invoice):
         res = False
         if invoice.type in ['out_invoice', 'in_invoice']:
             res = 'TD01'  # fattura
@@ -202,7 +234,8 @@ class WizardInvoiceStatement(models.TransientModel):
         # TD05 nota di debito NOT DEFINED IN ODOO
         # TD07 fattura semplificata NOT DEFINED IN ODOO
         # TD08 nota di credito semplificata NOT DEFINED IN ODOO
-        if 'CEE' in invoice.journal_id.name.upper() and invoice.type == 'in_invoice':
+        if 'CEE' in invoice.journal_id.name.upper() and \
+                invoice.type == 'in_invoice':
             res = 'TD10'  # fattura di acquisto intracomunitario beni
             service_amount = sum(
                 x.price_subtotal for x in invoice.invoice_line if
@@ -242,7 +275,6 @@ class WizardInvoiceStatement(models.TransientModel):
         # DTR - INVOICE RECEIVED
         if statement_id.type == 'DTR':
             invoice_ids = self.env['account.invoice'].search([
-                # ('period_id', 'in', statement_id.period_ids)
                 ('registration_date', '>=', date_start),
                 ('registration_date', '<=', date_stop),
                 ('type', 'in', ['in_invoice', 'in_refund']),
@@ -264,7 +296,9 @@ class WizardInvoiceStatement(models.TransientModel):
             for partner_id in partner_ids:
                 # qui si creano piu blocchi, uno per ogni partner
                 CedentePrestatoreDTR = self.setCedPrestDTRCesComDTE(
-                    CedentePrestatoreDTRType(), partner_id)
+                    CedentePrestatoreDTRType(),
+                    IdentificativiFiscaliType(),
+                    partner_id)
 
                 for invoice in invoice_ids.filtered(
                         lambda x: x.partner_id == partner_id):
@@ -289,18 +323,70 @@ class WizardInvoiceStatement(models.TransientModel):
                 self.statement.DTR.CedentePrestatoreDTR.append(
                     CedentePrestatoreDTR)
 
-        #('type', 'in', ['out_invoice', 'out_refund']),
-        # todo ESCLUDERE AUTOFATTURE
-        #auto_invoice_id nella fatture fornitori non c'è
+        # DTE - INVOICE EMITTED
+        if statement_id.type == 'DTE':
+            invoice_ids = self.env['account.invoice'].search([
+                ('registration_date', '>=', date_start),
+                ('registration_date', '<=', date_stop),
+                ('type', 'in', ['out_invoice', 'out_refund']),
+                ('state', 'in', ['open', 'paid']),
+            ])
+            # todo group invoices by partner (limit 1000)
+            partner_ids = invoice_ids.mapped('partner_id')
+            if len(partner_ids) > 1000:
+                raise exceptions.ValidationError('TODO more than 1000 partner')
+            if partner_ids:
+                # CREATE CEDENTE - PRESTATORE DTE
+                self.statement.DTE = (DTEType())
+                # INSERIRE I DATI DEL CEDENTE - 1 BLOCCO SINGOLO
+                self.statement.DTE.CedentePrestatoreDTE = (
+                    CedentePrestatoreDTEType())
+                self.setCedPrestDTECesComDTR(
+                    self.statement.DTE.CedentePrestatoreDTE,
+                    statement_id.company_id.partner_id)
+
+            for partner_id in partner_ids:
+                # qui si creano piu blocchi, uno per ogni partner
+                CessionarioCommittenteDTE = self.setCedPrestDTRCesComDTE(
+                    CessionarioCommittenteDTEType(),
+                    IdentificativiFiscaliNoIVAType(),
+                    partner_id)
+
+                for invoice in invoice_ids.filtered(
+                    lambda x: x.partner_id == partner_id):
+                    # set invoice body
+                    DatiFatturaBodyDTE = DatiFatturaBodyDTEType()
+                    DatiFatturaBodyDTE.DatiGenerali = (
+                        DatiGeneraliType(
+                            TipoDocumento=self._get_fiscal_document_type(
+                                invoice),
+                            Data=invoice.date_invoice,
+                            Numero=invoice.number))
+                    # SET lines - tax with child and without child
+                    for invoice_tax in invoice.tax_line:
+                        DatiRiepilogo = self.get_dati_riepilogo(
+                            invoice, invoice_tax)
+                        if DatiRiepilogo:
+                            DatiFatturaBodyDTE.DatiRiepilogo.append(
+                                DatiRiepilogo)
+                    CessionarioCommittenteDTE.DatiFatturaBodyDTE.append(
+                        DatiFatturaBodyDTE)
+                self.statement.DTE.CessionarioCommittenteDTE.append(
+                    CessionarioCommittenteDTE)
 
         statement_id.write(
-            {'progressive_number': progressive_number})
+            {'progressive_number': progressive_number + 1})
         try:
             attach_id = self.saveAttachment(sender_fiscalcode, statement_id)
         except (SimpleFacetValueError, SimpleTypeValueError) as e:
             raise exceptions.ValidationError(
                 _("XML SDI validation error"),
                 (unicode(e)))
+        if statement_id.type == 'DTR':
+            val = 'dtr_attachment_id'
+        if statement_id.type == 'DTE':
+            val = 'dte_attachment_id'
+        statement_id.write({val: attach_id.id})
         view_rec = self.env['ir.model.data'].get_object_reference(
             'l10n_it_account_invoice_statement',
             'view_invoice_statement_attachment_form')
