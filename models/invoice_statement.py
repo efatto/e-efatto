@@ -16,10 +16,12 @@ class InvoiceStatement(models.Model):
     progressive_number = fields.Integer(readonly=True)
     statement_partner_id = fields.Many2one(
         comodel_name='res.partner', required=True,
+        string='Soggetto obbligato all\'invio',
         help="Legal phisical Person or Partner which is obliged "
              "to present the invoice statement.")
     sender_partner_id = fields.Many2one(
         comodel_name='res.partner',
+        string='Soggetto incaricato alla trasmissione',
         help="Partner who send the statement")
     sender_date_commitment = fields.Date(required=True)
     dtr_attachment_id = fields.Many2one(

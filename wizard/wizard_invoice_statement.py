@@ -105,7 +105,7 @@ class WizardInvoiceStatement(models.TransientModel):
                 _('Partner VAT and Fiscalcode not set.'))
         obj.IdentificativiFiscali = (IdentificativiFiscaliITType())
         obj.IdentificativiFiscali.IdFiscaleIVA = (IdFiscaleITType(
-            IdPaese=partner_id.vat[:2], IdCodice=partner_id.vat[2:]
+            IdPaese=partner_id.vat[:2].upper(), IdCodice=partner_id.vat[2:]
         ))
 
         obj.AltriDatiIdentificativi = (AltriDatiIdentificativiNoSedeType())
@@ -140,7 +140,7 @@ class WizardInvoiceStatement(models.TransientModel):
         obj.IdentificativiFiscali = (id_fiscali)
         obj.IdentificativiFiscali.IdFiscaleIVA = (
             IdFiscaleType(
-                IdPaese=partner_id.vat[:2], IdCodice=partner_id.vat[2:]))
+                IdPaese=partner_id.vat[:2].upper(), IdCodice=partner_id.vat[2:]))
         fiscalcode = False
         if partner_id.fiscalcode:
             if len(partner_id.fiscalcode) == 16:
@@ -191,7 +191,6 @@ class WizardInvoiceStatement(models.TransientModel):
             esigibilita_iva = 'I'
             if tax_id.payability:
                 esigibilita_iva = tax_id.payability
-            #TODO 6.1 get info from tax type
             DatiRiepilogo.EsigibilitaIVA = esigibilita_iva
         else:
             if invoice_tax.base_code_id and not invoice_tax.base_code_id.\
@@ -246,9 +245,9 @@ class WizardInvoiceStatement(models.TransientModel):
         # Check sender fiscalcode
         sender_fiscalcode = statement_id.sender_partner_id.fiscalcode
         if len(sender_fiscalcode) == 13:
-            if sender_fiscalcode[:2].lower() == 'it':
+            if sender_fiscalcode[:2].upper() == 'IT':
                 sender_fiscalcode = sender_fiscalcode[2:]
-        elif len(sender_fiscalcode) != 16 or len(sender_fiscalcode) != 11:
+        elif len(sender_fiscalcode) != 16 and len(sender_fiscalcode) != 11:
             raise exceptions.ValidationError('Sender fiscalcode invalid')
 
         # get data for statement
