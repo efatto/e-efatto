@@ -59,13 +59,6 @@ class WizardInvoiceStatement(models.TransientModel):
         self.statement = False
         super(WizardInvoiceStatement, self).__init__(pool, cr)
 
-    def _check_installed_module(self, module):
-        res = False
-        if self.env['ir.module.module'].search([('name', '=', module),
-                                               ('state', '=', 'installed')]):
-            res = True
-        return res
-
     def get_date_start_stop(self, statement):
         date_start = False
         date_stop = False
@@ -215,11 +208,8 @@ class WizardInvoiceStatement(models.TransientModel):
 
     def _get_fiscal_document_type(self, invoice):
         res = False
-        if self._check_installed_module('l10n_it_fiscal_document_type'):
-            if invoice.fiscal_document_type_id:
-                res = invoice.fiscal_document_type_id.code
-            else:
-                res = self._find_fiscal_document_type(invoice)
+        if invoice.fiscal_document_type_id:
+            res = invoice.fiscal_document_type_id.code
         else:
             res = self._find_fiscal_document_type(invoice)
         return res
@@ -271,6 +261,15 @@ class WizardInvoiceStatement(models.TransientModel):
         self.statement.DatiFatturaHeader = (DatiFatturaHeaderType())
         self.statement.DatiFatturaHeader.ProgressivoInvio = str(
             progressive_number + 1)
+
+        # check and put if there is Dichiarante
+        if statement_id.statement_partner_id:
+            self.statement.DatiFatturaHeader.Dichiarante = (
+                DichiaranteType(
+                    CodiceFiscale=statement_id.statement_partner_id.fiscalcode,
+                    Carica=statement_id.statement_partner_id.codice_carica.code,
+                )
+            )
 
         # DTR - INVOICE RECEIVED
         if statement_id.type == 'DTR':

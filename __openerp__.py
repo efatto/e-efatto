@@ -40,6 +40,7 @@
     'data': [
         'wizard/add_period.xml',
         'wizard/remove_period.xml',
+        'views/res_partner.xml',
         'views/invoice_statement.xml',
         'wizard/wizard_invoice_statement.xml',
     ],
