@@ -130,16 +130,24 @@ class WizardInvoiceStatement(models.TransientModel):
         obj.AltriDatiIdentificativi.Sede.Nazione = partner_id.country_id.code\
             if partner_id.country_id else 'IT'
 
-    def setCedPrestDTRCesComDTE(self, obj, id_fiscali, partner_id):
-        if not partner_id.vat and not partner_id.fiscalcode:
+    def setCedPrestDTRCesComDTE(
+            self, obj, id_fiscali, partner_id, year, statement_id):
+        partner_vat = country = False
+        if year == 2017 and statement_id.type == 'DTR' and not partner_id.vat:
+            partner_vat = '9'*11
+            country = 'OO'
+        elif not partner_id.vat and not partner_id.fiscalcode:
             raise exceptions.ValidationError(
                 _('Partner VAT and Fiscalcode not set.'))
         obj.IdentificativiFiscali = (id_fiscali)
         obj.IdentificativiFiscali.IdFiscaleIVA = (
             IdFiscaleType(
-                IdPaese=partner_id.vat[:2].upper(), IdCodice=partner_id.vat[2:]))
+                IdPaese=country if country else partner_id.vat[:2].upper(),
+                IdCodice=partner_vat if partner_vat else partner_id.vat[2:]))
         fiscalcode = False
-        if partner_id.fiscalcode:
+        if partner_id.fiscalcode and (
+                partner_id.country_id.code == 'IT' or
+                partner_id.vat and partner_id.vat[:2].upper == 'IT'):
             if len(partner_id.fiscalcode) == 16:
                 fiscalcode = partner_id.fiscalcode
             if len(partner_id.fiscalcode) == 13:
@@ -176,10 +184,9 @@ class WizardInvoiceStatement(models.TransientModel):
             # if tax_id is a child of other tax, use it for aliquota
             if tax_id.parent_id and tax_id.parent_id.child_depend:
                 tax_id = tax_id.parent_id
-            # if invoice_tax.amount == 0:
-            #     DatiRiepilogo.Natura = tax_id.kind_id.code
-            # else:
             DatiRiepilogo = DatiRiepilogoType()
+            if tax_id.kind_id:
+                DatiRiepilogo.Natura = tax_id.kind_id.code
             DatiRiepilogo.ImponibileImporto = '%.2f' % invoice_tax.base
             DatiRiepilogo.DatiIVA = (DatiIVAType())
             DatiRiepilogo.DatiIVA.Imposta = '%.2f' % invoice_tax.amount
@@ -197,7 +204,7 @@ class WizardInvoiceStatement(models.TransientModel):
                 DatiRiepilogo.ImponibileImporto = '%.2f' % invoice_tax.base
                 DatiRiepilogo.DatiIVA = (DatiIVAType())
                 DatiRiepilogo.Natura = tax_id.kind_id.code
-                # N.B. Imposta and Aliquota will be zero here
+                # N.B. Imposta and Aliquota will be zero here and it is ok
                 DatiRiepilogo.DatiIVA.Imposta = '%.2f' % invoice_tax.amount
                 DatiRiepilogo.DatiIVA.Aliquota = '%.2f' % (tax_id.amount * 100)
         return DatiRiepilogo
@@ -312,8 +319,8 @@ class WizardInvoiceStatement(models.TransientModel):
                 CedentePrestatoreDTR = self.setCedPrestDTRCesComDTE(
                     CedentePrestatoreDTRType(),
                     IdentificativiFiscaliType(),
-                    partner_id)
-
+                    partner_id, date_stop.year, statement_id,
+                )
                 for invoice in invoice_ids.filtered(
                         lambda x: x.partner_id == partner_id):
                     # set invoice body
@@ -358,8 +365,7 @@ class WizardInvoiceStatement(models.TransientModel):
                 CessionarioCommittenteDTE = self.setCedPrestDTRCesComDTE(
                     CessionarioCommittenteDTEType(),
                     IdentificativiFiscaliNoIVAType(),
-                    partner_id)
-
+                    partner_id, date_stop.year, statement_id,)
                 for invoice in invoice_ids.filtered(
                     lambda x: x.partner_id == partner_id):
                     # set invoice body
