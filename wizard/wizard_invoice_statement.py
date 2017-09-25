@@ -110,7 +110,7 @@ class WizardInvoiceStatement(models.TransientModel):
 
         obj.AltriDatiIdentificativi = (AltriDatiIdentificativiNoSedeType())
         # get partner name in case of natural person
-        if not partner_id.is_company:
+        if partner_id.individual:
             obj.AltriDatiIdentificativi.Nome = partner_id.first_name
             obj.AltriDatiIdentificativi.Cognome = partner_id.last_name
         else:
@@ -131,9 +131,6 @@ class WizardInvoiceStatement(models.TransientModel):
             if partner_id.country_id else 'IT'
 
     def setCedPrestDTRCesComDTE(self, obj, id_fiscali, partner_id):
-        # if partner_id.vat[:2].upper() != 'IT': ? quando?
-        #     raise exceptions.ValidationError(
-        #         _('No partner != IT allowed'))
         if not partner_id.vat and not partner_id.fiscalcode:
             raise exceptions.ValidationError(
                 _('Partner VAT and Fiscalcode not set.'))
@@ -152,7 +149,7 @@ class WizardInvoiceStatement(models.TransientModel):
 
         obj.AltriDatiIdentificativi = (AltriDatiIdentificativiNoCAPType())
         # get partner name in case of natural person
-        if not partner_id.is_company:
+        if partner_id.individual:
             obj.AltriDatiIdentificativi.Nome = partner_id.first_name
             obj.AltriDatiIdentificativi.Cognome = partner_id.last_name
         else:
@@ -270,14 +267,33 @@ class WizardInvoiceStatement(models.TransientModel):
                 )
             )
 
+        # Get invoices for all cases to remove auto invoices
+        DTR_invoice_ids = self.env['account.invoice'].search([
+            ('registration_date', '>=', date_start),
+            ('registration_date', '<=', date_stop),
+            ('type', 'in', ['in_invoice', 'in_refund'],),
+            ('state', 'in', ['open', 'paid']),
+            '|', ('fiscal_document_type_code', '!=', 'NONE'),
+            ('fiscal_document_type_id', '=', False),
+        ])
+        DTE_invoice_ids = self.env['account.invoice'].search([
+            ('registration_date', '>=', date_start),
+            ('registration_date', '<=', date_stop),
+            ('type', 'in', ['out_invoice', 'out_refund']),
+            ('state', 'in', ['open', 'paid']),
+            '|', ('fiscal_document_type_code', '!=', 'NONE'),
+            ('fiscal_document_type_id', '=', False),
+        ])
+        auto_invoice_ids = DTR_invoice_ids.filtered('auto_invoice_id')
+        DTE_invoice_ids -= auto_invoice_ids.mapped('auto_invoice_id')
+
+        if statement_id.type == 'DTR':
+            invoice_ids = DTR_invoice_ids
+        elif statement_id.type == 'DTE':
+            invoice_ids = DTE_invoice_ids
+
         # DTR - INVOICE RECEIVED
         if statement_id.type == 'DTR':
-            invoice_ids = self.env['account.invoice'].search([
-                ('registration_date', '>=', date_start),
-                ('registration_date', '<=', date_stop),
-                ('type', 'in', ['in_invoice', 'in_refund']),
-                ('state', 'in', ['open', 'paid']),
-            ])
             # todo group invoices by partner (limit 1000)
             partner_ids = invoice_ids.mapped('partner_id')
             if partner_ids:
@@ -323,12 +339,6 @@ class WizardInvoiceStatement(models.TransientModel):
 
         # DTE - INVOICE EMITTED
         if statement_id.type == 'DTE':
-            invoice_ids = self.env['account.invoice'].search([
-                ('registration_date', '>=', date_start),
-                ('registration_date', '<=', date_stop),
-                ('type', 'in', ['out_invoice', 'out_refund']),
-                ('state', 'in', ['open', 'paid']),
-            ])
             # todo group invoices by partner (limit 1000)
             partner_ids = invoice_ids.mapped('partner_id')
             if len(partner_ids) > 1000:

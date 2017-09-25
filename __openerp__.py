@@ -36,13 +36,16 @@
         'l10n_it_account_tax_kind',
         'l10n_it_esigibilita_iva',
         'l10n_it_fiscal_document_type',
+        'l10n_it_invoice_intra_cee',
+        'res_partner_name_lastname',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'wizard/add_period.xml',
         'wizard/remove_period.xml',
+        'wizard/wizard_invoice_statement.xml',
         'views/res_partner.xml',
         'views/invoice_statement.xml',
-        'wizard/wizard_invoice_statement.xml',
     ],
     'external_dependencies': {
         'python': ['pyxb'],
