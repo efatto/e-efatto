@@ -117,7 +117,9 @@ class WizardInvoiceStatement(models.TransientModel):
             obj.AltriDatiIdentificativi.Denominazione = partner_id.name
 
         obj.AltriDatiIdentificativi.Sede = (IndirizzoType())
-        obj.AltriDatiIdentificativi.Sede.Indirizzo = partner_id.street
+        obj.AltriDatiIdentificativi.Sede.Indirizzo = \
+            partner_id.street + (
+                ' ' + partner_id.street2 if partner_id.street2 else '')
         if re.match('^[0-9]{5}$', partner_id.zip):
             obj.AltriDatiIdentificativi.Sede.CAP = partner_id.zip
         else:
@@ -141,16 +143,15 @@ class WizardInvoiceStatement(models.TransientModel):
                 _('Partner VAT and Fiscalcode not set.'))
         else:
             partner_vat = partner_id.vat[2:]
-            country = partner_id.vat[:2].upper()
+            country = partner_id.vat.replace(" ","")[:2].upper()
         obj.IdentificativiFiscali = (id_fiscali)
         obj.IdentificativiFiscali.IdFiscaleIVA = (
             IdFiscaleType(
-                IdPaese=country,
-                IdCodice=partner_vat))
+                IdPaese=country, IdCodice=partner_vat))
         fiscalcode = False
         if partner_id.fiscalcode and (
                 partner_id.country_id.code == 'IT' or
-                partner_id.vat and partner_id.vat[:2].upper == 'IT'):
+                country == 'IT'):
             if len(partner_id.fiscalcode) == 16:
                 fiscalcode = partner_id.fiscalcode
             if len(partner_id.fiscalcode) == 13:
@@ -167,15 +168,18 @@ class WizardInvoiceStatement(models.TransientModel):
             obj.AltriDatiIdentificativi.Denominazione = partner_id.name
 
         obj.AltriDatiIdentificativi.Sede = (IndirizzoNoCAPType())
-        obj.AltriDatiIdentificativi.Sede.Indirizzo = partner_id.street
-        if re.match('^[0-9]{5}$', partner_id.zip) and country == 'IT':
+        obj.AltriDatiIdentificativi.Sede.Indirizzo = \
+            partner_id.street + (
+                ' ' + partner_id.street2 if partner_id.street2 else '')
+        if partner_id.zip and re.match(
+                '^[0-9]{5}$', partner_id.zip) and country == 'IT':
             obj.AltriDatiIdentificativi.Sede.CAP = partner_id.zip
         obj.AltriDatiIdentificativi.Sede.Comune = partner_id.city
         if partner_id.state_id and country == 'IT':
             obj.AltriDatiIdentificativi.Sede.Provincia = partner_id.state_id.\
                 code
         obj.AltriDatiIdentificativi.Sede.Nazione = partner_id.country_id.code\
-            if partner_id.country_id else 'IT'
+            if partner_id.country_id else country
 
         return obj
 
@@ -322,8 +326,7 @@ class WizardInvoiceStatement(models.TransientModel):
                 CedentePrestatoreDTR = self.setCedPrestDTRCesComDTE(
                     CedentePrestatoreDTRType(),
                     IdentificativiFiscaliType(),
-                    partner_id, date_stop.year, statement_id,
-                )
+                    partner_id, date_stop.year, statement_id,)
                 for invoice in invoice_ids.filtered(
                         lambda x: x.partner_id == partner_id):
                     # set invoice body
