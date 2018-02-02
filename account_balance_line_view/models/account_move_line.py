@@ -7,6 +7,7 @@ from openerp.osv import osv, fields
 
 class account_move_line(osv.osv):
     _inherit = "account.move.line"
+    _order = 'date desc, id desc'
 
     def _balance(self, cr, uid, ids, name, arg, context=None):
         super(account_move_line, self)._balance(
