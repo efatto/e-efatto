@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <record id="corrispettivi_form_force_number" model="ir.ui.view">
+        <field name="name">account.corrispettivi.form.force.number</field>
+        <field name="model">account.invoice</field>
+        <field name="priority" eval="17"/>
+        <field name="inherit_id" ref="l10n_it_corrispettivi.corrispettivi_form"/>
+        <field name="arch" type="xml">
+            <field name="date_invoice" position="after">
+                <field name="internal_number" attrs="{'invisible': [('state', '!=', 'draft')]}"
+                   string="Force Number"
+                   help="Force number. Use this field if you don't want to use the default numbering"
+                   invisible="0"
+                   groups="account_invoice_force_number.group_allow_invoice_force_number"/>
+            </field>
+        </field>
+    </record>
+
+</data>
+</openerp>
