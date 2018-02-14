@@ -18,12 +18,12 @@ msgstr ""
 #. module: res_partner_name_lastname
 #: field:res.partner,last_name:0
 msgid "Last Name"
-msgstr "Cognome"
+msgstr "Cognome Persona Fisica"
 
 #. module: res_partner_name_lastname
 #: field:res.partner,first_name:0
 msgid "First Name"
-msgstr "Nome"
+msgstr "Nome Persona Fisica"
 
 #. module: res_partner_name_lastname
 #: model:ir.model,name:res_partner_name_lastname.model_res_partner
