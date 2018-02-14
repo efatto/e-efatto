@@ -42,6 +42,6 @@ class AccountInvoice(models.Model):
     @api.one
     def copy(self, default=None):
         default = dict(default or {})
-        default['proforma_number'] = False,
+        default['proforma_number'] = False
         default['date_proforma'] = False
         return super(AccountInvoice, self).copy(default)
