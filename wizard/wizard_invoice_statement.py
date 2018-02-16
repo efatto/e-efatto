@@ -141,13 +141,15 @@ class WizardInvoiceStatement(models.TransientModel):
         elif not partner_id.vat and not partner_id.fiscalcode:
             raise exceptions.ValidationError(
                 _('Partner VAT and Fiscalcode not set.'))
-        else:
+        elif partner_id.vat:
             partner_vat = partner_id.vat[2:]
             country = partner_id.vat.replace(" ","")[:2].upper()
         obj.IdentificativiFiscali = (id_fiscali)
-        obj.IdentificativiFiscali.IdFiscaleIVA = (
-            IdFiscaleType(
-                IdPaese=country, IdCodice=partner_vat))
+
+        if partner_id.vat:
+            obj.IdentificativiFiscali.IdFiscaleIVA = (
+                IdFiscaleType(
+                    IdPaese=country, IdCodice=partner_vat))
         fiscalcode = False
         if partner_id.fiscalcode and (
                 partner_id.country_id.code == 'IT' or
