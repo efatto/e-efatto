@@ -402,8 +402,7 @@ class WizardInvoiceStatement(models.TransientModel):
             attach_id = self.saveAttachment(sender_fiscalcode, statement_id)
         except (SimpleFacetValueError, SimpleTypeValueError) as e:
             raise exceptions.ValidationError(
-                _("XML SDI validation error"),
-                (unicode(e)))
+                _("XML SDI validation error %s" % unicode(e)))
         if statement_id.type == 'DTR':
             val = 'dtr_attachment_id'
         if statement_id.type == 'DTE':
@@ -412,6 +411,7 @@ class WizardInvoiceStatement(models.TransientModel):
         view_rec = self.env['ir.model.data'].get_object_reference(
             'l10n_it_account_invoice_statement',
             'view_invoice_statement_attachment_form')
+        view_id = False
         if view_rec:
             view_id = view_rec and view_rec[1] or False
         return {
