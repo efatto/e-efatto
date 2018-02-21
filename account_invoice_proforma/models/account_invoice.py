@@ -17,7 +17,7 @@ class AccountInvoice(models.Model):
             'Proforma Date',
             readonly=True,
             states={'draft': [('readonly', False)]},
-            select=True, help="Keep empty to use the current date",
+            select=True,
             )
 
     @api.multi
@@ -27,10 +27,10 @@ class AccountInvoice(models.Model):
                 'state': 'proforma2',
                 'proforma_number': self.env['ir.sequence'].with_context(
                     fiscalyear_id=self.env['account.fiscalyear'].find(
-                        dt=fields.Date.context_today(self)
+                        dt=inv.date_invoice or fields.Date.context_today(self)
                     )
                 ).get('account.invoice.proforma'),
-                'date_proforma': inv.date_proforma or fields.Date.today(),
+                'date_proforma': inv.date_invoice or fields.Date.today(),
                 'number': False,
                 'date_invoice': False,
                 'internal_number': False,

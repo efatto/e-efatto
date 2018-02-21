@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data noupdate="1">
-
         <record id="seq_type_proforma_invoice" model="ir.sequence.type">
             <field name="name">Proforma Invoice</field>
             <field name="code">account.invoice.proforma</field>
@@ -15,8 +14,9 @@
             <field name="company_id" eval="False"/>
             <field name="implementation">no_gap</field>
         </record>
+    </data>
 
-
+    <data noupdate="0">
         <record id="account.act_proforma2" model="workflow.activity">
             <field name="wkf_id" ref="account.wkf"/>
             <field name="name">proforma2</field>
