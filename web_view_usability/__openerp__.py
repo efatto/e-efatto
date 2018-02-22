@@ -22,10 +22,15 @@
     'version': '8.0.1.0.0',
     'category': 'other',
     'author': 'Sergio Corato',
-    'description': 'Usability issue resolved on web view: '
-                   '\n- enlarge pop-up view,'
-                   '\n- enlarge open button,'
-                   '\n- enlarge drop-down button.',
+    'description': """
+Web view usability
+==================
+
+Usability issue resolved on web view: 
+    * enlarge pop-up view,
+    * enlarge open button,
+    * enlarge drop-down button.
+    """,
     'website': 'http://www.efatto.it',
     'license': 'AGPL-3',
     'depends': [
