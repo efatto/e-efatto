@@ -99,8 +99,10 @@ class Parser(report_sxw.rml_parse):
                 'value_residual': 0.0
             }
         })
+        fy = self.pool['account.fiscalyear'].browse(
+            self.cr, self.uid, self.localcontext['fy_id'])[0]
         for ctg in self.pool['account.asset.category'].browse(self.cr, self.uid, category_ids):
-            asset_ids = asset_obj.search(self.cr, self.uid, [('category_id', '=', ctg.id), ('state', 'in', state)])
+            asset_ids = asset_obj.search(self.cr, self.uid, [('category_id', '=', ctg.id), ('state', 'in', state), ('date_start', '<=', fy.date_stop)])
             if asset_ids:
                 res.update({
                     ctg.id: {
