@@ -34,6 +34,7 @@
                     <tbody>
                         <t t-set="ctgs" t-value="ctg_total(category_ids)"/>
                         <t t-foreach="ctgs" t-as="ctg">
+                        <t t-if="ctg != 'total'">
                             <td><div t-esc="ctgs[ctg]['name']"/></td>
                             <t t-set="counter" t-value="counter + 1"/>
                             <t t-foreach="get_asset(data['ids'])" t-as="asset">
@@ -82,6 +83,25 @@
                                 <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['value_depreciated'] + ctgs[ctg]['value_depreciation'])"/></strong></td>
                                 <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['value_residual'])"/></strong></td>
                             </tr>
+                        </t>
+                        </t>
+                        <t t-foreach="ctgs" t-as="ctg">
+                        <t t-if="ctg == 'total'">
+                            <tr>
+                                <td class="left_with_line"></td>
+                                <td class="left_with_line"><strong>Totale generale</strong></td>
+                                <td class="left_with_line"></td>
+                                <td class="left_with_line"></td>
+                                <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['purchase_value'])"/></strong></td>
+                                <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['increase_decrease_value'])"/></strong></td>
+                                <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['remove_value'])"/></strong></td>
+                                <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['value_depreciated'])"/></strong></td>
+                                <td class="right_with_line"></td>
+                                <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['value_depreciation'])"/></strong></td>
+                                <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['value_depreciated'] + ctgs[ctg]['value_depreciation'])"/></strong></td>
+                                <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['value_residual'])"/></strong></td>
+                            </tr>
+                        </t>
                         </t>
                     </tbody>
                 </table>
