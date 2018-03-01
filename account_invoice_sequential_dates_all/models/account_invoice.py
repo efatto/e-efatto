@@ -16,37 +16,19 @@ class AccountInvoice(models.Model):
         res = super(AccountInvoice, self).action_number()
         for invoice in self:
             # ----- NOT Ignore supplier invoice and supplier refund
-            if invoice.type in ('in_invoice', 'in_refund'):
-                supplier_invoice = self.search([
-                    ('type', '=', invoice.type),
-                    ('registration_date', '>', invoice.registration_date),
-                    ('number', '<', invoice.number),
-                    ('journal_id', '=', invoice.journal_id.id)],
-                    order='registration_date desc', limit=1,
+            existing_invoice = self.search([
+                ('type', '=', invoice.type),
+                ('registration_date', '>', invoice.registration_date),
+                ('number', '<', invoice.number),
+                ('journal_id', '=', invoice.journal_id.id)],
+                order='registration_date desc', limit=1,
+            )
+            if existing_invoice:
+                raise UserError(
+                    _('Cannot create invoice! Post the invoice'
+                      ' with an equal or greater date than %s')
+                    % datetime.strptime(
+                        existing_invoice.registration_date,
+                        DEFAULT_SERVER_DATE_FORMAT).strftime('%d/%m/%Y')
                 )
-                if supplier_invoice:
-                    raise UserError(
-                        _('Cannot create invoice! Post the invoice'
-                          ' with an equal or greater date than %s')
-                        % datetime.strptime(
-                            supplier_invoice.registration_date,
-                            DEFAULT_SERVER_DATE_FORMAT).strftime('%d/%m/%Y')
-                    )
-            # ----- Search if exists an invoice, yet
-            else:
-                sale_invoice = self.search([
-                    ('type', '=', invoice.type),
-                    ('date_invoice', '>', invoice.date_invoice),
-                    ('number', '<', invoice.number),
-                    ('journal_id', '=', invoice.journal_id.id)],
-                    order='date_invoice desc', limit=1,
-                )
-                if sale_invoice:
-                    raise UserError(
-                        _('Cannot create invoice! Post the invoice'
-                          ' with an equal or greater date than %s')
-                        % datetime.strptime(
-                            sale_invoice.date_invoice,
-                            DEFAULT_SERVER_DATE_FORMAT).strftime('%d/%m/%Y')
-                    )
         return res
