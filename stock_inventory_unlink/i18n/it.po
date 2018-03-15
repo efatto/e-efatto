@@ -1,13 +1,13 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* stock_inventory_date
+#	* stock_inventory_unlink
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-14 07:44+0000\n"
-"PO-Revision-Date: 2018-03-14 07:44+0000\n"
+"POT-Creation-Date: 2018-03-15 11:33+0000\n"
+"PO-Revision-Date: 2018-03-15 11:33+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -15,35 +15,14 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
-#. module: stock_inventory_date
-#: field:stock.inventory,date_inventory:0
-msgid "Date inventory"
-msgstr "Data calcolo giacenze inventario"
-
-#. module: stock_inventory_date
-#: model:ir.model,name:stock_inventory_date.model_stock_inventory
+#. module: stock_inventory_unlink
+#: model:ir.model,name:stock_inventory_unlink.model_stock_inventory
 msgid "Inventory"
 msgstr "Inventario"
 
-#. module: stock_inventory_date
-#: model:ir.model,name:stock_inventory_date.model_stock_inventory_line
-msgid "Inventory Line"
-msgstr "Riga inventario"
-
-#. module: stock_inventory_date
-#: code:addons/stock_inventory_date/models/stock.py:109
+#. module: stock_inventory_unlink
+#: code:addons/stock_inventory_unlink/models/stock.py:16
 #, python-format
-msgid "No product in this location."
-msgstr "Nessun prodotto in questo deposito."
-
-#. module: stock_inventory_date
-#: model:ir.model,name:stock_inventory_date.model_stock_move
-msgid "Stock Move"
-msgstr "Movimento di magazzino"
-
-#. module: stock_inventory_date
-#: code:addons/stock_inventory_date/models/stock.py:139
-#, python-format
-msgid "You can not process an actual movement date in the future."
-msgstr "Non è possibile processare un movimento con data futura."
+msgid "You cannot delete a stock inventory in 'done' state."
+msgstr "Non è possibile eliminare un inventario in stato 'Confermato'."
 
