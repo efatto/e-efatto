@@ -18,7 +18,7 @@ msgstr ""
 #. module: stock_move_tree_purchase_price
 #: field:stock.move,purchase_net_price:0
 msgid "Purchase net price"
-msgstr "Prezzo netto acquisto"
+msgstr "Prezzo Netto Acquisto"
 
 #. module: stock_move_tree_purchase_price
 #: help:stock.move,purchase_net_price:0
