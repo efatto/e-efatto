@@ -3,9 +3,9 @@
 # For copyright and license notices, see __openerp__.py file in root directory
 ##############################################################################
 from openerp import fields, models, api, exceptions, _
-from ..bindings.invoice_statement_v_2_0 import (
-    AltriDatiIdentificativiNoCAPType,
-    AltriDatiIdentificativiNoSedeType,
+from ..bindings.invoice_statement_v_2_1 import (
+    # AltriDatiIdentificativiNoCAPType,
+    # AltriDatiIdentificativiNoSedeType,
     CaricaType,
     CedentePrestatoreDTEType,
     CedentePrestatoreDTRType,
@@ -16,7 +16,7 @@ from ..bindings.invoice_statement_v_2_0 import (
     DatiFatturaBodyDTRType,
     DatiFatturaHeaderType,
     DatiFatturaType,
-    DatiGeneraliType,
+    DatiGeneraliDTEType,
     DatiGeneraliDTRType,
     DatiIVAType,
     DatiRiepilogoType,
@@ -28,9 +28,9 @@ from ..bindings.invoice_statement_v_2_0 import (
     IdentificativiFiscaliNoIVAType,
     IdFiscaleITType,
     IdFiscaleType,
-    IndirizzoNoCAPType,
-    IndirizzoType,
-    TipoDocumentoType,
+    # IndirizzoNoCAPType,
+    # IndirizzoType,
+    # TipoDocumentoType,
 )
 import base64
 import logging
@@ -43,7 +43,6 @@ except ImportError as err:
     _logger.debug(err)
 
 import datetime
-import re
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT
 
 
@@ -108,29 +107,30 @@ class WizardInvoiceStatement(models.TransientModel):
             IdPaese=partner_id.vat[:2].upper(), IdCodice=partner_id.vat[2:]
         ))
 
-        obj.AltriDatiIdentificativi = (AltriDatiIdentificativiNoSedeType())
-        # get partner name in case of natural person
-        if partner_id.individual:
-            obj.AltriDatiIdentificativi.Nome = partner_id.first_name
-            obj.AltriDatiIdentificativi.Cognome = partner_id.last_name
-        else:
-            obj.AltriDatiIdentificativi.Denominazione = partner_id.name
-
-        obj.AltriDatiIdentificativi.Sede = (IndirizzoType())
-        obj.AltriDatiIdentificativi.Sede.Indirizzo = \
-            partner_id.street + (
-                ' ' + partner_id.street2 if partner_id.street2 else '')
-        if re.match('^[0-9]{5}$', partner_id.zip):
-            obj.AltriDatiIdentificativi.Sede.CAP = partner_id.zip
-        else:
-            raise exceptions.ValidationError(
-                'Malformed zip for %s' % partner_id.name)
-        obj.AltriDatiIdentificativi.Sede.Comune = partner_id.city
-        if partner_id.state_id:
-            obj.AltriDatiIdentificativi.Sede.Provincia = partner_id.state_id.\
-                code
-        obj.AltriDatiIdentificativi.Sede.Nazione = partner_id.country_id.code\
-            if partner_id.country_id else 'IT'
+        # 2017-04-06 NOT MORE NEEDED - only for invoice simplified, not used
+        # obj.AltriDatiIdentificativi = (AltriDatiIdentificativiNoSedeType())
+        # # get partner name in case of natural person
+        # if partner_id.individual:
+        #     obj.AltriDatiIdentificativi.Nome = partner_id.first_name
+        #     obj.AltriDatiIdentificativi.Cognome = partner_id.last_name
+        # else:
+        #     obj.AltriDatiIdentificativi.Denominazione = partner_id.name
+        #
+        # obj.AltriDatiIdentificativi.Sede = (IndirizzoType())
+        # obj.AltriDatiIdentificativi.Sede.Indirizzo = \
+        #     partner_id.street + (
+        #         ' ' + partner_id.street2 if partner_id.street2 else '')
+        # if re.match('^[0-9]{5}$', partner_id.zip):
+        #     obj.AltriDatiIdentificativi.Sede.CAP = partner_id.zip
+        # else:
+        #     raise exceptions.ValidationError(
+        #         'Malformed zip for %s' % partner_id.name)
+        # obj.AltriDatiIdentificativi.Sede.Comune = partner_id.city
+        # if partner_id.state_id:
+        #     obj.AltriDatiIdentificativi.Sede.Provincia = partner_id.state_id.\
+        #         code
+        # obj.AltriDatiIdentificativi.Sede.Nazione = partner_id.country_id.code\
+        #     if partner_id.country_id else 'IT'
 
     def setCedPrestDTRCesComDTE(
             self, obj, id_fiscali, partner_id, year, statement_id):
@@ -144,12 +144,23 @@ class WizardInvoiceStatement(models.TransientModel):
         elif partner_id.vat:
             partner_vat = partner_id.vat[2:]
             country = partner_id.vat.replace(" ","")[:2].upper()
+        else:
+            if not partner_id.country_id:
+                raise exceptions.ValidationError(
+                    _('Partner Country not set.'))
+            partner_vat = False
+            country = partner_id.country_id.code
         obj.IdentificativiFiscali = (id_fiscali)
 
         if partner_id.vat:
             obj.IdentificativiFiscali.IdFiscaleIVA = (
                 IdFiscaleType(
                     IdPaese=country, IdCodice=partner_vat))
+        if not partner_vat and country != 'IT':
+            obj.IdentificativiFiscali.IdFiscaleIVA = (
+                IdFiscaleType(
+                    IdPaese=country, IdCodice=partner_id.fiscalcode if
+                    partner_id.fiscalcode else partner_id.name[:11]))
         fiscalcode = False
         if partner_id.fiscalcode and (
                 partner_id.country_id.code == 'IT' or
@@ -158,63 +169,120 @@ class WizardInvoiceStatement(models.TransientModel):
                 fiscalcode = partner_id.fiscalcode
             if len(partner_id.fiscalcode) == 13:
                 fiscalcode = partner_id.fiscalcode[2:]
-        if fiscalcode:
+        if fiscalcode and not partner_vat:
             obj.IdentificativiFiscali.CodiceFiscale = fiscalcode
 
-        obj.AltriDatiIdentificativi = (AltriDatiIdentificativiNoCAPType())
-        # get partner name in case of natural person
-        if partner_id.individual:
-            obj.AltriDatiIdentificativi.Nome = partner_id.first_name
-            obj.AltriDatiIdentificativi.Cognome = partner_id.last_name
-        else:
-            obj.AltriDatiIdentificativi.Denominazione = partner_id.name
-
-        obj.AltriDatiIdentificativi.Sede = (IndirizzoNoCAPType())
-        obj.AltriDatiIdentificativi.Sede.Indirizzo = \
-            partner_id.street + (
-                ' ' + partner_id.street2 if partner_id.street2 else '')
-        if partner_id.zip and re.match(
-                '^[0-9]{5}$', partner_id.zip) and country == 'IT':
-            obj.AltriDatiIdentificativi.Sede.CAP = partner_id.zip
-        obj.AltriDatiIdentificativi.Sede.Comune = partner_id.city
-        if partner_id.state_id and country == 'IT':
-            obj.AltriDatiIdentificativi.Sede.Provincia = partner_id.state_id.\
-                code
-        obj.AltriDatiIdentificativi.Sede.Nazione = partner_id.country_id.code\
-            if partner_id.country_id else country
+        # obj.AltriDatiIdentificativi = (AltriDatiIdentificativiNoCAPType())
+        # # get partner name in case of natural person
+        # if partner_id.individual:
+        #     obj.AltriDatiIdentificativi.Nome = partner_id.first_name
+        #     obj.AltriDatiIdentificativi.Cognome = partner_id.last_name
+        # else:
+        #     obj.AltriDatiIdentificativi.Denominazione = partner_id.name
+        #
+        # obj.AltriDatiIdentificativi.Sede = (IndirizzoNoCAPType())
+        # obj.AltriDatiIdentificativi.Sede.Indirizzo = \
+        #     partner_id.street + (
+        #         ' ' + partner_id.street2 if partner_id.street2 else '')
+        # if partner_id.zip and re.match(
+        #         '^[0-9]{5}$', partner_id.zip) and country == 'IT':
+        #     obj.AltriDatiIdentificativi.Sede.CAP = partner_id.zip
+        # obj.AltriDatiIdentificativi.Sede.Comune = partner_id.city
+        # if partner_id.state_id and country == 'IT':
+        #     obj.AltriDatiIdentificativi.Sede.Provincia = partner_id.state_id.\
+        #         code
+        # obj.AltriDatiIdentificativi.Sede.Nazione = partner_id.country_id.code\
+        #     if partner_id.country_id else country
 
         return obj
 
-    def get_dati_riepilogo(self, invoice, invoice_tax):
-        DatiRiepilogo = False
-        if invoice_tax.tax_code_id and not invoice_tax.tax_code_id.\
-                exclude_from_registries:
-            tax_id = invoice_tax.tax_code_id.tax_ids[0]
+    def _get_grouped_taxes(self, invoice):
+        # group invoice tax lines for same tax
+        # get totals for group of sale tax
+        taxes = set([
+            x.tax_code_id for x in invoice.tax_line if
+            x.tax_code_id
+            and not x.tax_code_id.exclude_from_registries
+        ])
+        bases = set([
+            x.base_code_id for x in invoice.tax_line if
+            x.base_code_id and not x.tax_code_id
+            and not x.base_code_id.exclude_from_registries
+        ])
+        tax_group = {}
+        if taxes or bases:
+            if taxes:
+                tax_group = {x: {'base': 0, 'amount': 0, 'is_base': False}
+                         for x in taxes}
+            if bases and not taxes:
+                tax_group = {x: {'base': 0, 'amount': 0, 'is_base': True}
+                                  for x in bases}
+            if taxes and bases:
+                tax_group.update({x: {'base': 0, 'amount': 0, 'is_base': True}
+                             for x in bases})
+            for tax in invoice.tax_line:
+                if tax.tax_code_id and tax.tax_code_id in tax_group:
+                    tax_group[tax.tax_code_id].update({
+                        'base': tax_group[tax.tax_code_id][
+                                    'base'] + tax.base,
+                        'amount': tax_group[tax.tax_code_id][
+                                      'amount'] + tax.amount,
+                        'is_base': False,
+                    })
+                    # # TODO sum rows partial deductible vat in one?
+                    # tax_id = tax.tax_code_id.tax_ids[0]
+                    # # if tax_id is a child of other tax, use it for aliquota
+                    # if tax_id.parent_id and tax_id.parent_id.child_depend:
+                    #     tax_id = tax_id.parent_id
+                elif tax.base_code_id and tax.base_code_id in tax_group:
+                    tax_group[tax.base_code_id].update({
+                        'base': tax_group[tax.base_code_id][
+                                    'base'] + tax.base,
+                        'amount': tax_group[tax.base_code_id][
+                                      'amount'] + tax.amount,
+                        'is_base': True,
+                    })
+        return tax_group
+
+    def get_dati_riepilogo(self, invoice, invoice_tax, tax_data):
+        DatiRiepilogo = payability = False
+        for invoice_tax_id in invoice.tax_line:
+            if invoice_tax_id.tax_code_id and not invoice_tax_id.tax_code_id. \
+                    exclude_from_registries:
+                tax_id = invoice_tax_id.tax_code_id.tax_ids[0]
+                if tax_id.payability == 'S':
+                    payability = True
+        if not tax_data.get('is_base', False):
+            tax_id = invoice_tax.tax_ids[0]
             # if tax_id is a child of other tax, use it for aliquota
             if tax_id.parent_id and tax_id.parent_id.child_depend:
                 tax_id = tax_id.parent_id
+            # se la fattura tipo split payment e la tassa attuale non e' quella
+            # split, salta la riga ### TODO verificare: era per la 6.1!!!
+            if payability and not tax_id.payability:
+                return False
             DatiRiepilogo = DatiRiepilogoType()
             if tax_id.kind_id:
                 DatiRiepilogo.Natura = tax_id.kind_id.code
-            DatiRiepilogo.ImponibileImporto = '%.2f' % invoice_tax.base
+            DatiRiepilogo.ImponibileImporto = '%.2f' % tax_data['base']
             DatiRiepilogo.DatiIVA = (DatiIVAType())
-            DatiRiepilogo.DatiIVA.Imposta = '%.2f' % invoice_tax.amount
-            DatiRiepilogo.DatiIVA.Aliquota = '%.2f' % (tax_id.amount * 100)
+            DatiRiepilogo.DatiIVA.Imposta = '%.2f' % (tax_data['amount'] * (
+                -1 if payability else 1))
+            DatiRiepilogo.DatiIVA.Aliquota = '%.2f' % (tax_id.amount * 100 * (
+                -1 if payability else 1))
             # DatiRiepilogo.Natura = se non iva
             esigibilita_iva = 'I'
             if tax_id.payability:
                 esigibilita_iva = tax_id.payability
             DatiRiepilogo.EsigibilitaIVA = esigibilita_iva
-        else:
-            if invoice_tax.base_code_id and not invoice_tax.base_code_id.\
-                    exclude_from_registries:
-                tax_id = invoice_tax.base_code_id.base_tax_ids[0]
+        elif tax_data.get('is_base', False):
+                tax_id = invoice_tax.base_tax_ids[0]
                 DatiRiepilogo = DatiRiepilogoType()
-                DatiRiepilogo.ImponibileImporto = '%.2f' % invoice_tax.base
+                DatiRiepilogo.ImponibileImporto = '%.2f' % tax_data['base']
                 DatiRiepilogo.DatiIVA = (DatiIVAType())
                 DatiRiepilogo.Natura = tax_id.kind_id.code
                 # N.B. Imposta and Aliquota will be zero here and it is ok
-                DatiRiepilogo.DatiIVA.Imposta = '%.2f' % invoice_tax.amount
+                DatiRiepilogo.DatiIVA.Imposta = '%.2f' % tax_data['amount']
                 DatiRiepilogo.DatiIVA.Aliquota = '%.2f' % (tax_id.amount * 100)
         return DatiRiepilogo
 
@@ -289,15 +357,18 @@ class WizardInvoiceStatement(models.TransientModel):
             ('registration_date', '<=', date_stop),
             ('type', 'in', ['in_invoice', 'in_refund'],),
             ('state', 'in', ['open', 'paid']),
-            '|', ('fiscal_document_type_code', '!=', 'NONE'),
+            '|', ('fiscal_document_type_id.code', '!=', 'NONE'),
             ('fiscal_document_type_id', '=', False),
         ])
+        summary_invoice_ids = DTR_invoice_ids.filtered(
+            lambda x: x.fiscal_document_type_id.code == 'TD12')
+        summary_partner_ids = summary_invoice_ids.mapped('partner_id')
         DTE_invoice_ids = self.env['account.invoice'].search([
             ('registration_date', '>=', date_start),
             ('registration_date', '<=', date_stop),
             ('type', 'in', ['out_invoice', 'out_refund']),
             ('state', 'in', ['open', 'paid']),
-            '|', ('fiscal_document_type_code', '!=', 'NONE'),
+            '|', ('fiscal_document_type_id.code', '!=', 'NONE'),
             ('fiscal_document_type_id', '=', False),
         ])
         auto_invoice_ids = DTR_invoice_ids.filtered('auto_invoice_id')
@@ -312,6 +383,10 @@ class WizardInvoiceStatement(models.TransientModel):
         if statement_id.type == 'DTR':
             # todo group invoices by partner (limit 1000)
             partner_ids = invoice_ids.mapped('partner_id')
+            if len(partner_ids) > 1000:
+                raise exceptions.ValidationError(
+                    _('Not implemented with more than 1,000 partners. '
+                      'Split statement in more parts.'))
             if partner_ids:
                 # CREATE CESSIONARIO - COMMITTENTE DTR
                 self.statement.DTR = (DTRType())
@@ -325,10 +400,13 @@ class WizardInvoiceStatement(models.TransientModel):
 
             for partner_id in partner_ids:
                 # qui si creano piu blocchi, uno per ogni partner
-                CedentePrestatoreDTR = self.setCedPrestDTRCesComDTE(
-                    CedentePrestatoreDTRType(),
-                    IdentificativiFiscaliType(),
-                    partner_id, date_stop.year, statement_id,)
+                if partner_id in summary_partner_ids:
+                    CedentePrestatoreDTR = CedentePrestatoreDTRType()
+                else:
+                    CedentePrestatoreDTR = self.setCedPrestDTRCesComDTE(
+                        CedentePrestatoreDTRType(),
+                        IdentificativiFiscaliType(),
+                        partner_id, date_stop.year, statement_id,)
                 for invoice in invoice_ids.filtered(
                         lambda x: x.partner_id == partner_id):
                     # set invoice body
@@ -341,9 +419,10 @@ class WizardInvoiceStatement(models.TransientModel):
                             Numero=invoice.supplier_invoice_number,
                             DataRegistrazione=invoice.registration_date))
                     # SET lines - tax with child and without child
-                    for invoice_tax in invoice.tax_line:
+                    group_taxes = self._get_grouped_taxes(invoice)
+                    for invoice_tax in group_taxes:
                         DatiRiepilogo = self.get_dati_riepilogo(
-                            invoice, invoice_tax)
+                            invoice, invoice_tax, group_taxes[invoice_tax])
                         if DatiRiepilogo:
                             DatiFatturaBodyDTR.DatiRiepilogo.append(
                                 DatiRiepilogo)
@@ -379,15 +458,16 @@ class WizardInvoiceStatement(models.TransientModel):
                     # set invoice body
                     DatiFatturaBodyDTE = DatiFatturaBodyDTEType()
                     DatiFatturaBodyDTE.DatiGenerali = (
-                        DatiGeneraliType(
+                        DatiGeneraliDTEType(
                             TipoDocumento=self._get_fiscal_document_type(
                                 invoice),
                             Data=invoice.date_invoice,
                             Numero=invoice.number))
                     # SET lines - tax with child and without child
-                    for invoice_tax in invoice.tax_line:
+                    group_taxes = self._get_grouped_taxes(invoice)
+                    for invoice_tax in group_taxes:
                         DatiRiepilogo = self.get_dati_riepilogo(
-                            invoice, invoice_tax)
+                            invoice, invoice_tax, group_taxes[invoice_tax])
                         if DatiRiepilogo:
                             DatiFatturaBodyDTE.DatiRiepilogo.append(
                                 DatiRiepilogo)

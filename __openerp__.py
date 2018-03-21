@@ -28,16 +28,12 @@
     'depends': [
         'sale',
         'account',
-        # 'account_vat_period_end_statement',
-        # 'account_vat_statement_endyear',
-        # 'l10n_it_vat_registries',
         'l10n_it_fiscalcode',
         'l10n_it_codici_carica',
         'l10n_it_account_tax_kind',
         'l10n_it_esigibilita_iva',
         'l10n_it_fiscal_document_type',
         'l10n_it_invoice_intra_cee',
-        'res_partner_name_lastname',
     ],
     'data': [
         'security/ir.model.access.csv',
