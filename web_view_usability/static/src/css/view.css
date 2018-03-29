@@ -11,3 +11,8 @@
 .openerp .oe_view_manager_view_form .oe_form_container .oe_m2o_drop_down_button img {
     height: 22px;
 }
+.oe_list_header_columns {
+	background: rgba(238, 238, 238, 0.75) !important;
+	position: sticky;
+	top: 0px !important;
+}
