@@ -16,3 +16,8 @@
 	position: sticky;
 	top: 0px !important;
 }
+.openerp .oe_form > :not(.oe_form_nosheet) header, .openerp .oe_form > .oe_form_nosheet header {
+	background: rgba(238, 238, 238, 0.75) !important;
+	position: sticky;
+	top: 0px !important;
+}
