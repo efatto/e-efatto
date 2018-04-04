@@ -2,18 +2,17 @@
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in root directory
 ##############################################################################
-from openerp import tools
-from openerp.osv import fields,osv
+from openerp import fields, models
 
 
-class AccountInvoiceReport(osv.osv):
+class AccountInvoiceReport(models.Model):
     _inherit = "account.invoice.report"
 
-    _columns = {
-        'product_tmpl_id': fields.many2one(
-            'product.template', 'Product Template',
-            readonly=True)
-    }
+    product_tmpl_id = fields.Many2one(
+        'product.template',
+        'Product Template',
+        readonly=True
+    )
 
     def _select(self):
         return super(AccountInvoiceReport, self)._select()\
