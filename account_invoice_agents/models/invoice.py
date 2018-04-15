@@ -10,12 +10,15 @@ class AccountInvoice(models.Model):
 
     agent_ids = fields.Many2many(
         comodel_name='res.partner',
+        relation='account_invoice_agent_ids_rel',
+        column1='invoice_id', column2='agent_id',
         compute='_get_invoice_agent_ids',
         store=True,
         string="Agents",
         help='Technical field to use when needed (like send mail).'
     )
 
+    @api.depends('invoice_line.agents')
     @api.multi
     def _get_invoice_agent_ids(self):
         for inv in self:

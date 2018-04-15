@@ -18,7 +18,7 @@ msgstr ""
 #. module: account_invoice_agents
 #: field:account.invoice,agent_ids:0
 msgid "Agents"
-msgstr "Agenti"
+msgstr "Agenti su fattura"
 
 #. module: account_invoice_agents
 #: model:ir.model,name:account_invoice_agents.model_account_invoice
