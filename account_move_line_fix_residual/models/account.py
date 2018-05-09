@@ -84,7 +84,7 @@ class AccountInvoice(models.Model):
         # and its residual amount is divided by this number of invoices
         partial_reconciliations_done = []
         default_sign = -1
-        if self.type in ['out_invoice', 'out_refund']:
+        if self.type in ['out_invoice', 'in_refund']:
             default_sign = 1
         for line in self.sudo().move_id.line_id:
             if line.account_id.type not in ('receivable', 'payable'):
