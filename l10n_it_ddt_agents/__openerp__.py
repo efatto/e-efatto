@@ -30,6 +30,7 @@
         'sale_order_agents',
         'sale_commission',
         'l10n_it_ddt',
+        'stock_picking_tree_sales',
     ],
     'data': [
         'views/ddt.xml'
