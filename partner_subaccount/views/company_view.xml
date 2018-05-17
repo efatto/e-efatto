@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="view_account_config_settings_subaccount">
+            <field name="name">view_account_config_settings_subaccount</field>
+            <field name="model">account.config.settings</field>
+            <field name="inherit_id" ref="account.view_account_config_settings"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/group[6]" position="after">
+                    <separator string="Partner Subaccount" colspan="4"/>
+                    <label for="enable_partner_subaccount"/>
+                    <field name="enable_partner_subaccount" class="oe_inline"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>
