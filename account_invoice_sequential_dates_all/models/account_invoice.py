@@ -16,11 +16,20 @@ class AccountInvoice(models.Model):
         res = super(AccountInvoice, self).action_number()
         for invoice in self:
             # ----- NOT Ignore supplier invoice and supplier refund
+            # check until last date of registration year only
+            registration_fy_id = self.env['account.fiscalyear'].find(
+                dt=invoice.registration_date)
+            if not registration_fy_id:
+                raise UserError(_('Fiscal Year not found for registration'
+                                  ' date requested'))
+            fy = self.env['account.fiscalyear'].browse(registration_fy_id)
             existing_invoice = self.search([
                 ('type', '=', invoice.type),
                 ('registration_date', '>', invoice.registration_date),
                 ('number', '<', invoice.number),
-                ('journal_id', '=', invoice.journal_id.id)],
+                ('journal_id', '=', invoice.journal_id.id),
+                ('registration_date', '<=', fy.date_stop),
+            ],
                 order='registration_date desc', limit=1,
             )
             if existing_invoice:
