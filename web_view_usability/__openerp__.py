@@ -39,5 +39,5 @@ Usability issue resolved on web view:
     'data': [
         'views/web.xml',
     ],
-    'installable': True
+    'installable': False
 }
