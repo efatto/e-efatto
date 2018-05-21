@@ -38,5 +38,5 @@
         'data/account_data.xml',
         'views/account_invoice.xml'
     ],
-    'installable': True,
+    'installable': False,
 }

@@ -31,5 +31,5 @@
     'data': [
         'views/produce.xml',
     ],
-    'installable': True
+    'installable': False
 }

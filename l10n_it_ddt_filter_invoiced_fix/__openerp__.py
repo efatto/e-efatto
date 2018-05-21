@@ -31,5 +31,5 @@
     'data': [
         'views/stock.xml',
     ],
-    'installable': True
+    'installable': False
 }

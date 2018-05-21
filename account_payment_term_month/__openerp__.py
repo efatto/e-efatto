@@ -39,5 +39,5 @@
     "test": [
         "test/invoice_emission.yml",
     ],
-    "installable": True,
+    'installable': False,
 }

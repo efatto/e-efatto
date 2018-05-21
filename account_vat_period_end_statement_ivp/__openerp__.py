@@ -37,5 +37,5 @@
     'external_dependencies': {
         'python': ['pyxb'],
     },
-    'installable': True
+    'installable': False
 }

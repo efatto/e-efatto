@@ -32,5 +32,5 @@
     'data': [
         'views/purchase.xml',
     ],
-    'installable': True
+    'installable': False
 }

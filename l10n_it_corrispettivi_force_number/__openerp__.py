@@ -33,5 +33,5 @@
         'views/corrispettivi.xml'
     ],
     'active': False,
-    'installable': True,
+    'installable': False,
 }

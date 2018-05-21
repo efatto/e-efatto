@@ -35,5 +35,5 @@
     'data': [
         'views/ddt.xml'
     ],
-    'installable': True,
+    'installable': False,
 }

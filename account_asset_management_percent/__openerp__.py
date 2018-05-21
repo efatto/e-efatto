@@ -39,5 +39,5 @@
         'views/wizard_asset_compute.xml',
         'views/wizard_asset_confirm.xml',
     ],
-    'installable': True
+    'installable': False
 }

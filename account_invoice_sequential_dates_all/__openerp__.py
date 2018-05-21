@@ -32,5 +32,5 @@ Check if exists a previous registered invoice with a greater date.
     ],
     "data": [
     ],
-    "installable": True
+    'installable': False
 }

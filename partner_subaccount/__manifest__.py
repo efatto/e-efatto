@@ -37,8 +37,5 @@
         'views/company_view.xml',
         'views/partner_view.xml',
     ],
-    'test': [
-        'test/partner_create_modify.yml',
-    ],
-    'installable': True,
+    'installable': False,
 }
