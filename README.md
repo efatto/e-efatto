@@ -12,6 +12,7 @@ Available addons
 ----------------
 addon | version | summary
 --- | --- | ---
+[l10n_it_country_data](l10n_it_country_data/) | 10.0.1.0.0 | Gestione civilistica cespiti
 
 Unavailable addons
 ----------------
