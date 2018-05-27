@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    Copyright (C) 2015-2017 Sergio Corato.
+#    Copyright (C) 2015-2018 Sergio Corato.
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -20,7 +20,7 @@
 
 {
     'name': 'Italy - Country data',
-    'version': '8.0.1.0.0',
+    'version': '10.0.1.0.0',
     'category': 'other',
     'description': """
     With this module Italian country data will be displayed as usual in Italy.
@@ -34,5 +34,5 @@
     "data": [
         'data/res_country_data.xml',
     ],
-    'installable': False,
+    'installable': True,
 }
