@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+    <record id="invoice_tree_signed" model="ir.ui.view">
+        <field name="name">account.invoice.tree.signed</field>
+        <field name="model">account.invoice</field>
+        <field name="arch" type="xml">
+            <tree colors="blue:state == 'draft';black:state in ('proforma','proforma2','open');gray:state == 'cancel'" string="Invoice">
+                <field name="partner_id" groups="base.group_user"/>
+                <field name="commercial_partner_id" invisible="1"/>
+                <field name="date_invoice"/>
+                <field name="number"/>
+                <field name="reference" invisible="1"/>
+                <field name="name" invisible="1"/>
+                <field name="journal_id" invisible="1"/>
+                <field name="period_id" invisible="1" groups="account.group_account_user"/>
+                <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                <field name="user_id" string="Responsible"/>
+                <field name="date_due"/>
+                <field name="origin"/>
+                <field name="currency_id" groups="base.group_multi_currency"/>
+                <field name="residual_signed" sum="Residual Amount"/>
+                <field name="amount_untaxed_signed" sum="Untaxed Amount"/>
+                <field name="amount_total_signed" sum="Total Amount"/>
+                <field name="state"/>
+                <field name="type" invisible="context.get('type',True)"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_invoice_refund_out_tree_signed" model="ir.actions.act_window">
+        <field name="name">Invoices</field>
+        <field name="res_model">account.invoice</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,calendar,graph</field>
+        <field name="view_id" ref="res_partner_account_refund_sign.invoice_tree_signed"/>
+        <field name="domain">[('type','in', ['out_invoice', 'out_refund']), ('state', 'not in', ['draft', 'cancel'])]</field>
+        <field name="context">{'default_type':'out_invoice', 'type':'out_invoice', 'journal_type': 'sale'}</field>
+        <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+    </record>
+
+    <record id="partner_view_button_refund_invoice" model="ir.ui.view">
+        <field name="name">usability.res.partner.refund.invoice</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.partner_view_buttons"/>
+        <field name="arch" type="xml">
+            <button id="invoice_button" position="attributes">
+                <attribute name="name">%(res_partner_account_refund_sign.action_invoice_refund_out_tree_signed)d</attribute>
+            </button>
+        </field>
+    </record>
+  </data>
+</openerp>

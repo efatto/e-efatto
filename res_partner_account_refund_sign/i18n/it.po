@@ -1,0 +1,63 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* res_partner_account_refund_sign
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-06-21 10:49+0000\n"
+"PO-Revision-Date: 2018-06-21 10:49+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: res_partner_account_refund_sign
+#: field:account.invoice,amount_total_signed:0
+msgid "Amount total signed"
+msgstr "Totale"
+
+#. module: res_partner_account_refund_sign
+#: field:account.invoice,amount_untaxed_signed:0
+msgid "Amount untaxed signed"
+msgstr "Subtotale"
+
+#. module: res_partner_account_refund_sign
+#: view:account.invoice:res_partner_account_refund_sign.invoice_tree_signed
+#: model:ir.model,name:res_partner_account_refund_sign.model_account_invoice
+msgid "Invoice"
+msgstr "Fattura"
+
+#. module: res_partner_account_refund_sign
+#: model:ir.actions.act_window,name:res_partner_account_refund_sign.action_invoice_refund_out_tree_signed
+msgid "Invoices"
+msgstr "Fatture"
+
+#. module: res_partner_account_refund_sign
+#: view:account.invoice:res_partner_account_refund_sign.invoice_tree_signed
+msgid "Residual Amount"
+msgstr "Saldo"
+
+#. module: res_partner_account_refund_sign
+#: field:account.invoice,residual_signed:0
+msgid "Residual signed"
+msgstr "Saldo"
+
+#. module: res_partner_account_refund_sign
+#: view:account.invoice:res_partner_account_refund_sign.invoice_tree_signed
+msgid "Responsible"
+msgstr "Responsabile"
+
+#. module: res_partner_account_refund_sign
+#: view:account.invoice:res_partner_account_refund_sign.invoice_tree_signed
+msgid "Total Amount"
+msgstr "Totale"
+
+#. module: res_partner_account_refund_sign
+#: view:account.invoice:res_partner_account_refund_sign.invoice_tree_signed
+msgid "Untaxed Amount"
+msgstr "Subtotale"
+
