@@ -83,27 +83,17 @@ class wizard_print_asset_report(orm.TransientModel):
                 'type': 'ir.actions.act_window',
                 'target': 'new',
             }
-        datas = {'ids': asset_ids}
-        datas['model'] = 'account.asset.asset'
-        datas['date_start'] = wizard.date_start
-        datas['fiscal_page_base'] = wizard.fiscal_page_base
-        datas['category_ids'] = [p.id for p in wizard.category_ids]
-        datas['type'] = wizard.type
-        datas['fy_name'] = wizard.fy_id.name
-        datas['fy_id'] = [wizard.fy_id.id]
-        datas['state'] = wizard.state
-        # res = {
-        #     'type': 'ir.actions.report.xml',
-        #     'datas': datas,
-        #     'report_name': 'report_asset',
-        # }
-        # return res
-
+        datas = {
+            'ids': asset_ids,
+            'model': 'account.asset.asset',
+            'date_start': wizard.date_start,
+            'fiscal_page_base': wizard.fiscal_page_base,
+            'category_ids': [p.id for p in wizard.category_ids],
+            'type': wizard.type,
+            'fy_name': wizard.fy_id.name,
+            'fy_id': [wizard.fy_id.id],
+            'state': wizard.state,
+        }
         report_name = 'account_asset_management_percent.report_asset'
-        # datas = {
-        #     'ids': move_ids,
-        #     'model': 'account.move',
-        #     'form': datas_form
-        # }
         return self.pool['report'].get_action(
             cr, uid, [], report_name, data=datas, context=context)

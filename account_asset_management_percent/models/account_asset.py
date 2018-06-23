@@ -113,6 +113,7 @@ class AccountAssetAsset(orm.Model):
                help="The Asset Value is calculated as follows:\n"
                     "Purchase Value - Salvage Value + Increase value"
                     "+ Decrease Value + Remove Value."),
+        'date_remove': fields.date(readonly=False),
     }
 
     def _get_depreciation_stop_date(self, cr, uid, asset,

@@ -56,14 +56,14 @@ class Parser(report_sxw.rml_parse):
         line_ids = depreciation_line_obj.search(self.cr, self.uid, [('asset_id', '=', asset.id), ('line_date', '<=', fy.date_stop), ('type', '=', 'remove')])
         if line_ids:
             for line in depreciation_line_obj.browse(self.cr, self.uid, line_ids):
-                res += line.amount
+                res -= line.amount
         return res
 
     def _get_asset_depreciation_amount(self, asset):
         res = {}
         depreciation_line_obj = self.pool['account.asset.depreciation.line']
         fy = self.pool['account.fiscalyear'].browse(self.cr, self.uid, self.localcontext['fy_id'])[0]
-        line_ids = depreciation_line_obj.search(self.cr, self.uid, [('asset_id', '=', asset.id), ('line_date', '<=', fy.date_stop), ('line_date', '>=', fy.date_start), ('type', '=', 'depreciate')])
+        line_ids = depreciation_line_obj.search(self.cr, self.uid, [('asset_id', '=', asset.id), ('line_date', '<=', fy.date_stop), ('line_date', '>=', fy.date_start), ('type', 'in', ['remove', 'sale'])])
         res.update({
                 asset.id: {
                     'amount': 0.0,
@@ -101,8 +101,15 @@ class Parser(report_sxw.rml_parse):
         })
         fy = self.pool['account.fiscalyear'].browse(
             self.cr, self.uid, self.localcontext['fy_id'])[0]
-        for ctg in self.pool['account.asset.category'].browse(self.cr, self.uid, category_ids):
-            asset_ids = asset_obj.search(self.cr, self.uid, [('category_id', '=', ctg.id), ('state', 'in', state), ('date_start', '<=', fy.date_stop)])
+        for ctg in self.pool['account.asset.category'].browse(
+                self.cr, self.uid, category_ids):
+            asset_ids = asset_obj.search(self.cr, self.uid, [
+                ('category_id', '=', ctg.id), ('state', 'in', state),
+                ('date_start', '<=', fy.date_stop),
+                '|',
+                ('date_remove', '>', fy.date_start),
+                ('date_remove', '=', False),
+            ])
             if asset_ids:
                 res.update({
                     ctg.id: {
