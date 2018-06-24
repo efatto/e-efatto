@@ -63,7 +63,7 @@ class Parser(report_sxw.rml_parse):
         res = {}
         depreciation_line_obj = self.pool['account.asset.depreciation.line']
         fy = self.pool['account.fiscalyear'].browse(self.cr, self.uid, self.localcontext['fy_id'])[0]
-        line_ids = depreciation_line_obj.search(self.cr, self.uid, [('asset_id', '=', asset.id), ('line_date', '<=', fy.date_stop), ('line_date', '>=', fy.date_start), ('type', 'in', ['remove', 'sale'])])
+        line_ids = depreciation_line_obj.search(self.cr, self.uid, [('asset_id', '=', asset.id), ('line_date', '<=', fy.date_stop), ('line_date', '>=', fy.date_start), ('type', '=', 'depreciate')])
         res.update({
                 asset.id: {
                     'amount': 0.0,
@@ -110,19 +110,18 @@ class Parser(report_sxw.rml_parse):
                 ('date_remove', '>', fy.date_start),
                 ('date_remove', '=', False),
             ])
+            res.update({
+                ctg.id: {
+                    'name': ctg.name,
+                    'purchase_value': 0.0,
+                    'increase_decrease_value': 0.0,
+                    'remove_value': 0.0,
+                    'value_depreciated': 0.0,
+                    'value_depreciation': 0.0,
+                    'value_residual': 0.0
+                }
+            })
             if asset_ids:
-                res.update({
-                    ctg.id: {
-                        'name': ctg.name,
-                        'purchase_value': 0.0,
-                        'increase_decrease_value': 0.0,
-                        'remove_value': 0.0,
-                        'value_depreciated': 0.0,
-                        'value_depreciation': 0.0,
-                        'value_residual': 0.0
-                    }
-                })
-
                 for asset in asset_obj.browse(self.cr, self.uid, asset_ids):
                     depr_amount = self._get_asset_depreciation_amount(asset)
                     incr_amount = self._get_asset_fy_increase_decrease_amount(asset)
@@ -147,7 +146,7 @@ class Parser(report_sxw.rml_parse):
         return asset_list
 
     def __init__(self, cr, uid, name, context):
-        super(Parser, self).__init__(cr, uid, name, context)
+        super(Parser, self).__init__(cr, uid, name, context=context)
         self.localcontext.update({
             'get_asset': self._get_asset,
             'invoiced_asset_lines': self._get_invoiced_account_move_lines,
@@ -169,15 +168,15 @@ class Parser(report_sxw.rml_parse):
 
     def set_context(self, objects, data, ids, report_type=None):
         self.localcontext.update({
-            'l10n_it_count_fiscal_page_base': data.get('fiscal_page_base'),
-            'start_date': data.get('date_start'),
-            'fy_name': data.get('fy_name'),
-            'type': data.get('type'),
-            'fy_id': data.get('fy_id'),
-            'state': data.get('state'),
-            'category_ids': data.get('category_ids'),
+            'l10n_it_count_fiscal_page_base': data['form'].get('fiscal_page_base'),
+            'start_date': data['form'].get('date_start'),
+            'fy_name': data['form'].get('fy_name'),
+            'type': data['form'].get('type'),
+            'fy_id': data['form'].get('fy_id'),
+            'state': data['form'].get('state'),
+            'category_ids': data['form'].get('category_ids'),
             'l10n_it_fiscalyear_code': self._get_fy(
-                data.get('fy_id')),
+                data['form'].get('fy_id')),
         })
         return super(Parser, self).set_context(objects, data, ids, report_type=report_type)
 

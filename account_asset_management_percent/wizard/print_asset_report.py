@@ -48,7 +48,7 @@ class wizard_print_asset_report(orm.TransientModel):
     def print_report(self, cr, uid, ids, context=None):
         if context is None:
             context = {}
-        wizard = self.browse(cr, uid, ids)[0]
+        wizard = self.browse(cr, uid, ids[0], context=context)
         asset_obj = self.pool.get('account.asset.asset')
         obj_model_data = self.pool.get('ir.model.data')
         state = [wizard.state]
@@ -83,9 +83,7 @@ class wizard_print_asset_report(orm.TransientModel):
                 'type': 'ir.actions.act_window',
                 'target': 'new',
             }
-        datas = {
-            'ids': asset_ids,
-            'model': 'account.asset.asset',
+        datas_form = {
             'date_start': wizard.date_start,
             'fiscal_page_base': wizard.fiscal_page_base,
             'category_ids': [p.id for p in wizard.category_ids],
@@ -93,6 +91,11 @@ class wizard_print_asset_report(orm.TransientModel):
             'fy_name': wizard.fy_id.name,
             'fy_id': [wizard.fy_id.id],
             'state': wizard.state,
+        }
+        datas = {
+            'ids': asset_ids,
+            'model': 'account.asset.asset',
+            'form': datas_form,
         }
         report_name = 'account_asset_management_percent.report_asset'
         return self.pool['report'].get_action(

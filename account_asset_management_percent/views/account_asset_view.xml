@@ -53,6 +53,9 @@
                <button name="%(account_asset_management.action_asset_modify)d" position="replace">
                    <button name="%(account_asset_management.action_asset_modify)d" attrs="{'invisible': True}"/>
                </button>
+              <button name="set_to_draft" position="after">
+                  <button name="set_to_close" states="open" string="Set to Close" type="object" />
+              </button>
                <field name="prorata" position="after">
                     <field name="first_year_half"/>
                </field>

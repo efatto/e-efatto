@@ -40,7 +40,6 @@ class asset_asset_report(orm.Model):
                     left join account_asset_asset a on (dl.asset_id=a.id)
                 group by
                     dl.amount, dl.asset_id, dl.line_date, dl.name,
-                    a.date_start, a.date_remove, dl.move_check, a.state,
-                    a.category_id, a.partner_id, a.company_id, a.asset_value,
+                    a.date_start, dl.move_check, a.state, a.category_id, a.partner_id, a.company_id,
                     a.purchase_value, a.id, a.salvage_value
         )""")

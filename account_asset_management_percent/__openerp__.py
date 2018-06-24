@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 #
-#    Copyright (C) 2015-2016 SimplERP srl (<http://www.simplerp.it>).
-#    Copyright (C) 2017 Sergio Corato
+#    Copyright (C) 2015-2018 Sergio Corato
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published
@@ -38,6 +37,7 @@
         'views/report_asset.xml',
         'views/wizard_asset_compute.xml',
         'views/wizard_asset_confirm.xml',
+        'views/account_asset_remove.xml',
     ],
     'installable': True
 }

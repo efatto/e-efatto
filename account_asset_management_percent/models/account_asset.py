@@ -46,6 +46,16 @@ class AccountAssetCategory(orm.Model):
 class AccountAssetAsset(orm.Model):
     _inherit = 'account.asset.asset'
 
+    def set_to_close(self, cr, uid, ids, context=None):
+        for asset in self.browse(cr, uid, ids, context):
+            if asset.value_residual:
+                raise orm.except_orm(_('Operation not allowed!'),
+                    _("You cannot close an asset which has not been "
+                      "fully depreciated."
+                      "\nPlease create the remaining depreciation entry via "
+                      "the Depreciation Board."))
+        return self.write(cr, uid, ids, {'state': 'close'}, context=context)
+
     def _compute_year_from_percent(
             self, cr, uid, ids, field_name, arg, context):
         res = {}

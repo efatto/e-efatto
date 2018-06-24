@@ -45,7 +45,7 @@
                                         <td class="left_with_line"><div style="page-break-inside: avoid" t-esc="asset.name"/></td>
                                         <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="asset_start_year(asset)"/></td>
                                         <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="formatLang(asset.date_start, date=True)"/></td>
-                                        <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="asset.asset_value"/></td>
+                                        <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="formatLang(asset.purchase_value)"/></td>
 
                                         <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="formatLang(asset_fy_increase_decrease_amount(asset))"/></td>
                                         <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="formatLang(asset_remove_amount(asset))"/></td>
