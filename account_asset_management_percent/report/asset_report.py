@@ -53,7 +53,7 @@ class Parser(report_sxw.rml_parse):
         res = False
         depreciation_line_obj = self.pool['account.asset.depreciation.line']
         fy = self.pool['account.fiscalyear'].browse(self.cr, self.uid, self.localcontext['fy_id'])[0]
-        line_ids = depreciation_line_obj.search(self.cr, self.uid, [('asset_id', '=', asset.id), ('line_date', '<=', fy.date_stop), ('type', '=', 'remove')])
+        line_ids = depreciation_line_obj.search(self.cr, self.uid, [('asset_id', '=', asset.id), ('line_date', '<=', fy.date_stop), ('type', 'in', ['remove', 'sale'])])
         if line_ids:
             for line in depreciation_line_obj.browse(self.cr, self.uid, line_ids):
                 res -= line.amount
