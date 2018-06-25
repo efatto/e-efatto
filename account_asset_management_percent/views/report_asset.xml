@@ -15,18 +15,18 @@
                 <table style="width:100%; font-size: small;" cellspacing="0">
                     <thead>
                         <tr style="page-break-inside: avoid">
-                            <th class="left_with_line">RIF.</th>
-                            <th class="left_with_line">DESCRIZIONE</th>
-                            <th class="right_with_line">ANNO ACQUISIZIONE</th>
-                            <th class="right_with_line">DATA ACQUISIZIONE</th>
-                            <th class="right_with_line">COSTO STORICO</th>
-                            <th class="right_with_line">RIVAL./SVALUT.</th>
-                            <th class="right_with_line">ELIMINAZIONE/VENDITA</th>
-                            <th class="right_with_line">F.DO AMM. PREC.</th>
-                            <th class="right_with_line">% AMM.TO</th>
-                            <th class="right_with_line">QUOTA AMM.TO</th>
-                            <th class="right_with_line">F.DO AMM. ATTUALE</th>
-                            <th class="right_with_line">RESIDUO AMM.LE</th>
+                            <th class="left_with_line">Rif.</th>
+                            <th class="left_with_line">Descrizione</th>
+                            <th class="left_with_line">Anno acquisizione</th>
+                            <th class="left_with_line">Data acquisizione</th>
+                            <th class="right_with_line">Costo storico di acquisto</th>
+                            <th class="right_with_line">Rivalutazioni o svalutazioni</th>
+                            <th class="right_with_line">Eliminazione / Vendita</th>
+                            <th class="right_with_line">Fondo di amm.to fine esercizio precedente</th>
+                            <th class="right_with_line">Coefficiente di ammortamento</th>
+                            <th class="right_with_line">Quota annuale di ammortamento</th>
+                            <th class="right_with_line">Fondo di amm.to fine esercizio in corso</th>
+                            <th class="right_with_line">Residuo ammortizzabile</th>
                         </tr>
                     </thead>
 
@@ -40,34 +40,37 @@
                             <t t-foreach="get_asset(data['ids'])" t-as="asset">
                                 <t t-if="asset.category_id.id == ctg">
                                     <tr style="page-break-inside: avoid; border:1px solid #fff;" >
-                                        <!-- Rif. -->
                                         <td class="left_with_line"><div style="page-break-inside: avoid" t-esc="asset.code"/></td>
                                         <td class="left_with_line"><div style="page-break-inside: avoid" t-esc="asset.name"/></td>
-                                        <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="asset_start_year(asset)"/></td>
-                                        <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="formatLang(asset.date_start, date=True)"/></td>
+                                        <td class="left_with_line"><div style="page-break-inside: avoid" t-esc="asset_start_year(asset)"/></td>
+                                        <td class="left_with_line"><div style="page-break-inside: avoid" t-esc="formatLang(asset.date_start, date=True)"/></td>
                                         <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="formatLang(asset.purchase_value)"/></td>
 
                                         <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="formatLang(asset_fy_increase_decrease_amount(asset))"/></td>
-                                        <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="formatLang(asset_remove_amount(asset))"/></td>
+                                        <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="formatLang(asset_remove_amount(asset))"/>
+                                            <t t-if="asset.date_remove[:4] &lt;= fy_name if asset.date_remove else False">
+                                                <div style="page-break-inside: avoid" t-esc="formatLang(asset.date_remove, date=True)"/>
+                                            </t>
+                                        </td>
                                         <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="formatLang(asset_depreciation_amount(asset)[asset.id]['depreciated_value'])"/></td>
                                         <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="formatLang(asset_depreciation_amount(asset)[asset.id]['factor'])"/></td>
                                         <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="formatLang(asset_depreciation_amount(asset)[asset.id]['amount'])"/></td>
 
                                         <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="formatLang(asset_depreciation_amount(asset)[asset.id]['depreciated_value'] + asset_depreciation_amount(asset)[asset.id]['amount'])"/></td>
                                         <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="formatLang(asset_depreciation_amount(asset)[asset.id]['remaining_value'])"/></td>
-                                        </tr>
-                                        <tr>
-                                            <td/>
-                                            <td/>
-                                            <td colspan="10">
-                                                <t t-foreach="invoiced_asset_lines(asset)" t-as="invoiced_line">
-                                                <t t-if="invoiced_line['supplier_invoice_number']">
-                                                    <div style="page-break-inside: avoid" t-esc="'Invoices n. ' + invoiced_line['supplier_invoice_number'] + ' - Date: ' + invoiced_line['invoice_date'] + ' - Supplier: ' + invoiced_line['partner_name']"/>
-                                                </t>
-                                                </t>
-                                            </td>
-                                        </tr>
-                                    </t>
+                                    </tr>
+                                    <tr>
+                                        <td/>
+                                        <td/>
+                                        <td colspan="10">
+                                            <t t-foreach="invoiced_asset_lines(asset)" t-as="invoiced_line">
+                                            <t t-if="invoiced_line['supplier_invoice_number']">
+                                                <div style="page-break-inside: avoid" t-esc="'Invoices n. ' + invoiced_line['supplier_invoice_number'] + ' - Date: ' + invoiced_line['invoice_date'] + ' - Supplier: ' + invoiced_line['partner_name']"/>
+                                            </t>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </t>
                             </t>
                             <tr>
                                 <td class="left_with_line"></td>
@@ -86,71 +89,26 @@
                         </t>
                         </t>
                         <t t-foreach="ctgs" t-as="ctg">
-                        <t t-if="ctg == 'total'">
-                            <tr>
-                                <td class="left_with_line"></td>
-                                <td class="left_with_line"><strong>Totale generale</strong></td>
-                                <td class="left_with_line"></td>
-                                <td class="left_with_line"></td>
-                                <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['purchase_value'])"/></strong></td>
-                                <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['increase_decrease_value'])"/></strong></td>
-                                <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['remove_value'])"/></strong></td>
-                                <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['value_depreciated'])"/></strong></td>
-                                <td class="right_with_line"></td>
-                                <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['value_depreciation'])"/></strong></td>
-                                <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['value_depreciated'] + ctgs[ctg]['value_depreciation'])"/></strong></td>
-                                <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['value_residual'])"/></strong></td>
-                            </tr>
-                        </t>
+                            <t t-if="ctg == 'total'">
+                                <tr>
+                                    <td class="left_with_line"></td>
+                                    <td class="left_with_line"><strong>Totale generale</strong></td>
+                                    <td class="left_with_line"></td>
+                                    <td class="left_with_line"></td>
+                                    <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['purchase_value'])"/></strong></td>
+                                    <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['increase_decrease_value'])"/></strong></td>
+                                    <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['remove_value'])"/></strong></td>
+                                    <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['value_depreciated'])"/></strong></td>
+                                    <td class="right_with_line"></td>
+                                    <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['value_depreciation'])"/></strong></td>
+                                    <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['value_depreciated'] + ctgs[ctg]['value_depreciation'])"/></strong></td>
+                                    <td class="right_with_line"><strong><span t-esc="formatLang(ctgs[ctg]['value_residual'])"/></strong></td>
+                                </tr>
+                            </t>
                         </t>
                     </tbody>
                 </table>
                 <br/>
-            <!---->
-                <!--<t t-set="tot_base" t-value="0"/>-->
-                <!--<t t-set="tot_tax" t-value="0"/>-->
-                <!--<t t-set="tot_ded" t-value="0"/>-->
-                <!--<t t-set="tot_unded" t-value="0"/>-->
-                <!--<div style="page-break-inside: avoid;">-->
-                    <!--<table style="width:100%;" >-->
-                       <!--<tr>-->
-                            <!--<td colspan="2" style="vertical-align:text-top;padding:10">-->
-                                <!--<h3>Totali</h3>-->
-                                <!--<table style="width:100%;">-->
-                                    <!--<thead>-->
-                                        <!--<tr>-->
-                                            <!--<th class="left_without_line_bold">Descrizione</th>-->
-                                            <!--<th class="right_without_line_bold">Imponibile</th>-->
-                                            <!--<th class="right_without_line_bold">Imposta</th>-->
-                                            <!--<th class="right_without_line_bold">Detraibile</th>-->
-                                            <!--<th class="right_without_line_bold">Indetraibile</th>-->
-                                        <!--</tr>-->
-                                    <!--</thead>    -->
-                                    <!--<t t-foreach="tax_codes()" t-as="tax_code_tuple">-->
-                                        <!--<t t-set="tot_base" t-value="tot_base + tax_code_tuple[1]"/>-->
-                                        <!--<t t-set="tot_tax" t-value="tot_tax + tax_code_tuple[2]"/>-->
-                                        <!--<t t-set="tot_ded" t-value="tot_ded + tax_code_tuple[3]"/>-->
-                                        <!--<t t-set="tot_unded" t-value="tot_unded + tax_code_tuple[4]"/>-->
-                                        <!--<tr>-->
-                                            <!--<td class="left_without_line" t-esc="tax_code_tuple[0]"/>-->
-                                            <!--<td class="right_without_line" t-esc="formatLang(tax_code_tuple[1])"/>-->
-                                            <!--<td class="right_without_line" t-esc="formatLang(tax_code_tuple[2])"/>-->
-                                            <!--<td class="right_without_line" t-esc="formatLang(tax_code_tuple[3])"/>-->
-                                            <!--<td class="right_without_line" t-esc="formatLang(tax_code_tuple[4])"/>-->
-                                        <!--</tr>-->
-                                    <!--</t>-->
-                                    <!--<tr>-->
-                                        <!--<td class="left_without_line_bold">Totale generale euro</td>-->
-                                        <!--<td class="right_without_line_bold" t-esc="formatLang(tot_base)"/>-->
-                                        <!--<td class="right_without_line_bold" t-esc="formatLang(tot_tax)"/>-->
-                                        <!--<td class="right_without_line_bold" t-esc="formatLang(tot_ded)"/>-->
-                                        <!--<td class="right_without_line_bold" t-esc="formatLang(tot_unded)"/>-->
-                                    <!--</tr>-->
-                                <!--</table>-->
-                            <!--</td>-->
-                        <!--</tr>-->
-                    <!--</table>-->
-                <!--</div>-->
             </div>
         </t>
     </t>
