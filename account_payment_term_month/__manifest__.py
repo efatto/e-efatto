@@ -7,7 +7,7 @@
 #    Copyright (C) 2014 Didotech SRL
 #    (<http://www.didotech.com>)
 #    Copyright (C) 2015 SimplERP Srl
-#    Copyright (C) 2016-2017 Sergio Corato
+#    Copyright (C) 2016-2018 Sergio Corato
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published
@@ -26,9 +26,9 @@
 
 {
     "name": "Payment terms - Commercial month",
-    "version": "8.0.0.0.3",
+    "version": "10.0.1.0.0",
     "author": "Sergio Corato",
-    "website": "http://www.efatto.it",
+    "website": "https://efatto.it",
     "category": "Account / Payments",
     "depends": [
         "account",
@@ -36,8 +36,5 @@
     "data": [
         "views/payment_view.xml",
     ],
-    "test": [
-        "test/invoice_emission.yml",
-    ],
-    'installable': False,
+    'installable': True,
 }
