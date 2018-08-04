@@ -8,26 +8,12 @@ from odoo import fields, models, api, _
 from odoo.tools.float_utils import float_is_zero, float_round
 import calendar
 
-PAYMENT_TERM_TYPE_SELECTION = [
-    ('AV', 'Avvenuto'),
-    ('BB', 'Bonifico Bancario'),
-    ('BP', 'Bonifico Postale'),
-    ('CC', 'Carta di Credito'),
-    ('CN', 'Contanti'),
-    ('CO', 'Contrassegno'),
-    ('F4', 'F24'),
-    ('PP', 'Paypal'),
-    ('RB', 'Ricevuta Bancaria'),
-    ('RD', 'Rimessa Diretta'),
-    ('SD', 'Sepa DD'),
-]
-
 
 class AccountPaymentTermLine(models.Model):
     _inherit = "account.payment.term.line"
 
-    type = fields.Selection(PAYMENT_TERM_TYPE_SELECTION,
-                            "Type of payment")
+    fatturapa_pm_id = fields.Many2one(
+        'fatturapa.payment_method', string="FatturaPA Payment Method")
     sequence = fields.Integer(
         'Sequence', default=0, required=True, help="""The
         sequence field is used to order the payment term lines from the lowest
@@ -40,16 +26,16 @@ class AccountPaymentTermLine(models.Model):
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
-    payment_term_type = fields.Selection(
-        PAYMENT_TERM_TYPE_SELECTION, 'Payment line term type')
+    fatturapa_pm_id = fields.Many2one(
+        'fatturapa.payment_method', string="FatturaPA Payment Method")
 
 
-class account_invoice(models.Model):
+class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
     @api.multi
     def finalize_invoice_move_lines(self, move_lines):
-        super(account_invoice, self).finalize_invoice_move_lines(move_lines)
+        super(AccountInvoice, self).finalize_invoice_move_lines(move_lines)
         totlines = False
         amount = 0
         if self.payment_term_id:
@@ -66,8 +52,9 @@ class account_invoice(models.Model):
                                 and (line[2]['credit'] == pay_line[1] or
                                      line[2]['debit'] == pay_line[1]):
                             line[2].update({
-                                'payment_term_type': pay_line[2] if
-                                pay_line[2] else self.payment_term_id.type
+                                'fatturapa_pm_id': pay_line[2].id if
+                                pay_line[2] else self.payment_term_id.
+                                fatturapa_pm_id.id
                             })
                             totlines.remove(pay_line)
         return move_lines
@@ -96,8 +83,6 @@ class AccountPaymentTerm(models.Model):
     payment_month_ids = fields.One2many(
         'account.payment.term.month', 'payment_id',
         string='Months to be delayed')
-    type = fields.Selection(PAYMENT_TERM_TYPE_SELECTION,
-                            "Type of payment")
 
     def apply_payment_month(self, payment, next_date):
         for month in payment.payment_month_ids:
@@ -156,7 +141,8 @@ class AccountPaymentTerm(models.Model):
 
             if not float_is_zero(amt, precision_rounding=prec):
                 result.append((
-                    fields.Date.to_string(next_date), amt, line.type))
+                    fields.Date.to_string(next_date), amt,
+                    line.fatturapa_pm_id))
                 amount -= amt
         amount = reduce(lambda x, y: x + y[1], result, 0.0)
         dist = round(value - amount, prec)

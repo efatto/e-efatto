@@ -25,16 +25,18 @@
 ##############################################################################
 
 {
-    "name": "Payment terms - Commercial month",
-    "version": "10.0.1.0.0",
-    "author": "Sergio Corato",
-    "website": "https://efatto.it",
-    "category": "Account / Payments",
-    "depends": [
-        "account",
+    'name': 'Payment terms - Commercial month',
+    'version': '10.0.1.0.0',
+    'author': 'Sergio Corato',
+    'website': 'https://efatto.it',
+    'category': 'Account / Payments',
+    'summary': 'Add month not valid for payments and ability to evaluate tax',
+    'depends': [
+        'account',
+        'l10n_it_fiscal_payment_term',
     ],
-    "data": [
-        "views/payment_view.xml",
+    'data': [
+        'views/payment_view.xml',
     ],
     'installable': True,
 }
