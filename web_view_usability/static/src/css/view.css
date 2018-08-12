@@ -2,22 +2,31 @@
 .modal-lg {
 	width: 80%;
 }
-/* open button */
-.openerp .oe_form_field_many2one .oe_m2o_cm_button {
-    font-size: 40px;
-    font-weight: 40 !important;
+/* change open button icon */
+.fa-external-link::before {
+	content: "\f14c";
 }
-/* arrow button in fields */
-.openerp .oe_view_manager_view_form .oe_form_container .oe_m2o_drop_down_button img {
-    height: 22px;
+/* arrow button in dropdown button */
+.o_form_view .o_form_input_dropdown .o_dropdown_button::after {
+	width: 14px;
+	border-left: 8px solid transparent;
+	border-right: 8px solid transparent;
+	border-top: 8px solid;
 }
-.oe_list_header_columns {
+/* arrow button in datepicker button */
+.o_datepicker .o_datepicker_button::after {
+	width: 14px;
+	border-left: 8px solid transparent;
+	border-right: 8px solid transparent;
+	border-top: 8px solid;
+}
+/* block columns headers and set transparency in tree views */
+.o_list_view thead {
 	background: rgba(238, 238, 238, 0.75) !important;
 	position: sticky;
 	top: 0px !important;
 }
-.openerp .oe_form > :not(.oe_form_nosheet) header, .openerp .oe_form > .oe_form_nosheet header {
-	background: rgba(238, 238, 238, 0.75) !important;
-	position: sticky;
-	top: 0px !important;
+/* needed for sticky columns*/
+.table-responsive {
+	overflow-x: inherit !important;
 }
