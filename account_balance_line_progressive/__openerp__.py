@@ -23,8 +23,7 @@
     'category': 'Account',
     'description': 'View balance in account line tree. '
     'Instead of module account_balance_line, wich show the balance only of the'
-    ' single line, it compute progressive balance'
-    ' for the account selected.',
+    ' single line, it compute progressive balance for the account selected.',
     'author': 'Sergio Corato',
     'website': 'https://efatto.it',
     'license': 'AGPL-3',
@@ -32,7 +31,7 @@
         'account',
     ],
     'data': [
-        'views/account_move_line_view.xml',
+        'views/account_move_line.xml',
     ],
     'installable': True,
 }
