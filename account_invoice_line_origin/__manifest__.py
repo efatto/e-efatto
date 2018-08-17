@@ -18,20 +18,18 @@
 #
 #
 {
-    'name': 'Stock inventory done unlinkable',
-    'version': '8.0.1.0.0',
+    'name': 'Account invoice line origin',
+    'version': '10.0.1.0.0',
     'category': 'other',
-    'description': """
-    Add warning when user tres to delete a Stock inventory in 'done' state.
-    Actually stock move generated are not unlinked. 
-    """,
     'author': 'Sergio Corato',
-    'website': 'http://www.efatto.it',
+    'description': 'Show origin in account invoice line to edit.',
+    'website': 'https://efatto.it',
     'license': 'AGPL-3',
-    "depends": [
-        'stock',
+    'depends': [
+        'account',
     ],
-    "data": [
+    'data': [
+        'views/account.xml',
     ],
-    'installable': False,
+    'installable': True
 }

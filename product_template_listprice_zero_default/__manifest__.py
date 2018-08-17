@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 #
-#    Copyright (C) 2018 Sergio Corato
+#    Copyright (C) 2016-2018 Sergio Corato
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published
@@ -18,26 +18,17 @@
 #
 #
 {
-    'name': 'Web view usability',
-    'version': '8.0.1.0.0',
+    'name': 'Product template default list price zero',
+    'version': '10.0.1.0.0',
     'category': 'other',
     'author': 'Sergio Corato',
-    'description': """
-Web view usability
-==================
-
-Usability issue resolved on web view: 
-    * enlarge pop-up view,
-    * enlarge open button,
-    * enlarge drop-down button.
-    """,
-    'website': 'http://www.efatto.it',
+    'description': 'Product template default list price zero',
+    'website': 'https://efatto.it',
     'license': 'AGPL-3',
     'depends': [
-        'web',
+        'product',
     ],
     'data': [
-        'views/web.xml',
     ],
-    'installable': False
+    'installable': True
 }
