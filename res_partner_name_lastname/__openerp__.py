@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-#    Copyright (C) 2016-2017 Sergio Corato
+#    Copyright (C) 2016-2018 Sergio Corato
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -19,16 +19,17 @@
 
 {
     'name': 'Partner first and last name',
-    'version': '8.0.1.0.0',
+    'version': '10.0.1.0.0',
     'category': 'Invoice Management',
-    'license': 'AGPL-3',
-    'description': "Partner first and last name",
     'author': "Sergio Corato",
+    'description': "Partner first and last name",
+    'website': 'https://efatto.it',
+    'license': 'AGPL-3',
     'depends': [
-        'base'
+        'base',
     ],
     'data': [
         'views/partner_view.xml'
     ],
-    'installable': False,
+    'installable': True,
 }
