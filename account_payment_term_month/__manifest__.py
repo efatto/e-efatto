@@ -30,12 +30,14 @@
     'author': 'Sergio Corato',
     'website': 'https://efatto.it',
     'category': 'Account / Payments',
-    'summary': 'Add month not valid for payments and ability to evaluate tax',
+    'description': '''Alternative module to account_payment_term_extension.
+This module add months not valid for payments and ability to evaluate tax.''',
     'depends': [
         'account',
         'l10n_it_fiscal_payment_term',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'views/payment_view.xml',
     ],
     'installable': True,
