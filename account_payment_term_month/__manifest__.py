@@ -40,5 +40,5 @@ This module add months not valid for payments and ability to evaluate tax.''',
         'security/ir.model.access.csv',
         'views/payment_view.xml',
     ],
-    'installable': False,
+    'installable': True,
 }
