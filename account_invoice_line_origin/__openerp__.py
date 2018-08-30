@@ -19,7 +19,7 @@
 #
 {
     'name': 'Account invoice line origin',
-    'version': '10.0.1.0.0',
+    'version': '9.0.1.0.0',
     'category': 'other',
     'author': 'Sergio Corato',
     'description': 'Show origin in account invoice line to edit.',
