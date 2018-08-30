@@ -19,7 +19,7 @@
 #
 {
     'name': 'Account Invoice Partner default',
-    'version': '8.0.1.0.0',
+    'version': '9.0.1.0.0',
     'category': 'other',
     'author': 'Sergio Corato',
     'description': 'This module add ability to select in partner '
