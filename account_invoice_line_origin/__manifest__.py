@@ -31,5 +31,5 @@
     'data': [
         'views/account.xml',
     ],
-    'installable': False
+    'installable': True
 }
