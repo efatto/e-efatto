@@ -10,7 +10,6 @@ class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
     volume = fields.Float(
-        digits_compute=dp.get_precision('Stock Volume'),
         digits=dp.get_precision('Stock Volume'),
     )
 
@@ -19,6 +18,5 @@ class ProductProduct(models.Model):
     _inherit = 'product.product'
 
     volume = fields.Float(
-        digits_compute=dp.get_precision('Stock Volume'),
         digits=dp.get_precision('Stock Volume'),
     )

@@ -34,5 +34,5 @@ This module add:
     'data': [
         'data/stock.xml',
     ],
-    'installable': False,
+    'installable': True,
 }
