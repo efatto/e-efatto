@@ -26,7 +26,7 @@
 
 {
     "name": "Payment terms - Commercial month",
-    "version": "8.0.0.0.3",
+    "version": "9.0.1.0.0",
     "author": "Sergio Corato",
     "website": "http://www.efatto.it",
     "category": "Account / Payments",

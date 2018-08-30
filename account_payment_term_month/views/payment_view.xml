@@ -25,7 +25,7 @@
                    <field name="days" position="before">
                        <field name="months" attrs="{'required':[('days','=',False)]}"/>
                    </field>
-                   <xpath expr="/form/group/group/field[@name='days']" position="attributes">
+                   <xpath expr="/form/group/group/div/div/field[@name='days']" position="attributes">
                        <attribute name="attrs">{'required':[('months','=',False)]}</attribute>
                    </xpath>
                    <field name="value" position="after">
