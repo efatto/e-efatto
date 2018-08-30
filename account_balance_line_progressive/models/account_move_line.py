@@ -2,7 +2,7 @@
 ##############################################################################
 # For copyright and license notices, see __openerp__.py file in root directory
 ##############################################################################
-from odoo import models, fields, api
+from openerp import models, fields, api
 
 
 class AccountMoveLine(models.Model):
