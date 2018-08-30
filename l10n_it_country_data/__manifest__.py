@@ -34,5 +34,5 @@
     "data": [
         'data/res_country_data.xml',
     ],
-    'installable': False,
+    'installable': True,
 }
