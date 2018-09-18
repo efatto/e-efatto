@@ -199,9 +199,21 @@ class WizardInvoiceStatement(models.TransientModel):
     def _get_grouped_taxes(self, invoice):
         # group invoice tax lines for same tax
         # get totals for group of sale tax
+        # group children taxes: sum taxes and get base from the correct tax
+        tax_with_child_ids = self.env['account.tax'].search(
+            [('child_ids', '!=', False)])
         taxes = set([
             x.tax_code_id for x in invoice.tax_line if
-            x.tax_code_id
+            x.tax_code_id and not self.env['account.tax'].search([
+                ('tax_code_id', '=', x.tax_code_id.id)
+            ]) in tax_with_child_ids.mapped('child_ids')
+            and not x.tax_code_id.exclude_from_registries
+        ])
+        child_taxes = set([
+            x.tax_code_id for x in invoice.tax_line if
+            x.tax_code_id and self.env['account.tax'].search([
+                ('tax_code_id', '=', x.tax_code_id.id)
+            ]) in tax_with_child_ids.mapped('child_ids')
             and not x.tax_code_id.exclude_from_registries
         ])
         bases = set([
@@ -210,18 +222,40 @@ class WizardInvoiceStatement(models.TransientModel):
             and not x.base_code_id.exclude_from_registries
         ])
         tax_group = {}
-        if taxes or bases:
-            if taxes:
+        if taxes or bases or child_taxes:
+            if taxes or child_taxes:
                 tax_group = {x: {'base': 0, 'amount': 0, 'is_base': False}
-                         for x in taxes}
-            if bases and not taxes:
+                             for x in taxes | child_taxes}
+            if bases and not (taxes or child_taxes):
                 tax_group = {x: {'base': 0, 'amount': 0, 'is_base': True}
-                                  for x in bases}
-            if taxes and bases:
+                             for x in bases}
+            if bases and (taxes or child_taxes):
                 tax_group.update({x: {'base': 0, 'amount': 0, 'is_base': True}
-                             for x in bases})
+                                  for x in bases})
+        if tax_group:
             for tax in invoice.tax_line:
-                if tax.tax_code_id and tax.tax_code_id in tax_group:
+                if tax.tax_code_id and tax.tax_code_id in child_taxes:
+                    # this is a child tax: sum amount from not deductible
+                    # and pop from the group
+                    tax_id = self.env['account.tax'].search(
+                        [('tax_code_id', '=', tax.tax_code_id.id)])
+                    sister_tax_id = tax_id.parent_id.child_ids.filtered(
+                        lambda z: z.id != tax_id.id)[0]
+                    if tax_id.account_collected_id:
+                        tax_group[sister_tax_id.tax_code_id].update({
+                            'amount': tax_group[sister_tax_id.tax_code_id][
+                                'amount'] + tax.amount,
+                        })
+                        tax_group.pop(tax_id.tax_code_id)
+                    else:
+                        tax_group[tax.tax_code_id].update({
+                            'base': tax_group[tax.tax_code_id][
+                                'base'] + tax.base,
+                            'amount': tax_group[tax.tax_code_id][
+                                'amount'] + tax.amount,
+                            'is_base': False,
+                        })
+                elif tax.tax_code_id and tax.tax_code_id in tax_group:
                     tax_group[tax.tax_code_id].update({
                         'base': tax_group[tax.tax_code_id][
                                     'base'] + tax.base,
@@ -229,11 +263,6 @@ class WizardInvoiceStatement(models.TransientModel):
                                       'amount'] + tax.amount,
                         'is_base': False,
                     })
-                    # # TODO sum rows partial deductible vat in one?
-                    # tax_id = tax.tax_code_id.tax_ids[0]
-                    # # if tax_id is a child of other tax, use it for aliquota
-                    # if tax_id.parent_id and tax_id.parent_id.child_depend:
-                    #     tax_id = tax_id.parent_id
                 elif tax.base_code_id and tax.base_code_id in tax_group:
                     tax_group[tax.base_code_id].update({
                         'base': tax_group[tax.base_code_id][
