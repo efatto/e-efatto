@@ -274,31 +274,19 @@ class WizardInvoiceStatement(models.TransientModel):
         return tax_group
 
     def get_dati_riepilogo(self, invoice, invoice_tax, tax_data):
-        DatiRiepilogo = payability = False
-        for invoice_tax_id in invoice.tax_line:
-            if invoice_tax_id.tax_code_id and not invoice_tax_id.tax_code_id. \
-                    exclude_from_registries:
-                tax_id = invoice_tax_id.tax_code_id.tax_ids[0]
-                if tax_id.payability == 'S':
-                    payability = True
+        DatiRiepilogo = False
         if not tax_data.get('is_base', False):
             tax_id = invoice_tax.tax_ids[0]
             # if tax_id is a child of other tax, use it for aliquota
             if tax_id.parent_id and tax_id.parent_id.child_depend:
                 tax_id = tax_id.parent_id
-            # se la fattura tipo split payment e la tassa attuale non e' quella
-            # split, salta la riga ### TODO verificare: era per la 6.1!!!
-            if payability and not tax_id.payability:
-                return False
             DatiRiepilogo = DatiRiepilogoType()
             if tax_id.kind_id:
                 DatiRiepilogo.Natura = tax_id.kind_id.code
             DatiRiepilogo.ImponibileImporto = '%.2f' % tax_data['base']
             DatiRiepilogo.DatiIVA = (DatiIVAType())
-            DatiRiepilogo.DatiIVA.Imposta = '%.2f' % (tax_data['amount'] * (
-                -1 if payability else 1))
-            DatiRiepilogo.DatiIVA.Aliquota = '%.2f' % (tax_id.amount * 100 * (
-                -1 if payability else 1))
+            DatiRiepilogo.DatiIVA.Imposta = '%.2f' % tax_data['amount']
+            DatiRiepilogo.DatiIVA.Aliquota = '%.2f' % (tax_id.amount * 100)
             # DatiRiepilogo.Natura = se non iva
             esigibilita_iva = 'I'
             if tax_id.payability:
