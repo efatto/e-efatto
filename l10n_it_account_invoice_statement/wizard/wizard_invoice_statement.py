@@ -111,8 +111,8 @@ class WizardInvoiceStatement(models.TransientModel):
         # obj.AltriDatiIdentificativi = (AltriDatiIdentificativiNoSedeType())
         # # get partner name in case of natural person
         # if partner_id.individual:
-        #     obj.AltriDatiIdentificativi.Nome = partner_id.first_name
-        #     obj.AltriDatiIdentificativi.Cognome = partner_id.last_name
+        #     obj.AltriDatiIdentificativi.Nome = partner_id.firstname
+        #     obj.AltriDatiIdentificativi.Cognome = partner_id.lastname
         # else:
         #     obj.AltriDatiIdentificativi.Denominazione = partner_id.name
         #
@@ -175,8 +175,8 @@ class WizardInvoiceStatement(models.TransientModel):
         # obj.AltriDatiIdentificativi = (AltriDatiIdentificativiNoCAPType())
         # # get partner name in case of natural person
         # if partner_id.individual:
-        #     obj.AltriDatiIdentificativi.Nome = partner_id.first_name
-        #     obj.AltriDatiIdentificativi.Cognome = partner_id.last_name
+        #     obj.AltriDatiIdentificativi.Nome = partner_id.firstname
+        #     obj.AltriDatiIdentificativi.Cognome = partner_id.lastname
         # else:
         #     obj.AltriDatiIdentificativi.Denominazione = partner_id.name
         #
