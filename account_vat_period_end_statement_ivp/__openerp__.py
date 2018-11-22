@@ -14,12 +14,12 @@
 # [2017: odoo-italia] Electronic VAT statement
 {
     'name': 'IVP 2017',
-    'version': '8.0.1.0.0',
+    'version': '8.0.1.1.0',
     'category': 'other',
     'author': "Agile Business Group, Odoo Italia Associazione,"
               " Odoo Community Association (OCA), Sergio Corato",
     'description': 'IVP 2017 export xml file',
-    'website': 'http://www.efatto.it',
+    'website': 'https://efatto.it',
     'license': 'AGPL-3',
     'depends': [
         'sale',
