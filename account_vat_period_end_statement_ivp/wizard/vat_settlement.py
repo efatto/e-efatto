@@ -25,7 +25,7 @@ _logger = logging.getLogger(__name__)
 _logger.setLevel(logging.DEBUG)
 
 codice_fornitura = 'IVP17'
-identificativo_software = 'Odoo.8.0.3.0.2'
+identificativo_software = 'Odoo.8.0.3.0.3'
 
 
 class WizardVatSettlement(orm.TransientModel):
@@ -213,7 +213,7 @@ class WizardVatSettlement(orm.TransientModel):
                     IdentificativoProdSoftware = identificativo_software
             _logger.debug(
                 settlement.Comunicazione.Frontespizio.toDOM().toprettyxml(
-                    encoding="latin1"))
+                    encoding="UTF-8"))
 
             settlement.Comunicazione.DatiContabili = (DatiContabili_IVP_Type())
 
@@ -232,10 +232,16 @@ class WizardVatSettlement(orm.TransientModel):
                 modulo.Mese = str(date_stop.month)
             else:
                 if date_start.month in (1, 4, 7, 10) and \
-                        date_stop.month in (3, 6, 9, 11):
+                        date_stop.month in (3, 6, 9, 12):
                     modulo.Trimestre = trimestre[str(date_stop.month)]
-            # TODO: Per aziende supposte al controllo antimafia (i
-            # subfornitori), per il momento non valorizziamo
+                else:
+                    _logger.info(
+                        'Undetermined quarter/month!')
+                    raise orm.except_orm(
+                        'Error!',
+                        "Undetermined quarter/month!")
+
+            # TODO: Per aziende supposte al controllo antimafia (i subfornitori), per il momento non valorizziamo
             # modulo.Subfornitura = "0"
             # TODO: facoltativo: Vittime del terremoto, per il momento non
             # valorizziamo
