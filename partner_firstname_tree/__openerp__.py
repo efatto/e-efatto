@@ -25,7 +25,6 @@
     'description': "Partner first and last name in tree view",
     'author': "Sergio Corato",
     'depends': [
-        'base',
         'partner_firstname',
     ],
     'data': [
