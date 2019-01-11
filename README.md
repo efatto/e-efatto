@@ -12,7 +12,12 @@ Available addons
 ----------------
 addon | version | summary
 --- | --- | ---
+[account_balance_line_progressive](account_balance_line_progressive/) | 10.0.1.0.0 | Saldo progressivo sulle righe contabili
+[account_invoice_line_origin](account_invoice_line_origin/) | 10.0.1.0.0 | Inserimento campo origine sulle righe fattura
+[account_payment_term_month](account_payment_term_month/) | 10.0.1.0.0 | Modulo alternativo ad account_payment_term_extension
 [l10n_it_country_data](l10n_it_country_data/) | 10.0.1.0.0 | Gestione civilistica cespiti
+[product_volume_digits](product_volume_digits/) | 10.0.1.0.0 | Impostazione default 6 decimali su volume prodotti
+[web_view_usability](web_view_usability/) | 10.0.1.0.0 | Fix di usabilità parte web
 
 Unavailable addons
 ----------------
