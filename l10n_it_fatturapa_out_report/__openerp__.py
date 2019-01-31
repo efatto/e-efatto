@@ -18,7 +18,7 @@
 #
 #
 {
-    'name': 'Export alternative reports for E-invoice',
+    'name': 'Export e-invoice - REMOVE AS MERGED OCA',
     'version': '8.0.1.0.0',
     'category': 'other',
     'author': 'Sergio Corato',
