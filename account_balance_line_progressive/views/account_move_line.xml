@@ -2,7 +2,7 @@
 <openerp>
     <data>
         <record id="view_account_move_line_filter_balance" model="ir.ui.view">
-            <field name="name">Journal Items add visibilty for balance</field>
+            <field name="name">Journal Items add visibility for progressive balance</field>
             <field name="model">account.move.line</field>
             <field name="inherit_id" ref="account.view_account_move_line_filter"/>
             <field name="arch" type="xml">
@@ -22,7 +22,7 @@
             <field name="inherit_id" ref="account.view_move_line_tree"/>
             <field name="arch" type="xml">
             <field name="credit" position="after">
-                <field name="balance" invisible="context.get('invisible_balance', True)"/>
+                <field name="balance_progressive" invisible="context.get('invisible_balance', True)"/>
             </field>
             </field>
         </record>

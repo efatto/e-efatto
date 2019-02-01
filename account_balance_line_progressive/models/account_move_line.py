@@ -27,9 +27,9 @@ class AccountMoveLine(models.Model):
             WHERE l1.id IN %s """ + where_clause + " GROUP BY l1.id",
             where_params)
         for id, val in self._cr.fetchall():
-            self.browse(id).balance = val
+            self.browse(id).balance_progressive = val
 
-    balance = fields.Monetary(
+    balance_progressive = fields.Monetary(
         compute='_store_balance_progressive', store=False,
         currency_field='company_currency_id',
         help="Technical field holding the progressive debit - credit in order "
