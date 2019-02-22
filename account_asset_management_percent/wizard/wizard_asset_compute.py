@@ -52,14 +52,15 @@ class AssetDepreciationConfirmationWizard(models.TransientModel):
         asset_ids = ass_obj.search([
             ('state', 'in', ['open', 'draft']),
             ('type', '=', 'normal'),
-            ('date_start', '>=', fy.date_start),
-            ('date_start', '<=', fy.date_stop)
         ])
         asset_board_obj = self.env['account.asset.depreciation.line']
         set_init = self[0].set_init
         init_move_ids = []
         for asset in asset_ids:
-            asset.compute_depreciation_board()
+            try:
+                asset.compute_depreciation_board()
+            except:
+                asset.name = '%s ***' % asset.name
             if not asset_board_obj.search([
                     ('asset_id', '=', asset.id),
                     ('move_id', '!=', False),
