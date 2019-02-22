@@ -26,6 +26,8 @@ class AssetDepreciationConfirmationWizard(models.TransientModel):
             ], limit=1)
         return period and period or False
 
+    recompute = fields.Boolean(
+        'Recompute depreciations')
     set_init = fields.Boolean(
         'Set manual',
         help='Set depreciation as manual for selected Fiscal Year.')
@@ -55,12 +57,14 @@ class AssetDepreciationConfirmationWizard(models.TransientModel):
         ])
         asset_board_obj = self.env['account.asset.depreciation.line']
         set_init = self[0].set_init
+        recompute = self[0].recompute
         init_move_ids = []
         for asset in asset_ids:
-            try:
-                asset.compute_depreciation_board()
-            except:
-                asset.name = '%s ***' % asset.name
+            if recompute:
+                try:
+                    asset.compute_depreciation_board()
+                except:
+                    asset.name = '%s ***' % asset.name
             if not asset_board_obj.search([
                     ('asset_id', '=', asset.id),
                     ('move_id', '!=', False),
@@ -75,7 +79,8 @@ class AssetDepreciationConfirmationWizard(models.TransientModel):
                         asset_board.init_entry = True
                     init_move_ids.append(asset_board.id)
         return {
-            'name': _('Asset Moves Created'),
+            'name': _('Asset Moves %s') %
+            recompute and 'Created' or 'Confirmed',
             'view_type': 'form',
             'view_mode': 'tree,form',
             'res_model': 'account.asset.depreciation.line',

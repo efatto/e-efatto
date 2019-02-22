@@ -13,6 +13,7 @@
                     <field name="fy_id"/>
                     <separator colspan="2"/>
                     <field name="set_init"/>
+                    <field name="recompute"/>
                     <button colspan="2" string="Compute depreciation table and set manual for selected Fiscal Year if flagged as init" name="asset_set_init" type="object" class="oe_highlight"/>
                 </field>
              </field>

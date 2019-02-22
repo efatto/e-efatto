@@ -112,7 +112,7 @@ msgstr "Chiudi"
 #. module: account_asset_management_percent
 #: view:asset.depreciation.confirmation.wizard:account_asset_management_percent.view_asset_depreciation_confirmation_wizard_init
 msgid "Compute depreciation table and set manual for selected Fiscal Year if flagged as init"
-msgstr "Calcola la tabella di ammortamento e imposta come manuale per l'anno fiscale selezionato se c'è il flag 'Manuale'"
+msgstr "Calcola la tabella di ammortamento se c'è il flag 'Ricalcola ammortamenti' e imposta come manuale per l'anno fiscale selezionato se c'è il flag 'Manuale'"
 
 #. module: account_asset_management_percent
 #: view:account.asset.confirm:account_asset_management_percent.account_asset_confirm_form
