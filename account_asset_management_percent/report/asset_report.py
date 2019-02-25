@@ -63,7 +63,16 @@ class Parser(report_sxw.rml_parse):
         res = {}
         depreciation_line_obj = self.pool['account.asset.depreciation.line']
         fy = self.pool['account.fiscalyear'].browse(self.cr, self.uid, self.localcontext['fy_id'])[0]
-        line_ids = depreciation_line_obj.search(self.cr, self.uid, [('asset_id', '=', asset.id), ('line_date', '<=', fy.date_stop), ('line_date', '>=', fy.date_start), ('type', '=', 'depreciate')])
+        line_ids = depreciation_line_obj.search(
+            self.cr, self.uid, [
+                ('asset_id', '=', asset.id), ('line_date', '<=', fy.date_stop),
+                ('line_date', '>=', fy.date_start), ('type', '=', 'depreciate')
+            ], order='line_date asc')
+        previous_line_ids = depreciation_line_obj.search(
+            self.cr, self.uid, [
+                ('asset_id', '=', asset.id), ('line_date', '<', fy.date_start),
+                ('type', '=', 'depreciate')
+            ], order='line_date asc')
         res.update({
                 asset.id: {
                     'amount': 0.0,
@@ -72,12 +81,18 @@ class Parser(report_sxw.rml_parse):
                     'remaining_value': 0.0,
                 }
             })
+        if previous_line_ids:
+            for line in depreciation_line_obj.browse(
+                    self.cr, self.uid, previous_line_ids):
+                res[asset.id]['depreciated_value'] += line.amount
+                res[asset.id]['remaining_value'] = line.remaining_value
         if line_ids:
-            for line in depreciation_line_obj.browse(self.cr, self.uid, line_ids):
+            for line in depreciation_line_obj.browse(
+                    self.cr, self.uid, line_ids):
                 res[asset.id]['amount'] += line.amount
-                res[asset.id]['depreciated_value'] += line.depreciated_value
-                res[asset.id]['factor'] += line.factor
-                res[asset.id]['remaining_value'] += line.remaining_value
+                res[asset.id]['factor'] = line.factor
+                # update remaining value to possible current year
+                res[asset.id]['remaining_value'] = line.remaining_value
         return res
 
     def _get_ctg_total(self, category_ids):
