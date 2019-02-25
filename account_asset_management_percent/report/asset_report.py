@@ -94,7 +94,7 @@ class Parser(report_sxw.rml_parse):
         remove_amount = self._get_asset_remove_amount(asset)
         if not (
             asset.purchase_value + incr_amount + remove_amount == 0.0 or
-            asset.state in ['close', 'removed']
+            asset.state == 'removed'
         ):
             res[asset.id]['remaining_value'] = asset.purchase_value + \
                 incr_amount + remove_amount - \
