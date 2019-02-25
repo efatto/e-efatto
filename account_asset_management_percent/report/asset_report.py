@@ -85,14 +85,22 @@ class Parser(report_sxw.rml_parse):
             for line in depreciation_line_obj.browse(
                     self.cr, self.uid, previous_line_ids):
                 res[asset.id]['depreciated_value'] += line.amount
-                res[asset.id]['remaining_value'] = line.remaining_value
         if line_ids:
             for line in depreciation_line_obj.browse(
                     self.cr, self.uid, line_ids):
                 res[asset.id]['amount'] += line.amount
                 res[asset.id]['factor'] = line.factor
-                # update remaining value to possible current year
-                res[asset.id]['remaining_value'] = line.remaining_value
+        incr_amount = self._get_asset_fy_increase_decrease_amount(asset)
+        remove_amount = self._get_asset_remove_amount(asset)
+        if not (
+            asset.purchase_value + incr_amount + remove_amount == 0.0 or
+            asset.state in ['close', 'removed']
+        ):
+            res[asset.id]['remaining_value'] = asset.purchase_value + \
+                incr_amount + remove_amount - \
+                res[asset.id]['depreciated_value'] - res[asset.id]['amount']
+        else:
+            res[asset.id]['depreciated_value'] = 0.0
         return res
 
     def _get_ctg_total(self, category_ids):
