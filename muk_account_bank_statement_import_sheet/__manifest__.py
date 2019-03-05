@@ -1,14 +1,14 @@
 ###############################################################################
 # 
 # Copyright (C) 2017 MuK IT GmbH
-# Copyright 2018 Enrico Ganzaroli (enrico.gz@gmail.com)
-# Copyright 2018 Sergio Corato (https://efatto.it)
+# Copyright 2019 Enrico Ganzaroli (enrico.gz@gmail.com)
+# Copyright 2019 Sergio Corato (https://efatto.it)
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 {
     "name": "Import CSV/XLS/XLSX/ODS Bank Statement",
     "summary": """Bank Statement Import Wizard""",
-    "version": "10.0.3.0.0",
+    "version": "10.0.3.1.0",
     "category": "Accounting",
     "license": "AGPL-3",
     "website": "https://efatto.it",
