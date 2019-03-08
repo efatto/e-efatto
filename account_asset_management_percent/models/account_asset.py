@@ -247,16 +247,13 @@ class AccountAssetAsset(orm.Model):
         return res
 
     def _compute_asset_value_from_dl(self, cr, uid, ids, context):
-        if context.get('purchase_value', False):
-            res = {'purchase_value': context['purchase_value'],
-                   'increase_value': context['increase_value'],
-                   'decrease_value': context['decrease_value'],
-                   'remove_value': context['remove_value']}
-        else:
-            res = {'purchase_value': 0.0, 'increase_value': 0.0,
-                   'decrease_value': 0.0, 'remove_value': 0.0}
+        res = {}
+        res['purchase_value'] = context.get('purchase_value', 0.0)
+        res['increase_value'] = context.get('increase_value', 0.0)
+        res['decrease_value'] = context.get('decrease_value', 0.0)
+        res['remove_value'] = context.get('remove_value', 0.0)
         for dl in ids:
-            if dl[2].get('type', False):
+            if dl[2].get('type', False) and dl[2].get('amount'):
                 if dl[2]['type'] == 'purchase':
                     res['increase_value'] += dl[2]['amount']
                 if dl[2]['type'] == 'sale':
