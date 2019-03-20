@@ -18,7 +18,7 @@
 #
 #
 {
-    'name': 'Account move line residual signed',
+    'name': 'Account move line residual signed DEPRECATED',
     'version': '8.0.1.0.0',
     'category': 'Accounting & Finance',
     'author': 'Sergio Corato',
