@@ -17,9 +17,16 @@ class account_move_line(osv.osv):
         c = context.copy()
         c['initital_bal'] = True
         sql = """SELECT l1.id, COALESCE(SUM(l2.debit-l2.credit), 0)
-                    FROM account_move_line l1 LEFT JOIN account_move_line l2
+                    FROM account_move_line l1 
+                    LEFT JOIN account_account a
+                    ON (a.id = l1.account_id)
+                    LEFT JOIN account_move_line l2
                     ON (l1.account_id = l2.account_id
-                      AND l1.partner_id = l2.partner_id
+                      AND (
+                          l1.partner_id = l2.partner_id
+                          OR 
+                          a.type not in ('receivable', 'payable')
+                        )
                       AND (l2.date < l1.date
                       OR (l2.date = l1.date AND l2.id <= l1.id))
                       AND """ + \
