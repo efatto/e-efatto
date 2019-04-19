@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2016-2018-2019 Sergio Corato
+# Copyright 2016-2019 Sergio Corato
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 {
     'name': 'Account balance line progressive',
