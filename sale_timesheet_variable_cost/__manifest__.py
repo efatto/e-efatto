@@ -3,7 +3,7 @@
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
 {
     'name': 'Hr timesheet variable costs',
-    'version': '10.0.1.0.1',
+    'version': '10.0.1.0.2',
     'category': 'Account',
     'description': 'Add ability to set multi costs for hr employeee with date'
                    'validity.',
