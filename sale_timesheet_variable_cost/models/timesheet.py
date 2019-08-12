@@ -42,7 +42,7 @@ class AccountAnalyticLine(models.Model):
                 else:
                     cost = emp.timesheet_cost
             uom = (emp or user).company_id.project_time_mode_id
-            return {
+            res = {
                 'amount': -unit_amount * cost,
                 'product_uom_id': uom.id,
                 'account_id': values.get(
