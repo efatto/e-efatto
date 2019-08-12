@@ -28,15 +28,17 @@ class AccountAnalyticLine(models.Model):
                     cost_id = emp.timesheet_cost_ids.filtered(
                         lambda x: x.date_to and from_string(x.date_from) <=
                         from_string(values.get('date', self.date))
-                        <= from_string(x.date_to))
+                        <= from_string(x.date_to)).sorted(
+                            key=lambda x: x.date_from, reverse=True)
                     if not cost_id:
                         cost_id = emp.timesheet_cost_ids.filtered(
                             lambda x: not x.date_to and
                             from_string(x.date_from) <=
-                            from_string(values.get('date', self.date)))
+                            from_string(values.get('date', self.date))).sorted(
+                                key=lambda x: x.date_from, reverse=True)
                         if not cost_id:
-                            cost_id = emp.timesheet_cost_ids[0]
-                    cost = cost_id.timesheet_cost
+                            cost_id = emp.timesheet_cost_ids
+                    cost = cost_id[0].timesheet_cost
                 else:
                     cost = emp.timesheet_cost
             uom = (emp or user).company_id.project_time_mode_id

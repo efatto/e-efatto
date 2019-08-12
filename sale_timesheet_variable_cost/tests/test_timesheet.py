@@ -37,9 +37,20 @@ class HrTimesheet(TransactionCase):
             'timesheet_cost': 30.0,
             'date_from': time.strftime('%Y-01-01'),
         })
+        self.cost_generic1 = self.HrEmployeeCost.create({
+            'hr_employee_id': self.employee.id,
+            'timesheet_cost': 40.0,
+            'date_from': time.strftime('%Y-04-01'),
+        })
+        self.cost_generic2 = self.HrEmployeeCost.create({
+            'hr_employee_id': self.employee.id,
+            'timesheet_cost': 50.0,
+            'date_from': time.strftime('%Y-12-01'),
+        })
         self.employee.write({
             'timesheet_cost_ids': [(6, 0, [
-                self.cost_august.id, self.cost_july.id, self.cost_generic.id
+                self.cost_august.id, self.cost_july.id, self.cost_generic.id,
+                self.cost_generic1.id, self.cost_generic2.id,
             ])]
         })
 
@@ -97,8 +108,8 @@ class HrTimesheet(TransactionCase):
 
     def test_create_ts3(self):
         ts = self.TimesheetSheet.create({
-            'date_from': time.strftime('%Y-04-01'),
-            'date_to': time.strftime('%Y-04-05'),
+            'date_from': time.strftime('%Y-02-01'),
+            'date_to': time.strftime('%Y-02-05'),
             'name': self.employee.name,
             'state': 'new',
             'user_id': self.user_test.id,
@@ -107,7 +118,7 @@ class HrTimesheet(TransactionCase):
         # I add 5 hours of work timesheet
         ts.write({'timesheet_ids': [(0, 0, {
             'project_id': self.project_2.id,
-            'date': time.strftime('%Y-04-04'),
+            'date': time.strftime('%Y-02-04'),
             'name': 'Development for hr module',
             'user_id': self.user_test.id,
             'unit_amount': 5.00,
@@ -144,5 +155,31 @@ class HrTimesheet(TransactionCase):
         self.assertEqual(len(ts), 1, msg="Timesheet was not created")
         self.assertEqual(len(ts[0].timesheet_ids), 1,
                          msg="Timesheet was not created")
-        self.assertEqual(ts[0].timesheet_ids[0].amount, -5*30,
+        self.assertEqual(ts[0].timesheet_ids[0].amount, -5*40,
+                         msg="Timesheet Amount wrong")
+
+    def test_create_ts5(self):
+        ts = self.TimesheetSheet.create({
+            'date_from': time.strftime('%Y-04-01'),
+            'date_to': time.strftime('%Y-04-05'),
+            'name': self.employee.name,
+            'state': 'new',
+            'user_id': self.user_test.id,
+            'employee_id': self.employee.id,
+        })
+        # I add 5 hours of work timesheet
+        ts.write({'timesheet_ids': [(0, 0, {
+            'project_id': self.project_2.id,
+            'date': time.strftime('%Y-04-04'),
+            'name': 'Development for hr module',
+            'user_id': self.user_test.id,
+            'unit_amount': 5.00,
+        })]})
+
+        ts.action_timesheet_confirm()
+        ts.action_timesheet_done()
+        self.assertEqual(len(ts), 1, msg="Timesheet was not created")
+        self.assertEqual(len(ts[0].timesheet_ids), 1,
+                         msg="Timesheet was not created")
+        self.assertEqual(ts[0].timesheet_ids[0].amount, -5*40,
                          msg="Timesheet Amount wrong")
