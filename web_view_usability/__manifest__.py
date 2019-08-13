@@ -3,14 +3,14 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 {
     'name': 'Web view usability',
-    'version': '10.0.1.0.0',
+    'version': '10.0.1.0.1',
     'category': 'other',
     'author': 'Sergio Corato',
     'description': """
 Web view usability
 ==================
 
-Usability issue resolved on web view: 
+Usability issue resolved on web view:
     * enlarge pop-up view,
     * enlarge open button,
     * enlarge drop-down button,
