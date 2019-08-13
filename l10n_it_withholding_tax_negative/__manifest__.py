@@ -14,5 +14,5 @@
     "autoinstall": True,
     "data": [
     ],
-    "installable": True
+    "installable": False
 }
