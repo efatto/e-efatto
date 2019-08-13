@@ -4,7 +4,7 @@
 
 {
     'name': 'Italian Withholding Tax Negative',
-    'version': '10.0.1.0.0',
+    'version': '10.0.1.0.1',
     'category': 'Account',
     'author': 'Sergio Corato, '
               'Odoo Community Association (OCA)',
