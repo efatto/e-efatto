@@ -1,0 +1,8 @@
+account-financial-reporting
+account-invoicing
+account-payment
+commission
+partner-contact
+server-tools
+stock-logistics-workflow
+web
