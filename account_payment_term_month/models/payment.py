@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
-##############################################################################
-# For copyright and license notices, see __openerp__.py file in root directory
-##############################################################################
-from odoo.exceptions import ValidationError
+
 from dateutil.relativedelta import relativedelta
-from odoo import fields, models, api, _
+from odoo import fields, models, api
 from odoo.tools.float_utils import float_is_zero, float_round
-import calendar
 
 
 class AccountPaymentTermLine(models.Model):
