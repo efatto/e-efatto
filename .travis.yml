@@ -28,7 +28,6 @@ install:
   - pip install unicodecsv
   - pip install codicefiscale
   - pip install unidecode==0.04.17
-  - pip install PyXB==1.2.6
 
 script:
   - travis_run_tests
