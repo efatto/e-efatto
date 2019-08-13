@@ -4,7 +4,7 @@
 
 {
     "name": "Italy - Country data",
-    "version": "10.0.1.0.0",
+    "version": "10.0.1.0.1",
     "category": "other",
     "description": """
     With this module Italian country data will be displayed as usual in Italy.
