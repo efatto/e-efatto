@@ -290,26 +290,23 @@ class ResPartner(models.Model):
 
             if not payable_is_valid and (partner.block_ref_customer or
                                          vals.get('customer', False)):
-                vals['block_ref_customer'] = True
-                if 'name' not in vals:
-                    vals['name'] = partner.name
                 # if there is already an account we update account name
                 if partner.property_account_receivable.type != 'view':
                     if partner.property_account_receivable.name \
-                            != vals['name']:
-                        partner.property_account_receivable.name = vals['name']
+                            != vals.get('name', partner.name):
+                        partner.property_account_receivable.name = \
+                            vals.get('name', partner.name)
                 else:  # view type so create partner account
+                    vals['block_ref_customer'] = True
                     if 'property_customer_ref' not in vals:
                         vals['property_customer_ref'] = \
+                            partner.property_customer_ref or \
                             self.env['ir.sequence'].get(
                                 'SEQ_CUSTOMER_REF') or ''
-                    if vals.get('selection_account_receivable', False):
-                        vals['property_account_receivable'] = \
-                            vals['selection_account_receivable']
-                    else:
-                        vals['property_account_receivable'] = \
-                            partner.property_account_receivable.id
-                        # è il conto vista
+                    vals['property_account_receivable'] = vals.get(
+                        'selection_account_receivable',
+                        partner.property_account_receivable.id)
+                    # è il conto vista
                     vals['property_account_receivable'] = \
                         self.get_create_customer_partner_account(vals)
 
@@ -324,23 +321,21 @@ class ResPartner(models.Model):
             if not receivable_is_valid and (partner.block_ref_supplier or
                                             vals.get('supplier', False)):
                 # already a supplier or flagged as a supplier
-                vals['block_ref_supplier'] = True
-                if 'name' not in vals:
-                    vals['name'] = partner.name
                 if partner.property_account_payable.type != 'view':
-                    if partner.property_account_payable.name != vals['name']:
-                        partner.property_account_payable.name = vals['name']
+                    if partner.property_account_payable.name != vals.get(
+                            'name', partner.name):
+                        partner.property_account_payable.name = vals.get(
+                            'name', partner.name)
                 else:
+                    vals['block_ref_supplier'] = True
                     if 'property_supplier_ref' not in vals:
                         vals['property_supplier_ref'] = \
+                            partner.property_supplier_ref or \
                             self.env['ir.sequence'].get(
                                 'SEQ_SUPPLIER_REF') or ''
-                    if vals.get('selection_account_payable', False):
-                        vals['property_account_payable'] = \
-                            vals['selection_account_payable']
-                    else:
-                        vals['property_account_payable'] = \
-                            partner.property_account_payable.id
+                    vals['property_account_payable'] = vals.get(
+                        'selection_account_payable',
+                        partner.property_account_payable.id)
                     vals['property_account_payable'] = \
                         self.get_create_supplier_partner_account(vals)
 
