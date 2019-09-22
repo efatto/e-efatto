@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-##############################################################################
-# For copyright and license notices, see __openerp__.py file in root directory
-##############################################################################
+
 from odoo import models, fields, api
 
 
@@ -19,10 +17,20 @@ class AccountMoveLine(models.Model):
             where_clause = where_clause.replace('account_move_line', 'l1')
         self._cr.execute(
             """SELECT l1.id, COALESCE(SUM(l2.debit-l2.credit), 0)
-            FROM account_move_line l1 
+            FROM account_move_line l1
+            LEFT JOIN account_account a
+            ON (a.id = l1.account_id)
+            LEFT JOIN account_account_type at
+            ON (at.id = a.user_type_id)
             JOIN account_move m on (m.id = l1.move_id AND m.state <> 'draft')
             LEFT JOIN account_move_line l2
-            ON (l1.account_id = l2.account_id AND l1.partner_id = l2.partner_id)
+            ON (l1.account_id = l2.account_id
+                AND (
+                     l1.partner_id = l2.partner_id
+                     OR
+                     at.type not in ('receivable', 'payable')
+                    )
+               )
             AND (l2.date < l1.date OR (l2.date = l1.date AND l2.id <= l1.id))
             WHERE l1.id IN %s """ + where_clause + " GROUP BY l1.id",
             where_params)
