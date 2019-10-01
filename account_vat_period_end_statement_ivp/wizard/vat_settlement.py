@@ -156,10 +156,7 @@ class WizardVatSettlement(orm.TransientModel):
             else:
                 vat = company.partner_id.vat
             if company.partner_id.fiscalcode:
-                if len(company.partner_id.fiscalcode) == 16:
-                    fiscalcode = company.partner_id.fiscalcode
-                else:
-                    fiscalcode = company.partner_id.fiscalcode[2:]
+                fiscalcode = company.partner_id.fiscalcode
             else:
                 fiscalcode = vat
             settlement = Fornitura()
