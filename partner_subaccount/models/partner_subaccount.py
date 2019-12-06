@@ -275,69 +275,70 @@ class ResPartner(models.Model):
         if not self._context or vals.get('child_ids', False):
             return super(ResPartner, self).write(vals)
         company = self.env.user.company_id
-        for partner in self:
-            if not company.enable_partner_subaccount or partner != partner.\
-                    commercial_partner_id:
-                continue
-            # if user has put a valid custom created account
-            payable_is_valid = False
-            if vals.get('property_account_payable', False):
-                if isinstance(vals['property_account_payable'], int):
-                    if self.env['account.account'].browse(
-                        vals['property_account_payable']
-                    )[0].type != 'view':
-                        payable_is_valid = True
+        if len(self) == 1:
+            for partner in self:
+                if not company.enable_partner_subaccount or partner != partner.\
+                        commercial_partner_id:
+                    continue
+                # if user has put a valid custom created account
+                payable_is_valid = False
+                if vals.get('property_account_payable', False):
+                    if isinstance(vals['property_account_payable'], int):
+                        if self.env['account.account'].browse(
+                            vals['property_account_payable']
+                        )[0].type != 'view':
+                            payable_is_valid = True
 
-            if not payable_is_valid and (partner.block_ref_customer or
-                                         vals.get('customer', False)):
-                # if there is already an account we update account name
-                if partner.property_account_receivable.type != 'view':
-                    if partner.property_account_receivable.name \
-                            != vals.get('name', partner.name):
-                        partner.property_account_receivable.name = \
-                            vals.get('name', partner.name)
-                else:  # view type so create partner account
-                    vals['block_ref_customer'] = True
-                    if 'property_customer_ref' not in vals:
-                        vals['property_customer_ref'] = \
-                            partner.property_customer_ref or \
-                            self.env['ir.sequence'].get(
-                                'SEQ_CUSTOMER_REF') or ''
-                    vals['property_account_receivable'] = vals.get(
-                        'selection_account_receivable',
-                        partner.property_account_receivable.id)
-                    # è il conto vista
-                    vals['property_account_receivable'] = \
-                        self.get_create_customer_partner_account(vals)
+                if not payable_is_valid and (partner.block_ref_customer or
+                                             vals.get('customer', False)):
+                    # if there is already an account we update account name
+                    if partner.property_account_receivable.type != 'view':
+                        if partner.property_account_receivable.name \
+                                != vals.get('name', partner.name):
+                            partner.property_account_receivable.name = \
+                                vals.get('name', partner.name)
+                    else:  # view type so create partner account
+                        vals['block_ref_customer'] = True
+                        if 'property_customer_ref' not in vals:
+                            vals['property_customer_ref'] = \
+                                partner.property_customer_ref or \
+                                self.env['ir.sequence'].get(
+                                    'SEQ_CUSTOMER_REF') or ''
+                        vals['property_account_receivable'] = vals.get(
+                            'selection_account_receivable',
+                            partner.property_account_receivable.id)
+                        # è il conto vista
+                        vals['property_account_receivable'] = \
+                            self.get_create_customer_partner_account(vals)
 
-            receivable_is_valid = False
-            if vals.get('property_account_receivable', False):
-                if isinstance(vals['property_account_receivable'], int):
-                    if self.env['account.account'].browse(
-                            vals['property_account_receivable']
-                    )[0].type != 'view':
-                        receivable_is_valid = True
+                receivable_is_valid = False
+                if vals.get('property_account_receivable', False):
+                    if isinstance(vals['property_account_receivable'], int):
+                        if self.env['account.account'].browse(
+                                vals['property_account_receivable']
+                        )[0].type != 'view':
+                            receivable_is_valid = True
 
-            if not receivable_is_valid and (partner.block_ref_supplier or
-                                            vals.get('supplier', False)):
-                # already a supplier or flagged as a supplier
-                if partner.property_account_payable.type != 'view':
-                    if partner.property_account_payable.name != vals.get(
-                            'name', partner.name):
-                        partner.property_account_payable.name = vals.get(
-                            'name', partner.name)
-                else:
-                    vals['block_ref_supplier'] = True
-                    if 'property_supplier_ref' not in vals:
-                        vals['property_supplier_ref'] = \
-                            partner.property_supplier_ref or \
-                            self.env['ir.sequence'].get(
-                                'SEQ_SUPPLIER_REF') or ''
-                    vals['property_account_payable'] = vals.get(
-                        'selection_account_payable',
-                        partner.property_account_payable.id)
-                    vals['property_account_payable'] = \
-                        self.get_create_supplier_partner_account(vals)
+                if not receivable_is_valid and (partner.block_ref_supplier or
+                                                vals.get('supplier', False)):
+                    # already a supplier or flagged as a supplier
+                    if partner.property_account_payable.type != 'view':
+                        if partner.property_account_payable.name != vals.get(
+                                'name', partner.name):
+                            partner.property_account_payable.name = vals.get(
+                                'name', partner.name)
+                    else:
+                        vals['block_ref_supplier'] = True
+                        if 'property_supplier_ref' not in vals:
+                            vals['property_supplier_ref'] = \
+                                partner.property_supplier_ref or \
+                                self.env['ir.sequence'].get(
+                                    'SEQ_SUPPLIER_REF') or ''
+                        vals['property_account_payable'] = vals.get(
+                            'selection_account_payable',
+                            partner.property_account_payable.id)
+                        vals['property_account_payable'] = \
+                            self.get_create_supplier_partner_account(vals)
 
         return super(ResPartner, self).write(vals)
 
