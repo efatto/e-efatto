@@ -58,7 +58,7 @@ class account_payment_term_line(models.Model):
         "then the due date is 28-02. If compiled, there is no "
         "need to compile the field Days.")
     value = fields.Selection([
-        ('procent', 'Percent'),
+        ('percent', 'Percent'),
         ('balance', 'Balance'),
         ('fixed', 'Fixed Amount'),
         ('tax', 'Tax Amount'),
