@@ -1,3 +1,0 @@
-"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
-"access_invoice_statement_user","invoice_statement user","model_invoice_statement",,1,0,0,0
-"access_invoice_statement_manager","invoice_statement manager","model_invoice_statement","account.group_account_invoice",1,1,1,1
