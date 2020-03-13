@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# Copyright 2019 Sergio Corato <https://github.com/sergiocorato>
+# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
 
 from odoo import models, fields, api
 
@@ -8,15 +9,11 @@ class AccountMoveLine(models.Model):
     _order = 'date desc, id desc'
 
     @api.depends('debit', 'credit')
-    def _store_balance_progressive(self):
+    def _compute_balance_progressive(self):
         tables, where_clause, where_params = self.with_context(
             initial_bal=True)._query_get()
         where_params = [tuple(self.ids)] + where_params
-        if where_clause:
-            where_clause = 'AND ' + where_clause
-            where_clause = where_clause.replace('account_move_line', 'l1')
-        self._cr.execute(
-            """SELECT l1.id, COALESCE(SUM(l2.debit-l2.credit), 0)
+        query = """SELECT l1.id, COALESCE(SUM(l2.debit-l2.credit), 0)
             FROM account_move_line l1
             LEFT JOIN account_account a
             ON (a.id = l1.account_id)
@@ -32,13 +29,18 @@ class AccountMoveLine(models.Model):
                     )
                )
             AND (l2.date < l1.date OR (l2.date = l1.date AND l2.id <= l1.id))
-            WHERE l1.id IN %s """ + where_clause + " GROUP BY l1.id",
-            where_params)
-        for id, val in self._cr.fetchall():
-            self.browse(id).balance_progressive = val
+            WHERE l1.id IN %s """
+        if where_clause:
+            where_clause = 'AND ' + where_clause
+            where_clause = where_clause.replace('account_move_line', 'l1')
+            query += where_clause
+        query += " GROUP BY l1.id"
+        self._cr.execute(query, where_params)
+        for line_id, val in self._cr.fetchall():
+            self.browse(line_id).balance_progressive = val
 
     balance_progressive = fields.Monetary(
-        compute='_store_balance_progressive', store=False,
+        compute='_compute_balance_progressive',
         currency_field='company_currency_id',
-        help="Technical field holding the progressive debit - credit in order "
-             "to open meaningful graph views from reports")
+        string='Progressive Balance',
+        help="Field holding the progressive debit - credit of the account")
