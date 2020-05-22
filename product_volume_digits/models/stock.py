@@ -5,16 +5,16 @@ from odoo import models, fields
 import odoo.addons.decimal_precision as dp
 
 
-class ProductTemplate(models.Model):
-    _inherit = 'product.template'
+class StockPicking(models.Model):
+    _inherit = 'stock.picking'
 
     volume = fields.Float(
         digits=dp.get_precision('Stock Volume'),
     )
 
 
-class ProductProduct(models.Model):
-    _inherit = 'product.product'
+class StockPickingPackagePreparation(models.Model):
+    _inherit = 'stock.picking.package.preparation'
 
     volume = fields.Float(
         digits=dp.get_precision('Stock Volume'),
