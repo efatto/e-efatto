@@ -53,16 +53,19 @@ class PurchaseOrder(models.Model):
                         'purchase', 'email_template_edi_purchase_done')[1]
             except ValueError:
                 template_id = False
-            ctx = res.get('context')
-            ctx.update({
+            res['context'].update({
                 'default_template_id': template_id,
                 'mark_rfq_as_draft_sent': True,
                 'mark_rfq_as_sent': False,
             })
-            send_purchases = self.filtered(
-                lambda p: p.company_id.purchase_approve_active)
-            send_purchases.write({'state': 'rfq sent'})
         return res
+
+    @api.multi
+    @api.returns('mail.message', lambda value: value.id)
+    def message_post(self, **kwargs):
+        if self.env.context.get('mark_rfq_as_draft_sent'):
+            self.filtered(lambda o: o.state == 'draft').write({'state': 'rfq sent'})
+        return super(PurchaseOrder, self.with_context(mail_post_autofollow=True)).message_post(**kwargs)
 
     @api.multi
     def button_confirm_rfq(self):
