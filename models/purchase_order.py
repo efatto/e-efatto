@@ -94,6 +94,4 @@ class PurchaseOrder(models.Model):
     def print_quotation(self):
         if self.state == 'draft':
             self.write({'state': "rfq sent"})
-        else:
-            self.write({'state': "sent"})
         return self.env.ref('purchase.report_purchase_quotation').report_action(self)
