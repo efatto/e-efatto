@@ -10,10 +10,15 @@
                 <attribute name="states">cancel,to approve,approved,rfq confirmed,rfq sent</attribute>
             </button>
             <button name="button_approve" position="after">
+                <button name="button_confirm_rfq" type="object" states='draft'
+                        string="Vendor Confirm RFQ"/>
                 <button name="button_confirm_rfq" type="object" states='rfq sent'
                         string="Vendor Confirm RFQ"
                         class="oe_highlight"/>
             </button>
+            <xpath expr="///button[@id='draft_confirm']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
             <xpath expr="///button[@id='bid_confirm']" position="attributes">
                 <attribute name="states">rfq confirmed</attribute>
             </xpath>
@@ -25,6 +30,9 @@
             </xpath>
             <xpath expr="//button[@name='action_rfq_send'][2]" position="attributes">
                 <attribute name="states">sent,rfq confirmed</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_rfq_send'][3]" position="attributes">
+                <attribute name="states">approved</attribute>
             </xpath>
         </field>
     </record>
