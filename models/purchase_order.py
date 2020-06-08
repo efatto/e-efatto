@@ -42,19 +42,7 @@ class PurchaseOrder(models.Model):
     def action_rfq_send(self):
         res = super().action_rfq_send()
         if self.env.context.get('send_draft_rfq', False):
-            ir_model_data = self.env['ir.model.data']
-            try:
-                if self.env.context.get('send_draft_rfq', False) \
-                        or self.env.context.get('send_rfq', False):
-                    template_id = ir_model_data.get_object_reference(
-                        'purchase', 'email_template_edi_purchase')[1]
-                else:
-                    template_id = ir_model_data.get_object_reference(
-                        'purchase', 'email_template_edi_purchase_done')[1]
-            except ValueError:
-                template_id = False
             res['context'].update({
-                'default_template_id': template_id,
                 'mark_rfq_as_draft_sent': True,
                 'mark_rfq_as_sent': False,
             })
