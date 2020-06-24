@@ -21,6 +21,7 @@
             </xpath>
             <xpath expr="///button[@id='bid_confirm']" position="attributes">
                 <attribute name="states">rfq confirmed</attribute>
+                <attribute name="string">Confirm Offer</attribute>
             </xpath>
             <xpath expr="//button[@name='print_quotation'][2]" position="attributes">
                 <attribute name="states">sent,rfq confirmed</attribute>
