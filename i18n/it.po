@@ -94,7 +94,7 @@ msgstr "RdP"
 #. module: purchase_order_approved_vendor
 #: selection:purchase.order,state:0
 msgid "RFQ Confirmed"
-msgstr "RdP Confermata"
+msgstr "RdP Ricevuta"
 
 #. module: purchase_order_approved_vendor
 #: selection:purchase.order,state:0
@@ -134,7 +134,7 @@ msgstr "Fornitore"
 #. module: purchase_order_approved_vendor
 #: model_terms:ir.ui.view,arch_db:purchase_order_approved_vendor.purchase_order_form
 msgid "Vendor Confirm RFQ"
-msgstr "Conferma del Fornitore RdP"
+msgstr "RdP Ricevuta"
 
 #. module: purchase_order_approved_vendor
 #: model:ir.model.fields,help:purchase_order_approved_vendor.field_purchase_order__partner_id
