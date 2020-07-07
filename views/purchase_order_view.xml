@@ -24,13 +24,13 @@
                 <attribute name="string">Confirm Offer</attribute>
             </xpath>
             <xpath expr="//button[@name='print_quotation'][2]" position="attributes">
-                <attribute name="states">sent,rfq confirmed</attribute>
+                <attribute name="states">rfq sent,sent,rfq confirmed</attribute>
             </xpath>
             <xpath expr="//button[@name='action_rfq_send'][1]" position="attributes">
                 <attribute name="context">{'send_draft_rfq':True,'send_rfq':True}</attribute>
             </xpath>
             <xpath expr="//button[@name='action_rfq_send'][2]" position="attributes">
-                <attribute name="states">sent,rfq confirmed</attribute>
+                <attribute name="states">rfq sent,sent,rfq confirmed</attribute>
             </xpath>
             <xpath expr="//button[@name='action_rfq_send'][3]" position="attributes">
                 <attribute name="states">approved</attribute>
