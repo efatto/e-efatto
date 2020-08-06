@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<openerp>
+	<data>
+
+    <record model="ir.ui.view" id="invoice_form_discount_complex">
+        <field name="name">invoice.form.discount.complex</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_line']/tree/field[@name='discount']" position="after">
+                <field name="complex_discount"/>
+            </xpath>
+        </field>
+    </record>
+    
+    <record model="ir.ui.view" id="view_invoice_line_tree_discount_complex">
+        <field name="name">account.invoice.line.tree.discount.complex</field>
+        <field name="model">account.invoice.line</field>
+        <field name="inherit_id" ref="account.view_invoice_line_tree"/>
+        <field name="arch" type="xml">
+            <field name="discount" position="after">
+                <field name="complex_discount"/>
+            </field>
+        </field>
+    </record>
+    
+	</data>
+</openerp>
