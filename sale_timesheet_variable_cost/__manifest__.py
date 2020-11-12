@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
-# Copyright 2019 Sergio Corato
-# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
+# Copyright 2019-2020 Sergio Corato <https://github.com/sergiocorato>
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 {
     'name': 'Hr timesheet variable costs',
-    'version': '10.0.1.0.3',
+    'version': '12.0.1.0.0',
     'category': 'Account',
-    'description': 'Add ability to set multi costs for hr employeee with date'
+    'description': 'Add ability to set multi costs for hr employeee with date '
                    'validity.',
     'author': 'Sergio Corato',
     'website': 'https://efatto.it',

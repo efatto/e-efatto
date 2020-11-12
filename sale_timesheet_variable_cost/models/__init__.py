@@ -1,3 +1,5 @@
-# -*- coding: utf-8 -*-
-
-from . import hr, timesheet
+from . import (
+    hr_employee,
+    hr_employee_cost,
+    timesheet,
+)
