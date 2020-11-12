@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_timesheet_employee_costs_form" model="ir.ui.view">
+        <field name="name">hr.timesheet.employee.costs</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="sale_timesheet.hr_timesheet_employee_extd_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='timesheet_cost']" position="after">
+                <field name="timesheet_cost_ids">
+                    <tree string="Timesheet costs" limit="5" editable="top">
+                        <field name="timesheet_cost"/>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </tree>
+                </field>
+            </xpath>
+        </field>
+    </record>
+</odoo>
