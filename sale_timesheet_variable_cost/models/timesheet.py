@@ -10,5 +10,5 @@ class AccountAnalyticLine(models.Model):
     @api.multi
     def action_recompute_timesheet_cost(self):
         for aal in self.filtered('project_id'):
-            cost = aal.employee_id.sudo()._get_timesheet_cost(aal.date)
+            cost = aal.employee_id.sudo()._compute_timesheet_cost(aal.date)
             aal.amount = -aal.unit_amount * cost

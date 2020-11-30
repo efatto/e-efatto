@@ -8,7 +8,7 @@ class HrEmployee(models.Model):
     _inherit = 'hr.employee'
 
     timesheet_cost = fields.Monetary(
-        compute='_get_timesheet_cost',
+        compute='_compute_timesheet_cost',
         string='Current employee cost')
     timesheet_cost_manual = fields.Monetary(
         string='Timesheet Cost (manual)')
@@ -24,8 +24,10 @@ class HrEmployee(models.Model):
         'timesheet_cost_ids.date_from',
         'timesheet_cost_ids.date_to',
     )
-    def _get_timesheet_cost(self, as_of_date):
+    def _compute_timesheet_cost(self, as_of_date=False):
         self.ensure_one()
+        if not as_of_date:
+            as_of_date = fields.Date.today()
         from_string = fields.Date.from_string
         cost = self.timesheet_cost_manual or 0.0
         if self.timesheet_cost_ids:
