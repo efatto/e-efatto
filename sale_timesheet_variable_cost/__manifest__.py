@@ -11,7 +11,7 @@
     'license': 'LGPL-3',
     'depends': [
         'account',
-        'hr',
+        'hr_timesheet',
         'sale_timesheet',
         'hr_timesheet_sheet',
     ],
