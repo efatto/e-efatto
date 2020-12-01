@@ -42,4 +42,4 @@ class HrEmployee(models.Model):
                         key=lambda x: x.date_from, reverse=True)
             if cost_id:
                 cost = cost_id[0].cost
-        return cost
+        self.timesheet_cost = cost
