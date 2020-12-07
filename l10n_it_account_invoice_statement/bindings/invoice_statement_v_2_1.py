@@ -25,7 +25,7 @@ except ImportError as err:
 _GenerationUID = pyxb.utils.utility.UniqueIdentifier('urn:uuid:19ee3132-ee4d-11e8-b673-b05adae3c683')
 
 # Version of PyXB used to generate the bindings
-_PyXBVersion = '1.2.5'
+_PyXBVersion = '1.2.6'
 # Generated bindings are not compatible across PyXB versions
 if pyxb.__version__ != _PyXBVersion:
     raise pyxb.PyXBVersionError(_PyXBVersion)
