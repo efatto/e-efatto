@@ -25,21 +25,21 @@ class HrEmployee(models.Model):
         'timesheet_cost_ids.date_to',
     )
     def _compute_timesheet_cost(self, as_of_date=False):
-        self.ensure_one()
         if not as_of_date:
             as_of_date = fields.Date.today()
         from_string = fields.Date.from_string
-        cost = self.timesheet_cost_manual or 0.0
-        if self.timesheet_cost_ids:
-            cost_id = self.timesheet_cost_ids.filtered(
-                lambda x: x.date_to and
-                x.date_from <= from_string(as_of_date) <= x.date_to).sorted(
-                    key=lambda x: x.date_from, reverse=True)
-            if not cost_id:
-                cost_id = self.timesheet_cost_ids.filtered(
-                    lambda x: not x.date_to and
-                    x.date_from <= from_string(as_of_date)).sorted(
+        for employee in self:
+            cost = employee.timesheet_cost_manual or 0.0
+            if employee.timesheet_cost_ids:
+                cost_id = employee.timesheet_cost_ids.filtered(
+                    lambda x: x.date_to and
+                    x.date_from <= from_string(as_of_date) <= x.date_to).sorted(
                         key=lambda x: x.date_from, reverse=True)
-            if cost_id:
-                cost = cost_id[0].cost
-        self.timesheet_cost = cost
+                if not cost_id:
+                    cost_id = employee.timesheet_cost_ids.filtered(
+                        lambda x: not x.date_to and
+                        x.date_from <= from_string(as_of_date)).sorted(
+                            key=lambda x: x.date_from, reverse=True)
+                if cost_id:
+                    cost = cost_id[0].cost
+            employee.timesheet_cost = cost

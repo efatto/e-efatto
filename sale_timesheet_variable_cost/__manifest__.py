@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 {
     'name': 'Hr timesheet variable costs',
-    'version': '12.0.1.0.0',
+    'version': '12.0.1.0.1',
     'category': 'Account',
     'description': 'Add ability to set multi costs for hr employeee with date '
                    'validity.',
