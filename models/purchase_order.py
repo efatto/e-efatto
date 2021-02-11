@@ -24,8 +24,6 @@ class PurchaseOrder(models.Model):
         'done': [('readonly', True)],
         'cancel': [('readonly', True)],
         'approved': [('readonly', True)],
-        'rfq sent': [('readonly', True)],
-        'rfq confirmed': [('readonly', True)],
     }
 
     # Update the readonly states:
@@ -60,7 +58,7 @@ class PurchaseOrder(models.Model):
         confirm_purchases = self.filtered(
             lambda p: p.company_id.purchase_approve_active)
         confirm_purchases.write({'state': 'rfq confirmed'})
-        return {}
+        return super(PurchaseOrder, self - confirm_purchases).button_approve()
 
     @api.multi
     def button_confirm(self):

@@ -16,10 +16,10 @@
                         string="Vendor Confirm RFQ"
                         class="oe_highlight"/>
             </button>
-            <xpath expr="///button[@id='draft_confirm']" position="attributes">
+            <xpath expr="//button[@id='draft_confirm']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
-            <xpath expr="///button[@id='bid_confirm']" position="attributes">
+            <xpath expr="//button[@id='bid_confirm']" position="attributes">
                 <attribute name="states">rfq confirmed</attribute>
                 <attribute name="string">Confirm Offer</attribute>
             </xpath>

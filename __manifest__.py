@@ -3,7 +3,7 @@
 {
     "name": "Purchase Order Approved Vendor",
     "summary": "Add new states 'RFQ Confirmed' and 'RFQ Sent' in purchase orders.",
-    "version": "12.0.1.0.3",
+    "version": "12.0.1.0.4",
     "category": "Purchases",
     "website": "https://efatto.it",
     "author": "Sergio Corato",
@@ -11,6 +11,7 @@
     "application": False,
     "installable": True,
     "depends": [
+        "purchase",
         "purchase_order_approved",
     ],
     "data": [
