@@ -11,6 +11,7 @@ class MrpProduction(models.Model):
     def _generate_workorders(self, exploded_boms):
         workorders = super()._generate_workorders(exploded_boms)
         if self.date_planned_start:
-            for workorder in workorders:
-                workorder.date_planned_start = self.date_planned_start
+            workorders.write({
+                'date_planned_start': self.date_planned_start
+            })
         return workorders
