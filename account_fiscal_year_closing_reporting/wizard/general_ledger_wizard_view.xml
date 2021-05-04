@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="general_ledger_wizard" model="ir.ui.view">
+        <field name="name">General Ledger</field>
+        <field name="model">general.ledger.report.wizard</field>
+        <field name="inherit_id" ref="account_financial_report.general_ledger_wizard"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='filters']/group[@name='other_filters']/field[last()]" position="after">
+                <field name="exclude_opening"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
