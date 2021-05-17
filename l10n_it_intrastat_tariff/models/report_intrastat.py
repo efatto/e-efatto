@@ -18,4 +18,13 @@ class ReportIntrastatTariff(models.Model):
     name = fields.Char()
     active = fields.Boolean(default=True)
     tariff_percentage = fields.Float()
-    tariff_fixed_value = fields.Float()
+    currency_id = fields.Many2one(
+        'res.currency',
+        required=True,
+        default=lambda self: self.env.user.company_id.currency_id.id,
+        string="Currency",
+    )
+    tariff_fixed_value = fields.Monetary(
+        currency_field='currency_id',
+        default=0.0,
+    )
