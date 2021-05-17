@@ -13,7 +13,7 @@ class ReportIntrastatCode(models.Model):
 
 class ReportIntrastatTariff(models.Model):
     _name = "report.intrastat.tariff"
-    _description = "Intrastat tariff"
+    _description = "Customs Tariff"
 
     name = fields.Char()
     active = fields.Boolean(default=True)
