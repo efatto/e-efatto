@@ -31,7 +31,11 @@
                     <field name="name"/>
                 </group>
                 <group>
-                    <field name="tariff_percentage"/>
+                    <label for="tariff_percentage"/>
+                    <div>
+                        <field name="tariff_percentage" class="oe_inline"/>
+                        <span class="o_form_label oe_inline">%</span>
+                    </div>
                     <field name="active"/>
                 </group>
             </form>
