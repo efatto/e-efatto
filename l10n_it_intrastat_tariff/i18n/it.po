@@ -31,11 +31,6 @@ msgid "Created on"
 msgstr "Creato il"
 
 #. module: l10n_it_intrastat_tariff
-#: model:ir.model.fields,field_description:l10n_it_intrastat_tariff.field_report_intrastat_tariff__currency_id
-msgid "Currency"
-msgstr "Valuta"
-
-#. module: l10n_it_intrastat_tariff
 #: model:ir.actions.act_window,name:l10n_it_intrastat_tariff.action_report_intrastat_tariff
 #: model:ir.model,name:l10n_it_intrastat_tariff.model_report_intrastat_tariff
 #: model:ir.model.fields,field_description:l10n_it_intrastat_tariff.field_report_intrastat_code__tariff_id
@@ -49,11 +44,6 @@ msgstr "Tariffa Doganale"
 #: model:ir.model.fields,field_description:l10n_it_intrastat_tariff.field_report_intrastat_tariff__display_name
 msgid "Display Name"
 msgstr "Nome Visualizzato"
-
-#. module: l10n_it_intrastat_tariff
-#: selection:report.intrastat.tariff,type:0
-msgid "Fixed Value"
-msgstr "Importo Fisso"
 
 #. module: l10n_it_intrastat_tariff
 #: model:ir.model.fields,field_description:l10n_it_intrastat_tariff.field_report_intrastat_tariff__id
@@ -86,22 +76,7 @@ msgid "Name"
 msgstr "Nome"
 
 #. module: l10n_it_intrastat_tariff
-#: selection:report.intrastat.tariff,type:0
-msgid "Percentage"
-msgstr "Percentuale"
-
-#. module: l10n_it_intrastat_tariff
-#: model:ir.model.fields,field_description:l10n_it_intrastat_tariff.field_report_intrastat_tariff__tariff_fixed_value
-msgid "Tariff Fixed Value"
-msgstr "Importo Fisso Tariffa"
-
-#. module: l10n_it_intrastat_tariff
 #: model:ir.model.fields,field_description:l10n_it_intrastat_tariff.field_report_intrastat_tariff__tariff_percentage
 msgid "Tariff Percentage"
 msgstr "Percentuale Tariffa"
-
-#. module: l10n_it_intrastat_tariff
-#: model:ir.model.fields,field_description:l10n_it_intrastat_tariff.field_report_intrastat_tariff__type
-msgid "Tariff Type"
-msgstr "Tipo Tariffa"
 
