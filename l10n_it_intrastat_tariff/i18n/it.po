@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-17 09:43+0000\n"
-"PO-Revision-Date: 2021-05-17 09:43+0000\n"
+"POT-Creation-Date: 2021-05-18 06:12+0000\n"
+"PO-Revision-Date: 2021-05-18 06:12+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -51,6 +51,11 @@ msgid "Display Name"
 msgstr "Nome Visualizzato"
 
 #. module: l10n_it_intrastat_tariff
+#: selection:report.intrastat.tariff,type:0
+msgid "Fixed Value"
+msgstr "Importo Fisso"
+
+#. module: l10n_it_intrastat_tariff
 #: model:ir.model.fields,field_description:l10n_it_intrastat_tariff.field_report_intrastat_tariff__id
 msgid "ID"
 msgstr ""
@@ -81,6 +86,11 @@ msgid "Name"
 msgstr "Nome"
 
 #. module: l10n_it_intrastat_tariff
+#: selection:report.intrastat.tariff,type:0
+msgid "Percentage"
+msgstr "Percentuale"
+
+#. module: l10n_it_intrastat_tariff
 #: model:ir.model.fields,field_description:l10n_it_intrastat_tariff.field_report_intrastat_tariff__tariff_fixed_value
 msgid "Tariff Fixed Value"
 msgstr "Importo Fisso Tariffa"
@@ -89,4 +99,9 @@ msgstr "Importo Fisso Tariffa"
 #: model:ir.model.fields,field_description:l10n_it_intrastat_tariff.field_report_intrastat_tariff__tariff_percentage
 msgid "Tariff Percentage"
 msgstr "Percentuale Tariffa"
+
+#. module: l10n_it_intrastat_tariff
+#: model:ir.model.fields,field_description:l10n_it_intrastat_tariff.field_report_intrastat_tariff__type
+msgid "Tariff Type"
+msgstr "Tipo Tariffa"
 
