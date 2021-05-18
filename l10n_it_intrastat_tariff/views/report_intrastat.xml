@@ -33,11 +33,14 @@
                     <field name="name"/>
                 </group>
                 <group>
-                    <field name="tariff_percentage"/>
+                    <field name="type"/>
+                    <field name="tariff_percentage"
+                           attrs="{'readonly': [('type', '!=', 'percentage')]}"/>
                     <field name="currency_id"
                            groups="base.group_multi_currency"/>
                     <field name="tariff_fixed_value"
                            widget="monetary"
+                           attrs="{'readonly': [('type', '=', 'percentage')]}"
                            options="{'currency_field': 'currency_id'}"/>
                     <field name="active"/>
                 </group>
