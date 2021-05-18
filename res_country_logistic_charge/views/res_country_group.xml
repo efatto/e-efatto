@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_country_group_form" model="ir.ui.view">
+        <field name="model">res.country.group</field>
+        <field name="inherit_id" ref="base.view_country_group_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='country_ids']" position="before">
+                <label for="logistic_charge_percentage"/>
+                <div>
+                    <field name="logistic_charge_percentage" class="oe_inline"/>
+                    <span class="o_form_label oe_inline">%</span>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
