@@ -17,6 +17,12 @@ class ReportIntrastatTariff(models.Model):
 
     name = fields.Char()
     active = fields.Boolean(default=True)
+    type = fields.Selection([
+        ('percentage', 'Percentage'),
+        ('fixed_value', 'Fixed Value')],
+        string='Tariff Type',
+        default='percentage'
+    )
     tariff_percentage = fields.Float()
     currency_id = fields.Many2one(
         'res.currency',
