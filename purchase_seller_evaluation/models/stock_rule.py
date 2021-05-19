@@ -80,10 +80,10 @@ class StockRule(models.Model):
         return res[0]
 
     def _get_seller_price(self, seller, product_uom):
-        price_unit = 0.0
-        if seller.price and seller.currency_id != self.env.user.company_id.currency_id:
+        price_unit = seller.price
+        if price_unit and seller.currency_id != self.env.user.company_id.currency_id:
             price_unit = seller.currency_id._convert(
-                seller.price, self.env.user.company_id.currency_id,
+                price_unit, self.env.user.company_id.currency_id,
                 self.env.user.company_id,
                 fields.Date.today())
 
