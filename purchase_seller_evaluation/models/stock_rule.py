@@ -81,6 +81,11 @@ class StockRule(models.Model):
 
     def _get_seller_price(self, seller, product_uom):
         price_unit = seller.price
+        if hasattr(seller, 'discount'):
+            price_unit = price_unit * (1 - seller.discount / 100.0)
+        if hasattr(seller, 'discount2'):
+            price_unit = price_unit * (1 - seller.discount2 / 100.0)
+            price_unit = price_unit * (1 - seller.discount3 / 100.0)
         if price_unit and seller.currency_id != self.env.user.company_id.currency_id:
             price_unit = seller.currency_id._convert(
                 price_unit, self.env.user.company_id.currency_id,
