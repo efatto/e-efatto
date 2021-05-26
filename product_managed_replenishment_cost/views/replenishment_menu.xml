@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<odoo>
+    <record model="ir.ui.view" id="view_replenishment_cost_tree">
+        <field name="name">replenishment.cost.tree</field>
+        <field name="model">replenishment.cost</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Replenishment Cost">
+                <field name="name"/>
+                <field name="last_update"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="view_replenishment_cost_form">
+        <field name="name">replenishment.cost.form</field>
+        <field name="model">replenishment.cost</field>
+        <field name="arch" type="xml">
+            <form string="Replenishment Cost">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="company_id" groups="base.group_multi_company"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="last_update"/>
+                            <field name="product_ctg_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <button name="update_products_replenishment_cost" string="Update Products Replenishment Cost" type="object"/>
+                    <!--                    <button name="update_products_cost" string="Update Products Cost" type="object"/>-->
+                    <group>
+                        <field name="log"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_replenishment_cost">
+        <field name="name">Product Replenishment Cost</field>
+        <field name="res_model">replenishment.cost</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_replenishment_cost_tree"/>
+    </record>
+    <menuitem name="Replenishment Cost"
+              id="menu_replenishment_stock"
+              parent="stock.menu_warehouse_config"
+              action="action_replenishment_cost"/>
+</odoo>
