@@ -22,14 +22,20 @@ class ReplenishmentCost(models.Model):
     log = fields.Text()
 
     @api.multi
-    def update_products_replenishment_cost(self):
+    def update_products_standard_price(self):
+        res = self.update_products_replenishment_cost(update_standard_price=True)
+        return res
+
+    @api.multi
+    def update_products_replenishment_cost(self, update_standard_price=False):
         for repl in self:
             domain = [('type', 'in', ['product', 'service'])]
+            #fixme serve aggiungere la company_id al dominio su repl.company_id.id?
             if repl.product_ctg_ids:
                 domain.append(('categ_id', 'in', repl.product_ctg_ids.ids))
             products = self.env['product.product'].search(domain)
             started_at = time.time()
-            products.update_managed_replenishment_cost()
+            products.update_managed_replenishment_cost(update_standard_price)
             duration = time.time() - started_at
             repl.last_update = fields.Datetime.now()
             if not repl.name:
