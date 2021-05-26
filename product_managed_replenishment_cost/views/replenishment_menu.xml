@@ -27,11 +27,15 @@
                             <field name="last_update"/>
                             <field name="product_ctg_ids" widget="many2many_tags"/>
                         </group>
-                    </group>
-                    <button name="update_products_replenishment_cost" string="Update Products Replenishment Cost" type="object"/>
-                    <!--                    <button name="update_products_cost" string="Update Products Cost" type="object"/>-->
-                    <group>
-                        <field name="log"/>
+                        <group>
+                            <button name="update_products_replenishment_cost" string="Update Products Replenishment Cost" type="object"/>
+                        </group>
+                        <group>
+                            <button name="update_products_standard_price" string="Update Products Standard Price" type="object"/>
+                        </group>
+                        <group>
+                            <field name="log"/>
+                        </group>
                     </group>
                 </sheet>
             </form>

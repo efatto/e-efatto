@@ -52,13 +52,9 @@ class ProductProduct(models.Model):
         help="The cost that you have to support in order to produce or "
              "acquire the goods, mass updated by the user on request only.")
 
-    #todo funzione che aggiorna costo di rimpiazzo
-    # 1. chiama _compute_replenishment_cost > funziona solo sui prodotti acquistati
-    # 2. chiama ricalcolo del costo bom dei prodotti e scrive sempre su questo campo
-    # 3. fare funzione separata che scrive sul campo costo (lo fa l'utente quando vuole)
     @api.multi
-    def update_managed_replenishment_cost(self):
-        # update cost for products to be purchased
+    def update_managed_replenishment_cost(self, update_standard_price=False):
+        # update cost for products to be purchased first, then them to be produced
         for product in self.filtered(
             lambda x: x.seller_ids
         ):
@@ -84,12 +80,15 @@ class ProductProduct(models.Model):
             tariff_id = product.intrastat_code_id.tariff_id
             if tariff_id:
                 margin_percentage += tariff_id.tariff_percentage
-            product.managed_replenishment_cost = purchase_price * (
-                1 + margin_percentage / 100.0
-            )
+            purchase_price = purchase_price * (1 + margin_percentage / 100.0)
+            product.managed_replenishment_cost = purchase_price
+            if update_standard_price:
+                product.standard_price = purchase_price
         for product in self.filtered(
             lambda x: not x.seller_ids
         ):
             produce_price = product.managed_replenishment_cost
             # todo if product has a bom, update cost from this one
             product.managed_replenishment_cost = produce_price
+            if update_standard_price:
+                product.standard_price = produce_price

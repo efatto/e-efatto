@@ -8,6 +8,7 @@
     'category': 'Products',
     'depends': [
         'l10n_it_intrastat_tariff',
+        'mrp_bom_cost',
         'product',
         'res_country_logistic_charge',
     ],
