@@ -10,6 +10,7 @@
         'l10n_it_intrastat_tariff',
         'mrp_bom_cost',
         'product',
+        'purchase_stock',
         'res_country_logistic_charge',
     ],
     'data': [
