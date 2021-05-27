@@ -9,9 +9,10 @@ class TestProductManagedReplenishmentCost(SavepointCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        vendor = cls.env.ref('base.res_partner_3')
+        cls.vendor = cls.env.ref('base.res_partner_3')
+        cls.vendor.country_id = cls.env.ref('base.be')
         supplierinfo = cls.env['product.supplierinfo'].create({
-            'name': vendor.id,
+            'name': cls.vendor.id,
         })
         mto = cls.env.ref('stock.route_warehouse0_mto')
         buy = cls.env.ref('purchase_stock.route_warehouse0_buy')
@@ -38,3 +39,6 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         })
         repl.update_products_replenishment_cost()
         self.assertEqual(self.product.managed_replenishment_cost, 60.0)
+        self.vendor.country_id.country_group_ids[0].logistic_charge_percentage = 15.0
+        repl.update_products_replenishment_cost()
+        self.assertAlmostEqual(self.product.managed_replenishment_cost, 60.0 * 1.15)
