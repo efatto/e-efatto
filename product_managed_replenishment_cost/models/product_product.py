@@ -53,7 +53,8 @@ class ProductProduct(models.Model):
              "acquire the goods, mass updated by the user on request only.")
 
     @api.multi
-    def update_managed_replenishment_cost(self, update_standard_price=False):
+    def update_managed_replenishment_cost(self):
+        update_standard_price = self.env.context.get('update_standard_price', False)
         # update cost for products to be purchased first, then them to be produced
         for product in self.filtered(
             lambda x: x.seller_ids
@@ -88,7 +89,9 @@ class ProductProduct(models.Model):
             lambda x: not x.seller_ids
         ):
             produce_price = product.managed_replenishment_cost
-            # todo if product has a bom, update cost from this one
+            # if product has a bom, update cost from this one
+            if product.bom_count:
+                produce_price = product._get_price_from_bom()
             product.managed_replenishment_cost = produce_price
             if update_standard_price:
                 product.standard_price = produce_price

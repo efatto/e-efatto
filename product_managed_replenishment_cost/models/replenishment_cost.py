@@ -23,24 +23,28 @@ class ReplenishmentCost(models.Model):
 
     @api.multi
     def update_products_standard_price(self):
-        res = self.update_products_replenishment_cost(update_standard_price=True)
+        res = self.with_context(
+            update_standard_price=True
+        ).update_products_replenishment_cost()
         return res
 
     @api.multi
-    def update_products_replenishment_cost(self, update_standard_price=False):
+    def update_products_replenishment_cost(self):
         for repl in self:
-            domain = [('type', 'in', ['product', 'service'])]
-            #fixme serve aggiungere la company_id al dominio su repl.company_id.id?
+            domain = [('type', 'in', ['product', 'consu'])]
             if repl.product_ctg_ids:
                 domain.append(('categ_id', 'in', repl.product_ctg_ids.ids))
             products = self.env['product.product'].search(domain)
             started_at = time.time()
-            products.update_managed_replenishment_cost(update_standard_price)
+            products.update_managed_replenishment_cost()
             duration = time.time() - started_at
             repl.last_update = fields.Datetime.now()
             if not repl.name:
                 repl.name = _('Update of %s' % repl.last_update)
-            repl.log = 'Updated %s products in %.2f minutes.' % (
+            repl.log = 'Updated %s for %s products in %.2f minutes.' % (
+                'replenishment cost and standard price'
+                if self.env.context.get('update_standard_price')
+                else 'replenishment cost',
                 len(products),
                 duration / 60,
             )
