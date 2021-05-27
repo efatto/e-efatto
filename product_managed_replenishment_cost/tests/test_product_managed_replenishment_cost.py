@@ -16,11 +16,13 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         })
         mto = cls.env.ref('stock.route_warehouse0_mto')
         buy = cls.env.ref('purchase_stock.route_warehouse0_buy')
+        cls.intrastat = cls.env.ref('l10n_it_intrastat.intrastat_intrastat_01012100')
         cls.product = cls.env['product.product'].create({
             'name': 'Product Test',
             'standard_price': 50.0,
             'seller_ids': [(6, 0, [supplierinfo.id])],
             'route_ids': [(6, 0, [buy.id, mto.id])],
+            'intrastat_code_id': cls.intrastat.id,
         })
 
     def test_01_create(self):
@@ -42,3 +44,9 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         self.vendor.country_id.country_group_ids[0].logistic_charge_percentage = 15.0
         repl.update_products_replenishment_cost()
         self.assertAlmostEqual(self.product.managed_replenishment_cost, 60.0 * 1.15)
+        tariff = self.env['report.intrastat.tariff'].create({
+            'tariff_percentage': 10.0
+        })
+        self.intrastat.tariff_id = tariff
+        repl.update_products_replenishment_cost()
+        self.assertAlmostEqual(self.product.managed_replenishment_cost, 60.0 * 1.25)
