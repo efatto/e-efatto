@@ -31,7 +31,7 @@
                             <button name="update_products_replenishment_cost" string="Update Products Replenishment Cost" type="object"/>
                         </group>
                         <group>
-                            <button name="update_products_standard_price" string="Update Bom Cost and Products Standard Price" type="object"/>
+                            <button name="update_products_standard_price" string="Update Products Standard Price from Replenishment Cost" type="object"/>
                         </group>
                         <group>
                             <field name="log"/>

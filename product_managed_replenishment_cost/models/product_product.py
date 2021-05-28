@@ -55,9 +55,9 @@ class ProductProduct(models.Model):
     @api.multi
     def update_managed_replenishment_cost(self):
         update_standard_price = self.env.context.get('update_standard_price', False)
-        # update cost for products to be purchased first, then them to be produced
+        # update cost for products to be purchased first, then them to be manufactured
         for product in self.filtered(
-            lambda x: x.seller_ids
+            lambda x: x.seller_ids and not x.bom_count
         ):
             purchase_price = 0.0
             margin_percentage = 0.0
@@ -85,13 +85,12 @@ class ProductProduct(models.Model):
             product.managed_replenishment_cost = purchase_price
             if update_standard_price:
                 product.standard_price = purchase_price
+        # compute replenishment cost for product to be manufactured, with or without
+        # suppliers
         for product in self.filtered(
-            lambda x: not x.seller_ids
+            lambda x: x.bom_count
         ):
-            produce_price = product.managed_replenishment_cost
-            # if product has a bom, update cost from this one
-            if product.bom_count:
-                produce_price = product._get_price_from_bom()
+            produce_price = product._get_price_from_bom()
             product.managed_replenishment_cost = produce_price
             if update_standard_price:
                 product.standard_price = produce_price
