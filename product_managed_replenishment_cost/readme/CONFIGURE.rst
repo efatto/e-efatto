@@ -19,14 +19,14 @@ verranno modificati.
 
 Questo calcolo è possibile farlo in maniera indipendente dal menu:
 
-.. image:: /product_managed_replenishment_cost/static/description/menu.png
+.. image:: ../static/description/menu.png
     :alt: Menu in impostazioni Magazzino
 
 tramite due azioni
 
 1. questa azione esegue l'aggiornamento del costo di sostituzione solamente;
 
-.. image:: /product_managed_replenishment_cost/static/description/aggiorna_sostituzione.png
+.. image:: ../static/description/aggiorna_sostituzione.png
     :alt: Aggiorna il costo di sostituzione
 
 2. questa azione esegue l'aggiornamento del punto 1. e poi riporta lo stesso
@@ -35,5 +35,5 @@ tramite due azioni
    in ogni caso che questo campo potrebbe essere modificato in maniera automa-
    tica dal sistema in base alla configurazione.
 
-.. image:: /product_managed_replenishment_cost/static/description/aggiorna_costo.png
+.. image:: ../static/description/aggiorna_costo.png
     :alt: Aggiorna il costo
