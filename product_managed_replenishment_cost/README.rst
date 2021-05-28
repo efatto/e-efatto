@@ -77,6 +77,12 @@ mato:
 .. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/product_managed_replenishment_cost/static/description/listino.png
     :alt: Esporta un listino
 
+Known issues / Roadmap
+======================
+
+Permettere la generazione di un listino sulla base del campo costo di
+sostituzione programmato.
+
 Bug Tracker
 ===========
 
