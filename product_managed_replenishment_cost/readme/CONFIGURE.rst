@@ -37,3 +37,10 @@ tramite due azioni
 
 .. image:: ../static/description/aggiorna_costo.png
     :alt: Aggiorna il costo
+
+In seguito è utile creare un listino a partire dal costo per generare un'espor-
+tazione (reimportabile) per effettuare un cambio di listino di vendita program-
+mato:
+
+.. image:: ../static/description/listino.png
+    :alt: Esporta un listino

@@ -70,6 +70,13 @@ tramite due azioni
 .. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/product_managed_replenishment_cost/static/description/aggiorna_costo.png
     :alt: Aggiorna il costo
 
+In seguito è utile creare un listino a partire dal costo per generare un'espor-
+tazione (reimportabile) per effettuare un cambio di listino di vendita program-
+mato:
+
+.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/product_managed_replenishment_cost/static/description/listino.png
+    :alt: Esporta un listino
+
 Bug Tracker
 ===========
 
