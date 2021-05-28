@@ -2,12 +2,6 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     'name': 'Product Managed Replenishment Cost',
-    'description': """
-    Compute replenishment cost from Customs Tariff and Country Group of Seller.
-    Cost is computed:
-    - from BOM if product has a bom;
-    - from sellers if product does not have a bom and has sellers.
-    In other cases it isn't recomputed (without BOM and sellers.""",
     'version': '12.0.1.0.0',
     'author': 'Sergio Corato',
     'category': 'Products',
