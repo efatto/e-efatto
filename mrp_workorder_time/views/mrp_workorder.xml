@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="mrp_production_workorder_form_view_inherit">
+        <field name="model">mrp.workorder</field>
+        <field name="inherit_id" ref="mrp.mrp_production_workorder_form_view_inherit"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='time_ids']" position="attributes">
+                <attribute name="attrs">{'invisible': [('state', '=', 'ready')]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='time_ids']/tree" position="attributes">
+                <attribute name="editable">bottom</attribute>
+            </xpath>
+            <xpath expr="//field[@name='time_ids']/tree/field[@name='workcenter_id']" position="attributes">
+                <attribute name="invisible" eval="0"/>
+            </xpath>
+            <xpath expr="//field[@name='time_ids']/tree/field[@name='date_start']" position="after">
+                <field name="unit_amount"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
