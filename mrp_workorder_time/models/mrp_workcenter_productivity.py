@@ -14,6 +14,13 @@ class MrpWorkcenterProductivity(models.Model):
              "compute duration in seconds. When filled, date start will be reset to "
              "minutes."
     )
+    loss_id = fields.Many2one(
+        default=lambda self: self._default_loss_id())
+
+    def _default_loss_id(self):
+        return self.env['mrp.workcenter.productivity.loss'].search(
+            [('loss_type', '=', 'productive')],
+            limit=1)
 
     @api.onchange('unit_amount')
     def _onchange_unit_amount(self):
