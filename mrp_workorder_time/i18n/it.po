@@ -1,0 +1,32 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* mrp_workorder_time
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-06-03 09:05+0000\n"
+"PO-Revision-Date: 2021-06-03 09:05+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: mrp_workorder_time
+#: model:ir.model.fields,help:mrp_workorder_time.field_mrp_workcenter_productivity__unit_amount
+msgid "This time will added to date start to compute date end and automatically compute duration in seconds. When filled, date start will be reset to minutes."
+msgstr "Questo tempo verrà aggiunto alla data di inizio per calcolare la data finale e automaticamente calcolare la durata in secondi. Quando compilato, la data iniziale verrà resettata ai minuti."
+
+#. module: mrp_workorder_time
+#: model:ir.model,name:mrp_workorder_time.model_mrp_workcenter_productivity
+msgid "Workcenter Productivity Log"
+msgstr "Registro produttività del centro di lavoro"
+
+#. module: mrp_workorder_time
+#: model:ir.model.fields,field_description:mrp_workorder_time.field_mrp_workcenter_productivity__unit_amount
+msgid "Worked hours"
+msgstr "Ore lavorate"
+
