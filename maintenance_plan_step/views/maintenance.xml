@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="hr_equipment_view_form" model="ir.ui.view">
+        <field name="name">equipment.form.inherit</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_view_form" />
+        <field name="model">maintenance.equipment</field>
+        <field name="arch" type="xml">
+            <field name="maintenance_team_id" position="after">
+                <field name="maintenance_plan_horizon"/>
+                <field name="maintenance_plan_step"/>
+            </field>
+            <xpath expr="//field[@name='maintenance_plan_ids']/tree/field[@name='maintenance_plan_horizon']" position="attributes">
+                <attribute name="attrs">{'invisible': 1}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='maintenance_plan_ids']/tree/field[@name='planning_step']" position="attributes">
+                <attribute name="attrs">{'invisible': 1}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='maintenance_plan_ids']/tree/field[@name='maintenance_plan_horizon']" position="after">
+                <field name="maintenance_plan_horizon_max"/>
+                <field name="planning_step_max"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="maintenance_plan_view_form" model="ir.ui.view">
+        <field name="name">maintenance.plan.form</field>
+        <field name="inherit_id" ref="maintenance_plan.maintenance_plan_view_form" />
+        <field name="model">maintenance.plan</field>
+        <field name="arch" type="xml">
+            <field name="maintenance_plan_horizon" position="attributes">
+                <attribute name="attrs">{'invisible': 1}</attribute>
+            </field>
+            <field name="planning_step" position="attributes">
+                <attribute name="attrs">{'invisible': 1}</attribute>
+            </field>
+            <field name="maintenance_plan_horizon" position="after">
+                <field name="maintenance_plan_horizon_max"/>
+                <field name="planning_step_max"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>
