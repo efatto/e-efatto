@@ -1,17 +1,17 @@
 
 Crea un prodotto di tipo consumabile o stoccabile con:
 
-* a value in field 'weight';
+* un valore nel campo peso:
 
 .. image:: ../static/description/peso.png
     :alt: Peso prodotto
 
-* set True on field 'compute_price_on_weight';
+* il campo 'Calcola prezzo sul peso' selezionato:
 
 .. image:: ../static/description/prodotto.png
     :alt: Prodotto
 
-* add a Seller with a price
+* un Fornitore con un prezzo:
 
 .. image:: ../static/description/prezzo-fornitore-kg.png
     :alt: Fornitore
