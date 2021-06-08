@@ -386,18 +386,26 @@ with purchase product on weight but manage it on a different u.m.</p>
 </div>
 <div class="section" id="configuration">
 <h1><a class="toc-backref" href="#id1">Configuration</a></h1>
-<p>Create a product of type consumable or product with:</p>
+<p>Crea un prodotto di tipo consumabile o stoccabile con:</p>
 <ul class="simple">
 <li>a value in field ‘weight’;</li>
-<li>set True on field ‘compute_price_on_weight’;</li>
-<li>add a Seller with a price.</li>
 </ul>
-<p>Then create a purchase order with the product created, unit price will be
-computed with: ‘seller price’ * ‘product weight’.</p>
-<p>A computed field ‘total weight’ is shown in purchase order line.</p>
-<p>In this way, all other logic remains untouched, but the user can have a simple
-solution to manage product with price on weight but with a different unit of
-measure on warehouse (m, m2, etc.)</p>
+<img alt="Peso prodotto" src="https://raw.githubusercontent.com/efatto/efatto/12.0/purchase_product_weight/static/description/peso.png" />
+<ul class="simple">
+<li>set True on field ‘compute_price_on_weight’;</li>
+</ul>
+<img alt="Prodotto" src="https://raw.githubusercontent.com/efatto/efatto/12.0/purchase_product_weight/static/description/prodotto.png" />
+<ul class="simple">
+<li>add a Seller with a price</li>
+</ul>
+<img alt="Fornitore" src="https://raw.githubusercontent.com/efatto/efatto/12.0/purchase_product_weight/static/description/prezzo-fornitore-kg.png" />
+<p>Quindi creando un ordine di acquisto con questo prodotto, il prezzo unitario
+sarà calcolato con la formula: prezzo fornitore * peso prodotto.</p>
+<p>Un campo calcolato ‘Peso totale’ è mostrato nella riga dell’ordine di acquisto.</p>
+<img alt="Ordine di acquisto" src="https://raw.githubusercontent.com/efatto/efatto/12.0/purchase_product_weight/static/description/acquisto.png" />
+<p>In questo modo, con logica di gestione invariata, si ha una soluzione semplice
+per gestire i prodotti acquistati a peso ma che vengono gestiti internamente
+con una diversa unità di misura.</p>
 </div>
 <div class="section" id="bug-tracker">
 <h1><a class="toc-backref" href="#id2">Bug Tracker</a></h1>

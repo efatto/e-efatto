@@ -1,15 +1,29 @@
 
-Create a product of type consumable or product with:
+Crea un prodotto di tipo consumabile o stoccabile con:
 
 * a value in field 'weight';
+
+.. image:: ../static/description/peso.png
+    :alt: Peso prodotto
+
 * set True on field 'compute_price_on_weight';
-* add a Seller with a price.
 
-Then create a purchase order with the product created, unit price will be
-computed with: 'seller price' * 'product weight'.
+.. image:: ../static/description/prodotto.png
+    :alt: Prodotto
 
-A computed field 'total weight' is shown in purchase order line.
+* add a Seller with a price
 
-In this way, all other logic remains untouched, but the user can have a simple
-solution to manage product with price on weight but with a different unit of
-measure on warehouse (m, m2, etc.)
+.. image:: ../static/description/prezzo-fornitore-kg.png
+    :alt: Fornitore
+
+Quindi creando un ordine di acquisto con questo prodotto, il prezzo unitario
+sarà calcolato con la formula: prezzo fornitore * peso prodotto.
+
+Un campo calcolato 'Peso totale' è mostrato nella riga dell'ordine di acquisto.
+
+.. image:: ../static/description/acquisto.png
+    :alt: Ordine di acquisto
+
+In questo modo, con logica di gestione invariata, si ha una soluzione semplice
+per gestire i prodotti acquistati a peso ma che vengono gestiti internamente
+con una diversa unità di misura.
