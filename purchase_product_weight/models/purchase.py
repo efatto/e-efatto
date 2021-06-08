@@ -16,7 +16,11 @@ class PurchaseOrderLine(models.Model):
     @api.depends('product_id', 'product_qty')
     def compute_weight_total(self):
         for line in self:
-            line.weight_total = line.product_id.weight * line.product_qty
+            weight_total = line.product_id.weight * line.product_qty
+            if self.product_uom and self.product_id.uom_id != self.product_uom:
+                weight_total = self.product_uom._compute_quantity(
+                    weight_total, self.product_id.uom_id)
+            line.weight_total = weight_total
 
     @api.onchange('product_qty', 'product_uom')
     def _onchange_quantity(self):
@@ -50,9 +54,8 @@ class PurchaseOrderLine(models.Model):
                     self.order_id.company_id,
                     self.date_order or fields.Date.today())
 
-            if seller and self.product_uom \
-                    and seller.product_uom != self.product_uom:
-                price_unit = seller.product_uom._compute_price(
+            if self.product_uom and self.product_id.uom_id != self.product_uom:
+                price_unit = self.product_id.uom_id._compute_price(
                     price_unit, self.product_uom)
 
             self.price_unit = price_unit
