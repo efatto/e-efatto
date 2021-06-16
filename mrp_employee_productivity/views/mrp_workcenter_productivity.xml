@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_mrp_workcenter_productivity_search" model="ir.ui.view">
+        <field name="name">view.mrp.workcenter.productivity.search</field>
+        <field name="model">mrp.workcenter.productivity</field>
+        <field name="arch" type="xml">
+            <search string="Mrp Workcenter Productivity">
+                <field name="employee_id"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="description"/>
+                <field name="duration"/>
+                <field name="workcenter_id"/>
+                <field name="workorder_id"/>
+                <field name="loss_id"/>
+            </search>
+        </field>
+    </record>
+    <record id="view_mrp_workcenter_productivity_tree" model="ir.ui.view">
+        <field name="name">view.mrp.workcenter.productivity.tree</field>
+        <field name="model">mrp.workcenter.productivity</field>
+        <field name="arch" type="xml">
+            <tree string="Mrp Workcenter Productivity">
+                <field name="employee_id"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="description"/>
+                <field name="duration" widget="float_timet"/>
+                <field name="workcenter_id"/>
+                <field name="workorder_id"/>
+                <field name="loss_id"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_mrp_workcenter_productivity_form" model="ir.ui.view">
+        <field name="name">view.mrp.workcenter.productivity.form</field>
+        <field name="model">mrp.workcenter.productivity</field>
+        <field name="arch" type="xml">
+            <form string="Mrp Workcenter Productivity">
+                <sheet string="Mrp Workcenter Productivity">
+                    <group>
+                        <group>
+                            <field name="employee_id"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="description"/>
+                        </group>
+                        <group>
+                            <field name="duration"/>
+                            <field name="workcenter_id"/>
+                            <field name="workorder_id"/>
+                            <field name="loss_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_mrp_workcenter_productivity" model="ir.actions.act_window">
+        <field name="name">Workcenter Productivity</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">mrp.workcenter.productivity</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'create':False, 'edit':False}</field>
+        <field name="view_id" ref="view_mrp_workcenter_productivity_tree"/>
+    </record>
+
+    <menuitem action="action_mrp_workcenter_productivity" id="menu_mrp_workcenter_productivity"
+              parent="mrp.menu_mrp_manufacturing" sequence="100"/>
+</odoo>
