@@ -8,7 +8,13 @@
             <xpath expr="//field[@name='time_ids']/tree/field[@name='date_start']" position="before">
                 <field name="employee_id" />
             </xpath>
-            <xpath expr="//field[@name='user_id']" position="replace">
+            <xpath expr="//field[@name='time_ids']/tree/field[@name='user_id']" position="replace">
+            </xpath>
+            <xpath expr="//field[@name='time_ids']/form//field[@name='workcenter_id']" position="before">
+                <field name="employee_id" />
+            </xpath>
+            <xpath expr="//field[@name='time_ids']/form//field[@name='user_id']" position="attributes">
+                <attribute name="attrs">{'invisible': True}</attribute>
             </xpath>
         </field>
     </record>
