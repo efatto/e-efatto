@@ -12,4 +12,8 @@ registrate da questo menu:
 .. image:: ../static/description/menu.png
     :alt: Menu
 
-Nella registrazione sull'ordine di lavoro
+Nella registrazione sull'ordine di lavoro si avrà quindi a disposizione il
+campo dipendente da compilare:
+
+.. image:: ../static/description/lavorazione.png
+    :alt: Ordine di Lavorazione
