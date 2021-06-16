@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="action_mrp_workcenter_productivity_employee" model="ir.actions.act_window">
+        <field name="res_model">mrp.workcenter.productivity</field>
+        <field name="view_type">form</field>
+        <field name="name">Productivity</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_employee_id': [active_id], 'default_employee_id': active_id, 'create':False, 'edit':False}</field>
+        <field name="view_id" ref="view_mrp_workcenter_productivity_tree"/>
+        <field name="search_view_id" ref="view_mrp_workcenter_productivity_search"/>
+    </record>
+    <record id="view_employee_form_inherit_mrp_productivity" model="ir.ui.view">
+        <field name="name">hr.employee</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="priority">10</field>
+        <field name="groups_id" eval="[(4,ref('hr.group_hr_manager'))]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='toggle_active']" position="before">
+                <button name="%(mrp_employee_productivity.action_mrp_workcenter_productivity_employee)d"
+                    class="oe_stat_button"
+                    type="action"
+                    icon="fa-clock-o">
+                    <field name="productivity_count" widget="statinfo" string="Productivity"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>
