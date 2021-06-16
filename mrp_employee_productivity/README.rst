@@ -28,6 +28,29 @@ Add also a button to retrieve productivity from employee form view.
 .. contents::
    :local:
 
+Configuration
+=============
+
+
+All'interno della maschera del dipendenti è visibile questo bottone
+
+.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/mrp_employee_productivity/static/description/lavorazioni.png
+    :alt: Lavorazioni
+
+da cui si accede in maniera diretta alle lavorazioni eseguite dal dipendente.
+
+Inoltre nell'app produzione si possono visualizzare tutte le lavorazioni
+registrate da questo menu:
+
+.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/mrp_employee_productivity/static/description/menu.png
+    :alt: Menu
+
+Nella registrazione sull'ordine di lavoro si avrà quindi a disposizione il
+campo dipendente da compilare:
+
+.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/mrp_employee_productivity/static/description/lavorazione.png
+    :alt: Ordine di Lavorazione
+
 Bug Tracker
 ===========
 
