@@ -11,9 +11,10 @@ class MrpWorkcenterProductivity(models.Model):
     def default_get(self, field_list):
         result = super(MrpWorkcenterProductivity, self).default_get(field_list)
         if not self.env.context.get('default_employee_id') \
-                and 'employee_id' in field_list and result.get('user_id'):
+                and 'employee_id' in field_list:
+            user_id = result.get('user_id') or self._context['uid']
             result['employee_id'] = self.env['hr.employee'].search(
-                [('user_id', '=', result['user_id'])], limit=1).id
+                [('user_id', '=', user_id)], limit=1).id
         return result
 
     employee_id = fields.Many2one('hr.employee', "Employee", required=True)
