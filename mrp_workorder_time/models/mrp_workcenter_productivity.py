@@ -27,3 +27,8 @@ class MrpWorkcenterProductivity(models.Model):
         if self.unit_amount:
             self.date_start = self.date_start.replace(second=0)
             self.date_end = self.date_start + relativedelta(hours=self.unit_amount)
+
+    @api.onchange('date_start')
+    def _onchange_date_start(self):
+        if self.unit_amount:
+            self.date_end = self.date_start + relativedelta(hours=self.unit_amount)
