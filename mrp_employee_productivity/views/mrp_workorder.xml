@@ -5,8 +5,10 @@
         <field name="model">mrp.workorder</field>
         <field name="inherit_id" ref="mrp.mrp_production_workorder_form_view_inherit"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='user_id']" position="after">
+            <xpath expr="//field[@name='time_ids']/tree/field[@name='date_start']" position="before">
                 <field name="employee_id" />
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position="replace">
             </xpath>
         </field>
     </record>
