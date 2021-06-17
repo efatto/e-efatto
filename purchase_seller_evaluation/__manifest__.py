@@ -7,6 +7,7 @@
     'category': 'Products',
     'depends': [
         'purchase_stock',
+        'sale_stock',
     ],
     'data': [
     ],
