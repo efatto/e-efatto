@@ -137,19 +137,39 @@ class PurchaseSellerEvaluation(TransactionCase):
                 purchase_order.company_id, purchase_order.date_order)
         self.assertEqual(po_line.price_unit, round(price_unit, 2))
 
-    # def test_sale_order_different_uom_po(self):
-    #     purchase_order = self.env['purchase.order'].create({
-    #         'partner_id': self.env.ref('base.res_partner_3').id,
-    #         'date_order': fields.Date.today(),
-    #         'order_line': [
-    #             (0, 0, {
-    #                 'product_id': self.product_on_weight_uom_po.id,
-    #                 'product_qty': 20,
-    #                 'product_uom': self.product_on_weight_uom_po.uom_po_id.id,
-    #                 'price_unit': self.product_on_weight_uom_po.list_price,
-    #                 'name': self.product_on_weight_uom_po.name,
-    #                 'date_planned': fields.Date.today(),
-    #             }),
-    #         ]
-    #     })
-    #
+    def test_sale_order_different_uom_po(self):
+        sale_order = self.env['sale.order'].create({
+            'partner_id': self.env.ref('base.res_partner_12').id,
+            'date_order': fields.Date.today(),
+            'picking_policy': 'direct',
+            'order_line': [
+                (0, 0, {
+                    'product_id': self.product_uom_po.id,
+                    'product_uom_qty': 20,
+                    'product_uom': self.product_uom_po.uom_po_id.id,
+                    'price_unit': self.product_uom_po.list_price,
+                    'name': self.product_uom_po.name,
+                    'expected_date': fields.Date.today() + timedelta(days=20),
+                }),
+            ]
+        })
+        sale_order.action_confirm()
+        with mute_logger('odoo.addons.stock.models.procurement'):
+            self.env['procurement.group'].run_scheduler()
+        self.assertEqual(
+            len(sale_order.order_line), 1, msg="Order line was not created")
+        purchase_order = self.env['purchase.order'].search([
+            ('partner_id', '=', self.env.ref('base.res_partner_4').id),
+            ('order_line.product_id', 'in', [self.product_uom_po.id]),
+        ])
+        self.assertTrue(purchase_order)
+        po_line = purchase_order.order_line.filtered(
+            lambda x: x.product_id == self.product_uom_po
+        )
+        price_unit = 4
+        if purchase_order.partner_id.currency_id != purchase_order.currency_id:
+            price_unit *= purchase_order.currency_id._get_conversion_rate(
+                purchase_order.partner_id.currency_id, purchase_order.currency_id,
+                purchase_order.company_id, purchase_order.date_order)
+        self.assertEqual(po_line.price_unit, round(price_unit, 2))
+        self.assertEqual(po_line.product_uom, self.uom_po)
