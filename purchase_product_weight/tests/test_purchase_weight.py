@@ -5,10 +5,10 @@ from odoo.tests.common import TransactionCase
 from odoo import fields
 
 
-class PurchaseOrder(TransactionCase):
+class PurchaseProductWeight(TransactionCase):
 
     def setUp(self):
-        super(PurchaseOrder, self).setUp()
+        super(PurchaseProductWeight, self).setUp()
         self.product_model = self.env['product.template']
         self.product_template_on_weight = self.product_model.create({
             'name': 'Product on weight',
