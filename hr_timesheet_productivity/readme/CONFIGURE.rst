@@ -9,3 +9,9 @@ lavoro:
 
 .. image:: ../static/description/report.png
     :alt: Report
+
+È possibile entrare nel dettaglio delle ore riportate e verificare l'origine:
+ordine di lavoro, produzione, attività e progetto:
+
+.. image:: ../static/description/dettaglio.png
+    :alt: Dettaglio
