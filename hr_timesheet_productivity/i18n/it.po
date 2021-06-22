@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-22 07:34+0000\n"
-"PO-Revision-Date: 2021-06-22 07:34+0000\n"
+"POT-Creation-Date: 2021-06-22 10:25+0000\n"
+"PO-Revision-Date: 2021-06-22 10:25+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -52,9 +52,24 @@ msgid "Name"
 msgstr "Nome"
 
 #. module: hr_timesheet_productivity
+#: model:ir.model.fields,field_description:hr_timesheet_productivity.field_hr_timesheet_productivity_report__production_id
+msgid "Production"
+msgstr "Produzione"
+
+#. module: hr_timesheet_productivity
 #: model:ir.model.fields,field_description:hr_timesheet_productivity.field_hr_timesheet_productivity_report__total_productivity
 msgid "Productivity"
 msgstr "Tempi Lavorazioni"
+
+#. module: hr_timesheet_productivity
+#: model:ir.model.fields,field_description:hr_timesheet_productivity.field_hr_timesheet_productivity_report__project_id
+msgid "Project"
+msgstr "Progetti"
+
+#. module: hr_timesheet_productivity
+#: model:ir.model.fields,field_description:hr_timesheet_productivity.field_hr_timesheet_productivity_report__task_id
+msgid "Task"
+msgstr "Attività"
 
 #. module: hr_timesheet_productivity
 #: model:ir.model.fields,field_description:hr_timesheet_productivity.field_hr_timesheet_productivity_report__total_timesheet
@@ -75,6 +90,11 @@ msgstr "Report Fogli Ore e Tempi Lavorazioni"
 #: model:ir.model.fields,field_description:hr_timesheet_productivity.field_hr_timesheet_productivity_report__total_worked
 msgid "Total"
 msgstr "Totale"
+
+#. module: hr_timesheet_productivity
+#: model:ir.model.fields,field_description:hr_timesheet_productivity.field_hr_timesheet_productivity_report__workorder_id
+msgid "Workorder"
+msgstr "Ordine di lavoro"
 
 #. module: hr_timesheet_productivity
 #: model_terms:ir.ui.view,arch_db:hr_timesheet_productivity.view_hr_timesheet_productivity_report_pivot
