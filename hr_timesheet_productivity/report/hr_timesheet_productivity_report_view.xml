@@ -14,7 +14,7 @@
         <field name="name">HR timesheet productivity report: Pivot</field>
         <field name="model">hr.timesheet.productivity.report</field>
         <field name="arch" type="xml">
-            <pivot string="timesheet productivity" disable_linking="False">
+            <pivot string="timesheet productivity" disable_linking="True">
                 <field name="employee_id" type="row"/>
                 <field name="date" interval="day" type="col"/>
                 <field name="total_timesheet" type="measure" widget="float_time"/>
