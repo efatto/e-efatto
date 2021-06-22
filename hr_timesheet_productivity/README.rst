@@ -41,6 +41,12 @@ lavoro:
 .. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/hr_timesheet_productivity/static/description/report.png
     :alt: Report
 
+È possibile entrare nel dettaglio delle ore riportate e verificare l'origine:
+ordine di lavoro, produzione, attività e progetto:
+
+.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/hr_timesheet_productivity/static/description/dettaglio.png
+    :alt: Dettaglio
+
 Bug Tracker
 ===========
 
