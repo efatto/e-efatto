@@ -4,6 +4,12 @@
 from odoo import fields, _, models
 
 
+class GeneralLedgerReportMoveLine(models.TransientModel):
+    _inherit = 'report_general_ledger_move_line'
+
+    date_maturity = fields.Date()
+
+
 class GeneralLedgerReportCompute(models.TransientModel):
     _inherit = 'report_general_ledger'
 
