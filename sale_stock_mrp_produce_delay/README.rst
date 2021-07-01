@@ -69,6 +69,11 @@ informazioni sopra:
 
 n.b. la disponibilità di un articolo in arrivo in magazzino il giorno x è calcolata per il giorno x+1
 
+Quando l'icona è rossa segnala che non è possibile fornire da stock il prodotto:
+
+.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/sale_stock_mrp_produce_delay/static/description/non-disponibile.png
+    :alt: Non disponibile
+
 Known issues / Roadmap
 ======================
 

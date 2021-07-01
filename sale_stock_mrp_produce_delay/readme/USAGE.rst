@@ -39,3 +39,8 @@ informazioni sopra:
     :alt: Disponibilità maggiore
 
 n.b. la disponibilità di un articolo in arrivo in magazzino il giorno x è calcolata per il giorno x+1
+
+Quando l'icona è rossa segnala che non è possibile fornire da stock il prodotto:
+
+.. image:: ../static/description/non-disponibile.png
+    :alt: Non disponibile
