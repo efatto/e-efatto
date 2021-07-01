@@ -48,6 +48,7 @@ class SaleOrderLine(models.Model):
         #  available from stock to customer
         # do not do super() as this override other logic and consume time
         # storing fields will not recall this method on all record at every change
+        # TODO add previsional consumed and manufactured from manufacturing
         qty_processed_per_product = defaultdict(lambda: 0)
         for line in self.sorted(key=lambda r: r.sequence):
             if not line.product_id:
