@@ -9,7 +9,8 @@ Quando l'icona è in blu mostra la quantità disponibile per coprire la richiest
 alla prima data possibile, senza che questo prelievo incida sullo stock in modo
 da farlo diventare negativo.
 
-Es. con una richiesta di 1 pz la disponibilità è immediata:
+Es. con una richiesta di 1 pz con un ordine alla data odierna del 01/07/2021
+la disponibilità è immediata:
 
 .. image:: ../static/description/richiesta-quantita.png
     :alt: Richiesta quantità iniziale
