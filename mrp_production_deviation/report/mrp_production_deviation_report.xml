@@ -6,7 +6,7 @@
         <field name="arch" type="xml">
             <search string="production deviation">
                 <field name="production_id"/>
-                <filter name="year" string="Date" date="date"/>
+                <filter name="year" string="Date" date="date" default_period="this_year"/>
             </search>
         </field>
     </record>
@@ -16,7 +16,6 @@
         <field name="arch" type="xml">
             <pivot string="production deviation">
                 <field name="production_id" type="row"/>
-                <field name="date" interval="year" type="col"/>
             </pivot>
         </field>
     </record>
