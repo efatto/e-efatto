@@ -9,7 +9,6 @@ class MrpProductionDeviationReport(models.Model):
     _auto = False
     _description = 'Production Deviation Report'
 
-    # employee_id = fields.Many2one('hr.employee')
     name = fields.Char('Production Name', readonly=True)
     date = fields.Date('Planned Date', readonly=True)
     production_id = fields.Many2one('mrp.production', readonly=True)
@@ -21,9 +20,9 @@ class MrpProductionDeviationReport(models.Model):
     quantity_expected = fields.Float('Qty Expected', readonly=True)
     product_qty = fields.Float('Qty Done', readonly=True)
     quantity_deviation = fields.Float('Qty Deviation', readonly=True)
-    # cost_expected = fields.Float(string="Cost Expected", readonly=True)
-    # cost = fields.Float(string="Cost", readonly=True)
-    # cost_deviation = fields.Float(string="Cost Deviation", readonly=True)
+    cost_expected = fields.Float(string="Cost Expected", readonly=True)
+    cost = fields.Float(string="Cost", readonly=True)
+    cost_deviation = fields.Float(string="Cost Deviation", readonly=True)
 
     @api.model_cr
     def init(self):
@@ -42,7 +41,11 @@ class MrpProductionDeviationReport(models.Model):
                 coalesce(SUM(sub.quantity_expected), 0) AS quantity_expected,
                 coalesce(SUM(sub.product_qty), 0) AS product_qty,
                 coalesce(sum(sub.product_qty), 0) - 
-                    coalesce(sum(sub.quantity_expected), 0) AS quantity_deviation
+                    coalesce(sum(sub.quantity_expected), 0) AS quantity_deviation,
+                coalesce(SUM(sub.cost_expected), 0) AS cost_expected,
+                coalesce(SUM(sub.cost), 0) AS cost,
+                coalesce(sum(sub.cost), 0) - 
+                    coalesce(sum(sub.cost_expected), 0) AS cost_deviation
             FROM (
             SELECT
                 w.id AS id,
@@ -54,9 +57,12 @@ class MrpProductionDeviationReport(models.Model):
                 0 AS quantity_expected,
                 0 AS product_qty,
                 w.duration_expected,
-                w.duration * 60 AS duration
+                w.duration,
+                w.duration_expected * wc.costs_hour / 60 AS cost_expected,
+                w.duration * wc.costs_hour / 60 AS cost
             FROM mrp_workorder w 
                 LEFT JOIN mrp_production p ON w.production_id = p.id
+                LEFT JOIN mrp_workcenter wc ON wc.id = w.workcenter_id
             UNION
             SELECT
                 -MIN(s.id) AS id,
@@ -65,10 +71,12 @@ class MrpProductionDeviationReport(models.Model):
                 to_char(p.date_planned_start, 'YYYY-MM-DD') AS date,
                 p.id AS production_id,
                 s.product_id,
-                coalesce(SUM(bl.product_qty), 0) AS quantity_expected,
+                coalesce(SUM(bl.product_qty * p.product_qty), 0) AS quantity_expected,
                 coalesce(SUM(sml.qty_done), 0) AS product_qty,
                 0 AS duration_expected,
-                0 AS duration
+                0 AS duration,
+                coalesce(SUM(bl.product_qty * p.product_qty * s.price_unit), 0) AS cost_expected,
+                coalesce(SUM(sml.qty_done * s.price_unit ), 0)AS cost
             FROM stock_move s
                 LEFT JOIN mrp_bom_line bl ON bl.id = s.bom_line_id
                 LEFT JOIN mrp_production p ON s.raw_material_production_id = p.id
