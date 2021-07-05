@@ -1,1 +1,1 @@
-This module add a report for timesheet with productivity times from workorders.
+This module add statistic report for production deviation.
