@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_mrp_production_deviation_report_search" model="ir.ui.view">
+        <field name="name">Search for MRP production deviation report</field>
+        <field name="model">mrp.production.deviation.report</field>
+        <field name="arch" type="xml">
+            <search string="production deviation">
+                <field name="production_id"/>
+                <filter name="year" string="Date" date="date"/>
+            </search>
+        </field>
+    </record>
+    <record id="view_mrp_production_deviation_report_pivot" model="ir.ui.view">
+        <field name="name">MRP production deviation report: Pivot</field>
+        <field name="model">mrp.production.deviation.report</field>
+        <field name="arch" type="xml">
+            <pivot string="production deviation">
+                <field name="production_id" type="row"/>
+                <field name="date" interval="year" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_mrp_production_deviation_report" model="ir.actions.act_window">
+        <field name="name">MRP Production Deviation Report</field>
+        <field name="res_model">mrp.production.deviation.report</field>
+        <field name="view_mode">pivot,graph</field>
+        <field name="context">{'search_default_year': True}</field>
+    </record>
+
+    <menuitem id="menu_mrp_production_deviation_report"
+              parent="mrp.menu_mrp_reporting"
+              action="action_mrp_production_deviation_report"
+              name="Production Deviation"/>
+</odoo>
