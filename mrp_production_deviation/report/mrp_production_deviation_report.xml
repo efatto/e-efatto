@@ -17,6 +17,7 @@
             <pivot string="production deviation">
                 <field name="production_id" type="row"/>
                 <field name="product_id" type="row"/>
+                <field name="workorder_id" type="row"/>
                 <field name="quantity_expected" type="measure"/>
                 <field name="product_qty" type="measure"/>
                 <field name="quantity_deviation" type="measure"/>

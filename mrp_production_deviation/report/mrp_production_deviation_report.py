@@ -13,6 +13,7 @@ class MrpProductionDeviationReport(models.Model):
     name = fields.Char('Production Name', readonly=True)
     date = fields.Date('Planned Date', readonly=True)
     production_id = fields.Many2one('mrp.production', readonly=True)
+    workorder_id = fields.Many2one('mrp.workorder', readonly=True)
     duration_expected = fields.Float('Expected Duration', readonly=True)
     duration = fields.Float('Duration Done', readonly=True)
     duration_deviation = fields.Float('Duration Deviation', readonly=True)
@@ -20,8 +21,9 @@ class MrpProductionDeviationReport(models.Model):
     quantity_expected = fields.Float('Qty Expected', readonly=True)
     product_qty = fields.Float('Qty Done', readonly=True)
     quantity_deviation = fields.Float('Qty Deviation', readonly=True)
-    # expected_cost = fields.Float(string="Previsional Cost")
-    # cost = fields.Float(string="Cost")
+    # cost_expected = fields.Float(string="Cost Expected", readonly=True)
+    # cost = fields.Float(string="Cost", readonly=True)
+    # cost_deviation = fields.Float(string="Cost Deviation", readonly=True)
 
     @api.model_cr
     def init(self):
@@ -29,6 +31,7 @@ class MrpProductionDeviationReport(models.Model):
         self._cr.execute("""CREATE OR REPLACE VIEW %s AS (
             SELECT
                 MIN(id) AS id,
+                MIN(workorder_id) AS workorder_id,
                 sub.date,
                 sub.production_id,
                 sub.product_id,
@@ -43,6 +46,7 @@ class MrpProductionDeviationReport(models.Model):
             FROM (
             SELECT
                 w.id AS id,
+                w.id AS workorder_id,
                 p.name,
                 to_char(p.date_planned_start, 'YYYY-MM-DD') AS date,
                 p.id AS production_id,
@@ -50,12 +54,13 @@ class MrpProductionDeviationReport(models.Model):
                 0 AS quantity_expected,
                 0 AS product_qty,
                 w.duration_expected,
-                w.duration AS duration
+                w.duration * 60 AS duration
             FROM mrp_workorder w 
                 LEFT JOIN mrp_production p ON w.production_id = p.id
             UNION
             SELECT
                 -MIN(s.id) AS id,
+                NULL AS workorder_id,
                 MIN(s.name),
                 to_char(p.date_planned_start, 'YYYY-MM-DD') AS date,
                 p.id AS production_id,
@@ -71,6 +76,6 @@ class MrpProductionDeviationReport(models.Model):
             GROUP BY p.date_planned_start, p.id, s.product_id
             )
             AS sub
-            GROUP BY date, production_id, product_id
+            GROUP BY date, production_id, product_id, workorder_id
         )
         """ % self._table)
