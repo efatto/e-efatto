@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates>
 <!--  Icon is red when:
-      1. qty requested is greater than qty available and product is not mto and date scheduled is greater than date requested
-      2. product is mto and date scheduled is greater than date requested-->
+      1. qty requested is greater than qty available and date scheduled is greater than date requested
+      Icon is invisible when:
+      2. product is mto
+-->
     <div t-extend="sale_stock.qtyAtDate">
-        <t t-jquery="t[t-if^='widget.data.virtual_available_at_date']" t-operation="attributes">
-            <attribute name="t-if">widget.data.virtual_available_at_date &lt; widget.data.qty_to_deliver and widget.data.scheduled_date &gt; widget.data.commitment_date</attribute>
+        <t t-jquery="div" t-operation="replace">
+            <t t-if="widget.data.virtual_available_at_date &lt; widget.data.qty_to_deliver and widget.data.scheduled_date &gt; widget.data.commitment_date">
+                <a tabindex="0" class="fa fa-info-circle text-danger"/>
+            </t>
+            <t t-elif="widget.data.is_mto">
+                <a tabindex="0"/>
+            </t>
+            <t t-else="">
+                <a tabindex="0" class="fa fa-info-circle text-primary"/>
+            </t>
         </t>
     </div>
     <div t-extend="sale_stock.QtyDetailPopOver">
