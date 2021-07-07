@@ -9,7 +9,7 @@ class MrpProductionDeviationReport(models.Model):
     _auto = False
     _description = 'Production Deviation Report'
 
-    name = fields.Char('Production Name', readonly=True)
+    name = fields.Char('Reference', readonly=True)
     date = fields.Date('Planned Date', readonly=True)
     production_id = fields.Many2one('mrp.production', readonly=True)
     workorder_id = fields.Many2one('mrp.workorder', readonly=True)
@@ -31,6 +31,7 @@ class MrpProductionDeviationReport(models.Model):
             SELECT
                 MIN(id) AS id,
                 MIN(workorder_id) AS workorder_id,
+                MIN(sub.name) AS name,
                 sub.date,
                 sub.production_id,
                 sub.product_id,
