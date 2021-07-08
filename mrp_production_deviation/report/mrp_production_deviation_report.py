@@ -72,12 +72,13 @@ class MrpProductionDeviationReport(models.Model):
                 to_char(p.date_planned_start, 'YYYY-MM-DD') AS date,
                 p.id AS production_id,
                 s.product_id,
-                coalesce(SUM(bl.product_qty * p.product_qty), 0) AS quantity_expected,
+                coalesce(MAX(bl.product_qty * p.product_qty), 0) AS quantity_expected,
                 coalesce(SUM(sml.qty_done), 0) AS product_qty,
                 0 AS duration_expected,
                 0 AS duration,
-                coalesce(SUM(bl.product_qty * p.product_qty * s.price_unit), 0) AS cost_expected,
-                coalesce(SUM(sml.qty_done * s.price_unit ), 0)AS cost
+                coalesce(MAX(bl.product_qty * p.product_qty * ABS(s.price_unit)), 0)
+                 AS cost_expected,
+                coalesce(SUM(sml.qty_done * ABS(s.price_unit)), 0) AS cost
             FROM stock_move s
                 LEFT JOIN mrp_bom_line bl ON bl.id = s.bom_line_id
                 LEFT JOIN mrp_production p ON s.raw_material_production_id = p.id
