@@ -204,6 +204,10 @@ class SaleOrderLine(models.Model):
                 GROUP BY product_id, child_product_id, date
             """, (line.product_id.id, line.product_id.id,))
             res = self._cr.dictfetchall()
+            # adapt available qty if current SO line has a commitment date, to avoid
+            # double computation (1 in query ad another 1 in code)
+            fix_qty = line.product_uom_qty if (
+                line.commitment_date or line.order_id.commitment_date) else 0.0
             # dates on which availability is enough for requested qty
             candidate_availables = [
                 x for x in res if x['cumulative_quantity'] >= line.product_uom_qty]
@@ -212,7 +216,7 @@ class SaleOrderLine(models.Model):
             for candidate_available in candidate_availables:
                 not_available = [
                     x for x in res if
-                    x['cumulative_quantity'] < line.product_uom_qty
+                    (x['cumulative_quantity'] + fix_qty) < line.product_uom_qty
                     and x['date'] >= candidate_available['date']
                 ]
                 if not_available:
