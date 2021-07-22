@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="mrp_routing_form_view_revision" model="ir.ui.view">
+        <field name="name">mrp.routing.form.revision</field>
+        <field name="model">mrp.routing</field>
+        <field name="inherit_id" ref="mrp.mrp_routing_form_view"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="routing_revision" string="Revision"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>
