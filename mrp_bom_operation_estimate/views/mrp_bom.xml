@@ -14,7 +14,7 @@
                             <field name="name"/>
                             <field name="time" widget="float_time"/>
                             <field name="price_unit"/>
-                            <field name="price_subtotal"/>
+                            <field name="price_subtotal" sum="Total"/>
                         </tree>
                     </field>
                 </page>
