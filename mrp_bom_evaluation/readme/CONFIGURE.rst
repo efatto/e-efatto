@@ -8,3 +8,14 @@ Questi possono essere sovrascritti dall'utente, per adattarli in base alla propr
 
 .. image:: ../static/description/prezzi_fornitori.png
     :alt: Inserimento prezzi fornitori
+
+È inoltre possibile aggiornare il costo del prodotto finale con i costi dei materiali e delle operazioni previste:
+
+.. image:: ../static/description/materiali.png
+    :alt: Costi materiali
+
+.. image:: ../static/description/operazioni.png
+    :alt: Costi operazioni
+
+.. image:: ../static/description/prodotto.png
+    :alt: Costo prodotto finale

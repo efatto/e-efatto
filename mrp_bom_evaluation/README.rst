@@ -40,6 +40,17 @@ Questi possono essere sovrascritti dall'utente, per adattarli in base alla propr
 .. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/mrp_bom_evaluation/static/description/prezzi_fornitori.png
     :alt: Inserimento prezzi fornitori
 
+È inoltre possibile aggiornare il costo del prodotto finale con i costi dei materiali e delle operazioni previste:
+
+.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/mrp_bom_evaluation/static/description/materiali.png
+    :alt: Costi materiali
+
+.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/mrp_bom_evaluation/static/description/operazioni.png
+    :alt: Costi operazioni
+
+.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/mrp_bom_evaluation/static/description/prodotto.png
+    :alt: Costo prodotto finale
+
 Bug Tracker
 ===========
 

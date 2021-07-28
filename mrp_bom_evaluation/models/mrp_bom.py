@@ -39,6 +39,7 @@ class MrpBom(models.Model):
     def update_product_price(self):
         self.ensure_one()
         self.product_id.standard_price = sum(
-            self.bom_line_ids.mapped('price_subtotal')) + sum(
-                self.bom_operation_ids.mapped('time')
+            self.bom_line_ids.mapped('price_subtotal')
+        ) + sum(
+            self.bom_operation_ids.mapped('price_subtotal')
         )
