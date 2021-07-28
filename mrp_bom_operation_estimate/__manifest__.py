@@ -1,10 +1,10 @@
-# Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
-# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
+# Copyright 2020-2021 Sergio Corato <https://github.com/sergiocorato>
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
-    'name': 'Mrp bom operation estimate TO BE REFACTORED',
-    'version': '12.0.1.0.0',
+    'name': 'Mrp bom operation estimate',
+    'version': '12.0.1.0.1',
     'category': 'Manufacture',
-    'license': 'LGPL-3',
+    'license': 'AGPL-3',
     'description': """
     Add list of bom operation to estimate time.
     """,
