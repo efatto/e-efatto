@@ -6,7 +6,9 @@
     'category': 'Manufacture',
     'license': 'AGPL-3',
     'description': """
-    Add product prices to bom lines to store them.
+    Add product prices to bom lines to evaluate and store them.
+    Add function to update prices from current better vendor price.
+    TODO Add function to update product cost from current bom evaluation.
     """,
     'author': "Sergio Corato",
     'website': 'https://efatto.it',
