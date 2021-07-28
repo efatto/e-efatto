@@ -13,7 +13,8 @@
     'author': "Sergio Corato",
     'website': 'https://efatto.it',
     'depends': [
-        'mrp',
+        'account',
+        'mrp_bom_operation_estimate',
         'purchase_seller_evaluation',
     ],
     'data': [

@@ -1,13 +1,15 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import models, _
+from odoo import api, models, _
 from odoo.exceptions import UserError
 
 
 class MrpBom(models.Model):
     _inherit = 'mrp.bom'
 
+    @api.multi
     def get_supplier_product_prices(self):
+        self.ensure_one()
         for line in self.bom_line_ids:
             product_id = line.product_id
             values = {
@@ -32,3 +34,11 @@ class MrpBom(models.Model):
                 values, suppliers)
             line.price_unit = self.env['stock.rule']._get_seller_price(
                 supplier, line.product_uom_id)
+
+    @api.multi
+    def update_product_price(self):
+        self.ensure_one()
+        self.product_id.standard_price = sum(
+            self.bom_line_ids.mapped('price_subtotal')) + sum(
+                self.bom_operation_ids.mapped('time')
+        )

@@ -1,4 +1,6 @@
-from odoo import models, fields, api
+# Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+from odoo import api, fields, models
 
 
 class MrpBom(models.Model):
@@ -28,15 +30,3 @@ class MrpBom(models.Model):
         self.update({
             'bom_operation_ids': bom_operation_ids,
         })
-
-
-class MrpBomOperation(models.Model):
-    _name = 'mrp.bom.operation'
-    _description = 'Mrp Bom Estimated Operation'
-
-    name = fields.Char('Description')
-    time = fields.Float('Estimated Duration')
-    operation_id = fields.Many2one(
-        'mrp.routing.workcenter',
-        'Operation',
-    )

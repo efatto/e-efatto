@@ -9,6 +9,7 @@
             <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
                 <button name="get_supplier_product_prices" type="object"
                         icon="fa-shopping-cart"
+                        groups="account.group_account_user"
                         string="Set prices from vendors"/>
             </xpath>
             <xpath expr="//field[@name='bom_line_ids']/tree/field[@name='product_qty']" position="after">

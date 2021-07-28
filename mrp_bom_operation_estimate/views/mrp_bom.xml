@@ -13,6 +13,8 @@
                             <field name="operation_id"/>
                             <field name="name"/>
                             <field name="time" widget="float_time"/>
+                            <field name="price_unit"/>
+                            <field name="price_subtotal"/>
                         </tree>
                     </field>
                 </page>

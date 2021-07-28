@@ -11,6 +11,7 @@
     'author': "Sergio Corato",
     'website': 'https://efatto.it',
     'depends': [
+        'account',
         'mrp',
     ],
     'data': [
