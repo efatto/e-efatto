@@ -54,5 +54,5 @@ msgstr "Totale"
 #. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.mrp_bom_form_view
 msgid "Update product price from bom"
-msgstr "Aggiorna il prezzo del prodotto finito dalla bom"
+msgstr "Aggiorna prezzo prodotto finito da bom"
 
