@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_tree_lead_line" model="ir.ui.view">
+        <field name="name">crm.lead.form.lead</field>
+        <field name="model">crm.lead.line</field>
+        <field name="inherit_id" ref="crm_lead_product.view_tree_lead_line"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="attributes">
+                <attribute name="context">{'default_type': 'product'}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
