@@ -6,19 +6,17 @@
         <field name="model">mrp.bom</field>
         <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
         <field name="arch" type="xml">
-            <xpath expr="//notebook/page[last()]" position="after">
-                <page string="Estimated Operations">
-                    <field name="bom_operation_ids" widget="one2many_list">
-                        <tree string="Estimated Operations" editable="bottom">
-                            <field name="operation_id"/>
-                            <field name="name"/>
-                            <field name="time" widget="float_time"/>
-                            <field name="price_unit"/>
-                            <field name="price_subtotal" sum="Total"/>
-                        </tree>
-                    </field>
-                </page>
-            </xpath>
+            <field name="bom_line_ids" position="after">
+                <field name="bom_operation_ids" widget="one2many_list">
+                    <tree string="Estimated Operations" editable="bottom">
+                        <field name="operation_id"/>
+                        <field name="name"/>
+                        <field name="time" widget="float_time"/>
+                        <field name="price_unit"/>
+                        <field name="price_subtotal" sum="Total"/>
+                    </tree>
+                </field>
+            </field>
         </field>
     </record>
 
