@@ -14,7 +14,7 @@
                 <button name="update_product_price" type="object"
                         icon="fa-save"
                         groups="account.group_account_user"
-                        string="Update product price from bom"/>
+                        string="Update product price manufactured"/>
             </xpath>
             <xpath expr="//field[@name='bom_line_ids']/tree/field[@name='product_qty']" position="after">
                 <field name="price_unit"/>
