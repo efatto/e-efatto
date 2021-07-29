@@ -5,11 +5,8 @@
     'version': '12.0.1.0.0',
     'category': 'Sales Management',
     'license': 'AGPL-3',
-    'description': """
-    Set default product type to stockable to product created from lead.
-    Set product name to a code related to crm lead code.
-    Set default category of product on crm lead product category. Admin user can set 
-    a predefined value to crm.lead object, but this one can be changed by normal user.
+    'summary': """
+    Set defaults for products created from crm lead lines.
     """,
     'author': "Sergio Corato",
     'website': 'https://efatto.it',
