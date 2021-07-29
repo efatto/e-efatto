@@ -11,14 +11,20 @@
                         icon="fa-shopping-cart"
                         groups="account.group_account_user"
                         string="Set prices from vendors"/>
-                <button name="update_product_price" type="object"
+                <button name="update_product_replenishment_cost" type="object"
                         icon="fa-save"
                         groups="account.group_account_user"
-                        string="Update product price manufactured"/>
+                        string="Update manufactured product replenishment cost"/>
             </xpath>
-            <xpath expr="//field[@name='bom_line_ids']/tree/field[@name='product_qty']" position="after">
+            <xpath expr="//field[@name='bom_line_ids']/tree/field[last()]" position="after">
                 <field name="price_unit"/>
                 <field name="price_subtotal" sum="Total"/>
+            </xpath>
+            <xpath expr="//field[@name='bom_line_ids']/ancestor::page[last()]" position="inside">
+                <div class="oe_clear"/>
+                <group class="oe_subtotal_footer oe_right">
+                    <field name="total_amount" class="oe_subtotal_footer_separator"/>
+                </group>
             </xpath>
         </field>
     </record>

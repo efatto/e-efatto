@@ -15,6 +15,7 @@
     'depends': [
         'account',
         'mrp_bom_operation_estimate',
+        'product_replenishment_cost',
         'purchase_seller_evaluation',
     ],
     'data': [

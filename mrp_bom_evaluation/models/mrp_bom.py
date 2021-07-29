@@ -1,11 +1,24 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, models, _
+from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
 
 class MrpBom(models.Model):
     _inherit = 'mrp.bom'
+
+    total_amount = fields.Float(
+        compute='_compute_total_amount',
+        store=True)
+
+    @api.multi
+    @api.depends('bom_operation_ids.price_subtotal',
+                 'bom_line_ids.price_subtotal')
+    def _compute_total_amount(self):
+        for bom in self:
+            bom.total_amount = (
+                sum(bom.mapped('bom_operation_ids.price_subtotal'))
+                + sum(bom.mapped('bom_line_ids.price_subtotal')))
 
     @api.multi
     def get_supplier_product_prices(self):
@@ -36,9 +49,9 @@ class MrpBom(models.Model):
                 supplier, line.product_uom_id)
 
     @api.multi
-    def update_product_price(self):
+    def update_product_replenishment_cost(self):
         self.ensure_one()
-        self.product_id.standard_price = sum(
+        self.product_id.replenishment_cost = sum(
             self.bom_line_ids.mapped('price_subtotal')
         ) + sum(
             self.bom_operation_ids.mapped('price_subtotal')

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-28 13:11+0000\n"
-"PO-Revision-Date: 2021-07-28 13:11+0000\n"
+"POT-Creation-Date: 2021-07-29 13:00+0000\n"
+"PO-Revision-Date: 2021-07-29 13:00+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -28,12 +28,12 @@ msgstr "Riga distinta base"
 #. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_line__price_subtotal
 msgid "Price Subtotal"
-msgstr "Subtotale"
+msgstr "Subtotale Prezzo"
 
 #. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_line__price_unit
 msgid "Price Unit"
-msgstr "Prezzo Unitario"
+msgstr "Prezzo Unitaio"
 
 #. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.mrp_bom_form_view
@@ -41,7 +41,7 @@ msgid "Set prices from vendors"
 msgstr "Inserisci prezzi da fornitori"
 
 #. module: mrp_bom_evaluation
-#: code:addons/mrp_bom_evaluation/models/mrp_bom.py:27
+#: code:addons/mrp_bom_evaluation/models/mrp_bom.py:40
 #, python-format
 msgid "There is no vendor associated to the product %s. Please define a vendor for this product."
 msgstr "Non c'è un fornitore associato al prodotto %s. Si prega di inserire un fornitore in questo prodotto."
@@ -52,7 +52,12 @@ msgid "Total"
 msgstr "Totale"
 
 #. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom__total_amount
+msgid "Total Amount"
+msgstr "Importo Totale"
+
+#. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.mrp_bom_form_view
-msgid "Update product price manufactured"
-msgstr "Imposta prezzo prodotto costruito"
+msgid "Update manufactured product replenishment cost"
+msgstr "Aggiorna costo sostituzione prodotto"
 
