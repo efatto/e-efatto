@@ -11,7 +11,7 @@
                         icon="fa-shopping-cart"
                         groups="account.group_account_user"
                         string="Set prices from vendors"/>
-                <button name="update_product_replenishment_cost" type="object"
+                <button name="update_product_managed_replenishment_cost" type="object"
                         icon="fa-save"
                         groups="account.group_account_user"
                         string="Update manufactured product replenishment cost"/>

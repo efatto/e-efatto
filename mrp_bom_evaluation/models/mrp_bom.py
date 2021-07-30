@@ -49,9 +49,9 @@ class MrpBom(models.Model):
                 supplier, line.product_uom_id)
 
     @api.multi
-    def update_product_replenishment_cost(self):
+    def update_product_managed_replenishment_cost(self):
         self.ensure_one()
-        self.product_id.replenishment_cost = sum(
+        self.product_id.managed_replenishment_cost = sum(
             self.bom_line_ids.mapped('price_subtotal')
         ) + sum(
             self.bom_operation_ids.mapped('price_subtotal')
