@@ -9,9 +9,9 @@ class CrmLeadLine(models.Model):
 
     sequence = fields.Integer("Sequence", default=1)
     product_default_code = fields.Char()
-    product_categ_id = fields.Many2one()
+    product_categ_id = fields.Many2one(comodel_name='product.category')
 
-    @api.onchange('sequence', 'lead_id.product_categ_id')
+    @api.onchange('sequence')
     def onchange_product_default_code(self):
         self.product_default_code = '%s-%s' % (
             self.lead_id.code, self.sequence)
