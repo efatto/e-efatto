@@ -1,0 +1,39 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* product_template_replenishment_cost
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-07-30 08:14+0000\n"
+"PO-Revision-Date: 2021-07-30 08:14+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: product_template_replenishment_cost
+#: model:ir.model.fields,field_description:product_template_replenishment_cost.field_product_product__managed_replenishment_cost
+#: model:ir.model.fields,field_description:product_template_replenishment_cost.field_product_template__managed_replenishment_cost
+msgid "Managed replenishment cost"
+msgstr "Costo sostituzione gestito"
+
+#. module: product_template_replenishment_cost
+#: model:ir.model,name:product_template_replenishment_cost.model_product_product
+msgid "Product"
+msgstr "Prodotto"
+
+#. module: product_template_replenishment_cost
+#: model:ir.model,name:product_template_replenishment_cost.model_product_template
+msgid "Product Template"
+msgstr "Modello prodotto"
+
+#. module: product_template_replenishment_cost
+#: model:ir.model.fields,help:product_template_replenishment_cost.field_product_product__managed_replenishment_cost
+#: model:ir.model.fields,help:product_template_replenishment_cost.field_product_template__managed_replenishment_cost
+msgid "The cost that you have to support in order to produce or acquire the goods."
+msgstr "Il costo da sostenere per produrre o acquisire la merce."
+
