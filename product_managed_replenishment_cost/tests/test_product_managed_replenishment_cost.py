@@ -35,18 +35,23 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         self.product.product_tmpl_id.standard_price = 100.0
         self.assertEqual(self.product.managed_replenishment_cost, 0.0)
 
-        self.product.seller_ids[0].price = 60.0
+        self.product.seller_ids[0].write({
+            'price': 60.0,
+            'discount': 10.0,
+        })
         repl = self.env['replenishment.cost'].create({
             'name': 'Test cost update',
         })
         repl.update_products_replenishment_cost()
-        self.assertEqual(self.product.managed_replenishment_cost, 60.0)
+        self.assertEqual(self.product.managed_replenishment_cost, 60.0 * 0.9)
         self.vendor.country_id.country_group_ids[0].logistic_charge_percentage = 15.0
         repl.update_products_replenishment_cost()
-        self.assertAlmostEqual(self.product.managed_replenishment_cost, 60.0 * 1.15)
+        self.assertAlmostEqual(
+            self.product.managed_replenishment_cost, 60.0 * 0.9 * 1.15)
         tariff = self.env['report.intrastat.tariff'].create({
             'tariff_percentage': 10.0
         })
         self.intrastat.tariff_id = tariff
         repl.update_products_replenishment_cost()
-        self.assertAlmostEqual(self.product.managed_replenishment_cost, 60.0 * 1.25)
+        self.assertAlmostEqual(
+            self.product.managed_replenishment_cost, 60.0 * 0.9 * 1.25)
