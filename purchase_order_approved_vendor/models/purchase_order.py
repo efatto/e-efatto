@@ -1,5 +1,5 @@
-# Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
-# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
+# Copyright 2020-2021 Sergio Corato <https://github.com/sergiocorato>
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models
 
