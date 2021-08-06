@@ -77,7 +77,7 @@ class StockRule(models.Model):
                         'price': price_unit,
                     }
             res = seller_dict['seller']
-        return res[0]
+        return res
 
     def _get_seller_price(self, seller, product_uom):
         price_unit = seller.price
