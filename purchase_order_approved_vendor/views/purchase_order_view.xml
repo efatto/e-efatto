@@ -34,6 +34,10 @@
             </xpath>
             <xpath expr="//button[@name='action_rfq_send'][3]" position="attributes">
                 <attribute name="states">approved</attribute>
+                <attribute name="context">{'send_rfq':True}</attribute>
+            </xpath>
+            <xpath expr="//button[@name='button_release']" position="attributes">
+                <attribute name="states">approved,sent</attribute>
             </xpath>
         </field>
     </record>
