@@ -42,6 +42,10 @@ e costi degli ordini di produzione:
 .. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/mrp_production_deviation/static/description/statistica.png
     :alt: Statistica
 
+I costi dei tempi lavorati sono valorizzati al costo del centro di lavoro collegato.
+
+I costi dei materiali sono valorizzati al costo registrato nel movimento di magazzino di scarico.
+
 Bug Tracker
 ===========
 

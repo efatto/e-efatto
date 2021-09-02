@@ -10,3 +10,7 @@ e costi degli ordini di produzione:
 
 .. image:: ../static/description/statistica.png
     :alt: Statistica
+
+I costi dei tempi lavorati sono valorizzati al costo del centro di lavoro collegato.
+
+I costi dei materiali sono valorizzati al costo registrato nel movimento di magazzino di scarico.

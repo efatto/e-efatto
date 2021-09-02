@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-07 14:40+0000\n"
-"PO-Revision-Date: 2021-07-07 14:40+0000\n"
+"POT-Creation-Date: 2021-09-02 15:03+0000\n"
+"PO-Revision-Date: 2021-09-02 15:03+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -31,6 +31,16 @@ msgid "Cost Expected"
 msgstr "Costo Previsto"
 
 #. module: mrp_production_deviation
+#: model:ir.model.fields,field_description:mrp_production_deviation.field_mrp_production_deviation_report__cost_deviation_rw
+msgid "Cost Routing Deviation"
+msgstr "Scostamento Costo Routing"
+
+#. module: mrp_production_deviation
+#: model:ir.model.fields,field_description:mrp_production_deviation.field_mrp_production_deviation_report__cost_expected_rw
+msgid "Cost Routing Expected"
+msgstr "Costo Previsto Routing"
+
+#. module: mrp_production_deviation
 #: model_terms:ir.ui.view,arch_db:mrp_production_deviation.view_mrp_production_deviation_report_search
 msgid "Date"
 msgstr "Data"
@@ -51,9 +61,19 @@ msgid "Duration Done"
 msgstr "Durata finale"
 
 #. module: mrp_production_deviation
+#: model:ir.model.fields,field_description:mrp_production_deviation.field_mrp_production_deviation_report__duration_deviation_rw
+msgid "Duration Routing Deviation"
+msgstr "Scostamento Durata Routing"
+
+#. module: mrp_production_deviation
 #: model:ir.model.fields,field_description:mrp_production_deviation.field_mrp_production_deviation_report__duration_expected
 msgid "Expected Duration"
-msgstr "Durata prevista"
+msgstr "Durata Prevista"
+
+#. module: mrp_production_deviation
+#: model:ir.model.fields,field_description:mrp_production_deviation.field_mrp_production_deviation_report__duration_expected_rw
+msgid "Expected Routing Duration"
+msgstr "Durata Prevista Routing"
 
 #. module: mrp_production_deviation
 #: model:ir.model.fields,field_description:mrp_production_deviation.field_mrp_production_deviation_report__id
