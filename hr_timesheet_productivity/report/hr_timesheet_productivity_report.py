@@ -43,7 +43,8 @@ class TimesheetProductivity(models.Model):
                     mrp_workcenter_productivity.employee_id AS employee_id,
                     (mrp_workcenter_productivity.duration / 60) AS productivity,
                     NULL AS timesheet,
-                    mrp_workcenter_productivity.date_start::date AS date,
+                    mrp_workcenter_productivity.date_start::TIMESTAMP AT TIME ZONE 'UTC'
+                     AS date,
                     mrp_workorder.name AS name,
                     mrp_workcenter_productivity.workorder_id AS workorder_id,
                     mrp_workorder.production_id AS production_id,
