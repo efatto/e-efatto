@@ -7,9 +7,21 @@ class CrmLeadLine(models.Model):
     _inherit = "crm.lead.line"
     _order = "sequence,id"
 
+    @api.model
+    def _get_mto_route(self):
+        mrp_route = self.env.ref(
+            'mrp.route_warehouse0_manufacture', raise_if_not_found=False)
+        mto_route = self.env.ref('stock.route_warehouse0_mto', raise_if_not_found=False)
+
+        if mrp_route and mto_route:
+            return (mrp_route | mto_route).ids
+        return []
+
     sequence = fields.Integer("Sequence", default=1)
     product_default_code = fields.Char()
     product_categ_id = fields.Many2one(comodel_name='product.category')
+    product_route_ids = fields.Many2many(
+        'stock.location.route', default=lambda self: self._get_mto_route())
 
     @api.onchange('sequence')
     def onchange_product_default_code(self):

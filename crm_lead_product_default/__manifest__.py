@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     'name': 'CRM lead product defaults',
-    'version': '12.0.1.0.0',
+    'version': '12.0.1.0.1',
     'category': 'Sales Management',
     'license': 'AGPL-3',
     'summary': """
@@ -13,6 +13,8 @@
     'depends': [
         'crm_lead_code',
         'crm_lead_product',
+        'stock',
+        'mrp',
     ],
     'data': [
         'views/crm_lead.xml',

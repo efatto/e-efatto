@@ -10,6 +10,7 @@
                 <field name="sequence" widget="handle"/>
                 <field name="product_default_code" invisible="1"/>
                 <field name="product_categ_id" invisible="1"/>
+                <field name="product_route_ids" invisible="1"/>
             </xpath>
             <field name="category_id" position="attributes">
                 <attribute name="invisible">1</attribute>
@@ -18,7 +19,8 @@
                 <attribute name="context">
                     {'default_type': 'product',
                      'default_default_code': product_default_code,
-                     'default_categ_id': product_categ_id}</attribute>
+                     'default_categ_id': product_categ_id,
+                     'default_route_ids': product_route_ids}</attribute>
             </xpath>
         </field>
     </record>
