@@ -33,7 +33,7 @@ msgstr "Subtotale Prezzo"
 #. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_line__price_unit
 msgid "Price Unit"
-msgstr "Prezzo Unitaio"
+msgstr "Prezzo Unitario"
 
 #. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.mrp_bom_form_view
