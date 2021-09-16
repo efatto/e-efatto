@@ -17,5 +17,13 @@ Questi possono essere sovrascritti dall'utente, per adattarli in base alla propr
 .. image:: ../static/description/operazioni.png
     :alt: Costi operazioni
 
+Nel prodotto sarà quindi visibile, dopo il costo normale - aggiornato eventualmente sulla distinta base standard - il costo di sostituzione (denominato 'gestito' per distinguerlo dal costo di sostituzione di un modulo OCA):
+
 .. image:: ../static/description/prodotto.png
     :alt: Costo prodotto finale
+
+tramite il bottone:
+
+.. image:: ../static/description/aggiorna_costo.png
+    :alt: Aggiorna costo
+

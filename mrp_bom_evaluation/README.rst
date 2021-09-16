@@ -13,9 +13,9 @@ Mrp bom evaluation
 .. |badge2| image:: https://img.shields.io/badge/licence-AGPL--3-blue.png
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
-.. |badge3| image:: https://img.shields.io/badge/github-efatto%2Fefatto-lightgray.png?logo=github
-    :target: https://github.com/efatto/efatto/tree/12.0/mrp_bom_evaluation
-    :alt: efatto/efatto
+.. |badge3| image:: https://img.shields.io/badge/github-sergiocorato%2Fe--efatto-lightgray.png?logo=github
+    :target: https://github.com/sergiocorato/e-efatto/tree/12.0/mrp_bom_evaluation
+    :alt: sergiocorato/e-efatto
 
 |badge1| |badge2| |badge3| 
 
@@ -32,32 +32,40 @@ Configuration
 Quanto si inseriscono le righe delle distinte base, vengono automaticamente inseriti i costi dei prodotti.
 Questi possono essere sovrascritti dall'utente, per adattarli in base alla propria convenienza.
 
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/mrp_bom_evaluation/static/description/bom_evaluate.gif
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_evaluation/static/description/bom_evaluate.gif
     :alt: Valutazione bom
 
 È inoltre disponibile un bottone che carica il prezzo migliore del fornitore:
 
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/mrp_bom_evaluation/static/description/prezzi_fornitori.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_evaluation/static/description/prezzi_fornitori.png
     :alt: Inserimento prezzi fornitori
 
 È inoltre possibile aggiornare il costo del prodotto finale con i costi dei materiali e delle operazioni previste:
 
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/mrp_bom_evaluation/static/description/materiali.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_evaluation/static/description/materiali.png
     :alt: Costi materiali
 
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/mrp_bom_evaluation/static/description/operazioni.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_evaluation/static/description/operazioni.png
     :alt: Costi operazioni
 
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/mrp_bom_evaluation/static/description/prodotto.png
+Nel prodotto sarà quindi visibile, dopo il costo normale - aggiornato eventualmente sulla distinta base standard - il costo di sostituzione (denominato 'gestito' per distinguerlo dal costo di sostituzione di un modulo OCA):
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_evaluation/static/description/prodotto.png
     :alt: Costo prodotto finale
+
+tramite il bottone:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_evaluation/static/description/aggiorna_costo.png
+    :alt: Aggiorna costo
+
 
 Bug Tracker
 ===========
 
-Bugs are tracked on `GitHub Issues <https://github.com/efatto/efatto/issues>`_.
+Bugs are tracked on `GitHub Issues <https://github.com/sergiocorato/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us smashing it by providing a detailed and welcomed
-`feedback <https://github.com/efatto/efatto/issues/new?body=module:%20mrp_bom_evaluation%0Aversion:%2012.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/sergiocorato/e-efatto/issues/new?body=module:%20mrp_bom_evaluation%0Aversion:%2012.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -77,6 +85,6 @@ Contributors
 Maintainers
 ~~~~~~~~~~~
 
-This module is part of the `efatto/efatto <https://github.com/efatto/efatto/tree/12.0/mrp_bom_evaluation>`_ project on GitHub.
+This module is part of the `sergiocorato/e-efatto <https://github.com/sergiocorato/e-efatto/tree/12.0/mrp_bom_evaluation>`_ project on GitHub.
 
 You are welcome to contribute.

@@ -2,13 +2,13 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     'name': 'Mrp bom evaluation',
-    'version': '12.0.1.0.1',
+    'version': '12.0.1.0.2',
     'category': 'Manufacture',
     'license': 'AGPL-3',
     'description': """
     Add product prices to bom lines to evaluate and store them.
     Add function to update prices from current better vendor price.
-    TODO Add function to update product cost from current bom evaluation.
+    Add function to update product replenishment cost from current bom evaluation.
     """,
     'author': "Sergio Corato",
     'website': 'https://efatto.it',

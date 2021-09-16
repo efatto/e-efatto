@@ -1,6 +1,7 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, fields, models
+from odoo.addons import decimal_precision as dp
 
 
 class MrpBomLine(models.Model):
@@ -12,6 +13,16 @@ class MrpBomLine(models.Model):
         compute_sudo=True,
         groups='account.group_account_user',
         store=True)
+    weight_total = fields.Float(
+        'Total Weight',
+        digits=dp.get_precision('Stock Weight'),
+        compute='_compute_weight_total',
+        store=True)
+
+    @api.depends('product_id', 'product_id.weight', 'product_qty')
+    def _compute_weight_total(self):
+        for line in self:
+            line.weight_total = line.product_id.weight * line.product_qty
 
     @api.onchange('product_id')
     def onchange_product_id(self):

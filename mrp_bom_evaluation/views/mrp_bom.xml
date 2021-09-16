@@ -17,6 +17,7 @@
                         string="Update replenishment cost"/>
             </xpath>
             <xpath expr="//field[@name='bom_line_ids']/tree/field[last()]" position="after">
+                <field name="weight_total" sum="Total"/>
                 <field name="price_unit"/>
                 <field name="price_subtotal" sum="Total"/>
             </xpath>
