@@ -64,6 +64,8 @@ class PurchaseOrder(models.Model):
 
     @api.multi
     def button_confirm(self):
+        # BUG nel caso questo modulo sia installato, il flag su Approvazione ordini
+        # di acquisto non funziona se non è flaggato anche Stato Confermato extra!!!
         rfq_confirmed_orders = self.filtered(
             lambda x: x.state == 'rfq confirmed'
         )
