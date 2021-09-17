@@ -1,0 +1,16 @@
+# Copyright (C) 2018 - 2021, Open Source Integrators
+# Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+
+{
+    "name": "Product Template Code no space",
+    "summary": "Remove space from product template code",
+    "version": "12.0.1.0.0",
+    "license": "AGPL-3",
+    "author": "Sergio Corato",
+    "category": "Product",
+    "website": "https://efatto.it",
+    "depends": ["product"],
+    "pre_init_hook": 'pre_init_product_code',
+    "installable": True,
+}
