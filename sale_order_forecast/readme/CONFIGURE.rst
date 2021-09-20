@@ -8,7 +8,7 @@ che se cliccata genera un report pivot con le quantità disponibili per data del
 .. image:: ../static/description/forecast_pivot.png
     :alt: Forecast pivot
 
-Le quantità sono separate per documento di ordine:
+Le quantità sono separate per documento di origine:
  #. da ordine di vendita
  #. da magazzino
  #. da produzione (prodotto)
