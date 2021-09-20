@@ -14,12 +14,12 @@ Le quantità sono separate per documento di origine:
  #. da produzione (prodotto)
  #. da produzione (componente)
 
-Ad es. nel caso di una richiesta per 4.662 pz la disponibilità è per questa data:
+Ad es. la disponibilità cumulativa al 01/07/2021 è:
 
 .. image:: ../static/description/disponibilita.png
     :alt: Disponibilità
 
-Mentre per una richiesta superiore ai 5.937 pz la disponibilità è per ques'altra data:
+mentre al 23/07/2021 è:
 
 .. image:: ../static/description/disponibilita_maggiore.png
     :alt: Disponibilità maggiore
