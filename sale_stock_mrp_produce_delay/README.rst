@@ -10,9 +10,9 @@ Sale stock mrp produce delay
 .. |badge1| image:: https://img.shields.io/badge/maturity-Beta-yellow.png
     :target: https://odoo-community.org/page/development-status
     :alt: Beta
-.. |badge2| image:: https://img.shields.io/badge/github-efatto%2Fefatto-lightgray.png?logo=github
-    :target: https://github.com/efatto/efatto/tree/12.0/sale_stock_mrp_produce_delay
-    :alt: efatto/efatto
+.. |badge2| image:: https://img.shields.io/badge/github-sergiocorato%2Fe--efatto-lightgray.png?logo=github
+    :target: https://github.com/sergiocorato/e-efatto/tree/12.0/sale_stock_mrp_produce_delay
+    :alt: sergiocorato/e-efatto
 
 |badge1| |badge2| 
 
@@ -28,51 +28,43 @@ Usage
 =====
 
 Sulla riga ordine di vendita è presente un'icona (i) quando:
-1. l'ordine non ha una data di impegno;
-2. la riga non ha una data di impegno.
+ #. l'ordine non ha una data di impegno;
+ #. la riga non ha una data di impegno.
 
-L'icona è in blu quando il sistema trova una disponibilità futura a stock del
-prodotto. È in rosso in caso contrario.
+L'icona è in blu quando il sistema trova una disponibilità futura a stock del prodotto. È in rosso in caso contrario.
 
-Quando l'icona è in blu mostra la quantità disponibile per coprire la richiesta
-alla prima data possibile, senza che questo prelievo incida sullo stock in modo
-da farlo diventare negativo.
+Quando l'icona è in blu mostra la quantità disponibile per coprire la richiesta alla prima data possibile, senza che questo prelievo incida sullo stock in modo da farlo diventare negativo.
 
-Es. con una richiesta di 1 pz con un ordine alla data odierna del 01/07/2021
-la disponibilità è immediata:
+Es. con una richiesta di 1 pz con un ordine alla data odierna del 01/07/2021 la disponibilità è immediata:
 
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/sale_stock_mrp_produce_delay/static/description/richiesta-quantita.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_mrp_produce_delay/static/description/richiesta_quantita.png
     :alt: Richiesta quantità iniziale
 
-in quanto l'articolo è disponibile e lo stock previsto finale è superiore alla
-quantità richiesta:
+in quanto l'articolo è disponibile e lo stock previsto finale è superiore alla quantità richiesta:
 
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/sale_stock_mrp_produce_delay/static/description/disponibilita.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_mrp_produce_delay/static/description/disponibilita.png
     :alt: Disponibilità
 
 Con una richiesta di 4.662 pz la disponibilità è per il
 
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/sale_stock_mrp_produce_delay/static/description/richiesta-quantita-maggiore.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_mrp_produce_delay/static/description/richiesta_quantita_maggiore.png
     :alt: Richiesta quantità maggiore
 
-in quanto l'articolo ha una quantità sufficiente a partire da quella data, e la
-quantità prevista finale è superiore a quella richiesta:
+in quanto l'articolo ha una quantità sufficiente a partire da quella data, e la quantità prevista finale è superiore a quella richiesta:
 
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/sale_stock_mrp_produce_delay/static/description/disponibilita-maggiore.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_mrp_produce_delay/static/description/disponibilita_maggiore.png
     :alt: Disponibilità maggiore
 
-n.b.: quest'ultima vista si apre dall'icona seguente disponibile sulla riga
-dell'ordine di vendita, e mostra nel dettaglio i dati da cui sono desunte le
-informazioni sopra:
+n.b.: quest'ultima vista si apre dall'icona seguente disponibile sulla riga dell'ordine di vendita, e mostra nel dettaglio i dati da cui sono desunte le informazioni sopra:
 
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/sale_stock_mrp_produce_delay/static/description/icona-forecast.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_mrp_produce_delay/static/description/icona_forecast.png
     :alt: Disponibilità maggiore
 
 n.b. la disponibilità di un articolo in arrivo in magazzino il giorno x è calcolata per il giorno x+1
 
 Quando l'icona è rossa segnala che non è possibile fornire da stock il prodotto:
 
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/sale_stock_mrp_produce_delay/static/description/non-disponibile.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_mrp_produce_delay/static/description/non_disponibile.png
     :alt: Non disponibile
 
 Known issues / Roadmap
@@ -85,10 +77,10 @@ Known issues / Roadmap
 Bug Tracker
 ===========
 
-Bugs are tracked on `GitHub Issues <https://github.com/efatto/efatto/issues>`_.
+Bugs are tracked on `GitHub Issues <https://github.com/sergiocorato/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us smashing it by providing a detailed and welcomed
-`feedback <https://github.com/efatto/efatto/issues/new?body=module:%20sale_stock_mrp_produce_delay%0Aversion:%2012.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/sergiocorato/e-efatto/issues/new?body=module:%20sale_stock_mrp_produce_delay%0Aversion:%2012.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -108,6 +100,6 @@ Contributors
 Maintainers
 ~~~~~~~~~~~
 
-This module is part of the `efatto/efatto <https://github.com/efatto/efatto/tree/12.0/sale_stock_mrp_produce_delay>`_ project on GitHub.
+This module is part of the `sergiocorato/e-efatto <https://github.com/sergiocorato/e-efatto/tree/12.0/sale_stock_mrp_produce_delay>`_ project on GitHub.
 
 You are welcome to contribute.
