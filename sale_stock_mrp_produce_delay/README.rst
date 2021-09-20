@@ -40,27 +40,12 @@ Es. con una richiesta di 1 pz con un ordine alla data odierna del 01/07/2021 la 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_mrp_produce_delay/static/description/richiesta_quantita.png
     :alt: Richiesta quantità iniziale
 
-in quanto l'articolo è disponibile e lo stock previsto finale è superiore alla quantità richiesta:
-
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_mrp_produce_delay/static/description/disponibilita.png
-    :alt: Disponibilità
-
-Con una richiesta di 4.662 pz la disponibilità è per il
+in quanto l'articolo è disponibile e lo stock previsto finale è superiore alla quantità richiesta. Con una richiesta di 4.662 pz la disponibilità è per il:
 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_mrp_produce_delay/static/description/richiesta_quantita_maggiore.png
     :alt: Richiesta quantità maggiore
 
-in quanto l'articolo ha una quantità sufficiente a partire da quella data, e la quantità prevista finale è superiore a quella richiesta:
-
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_mrp_produce_delay/static/description/disponibilita_maggiore.png
-    :alt: Disponibilità maggiore
-
-n.b.: quest'ultima vista si apre dall'icona seguente disponibile sulla riga dell'ordine di vendita, e mostra nel dettaglio i dati da cui sono desunte le informazioni sopra:
-
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_mrp_produce_delay/static/description/icona_forecast.png
-    :alt: Disponibilità maggiore
-
-n.b. la disponibilità di un articolo in arrivo in magazzino il giorno x è calcolata per il giorno x+1
+in quanto l'articolo ha una quantità sufficiente a partire da quella data, e la quantità prevista finale è superiore a quella richiesta.
 
 Quando l'icona è rossa segnala che non è possibile fornire da stock il prodotto:
 
@@ -70,9 +55,9 @@ Quando l'icona è rossa segnala che non è possibile fornire da stock il prodott
 Known issues / Roadmap
 ======================
 
-1. aggiungere la data di consegna possibile in base al tempo di riacquisto/produzione (nel prodotto è stato aggiunto un campo "Tempo di consegna Acquisto" che è calcolato in automatico dal campo "Tempo di consegna" del primo fornitore presente nella tabella "Fornitori" del prodotto nel tab "Acquisto" (si accettano consigli per un metodo di calcolo diverso, media? max? non ci si può basare sull'ordine di vendita comunque) che sommato al "Tempo di consegna cliente" e al "Tempo di produzione" (che dovrebbe essere indicato solo per i prodotti da produrre in quanto viene sempre sommato) che si potrebbe mostrare in caso di prodotto non disponibile da stock)
+#. aggiungere la data di consegna possibile in base al tempo di riacquisto/produzione (nel prodotto è stato aggiunto un campo "Tempo di consegna Acquisto" che è calcolato in automatico dal campo "Tempo di consegna" del primo fornitore presente nella tabella "Fornitori" del prodotto nel tab "Acquisto" (si accettano consigli per un metodo di calcolo diverso, media? max? non ci si può basare sull'ordine di vendita comunque) che sommato al "Tempo di consegna cliente" e al "Tempo di produzione" (che dovrebbe essere indicato solo per i prodotti da produrre in quanto viene sempre sommato) che si potrebbe mostrare in caso di prodotto non disponibile da stock)
 
-2. inserire le quantità prodotte e le quantità in previsione di consumo in produzione nelle quantità considerate nella previsione di stock
+#. inserire le quantità prodotte e le quantità in previsione di consumo in produzione nelle quantità considerate nella previsione di stock
 
 Bug Tracker
 ===========

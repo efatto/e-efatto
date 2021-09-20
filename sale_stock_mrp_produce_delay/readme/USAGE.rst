@@ -11,27 +11,12 @@ Es. con una richiesta di 1 pz con un ordine alla data odierna del 01/07/2021 la 
 .. image:: ../static/description/richiesta_quantita.png
     :alt: Richiesta quantità iniziale
 
-in quanto l'articolo è disponibile e lo stock previsto finale è superiore alla quantità richiesta:
-
-.. image:: ../static/description/disponibilita.png
-    :alt: Disponibilità
-
-Con una richiesta di 4.662 pz la disponibilità è per il
+in quanto l'articolo è disponibile e lo stock previsto finale è superiore alla quantità richiesta. Con una richiesta di 4.662 pz la disponibilità è per il:
 
 .. image:: ../static/description/richiesta_quantita_maggiore.png
     :alt: Richiesta quantità maggiore
 
-in quanto l'articolo ha una quantità sufficiente a partire da quella data, e la quantità prevista finale è superiore a quella richiesta:
-
-.. image:: ../static/description/disponibilita_maggiore.png
-    :alt: Disponibilità maggiore
-
-n.b.: quest'ultima vista si apre dall'icona seguente disponibile sulla riga dell'ordine di vendita, e mostra nel dettaglio i dati da cui sono desunte le informazioni sopra:
-
-.. image:: ../static/description/icona_forecast.png
-    :alt: Disponibilità maggiore
-
-n.b. la disponibilità di un articolo in arrivo in magazzino il giorno x è calcolata per il giorno x+1
+in quanto l'articolo ha una quantità sufficiente a partire da quella data, e la quantità prevista finale è superiore a quella richiesta.
 
 Quando l'icona è rossa segnala che non è possibile fornire da stock il prodotto:
 
