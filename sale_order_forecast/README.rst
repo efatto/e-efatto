@@ -40,10 +40,10 @@ che se cliccata genera un report pivot con le quantità disponibili per data del
     :alt: Forecast pivot
 
 Le quantità sono separate per documento di ordine:
-# da ordine di vendita
-# da magazzino
-# da produzione (prodotto)
-# da produzione (componente)
+ #. da ordine di vendita
+ #. da magazzino
+ #. da produzione (prodotto)
+ #. da produzione (componente)
 
 Bug Tracker
 ===========
