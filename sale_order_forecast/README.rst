@@ -29,10 +29,21 @@ This module add button to generate a pivot view of products and components of sa
 Configuration
 =============
 
-Sulla riga ordine di vendita è presente un'icona fabbrica che se cliccata genera un report pivot con le quantità disponibili per data del prodotto e dei suoi componenti nel caso abbia un distinta base:
+Sulla riga ordine di vendita è presente un'icona a forma di edificio:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_order_forecast/static/description/forecast_icon.png
+    :alt: Forecast icon
+
+che se cliccata genera un report pivot con le quantità disponibili per data del prodotto e dei suoi componenti nel caso abbia un distinta base:
 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_order_forecast/static/description/forecast_pivot.png
     :alt: Forecast pivot
+
+Le quantità sono separate per documento di ordine:
+# da ordine di vendita
+# da magazzino
+# da produzione (prodotto)
+# da produzione (componente)
 
 Bug Tracker
 ===========
