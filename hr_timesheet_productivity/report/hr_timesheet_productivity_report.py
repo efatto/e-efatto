@@ -27,7 +27,7 @@ class TimesheetProductivity(models.Model):
             SELECT
                 max(id) AS id,
                 t.employee_id,
-                t.date,
+                t.date::date AS date,
                 coalesce(sum(t.productivity), 0) AS total_productivity,
                 coalesce(sum(t.timesheet), 0) AS total_timesheet,
                 coalesce(sum(t.productivity), 0) + coalesce(sum(t.timesheet), 0)
