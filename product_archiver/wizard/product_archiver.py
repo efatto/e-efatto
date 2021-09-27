@@ -13,14 +13,18 @@ class ProductArchiver(models.TransientModel):
     def archive(self):
         for wizard in self:
             from_date = wizard.from_date
-            unavailable_products = self.env['product.product'].search([
+            unavailable_products = self.env['product.product'].with_context(
+                active_test=False
+            ).search([
                 ('qty_available', '=', 0.0),
                 ('virtual_available', '=', 0.0),
                 ('incoming_qty', '=', 0.0),
                 ('outgoing_qty', '=', 0.0),
             ])
             # search moved product after from_date to exclude them
-            stock_moved_products = self.env['stock.move.line'].search([
+            stock_moved_products = self.env['stock.move.line'].with_context(
+                active_test=False
+            ).search([
                 ('date', '>=', from_date),
                 ('product_id', 'in', unavailable_products.ids),
             ])
