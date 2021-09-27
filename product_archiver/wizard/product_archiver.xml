@@ -2,13 +2,14 @@
 <odoo>
 
 <record id="product_archiver_wizard" model="ir.ui.view">
-    <field name="name">wizard_print_product_label_form</field>
+    <field name="name">product_archiver_wizard_form</field>
     <field name="model">product.archiver</field>
     <field name="type">form</field>
     <field name="arch" type="xml">
         <form string="Archive Products">
             <group colspan="4">
                 <field name="from_date"/>
+                <field name="model"/>
             </group>
             <footer>
                 <button icon="fa-check" name="archive" string="Open Products to Archive" type="object"/>

@@ -8,6 +8,10 @@ class ProductArchiver(models.TransientModel):
     _name = 'product.archiver'
 
     from_date = fields.Date(string='Inactive from date', required=True)
+    model = fields.Selection([
+        ('product', 'Product Variant'),
+        ('template', 'Product Template')],
+        string='Model', default='product')
 
     @api.multi
     def archive(self):
@@ -29,13 +33,18 @@ class ProductArchiver(models.TransientModel):
                 ('product_id', 'in', unavailable_products.ids),
             ])
             moved_product_ids = stock_moved_products.mapped('product_id')
-            products_to_archive = [
-                x.product_tmpl_id.id for x in unavailable_products
-                if x not in moved_product_ids and not x.orderpoint_ids]
+            if wizard.model == 'template':
+                products_to_archive = [
+                    x.product_tmpl_id.id for x in unavailable_products
+                    if x not in moved_product_ids and not x.orderpoint_ids]
+            else:
+                products_to_archive = [
+                    x.id for x in unavailable_products
+                    if x not in moved_product_ids and not x.orderpoint_ids]
             action = dict(
                 type='ir.actions.act_window',
                 name=_('Products to be archived'),
-                res_model='product.template',
+                res_model='product.%s' % wizard.model,
                 view_mode='tree,form',
                 domain=[('id', 'in', products_to_archive)],
                 target='current',
