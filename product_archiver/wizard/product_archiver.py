@@ -26,18 +26,14 @@ class ProductArchiver(models.TransientModel):
             ])
             moved_product_ids = stock_moved_products.mapped('product_id')
             products_to_archive = [
-                x.id for x in unavailable_products
-                if x not in moved_product_ids]
+                x.product_tmpl_id.id for x in unavailable_products
+                if x not in moved_product_ids and not x.orderpoint_ids]
             action = dict(
                 type='ir.actions.act_window',
                 name=_('Products to be archived'),
-                res_model='product.product',
+                res_model='product.template',
                 view_mode='tree,form',
                 domain=[('id', 'in', products_to_archive)],
-                # 'auto_search': True,
-                # 'views': [
-                #     (self.env.ref('repair.view_repair_order_tree').id, 'tree'),
-                #     (self.env.ref('repair.view_repair_order_form').id, 'form')],
                 target='current',
             )
             return action
