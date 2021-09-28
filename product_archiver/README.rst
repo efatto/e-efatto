@@ -10,9 +10,9 @@ Product archiver
 .. |badge1| image:: https://img.shields.io/badge/maturity-Beta-yellow.png
     :target: https://odoo-community.org/page/development-status
     :alt: Beta
-.. |badge2| image:: https://img.shields.io/badge/github-efatto%2Fe--efatto-lightgray.png?logo=github
-    :target: https://github.com/efatto/e-efatto/tree/12.0/product_archiver
-    :alt: efatto/e-efatto
+.. |badge2| image:: https://img.shields.io/badge/github-sergiocorato%2Fe--efatto-lightgray.png?logo=github
+    :target: https://github.com/sergiocorato/e-efatto/tree/12.0/product_archiver
+    :alt: sergiocorato/e-efatto
 
 |badge1| |badge2| 
 
@@ -30,7 +30,7 @@ Configuration
 
 Nella configurazione del magazzino è disponibile una procedura per selezionare i prodotti non movimentati da una data indicata:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/12.0/product_archiver/static/description/menu.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_archiver/static/description/menu.png
     :alt: Menu archivia
 
 Nella finestra che si apre va indicata la data fino alla quale verranno selezionati i prodotti non movimentati, con le seguenti caratteristiche:
@@ -40,22 +40,31 @@ Nella finestra che si apre va indicata la data fino alla quale verranno selezion
 #. Nessun ingresso previsto
 #. Nessuna uscita prevista
 #. Nessuna riserva
+#. Data creazione antecedente la data indicata
+#. Data ultima modifica antecedente la data indicata
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/12.0/product_archiver/static/description/selezione_data.png
-    :alt: Selezione data
+Nella finestra è possibile selezionare i modelli di prodotto:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_archiver/static/description/selezione_modelli.png
+    :alt: Selezione modelli
+
+oppure le varianti di prodotto:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_archiver/static/description/selezione_varianti.png
+    :alt: Selezione varianti
 
 Verrà alla fine aperta una maschera con i prodotti filtrati, che sarà possibile archiviare con l'azione archivia:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/12.0/product_archiver/static/description/archivia.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_archiver/static/description/archivia.png
     :alt: Archivia
 
 Bug Tracker
 ===========
 
-Bugs are tracked on `GitHub Issues <https://github.com/efatto/e-efatto/issues>`_.
+Bugs are tracked on `GitHub Issues <https://github.com/sergiocorato/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us smashing it by providing a detailed and welcomed
-`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20product_archiver%0Aversion:%2012.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/sergiocorato/e-efatto/issues/new?body=module:%20product_archiver%0Aversion:%2012.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -75,6 +84,6 @@ Contributors
 Maintainers
 ~~~~~~~~~~~
 
-This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/12.0/product_archiver>`_ project on GitHub.
+This module is part of the `sergiocorato/e-efatto <https://github.com/sergiocorato/e-efatto/tree/12.0/product_archiver>`_ project on GitHub.
 
 You are welcome to contribute.
