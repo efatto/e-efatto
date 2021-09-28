@@ -10,9 +10,18 @@ Nella finestra che si apre va indicata la data fino alla quale verranno selezion
 #. Nessun ingresso previsto
 #. Nessuna uscita prevista
 #. Nessuna riserva
+#. Data creazione antecedente la data indicata
+#. Data ultima modifica antecedente la data indicata
 
-.. image:: ../static/description/selezione_data.png
-    :alt: Selezione data
+Nella finestra è possibile selezionare i modelli di prodotto:
+
+.. image:: ../static/description/selezione_modelli.png
+    :alt: Selezione modelli
+
+oppure le varianti di prodotto:
+
+.. image:: ../static/description/selezione_varianti.png
+    :alt: Selezione varianti
 
 Verrà alla fine aperta una maschera con i prodotti filtrati, che sarà possibile archiviare con l'azione archivia:
 
