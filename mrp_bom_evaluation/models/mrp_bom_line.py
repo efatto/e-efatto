@@ -7,10 +7,13 @@ from odoo.addons import decimal_precision as dp
 class MrpBomLine(models.Model):
     _inherit = 'mrp.bom.line'
 
-    price_unit = fields.Float(groups='account.group_account_user')
+    price_unit = fields.Float(
+        digits=dp.get_precision('Product Price'),
+        groups='account.group_account_user')
     price_subtotal = fields.Float(
         compute='_compute_price_subtotal',
         compute_sudo=True,
+        digits=dp.get_precision('Product Price'),
         groups='account.group_account_user',
         store=True)
     weight_total = fields.Float(
