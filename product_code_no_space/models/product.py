@@ -19,7 +19,7 @@ class ProductTemplate(models.Model):
 
     @staticmethod
     def check_space(vals):
-        if 'default_code' in vals:
+        if vals.get('default_code', False):
             vals.update({
                 'default_code' : "".join(vals['default_code'].split())
             })
