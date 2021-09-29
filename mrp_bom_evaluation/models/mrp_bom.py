@@ -37,16 +37,14 @@ class MrpBom(models.Model):
                 ) and (
                     not r.product_id or r.product_id == product_id) and r.name.active)
             if not suppliers:
-                msg = _(
-                    'There is no vendor associated to the product %s. '
-                    'Please define a vendor for this product.') % (
-                        product_id.display_name,)
-                raise UserError(msg)
+                # do not raise error if vendor is not found, leave price unchanged
+                continue
 
             supplier = self.env['stock.rule']._make_po_select_supplier(
                 values, suppliers)
             line.price_unit = self.env['stock.rule']._get_seller_price(
                 supplier, line.product_uom_id)
+            line.price_write_date = supplier.write_date
 
     @api.multi
     def update_product_managed_replenishment_cost(self):

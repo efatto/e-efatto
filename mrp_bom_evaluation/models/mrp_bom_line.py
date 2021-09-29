@@ -21,6 +21,10 @@ class MrpBomLine(models.Model):
         digits=dp.get_precision('Stock Weight'),
         compute='_compute_weight_total',
         store=True)
+    price_write_date = fields.Datetime(
+        'Last price update',
+        store=True,
+    )
 
     @api.depends('product_id', 'product_id.weight', 'product_qty')
     def _compute_weight_total(self):
