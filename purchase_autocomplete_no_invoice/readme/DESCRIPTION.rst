@@ -1,1 +1,1 @@
-This module remove the insertion on invoice reference of purchase order reference when using autocompletion feature.
+This module remove the ability to select vendors invoices when using autocompletion feature.
