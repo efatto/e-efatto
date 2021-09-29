@@ -5,7 +5,4 @@ Quando viene usato il campo autocompletamento per inserire degli ordini di acqui
 .. image:: ../static/description/autocompletamento.png
     :alt: Autocompletamento
 
-il campo riferimento, usato per inserire il numero della fattura assegnato dal fornitore, resterà invariato:
-
-.. image:: ../static/description/riferimento.png
-    :alt: Riferimento
+verranno resi visibili solo gli ordini d'acquisto e non le fatture fornitore.
