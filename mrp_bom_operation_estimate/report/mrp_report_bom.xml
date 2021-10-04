@@ -6,7 +6,7 @@
                 <div class="oe_structure"/>
                 <div class="row">
                     <div class="col-12">
-                        <h1>BoM Structure &amp; Cost</h1>
+                        <h1>BoM Cost</h1>
                         <h3>
                             <t t-esc="doc.product_tmpl_id.name"/>
                         </h3>
@@ -107,7 +107,7 @@
             </div>
         </t>
     </template>
-    <template id="report_bom_structure">
+    <template id="report_bom_estimate">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="doc">
                 <div class="page">
@@ -118,13 +118,12 @@
         </t>
     </template>
     <report
-        string="BoM Estimate Structure"
-        id="action_report_bom_estimate_structure"
+        string="BoM Estimate"
+        id="action_report_bom_estimate"
         model="mrp.bom"
-        name="mrp_bom_operation_estimate.report_bom_structure"
-        file="mrp_bom_operation_estimate.report_bom_structure"
+        name="mrp_bom_operation_estimate.report_bom_estimate"
         report_type="qweb-pdf"
-        print_report_name="'Bom Estimate Structure - %s' % object.display_name"
+        print_report_name="'Bom Estimate - %s' % object.display_name"
     />
     <record id="paperformat_portrait_mrp" model="report.paperformat">
         <field name="name">European A4 Mrp Portrait</field>
@@ -141,7 +140,7 @@
         <field name="header_spacing">15</field>
         <field name="dpi">90</field>
     </record>
-    <record id="mrp_bom_operation_estimate.action_report_bom_estimate_structure" model="ir.actions.report">
+    <record id="mrp_bom_operation_estimate.action_report_bom_estimate" model="ir.actions.report">
         <field name="paperformat_id" ref="mrp_bom_operation_estimate.paperformat_portrait_mrp"/>
     </record>
 </odoo>

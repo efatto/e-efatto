@@ -18,7 +18,7 @@
         'security/ir.model.access.csv',
         'views/mrp_bom.xml',
         'report/report_view.xml',
-        'report/mrp_report_bom_structure.xml',
+        'report/mrp_report_bom.xml',
     ],
     'installable': True,
 }
