@@ -92,9 +92,9 @@
                             </td>
                         </tr>
                         <t t-if="doc.product_qty != 1">
-                            <tr>
+                            <tr class="o_mrp_total">
                                 <td></td>
-                                <td class="text-right"><span><strong>Total Cost for </strong></span></td>
+                                <td class="text-right"><span>(Total Cost for)</span></td>
                                 <td class="text-right"><span>(<t t-esc="doc.product_qty"/> <t t-esc="doc.product_uom_id.name"/>)</span></td>
                                 <td></td>
                                 <td class="text-right">
