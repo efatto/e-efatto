@@ -14,22 +14,22 @@
                     </div>
                 </div>
                 <t t-set="currency" t-value="user.company_id.currency_id"/>
+                <t t-set="component_total" t-value="0"/>
+                <t t-set="operation_total" t-value="0"/>
                 <table width="100%" class="table table-sm o_main_table">
                     <thead>
                         <tr>
                             <th>Product</th>
                             <th class="text-right">Quantity</th>
                             <th class="text-left">Unit of Measure</th>
-                            <th class="o_mrp_prod_cost text-right">Product Unit Cost</th>
-                            <th class="o_mrp_prod_cost text-right">Product Total Cost</th>
+                            <th class="text-right">Product Unit Cost</th>
+                            <th class="text-right">Product Total Cost</th>
                         </tr>
                     </thead>
                     <tbody>
                         <t t-if="doc.bom_line_ids">
-                            <tr>
-                                <td colspan="5">Components</td>
-                            </tr>
                             <t t-foreach="doc.bom_line_ids" t-as="bom_line">
+                                <t t-set="component_total" t-value="component_total + bom_line.price_subtotal"/>
                                 <tr>
                                     <td><span><t t-esc="bom_line.product_id.name"/></span></td>
                                     <td class="text-right">
@@ -39,20 +39,24 @@
                                         </span>
                                     </td>
                                     <td><span><t t-esc="bom_line.product_uom_id.name"/></span></td>
-                                    <td class="o_mrp_prod_cost text-right">
+                                    <td class="text-right">
                                         <span t-esc="bom_line.price_unit" t-options='{"widget": "monetary", "display_currency": currency}'/>
                                     </td>
-                                    <td class="o_mrp_prod_cost text-right">
+                                    <td class="text-right">
                                         <span t-esc="bom_line.price_subtotal" t-options='{"widget": "monetary", "display_currency": currency}'/>
                                     </td>
                                 </tr>
                             </t>
+                            <tr class="o_mrp_total">
+                                <td colspan="4">Components</td>
+                                <td class="text-right">
+                                    <span t-esc="component_total" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                                </td>
+                            </tr>
                         </t>
                         <t t-if="doc.bom_operation_ids">
-                            <tr>
-                                <td colspan="5">Operations</td>
-                            </tr>
                             <t t-foreach="doc.bom_operation_ids" t-as="bom_operation">
+                                <t t-set="operation_total" t-value="operation_total + bom_operation.price_subtotal"/>
                                 <tr>
                                     <td><span><t t-esc="bom_operation.name"/></span></td>
                                     <td class="text-right">
@@ -61,24 +65,30 @@
                                         </span>
                                     </td>
                                     <td><span>Hours</span></td>
-                                    <td class="o_mrp_prod_cost text-right">
+                                    <td class="text-right">
                                         <span t-esc="bom_operation.price_unit" t-options='{"widget": "monetary", "display_currency": currency}'/>
                                     </td>
-                                    <td class="o_mrp_prod_cost text-right">
+                                    <td class="text-right">
                                         <span t-esc="bom_operation.price_subtotal" t-options='{"widget": "monetary", "display_currency": currency}'/>
                                     </td>
                                 </tr>
                             </t>
+                            <tr class="o_mrp_total">
+                                <td colspan="4">Operations</td>
+                                <td class="text-right">
+                                    <span t-esc="operation_total" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                                </td>
+                            </tr>
                         </t>
                     </tbody>
                     <tfoot>
-                        <tr>
+                        <tr class="o_mrp_total">
                             <td></td>
                             <td class="text-right"><span><strong>Total Unit Cost</strong></span></td>
                             <td></td>
                             <td></td>
-                            <td class="o_mrp_prod_cost text-right">
-                                <span><t t-esc="doc.total_amount" t-options='{"widget": "monetary", "display_currency": currency}'/></span>
+                            <td class="text-right">
+                                <span><strong><t t-esc="doc.total_amount" t-options='{"widget": "monetary", "display_currency": currency}'/></strong></span>
                             </td>
                         </tr>
                         <t t-if="doc.product_qty != 1">
@@ -87,7 +97,7 @@
                                 <td class="text-right"><span><strong>Total Cost for </strong></span></td>
                                 <td class="text-right"><span>(<t t-esc="doc.product_qty"/> <t t-esc="doc.product_uom_id.name"/>)</span></td>
                                 <td></td>
-                                <td class="o_mrp_bom_cost text-right">
+                                <td class="text-right">
                                     <span>(<t t-esc="doc.total_amount * doc.product_qty" t-options='{"widget": "monetary", "display_currency": currency}'/>)</span>
                                 </td>
                             </tr>
