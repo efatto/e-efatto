@@ -12,7 +12,7 @@
     'website': 'https://efatto.it',
     'depends': [
         'account',
-        'mrp',
+        'product_bom_revision',
     ],
     'data': [
         'security/ir.model.access.csv',

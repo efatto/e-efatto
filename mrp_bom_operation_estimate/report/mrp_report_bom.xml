@@ -6,11 +6,12 @@
                 <div class="oe_structure"/>
                 <div class="row">
                     <div class="col-12">
-                        <h1>BoM Cost</h1>
-                        <h3>
-                            <t t-esc="doc.product_tmpl_id.name"/>
-                        </h3>
-                        <h6 t-if="doc.product_tmpl_id.default_code">Reference: <t t-esc="doc.product_tmpl_id.default_code"/></h6>
+                        <h3>BoM Cost <span><t t-esc="doc.product_tmpl_id.name"/></span></h3>
+                        <h6><span>
+                            <t t-if="doc.product_tmpl_id.default_code">Reference: <t t-esc="doc.product_tmpl_id.default_code"/></t>
+                            <t t-if="doc.bom_revision">Revision: <t t-esc="doc.bom_revision"/></t>
+                            Last write: <t t-esc="context_timestamp(doc.write_date).strftime('%d/%m/%Y %H:%M')"/>
+                        </span></h6>
                     </div>
                 </div>
                 <t t-set="currency" t-value="user.company_id.currency_id"/>
@@ -104,6 +105,20 @@
                         </t>
                     </tfoot>
                 </table>
+            </div>
+            <div class="footer">
+                <div class="row">
+                    <div class="col-6 custom_footer">
+                        <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/>
+                    </div>
+                    <div class="col-6 text-right custom_footer">
+                        <ul class="list-inline">
+                            <li class="list-inline-item"><span class="page"/></li>
+                            <li class="list-inline-item">/</li>
+                            <li class="list-inline-item"><span class="topage"/></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </t>
     </template>
