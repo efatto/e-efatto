@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     'name': 'Mrp bom operation estimate',
-    'version': '12.0.1.0.2',
+    'version': '12.0.1.0.3',
     'category': 'Manufacture',
     'license': 'AGPL-3',
     'description': """
@@ -17,8 +17,6 @@
     'data': [
         'security/ir.model.access.csv',
         'views/mrp_bom.xml',
-        'report/report_view.xml',
-        'report/mrp_report_bom.xml',
     ],
     'installable': True,
 }

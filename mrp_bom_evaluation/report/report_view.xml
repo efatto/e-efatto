@@ -2,7 +2,7 @@
 <odoo>
     <template id="report_assets_common_inherit" inherit_id="web.report_assets_common">
           <xpath expr="." position="inside">
-                 <link rel='stylesheet' type="text/scss" href="/mrp_bom_operation_estimate/static/src/css/report.scss"/>
+                 <link rel='stylesheet' type="text/scss" href="/mrp_bom_evaluation/static/src/css/report.scss"/>
           </xpath>
     </template>
 </odoo>

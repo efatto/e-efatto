@@ -6,14 +6,29 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-29 15:25+0000\n"
-"PO-Revision-Date: 2021-09-29 15:25+0000\n"
+"POT-Creation-Date: 2021-10-04 14:20+0000\n"
+"PO-Revision-Date: 2021-10-04 14:20+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
+msgid "<span>(Total Cost for)</span>"
+msgstr "<span>(Costo Totale per)</span>"
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
+msgid "<span><strong>Total Unit Cost</strong></span>"
+msgstr "<span><strong>Costo Unitario Totale</strong></span>"
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
+msgid "<span>Hours</span>"
+msgstr "<span>Ore</span>"
 
 #. module: mrp_bom_evaluation
 #: model:ir.model,name:mrp_bom_evaluation.model_mrp_bom
@@ -26,9 +41,34 @@ msgid "Bill of Material Line"
 msgstr "Riga distinta base"
 
 #. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
+msgid "BoM Cost"
+msgstr "Costo DiBa"
+
+#. module: mrp_bom_evaluation
+#: model:ir.actions.report,name:mrp_bom_evaluation.action_report_bom_estimate
+msgid "BoM Estimate"
+msgstr "Preventivo BoM"
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
+msgid "Components"
+msgstr "Componenti"
+
+#. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_line__price_write_date
 msgid "Last price update"
 msgstr "Data aggiornamento prezzo"
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
+msgid "Last write:"
+msgstr "Ultima modifica:"
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
+msgid "Operations"
+msgstr "Operazioni"
 
 #. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_line__price_subtotal
@@ -38,7 +78,37 @@ msgstr "Subtotale Prezzo"
 #. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_line__price_unit
 msgid "Price Unit"
-msgstr "Prezzo Unitario"
+msgstr "Unità di prezzo"
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
+msgid "Product"
+msgstr "Prodotto"
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
+msgid "Product Total Cost"
+msgstr "Costo Totale Prodotto"
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
+msgid "Product Unit Cost"
+msgstr "Costo Unitario Prodotto"
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
+msgid "Quantity"
+msgstr "Quantità"
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
+msgid "Reference:"
+msgstr "Riferimento:"
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
+msgid "Revision:"
+msgstr "Revisione:"
 
 #. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.mrp_bom_form_view
@@ -59,6 +129,11 @@ msgstr "Importo Totale"
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_line__weight_total
 msgid "Total Weight"
 msgstr "Peso Totale"
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
+msgid "Unit of Measure"
+msgstr "Unità di misura"
 
 #. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.mrp_bom_form_view
