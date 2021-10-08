@@ -9,7 +9,7 @@ class MrpBomOperation(models.Model):
     _description = 'Mrp Bom Estimated Operation'
 
     name = fields.Char('Description')
-    time = fields.Float('Estimated Duration')
+    time = fields.Float('Estimated Duration (in hours)')
     price_unit = fields.Float(
         related='operation_id.workcenter_id.costs_hour',
         groups='account.group_account_user')

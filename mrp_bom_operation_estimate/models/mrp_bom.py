@@ -1,6 +1,7 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, fields, models
+from odoo.exceptions import UserError
 
 
 class MrpBom(models.Model):
@@ -30,3 +31,16 @@ class MrpBom(models.Model):
         self.update({
             'bom_operation_ids': bom_operation_ids,
         })
+
+    @api.multi
+    @api.constrains('bom_operation_ids')
+    def operation_unique(self):
+        for bom in self:
+            if any([
+                    len(bom.bom_operation_ids.filtered(
+                        lambda x: x.operation_id == y)) > 1
+                    for y in bom.bom_operation_ids.mapped('operation_id')
+            ]):
+                raise UserError(
+                    "Operations linked to bom cycle operation must be unique!"
+                )
