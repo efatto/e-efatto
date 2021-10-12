@@ -25,7 +25,6 @@ class ProductArchiver(models.TransientModel):
                 ('incoming_qty', '=', 0.0),
                 ('outgoing_qty', '=', 0.0),
                 ('create_date', '<=', from_date),
-                ('write_date', '<=', from_date),
             ])
             # search moved product after from_date to exclude them
             stock_moved_products = self.env['stock.move.line'].with_context(
