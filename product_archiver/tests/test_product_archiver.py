@@ -34,7 +34,12 @@ class ProductArchiver(SavepointCase):
         res = wizard.archive()
         domain = res.get('domain')
         model = res.get('res_model')
+        moved_products = self.env['stock.move.line'].search([
+            ('date', '>=', from_date)
+        ]).mapped('product_id')
         products = self.env[model].search(domain)
+        for moved_product in moved_products:
+            self.assertFalse(moved_product in products)
         self.assertFalse(self.product in products)
         self.assertFalse(new_product in products)
         self.assertTrue(old_product in products)
