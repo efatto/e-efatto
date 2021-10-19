@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-04 14:20+0000\n"
-"PO-Revision-Date: 2021-10-04 14:20+0000\n"
+"POT-Creation-Date: 2021-10-19 16:19+0000\n"
+"PO-Revision-Date: 2021-10-19 16:19+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -56,6 +56,17 @@ msgid "Components"
 msgstr "Componenti"
 
 #. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_order_line__created_from_bom
+msgid "Created From Bom"
+msgstr "Creato da DiBa"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_product_product__exclude_from_mo
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_product_template__exclude_from_mo
+msgid "Exclude From Mo"
+msgstr "Escludi Dalla Produzione"
+
+#. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_line__price_write_date
 msgid "Last price update"
 msgstr "Data aggiornamento prezzo"
@@ -86,6 +97,11 @@ msgid "Product"
 msgstr "Prodotto"
 
 #. module: mrp_bom_evaluation
+#: model:ir.model,name:mrp_bom_evaluation.model_product_template
+msgid "Product Template"
+msgstr "Modello prodotto"
+
+#. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
 msgid "Product Total Cost"
 msgstr "Costo Totale Prodotto"
@@ -94,6 +110,11 @@ msgstr "Costo Totale Prodotto"
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
 msgid "Product Unit Cost"
 msgstr "Costo Unitario Prodotto"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model,name:mrp_bom_evaluation.model_mrp_production
+msgid "Production Order"
+msgstr "Ordine di Produzione"
 
 #. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
@@ -109,6 +130,16 @@ msgstr "Riferimento:"
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
 msgid "Revision:"
 msgstr "Revisione:"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model,name:mrp_bom_evaluation.model_sale_order
+msgid "Sale Order"
+msgstr "Ordine di vendita"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model,name:mrp_bom_evaluation.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Linea d'ordine di vendita"
 
 #. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.mrp_bom_form_view
@@ -139,4 +170,10 @@ msgstr "Unità di misura"
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.mrp_bom_form_view
 msgid "Update replenishment cost"
 msgstr "Aggiorna costo sostituzione"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,help:mrp_bom_evaluation.field_product_product__exclude_from_mo
+#: model:ir.model.fields,help:mrp_bom_evaluation.field_product_template__exclude_from_mo
+msgid "Used to exclude products that will be used outside manufacturing process, e.g. during the assembly on site, but included in bom for evaluation purpose."
+msgstr "Usato per escludere prodotti che saranno usati al di fuori del processo produttivo, ad es. durante l'assemblaggio in cantiere, ma inclusi nella bom per fini di valutazione."
 

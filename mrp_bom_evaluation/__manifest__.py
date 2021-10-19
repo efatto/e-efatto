@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     'name': 'Mrp bom evaluation',
-    'version': '12.0.1.0.3',
+    'version': '12.0.1.0.4',
     'category': 'Manufacture',
     'license': 'AGPL-3',
     'description': """
@@ -14,12 +14,15 @@
     'website': 'https://efatto.it',
     'depends': [
         'account',
+        'hr_timesheet',
         'mrp_bom_operation_estimate',
         'product_template_replenishment_cost',
         'purchase_seller_evaluation',
+        'sale_management',
     ],
     'data': [
         'views/mrp_bom.xml',
+        'views/product_template.xml',
         'report/report_view.xml',
         'report/mrp_report_bom.xml',
     ],
