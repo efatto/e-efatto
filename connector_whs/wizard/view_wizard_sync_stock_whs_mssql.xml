@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+# Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+-->
+<odoo>
+
+    <record id="view_wizard_sync_stock_whs_mssql" model="ir.ui.view">
+        <field name="name">Synchronize stock inventory</field>
+        <field name="model">wizard.sync.stock.whs.mssql</field>
+        <field name="arch" type="xml">
+            <form string="Synchronize stock">
+                <header/>
+                <sheet>
+                    <div>
+                        <span>Synchronize stock inventory. </span>
+                        <span>If 'do_sync' is not set, it create and show only a log saved in Whslog.</span>
+                    </div>
+                    <group>
+                        <field name="do_sync" />
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="apply" string="Apply" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel" />
+                </footer>
+           </form>
+        </field>
+    </record>
+
+</odoo>
