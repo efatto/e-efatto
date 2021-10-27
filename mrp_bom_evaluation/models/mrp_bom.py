@@ -42,9 +42,11 @@ class MrpBom(models.Model):
 
             supplier = self.env['stock.rule']._make_po_select_supplier(
                 values, suppliers)
-            line.price_unit = self.env['stock.rule']._get_seller_price(
+            price_unit = self.env['stock.rule']._get_seller_price(
                 supplier, line.product_uom_id)
-            line.price_write_date = supplier.write_date
+            if price_unit != 0.0:
+                line.price_unit = price_unit
+                line.price_write_date = supplier.write_date
 
     @api.multi
     def update_product_managed_replenishment_cost(self):
