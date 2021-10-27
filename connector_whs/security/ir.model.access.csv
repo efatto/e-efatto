@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hyddemo_mssql_log_all,hyddemo_mssql_log all,model_hyddemo_mssql_log,,1,0,0,0
+access_hyddemo_mssql_log_manager,hyddemo_mssql_log manager,model_hyddemo_mssql_log,base.group_no_one,1,1,1,1
+access_hyddemo_mssql_log_line_all,hyddemo_mssql_log_line all,model_hyddemo_mssql_log_line,,1,1,1,0
+access_hyddemo_mssql_log_line_manager,hyddemo_mssql_log_line manager,model_hyddemo_mssql_log_line,base.group_no_one,1,1,1,1
+access_hyddemo_whsliste_all,hyddemo_whsliste all,model_hyddemo_whs_liste,,1,0,0,0
+access_hyddemo_whsliste_manager,hyddemo_whsliste manager,model_hyddemo_whs_liste,base.group_no_one,1,1,1,1
+access_base_external_dbsource_all,base_external_dbsource all,model_base_external_dbsource,,1,0,0,0
