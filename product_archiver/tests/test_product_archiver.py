@@ -4,6 +4,7 @@
 from odoo.tests.common import SavepointCase
 from odoo import fields
 from datetime import timedelta
+from odoo.tools import mute_logger
 
 
 class ProductArchiver(SavepointCase):
@@ -15,6 +16,9 @@ class ProductArchiver(SavepointCase):
         cls.user_model = cls.env['res.users'].with_context(no_reset_password=True)
         cls.product = cls.env.ref('product.product_product_1')
 
+    @mute_logger(
+        'odoo.models', 'odoo.models.unlink', 'odoo.addons.base.ir.ir_model'
+    )
     def test_archive_product(self):
         today_date = fields.Date.today()
         from_date = today_date - timedelta(days=1)
