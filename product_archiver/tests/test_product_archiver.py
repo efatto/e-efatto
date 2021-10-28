@@ -11,6 +11,8 @@ class ProductArchiver(SavepointCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
+        cls.user_model = cls.env['res.users'].with_context(no_reset_password=True)
         cls.product = cls.env.ref('product.product_product_1')
 
     def test_archive_product(self):
