@@ -11,7 +11,8 @@ class MrpProductProduce(models.TransientModel):
     @api.multi
     def do_produce(self):
         res = super(MrpProductProduce, self).do_produce()
-        # FIXME: i dati corretti sono quelli dentro il wizard, qui si sta usando l'MO!!!
+        # FIXME: this works only for complete production, add support for partial
+        #  production
         production_id = self._context.get('active_id', False)
         mo_obj = self.env['mrp.production']
         whsliste_obj = self.env['hyddemo.whs.liste']
@@ -46,7 +47,7 @@ class MrpProductProduce(models.TransientModel):
                             tipo='1',
                             product_id=move.product_id.id,
                             parent_product_id=production.product_id.id,
-                            qta=move.quantity_done,  # verificare quanto è l'attuale
+                            qta=move.quantity_done,
                             move_id=move.id,
                             tipo_mov='mrpout',
                         )
@@ -93,7 +94,7 @@ class MrpProductProduce(models.TransientModel):
                             data_lista=fields.Datetime.now(),
                             riferimento=production.name,
                             product_id=move.product_id.id,
-                            qta=move.quantity_done,  # FIXME verificare quanto è l'attuale
+                            qta=move.quantity_done,
                             move_id=move.id,
                             tipo_mov='mrpin',
                             riga=riga,
