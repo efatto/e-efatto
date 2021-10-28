@@ -7,7 +7,7 @@ from odoo.addons.mrp.tests.common import TestMrpCommon
 class TestMrpProductionPreserveKitRoute(TestMrpCommon):
 
     def setUp(self):
-        super(TestMrpProductionPreserveKitRoute, self).setUp()
+        super().setUp()
         vendor = self.env['res.partner'].create({
             'name': 'Partner #2',
         })
