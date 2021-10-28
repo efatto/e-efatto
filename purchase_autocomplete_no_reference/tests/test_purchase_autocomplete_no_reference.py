@@ -11,6 +11,8 @@ class PurchaseInvoiceNoReference(SavepointCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
+        cls.user_model = cls.env['res.users'].with_context(no_reset_password=True)
         cls.vendor = cls.env.ref('base.res_partner_3')
         cls.product = cls.env.ref('product.product_product_1')
 
