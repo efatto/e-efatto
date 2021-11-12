@@ -16,6 +16,7 @@
     'data': [
         'security/ir.model.access.csv',
         'security/replenishment_cost_security.xml',
+        'views/product_supplierinfo.xml',
         'views/replenishment_menu.xml',
     ],
     'installable': True,
