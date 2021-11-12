@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="view_hr_timesheet_productivity_report_tree" model="ir.ui.view">
+        <field name="name">HR timesheet productivity report tree</field>
+        <field name="model">hr.timesheet.productivity.report</field>
+        <field name="arch" type="xml">
+            <tree string="timesheet productivity">
+                <field name="date"/>
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="workorder_id"/>
+                <field name="task_id"/>
+                <field name="total_timesheet"/>
+                <field name="total_productivity"/>
+                <field name="total_worked"/>
+            </tree>
+        </field>
+    </record>
     <record id="view_hr_timesheet_productivity_report_search" model="ir.ui.view">
         <field name="name">Search for HR timesheet productivity report</field>
         <field name="model">hr.timesheet.productivity.report</field>
