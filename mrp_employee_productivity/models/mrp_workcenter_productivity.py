@@ -1,7 +1,8 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import api, fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 
 class MrpWorkcenterProductivity(models.Model):
@@ -13,8 +14,12 @@ class MrpWorkcenterProductivity(models.Model):
         if not self.env.context.get('default_employee_id') \
                 and 'employee_id' in field_list:
             user_id = result.get('user_id') or self._context['uid']
-            result['employee_id'] = self.env['hr.employee'].search(
+            employee_id = self.env['hr.employee'].search(
                 [('user_id', '=', user_id)], limit=1).id
+            if not employee_id:
+                raise ValidationError(_('Current user does not have a linked '
+                                        'valid employee!'))
+            result['employee_id'] = employee_id
         return result
 
     employee_id = fields.Many2one('hr.employee', "Employee", required=True)
