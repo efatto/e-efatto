@@ -15,7 +15,7 @@ class TimesheetProductivity(models.Model):
     total_productivity = fields.Float(string="Productivity")
     total_worked = fields.Float(string="Total")
     name = fields.Char()
-    workorder_id = fields.Many2one('mrp.workcenter.productivity')
+    workorder_id = fields.Many2one('mrp.workorder')
     production_id = fields.Many2one('mrp.production')
     task_id = fields.Many2one('project.task')
     project_id = fields.Many2one('project.project')
