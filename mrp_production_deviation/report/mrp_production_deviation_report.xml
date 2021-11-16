@@ -1,5 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="view_mrp_production_deviation_report_tree" model="ir.ui.view">
+        <field name="name">MRP production deviation report: Tree</field>
+        <field name="model">mrp.production.deviation.report</field>
+        <field name="arch" type="xml">
+            <tree string="production deviation">
+                <field name="date"/>
+                <field name="name"/>
+                <field name="production_id"/>
+                <field name="product_id"/>
+                <field name="quantity_expected" sum="Total"/>
+                <field name="product_qty" sum="Total"/>
+                <field name="quantity_deviation" sum="Total"/>
+                <field name="duration_expected_rw" sum="Total"/>
+                <field name="duration" sum="Total"/>
+                <field name="duration_deviation_rw" sum="Total"/>
+                <field name="cost_expected_rw" sum="Total"/>
+                <field name="cost" sum="Total"/>
+                <field name="cost_deviation_rw" sum="Total"/>
+            </tree>
+        </field>
+    </record>
     <record id="view_mrp_production_deviation_report_search" model="ir.ui.view">
         <field name="name">Search for MRP production deviation report</field>
         <field name="model">mrp.production.deviation.report</field>

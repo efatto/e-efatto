@@ -61,7 +61,7 @@ class MrpProductionDeviationReport(models.Model):
             SELECT
                 w.id AS id,
                 w.id AS workorder_id,
-                p.name,
+                w.name,
                 to_char(p.date_planned_start, 'YYYY-MM-DD') AS date,
                 p.id AS production_id,
                 NULL AS product_id,
