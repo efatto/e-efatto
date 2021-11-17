@@ -15,7 +15,7 @@ class MrpProduction(models.Model):
             self.env['sale.order.line'].create({
                 'name': bom_line.product_id.name,
                 'product_id': bom_line.product_id.id,
-                'product_uom_qty': 1,
+                'product_uom_qty': line_data['qty'],
                 'product_uom': bom_line.product_id.uom_id.id,
                 'price_unit': 0,
                 'order_id': self.sale_id.id,
