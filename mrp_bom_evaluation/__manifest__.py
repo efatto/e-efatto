@@ -20,6 +20,9 @@
         'purchase_seller_evaluation',
         'sale_management',
     ],
+    'conflicts': [
+        'mrp_production_grouped_by_product',
+    ],
     'data': [
         'views/mrp_bom.xml',
         'views/product_template.xml',
