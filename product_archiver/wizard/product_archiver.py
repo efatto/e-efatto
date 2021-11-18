@@ -20,6 +20,7 @@ class ProductArchiver(models.TransientModel):
             unavailable_products = self.env['product.product'].with_context(
                 active_test=False
             ).search([
+                ('type', '!=', 'service'),
                 ('qty_available', '=', 0.0),
                 ('virtual_available', '=', 0.0),
                 ('incoming_qty', '=', 0.0),

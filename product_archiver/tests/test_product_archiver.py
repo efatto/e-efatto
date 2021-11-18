@@ -23,6 +23,11 @@ class ProductArchiver(SavepointCase):
         today_date = fields.Date.today()
         from_date = today_date - timedelta(days=1)
         old_date = today_date - timedelta(days=10)
+        old_service = self.env['product.product'].create({
+            'name': 'Old product',
+            'type': 'service',
+        })
+        old_service.create_date = old_date.strftime('%Y-%m-%d')
         old_product = self.env['product.product'].create({
             'name': 'Old product',
         })
@@ -49,3 +54,4 @@ class ProductArchiver(SavepointCase):
         self.assertFalse(self.product in products)
         self.assertFalse(new_product in products)
         self.assertTrue(old_product in products)
+        self.assertTrue(old_service.active)
