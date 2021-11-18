@@ -9,8 +9,10 @@ class ProductSupplierinfo(models.Model):
     _inherit = 'product.supplierinfo'
 
     depreciation_cost = fields.Float(
+        string='Depreciation Cost (€/pz)',
         digits=dp.get_precision('Product Price'),
     )
     adjustment_cost = fields.Float(
+        string='Adjustment Cost (€/pz)',
         digits=dp.get_precision('Product Price'),
     )
