@@ -26,7 +26,12 @@ Add a button to open all attachments from product and its template.
 Configuration
 =============
 
-Nulla da fare, il bottone è accessibile dal prodotto e dal template:
+Il bottone è accessibile dal prodotto e dal template:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_attachments_button/static/description/bottone.png
+    :alt: Bottone
+
+e apre la vista allegati:
 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_attachments_button/static/description/allegati.png
     :alt: Allegati
