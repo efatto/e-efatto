@@ -33,7 +33,7 @@ Il bottone è accessibile dal prodotto e dal template:
 
 e apre la vista allegati:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_attachments_button/static/description/allegati.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_attachments_button/static/description/vista_allegati.png
     :alt: Allegati
 
 Bug Tracker
