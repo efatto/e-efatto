@@ -1,0 +1,52 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* product_attachments_button
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-11-23 15:36+0000\n"
+"PO-Revision-Date: 2021-11-23 15:36+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: product_attachments_button
+#: model:ir.model.fields,field_description:product_attachments_button.field_product_product__all_attachment_count
+#: model:ir.model.fields,field_description:product_attachments_button.field_product_template__all_attachment_count
+msgid "# All Attachments"
+msgstr "# Tutti gli Allegati"
+
+#. module: product_attachments_button
+#: model_terms:ir.ui.view,arch_db:product_attachments_button.product_form_view_attachments_button
+#: model_terms:ir.ui.view,arch_db:product_attachments_button.view_product_template_form
+msgid "<span class=\"o_stat_text\"># Attachments</span>"
+msgstr "<span class=\"o_stat_text\"># Allegati</span>"
+
+#. module: product_attachments_button
+#: model:ir.model.fields,field_description:product_attachments_button.field_product_product__all_attachment_ids
+#: model:ir.model.fields,field_description:product_attachments_button.field_product_template__all_attachment_ids
+msgid "All Attachment"
+msgstr "Tutti gli Allegati"
+
+#. module: product_attachments_button
+#: code:addons/product_attachments_button/models/product.py:37
+#: code:addons/product_attachments_button/models/product.py:51
+#, python-format
+msgid "All attachments"
+msgstr "Tutti gli Allegati"
+
+#. module: product_attachments_button
+#: model:ir.model,name:product_attachments_button.model_product_product
+msgid "Product"
+msgstr "Prodotto"
+
+#. module: product_attachments_button
+#: model:ir.model,name:product_attachments_button.model_product_template
+msgid "Product Template"
+msgstr "Modello prodotto"
+
