@@ -5,5 +5,5 @@ Il bottone è accessibile dal prodotto e dal template:
 
 e apre la vista allegati:
 
-.. image:: ../static/description/allegati.png
+.. image:: ../static/description/vista_allegati.png
     :alt: Allegati
