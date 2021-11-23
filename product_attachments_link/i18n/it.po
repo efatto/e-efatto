@@ -16,23 +16,23 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: product_attachments_link
-#: model:ir.model.fields,field_description:product_attachments_link.field_product_product__total_attachment_count
-#: model:ir.model.fields,field_description:product_attachments_link.field_product_template__total_attachment_count
+#: model:ir.model.fields,field_description:product_attachments_link.field_product_product__all_attachment_count
+#: model:ir.model.fields,field_description:product_attachments_link.field_product_template__all_attachment_count
 msgid "# All Attachments"
-msgstr ""
+msgstr "# Tutti gli Allegati"
 
 #. module: product_attachments_link
 #: model_terms:ir.ui.view,arch_db:product_attachments_link.product_form_view_attachments_button
 #: model_terms:ir.ui.view,arch_db:product_attachments_link.view_product_template_form
 msgid "<span class=\"o_stat_text\"># Attachments</span>"
-msgstr ""
+msgstr "<span class=\"o_stat_text\"># Allegati</span>"
 
 #. module: product_attachments_link
 #: code:addons/product_attachments_link/models/product.py:37
 #: code:addons/product_attachments_link/models/product.py:51
 #, python-format
 msgid "All attachments"
-msgstr ""
+msgstr "Tutti gli allegati"
 
 #. module: product_attachments_link
 #: model:ir.model,name:product_attachments_link.model_product_product
@@ -45,8 +45,8 @@ msgid "Product Template"
 msgstr "Modello prodotto"
 
 #. module: product_attachments_link
-#: model:ir.model.fields,field_description:product_attachments_link.field_product_product__total_attachment_ids
-#: model:ir.model.fields,field_description:product_attachments_link.field_product_template__total_attachment_ids
-msgid "Total Attachment"
+#: model:ir.model.fields,field_description:product_attachments_link.field_product_product__all_attachment_ids
+#: model:ir.model.fields,field_description:product_attachments_link.field_product_template__all_attachment_ids
+msgid "all Attachment"
 msgstr ""
 
