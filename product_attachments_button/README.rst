@@ -11,7 +11,7 @@ Product Attachments Button
     :target: https://odoo-community.org/page/development-status
     :alt: Beta
 .. |badge2| image:: https://img.shields.io/badge/github-sergiocorato%2Fe--efatto-lightgray.png?logo=github
-    :target: https://github.com/sergiocorato/e-efatto/tree/12.0/product_attachments_link
+    :target: https://github.com/sergiocorato/e-efatto/tree/12.0/product_attachments_button
     :alt: sergiocorato/e-efatto
 
 |badge1| |badge2| 
@@ -28,7 +28,7 @@ Configuration
 
 Nulla da fare, il bottone è accessibile dal prodotto e dal template:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_attachments_link/static/description/allegati.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_attachments_button/static/description/allegati.png
     :alt: Allegati
 
 Bug Tracker
@@ -37,7 +37,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/sergiocorato/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us smashing it by providing a detailed and welcomed
-`feedback <https://github.com/sergiocorato/e-efatto/issues/new?body=module:%20product_attachments_link%0Aversion:%2012.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/sergiocorato/e-efatto/issues/new?body=module:%20product_attachments_button%0Aversion:%2012.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -57,6 +57,6 @@ Contributors
 Maintainers
 ~~~~~~~~~~~
 
-This module is part of the `sergiocorato/e-efatto <https://github.com/sergiocorato/e-efatto/tree/12.0/product_attachments_link>`_ project on GitHub.
+This module is part of the `sergiocorato/e-efatto <https://github.com/sergiocorato/e-efatto/tree/12.0/product_attachments_button>`_ project on GitHub.
 
 You are welcome to contribute.
