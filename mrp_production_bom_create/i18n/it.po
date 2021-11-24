@@ -1,0 +1,87 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* mrp_production_bom_create
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-11-24 18:08+0000\n"
+"PO-Revision-Date: 2021-11-24 18:08+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: mrp_production_bom_create
+#: model_terms:ir.ui.view,arch_db:mrp_production_bom_create.view_mrp_production_bom_create
+msgid "Are you sure you want to create bom from this production?"
+msgstr "Si è sicuri di voler creare una BOM da questo ordine di produzione?"
+
+#. module: mrp_production_bom_create
+#: model_terms:ir.ui.view,arch_db:mrp_production_bom_create.view_mrp_production_bom_create
+msgid "Confirm"
+msgstr "Conferma"
+
+#. module: mrp_production_bom_create
+#: model_terms:ir.ui.view,arch_db:mrp_production_bom_create.view_mrp_production_bom_create
+msgid "Create BOM"
+msgstr "Crea BOM"
+
+#. module: mrp_production_bom_create
+#: model:ir.actions.act_window,name:mrp_production_bom_create.action_create_bom_from_production_order
+msgid "Create BOM from production order"
+msgstr "Crea BOM da ordine di produzione"
+
+#. module: mrp_production_bom_create
+#: model:ir.model,name:mrp_production_bom_create.model_mrp_production_bom_create
+msgid "Create income picking of repairable equipment"
+msgstr "Crea trasferimento in ingresso dell'attrezzatura riparabile"
+
+#. module: mrp_production_bom_create
+#: model:ir.model.fields,field_description:mrp_production_bom_create.field_mrp_production_bom_create__create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: mrp_production_bom_create
+#: model:ir.model.fields,field_description:mrp_production_bom_create.field_mrp_production_bom_create__create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: mrp_production_bom_create
+#: model_terms:ir.ui.view,arch_db:mrp_production_bom_create.view_mrp_production_bom_create
+msgid "Discard"
+msgstr "Abbandona"
+
+#. module: mrp_production_bom_create
+#: model:ir.model.fields,field_description:mrp_production_bom_create.field_mrp_production_bom_create__display_name
+msgid "Display Name"
+msgstr "Nome da visualizzare"
+
+#. module: mrp_production_bom_create
+#: model:ir.model.fields,field_description:mrp_production_bom_create.field_mrp_production_bom_create__id
+msgid "ID"
+msgstr ""
+
+#. module: mrp_production_bom_create
+#: model:ir.model.fields,field_description:mrp_production_bom_create.field_mrp_production_bom_create____last_update
+msgid "Last Modified on"
+msgstr "Ultima modifica il"
+
+#. module: mrp_production_bom_create
+#: model:ir.model.fields,field_description:mrp_production_bom_create.field_mrp_production_bom_create__write_uid
+msgid "Last Updated by"
+msgstr "Ultima modifica di"
+
+#. module: mrp_production_bom_create
+#: model:ir.model.fields,field_description:mrp_production_bom_create.field_mrp_production_bom_create__write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: mrp_production_bom_create
+#: model:ir.model.fields,field_description:mrp_production_bom_create.field_mrp_production_bom_create__name
+msgid "Name"
+msgstr "Nome"
+
