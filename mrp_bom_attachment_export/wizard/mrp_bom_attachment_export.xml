@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_mrp_bom_attachment_export" model="ir.ui.view">
+        <field name="name">Export components attachment</field>
+        <field name="model">wizard.mrp.bom.attachment.export</field>
+        <field name="arch" type="xml">
+            <form string="Download ZIP components attachment">
+                <group>
+                    <field name="name"/>
+                </group>
+                <footer>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                    <button name="export_zip" string="Export Zip" type="object" class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <act_window id="action_production_attachment_export"
+        name="Download ZIP components attachment"
+        res_model="wizard.mrp.bom.attachment.export"
+        src_model="mrp.production"
+        view_mode="form"
+        target="new"
+        key2="client_action_multi"
+    />
+    <act_window id="action_bom_attachment_export"
+        name="Download ZIP components attachment"
+        res_model="wizard.mrp.bom.attachment.export"
+        src_model="mrp.bom"
+        view_mode="form"
+        target="new"
+        key2="client_action_multi"
+    />
+
+</odoo>
