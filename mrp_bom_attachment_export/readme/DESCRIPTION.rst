@@ -1,0 +1,1 @@
+This module add an action to mrp bom and mrp production to export a zip with all attachments from its components.
