@@ -50,6 +50,10 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
         if self.attachment_ctg_ids:
             attachments = attachments.filtered(
                 lambda x: any(y in self.attachment_ctg_ids for y in x.category_ids))
+        if not attachments:
+            raise UserError(
+                _("No attachment found!")
+            )
         for att in attachments:
             if not att.datas or not att.datas_fname:
                 raise UserError(
