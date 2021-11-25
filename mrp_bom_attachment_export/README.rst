@@ -19,9 +19,7 @@ Mrp download Zip of components bom attachment
 
 |badge1| |badge2| |badge3| 
 
-This module add an employee to productivity time and a menu to see these
-productivity time for employee.
-Add also a button to retrieve productivity from employee form view.
+This module add an action to mrp bom and mrp production to export a zip with all attachments from its components.
 
 **Table of contents**
 
