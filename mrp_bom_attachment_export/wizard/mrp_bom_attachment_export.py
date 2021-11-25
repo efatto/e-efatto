@@ -38,11 +38,18 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
     )
     data = fields.Binary("File", readonly=True)
     name = fields.Char('Filename', default=_default_name, required=True)
+    attachment_ctg_ids = fields.Many2many(
+        'ir.attachment.category',
+        string='Attachment categories',
+    )
 
     @api.multi
     def export_zip(self):
         self.ensure_one()
         attachments = self.product_ids.mapped('product_tmpl_id.all_attachment_ids')
+        if self.attachment_ctg_ids:
+            attachments = attachments.filtered(
+                lambda x: any(y in self.attachment_ctg_ids for y in x.category_ids))
         for att in attachments:
             if not att.datas or not att.datas_fname:
                 raise UserError(
