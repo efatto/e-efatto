@@ -28,7 +28,7 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
     def _default_name(self):
         return "%s_%s_%s" % (
             _("BOM"),
-            '-'.join(x for x in self.bom_ids.mapped('product_tmpl_id.default_code')),
+            '-'.join(x.default_code for x in self.product_ids),
             datetime.now().strftime('%Y%m%d%H%M'))
 
     product_ids = fields.Many2many(
