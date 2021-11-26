@@ -2,9 +2,12 @@
 # Copyright 2020 Alex Comba - Agile Business Group
 # Copyright 2020-2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+import logging
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
+
+_logger = logging.getLogger(__name__)
 
 
 class StockMove(models.Model):
@@ -107,6 +110,9 @@ class HyddemoWhsListe(models.Model):
                 sqlquery=delete_lists_query.replace('\n', ' '),
                 sqlparams=None,
                 metadata=None)
+            logging.info('WHS LOG: unlink Lista %s Riga %s' % (
+                lista.num_lista, lista.riga
+            ))
             lista.unlink()
         return True
 
@@ -128,6 +134,9 @@ class HyddemoWhsListe(models.Model):
             dbsource.with_context(no_return=True).execute_mssql(
                 sqlquery=set_to_not_elaborate_query, sqlparams=None,
                 metadata=None)
+            logging.info('WHS LOG: cancel Lista %s Riga %s' % (
+                lista.num_lista, lista.riga
+            ))
             lista.write({'stato': '3'})
         return True
 
