@@ -110,7 +110,7 @@ class HyddemoWhsListe(models.Model):
                 sqlquery=delete_lists_query.replace('\n', ' '),
                 sqlparams=None,
                 metadata=None)
-            logging.info('WHS LOG: unlink Lista %s Riga %s' % (
+            _logger.info('WHS LOG: unlink Lista %s Riga %s' % (
                 lista.num_lista, lista.riga
             ))
             lista.unlink()
@@ -134,7 +134,7 @@ class HyddemoWhsListe(models.Model):
             dbsource.with_context(no_return=True).execute_mssql(
                 sqlquery=set_to_not_elaborate_query, sqlparams=None,
                 metadata=None)
-            logging.info('WHS LOG: cancel Lista %s Riga %s' % (
+            _logger.info('WHS LOG: cancel Lista %s Riga %s' % (
                 lista.num_lista, lista.riga
             ))
             lista.write({'stato': '3'})
