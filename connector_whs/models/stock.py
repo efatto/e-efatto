@@ -79,8 +79,8 @@ class Picking(models.Model):
                         if not dbsource:
                             # This location is not linked to WHS System
                             continue
-                        _logger.info('Unlinking whs list in backorder process of move '
-                                     '%s' % move.name)
+                        _logger.info('WHS LOG: unlink whs list in backorder process of '
+                                     'move %s' % move.name)
                         whs_list.whs_unlink_lists(dbsource.id)
         super(Picking, self).action_done()
         return True
@@ -132,7 +132,7 @@ class Picking(models.Model):
                     # This location is not linked to WHS System
                     continue
                 if unlink:
-                    _logger.info('Unlinking whs lists for picking %s' % pick.name)
+                    _logger.info('WHS LOG: unlink lists for picking %s' % pick.name)
                     whs_list_ids.whs_unlink_lists(dbsource.id)
                 else:
                     whs_list_ids.whs_cancel_lists(dbsource.id)
