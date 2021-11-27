@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-27 13:35+0000\n"
-"PO-Revision-Date: 2021-10-27 13:35+0000\n"
+"POT-Creation-Date: 2021-11-27 21:42+0000\n"
+"PO-Revision-Date: 2021-11-27 21:42+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -41,6 +41,11 @@ msgstr "Annulla"
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__cap
 msgid "Cap"
 msgstr "CAP"
+
+#. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_dbsource_form
+msgid "Check missing lists"
+msgstr "Controlla liste mancanti"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__client_order_ref
@@ -142,9 +147,10 @@ msgstr "Sorgenti Database Esterne"
 #. module: connector_whs
 #: code:addons/connector_whs/models/hyddemo_mssql_log.py:150
 #: code:addons/connector_whs/models/hyddemo_mssql_log.py:246
-#: code:addons/connector_whs/models/hyddemo_mssql_log.py:373
-#: code:addons/connector_whs/models/hyddemo_whs_liste.py:98
-#: code:addons/connector_whs/models/hyddemo_whs_liste.py:122
+#: code:addons/connector_whs/models/hyddemo_mssql_log.py:283
+#: code:addons/connector_whs/models/hyddemo_mssql_log.py:410
+#: code:addons/connector_whs/models/hyddemo_whs_liste.py:102
+#: code:addons/connector_whs/models/hyddemo_whs_liste.py:129
 #: code:addons/connector_whs/wizard/wizard_sync_stock_whs_mssql.py:23
 #, python-format
 msgid "Failed to open connection!"
@@ -417,7 +423,7 @@ msgid "Service"
 msgstr "Servizio"
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/stock.py:121
+#: code:addons/connector_whs/models/stock.py:123
 #, python-format
 msgid "Some moves already elaborated from WHS!"
 msgstr "Alcuni movimenti già elaborati da WHS!"
@@ -469,13 +475,13 @@ msgid "Transfer"
 msgstr "Trasferimento"
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/hyddemo_whs_liste.py:149
+#: code:addons/connector_whs/models/hyddemo_whs_liste.py:159
 #, python-format
 msgid "Trying to cancel lists elaborated from WHS, please wait for cron synchronization or force it."
 msgstr "Tentativo di annullare liste elaborate da WHS, si prega di attendere o forzare la sincronizzazione."
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/hyddemo_whs_liste.py:161
+#: code:addons/connector_whs/models/hyddemo_whs_liste.py:171
 #, python-format
 msgid "Trying to cancel lists launched in processing from user in WHS, please wait for order end processing."
 msgstr "Tentativo di annullare liste lanciate in elaborazione dall'utente in WHS, si prega di attendere il completamento dell'operazione."
@@ -527,6 +533,11 @@ msgstr "Liste Whs"
 #: model:ir.model.fields,field_description:connector_whs.field_base_external_dbsource__warehouse_id
 msgid "Warehouse linked to WHS"
 msgstr "Magazzino collegato a WHS"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__whs_list_absent
+msgid "Whs List Absent"
+msgstr "Lista Whs Mancante"
 
 #. module: connector_whs
 #: model:ir.actions.act_window,name:connector_whs.action_whs_liste
