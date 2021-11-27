@@ -64,6 +64,14 @@ class BaseExternalDbsource(models.Model):
             )
         return True
 
+    @api.multi
+    def whs_check_lists(self):
+        for dbsource in self:
+            self.env['hyddemo.mssql.log'].whs_check_list_to_elaborate(
+                dbsource.id
+            )
+        return True
+
     @api.model
     def _cron_whs_synchronize(self):
         for dbsource in self.search([]):
