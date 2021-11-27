@@ -19,6 +19,7 @@
                     <button name="whs_update_products" string="Update Products in WHS" type="object"/>
                     <button name="whs_insert_read_and_synchronize_list" string="Synchronize WHS lists" type="object"/>
                     <button name="whs_sync_stock" string="Synchronize Stock from WHS" type="object"/>
+                    <button name="whs_check_lists" string="Check missing lists" type="object"/>
                 </header>
             </xpath>
             <xpath expr="//group" position="after">
