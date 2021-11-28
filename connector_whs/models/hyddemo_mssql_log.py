@@ -246,21 +246,23 @@ class HyddemoMssqlLog(models.Model):
             raise UserError(_('Failed to open connection!'))
         whs_lists = self.env['hyddemo.whs.liste'].search([
             ('stato', 'in', ['1', '2']),
-            ('whs_list_absent', '=', False),
         ])
         i = 0
         imax = len(whs_lists)
         step = 1
         for whs_list in whs_lists:
             whs_liste_query = \
-                "SELECT NumLista, NumRiga, Qta, QtaMovimentata FROM HOST_LISTE AS A "\
-                "WHERE A.NumLista = '%s' AND A.NumRiga = '%s'" % (
+                "SELECT NumLista, NumRiga, Qta, QtaMovimentata, Elaborato " \
+                "FROM HOST_LISTE "\
+                "WHERE NumLista = '%s' AND NumRiga = '%s'" % (
                     whs_list.num_lista, whs_list.riga)
             esiti_liste = dbsource.execute_mssql(
                 sqlquery=whs_liste_query, sqlparams=None, metadata=None)
             # esiti_liste[0] contain result
             if not esiti_liste[0]:
                 whs_list.whs_list_absent = True
+            else:
+                whs_list.whs_list_absent = False
             i += 1
             if i * 100.0 / imax > step:
                 _logger.info(
