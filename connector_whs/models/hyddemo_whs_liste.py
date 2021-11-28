@@ -205,15 +205,36 @@ class HyddemoWhsListe(models.Model):
                         "WHERE NumLista = '%s'" % whs_list.num_lista
                     esito_lista_simple = dbsource.execute_mssql(
                         sqlquery=whs_liste_query_simple, sqlparams=None, metadata=None)
-                    whs_list.write({
-                        'whs_list_absent': True,
-                        'whs_list_log': 'Query: %s result:\n [%s] \n'
-                                        'Query simple: %s result:\n [%s]' % (
-                                            whs_liste_query,
-                                            str(esito_lista),
-                                            whs_liste_query_simple,
-                                            str(esito_lista_simple))
-                    })
+                    if not esito_lista_simple[0]:
+                        whs_liste_query_super_simple = \
+                            "SELECT NumLista, Elaborato FROM HOST_LISTE " \
+                            "WHERE NumLista like '%s'" % whs_list.num_lista.replace(
+                                'WHS/', '')
+                        esito_lista_super_simple = dbsource.execute_mssql(
+                            sqlquery=whs_liste_query_super_simple, sqlparams=None,
+                            metadata=None)
+                        whs_list.write({
+                            'whs_list_absent': True,
+                            'whs_list_log': 'Query: %s result:\n [%s]\n'
+                                            'Query simple: %s result:\n [%s]\n'
+                                            'Query super simple: %s result:\n [%s]' % (
+                                                whs_liste_query,
+                                                str(esito_lista),
+                                                whs_liste_query_simple,
+                                                str(esito_lista_simple),
+                                                whs_liste_query_super_simple,
+                                                str(esito_lista_super_simple))
+                        })
+                    else:
+                        whs_list.write({
+                            'whs_list_absent': True,
+                            'whs_list_log': 'Query: %s result:\n [%s]\n'
+                                            'Query simple: %s result:\n [%s]' % (
+                                                whs_liste_query,
+                                                str(esito_lista),
+                                                whs_liste_query_simple,
+                                                str(esito_lista_simple))
+                        })
                 else:
                     whs_list.write({
                         'whs_list_absent': False,
