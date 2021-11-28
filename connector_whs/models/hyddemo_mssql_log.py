@@ -258,7 +258,7 @@ class HyddemoMssqlLog(models.Model):
                     whs_list.num_lista, whs_list.riga)
             esiti_liste = dbsource.execute_mssql(
                 sqlquery=whs_liste_query, sqlparams=None, metadata=None)
-            # esiti_liste[0] contain result
+            # esiti_liste[0] contains result
             if not esiti_liste[0]:
                 whs_list.whs_list_absent = True
             else:
