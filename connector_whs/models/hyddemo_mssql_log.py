@@ -232,7 +232,7 @@ class HyddemoMssqlLog(models.Model):
         return execute_params
 
     @api.model
-    def whs_check_list_to_elaborate(self, datasource_id):
+    def whs_check_list_state(self, datasource_id):
         """
         Funzione lanciabile manualmente per marcare le liste in Odoo che non sono più
         presenti in WHS in quanto cancellate, per verifiche

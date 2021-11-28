@@ -67,7 +67,7 @@ class BaseExternalDbsource(models.Model):
     @api.multi
     def whs_check_lists(self):
         for dbsource in self:
-            self.env['hyddemo.mssql.log'].whs_check_list_to_elaborate(
+            self.env['hyddemo.mssql.log'].whs_check_list_state(
                 dbsource.id
             )
         return True
