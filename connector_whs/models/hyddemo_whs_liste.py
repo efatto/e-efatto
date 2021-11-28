@@ -194,16 +194,14 @@ class HyddemoWhsListe(models.Model):
                 if not connection:
                     raise UserError(_('Failed to open connection!'))
                 whs_liste_query = \
-                    "SELECT NumLista, NumRiga, Qta, QtaMovimentata, Elaborato " \
-                    "FROM HOST_LISTE "\
+                    "SELECT NumLista, NumRiga, Elaborato FROM HOST_LISTE "\
                     "WHERE NumLista = '%s' AND NumRiga = '%s'" % (
                         whs_list.num_lista, whs_list.riga)
                 esito_lista = dbsource.execute_mssql(
                     sqlquery=whs_liste_query, sqlparams=None, metadata=None)
                 if not esito_lista[0]:
                     whs_liste_query_simple = \
-                        "SELECT NumLista, NumRiga, Qta, QtaMovimentata, Elaborato " \
-                        "FROM HOST_LISTE " \
+                        "SELECT NumLista, Elaborato FROM HOST_LISTE " \
                         "WHERE NumLista = '%s'" % whs_list.num_lista
                     esito_lista_simple = dbsource.execute_mssql(
                         sqlquery=whs_liste_query_simple, sqlparams=None, metadata=None)
