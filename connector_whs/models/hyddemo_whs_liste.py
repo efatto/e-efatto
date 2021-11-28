@@ -175,7 +175,7 @@ class HyddemoWhsListe(models.Model):
                 ))
 
     @api.multi
-    def whs_check_list_state(self, datasource_id):
+    def whs_check_list_state(self):
         """
         Funzione lanciabile manualmente per marcare la lista in Odoo che non è più
         presenti in WHS in quanto cancellate, per verifiche
