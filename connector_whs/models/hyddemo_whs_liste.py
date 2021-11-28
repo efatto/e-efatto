@@ -89,7 +89,7 @@ class HyddemoWhsListe(models.Model):
     client_order_ref = fields.Text(size=50)
     product_customer_code = fields.Char(size=250)
     whs_list_absent = fields.Boolean()
-    whs_list_log = fields.Char()
+    whs_list_log = fields.Text()
 
     @api.multi
     def whs_unlink_lists(self, datasource_id):
@@ -201,10 +201,20 @@ class HyddemoWhsListe(models.Model):
                 esito_lista = dbsource.execute_mssql(
                     sqlquery=whs_liste_query, sqlparams=None, metadata=None)
                 if not esito_lista[0]:
+                    whs_liste_query_simple = \
+                        "SELECT NumLista, NumRiga, Qta, QtaMovimentata, Elaborato " \
+                        "FROM HOST_LISTE " \
+                        "WHERE NumLista = '%s'" % whs_list.num_lista
+                    esito_lista_simple = dbsource.execute_mssql(
+                        sqlquery=whs_liste_query_simple, sqlparams=None, metadata=None)
                     whs_list.write({
                         'whs_list_absent': True,
-                        'whs_list_log': '%s [query: %s]' % (
-                            str(esito_lista), whs_liste_query)
+                        'whs_list_log': 'Query: %s result:\n [%s] \n'
+                                        'Query simple: %s result:\n [%s]' % (
+                                            whs_liste_query,
+                                            str(esito_lista),
+                                            whs_liste_query_simple,
+                                            str(esito_lista_simple))
                     })
                 else:
                     whs_list.write({
