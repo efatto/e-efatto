@@ -183,10 +183,13 @@ class HyddemoWhsListe(models.Model):
         """
         for whs_list in self:
             if whs_list.move_id:
-                location_id = whs_list.move_id.location_id
                 dbsource = self.env['base.external.dbsource'].search([
-                    ('location_id', '=', location_id.id)
+                    ('location_id', '=', whs_list.move_id.location_id.id)
                 ])
+                if not dbsource:
+                    dbsource = self.env['base.external.dbsource'].search([
+                        ('location_id', '=', whs_list.move_id.location_dest_id.id)
+                    ])
                 connection = dbsource.connection_open_mssql()
                 if not connection:
                     raise UserError(_('Failed to open connection!'))
@@ -198,7 +201,13 @@ class HyddemoWhsListe(models.Model):
                 esito_lista = dbsource.execute_mssql(
                     sqlquery=whs_liste_query, sqlparams=None, metadata=None)
                 if not esito_lista[0]:
-                    whs_list.whs_list_absent = True
-                    whs_list.whs_list_log = str(esito_lista)
+                    whs_list.write({
+                        'whs_list_absent': True,
+                        'whs_list_log': '%s [query: %s]' % (
+                            str(esito_lista), whs_liste_query)
+                    })
                 else:
-                    whs_list.whs_list_absent = False
+                    whs_list.write({
+                        'whs_list_absent': False,
+                        'whs_list_log': 'Ok',
+                    })
