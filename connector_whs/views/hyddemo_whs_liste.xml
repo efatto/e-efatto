@@ -56,6 +56,9 @@
         <field name="model">hyddemo.whs.liste</field>
         <field name="arch" type="xml">
             <form string="Liste prelievo, deposito e inventario">
+                <header>
+                    <button name="whs_check_list_state" string="Check list state" type="object"/>
+                </header>
                 <sheet string="WHS liste">
                     <group>
                         <group>
@@ -67,11 +70,12 @@
                             <field name="lotto5"/>
                         </group>
                         <group>
-                            <field name="whs_list_absent"/>
                             <field name="move_id"/>
                             <field name="tipo_mov"/>
                             <field name="qta"/>
                             <field name="qtamov"/>
+                            <field name="whs_list_absent"/>
+                            <field name="whs_list_log"/>
                         </group>
                     </group>
                     <group>
