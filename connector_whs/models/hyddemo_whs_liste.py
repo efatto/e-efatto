@@ -179,28 +179,26 @@ class HyddemoWhsListe(models.Model):
         """
         Funzione lanciabile manualmente per marcare la lista in Odoo che non è più
         presenti in WHS in quanto cancellate, per verifiche
-        :param datasource_id:
         :return:
         """
-        self.ensure_one()
-        whs_list = self
-        if whs_list.move_id:
-            location_id = whs_list.move_id.location_id
-            dbsource = self.env['base.external.dbsource'].search([
-                ('location_id', '=', location_id.id)
-            ])
-            connection = dbsource.connection_open_mssql()
-            if not connection:
-                raise UserError(_('Failed to open connection!'))
-            whs_liste_query = \
-                "SELECT NumLista, NumRiga, Qta, QtaMovimentata, Elaborato " \
-                "FROM HOST_LISTE "\
-                "WHERE NumLista = '%s' AND NumRiga = '%s'" % (
-                    whs_list.num_lista, whs_list.riga)
-            esito_lista = dbsource.execute_mssql(
-                sqlquery=whs_liste_query, sqlparams=None, metadata=None)
-            if not esito_lista[0]:
-                whs_list.whs_list_absent = True
-                whs_list.whs_list_log = str(esito_lista)
-            else:
-                whs_list.whs_list_absent = False
+        for whs_list in self:
+            if whs_list.move_id:
+                location_id = whs_list.move_id.location_id
+                dbsource = self.env['base.external.dbsource'].search([
+                    ('location_id', '=', location_id.id)
+                ])
+                connection = dbsource.connection_open_mssql()
+                if not connection:
+                    raise UserError(_('Failed to open connection!'))
+                whs_liste_query = \
+                    "SELECT NumLista, NumRiga, Qta, QtaMovimentata, Elaborato " \
+                    "FROM HOST_LISTE "\
+                    "WHERE NumLista = '%s' AND NumRiga = '%s'" % (
+                        whs_list.num_lista, whs_list.riga)
+                esito_lista = dbsource.execute_mssql(
+                    sqlquery=whs_liste_query, sqlparams=None, metadata=None)
+                if not esito_lista[0]:
+                    whs_list.whs_list_absent = True
+                    whs_list.whs_list_log = str(esito_lista)
+                else:
+                    whs_list.whs_list_absent = False
