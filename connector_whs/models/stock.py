@@ -129,7 +129,7 @@ class Picking(models.Model):
                     ('location_id', '=', location_id)
                 ])
                 if not dbsource:
-                    _logger.info('Location %s is not linked to WHS System' %
+                    _logger.info('WHS LOG: Location %s is not linked to WHS System' %
                                  location_id.name)
                     continue
                 if unlink:
@@ -206,7 +206,7 @@ class StockMove(models.Model):
                     if move.whs_list_ids and any(
                             x.stato != '3' for x in move.whs_list_ids):
                         _logger.info(
-                            'Ignored creation of WHS list %s as it '
+                            'WHS LOG: Ignored creation of WHS list %s as it '
                             'already exists and is processable!'
                             % str(
                                 ['%s-%s' % (x.riga, x.num_lista)
