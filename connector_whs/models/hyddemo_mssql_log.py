@@ -387,12 +387,13 @@ class HyddemoMssqlLog(models.Model):
                     # FIXME action_assign must assign on qty_done and not on available
                     pickings_to_assign |= move.picking_id
 
-                # Set mssql list done from host
-                set_liste_to_elaborate_query = \
+                # Set mssql list done from host, they are not deleted from HOST to
+                # preserve history, but it is a possible implementation to do
+                set_liste_to_done_query = \
                     "UPDATE HOST_LISTE SET Elaborato=5 WHERE NumLista='%s' AND "\
                     "NumRiga='%s'" % (num_lista, num_riga)
                 dbsource.with_context(no_return=True).execute_mssql(
-                    sqlquery=set_liste_to_elaborate_query, sqlparams=None,
+                    sqlquery=set_liste_to_done_query, sqlparams=None,
                     metadata=None)
         if pickings_to_assign:
             pickings_to_assign.action_assign()
