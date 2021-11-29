@@ -266,7 +266,7 @@ class HyddemoMssqlLog(models.Model):
             i += 1
             if i * 100.0 / imax > step:
                 _logger.info(
-                    'Execution {0}% '.format(
+                    'WHS LOG: Execution {0}% '.format(
                         int(i * 100.0 / imax)))
                 step += 1
 
@@ -304,9 +304,9 @@ class HyddemoMssqlLog(models.Model):
                 num_lista = esito_lista[1]
                 num_riga = int(esito_lista[2])
                 if not num_riga or not num_lista:
-                    _logger.info('WHS list %s in db without NumLista or NumRiga' % (
-                        esito_lista
-                    ))
+                    _logger.info('WHS LOG: list %s in db without NumLista or NumRiga' %
+                                 esito_lista
+                                 )
                     continue
                 hyddemo_whs_lists = self.env['hyddemo.whs.liste'].search([
                     ('num_lista', '=', num_lista),
@@ -316,8 +316,8 @@ class HyddemoMssqlLog(models.Model):
                     # ROADMAP: if the user want to create the list directly in WHS, do
                     # the reverse synchronization (not requested so far)
                     _logger.info(
-                        'WHS liste num_riga %s num_lista %s not found in '
-                        'whs liste (found whs_lista %s but not row)' % (
+                        'WHS LOG: list num_riga %s num_lista %s not found in '
+                        'lists (found list %s but not row)' % (
                             num_riga,
                             num_lista,
                             self.env['hyddemo.whs.liste'].search([
@@ -327,10 +327,11 @@ class HyddemoMssqlLog(models.Model):
                     continue
                 if len(hyddemo_whs_lists) > 1:
                     _logger.info(
-                        'More than 1 WHS lista found for lista %s' % hyddemo_whs_lists)
+                        'WHS LOG: More than 1 list found for lista %s' %
+                        hyddemo_whs_lists)
                 hyddemo_whs_list = hyddemo_whs_lists[0]
                 if hyddemo_whs_list.stato == '3':
-                    _logger.info('WHS list not processable: %s-%s' % (
+                    _logger.info('WHS LOG: list not processable: %s-%s' % (
                         hyddemo_whs_list.num_lista,
                         hyddemo_whs_list.riga,
                     ))
@@ -358,7 +359,7 @@ class HyddemoMssqlLog(models.Model):
                 elif qty_moved != hyddemo_whs_list.qta:
                     # in or out differs from total qty
                     if qty_moved > hyddemo_whs_list.qta:
-                        _logger.info('Hyddemo whs list %s: qty moved %s is bigger than '
+                        _logger.info('WHS LOG: list %s: qty moved %s is bigger than '
                                      'initial qty %s!'
                                      % (hyddemo_whs_list.id, qty_moved,
                                         hyddemo_whs_list.qta))
@@ -381,7 +382,7 @@ class HyddemoMssqlLog(models.Model):
                 if move.move_line_ids:
                     move.move_line_ids[0].qty_done = qty_moved
                 else:
-                    _logger.info('Missing move lines in move %s' % move.name)
+                    _logger.info('WHS LOG: Missing move lines in move %s' % move.name)
                 if move.picking_id.mapped('move_lines').filtered(
                         lambda m: m.state not in ('draft', 'cancel', 'done')):
                     # FIXME action_assign must assign on qty_done and not on available
