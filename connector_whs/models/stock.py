@@ -129,7 +129,8 @@ class Picking(models.Model):
                     ('location_id', '=', location_id)
                 ])
                 if not dbsource:
-                    # This location is not linked to WHS System
+                    _logger.info('Location %s is not linked to WHS System' %
+                                 location_id.name)
                     continue
                 if unlink:
                     _logger.info('WHS LOG: unlink lists for picking %s' % pick.name)
