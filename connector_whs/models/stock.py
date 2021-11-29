@@ -266,6 +266,9 @@ class StockMove(models.Model):
                     if nazione:
                         whsliste_data['nazione'] = nazione[0:50]
                     whsliste_obj.create(whsliste_data)
+                    _logger.info('WHS LOG: create list with data:\n %s' % (
+                        str(whsliste_data)
+                    ))
                     move.state = 'waiting'
         return True
 
