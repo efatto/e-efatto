@@ -11,7 +11,7 @@
                     <label for="is_finishing"/>
                 </div>
             </div>
-            <field name="weight" position="after">
+            <field name="uom_id" position="before">
                 <field name="finishing_surcharge_percent"/>
             </field>
         </field>
