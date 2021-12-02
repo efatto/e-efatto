@@ -77,7 +77,9 @@ class MrpBom(models.Model):
             total_bom_product_weight_to_finish = sum(
                 x.product_id.weight_uom_id._compute_quantity(
                     x.weight_total * x.product_qty, finishing_product_id.uom_id
-                ) for x in to_finish_bom_line_ids)
+                ) for x in to_finish_bom_line_ids) * (
+                1 + finishing_product_id.finishing_surcharge_percent
+            )
             if total_bom_product_weight_to_finish:
                 finishing_product_bom_line_ids = self.bom_line_ids.filtered(
                     lambda y: y.product_id == finishing_product_id

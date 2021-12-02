@@ -96,9 +96,9 @@
                     <tfoot>
                         <tr class="o_mrp_total">
                             <td class="text-right"><span><strong>Total Unit Cost</strong></span></td>
-                            <td></td>
-                            <td></td>
-                            <td><span><t t-esc="finishing_weight_total" t-options='{"widget": "float", "decimal_precision": "Product Unit of Measure"}'/></span></td>
+                            <td colspan="2"/>
+                            <td class="text-right"><span><t t-esc="finishing_weight_total" t-options='{"widget": "float", "decimal_precision": "Product Unit of Measure"}'/></span></td>
+                            <td/>
                             <td class="text-right">
                                 <span><strong><t t-esc="doc.total_amount" t-options='{"widget": "monetary", "display_currency": currency}'/></strong></span>
                             </td>
