@@ -11,6 +11,9 @@
                     <label for="is_finishing"/>
                 </div>
             </div>
+            <field name="weight" position="after">
+                <field name="finishing_surcharge"/>
+            </field>
         </field>
     </record>
     <record id="product_category_form_view" model="ir.ui.view">
