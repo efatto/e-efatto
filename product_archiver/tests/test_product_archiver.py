@@ -25,16 +25,19 @@ class ProductArchiver(SavepointCase):
         old_date = today_date - timedelta(days=10)
         old_service = self.env['product.product'].create({
             'name': 'Old product',
+            'default_code': 'OLD_P_CODE',
             'type': 'service',
         })
         old_service.create_date = old_date.strftime('%Y-%m-%d')
         old_product = self.env['product.product'].create({
             'name': 'Old product',
+            'default_code': 'OLD_S_CODE',
         })
         old_product.create_date = old_date.strftime('%Y-%m-%d')
         self.product.create_date = today_date.strftime('%Y-%m-%d')
         new_product = self.env['product.product'].create({
             'name': 'New product',
+            'default_code': 'NEW_P_CODE',
         })
         wizard_obj = self.env['product.archiver']
         wizard_vals = wizard_obj.default_get(
