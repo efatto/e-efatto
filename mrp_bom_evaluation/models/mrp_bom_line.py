@@ -35,7 +35,30 @@ class MrpBomLine(models.Model):
     def onchange_product_id(self):
         # this onchange work only when an account user change the product
         res = super().onchange_product_id()
-        self.price_unit = self.product_id.standard_price
+        purchase_order_line_ids = self.env['purchase.order.line'].search([
+            ('product_id', '=', self.product_id.id),
+            ('state', '!=', 'cancel'),
+        ])
+        price_unit = self.product_id.standard_price
+        if purchase_order_line_ids:
+            purchase_order_line_id = purchase_order_line_ids.sorted(
+                'date_order', reverse=True
+            )[0]
+            if purchase_order_line_id.price_unit != 0.0:
+                price_unit = purchase_order_line_id._get_discounted_price_unit()
+                if purchase_order_line_id.product_uom != self.product_uom_id:
+                    price_unit = purchase_order_line_id.product_uom._compute_price(
+                        price_unit, self.product_uom_id
+                    )
+                if purchase_order_line_id.currency_id != \
+                        self.bom_id.company_id.currency_id:
+                    price_unit = purchase_order_line_id.currency_id._convert(
+                        price_unit,
+                        self.bom_id.company_id.currency_id,
+                        self.bom_id.company_id,
+                        fields.Date.today(),
+                    )
+        self.price_unit = price_unit
         return res
 
     @api.depends('product_id', 'price_unit', 'product_qty')
