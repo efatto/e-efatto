@@ -84,16 +84,16 @@ class MrpBom(models.Model):
                 finishing_product_bom_line_ids = self.bom_line_ids.filtered(
                     lambda y: y.product_id == finishing_product_id
                 )
+                values = {
+                    'product_id': finishing_product_id.id,
+                    'product_qty': total_bom_product_weight_to_finish,
+                    'product_uom_id': finishing_product_id.uom_id.id,
+                    'price_unit': finishing_product_id.standard_price,
+                }
                 if finishing_product_bom_line_ids:
-                    finishing_product_bom_line_ids[-1].write({
-                        'product_qty': total_bom_product_weight_to_finish,
-                        'price_unit': finishing_product_id.standard_price,
-                    })
+                    finishing_product_bom_line_ids[-1].write(values)
                 else:
-                    self.env['mrp.bom.line'].create({
+                    values.update({
                         'bom_id': self.id,
-                        'product_id': finishing_product_id.id,
-                        'product_qty': total_bom_product_weight_to_finish,
-                        'product_uom_id': finishing_product_id.uom_id.id,
-                        'price_unit': finishing_product_id.standard_price,
                     })
+                    self.env['mrp.bom.line'].create(values)
