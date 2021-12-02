@@ -62,3 +62,36 @@ class MrpBom(models.Model):
             self.product_id.managed_replenishment_cost = managed_replenishment_cost
         elif self.product_tmpl_id:
             self.product_tmpl_id.managed_replenishment_cost = managed_replenishment_cost
+
+    @api.multi
+    def add_finishing_product(self):
+        self.ensure_one()
+        # get finishing products for mrp_bom product computing weight from mrp component
+        # wich belongs to product category where a finishing product is set
+        finishing_product_id = self.product_tmpl_id.categ_id.finishing_product_id
+        if finishing_product_id:
+            to_finish_bom_line_ids = self.mapped('bom_line_ids').filtered(
+                lambda x: x.product_id.categ_id.finishing_product_id
+                and x.product_id.type != 'service'
+            )
+            total_bom_product_weight_to_finish = sum(
+                x.product_id.weight_uom_id._compute_quantity(
+                    x.weight_total * x.product_qty, finishing_product_id.uom_id
+                ) for x in to_finish_bom_line_ids)
+            if total_bom_product_weight_to_finish:
+                finishing_product_bom_line_ids = self.bom_line_ids.filtered(
+                    lambda y: y.product_id == finishing_product_id
+                )
+                if finishing_product_bom_line_ids:
+                    finishing_product_bom_line_ids[-1].write({
+                        'product_qty': total_bom_product_weight_to_finish,
+                        'price_unit': finishing_product_id.standard_price,
+                    })
+                else:
+                    self.env['mrp.bom.line'].create({
+                        'bom_id': self.id,
+                        'product_id': finishing_product_id.id,
+                        'product_qty': total_bom_product_weight_to_finish,
+                        'product_uom_id': finishing_product_id.uom_id.id,
+                        'price_unit': finishing_product_id.standard_price,
+                    })

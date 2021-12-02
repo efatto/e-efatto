@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-19 16:19+0000\n"
-"PO-Revision-Date: 2021-10-19 16:19+0000\n"
+"POT-Creation-Date: 2021-12-02 11:11+0000\n"
+"PO-Revision-Date: 2021-12-02 11:11+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,8 +17,18 @@ msgstr ""
 
 #. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
+msgid "<i>Operations Total</i>"
+msgstr "<i>Totale Operazioni</i>"
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
 msgid "<span>(Total Cost for)</span>"
 msgstr "<span>(Costo Totale per)</span>"
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
+msgid "<span><i>Components Total</i></span>"
+msgstr "<span><i>Total Componenti</i></span>"
 
 #. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
@@ -29,6 +39,11 @@ msgstr "<span><strong>Costo Unitario Totale</strong></span>"
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
 msgid "<span>Hours</span>"
 msgstr "<span>Ore</span>"
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.mrp_bom_form_view
+msgid "Add finishing product"
+msgstr "Aggiungi finitura"
 
 #. module: mrp_bom_evaluation
 #: model:ir.model,name:mrp_bom_evaluation.model_mrp_bom
@@ -51,11 +66,6 @@ msgid "BoM Estimate"
 msgstr "Preventivo BoM"
 
 #. module: mrp_bom_evaluation
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
-msgid "Components"
-msgstr "Componenti"
-
-#. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_order_line__created_from_bom
 msgid "Created From Bom"
 msgstr "Creato da DiBa"
@@ -67,6 +77,11 @@ msgid "Exclude From Mo"
 msgstr "Escludi Dalla Produzione"
 
 #. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
+msgid "Finishing Weight"
+msgstr "Peso Finitura"
+
+#. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_line__price_write_date
 msgid "Last price update"
 msgstr "Data aggiornamento prezzo"
@@ -75,11 +90,6 @@ msgstr "Data aggiornamento prezzo"
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
 msgid "Last write:"
 msgstr "Ultima modifica:"
-
-#. module: mrp_bom_evaluation
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
-msgid "Operations"
-msgstr "Operazioni"
 
 #. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_line__price_subtotal

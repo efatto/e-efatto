@@ -17,12 +17,14 @@
                 <t t-set="currency" t-value="user.company_id.currency_id"/>
                 <t t-set="component_total" t-value="0"/>
                 <t t-set="operation_total" t-value="0"/>
+                <t t-set="finishing_weight_total" t-value="0"/>
                 <table width="100%" class="table table-sm o_main_table">
                     <thead>
                         <tr>
                             <th>Product</th>
                             <th class="text-right">Quantity</th>
                             <th class="text-left">Unit of Measure</th>
+                            <th class="text-right">Finishing Weight</th>
                             <th class="text-right">Product Unit Cost</th>
                             <th class="text-right">Product Total Cost</th>
                         </tr>
@@ -41,6 +43,14 @@
                                     </td>
                                     <td><span><t t-esc="bom_line.product_uom_id.name"/></span></td>
                                     <td class="text-right">
+                                        <span>
+                                            <t t-if="bom_line.product_id.categ_id.finishing_product_id">
+                                                <t t-set="finishing_weight_total" t-value="finishing_weight_total + bom_line.weight_total"/>
+                                                <t t-esc="bom_line.weight_total" t-options='{"widget": "float", "decimal_precision": "Product Unit of Measure"}'/>
+                                            </t>
+                                        </span>
+                                    </td>
+                                    <td class="text-right">
                                         <span t-esc="bom_line.price_unit" t-options='{"widget": "monetary", "display_currency": currency}'/>
                                     </td>
                                     <td class="text-right">
@@ -49,9 +59,9 @@
                                 </tr>
                             </t>
                             <tr class="o_mrp_total">
-                                <td colspan="4">Components</td>
+                                <td colspan="5"><span><i>Components Total</i></span></td>
                                 <td class="text-right">
-                                    <span t-esc="component_total" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                                    <i><span t-esc="component_total" t-options='{"widget": "monetary", "display_currency": currency}'/></i>
                                 </td>
                             </tr>
                         </t>
@@ -66,6 +76,7 @@
                                         </span>
                                     </td>
                                     <td><span>Hours</span></td>
+                                    <td></td>
                                     <td class="text-right">
                                         <span t-esc="bom_operation.price_unit" t-options='{"widget": "monetary", "display_currency": currency}'/>
                                     </td>
@@ -75,19 +86,19 @@
                                 </tr>
                             </t>
                             <tr class="o_mrp_total">
-                                <td colspan="4">Operations</td>
+                                <td colspan="5"><i>Operations Total</i></td>
                                 <td class="text-right">
-                                    <span t-esc="operation_total" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                                    <i><span t-esc="operation_total" t-options='{"widget": "monetary", "display_currency": currency}'/></i>
                                 </td>
                             </tr>
                         </t>
                     </tbody>
                     <tfoot>
                         <tr class="o_mrp_total">
-                            <td></td>
                             <td class="text-right"><span><strong>Total Unit Cost</strong></span></td>
                             <td></td>
                             <td></td>
+                            <td><span><t t-esc="finishing_weight_total" t-options='{"widget": "float", "decimal_precision": "Product Unit of Measure"}'/></span></td>
                             <td class="text-right">
                                 <span><strong><t t-esc="doc.total_amount" t-options='{"widget": "monetary", "display_currency": currency}'/></strong></span>
                             </td>
@@ -97,6 +108,7 @@
                                 <td></td>
                                 <td class="text-right"><span>(Total Cost for)</span></td>
                                 <td class="text-right"><span>(<t t-esc="doc.product_qty"/> <t t-esc="doc.product_uom_id.name"/>)</span></td>
+                                <td></td>
                                 <td></td>
                                 <td class="text-right">
                                     <span>(<t t-esc="doc.total_amount * doc.product_qty" t-options='{"widget": "monetary", "display_currency": currency}'/>)</span>

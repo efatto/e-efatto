@@ -15,6 +15,10 @@
                         icon="fa-save"
                         groups="account.group_account_user"
                         string="Update replenishment cost"/>
+                <button name="add_finishing_product" type="object"
+                        icon="fa-check"
+                        groups="account.group_account_user"
+                        string="Add finishing product"/>
             </xpath>
             <xpath expr="//field[@name='bom_line_ids']/tree/field[last()]" position="after">
                 <field name="weight_total" sum="Total"/>
