@@ -6,7 +6,7 @@ from odoo import api, fields, models,  _
 class ProductCategory(models.Model):
     _inherit = 'product.category'
 
-    finishing_product_ids = fields.Many2many(
-        'product.template',
+    finishing_product_id = fields.Many2one(
+        'product.product',
         domain=[('is_finishing', '=', True)],
         string='Finishing Product')
