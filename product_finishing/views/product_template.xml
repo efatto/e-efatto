@@ -12,7 +12,7 @@
                 </div>
             </div>
             <field name="weight" position="after">
-                <field name="finishing_surcharge"/>
+                <field name="finishing_surcharge_percent"/>
             </field>
         </field>
     </record>

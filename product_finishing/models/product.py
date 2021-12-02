@@ -9,6 +9,6 @@ class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
     is_finishing = fields.Boolean()
-    finishing_surcharge = fields.Float(
+    finishing_surcharge_percent = fields.Float(
         digits=dp.get_precision('Stock Weight')
     )
