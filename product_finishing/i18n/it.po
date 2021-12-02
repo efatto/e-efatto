@@ -1,0 +1,100 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* product_archiver
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-09-27 13:49+0000\n"
+"PO-Revision-Date: 2021-09-27 13:49+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: product_archiver
+#: model:ir.actions.act_window,name:product_archiver.action_product_archive
+#: model:ir.ui.menu,name:product_archiver.product_archiver
+#: model_terms:ir.ui.view,arch_db:product_archiver.product_archiver_wizard
+msgid "Archive Products"
+msgstr "Archiviazione Prodotti"
+
+#. module: product_archiver
+#: model_terms:ir.ui.view,arch_db:product_archiver.product_archiver_wizard
+msgid "Cancel"
+msgstr "Annulla"
+
+#. module: product_archiver
+#: model:ir.model.fields,field_description:product_archiver.field_product_archiver__create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: product_archiver
+#: model:ir.model.fields,field_description:product_archiver.field_product_archiver__create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: product_archiver
+#: model:ir.model.fields,field_description:product_archiver.field_product_archiver__display_name
+msgid "Display Name"
+msgstr "Nome da visualizzare"
+
+#. module: product_archiver
+#: model:ir.model.fields,field_description:product_archiver.field_product_archiver__id
+msgid "ID"
+msgstr ""
+
+#. module: product_archiver
+#: model:ir.model.fields,field_description:product_archiver.field_product_archiver__from_date
+msgid "Inactive from date"
+msgstr "Inattivo dalla data"
+
+#. module: product_archiver
+#: model:ir.model.fields,field_description:product_archiver.field_product_archiver____last_update
+msgid "Last Modified on"
+msgstr "Data di ultima modifica"
+
+#. module: product_archiver
+#: model:ir.model.fields,field_description:product_archiver.field_product_archiver__write_uid
+msgid "Last Updated by"
+msgstr "Ultima modifica di"
+
+#. module: product_archiver
+#: model:ir.model.fields,field_description:product_archiver.field_product_archiver__write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: product_archiver
+#: model:ir.model.fields,field_description:product_archiver.field_product_archiver__model
+msgid "Model"
+msgstr "Modello"
+
+#. module: product_archiver
+#: model_terms:ir.ui.view,arch_db:product_archiver.product_archiver_wizard
+msgid "Open Products to Archive"
+msgstr "Apri i Prodotti da Archiviare"
+
+#. module: product_archiver
+#: selection:product.archiver,model:0
+msgid "Product Template"
+msgstr "Modello Prodotto"
+
+#. module: product_archiver
+#: selection:product.archiver,model:0
+msgid "Product Variant"
+msgstr "Variante Prodotto"
+
+#. module: product_archiver
+#: code:addons/product_archiver/wizard/product_archiver.py:46
+#, python-format
+msgid "Products to be archived"
+msgstr "Prodotti da archiviare"
+
+#. module: product_archiver
+#: model:ir.model,name:product_archiver.model_product_archiver
+msgid "product.archiver"
+msgstr ""
+
