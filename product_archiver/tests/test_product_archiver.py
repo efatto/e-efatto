@@ -30,7 +30,7 @@ class ProductArchiver(SavepointCase):
         })
         old_service.create_date = old_date.strftime('%Y-%m-%d')
         old_product = self.env['product.product'].create({
-            'name': 'Old product',
+            'name': 'Old service',
             'default_code': 'OLD_S_CODE',
         })
         old_product.create_date = old_date.strftime('%Y-%m-%d')
