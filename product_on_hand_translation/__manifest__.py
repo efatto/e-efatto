@@ -9,5 +9,5 @@
     "category": "Product",
     "website": "https://efatto.it",
     "depends": ["product"],
-    "installable": True,
+    "installable": False,
 }
