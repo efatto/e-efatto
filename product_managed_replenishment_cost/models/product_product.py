@@ -93,6 +93,9 @@ class ProductProduct(models.Model):
         # suppliers
         for product in products_tobe_manufactured:
             produce_price = product._get_managed_price_from_bom()
+            if product.seller_ids:
+                seller = product.seller_ids[0]
+                produce_price += (seller.adjustment_cost + seller.depreciation_cost)
             product.managed_replenishment_cost = produce_price
             if update_standard_price:
                 product.standard_price = produce_price
