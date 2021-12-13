@@ -42,14 +42,14 @@ class MrpBomLine(models.Model):
             ('state', '!=', 'cancel'),
         ])
         price_unit = self.product_id.standard_price
-        price_write_date = fields.Datetime.now()
+        purchase_order_line_id_found = False
         if purchase_order_line_ids:
             purchase_order_line_id = purchase_order_line_ids.sorted(
                 'date_order', reverse=True
             )[0]
             if purchase_order_line_id.price_unit != 0.0:
                 price_unit = purchase_order_line_id._get_discounted_price_unit()
-                price_write_date = purchase_order_line_id.date_order
+                purchase_order_line_id_found = purchase_order_line_id
                 if purchase_order_line_id.product_uom != self.product_uom_id:
                     price_unit = purchase_order_line_id.product_uom._compute_price(
                         price_unit, self.product_uom_id
@@ -63,7 +63,9 @@ class MrpBomLine(models.Model):
                         fields.Date.today(),
                     )
         self.price_unit = price_unit
-        self.price_write_date = price_write_date
+        if purchase_order_line_id_found:
+            self.price_write_date = purchase_order_line_id_found.date_order
+            self.purchase_order_line_id = purchase_order_line_id_found
         return res
 
     @api.depends('product_id', 'price_unit', 'product_qty')

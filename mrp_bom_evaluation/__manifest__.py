@@ -26,9 +26,9 @@
         'mrp_production_grouped_by_product',
     ],
     'data': [
+        'wizard/mrp_bom_purchase_link.xml',
         'views/mrp_bom.xml',
         'views/product_template.xml',
-        'wizard/mrp_bom_purchase_link.xml',
         'report/report_view.xml',
         'report/mrp_report_bom.xml',
     ],
