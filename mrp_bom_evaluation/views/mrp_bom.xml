@@ -7,10 +7,10 @@
         <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
-                <button name="get_supplier_product_prices" type="object"
+                <button name="%(mrp_bom_evaluation.action_mrp_bom_purchase_link)d" type="action"
                         icon="fa-shopping-cart"
                         groups="account.group_account_user"
-                        string="Set prices from vendors"/>
+                        string="Link vendors RDP/PO"/>
                 <button name="update_product_managed_replenishment_cost" type="object"
                         icon="fa-save"
                         groups="account.group_account_user"
@@ -23,6 +23,7 @@
             <xpath expr="//field[@name='bom_line_ids']/tree/field[last()]" position="after">
                 <field name="weight_total" sum="Total"/>
                 <field name="price_unit"/>
+                <field name="purchase_order_line_id"/>
                 <field name="price_write_date" readonly="1"/>
                 <field name="price_subtotal" sum="Total"/>
             </xpath>

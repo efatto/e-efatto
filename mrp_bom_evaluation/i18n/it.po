@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-02 11:11+0000\n"
-"PO-Revision-Date: 2021-12-02 11:11+0000\n"
+"POT-Creation-Date: 2021-12-13 11:41+0000\n"
+"PO-Revision-Date: 2021-12-13 11:41+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -46,6 +46,11 @@ msgid "Add finishing product"
 msgstr "Aggiungi finitura"
 
 #. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.view_mrp_bom_purchase_link
+msgid "Are you sure you want to link bom to this purchase order?"
+msgstr "Si è sicuri di voler collegare la DiBa con questo ordine di acquisto?"
+
+#. module: mrp_bom_evaluation
 #: model:ir.model,name:mrp_bom_evaluation.model_mrp_bom
 msgid "Bill of Material"
 msgstr "Distinta base"
@@ -66,9 +71,34 @@ msgid "BoM Estimate"
 msgstr "Preventivo BoM"
 
 #. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.view_mrp_bom_purchase_link
+msgid "Confirm"
+msgstr "Conferma"
+
+#. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_order_line__created_from_bom
 msgid "Created From Bom"
 msgstr "Creato da DiBa"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_purchase_link__create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_purchase_link__create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.view_mrp_bom_purchase_link
+msgid "Discard"
+msgstr "Abbandona"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_purchase_link__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
 
 #. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_product_product__exclude_from_mo
@@ -82,6 +112,26 @@ msgid "Finishing Weight"
 msgstr "Peso Finitura"
 
 #. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_purchase_link__id
+msgid "ID"
+msgstr ""
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_purchase_link____last_update
+msgid "Last Modified on"
+msgstr "Ultima modifica il"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_purchase_link__write_uid
+msgid "Last Updated by"
+msgstr "Ultimo aggiornamento di"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_purchase_link__write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_line__price_write_date
 msgid "Last price update"
 msgstr "Data aggiornamento prezzo"
@@ -90,6 +140,27 @@ msgstr "Data aggiornamento prezzo"
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
 msgid "Last write:"
 msgstr "Ultima modifica:"
+
+#. module: mrp_bom_evaluation
+#: model:ir.actions.act_window,name:mrp_bom_evaluation.action_mrp_bom_purchase_link
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.view_mrp_bom_purchase_link
+msgid "Link Purchase Order or RDP to BOM"
+msgstr "Collegato Ordine di Acquisto o RDP a DiBa"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model,name:mrp_bom_evaluation.model_mrp_bom_purchase_link
+msgid "Link bom line to purchase order line"
+msgstr "Collega riga DiBa a riga ordine di acquisto"
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.mrp_bom_form_view
+msgid "Link vendors RDP/PO"
+msgstr "Collega offerte fornitori"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_line__purchase_order_line_id
+msgid "Linked RDP/PO line"
+msgstr "Riga ordine fornitore"
 
 #. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_line__price_subtotal
@@ -127,6 +198,11 @@ msgid "Production Order"
 msgstr "Ordine di Produzione"
 
 #. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_purchase_link__purchase_order_id
+msgid "Purchase Order"
+msgstr "Ordine di acquisto"
+
+#. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
 msgid "Quantity"
 msgstr "Quantità"
@@ -150,11 +226,6 @@ msgstr "Ordine di vendita"
 #: model:ir.model,name:mrp_bom_evaluation.model_sale_order_line
 msgid "Sales Order Line"
 msgstr "Linea d'ordine di vendita"
-
-#. module: mrp_bom_evaluation
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.mrp_bom_form_view
-msgid "Set prices from vendors"
-msgstr "Inserisci prezzi da fornitori"
 
 #. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.mrp_bom_form_view

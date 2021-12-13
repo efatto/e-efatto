@@ -2,12 +2,12 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     'name': 'Mrp bom evaluation',
-    'version': '12.0.1.0.4',
+    'version': '12.0.1.0.5',
     'category': 'Manufacture',
     'license': 'AGPL-3',
     'description': """
     Add product prices to bom lines to evaluate and store them.
-    Add function to update prices from current better vendor price.
+    Add function to link bom lines and update prices from vendor RPD/PO.
     Add function to update product replenishment cost from current bom evaluation.
     """,
     'author': "Sergio Corato",
@@ -28,6 +28,7 @@
     'data': [
         'views/mrp_bom.xml',
         'views/product_template.xml',
+        'wizard/mrp_bom_purchase_link.xml',
         'report/report_view.xml',
         'report/mrp_report_bom.xml',
     ],
