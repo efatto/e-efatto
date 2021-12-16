@@ -67,7 +67,8 @@ class ProductProduct(models.Model):
                         seller.price,
                         self.env.user.company_id.currency_id,
                         self.env.user.company_id,
-                        fields.Date.today())
+                        fields.Date.today(),
+                        round=False)
             adjustment_cost = seller.adjustment_cost
             depreciation_cost = seller.depreciation_cost
             if seller.product_uom != product.uom_id:
@@ -79,7 +80,7 @@ class ProductProduct(models.Model):
             )
             tariff_id = product.intrastat_code_id.tariff_id
             if tariff_id:
-                margin_percentage += tariff_id.tariff_percentage
+                price_unit = price_unit * (1 + tariff_id.tariff_percentage / 100.0)
             price_unit = price_unit * (1 + margin_percentage / 100.0) + (
                 adjustment_cost + depreciation_cost
             )
