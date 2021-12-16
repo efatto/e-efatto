@@ -1,0 +1,43 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* sale_comment_product
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-12-16 13:38+0000\n"
+"PO-Revision-Date: 2021-12-16 13:38+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: sale_comment_product
+#: model:ir.model.fields,field_description:sale_comment_product.field_product_product__formatted_note_sale
+#: model:ir.model.fields,field_description:sale_comment_product.field_product_template__formatted_note_sale
+msgid "Formatted Note Sale"
+msgstr "Nota Formattata Vendite"
+
+#. module: sale_comment_product
+#: model_terms:ir.ui.view,arch_db:sale_comment_product.product_template_form_view
+msgid "Formatted description for Customers"
+msgstr "Descrizione formattata per Clienti"
+
+#. module: sale_comment_product
+#: model:ir.model,name:sale_comment_product.model_product_template
+msgid "Product Template"
+msgstr "Modello prodotto"
+
+#. module: sale_comment_product
+#: model:ir.model,name:sale_comment_product.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Linea d'ordine di vendita"
+
+#. module: sale_comment_product
+#: model_terms:ir.ui.view,arch_db:sale_comment_product.product_template_form_view
+msgid "This formatted note will be shown only on sale orders."
+msgstr "Questa nota formattata sarà mostrata solo negli ordini di vendita."
+
