@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_template_form_view" model="ir.ui.view">
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='description_sale']/.." position="before">
+                <group string="Formatted description for Customers">
+                    <field name="formatted_note_sale" widget="html" nolabel="1" placeholder="This formatted note will be shown only on sale orders."/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
