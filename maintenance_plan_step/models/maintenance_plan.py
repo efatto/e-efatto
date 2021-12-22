@@ -2,7 +2,18 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api
-from odoo.addons.maintenance_plan.models import maintenance_plan
+from dateutil.relativedelta import relativedelta
+
+
+def get_relativedelta(interval, step):
+    if step == 'day':
+        return relativedelta(days=interval)
+    elif step == 'week':
+        return relativedelta(weeks=interval)
+    elif step == 'month':
+        return relativedelta(months=interval)
+    elif step == 'year':
+        return relativedelta(years=interval)
 
 
 class MaintenancePlan(models.Model):
@@ -48,11 +59,11 @@ class MaintenancePlan(models.Model):
             if equipment.maintenance_plan_horizon and equipment.maintenance_plan_step:
                 if plan.maintenance_plan_horizon_max and plan.planning_step_max:
                     plan_horizon_date = fields.Date.from_string(
-                        fields.Date.today()) + maintenance_plan.get_relativedelta(
+                        fields.Date.today()) + get_relativedelta(
                         plan.maintenance_plan_horizon_max,
                         plan.planning_step_max)
                     equipment_horizon_date = fields.Date.from_string(
-                        fields.Date.today()) + maintenance_plan.get_relativedelta(
+                        fields.Date.today()) + get_relativedelta(
                         equipment.maintenance_plan_horizon,
                         equipment.maintenance_plan_step)
                     if plan_horizon_date <= equipment_horizon_date:
