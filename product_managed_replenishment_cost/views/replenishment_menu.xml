@@ -37,6 +37,22 @@
                             <field name="log"/>
                         </group>
                     </group>
+                    <group string="Products without seller price">
+                        <field name="missing_seller_price_ids">
+                            <tree>
+                                <field name="default_code"/>
+                                <field name="name"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group string="Products without seller">
+                        <field name="missing_seller_ids">
+                            <tree>
+                                <field name="default_code"/>
+                                <field name="name"/>
+                            </tree>
+                        </field>
+                    </group>
                 </sheet>
             </form>
         </field>
