@@ -56,4 +56,4 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         self.intrastat.tariff_id = tariff
         repl.update_products_replenishment_cost()
         self.assertAlmostEqual(
-            self.product.managed_replenishment_cost, 60.0 * 0.9 * 1.25)
+            self.product.managed_replenishment_cost, (60.0 * 0.9 * 1.15) * 1.10)
