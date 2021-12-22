@@ -20,6 +20,18 @@ class ReplenishmentCost(models.Model):
         string='Product Categories'
     )
     log = fields.Text()
+    missing_seller_ids = fields.Many2many(
+        comodel_name='product.product',
+        relation='repl_missing_seller_rel',
+        column1='repl_id',
+        column2='prod_id',
+        string="Product missing seller")
+    missing_seller_price_ids = fields.Many2many(
+        comodel_name='product.product',
+        relation='repl_missing_price_rel',
+        column1='repl_id',
+        column2='prod_id',
+        string="Product missing price")
 
     @api.multi
     def update_products_standard_price(self):
@@ -36,16 +48,23 @@ class ReplenishmentCost(models.Model):
                 domain.append(('categ_id', 'in', repl.product_ctg_ids.ids))
             products = self.env['product.product'].search(domain)
             started_at = time.time()
-            products.update_managed_replenishment_cost()
+            products_without_seller, products_without_seller_price = \
+                products.update_managed_replenishment_cost()
             duration = time.time() - started_at
-            repl.last_update = fields.Datetime.now()
+            last_update = fields.Datetime.now()
             if not repl.name:
-                repl.name = _('Update of %s' % repl.last_update)
-            repl.log = 'Updated %s for %s products in %.2f minutes.' % (
-                'replenishment cost and standard price'
-                if self.env.context.get('update_standard_price')
-                else 'replenishment cost',
-                len(products),
-                duration / 60,
+                repl.name = _('Update of %s' % last_update)
+            repl.write(dict(
+                last_update=last_update,
+                log='Updated %s for %s products in %.2f minutes.' % (
+                    'replenishment cost and standard price'
+                    if self.env.context.get('update_standard_price')
+                    else 'replenishment cost',
+                    len(products),
+                    duration / 60,
+                    ),
+                )
             )
+            repl.missing_seller_ids = products_without_seller
+            repl.missing_seller_price_ids = products_without_seller_price
         return True
