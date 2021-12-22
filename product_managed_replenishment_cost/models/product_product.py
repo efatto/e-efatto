@@ -51,6 +51,7 @@ class ProductProduct(models.Model):
             lambda x: not x.seller_ids and not x.bom_count)
         products_tobe_manufactured = self - (
             products_tobe_purchased + products_nottobe_purchased)
+        products_without_seller_price = self.env['product.product']
         for product in products_tobe_purchased:
             price_unit = 0.0
             margin_percentage = 0.0
@@ -69,6 +70,9 @@ class ProductProduct(models.Model):
                         self.env.user.company_id,
                         fields.Date.today(),
                         round=False)
+            else:
+                # this product is without seller price
+                products_without_seller_price |= product
             adjustment_cost = seller.adjustment_cost
             depreciation_cost = seller.depreciation_cost
             if seller.product_uom != product.uom_id:
@@ -90,6 +94,7 @@ class ProductProduct(models.Model):
         # compute replenishment cost for product without suppliers
         for product in products_nottobe_purchased:
             product.managed_replenishment_cost = product.standard_price
+            # these products are without seller nor bom
         # compute replenishment cost for product to be manufactured, with or without
         # suppliers
         for product in products_tobe_manufactured:
@@ -100,3 +105,5 @@ class ProductProduct(models.Model):
             product.managed_replenishment_cost = produce_price
             if update_standard_price:
                 product.standard_price = produce_price
+
+        return products_nottobe_purchased, products_without_seller_price
