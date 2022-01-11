@@ -22,7 +22,7 @@
         'purchase_seller_evaluation',
         'sale_management',
     ],
-    'conflicts': [
+    'excludes': [
         'mrp_production_grouped_by_product',
     ],
     'data': [
