@@ -5,18 +5,21 @@
 from odoo import api, fields, models, _
 
 
-class MrpProductProduce(models.TransientModel):
-    _inherit = "mrp.product.produce"
+class MrpProduction(models.Model):
+    _inherit = "mrp.production"
 
     @api.multi
-    def do_produce(self):
-        res = super(MrpProductProduce, self).do_produce()
+    def button_mark_done(self):
+        res = super().button_mark_done()
+        self._generate_whs()
+        return res
+
+    @api.multi
+    def _generate_whs(self):
         # FIXME: this works only for complete production, add support for partial
         #  production
-        production_id = self._context.get('active_id', False)
-        mo_obj = self.env['mrp.production']
         whsliste_obj = self.env['hyddemo.whs.liste']
-        for production in mo_obj.browse([production_id]):
+        for production in self:
             # Create WHS list for raw materials
             raw_dbsource = self.env['base.external.dbsource'].search([
                 ('location_id', '=', production.location_src_id.id)
@@ -27,7 +30,7 @@ class MrpProductProduce(models.TransientModel):
                 for move in production.move_raw_ids:
                     if move.scrapped:
                         continue
-                    if move.state in ('done', 'cancel'):
+                    if move.state in ('done', 'cancel') and move.whs_list_ids:
                         continue
                     if move.quantity_done <= 0:
                         continue
@@ -63,7 +66,7 @@ class MrpProductProduce(models.TransientModel):
                 for move in production.move_finished_ids:
                     if move.scrapped or (move.product_id.id != production.product_id.id):
                         continue
-                    if move.state in ('done', 'cancel'):
+                    if move.state in ('done', 'cancel') and move.whs_list_ids:
                         continue
                     if move.quantity_done <= 0:
                         continue
@@ -100,4 +103,15 @@ class MrpProductProduce(models.TransientModel):
                             riga=riga,
                         )
                         whsliste_obj.create(whsliste_data)
+
+
+class MrpProductProduce(models.TransientModel):
+    _inherit = "mrp.product.produce"
+
+    @api.multi
+    def do_produce(self):
+        res = super().do_produce()
+        production_id = self._context.get('active_id', False)
+        production = self.env['mrp.production'].browse([production_id])
+        production._generate_whs()
         return res
