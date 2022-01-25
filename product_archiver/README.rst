@@ -42,18 +42,11 @@ Nella finestra che si apre va indicata la data fino alla quale verranno selezion
 #. Nessuna riserva
 #. Data creazione antecedente la data indicata
 #. Data ultima modifica antecedente la data indicata
+#. Nessuna bom attiva
+#. Nessun ordine di vendita oltre la data indicata
+#. Nessun ordine di acquisto oltre la data indicata
 
-Nella finestra è possibile selezionare i modelli di prodotto:
-
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_archiver/static/description/selezione_modelli.png
-    :alt: Selezione modelli
-
-oppure le varianti di prodotto:
-
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_archiver/static/description/selezione_varianti.png
-    :alt: Selezione varianti
-
-Verrà alla fine aperta una maschera con i prodotti filtrati, che sarà possibile archiviare con l'azione archivia:
+Verrà quindi aperta una maschera con i prodotti filtrati, che sarà possibile archiviare con l'azione archivia:
 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_archiver/static/description/archivia.png
     :alt: Archivia
