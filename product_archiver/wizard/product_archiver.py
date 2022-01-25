@@ -9,13 +9,29 @@ class ProductArchiver(models.TransientModel):
 
     from_date = fields.Date(string='Inactive from date', required=True)
     model = fields.Selection([
-        ('product', 'Product Variant'),
+        # ('product', 'Product Variant'),
         ('template', 'Product Template')],
-        string='Model', default='product')
+        string='Model', default='template')
 
     @api.multi
     def archive(self):
         for wizard in self:
+            # unarchive product.product wich product.template is active
+            to_unarchive_products = self.env['product.product'].with_context(
+                active_test=False
+            ).search([
+                ('product_tmpl_id.active', '=', True)
+            ])
+            to_unarchive_products.write({
+                'active': True,
+            })
+            # archive product.product wich product.template is archived
+            to_archive_products = self.env['product.product'].search([
+                ('product_tmpl_id.active', '=', False)
+            ])
+            to_archive_products.write({
+                'active': False,
+            })
             from_date = wizard.from_date
             unavailable_products = self.env['product.product'].with_context(
                 active_test=False
@@ -35,14 +51,9 @@ class ProductArchiver(models.TransientModel):
                 ('product_id', 'in', unavailable_products.ids),
             ])
             moved_product_ids = stock_moved_products.mapped('product_id')
-            if wizard.model == 'template':
-                products_to_archive = [
-                    x.product_tmpl_id.id for x in unavailable_products
-                    if x not in moved_product_ids and not x.orderpoint_ids]
-            else:
-                products_to_archive = [
-                    x.id for x in unavailable_products
-                    if x not in moved_product_ids and not x.orderpoint_ids]
+            products_to_archive = [
+                x.product_tmpl_id.id for x in unavailable_products
+                if x not in moved_product_ids and not x.orderpoint_ids]
             action = dict(
                 type='ir.actions.act_window',
                 name=_('Products to be archived'),
