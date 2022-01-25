@@ -16,21 +16,11 @@ class ProductArchiver(models.TransientModel):
     @api.multi
     def archive(self):
         for wizard in self:
-            # unarchive product.product wich product.template is active
-            to_unarchive_products = self.env['product.product'].with_context(
-                active_test=False
-            ).search([
-                ('product_tmpl_id.active', '=', True)
-            ])
-            to_unarchive_products.write({
+            # unarchive product.template wich product.product is active
+            to_unarchive_product_tmpls = self.env['product.product'].search([
+                ]).mapped('product_tmpl_id')
+            to_unarchive_product_tmpls.write({
                 'active': True,
-            })
-            # archive product.product wich product.template is archived
-            to_archive_products = self.env['product.product'].search([
-                ('product_tmpl_id.active', '=', False)
-            ])
-            to_archive_products.write({
-                'active': False,
             })
             from_date = wizard.from_date
             unavailable_products = self.env['product.product'].with_context(
