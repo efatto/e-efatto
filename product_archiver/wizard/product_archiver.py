@@ -22,6 +22,15 @@ class ProductArchiver(models.TransientModel):
             to_unarchive_product_tmpls.write({
                 'active': True,
             })
+            # archive product.template wich product.product is deactivated
+            to_archive_product_tmpls = self.env['product.product'].with_context(
+                active_test=False
+            ).search([
+                ('active', '=', False)
+            ]).mapped('product_tmpl_id')
+            to_archive_product_tmpls.write({
+                'active': False,
+            })
             from_date = wizard.from_date
             unavailable_products = self.env['product.product'].with_context(
                 active_test=False
