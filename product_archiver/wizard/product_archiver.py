@@ -8,10 +8,6 @@ class ProductArchiver(models.TransientModel):
     _name = 'product.archiver'
 
     from_date = fields.Date(string='Inactive from date', required=True)
-    model = fields.Selection([
-        # ('product', 'Product Variant'),
-        ('template', 'Product Template')],
-        string='Model', default='template')
 
     @api.multi
     def archive(self):
@@ -43,6 +39,7 @@ class ProductArchiver(models.TransientModel):
                 ('create_date', '<=', from_date),
             ])
             # search moved product after from_date to exclude them
+            # from stock.move.line
             stock_move_line_products = self.env['stock.move.line'].with_context(
                 active_test=False
             ).search([
@@ -50,7 +47,7 @@ class ProductArchiver(models.TransientModel):
                 ('product_id', 'in', unavailable_products.ids),
             ])
             move_line_product_ids = stock_move_line_products.mapped('product_id')
-            # search moved product after from_date to exclude them
+            # from stock.move
             stock_move_products = self.env['stock.move'].with_context(
                 active_test=False
             ).search([
@@ -58,16 +55,44 @@ class ProductArchiver(models.TransientModel):
                 ('product_id', 'in', unavailable_products.ids),
             ])
             move_product_ids = stock_move_products.mapped('product_id')
+            # from sale.order.line
+            sale_order_line_products = self.env['sale.order.line'].with_context(
+                active_test=False
+            ).search([
+                ('order_id.date_order', '>=', from_date),
+                ('product_id', 'in', unavailable_products.ids),
+            ])
+            sale_order_line_product_ids = sale_order_line_products.mapped('product_id')
+            # from purchase.order.line
+            purchase_order_line_products = self.env['purchase.order.line'].with_context(
+                active_test=False
+            ).search([
+                ('date_order', '>=', from_date),
+                ('product_id', 'in', unavailable_products.ids),
+            ])
+            purchase_order_line_product_ids = purchase_order_line_products.mapped(
+                'product_id')
+            # from mrp.bom
+            mrp_bom_line_products = self.env['mrp.bom.line'].with_context(
+                active_test=False
+            ).search([
+                ('bom_id.active', '=', True),
+                ('product_id', 'in', unavailable_products.ids),
+            ])
+            mrp_bom_line_product_ids = mrp_bom_line_products.mapped('product_id')
             # other? sale line? purchase line? mrp line?
             products_to_archive = [
                 x.product_tmpl_id.id for x in unavailable_products
                 if x not in move_line_product_ids
                 and x not in move_product_ids
+                and x not in sale_order_line_product_ids
+                and x not in purchase_order_line_product_ids
+                and x not in mrp_bom_line_product_ids
                 and not x.orderpoint_ids]
             action = dict(
                 type='ir.actions.act_window',
                 name=_('Products to be archived'),
-                res_model='product.%s' % wizard.model,
+                res_model='product.template',
                 view_mode='tree,form',
                 domain=[('id', 'in', products_to_archive)],
                 target='current',

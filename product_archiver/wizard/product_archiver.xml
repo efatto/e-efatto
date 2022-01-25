@@ -9,7 +9,6 @@
         <form string="Archive Products">
             <group colspan="4">
                 <field name="from_date"/>
-                <field name="model"/>
             </group>
             <footer>
                 <button icon="fa-check" name="archive" string="Open Products to Archive" type="object"/>

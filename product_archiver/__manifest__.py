@@ -7,7 +7,9 @@
     'website': 'https://efatto.it',
     'category': 'Inventory',
     'depends': [
-        'stock',
+        'mrp',
+        'purchase_stock',
+        'sale_stock',
     ],
     'description': "Add an action 'Archive Products' to menu Settings > Products, "
                    "configurable with variable: Inactive from date, "
