@@ -1,2 +1,2 @@
 
-from . import test_mrp_production_remote
+from . import test_iot_input_mrp

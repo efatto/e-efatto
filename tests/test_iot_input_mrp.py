@@ -47,3 +47,26 @@ class TestMrpProductionRemote(TestMrpCommon):
         args = {'production_name': 'MO-Test', 'product_qty': 5}
         res = iot.call_device(args)
         self.assertEqual(res.get('message'), 'Production done')
+
+    @mute_logger(
+        'odoo.models', 'odoo.models.unlink', 'odoo.addons.base.ir.ir_model'
+    )
+    def test_remote_produce_lot(self):
+        mrp_order = self.env['mrp.production'].create({
+            'name': 'MO-Test',
+            'product_id': self.product_6.id,
+            'product_uom_id': self.product_6.uom_id.id,
+            'product_qty': 1,
+            'bom_id': self.bom_3.id,
+        })
+        mrp_order.button_plan()
+        self.assertTrue(mrp_order.workorder_ids)
+        workorder = mrp_order.workorder_ids[0]
+        workorder.button_start()
+        self.assertTrue(workorder.time_ids)
+        iot = self.env['iot.device.input']
+        iot = iot.get_device(
+            serial=self.serial, passphrase=self.passphrase)
+        args = {'production_name': 'MO-Test', 'product_qty': 1, 'product_lot': '780'}
+        res = iot.call_device(args)
+        self.assertEqual(res.get('message'), 'Production done')
