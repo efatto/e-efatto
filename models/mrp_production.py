@@ -14,7 +14,7 @@ class MrpProduction(models.Model):
         domain = [('state', 'not in', ['done', 'cancel'])]
         log_msg = ''
         for key, value in keys.items():
-            if key == 'production_name':
+            if key == 'value':
                 production_name = value
                 domain.append(('name', '=', value))
                 productions = self.env['mrp.production'].search(domain)

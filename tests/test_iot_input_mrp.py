@@ -11,16 +11,18 @@ class TestMrpProductionRemote(TestMrpCommon):
         self.env = self.env(context=dict(self.env.context, tracking_disable=True))
         self.product = self.env.ref('product.product_product_1')
         self.serial = 'testingdeviceserial'
+        self.device_identification = 'test_device_name'
         self.passphrase = 'password'
-        device = self.env['iot.device'].create([{
+        self.device = self.env['iot.device'].create([{
             'name': 'Device',
+            'device_identification': self.device_identification,
+            'passphrase': self.passphrase,
         }])
+        self.address_1 = 'I0'
         self.env['iot.device.input'].create([{
             'name': 'Input',
-            'device_id': device.id,
-            'active': True,
-            'serial': self.serial,
-            'passphrase': self.passphrase,
+            'device_id': self.device.id,
+            'address': self.address_1,
             'call_model_id': self.ref('mrp.model_mrp_production'),
             'call_function': 'input_produce'
         }])
@@ -41,12 +43,17 @@ class TestMrpProductionRemote(TestMrpCommon):
         workorder = mrp_order.workorder_ids[0]
         workorder.button_start()
         self.assertTrue(workorder.time_ids)
-        iot = self.env['iot.device.input']
-        iot = iot.get_device(
-            serial=self.serial, passphrase=self.passphrase)
-        args = {'production_name': 'MO-Test', 'product_qty': 5}
-        res = iot.call_device(args)
-        self.assertEqual(res.get('message'), 'Production done')
+        input_values = [{
+            'address': self.address_1,
+            'value': 'MO-Test',
+            'product_qty': 5,
+        }]
+        for response in self.device.parse_multi_input(
+            self.device.device_identification,
+            self.device.passphrase,
+            input_values
+        ):
+            self.assertEqual(response.get('message'), 'Production done')
 
     @mute_logger(
         'odoo.models', 'odoo.models.unlink', 'odoo.addons.base.ir.ir_model'
@@ -64,9 +71,14 @@ class TestMrpProductionRemote(TestMrpCommon):
         workorder = mrp_order.workorder_ids[0]
         workorder.button_start()
         self.assertTrue(workorder.time_ids)
-        iot = self.env['iot.device.input']
-        iot = iot.get_device(
-            serial=self.serial, passphrase=self.passphrase)
-        args = {'production_name': 'MO-Test', 'product_qty': 1, 'product_lot': '780'}
-        res = iot.call_device(args)
-        self.assertEqual(res.get('message'), 'Production done')
+        input_values = [{
+            'address': self.address_1,
+            'value': 'MO-Test',
+            'product_qty': 1,
+            'product_lot': '780'}]
+        for response in self.device.parse_multi_input(
+            self.device.device_identification,
+            self.device.passphrase,
+            input_values
+        ):
+            self.assertEqual(response.get('message'), 'Production done')
