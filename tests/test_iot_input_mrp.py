@@ -31,18 +31,13 @@ class TestMrpProductionRemote(TestMrpCommon):
         'odoo.models', 'odoo.models.unlink', 'odoo.addons.base.ir.ir_model'
     )
     def test_remote_produce(self):
-        mrp_order = self.env['mrp.production'].create({
+        production = self.env['mrp.production'].create({
             'name': 'MO-Test',
             'product_id': self.product_6.id,
             'product_uom_id': self.product_6.uom_id.id,
             'product_qty': 1,
             'bom_id': self.bom_3.id,
         })
-        mrp_order.button_plan()
-        self.assertTrue(mrp_order.workorder_ids)
-        workorder = mrp_order.workorder_ids[0]
-        workorder.button_start()
-        self.assertTrue(workorder.time_ids)
         input_values = [{
             'address': self.address_1,
             'value': 'MO-Test',
@@ -54,23 +49,20 @@ class TestMrpProductionRemote(TestMrpCommon):
             input_values
         ):
             self.assertEqual(response.get('message'), 'Production done')
+        self.assertEqual(production.state, 'progress')
+        self.assertEqual(production.qty_produced, 5.0)
 
     @mute_logger(
         'odoo.models', 'odoo.models.unlink', 'odoo.addons.base.ir.ir_model'
     )
     def test_remote_produce_lot(self):
-        mrp_order = self.env['mrp.production'].create({
+        production = self.env['mrp.production'].create({
             'name': 'MO-Test',
             'product_id': self.product_6.id,
             'product_uom_id': self.product_6.uom_id.id,
             'product_qty': 1,
             'bom_id': self.bom_3.id,
         })
-        mrp_order.button_plan()
-        self.assertTrue(mrp_order.workorder_ids)
-        workorder = mrp_order.workorder_ids[0]
-        workorder.button_start()
-        self.assertTrue(workorder.time_ids)
         input_values = [{
             'address': self.address_1,
             'value': 'MO-Test',
@@ -82,3 +74,5 @@ class TestMrpProductionRemote(TestMrpCommon):
             input_values
         ):
             self.assertEqual(response.get('message'), 'Production done')
+        self.assertEqual(production.state, 'progress')
+        self.assertEqual(production.qty_produced, 1.0)
