@@ -7,10 +7,11 @@ class MrpProduction(models.Model):
     _inherit = 'mrp.production'
 
     @api.model
-    def input_produce(self, keys):
+    def input_production_produce(self, keys):
         res = False
         product_qty = 1
         product_lot = False
+        production = False
         domain = [('state', 'not in', ['done', 'cancel'])]
         log_msg = ''
         for key, value in keys.items():
@@ -53,13 +54,64 @@ class MrpProduction(models.Model):
                     values.update(
                         dict(lot_id=lot_id.id)
                     )
-            # TODO se la produzione è in draft serve avviarla?
             produce = self.env['mrp.product.produce'].with_context(
                 default_production_id=production.id,
                 active_id=production.id).create(values)
             produce._onchange_product_qty()
             res = produce.do_produce()
         if not res:
-            return {'status': 'error',
-                    'message': log_msg}
+            return {'status': 'error', 'message': log_msg}
         return {'status': 'ok', 'message': 'Production done'}
+
+    @api.model
+    def input_production_weight(self, keys):
+        res = False
+        production_weight = 0
+        production = False
+        # FIXME limit weight ability to progress state?
+        domain = [('state', 'not in', ['done', 'cancel'])]
+        log_msg = ''
+        weight_uom_cat_id = self.env['uom.category'].search([
+            ('measure_type', '=', 'weight')
+        ])[0]
+        reference_weight_uom_id = self.env['uom.uom'].search([
+            ('category_id', '=', weight_uom_cat_id.id),
+            ('uom_type', '=', 'reference'),
+        ])
+        for key, value in keys.items():
+            if key == 'value':
+                production_name = value
+                domain.append(('name', '=', value))
+                productions = self.env['mrp.production'].search(domain)
+                if not productions:
+                    log_msg += 'Production %s not found' % production_name
+                    break
+                if len(productions) > 1:
+                    log_msg += 'More production %s found' % production_name
+                production = productions[0]
+            if key == 'production_weight':
+                production_weight = value
+        if production:
+            if not production_weight:
+                log_msg += 'Missing production %s weight' % production.name
+            else:
+                # set moves weight proportionally to weight received
+                moves = production.move_raw_ids.filtered(
+                    lambda x: x.product_uom.category_id == weight_uom_cat_id
+                )
+                # sum all weights converted to reference uom weight
+                total_weight = sum(
+                    x.product_uom._compute_quantity(
+                        x.product_uom_qty,
+                        reference_weight_uom_id,
+                        round=False)
+                    for x in moves
+                )
+                if total_weight:
+                    coef = production_weight / total_weight
+                    for move in moves:
+                        move.product_uom_qty = move.product_uom_qty * coef
+                    res = True
+        if not res:
+            return {'status': 'error', 'message': log_msg}
+        return {'status': 'ok', 'message': 'Production weighted'}
