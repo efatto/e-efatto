@@ -6,6 +6,7 @@ from odoo import api, fields, models, _
 
 class ProductArchiver(models.TransientModel):
     _name = 'product.archiver'
+    _description = 'Wizard to archive product'
 
     from_date = fields.Date(string='Inactive from date', required=True)
 
