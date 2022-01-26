@@ -2,6 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo.addons.mrp.tests.common import TestMrpCommon
 from odoo.tools import mute_logger
+from odoo.tests import Form
 
 
 class TestIotInputMrp(TestMrpCommon):
@@ -122,7 +123,20 @@ class TestIotInputMrp(TestMrpCommon):
             'bom_id': self.bom_weight.id,
         })
         production.button_plan()
+        production.action_assign()
         self.assertTrue(production.workorder_ids)
+        for workorder in production.workorder_ids:
+            workorder.button_start()
+            workorder.button_done()
+        self.assertEqual(production.state, 'progress')
+        produce_form = Form(self.env['mrp.product.produce'].with_context(
+            active_id=production.id,
+            active_ids=[production.id],
+        ))
+        produce_form.product_qty = 1.0
+        wizard = produce_form.save()
+        wizard.do_produce()
+        self.assertTrue(production.check_to_done)
         # production weight lower than estimated: 12.787 instead of 11.345
         input_values = [{
             'address': self.address_2,
@@ -136,7 +150,6 @@ class TestIotInputMrp(TestMrpCommon):
         ):
             self.assertEqual(response.get('message'), 'Production weighted')
         # FIXME limit weight ability to progress state?
-        self.assertEqual(production.state, 'planned')
         self.assertAlmostEqual(
             sum(x.product_uom_qty for x in production.move_raw_ids), 12.787)
 
@@ -152,7 +165,20 @@ class TestIotInputMrp(TestMrpCommon):
             'bom_id': self.bom_weight.id,
         })
         production.button_plan()
+        production.action_assign()
         self.assertTrue(production.workorder_ids)
+        for workorder in production.workorder_ids:
+            workorder.button_start()
+            workorder.button_done()
+        self.assertEqual(production.state, 'progress')
+        produce_form = Form(self.env['mrp.product.produce'].with_context(
+            active_id=production.id,
+            active_ids=[production.id],
+        ))
+        produce_form.product_qty = 1.0
+        wizard = produce_form.save()
+        wizard.do_produce()
+        self.assertTrue(production.check_to_done)
         # production weight lower than estimated: 12.787 instead of 11.345
         input_values = [{
             'address': self.address_2,
@@ -166,6 +192,5 @@ class TestIotInputMrp(TestMrpCommon):
         ):
             self.assertEqual(response.get('message'), 'Production weighted')
         # FIXME limit weight ability to progress state?
-        self.assertEqual(production.state, 'planned')
         self.assertAlmostEqual(
             sum(x.product_uom_qty for x in production.move_raw_ids), 10.143)

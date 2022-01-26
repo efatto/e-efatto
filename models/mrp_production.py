@@ -68,8 +68,8 @@ class MrpProduction(models.Model):
         res = False
         production_weight = 0
         production = False
-        # FIXME limit weight ability to progress state?
-        domain = [('state', 'not in', ['done', 'cancel'])]
+        # limit weight ability to progress state
+        domain = [('state', '=', 'progress'), ('check_to_done', '=', True)]
         log_msg = ''
         weight_uom_cat_id = self.env['uom.category'].search([
             ('measure_type', '=', 'weight')
@@ -84,7 +84,8 @@ class MrpProduction(models.Model):
                 domain.append(('name', '=', value))
                 productions = self.env['mrp.production'].search(domain)
                 if not productions:
-                    log_msg += 'Production %s not found' % production_name
+                    log_msg += 'Production %s not found or not in progress' \
+                               % production_name
                     break
                 if len(productions) > 1:
                     log_msg += 'More production %s found' % production_name
