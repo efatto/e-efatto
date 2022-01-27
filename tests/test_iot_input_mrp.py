@@ -149,7 +149,6 @@ class TestIotInputMrp(TestMrpCommon):
             input_values
         ):
             self.assertEqual(response.get('message'), 'Production weighted')
-        # FIXME limit weight ability to progress state?
         self.assertAlmostEqual(
             sum(x.product_uom_qty for x in production.move_raw_ids), 12.787)
 
@@ -191,6 +190,5 @@ class TestIotInputMrp(TestMrpCommon):
             input_values
         ):
             self.assertEqual(response.get('message'), 'Production weighted')
-        # FIXME limit weight ability to progress state?
         self.assertAlmostEqual(
             sum(x.product_uom_qty for x in production.move_raw_ids), 10.143)
