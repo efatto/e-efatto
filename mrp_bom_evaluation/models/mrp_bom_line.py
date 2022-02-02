@@ -65,7 +65,6 @@ class MrpBomLine(models.Model):
         self.price_unit = price_unit
         if purchase_order_line_id_found:
             self.price_write_date = purchase_order_line_id_found.date_order
-            self.purchase_order_line_id = purchase_order_line_id_found
         return res
 
     @api.depends('product_id', 'price_unit', 'product_qty')
