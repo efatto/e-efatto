@@ -50,7 +50,7 @@ class ProductArchiver(SavepointCase):
         model = res.get('res_model')
         moved_products = self.env['stock.move.line'].search([
             ('date', '>=', from_date)
-        ]).mapped('product_id')
+        ]).mapped('product_id.product_tmpl_id')
         products = self.env[model].search(domain)
         for moved_product in moved_products:
             self.assertFalse(moved_product in products)
