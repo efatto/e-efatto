@@ -1,0 +1,1 @@
+This module add the ability to link a sale order to a purchase order prior to its confirmation.

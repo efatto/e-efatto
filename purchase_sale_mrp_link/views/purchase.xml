@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="purchase_order_form" model="ir.ui.view">
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="%(purchase_sale_mrp_link.action_purchase_sale_mrp_link)d" type="action"
+                    string="Link to Sale Order"/>
+            </xpath>
+            <field name="origin" position="after">
+                <field name="sale_order_ids" widget="many2many_tags"/>
+            </field>
+        </field>
+    </record>
+</odoo>
