@@ -20,15 +20,17 @@ class TestPurchaseSaleMrpLink(SavepointCase):
         #todo creare un RDP a fornitore con alcuni prodotti collegabili e altri no
         #todo lanciare il wizard
 
-    def _create_sale_order(self):
-        sale_order = self.env['sale.order'].create({
-            'partner_id': self.partner.id,
-            'order_line': [(0, 0, {
-                'product_id': self.product.id,
-                'product_uom_qty': '5.0'
-            })]
-        })
-        return sale_order
+    def _create_sale_order_line(self, order, product, qty):
+        vals = {
+            'order_id': order.id,
+            'product_id': product.id,
+            'product_uom_qty': qty,
+            'price_unit': 100,
+            }
+        line = self.env['sale.order.line'].create(vals)
+        line.product_id_change()
+        line._convert_to_write(line._cache)
+        return line
 
     def _create_purchase_order(self):
         purchase_order = self.env['purchase.order'].create({
@@ -48,7 +50,10 @@ class TestPurchaseSaleMrpLink(SavepointCase):
         return purchase_order
 
     def test_sale_link_product_simple(self):
-        sale_order = self._create_sale_order()
+        sale_order = self.env['sale.order'].create({
+            'partner_id': self.partner.id
+        })
+        self._create_sale_order_line(sale_order, self.product, 5.0)
         purchase_order = self._create_purchase_order()
         purchase_order.order_line[0]._onchange_quantity()
         self.assertEqual(
