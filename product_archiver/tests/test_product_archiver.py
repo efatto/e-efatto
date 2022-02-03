@@ -54,7 +54,7 @@ class ProductArchiver(SavepointCase):
         products = self.env[model].search(domain)
         for moved_product in moved_products:
             self.assertFalse(moved_product in products)
-        self.assertFalse(self.product in products)
-        self.assertFalse(new_product in products)
-        self.assertTrue(old_product in products)
+        self.assertFalse(self.product.product_tmpl_id in products)
+        self.assertFalse(new_product.product_tmpl_id in products)
+        self.assertTrue(old_product.product_tmpl_id in products)
         self.assertTrue(old_service.active)
