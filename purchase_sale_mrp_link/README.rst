@@ -45,8 +45,8 @@ Verranno collegate le righe dell'ordine di vendita se sono presenti dei prodotti
 
 Si vedranno quindi in questo campo:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/purchase_sale_mrp_link/static/description/collegati.png
-    :alt: Collegati
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/purchase_sale_mrp_link/static/description/vendite.png
+    :alt: Vendite
 
 Bug Tracker
 ===========

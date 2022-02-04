@@ -8,9 +8,15 @@
                 <button name="%(purchase_sale_mrp_link.action_purchase_sale_mrp_link)d" type="action"
                     string="Link to Sale Order"/>
             </xpath>
-            <field name="origin" position="after">
-                <field name="sale_order_ids" widget="many2many_tags"/>
-            </field>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button type="object"
+                        name="action_view_sales"
+                        icon="fa-list"
+                        class="oe_stat_button"
+                        attrs="{'invisible': [('sales_order_count', '=', 0)]}">
+                        <field name="sales_order_count" widget="statinfo" string="Sales"/>
+                </button>
+            </xpath>
         </field>
     </record>
 </odoo>

@@ -14,5 +14,5 @@ Verranno collegate le righe dell'ordine di vendita se sono presenti dei prodotti
 
 Si vedranno quindi in questo campo:
 
-.. image:: ../static/description/collegati.png
-    :alt: Collegati
+.. image:: ../static/description/vendite.png
+    :alt: Vendite
