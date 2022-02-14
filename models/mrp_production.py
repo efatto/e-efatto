@@ -7,14 +7,14 @@ class MrpProduction(models.Model):
     _inherit = 'mrp.production'
 
     @api.model
-    def input_production_produce(self, keys):
+    def input_production_produce(self, **kwargs):
         res = False
         product_qty = 1
         product_lot = False
         production = False
         domain = [('state', 'not in', ['done', 'cancel'])]
         log_msg = ''
-        for key, value in keys.items():
+        for key, value in kwargs.items():
             if key == 'value':
                 production_name = value
                 domain.append(('name', '=', value))
@@ -64,7 +64,7 @@ class MrpProduction(models.Model):
         return {'status': 'ok', 'message': 'Production done'}
 
     @api.model
-    def input_production_weight(self, keys):
+    def input_production_weight(self, **kwargs):
         res = False
         production_weight = 0
         production = False
@@ -78,7 +78,7 @@ class MrpProduction(models.Model):
             ('category_id', '=', weight_uom_cat_id.id),
             ('uom_type', '=', 'reference'),
         ])
-        for key, value in keys.items():
+        for key, value in kwargs.items():
             if key == 'value':
                 production_name = value
                 domain.append(('name', '=', value))
