@@ -32,11 +32,11 @@ class PurchaseSaleMrpLinkWizard(models.TransientModel):
                         #  se è un prodotto senza distinta base:
                         #  se il prodotto è dentro l'so direttamente, linkare la riga
                         #  con la riga dell'SO
-                        purchase_line = purchase_order.order_line.filtered(
+                        purchase_lines = purchase_order.order_line.filtered(
                             lambda x: x.product_id == sale_line.product_id
                         )
-                        if purchase_line:
-                            sale_line.purchase_line_id = purchase_line
+                        if purchase_lines:
+                            sale_line.purchase_line_id = purchase_lines[0]
                     else:
                         # se è un prodotto con distinta base:
                         # linkare le singole righe dei componenti della distinta base
@@ -45,10 +45,10 @@ class PurchaseSaleMrpLinkWizard(models.TransientModel):
                         #  tutte
                         for bom_line in sale_line.product_id.mapped(
                                 'bom_ids.bom_line_ids'):
-                            purchase_line = purchase_order.order_line.filtered(
+                            purchase_lines = purchase_order.order_line.filtered(
                                 lambda x: x.product_id == bom_line.product_id
                             )
-                            if purchase_line:
-                                bom_line.purchase_order_line_id = purchase_line
-                                sale_line.purchase_line_id = purchase_line
+                            if purchase_lines:
+                                bom_line.purchase_order_line_id = purchase_lines[0]
+                                sale_line.purchase_line_id = purchase_lines[0]
         return {}

@@ -50,14 +50,16 @@ class TestPurchaseSaleMrpLink(SavepointCase):
             'partner_id': self.partner.id
         })
         self._create_sale_order_line(sale_order, self.product, 5.0)
+        self._create_sale_order_line(sale_order, self.product, 5.0)
         self._create_sale_order_line(sale_order, self.product1, 5.0)
         purchase_order = self.env['purchase.order'].create({
             'partner_id': self.partner.id
         })
         self._create_purchase_order_line(purchase_order, self.product, 5.0)
+        self._create_purchase_order_line(purchase_order, self.product, 5.0)
         purchase_order.order_line[0]._onchange_quantity()
         self.assertEqual(
-            len(purchase_order.order_line), 1, msg="Order line was not created")
+            len(purchase_order.order_line), 2, msg="Order line was not created")
         wizard_obj = self.env['purchase.sale.mrp.link.wizard']
         wizard_vals = wizard_obj.with_context(
                 active_id=purchase_order.id,
