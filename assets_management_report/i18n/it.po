@@ -1,0 +1,262 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* assets_management_report
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-02-22 18:56+0000\n"
+"PO-Revision-Date: 2022-02-22 18:56+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: assets_management_report
+#: model_terms:ir.ui.view,arch_db:assets_management_report.report_asset
+msgid "<strong>Totale generale</strong>"
+msgstr ""
+
+#. module: assets_management_report
+#: selection:wizard.asset.report,state:0
+msgid "All (and draft if simulated)"
+msgstr ""
+
+#. module: assets_management_report
+#: model_terms:ir.ui.view,arch_db:assets_management_report.report_asset
+msgid "Anno acquisizione"
+msgstr ""
+
+#. module: assets_management_report
+#: model_terms:ir.ui.view,arch_db:assets_management_report.wizard_asset_report
+msgid "Asset Report"
+msgstr ""
+
+#. module: assets_management_report
+#: model:ir.actions.act_window,name:assets_management_report.action_asset_report
+#: model:ir.model,name:assets_management_report.model_report_assets_management_report_report_asset
+#: model:ir.ui.menu,name:assets_management_report.menu_asset_report
+msgid "Assets Report"
+msgstr ""
+
+#. module: assets_management_report
+#: model_terms:ir.ui.view,arch_db:assets_management_report.wizard_asset_report
+msgid "Cancel"
+msgstr "Annulla"
+
+#. module: assets_management_report
+#: model:ir.model.fields,field_description:assets_management_report.field_wizard_asset_report__category_ids
+#: model_terms:ir.ui.view,arch_db:assets_management_report.wizard_asset_report
+msgid "Categories"
+msgstr "Categorie"
+
+#. module: assets_management_report
+#: selection:wizard.asset.report,state:0
+msgid "Close"
+msgstr ""
+
+#. module: assets_management_report
+#: model_terms:ir.ui.view,arch_db:assets_management_report.report_asset
+msgid "Coefficiente di ammortamento"
+msgstr ""
+
+#. module: assets_management_report
+#: model_terms:ir.ui.view,arch_db:assets_management_report.report_asset
+msgid "Costo storico di acquisto"
+msgstr ""
+
+#. module: assets_management_report
+#: model:ir.model.fields,field_description:assets_management_report.field_wizard_asset_report__create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: assets_management_report
+#: model:ir.model.fields,field_description:assets_management_report.field_wizard_asset_report__create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: assets_management_report
+#: model_terms:ir.ui.view,arch_db:assets_management_report.report_asset
+msgid "Data acquisizione"
+msgstr ""
+
+#. module: assets_management_report
+#: model:ir.model.fields,field_description:assets_management_report.field_wizard_asset_report__date_start
+msgid "Date start asset"
+msgstr "Data inizio cespite"
+
+#. module: assets_management_report
+#: model:ir.model.fields,field_description:assets_management_report.field_wizard_asset_report__depreciation_type
+msgid "Depreciation Type"
+msgstr "Natura ammortamento"
+
+#. module: assets_management_report
+#: model_terms:ir.ui.view,arch_db:assets_management_report.report_asset
+msgid "Descrizione"
+msgstr ""
+
+#. module: assets_management_report
+#: model:ir.model.fields,field_description:assets_management_report.field_report_assets_management_report_report_asset__display_name
+#: model:ir.model.fields,field_description:assets_management_report.field_wizard_asset_report__display_name
+msgid "Display Name"
+msgstr "Nome Visualizzato"
+
+#. module: assets_management_report
+#: selection:wizard.asset.report,state:0
+msgid "Draft"
+msgstr ""
+
+#. module: assets_management_report
+#: model_terms:ir.ui.view,arch_db:assets_management_report.report_asset
+msgid "Eliminazione / Vendita"
+msgstr ""
+
+#. module: assets_management_report
+#: model:ir.model.fields,field_description:assets_management_report.field_wizard_asset_report__fy_id
+msgid "Fiscal Year"
+msgstr "Anno Fiscale"
+
+#. module: assets_management_report
+#: model_terms:ir.ui.view,arch_db:assets_management_report.report_asset
+msgid "Fondo di amm.to anni precedenti"
+msgstr ""
+
+#. module: assets_management_report
+#: model_terms:ir.ui.view,arch_db:assets_management_report.report_asset
+msgid "Fondo di amm.to fine esercizio in corso"
+msgstr ""
+
+#. module: assets_management_report
+#: model:ir.model.fields,field_description:assets_management_report.field_report_assets_management_report_report_asset__id
+#: model:ir.model.fields,field_description:assets_management_report.field_wizard_asset_report__id
+msgid "ID"
+msgstr ""
+
+#. module: assets_management_report
+#: model:ir.model.fields,field_description:assets_management_report.field_report_assets_management_report_report_asset____last_update
+#: model:ir.model.fields,field_description:assets_management_report.field_wizard_asset_report____last_update
+msgid "Last Modified on"
+msgstr "Ultima modifica il"
+
+#. module: assets_management_report
+#: model:ir.model.fields,field_description:assets_management_report.field_wizard_asset_report__write_uid
+msgid "Last Updated by"
+msgstr "Ultima modifica di"
+
+#. module: assets_management_report
+#: model:ir.model.fields,field_description:assets_management_report.field_wizard_asset_report__write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: assets_management_report
+#: model:ir.model.fields,field_description:assets_management_report.field_wizard_asset_report__fiscal_page_base
+msgid "Last printed page"
+msgstr "Ultima pagina stampata"
+
+#. module: assets_management_report
+#: model:ir.model.fields,field_description:assets_management_report.field_wizard_asset_report__name
+msgid "Name"
+msgstr "Nome"
+
+#. module: assets_management_report
+#: selection:wizard.asset.report,type:0
+msgid "Posted Asset Report"
+msgstr ""
+
+#. module: assets_management_report
+#: model_terms:ir.ui.view,arch_db:assets_management_report.wizard_asset_report
+msgid "Print"
+msgstr "Stampa"
+
+#. module: assets_management_report
+#: model_terms:ir.ui.view,arch_db:assets_management_report.report_asset
+msgid "Quota annuale di ammortamento"
+msgstr ""
+
+#. module: assets_management_report
+#: selection:wizard.asset.report,state:0
+msgid "Removed"
+msgstr ""
+
+#. module: assets_management_report
+#: model_terms:ir.ui.view,arch_db:assets_management_report.report_asset
+msgid "Residuo ammortizzabile"
+msgstr ""
+
+#. module: assets_management_report
+#: model_terms:ir.ui.view,arch_db:assets_management_report.report_asset
+msgid "Rif."
+msgstr ""
+
+#. module: assets_management_report
+#: model_terms:ir.ui.view,arch_db:assets_management_report.report_asset
+msgid "Rivalutazioni o svalutazioni"
+msgstr ""
+
+#. module: assets_management_report
+#: selection:wizard.asset.report,state:0
+msgid "Running (and draft if simulated)"
+msgstr ""
+
+#. module: assets_management_report
+#: model:ir.model.fields,help:assets_management_report.field_wizard_asset_report__category_ids
+msgid "Select categories of assets"
+msgstr ""
+
+#. module: assets_management_report
+#: selection:wizard.asset.report,type:0
+msgid "Simulated Asset Report"
+msgstr ""
+
+#. module: assets_management_report
+#: model:ir.actions.report,name:assets_management_report.action_report_asset
+msgid "Stampa Registro Cespiti"
+msgstr ""
+
+#. module: assets_management_report
+#: model_terms:ir.ui.view,arch_db:assets_management_report.report_asset
+msgid "Stampa libro giornale"
+msgstr ""
+
+#. module: assets_management_report
+#: model:ir.model.fields,field_description:assets_management_report.field_wizard_asset_report__state
+msgid "Status"
+msgstr "Stato"
+
+#. module: assets_management_report
+#: code:addons/assets_management_report/wizard/print_asset_report.py:68
+#, python-format
+msgid "There is nothing to print according to current settings!"
+msgstr ""
+
+#. module: assets_management_report
+#: model_terms:ir.ui.view,arch_db:assets_management_report.report_asset
+msgid "Totali"
+msgstr ""
+
+#. module: assets_management_report
+#: model:ir.model.fields,field_description:assets_management_report.field_wizard_asset_report__type
+msgid "Type"
+msgstr "Tipo"
+
+#. module: assets_management_report
+#: model:ir.model.fields,help:assets_management_report.field_wizard_asset_report__state
+msgid "When an asset is created, the status is 'Draft'.\n"
+"If the asset is confirmed, the status goes in 'Running' and the depreciation lines can be posted to the accounting.\n"
+"If the last depreciation line is posted, the asset goes into the 'Close' status.\n"
+"When the removal entries are generated, the asset goes into the 'Removed' status."
+msgstr ""
+
+#. module: assets_management_report
+#: model:ir.model,name:assets_management_report.model_wizard_asset_report
+msgid "Wizard asset report"
+msgstr ""
+
+#. module: assets_management_report
+#: model_terms:ir.ui.view,arch_db:assets_management_report.wizard_asset_report
+msgid "or"
+msgstr "oppure"
+

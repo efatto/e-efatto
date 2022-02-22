@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<template id="report_asset">
+    <t t-call="web.html_container">
+        <t t-set="title">Stampa libro giornale <t t-raw="'SIMULATO' if type == 'simulated' else ''"/> <t t-raw="year_name"/></t>
+        <t t-call="account_financial_report_landscape.internal_layout">
+            <div class="page">
+                <div class="row">
+                    <h6 class="mt0" t-esc="title or 'Odoo Report'" style="text-align: center; width: 100%;"/>
+                </div>
+                <table style="width:100%; font-size: x-small;" cellspacing="0">
+                    <thead>
+                        <tr style="page-break-inside: avoid">
+                            <th class="left_with_line">Rif.</th>
+                            <th class="left_with_line">Descrizione</th>
+                            <th class="left_with_line">Anno acquisizione</th>
+                            <th class="left_with_line">Data acquisizione</th>
+                            <th class="right_with_line">Costo storico</th>
+                            <th class="right_with_line">Rivalutazioni / Svalutazioni</th>
+                            <th class="right_with_line">Eliminazione / Vendita</th>
+                            <th class="right_with_line">Fondo amm.to precedenti</th>
+                            <th class="right_with_line">Coefficiente amm.to</th>
+                            <th class="right_with_line">Quota annuale amm.to</th>
+                            <th class="right_with_line">Fondo amm.to anno</th>
+                            <th class="right_with_line">Residuo ammortizzabile</th>
+                        </tr>
+                    </thead>
+
+                    <t t-set="counter" t-value="0"/>
+                    <tbody>
+                        <t t-set="ctgs" t-value="ctg_total"/>
+                        <t t-foreach="ctgs" t-as="ctg">
+                        <t t-if="ctg != 'total'">
+                            <td colspan="99"><div t-esc="ctgs[ctg]['name']"/></td>
+                            <t t-set="counter" t-value="counter + 1"/>
+                            <t t-foreach="docs" t-as="depr_asset">
+                                <t t-if="depr_asset.asset_id.category_id.id == ctg">
+                                    <t t-set="asset_depr_amounts" t-value="asset_depreciation_amount(depr_asset)"/>
+                                    <t t-set="asset_remove_date" t-value="asset_remove_date_amount(depr_asset)[0]"/>
+                                    <t t-set="asset_remove_amount" t-value="asset_remove_date_amount(depr_asset)[1]"/>
+                                    <tr style="page-break-inside: avoid; border:1px solid #fff;" >
+                                        <td class="left_with_line"><div style="page-break-inside: avoid" t-esc="depr_asset.asset_id.code"/></td>
+                                        <td class="left_with_line"><div style="page-break-inside: avoid" t-esc="depr_asset.asset_id.name"/></td>
+                                        <td class="left_with_line"><div style="page-break-inside: avoid" t-esc="depr_asset.date_start" t-options='{"widget": "date", "format": "Y"}'/></td>
+                                        <td class="left_with_line"><div style="page-break-inside: avoid" t-esc="depr_asset.date_start" t-options='{"widget": "date", "format": "dd/MM/Y"}'/></td>
+                                        <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="depr_asset.asset_id.purchase_amount" t-options='{"widget": "float", "decimal_precision": "Account"}'/></td>
+                                        <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="asset_fy_increase_decrease_amount(depr_asset)" t-options='{"widget": "float", "decimal_precision": "Account"}'/></td>
+                                        <td class="right_with_line">
+                                            <div style="page-break-inside: avoid" t-esc="asset_remove_amount" t-options='{"widget": "float", "decimal_precision": "Account"}'/>
+                                            <t t-if="asset_remove_date.year &lt;= int(year_name) if asset_remove_date else False">
+                                                <div style="page-break-inside: avoid" t-esc="asset_remove_date" t-options='{"widget": "date", "format": "dd/MM/Y"}'/>
+                                            </t>
+                                        </td>
+                                        <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="asset_depr_amounts['depreciated_value']" t-options='{"widget": "float", "decimal_precision": "Account"}'/></td>
+                                        <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="asset_depr_amounts['percentage']" t-options='{"widget": "float", "decimal_precision": "Account"}'/></td>
+                                        <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="asset_depr_amounts['amount']" t-options='{"widget": "float", "decimal_precision": "Account"}'/></td>
+                                        <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="asset_depr_amounts['depreciated_value'] + asset_depr_amounts['amount']" t-options='{"widget": "float", "decimal_precision": "Account"}'/></td>
+                                        <td class="right_with_line"><div style="page-break-inside: avoid" t-esc="asset_depr_amounts['remaining_value']" t-options='{"widget": "float", "decimal_precision": "Account"}'/></td>
+                                    </tr>
+                                    <tr>
+<!--                                        <td/>-->
+<!--                                        <td/>-->
+<!--                                        <td colspan="10">-->
+<!--                                            <t t-foreach="invoiced_asset_lines(asset)" t-as="invoiced_line">-->
+<!--                                            <t t-if="invoiced_line['supplier_invoice_number']">-->
+<!--                                                <div style="page-break-inside: avoid" t-esc="'Invoices n. ' + invoiced_line['supplier_invoice_number'] + ' - Date: ' + invoiced_line['invoice_date'] + ' - Supplier: ' + invoiced_line['partner_name']"/>-->
+<!--                                            </t>-->
+<!--                                            </t>-->
+<!--                                        </td>-->
+                                    </tr>
+                                </t>
+                            </t>
+                            <tr>
+                                <td class="left_with_line"></td>
+                                <td class="left_with_line"><strong>Totali <span t-esc="ctgs[ctg]['name']" /></strong></td>
+                                <td class="left_with_line"></td>
+                                <td class="left_with_line"></td>
+                                <td class="right_with_line">
+                                    <strong><span t-esc="ctgs[ctg]['purchase_amount']" t-options='{"widget": "float", "decimal_precision": "Account"}'/></strong>
+                                </td>
+                                <td class="right_with_line">
+                                    <strong><span t-esc="ctgs[ctg]['increase_decrease_value']" t-options='{"widget": "float", "decimal_precision": "Account"}'/></strong>
+                                </td>
+                                <td class="right_with_line">
+                                    <strong><span t-esc="ctgs[ctg]['remove_value']" t-options='{"widget": "float", "decimal_precision": "Account"}'/></strong>
+                                </td>
+                                <td class="right_with_line">
+                                    <strong><span t-esc="ctgs[ctg]['value_depreciated']" t-options='{"widget": "float", "decimal_precision": "Account"}'/></strong>
+                                </td>
+                                <td class="right_with_line"></td>
+                                <td class="right_with_line">
+                                    <strong><span t-esc="ctgs[ctg]['value_depreciation']" t-options='{"widget": "float", "decimal_precision": "Account"}'/></strong>
+                                </td>
+                                <td class="right_with_line">
+                                    <strong><span t-esc="ctgs[ctg]['value_depreciated'] + ctgs[ctg]['value_depreciation']" t-options='{"widget": "float", "decimal_precision": "Account"}'/></strong>
+                                </td>
+                                <td class="right_with_line">
+                                    <strong><span t-esc="ctgs[ctg]['value_residual']" t-options='{"widget": "float", "decimal_precision": "Account"}'/></strong>
+                                </td>
+                            </tr>
+                        </t>
+                        </t>
+                        <t t-foreach="ctgs" t-as="ctg">
+                            <t t-if="ctg == 'total'">
+                                <tr>
+                                    <td class="left_with_line"></td>
+                                    <td class="left_with_line"><strong>Totale generale</strong></td>
+                                    <td class="left_with_line"></td>
+                                    <td class="left_with_line"></td>
+                                    <td class="right_with_line">
+                                        <strong><span t-esc="ctgs[ctg]['purchase_amount']" t-options='{"widget": "float", "decimal_precision": "Account"}'/></strong>
+                                    </td>
+                                    <td class="right_with_line">
+                                        <strong><span t-esc="ctgs[ctg]['increase_decrease_value']" t-options='{"widget": "float", "decimal_precision": "Account"}'/></strong>
+                                    </td>
+                                    <td class="right_with_line">
+                                        <strong><span t-esc="ctgs[ctg]['remove_value']" t-options='{"widget": "float", "decimal_precision": "Account"}'/></strong>
+                                    </td>
+                                    <td class="right_with_line">
+                                        <strong><span t-esc="ctgs[ctg]['value_depreciated']" t-options='{"widget": "float", "decimal_precision": "Account"}'/></strong>
+                                    </td>
+                                    <td class="right_with_line"></td>
+                                    <td class="right_with_line">
+                                        <strong><span t-esc="ctgs[ctg]['value_depreciation']" t-options='{"widget": "float", "decimal_precision": "Account"}'/></strong>
+                                    </td>
+                                    <td class="right_with_line">
+                                        <strong><span t-esc="ctgs[ctg]['value_depreciated'] + ctgs[ctg]['value_depreciation']" t-options='{"widget": "float", "decimal_precision": "Account"}'/></strong>
+                                    </td>
+                                    <td class="right_with_line">
+                                        <strong><span t-esc="ctgs[ctg]['value_residual']" t-options='{"widget": "float", "decimal_precision": "Account"}'/></strong>
+                                    </td>
+                                </tr>
+                            </t>
+                        </t>
+                    </tbody>
+                </table>
+                <br/>
+            </div>
+        </t>
+    </t>
+</template>
+<record id="report_qweb_paperformat_asset_landscape" model="report.paperformat">
+    <field name="name">Account asset report qweb paperformat landscape</field>
+    <field name="default" eval="True"/>
+    <field name="format">A4</field>
+    <field name="orientation">Landscape</field>
+    <field name="margin_top">25</field>
+    <field name="margin_bottom">15</field>
+    <field name="margin_left">5</field>
+    <field name="margin_right">5</field>
+    <field name="header_line" eval="False"/>
+    <field name="header_spacing">20</field>
+    <field name="dpi">90</field>
+</record>
+<report
+    string="Stampa Registro Cespiti"
+    id="action_report_asset"
+    model="asset.asset"
+    report_type="qweb-pdf"
+    name="assets_management_report.report_asset"
+    file="assets_management_report.report_asset"
+/>
+<record id="action_report_asset" model="ir.actions.report">
+    <field name="paperformat_id" ref="report_qweb_paperformat_asset_landscape"/>
+</record>
+</odoo>
