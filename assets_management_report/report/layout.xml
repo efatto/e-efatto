@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="document_layout">
+        <!-- Multicompany -->
+        <t t-if="o and 'company_id' in o">
+            <t t-set="company" t-value="o.company_id"/>
+        </t>
+        <t t-if="not o or not 'company_id' in o">
+            <t t-set="company" t-value="res_company"/>
+        </t>
+
+        <div class="header">
+            <div class="row">
+                <div class="col-8 company-info">
+                    <h3 class="name">
+                        <span t-esc="company.name"/>
+                    </h3>
+                    <span class="address">
+                        <span class="street" t-esc="company.street" /> -
+                        <span class="zip" t-esc="company.zip" /> -
+                        <span class="city" t-esc="company.city" /> -
+                        <span class="state" t-esc="company.state_id.code" /><br/>
+                    </span>
+                    <span class="vat text-right" t-if="company.partner_id.vat">
+                        <span>P.IVA:</span> <span t-esc="company.partner_id.vat" />
+                    </span> -
+                    <span class="fiscalcode text-right" t-if="company.partner_id.fiscalcode">
+                        <span>Fiscalcode:</span> <span t-esc="company.partner_id.fiscalcode" />
+                    </span>
+                </div>
+                <div class="col-4 text-right doc-info">
+                    <h3 class="doc-title" t-esc="title"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="article">
+            <link href="/account_financial_report_landscape/static/src/css/report.css" rel="stylesheet"/>
+            <t t-raw="0"/>
+        </div>
+
+        <div class="footer">
+            <div class="row">
+                <span style="display: none;" id="l10n_it_count_fiscal_page_base" t-esc="fiscal_page_base" />
+                <div class="col-12 text-right custom_footer">
+                    <ul class="list-inline">
+                        <li class="list-inline-item">Pag:</li>
+                        <li class="list-inline-item">
+                            <t t-if="year_name"><span t-esc="year_name"/></t>
+                        </li>
+                        <li class="list-inline-item">/</li>
+                        <li class="list-inline-item"><span class="page"/></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </template>
+
+</odoo>

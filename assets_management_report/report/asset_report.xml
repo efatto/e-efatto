@@ -3,12 +3,13 @@
 
 <template id="report_asset">
     <t t-call="web.html_container">
-        <t t-set="title">Stampa libro giornale <t t-raw="'SIMULATO' if type == 'simulated' else ''"/> <t t-raw="year_name"/></t>
-        <t t-call="account_financial_report_landscape.internal_layout">
+        <t t-set="title">Stampa libro giornale <t t-raw="year_name"/></t>
+        <t t-if="type == 'simulated'">
+            <t t-set="title">Stampa libro giornale SIMULATO <t t-raw="year_name"/></t>
+        </t>
+        <t t-set="l10n_it_count_fiscal_page_base" t-value="fiscal_page_base"/>
+        <t t-call="assets_management_report.document_layout">
             <div class="page">
-                <div class="row">
-                    <h6 class="mt0" t-esc="title or 'Odoo Report'" style="text-align: center; width: 100%;"/>
-                </div>
                 <table style="width:100%; font-size: x-small;" cellspacing="0">
                     <thead>
                         <tr style="page-break-inside: avoid">

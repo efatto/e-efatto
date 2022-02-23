@@ -41,7 +41,7 @@ class WizardAssetReport(models.TransientModel):
         'account.fiscal.year', 'Fiscal Year', required=True,
         default=lambda self: self.env[
             'account.fiscal.year'].get_fiscal_year_by_date(
-                datetime.date.today() + datetime.timedelta(days=-365)))
+                datetime.date(datetime.date.today().year - 1, 12, 31)))
 
     def print_report(self):
         wizard = self

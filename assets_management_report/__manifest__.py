@@ -11,8 +11,10 @@
     'depends': [
         'assets_management',
         'account_financial_report_landscape',
+        'l10n_it_account',
     ],
     'data': [
+        'report/layout.xml',
         'report/asset_report.xml',
         'wizard/print_asset_report.xml',
     ],

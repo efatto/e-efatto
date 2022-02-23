@@ -8,7 +8,7 @@
         <field name="arch" type="xml">
             <form string="Asset Report">
                 <group>
-                <field name="type" />
+                <field name="type" invisible="1"/>
                 <field name="date_start"/>
                 <field name="state"/>
                 </group>

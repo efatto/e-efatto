@@ -175,7 +175,9 @@ class ReportAsset(models.AbstractModel):
             'docs': docs,
             'env': self.env,
             'formatLang': formatLang,
+            'type': data['form']['type'],
             'year_name': data['form']['fy_name'],
+            'fiscal_page_base': data['form']['fiscal_page_base'],
             # 'invoiced_asset_lines': self._get_invoiced_account_move_lines,
             'asset_fy_increase_decrease_amount':
                 self._get_asset_fy_increase_decrease_amount,
@@ -183,17 +185,3 @@ class ReportAsset(models.AbstractModel):
             'asset_depreciation_amount': self._get_asset_depreciation_amount,
             'asset_remove_date_amount': self._get_asset_remove_date_amount,
         }
-
-    # def set_context(self, objects, data, ids, report_type=None):
-    #     self.localcontext.update({
-    #         'l10n_it_count_fiscal_page_base': data['form'].get('fiscal_page_base'),
-    #         'start_date': data['form'].get('date_start'),
-    #         'fy_name': data['form'].get('fy_name'),
-    #         'type': data['form'].get('type'),
-    #         'fy_id': data['form'].get('fy_id'),
-    #         'state': data['form'].get('state'),
-    #         'category_ids': data['form'].get('category_ids'),
-    #         'l10n_it_fiscalyear_code': self._get_fy(
-    #             data['form'].get('fy_id')),
-    #     })
-    #     return super(Parser, self).set_context(objects, data, ids, report_type=report_type)
