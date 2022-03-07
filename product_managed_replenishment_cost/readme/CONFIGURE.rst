@@ -9,6 +9,14 @@ Inoltre se la nazione del fornitore è in un gruppo di nazioni, si può:
 
 I prodotti che hanno una distinta di produzione verranno ricalcolati sulla base del costo di sostituzione ricalcolato sopra.
 
+La formula applicata è:
+ #. costo del primo fornitore nel tab acquisti del prodotto
+ #. * il margine di logistica indicato nel gruppo di paesi del fornitore sopra
+ #. * il dazio doganale indicato nel codice doganale prodotto
+ #. fa la conversione in € dalla valuta del fornitore al tasso più recente disponibile
+ #. somma il Costo Adeguamento (€/pz)
+ #. somma il Costo Ammortamento (€/pz)
+
 I prodotti che non hanno né fornitori né una distinta di produzione non verranno modificati.
 
 Questo calcolo è possibile farlo in maniera indipendente dal menu:
