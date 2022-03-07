@@ -10,9 +10,9 @@ Product Managed Replenishment Cost
 .. |badge1| image:: https://img.shields.io/badge/maturity-Beta-yellow.png
     :target: https://odoo-community.org/page/development-status
     :alt: Beta
-.. |badge2| image:: https://img.shields.io/badge/github-efatto%2Fefatto-lightgray.png?logo=github
-    :target: https://github.com/efatto/efatto/tree/12.0/product_managed_replenishment_cost
-    :alt: efatto/efatto
+.. |badge2| image:: https://img.shields.io/badge/github-sergiocorato%2Fe--efatto-lightgray.png?logo=github
+    :target: https://github.com/sergiocorato/e-efatto/tree/12.0/product_managed_replenishment_cost
+    :alt: sergiocorato/e-efatto
 
 |badge1| |badge2| 
 
@@ -41,35 +41,43 @@ Inoltre se la nazione del fornitore è in un gruppo di nazioni, si può:
 
 I prodotti che hanno una distinta di produzione verranno ricalcolati sulla base del costo di sostituzione ricalcolato sopra.
 
+La formula applicata è:
+ #. costo del primo fornitore nel tab acquisti del prodotto
+ #. * il margine di logistica indicato nel gruppo di paesi del fornitore sopra
+ #. * il dazio doganale indicato nel codice doganale prodotto
+ #. fa la conversione in € dalla valuta del fornitore al tasso più recente disponibile
+ #. somma il Costo Adeguamento (€/pz)
+ #. somma il Costo Ammortamento (€/pz)
+
 I prodotti che non hanno né fornitori né una distinta di produzione non verranno modificati.
 
 Questo calcolo è possibile farlo in maniera indipendente dal menu:
 
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/product_managed_replenishment_cost/static/description/menu.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_managed_replenishment_cost/static/description/menu.png
     :alt: Menu in impostazioni Magazzino
 
 tramite due azioni: la prima esegue l'aggiornamento del costo di sostituzione solamente:
 
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/product_managed_replenishment_cost/static/description/aggiorna_sostituzione.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_managed_replenishment_cost/static/description/aggiorna_sostituzione.png
     :alt: Aggiorna il costo di sostituzione
 
 La seconda azione esegue l'aggiornamento del punto 1. e poi riporta lo stesso valore nel campo costo del prodotto. Non è possibile ripristinare questa operazione, per cui il campo costo da ora in poi sarà questo. Tenere conto in ogni caso che questo campo potrebbe essere modificato in maniera automatica dal sistema in base alla configurazione.
 
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/product_managed_replenishment_cost/static/description/aggiorna_costo.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_managed_replenishment_cost/static/description/aggiorna_costo.png
     :alt: Aggiorna il costo
 
 In seguito è utile creare un listino a partire dal costo per generare un'esportazione (reimportabile) per effettuare un cambio di listino di vendita programmato:
 
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/product_managed_replenishment_cost/static/description/listino.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_managed_replenishment_cost/static/description/listino.png
     :alt: Esporta un listino
 
 Bug Tracker
 ===========
 
-Bugs are tracked on `GitHub Issues <https://github.com/efatto/efatto/issues>`_.
+Bugs are tracked on `GitHub Issues <https://github.com/sergiocorato/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us smashing it by providing a detailed and welcomed
-`feedback <https://github.com/efatto/efatto/issues/new?body=module:%20product_managed_replenishment_cost%0Aversion:%2012.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/sergiocorato/e-efatto/issues/new?body=module:%20product_managed_replenishment_cost%0Aversion:%2012.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -89,6 +97,6 @@ Contributors
 Maintainers
 ~~~~~~~~~~~
 
-This module is part of the `efatto/efatto <https://github.com/efatto/efatto/tree/12.0/product_managed_replenishment_cost>`_ project on GitHub.
+This module is part of the `sergiocorato/e-efatto <https://github.com/sergiocorato/e-efatto/tree/12.0/product_managed_replenishment_cost>`_ project on GitHub.
 
 You are welcome to contribute.
