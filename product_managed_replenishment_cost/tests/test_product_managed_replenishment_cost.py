@@ -46,17 +46,19 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         })
         repl.update_products_replenishment_cost_only()
         self.assertEqual(self.product.managed_replenishment_cost, 60.0 * 0.9)
+        self.assertEqual(self.product.standard_price, 100.0)
         repl.update_products_standard_price_only()
         self.assertEqual(self.product.standard_price, 60.0 * 0.9)
         repl.update_products_standard_price_and_replenishment_cost()
         self.assertEqual(self.product.managed_replenishment_cost, 60.0 * 0.9)
         self.assertEqual(self.product.standard_price, 60.0 * 0.9)
         self.vendor.country_id.country_group_ids[0].logistic_charge_percentage = 15.0
+        repl.update_products_standard_price_only()
+        self.assertAlmostEqual(self.product.standard_price, 60.0 * 0.9 * 1.15)
+        self.assertAlmostEqual(self.product.managed_replenishment_cost, 60.0 * 0.9)
         repl.update_products_replenishment_cost_only()
         self.assertAlmostEqual(
             self.product.managed_replenishment_cost, 60.0 * 0.9 * 1.15)
-        repl.update_products_standard_price_only()
-        self.assertAlmostEqual(self.product.standard_price, 60.0 * 0.9 * 1.15)
         repl.update_products_standard_price_and_replenishment_cost()
         self.assertAlmostEqual(
             self.product.managed_replenishment_cost, 60.0 * 0.9 * 1.15)
@@ -68,6 +70,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         repl.update_products_replenishment_cost_only()
         self.assertAlmostEqual(
             self.product.managed_replenishment_cost, (60.0 * 0.9 * 1.15) * 1.10)
+        self.assertAlmostEqual(self.product.standard_price, 60.0 * 0.9 * 1.15)
         repl.update_products_standard_price_only()
         self.assertAlmostEqual(self.product.standard_price, (60.0 * 0.9 * 1.15) * 1.10)
         repl.update_products_standard_price_and_replenishment_cost()
