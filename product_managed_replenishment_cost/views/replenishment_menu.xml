@@ -30,12 +30,15 @@
                         <group>
                             <button name="update_products_replenishment_cost_only" string="Update Products Replenishment Cost" type="object"/>
                         </group>
+                        <group/>
                         <group>
                             <button name="update_products_standard_price_only" string="Update Products Standard Price" type="object"/>
                         </group>
+                        <group/>
                         <group>
                             <button name="update_products_standard_price_and_replenishment_cost" string="Update Products Standard Price and Replenishment Cost" type="object"/>
                         </group>
+                        <group/>
                         <group>
                             <field name="log"/>
                         </group>
