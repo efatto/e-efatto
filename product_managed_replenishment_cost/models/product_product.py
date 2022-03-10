@@ -44,6 +44,8 @@ class ProductProduct(models.Model):
     @api.multi
     def update_managed_replenishment_cost(self):
         update_standard_price = self.env.context.get('update_standard_price', False)
+        update_managed_replenishment_cost = self.env.context.get(
+            'update_managed_replenishment_cost', False)
         # update cost for products to be purchased first, then them to be manufactured
         products_tobe_purchased = self.filtered(
             lambda x: x.seller_ids and not x.bom_count)
@@ -88,12 +90,14 @@ class ProductProduct(models.Model):
             price_unit = price_unit * (1 + margin_percentage / 100.0) + (
                 adjustment_cost + depreciation_cost
             )
-            product.managed_replenishment_cost = price_unit
+            if update_managed_replenishment_cost:
+                product.managed_replenishment_cost = price_unit
             if update_standard_price:
                 product.standard_price = price_unit
         # compute replenishment cost for product without suppliers
         for product in products_nottobe_purchased:
-            product.managed_replenishment_cost = product.standard_price
+            if update_managed_replenishment_cost:
+                product.managed_replenishment_cost = product.standard_price
             # these products are without seller nor bom
         # compute replenishment cost for product to be manufactured, with or without
         # suppliers
@@ -102,7 +106,8 @@ class ProductProduct(models.Model):
             if product.seller_ids:
                 seller = product.seller_ids[0]
                 produce_price += (seller.adjustment_cost + seller.depreciation_cost)
-            product.managed_replenishment_cost = produce_price
+            if update_managed_replenishment_cost:
+                product.managed_replenishment_cost = produce_price
             if update_standard_price:
                 product.standard_price = produce_price
 

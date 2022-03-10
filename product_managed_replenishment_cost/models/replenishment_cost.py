@@ -34,9 +34,24 @@ class ReplenishmentCost(models.Model):
         string="Product missing price")
 
     @api.multi
-    def update_products_standard_price(self):
+    def update_products_standard_price_and_replenishment_cost(self):
         res = self.with_context(
-            update_standard_price=True
+            update_standard_price=True,
+            update_managed_replenishment_cost=True,
+        ).update_products_replenishment_cost()
+        return res
+
+    @api.multi
+    def update_products_standard_price_only(self):
+        res = self.with_context(
+            update_standard_price=True,
+        ).update_products_replenishment_cost()
+        return res
+
+    @api.multi
+    def update_products_replenishment_cost_only(self):
+        res = self.with_context(
+            update_managed_replenishment_cost=True,
         ).update_products_replenishment_cost()
         return res
 
@@ -56,10 +71,13 @@ class ReplenishmentCost(models.Model):
                 repl.name = _('Update of %s' % last_update)
             repl.write(dict(
                 last_update=last_update,
-                log='Updated %s for %s products in %.2f minutes.' % (
-                    'replenishment cost and standard price'
+                log='Updated %s %s for %s products in %.2f minutes.' % (
+                    '"standard price"'
                     if self.env.context.get('update_standard_price')
-                    else 'replenishment cost',
+                    else '',
+                    '"replenishment cost"'
+                    if self.env.context.get('update_managed_replenishment_cost')
+                    else '',
                     len(products),
                     duration / 60,
                     ),
