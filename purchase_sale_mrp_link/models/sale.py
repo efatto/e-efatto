@@ -17,14 +17,19 @@ class SaleOrderLine(models.Model):
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    purchase_order_id = fields.Many2one(
-        'purchase.order',
-        compute='_compute_purchase_order_id',
+    purchase_order_ids = fields.Many2many(
+        comodel_name='purchase.order',
+        compute='_compute_purchase_order_ids',
         store=True,
+        relation='sale_order_purchase_order_rel',
+        column1='sale_id',
+        column2='purchase_id',
+        string='Purchase Order',
     )
 
     @api.multi
     @api.depends('order_line.purchase_line_id')
-    def _compute_purchase_order_id(self):
+    def _compute_purchase_order_ids(self):
         for sale in self:
-            sale.purchase_order_id = sale.mapped('order_line.purchase_line_id.order_id')
+            sale.purchase_order_ids = sale.mapped(
+                'order_line.purchase_line_id.order_id')

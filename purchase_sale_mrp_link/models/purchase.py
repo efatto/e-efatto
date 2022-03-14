@@ -7,9 +7,11 @@ from odoo import api, fields, models, _
 class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
 
-    sale_order_ids = fields.One2many(
-        'sale.order',
-        'purchase_order_id',
+    sale_order_ids = fields.Many2many(
+        comodel_name='sale.order',
+        relation='sale_order_purchase_order_rel',
+        column1='purchase_id',
+        column2='sale_id',
         string='Linked Sale Offer'
     )
     sales_order_count = fields.Integer(
