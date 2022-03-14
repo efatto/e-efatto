@@ -122,15 +122,15 @@ class Picking(models.Model):
                 if any([x.stato != '1' and x.qtamov != 0 for x in whs_list_ids]):
                     raise UserError(_('Some moves already elaborated from WHS!'))
 
-                location_id = pick.location_id.id
+                location = pick.location_id
                 if pick.picking_type_id.code == 'incoming':
-                    location_id = pick.location_dest_id.id
+                    location = pick.location_dest_id
                 dbsource = self.env['base.external.dbsource'].search([
-                    ('location_id', '=', location_id)
+                    ('location_id', '=', location.id)
                 ])
                 if not dbsource:
                     _logger.info('WHS LOG: Location %s is not linked to WHS System' %
-                                 location_id.name)
+                                 location.name)
                     continue
                 if unlink:
                     _logger.info('WHS LOG: unlink lists for picking %s' % pick.name)
