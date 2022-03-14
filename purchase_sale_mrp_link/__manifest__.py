@@ -9,12 +9,13 @@
     'website': 'https://efatto.it',
     'maintainers': ['sergiocorato'],
     'depends': [
-        'mrp',
+        'mrp_bom_evaluation',
         'purchase_stock',
         'sale_stock',
     ],
     'data': [
         'wizard/purchase_sale_mrp_link_wizard.xml',
+        'wizard/purchase_sale_mrp_unlink_wizard.xml',
         'views/purchase.xml',
     ],
     'installable': True,

@@ -78,6 +78,16 @@ class TestPurchaseSaleMrpLink(SavepointCase):
             sale_order.order_line.filtered(
                 lambda x: x.product_id == self.product1).purchase_line_id
         )
+        # test unlink
+        wizard_obj = self.env['purchase.sale.mrp.unlink.wizard']
+        wizard_vals = wizard_obj.with_context(
+            active_id=purchase_order.id,
+            active_ids=[purchase_order.id],
+            active_model='purchase.order',
+        ).default_get(['purchase_order_id'])
+        wizard = wizard_obj.create(wizard_vals)
+        wizard.action_done()
+        self.assertFalse(purchase_order.sale_order_ids)
 
     def test_sale_link_product_bom(self):
         sale_order = self.env['sale.order'].create({
@@ -106,3 +116,13 @@ class TestPurchaseSaleMrpLink(SavepointCase):
         self.assertEqual(
             purchase_order.sale_order_ids.ids, sale_order.ids
         )
+        # test unlink
+        wizard_obj = self.env['purchase.sale.mrp.unlink.wizard']
+        wizard_vals = wizard_obj.with_context(
+            active_id=purchase_order.id,
+            active_ids=[purchase_order.id],
+            active_model='purchase.order',
+        ).default_get(['purchase_order_id'])
+        wizard = wizard_obj.create(wizard_vals)
+        wizard.action_done()
+        self.assertFalse(purchase_order.sale_order_ids)

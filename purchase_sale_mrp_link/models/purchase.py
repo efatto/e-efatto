@@ -48,5 +48,3 @@ class PurchaseOrder(models.Model):
             action['view_mode'] = 'tree,form'
             action['domain'] = [('id', 'in', order_ids)]
         return action
-
-    #todo bottone per scollegare le offerte collegate
