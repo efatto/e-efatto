@@ -1,6 +1,7 @@
 # Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 
 class PurchaseSaleMrpUnlinkWizard(models.TransientModel):
@@ -14,9 +15,13 @@ class PurchaseSaleMrpUnlinkWizard(models.TransientModel):
     def default_get(self, fields):
         res = super().default_get(fields)
         if 'purchase_order_id' in fields and not res.get('purchase_order_id')\
-            and self._context.get('active_model') == 'purchase.order'\
-                and self._context.get('active_id'):
-            res['purchase_order_id'] = self._context['active_id']
+                and self._context.get('active_model') == 'purchase.order':
+            if len(self._context.get('active_ids')) > 1:
+                raise ValidationError(
+                    _('Purchase orders are unlinkable from sale order only one by one!')
+                )
+            elif self._context.get('active_id'):
+                res['purchase_order_id'] = self._context['active_id']
         return res
 
     @api.multi
