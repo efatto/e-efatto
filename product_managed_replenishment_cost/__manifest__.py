@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     'name': 'Product Managed Replenishment Cost',
-    'version': '12.0.1.0.3',
+    'version': '12.0.1.0.4',
     'author': 'Sergio Corato',
     'category': 'Products',
     'license': 'AGPL-3',
