@@ -86,6 +86,51 @@ class TestProductManagedReplenishmentCost(SavepointCase):
             'bom_line_ids': [
                 (0, 0, x) for x in bom_component_values]
         })
+        cls.product_bom_parent_parent = cls.env['product.product'].create({
+            'name': 'Product parent with nested children bom',
+            'route_ids': [(4, cls.env.ref('mrp.route_warehouse0_manufacture').id),
+                          (4, cls.env.ref('stock.route_warehouse0_mto').id)],
+            'default_code': 'PRODUCED',
+            'type': 'product',
+            'sale_ok': True,
+        })
+        cls.product_bom_parent = cls.env['product.product'].create({
+            'name': 'Product parent with bom',
+            'route_ids': [(4, cls.env.ref('mrp.route_warehouse0_manufacture').id),
+                          (4, cls.env.ref('stock.route_warehouse0_mto').id)],
+            'default_code': 'PRODUCED2',
+            'type': 'product',
+            'sale_ok': True,
+        })
+        bom_parent_component_values = [{
+            'product_id': x.id,
+            'product_qty': 1,
+        } for x in cls.product1 | cls.product_bom]
+        # Create the parent bom before the child one
+        cls.bom_parent_parent = cls.env['mrp.bom'].create({
+            'product_tmpl_id': cls.product_bom_parent_parent.product_tmpl_id.id,
+            'code': cls.product_bom_parent_parent.default_code,
+            'type': 'normal',
+            'product_qty': 1,
+            'product_uom_id': cls.env.ref('uom.product_uom_unit').id,
+        })
+        cls.bom_parent = cls.env['mrp.bom'].create({
+            'product_tmpl_id': cls.product_bom_parent.product_tmpl_id.id,
+            'code': cls.product_bom_parent.default_code,
+            'type': 'normal',
+            'product_qty': 1,
+            'product_uom_id': cls.env.ref('uom.product_uom_unit').id,
+            'bom_line_ids': [
+                (0, 0, x) for x in bom_parent_component_values]
+        })
+        bom_parent_parent_component_values = [{
+            'product_id': x.id,
+            'product_qty': 1,
+        } for x in cls.product3 | cls.product_bom_parent]
+        cls.bom_parent_parent.write({
+            'bom_line_ids': [
+                (0, 0, x) for x in bom_parent_parent_component_values]
+        })
 
     def test_01_create(self):
         self.assertEqual(self.product.standard_price, 50.0)
@@ -146,3 +191,22 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         })
         repl.update_products_standard_price_only()
         self.assertEqual(self.product_bom.standard_price, 3 + 4 + 7)
+
+    def test_03_bom_with_parent(self):
+        self.assertEqual(self.product_bom_parent.managed_replenishment_cost, 0.0)
+        self.assertEqual(self.product_bom_parent.standard_price, 0.0)
+        repl = self.env['replenishment.cost'].create({
+            'name': 'Test cost update bom parent',
+        })
+        repl.update_products_standard_price_only()
+        self.assertEqual(self.product_bom_parent.standard_price, 2 + 3 + 4 + 7)
+
+    def test_04_bom_with_nested_parent(self):
+        self.assertEqual(self.product_bom_parent_parent.managed_replenishment_cost, 0.0)
+        self.assertEqual(self.product_bom_parent_parent.standard_price, 0.0)
+        repl = self.env['replenishment.cost'].create({
+            'name': 'Test cost update bom nested parent',
+        })
+        repl.update_products_standard_price_only()
+        self.assertEqual(
+            self.product_bom_parent_parent.standard_price, 7 + 2 + 3 + 4 + 7)
