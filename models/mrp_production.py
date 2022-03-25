@@ -2,6 +2,28 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, models
 
+# todo CREARE UN modello per salvare i dati in maniera provvisoria, inviati dall'IOT
+#  ad ogni x secondi, ed utilizzare quelli per gestire la produzione a seguito dell'
+#  intervento utente, che dovrà avviare la produzione e poi far partire la macchina,
+#  quindi terminarla quando la macchina è ferma
+#  Creare un campo aggiuntivo collegato nella produzione per indicare in quale centro
+#  di lavoro è gestita la produzione. Mettere un blocco per evitare che ci siano più
+#  produzioni attive sullo stesso centro di lavoro (macchina), in quanto l'IOT prenderà
+#  la prima produzione in corso su quel centro di lavoro, senza essere a conoscenza di
+#  nulla.
+#  Salvare nella produzione il numero di sacchi attuali all'inizio della produzione e
+#  quelli finali alla fine, per calcolare i sacchi prodotti.
+
+#  ANNULLATO
+#  Utilizzare l'IOT OUTPUT creando una funzione che metta a disposizione un controller
+#  di tipo GET per ricevere il tipo di lavorazione da fare per la produzione, di cui
+#  si occupa il programma in modbus di chiamare.
+#  Creare un campo numerico intero nella distinta base in cui scegliere la ricetta, che
+#  verrà prelevata dal GET tramite la funzione IOT OUTPUT.
+
+#  È emersa una proposta da parte di Beccaria, ma non è confermata.
+#  Verrà inviato il nome dell'ordine di produzione e lo stato "in attesa".
+
 
 class MrpProduction(models.Model):
     _inherit = 'mrp.production'
