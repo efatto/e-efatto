@@ -14,6 +14,7 @@ class ProductProduct(models.Model):
 
     def _compute_bom_managed_price(self, bom, boms_to_recompute=False):
         self.ensure_one()
+        update_standard_price = self.env.context.get('update_standard_price', False)
         if not bom:
             return 0
         if not boms_to_recompute:
@@ -36,8 +37,10 @@ class ProductProduct(models.Model):
                 total += line.product_id.uom_id._compute_price(
                     child_total, line.product_uom_id) * line.product_qty
             else:
+                cost = line.product_id.standard_price if update_standard_price else \
+                    line.product_id.managed_replenishment_cost
                 total += line.product_id.uom_id._compute_price(
-                    line.product_id.managed_replenishment_cost, line.product_uom_id
+                    cost, line.product_uom_id
                 ) * line.product_qty
         return bom.product_uom_id._compute_price(total / bom.product_qty, self.uom_id)
 
@@ -102,6 +105,8 @@ class ProductProduct(models.Model):
         # compute replenishment cost for product to be manufactured, with or without
         # suppliers
         for product in products_tobe_manufactured:
+            # todo sort: first do products with parents and without children, then
+            #  parents (how to get order?)
             produce_price = product._get_managed_price_from_bom()
             if product.seller_ids:
                 seller = product.seller_ids[0]

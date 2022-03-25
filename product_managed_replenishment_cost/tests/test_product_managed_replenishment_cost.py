@@ -26,6 +26,66 @@ class TestProductManagedReplenishmentCost(SavepointCase):
             'route_ids': [(6, 0, [buy.id, mto.id])],
             'intrastat_code_id': cls.intrastat.id,
         })
+        # MRP BOM product
+        cls.product1 = cls.env['product.product'].create({
+            'name': 'Component 1',
+            'route_ids': [(6, 0, [buy.id, mto.id])],
+            'default_code': 'COMP1',
+            'seller_ids': [(0, 0, {
+                'name': cls.vendor.id,
+                'price': 2,
+            })],
+        })
+        cls.product2 = cls.env['product.product'].create({
+            'name': 'Component 2',
+            'route_ids': [(6, 0, [buy.id, mto.id])],
+            'default_code': 'COMP2',
+            'seller_ids': [(0, 0, {
+                'name': cls.vendor.id,
+                'price': 3,
+            })],
+        })
+        cls.product3 = cls.env['product.product'].create({
+            'name': 'Component 3',
+            'route_ids': [(6, 0, [buy.id, mto.id])],
+            'default_code': 'COMP3',
+            'seller_ids': [(0, 0, {
+                'name': cls.vendor.id,
+                'price': 7,
+            })],
+        })
+        cls.product_bom = cls.env['product.product'].create({
+            'name': 'Product with bom',
+            'route_ids': [(4, cls.env.ref('mrp.route_warehouse0_manufacture').id),
+                          (4, cls.env.ref('stock.route_warehouse0_mto').id)],
+            'default_code': 'PRODUCED1',
+            'type': 'product',
+            'sale_ok': True,
+        })
+        # create product after bom product, to give an id not in sequence
+        cls.product4 = cls.env['product.product'].create({
+            'name': 'Component 4',
+            'default_code': 'COMP4',
+            'type': 'product',
+            'purchase_ok': True,
+            'seller_ids': [(0, 0, {
+                'name': cls.vendor.id,
+                'price': 4,
+            })],
+        })
+        bom_component_values = [{
+            'product_id': x.id,
+            'product_qty': 1,
+        } for x in cls.product2 | cls.product3 | cls.product4]
+        cls.bom = cls.env['mrp.bom'].create({
+            'product_tmpl_id': cls.product_bom.product_tmpl_id.id,
+            'code': cls.product_bom.default_code,
+            'type': 'normal',
+            'product_qty': 1,
+            'product_uom_id': cls.env.ref('uom.product_uom_unit').id,
+            'bom_line_ids': [
+                (0, 0, x) for x in bom_component_values]
+        })
 
     def test_01_create(self):
         self.assertEqual(self.product.standard_price, 50.0)
@@ -77,3 +137,12 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         self.assertAlmostEqual(
             self.product.managed_replenishment_cost, (60.0 * 0.9 * 1.15) * 1.10)
         self.assertAlmostEqual(self.product.standard_price, (60.0 * 0.9 * 1.15) * 1.10)
+
+    def test_02_bom(self):
+        self.assertEqual(self.product_bom.managed_replenishment_cost, 0.0)
+        self.assertEqual(self.product_bom.standard_price, 0.0)
+        repl = self.env['replenishment.cost'].create({
+            'name': 'Test cost update bom',
+        })
+        repl.update_products_standard_price_only()
+        self.assertEqual(self.product_bom.standard_price, 3 + 4 + 7)
