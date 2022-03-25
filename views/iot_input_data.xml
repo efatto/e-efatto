@@ -8,9 +8,13 @@
             <form string="Input data">
                 <header/>
                 <sheet>
-                    <field name="name"/>
-                    <field name="value"/>
-                    <field name="timestamp"/>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                    <group>
+                        <field name="value"/>
+                        <field name="timestamp"/>
+                    </group>
                 </sheet>
             </form>
         </field>
