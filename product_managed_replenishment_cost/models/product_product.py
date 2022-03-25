@@ -104,9 +104,7 @@ class ProductProduct(models.Model):
             # these products are without seller nor bom
         # compute replenishment cost for product to be manufactured, with or without
         # suppliers
-        for product in products_tobe_manufactured:
-            # todo sort: first do products with parents and without children, then
-            #  parents (how to get order?)
+        for product in self.sort_products_by_parent(products_tobe_manufactured):
             produce_price = product._get_managed_price_from_bom()
             if product.seller_ids:
                 seller = product.seller_ids[0]
@@ -117,3 +115,15 @@ class ProductProduct(models.Model):
                 product.standard_price = produce_price
 
         return products_nottobe_purchased, products_without_seller_price
+
+    def sort_products_by_parent(self, products):
+        product_ids = self.env['product.product']
+        for product in products:
+            # this is used as component
+            if product.bom_line_ids:
+                product_ids |= product
+        for product in products:
+            # add other for last
+            if product not in product_ids:
+                product_ids |= product
+        return product_ids
