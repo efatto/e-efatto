@@ -42,7 +42,8 @@ class ProductProduct(models.Model):
                 total += line.product_id.uom_id._compute_price(
                     cost, line.product_uom_id
                 ) * line.product_qty
-        return bom.product_uom_id._compute_price(total / bom.product_qty, self.uom_id)
+        return bom.product_uom_id._compute_price(total / (bom.product_qty or 1),
+                                                 self.uom_id)
 
     @api.multi
     def update_managed_replenishment_cost(self):
