@@ -43,6 +43,8 @@ class MrpProductionComponentChange(models.TransientModel):
         )
         qty_done = self.product_uom_qty
         for move_line in move.move_line_ids:
+            if len(move.move_line_ids) > 1:
+                qty_done = move_line.qty_done
             move_line.write({"product_id": self.product_id.id, "state": "draft",
                              "qty_done": qty_done})
             qty_done = 0.0
