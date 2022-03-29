@@ -13,6 +13,7 @@ class TestMrpProductionChangeQty(TestMrpCommon):
     def test_01_update_product(self):
         man_order = self.env['mrp.production'].create({
             'name': 'MO-Test-to-update',
+            'product_tmpl_id': self.product_6.product_tmpl_id.id,
             'product_id': self.product_6.id,
             'product_uom_id': self.product_6.uom_id.id,
             'product_qty': 1,
