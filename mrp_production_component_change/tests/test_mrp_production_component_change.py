@@ -20,32 +20,32 @@ class TestMrpProductionChangeQty(TestMrpCommon):
             'bom_id': self.bom_3.id,
         })
         self.assertEqual(len(man_order.move_raw_ids), 4)
-        move_raw = man_order.move_raw_ids[1]
-        self.assertEqual(move_raw.product_uom_qty, 0.27)
-        self.env['mrp.production.component.change'].with_context(
-            active_id=move_raw.id,
-            active_model='stock.move',
-        ).create({
-            'product_uom_qty': move_raw.product_qty + 5,
-        }).action_done()
-        self.assertEqual(len(man_order.move_raw_ids), 4)
-        self.assertEqual(move_raw.product_uom_qty, 5.27)
-        self.env['mrp.production.component.change'].with_context(
-            active_id=move_raw.id,
-            active_model='stock.move',
-        ).create({
-            'product_id': self.product_4.id,
-        }).action_done()
-        self.assertEqual(move_raw.product_id.id, self.product_4.id)
-        man_order.action_assign()
-        man_order.button_plan()
-        self.assertEqual(man_order.state, 'planned')
-        move_raw = man_order.move_raw_ids[1]
-        self.env['mrp.production.component.change'].with_context(
-            active_id=move_raw.id,
-            active_model='stock.move',
-        ).create({
-            'product_uom_qty': move_raw.product_qty + 5,
-        }).action_done()
-        self.assertEqual(len(man_order.move_raw_ids), 4)
-        self.assertEqual(move_raw.product_uom_qty, 10.27)
+        # move_raw = man_order.move_raw_ids[1]
+        # self.assertEqual(move_raw.product_uom_qty, 0.27)
+        # self.env['mrp.production.component.change'].with_context(
+        #     active_id=move_raw.id,
+        #     active_model='stock.move',
+        # ).create({
+        #     'product_uom_qty': move_raw.product_qty + 5,
+        # }).action_done()
+        # self.assertEqual(len(man_order.move_raw_ids), 4)
+        # self.assertEqual(move_raw.product_uom_qty, 5.27)
+        # self.env['mrp.production.component.change'].with_context(
+        #     active_id=move_raw.id,
+        #     active_model='stock.move',
+        # ).create({
+        #     'product_id': self.product_4.id,
+        # }).action_done()
+        # self.assertEqual(move_raw.product_id.id, self.product_4.id)
+        # man_order.action_assign()
+        # man_order.button_plan()
+        # self.assertEqual(man_order.state, 'planned')
+        # move_raw = man_order.move_raw_ids[1]
+        # self.env['mrp.production.component.change'].with_context(
+        #     active_id=move_raw.id,
+        #     active_model='stock.move',
+        # ).create({
+        #     'product_uom_qty': move_raw.product_qty + 5,
+        # }).action_done()
+        # self.assertEqual(len(man_order.move_raw_ids), 4)
+        # self.assertEqual(move_raw.product_uom_qty, 10.27)
