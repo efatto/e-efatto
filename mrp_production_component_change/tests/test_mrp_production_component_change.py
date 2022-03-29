@@ -12,14 +12,6 @@ class TestMrpProductionChangeQty(TestMrpCommon):
 
     def test_01_update_product(self):
         man_order, bom, product_build, comp, comp1 = self.generate_mo()
-        # env['mrp.production'].create({
-        #     'name': 'MO-Test-to-update',
-        #     'product_tmpl_id': self.product_6.product_tmpl_id.id,
-        #     'product_id': self.product_6.id,
-        #     'product_uom_id': self.product_6.uom_id.id,
-        #     'product_uom_qty': 1,
-        #     'bom_id': self.bom_3.id,
-        # })
         self.assertEqual(len(man_order.move_raw_ids), 2)
         # move_raw = man_order.move_raw_ids[1]
         # self.assertEqual(move_raw.product_uom_qty, 20.0)
