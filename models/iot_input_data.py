@@ -2,6 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, fields, models
 from odoo.tools.date_utils import relativedelta
+from datetime import datetime
 
 
 class IotInputData(models.Model):
@@ -20,6 +21,30 @@ class IotInputData(models.Model):
             ('timestamp', '<', date_limit)
         ])
         data_to_cleanup_ids.unlink()
+
+    @api.model
+    def input_data(self, *args, **kwargs):
+        res = False
+        iot_device_input_id = self.env.context.get('iot_device_input_id')
+        iot_device_id = self.env.context.get('iot_device_id')
+        log_msg = ''
+        input_obj = self.env['iot.input.data']
+        values = {
+            'iot_device_input_id': iot_device_input_id,
+        }
+        for key, value in kwargs.items():
+            if key == 'timestamp':
+                values.update({'timestamp': datetime.strptime(
+                    value, '%Y-%m-%dT%H:%M:%S.%fz')})
+            else:
+                values.update({
+                    'name': key,
+                    'value': value,
+                })
+        res = input_obj.create(values)
+        if not res:
+            return {'status': 'error', 'message': log_msg}
+        return {'status': 'ok', 'message': 'Input data created'}
 
 
 class IotDeviceInput(models.Model):
