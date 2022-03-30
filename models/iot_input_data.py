@@ -27,19 +27,20 @@ class IotInputData(models.Model):
         iot_device_input_id = self.env.context.get('iot_device_input_id')
         log_msg = ''
         input_obj = self.env['iot.input.data']
-        values = {
+        default_values = {
             'iot_device_input_id': iot_device_input_id,
         }
+        timestamp = kwargs.pop('timestamp')
+        if timestamp:
+            default_values.update({'timestamp': datetime.strptime(
+                timestamp, '%Y-%m-%dT%H:%M:%S.%fz')})
         for key, value in kwargs.items():
-            if key == 'timestamp':
-                values.update({'timestamp': datetime.strptime(
-                    value, '%Y-%m-%dT%H:%M:%S.%fz')})
-            else:
-                values.update({
-                    'name': key,
-                    'value': value,
-                })
-        res = input_obj.create(values)
+            values = default_values
+            values.update({
+                'name': key,
+                'value': value,
+            })
+            res = input_obj.create(values)
         if not res:
             return {'status': 'error', 'message': log_msg}
         return {'status': 'ok', 'message': 'Input data created'}
