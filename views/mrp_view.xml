@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="mrp_production_form_view" model="ir.ui.view">
+        <field name="name">mrp.production.form.input</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='finished_move_line_ids']" position="after">
+                <field name="bag_count_initial"/>
+                <field name="bag_count_final"/>
+                <field name="bagging_duration"/>
+                <field name="weight_initial"/>
+                <field name="weight_final"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mrp_workcenter_view" model="ir.ui.view">
+        <field name="name">mrp.workcenter.form</field>
+        <field name="model">mrp.workcenter</field>
+        <field name="inherit_id" ref="mrp.mrp_workcenter_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook/page/group" position="inside">
+                <group name="iot_device_input">
+                    <label for="iot_device_input_id"/>
+                    <div class="o_row">
+                        <field name="iot_device_input_id"/>
+                    </div>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

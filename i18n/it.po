@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-26 07:45+0000\n"
-"PO-Revision-Date: 2022-01-26 07:45+0000\n"
+"POT-Creation-Date: 2022-03-30 17:19+0000\n"
+"PO-Revision-Date: 2022-03-30 17:19+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,47 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: iot_input_mrp
+#: model:ir.model.fields,field_description:iot_input_mrp.field_mrp_production__bag_count_final
+msgid "Bag Count Final"
+msgstr "Conteggio Sacchi Finale"
+
+#. module: iot_input_mrp
+#: model:ir.model.fields,field_description:iot_input_mrp.field_mrp_production__bag_count_initial
+msgid "Bag Count Initial"
+msgstr "Conteggio Sacchi Iniziale"
+
+#. module: iot_input_mrp
+#: model:ir.model.fields,field_description:iot_input_mrp.field_mrp_production__bagging_duration
+msgid "Bagging Duration"
+msgstr "Durata Insaccaggio"
+
+#. module: iot_input_mrp
+#: model:ir.model.fields,field_description:iot_input_mrp.field_mrp_workcenter__iot_device_input_id
+msgid "Iot Device Input"
+msgstr ""
+
+#. module: iot_input_mrp
 #: model:ir.model,name:iot_input_mrp.model_mrp_production
 msgid "Production Order"
-msgstr "Ordine di Produzione"
+msgstr "Ordine Produzione"
+
+#. module: iot_input_mrp
+#: model:ir.model.fields,field_description:iot_input_mrp.field_mrp_production__weight_final
+msgid "Weight Final"
+msgstr "Peso Finale"
+
+#. module: iot_input_mrp
+#: model:ir.model.fields,field_description:iot_input_mrp.field_mrp_production__weight_initial
+msgid "Weight Initial"
+msgstr "Peso Iniziale"
+
+#. module: iot_input_mrp
+#: model:ir.model,name:iot_input_mrp.model_mrp_workcenter
+msgid "Work Center"
+msgstr "Centro di Lavoro"
+
+#. module: iot_input_mrp
+#: model:ir.model,name:iot_input_mrp.model_mrp_workorder
+msgid "Work Order"
+msgstr "Ordine di Lavoro"
 

@@ -12,7 +12,7 @@
     "website": "https://efatto.it",
     "depends": [
         "iot_input_data",
-        "mrp",
+        "mrp_workcenter_capacity",
     ],
     "data": [
         "views/mrp_view.xml",
