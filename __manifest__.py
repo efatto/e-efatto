@@ -11,10 +11,11 @@
     "author": "Sergio Corato",
     "website": "https://efatto.it",
     "depends": [
-        "iot_input",
+        "iot_input_data",
         "mrp",
     ],
     "data": [
+        "views/mrp_view.xml",
     ],
     "installable": True,
 }

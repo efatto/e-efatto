@@ -1,9 +1,8 @@
 # Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, models
+from odoo import api, fields, models
 
-# todo CREARE UN modello per salvare i dati in maniera provvisoria, inviati dall'IOT
-#  ad ogni x secondi, ed utilizzare quelli per gestire la produzione a seguito dell'
+# todo ed utilizzare quelli per gestire la produzione a seguito dell'
 #  intervento utente, che dovrà avviare la produzione e poi far partire la macchina,
 #  quindi terminarla quando la macchina è ferma
 #  Creare un campo aggiuntivo collegato nella produzione per indicare in quale centro
@@ -12,7 +11,9 @@ from odoo import api, models
 #  la prima produzione in corso su quel centro di lavoro, senza essere a conoscenza di
 #  nulla.
 #  Salvare nella produzione il numero di sacchi attuali all'inizio della produzione e
-#  quelli finali alla fine, per calcolare i sacchi prodotti.
+#  quelli finali alla fine, per calcolare i sacchi prodotti, il peso totale e la durata
+#  della miscelazione (fare due operazioni di produzione mettendo la durata in quella
+#  di insaccaggio).
 
 #  ANNULLATO
 #  Utilizzare l'IOT OUTPUT creando una funzione che metta a disposizione un controller
@@ -27,6 +28,18 @@ from odoo import api, models
 
 class MrpProduction(models.Model):
     _inherit = 'mrp.production'
+
+    workcenter_ids = fields.Many2many(
+        comodel_name='mrp.workcenter', string='Workcenters',
+        compute='_compute_workcenter_ids', store=True, index=True)
+
+    @api.multi
+    @api.depends('bom_id.routing_id.operation_ids.workcenter_id')
+    def _compute_workcenter_ids(self):
+        for production in self:
+            production.workcenter_ids = production.mapped(
+                'bom_id.routing_id.operation_ids.workcenter_id'
+            )
 
     @api.model
     def input_production_produce(self, **kwargs):
