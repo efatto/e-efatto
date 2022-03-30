@@ -24,9 +24,7 @@ class IotInputData(models.Model):
 
     @api.model
     def input_data(self, *args, **kwargs):
-        res = False
         iot_device_input_id = self.env.context.get('iot_device_input_id')
-        iot_device_id = self.env.context.get('iot_device_id')
         log_msg = ''
         input_obj = self.env['iot.input.data']
         values = {
