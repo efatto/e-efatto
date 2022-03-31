@@ -16,9 +16,11 @@
         <field name="model">hyddemo.mssql.log</field>
         <field name="arch" type="xml">
             <form string="Log Processing">
-                <field name="ultimo_invio"/>
-                <field name="errori"/>
-                <field name="dbsource_id"/>
+                <group>
+                    <field name="ultimo_invio"/>
+                    <field name="errori"/>
+                    <field name="dbsource_id"/>
+                </group>
                 <field name="hyddemo_mssql_log_line_ids">
                     <tree>
                         <field name="name"/>
