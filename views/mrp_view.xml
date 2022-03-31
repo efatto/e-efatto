@@ -7,11 +7,13 @@
         <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='finished_move_line_ids']" position="after">
-                <field name="bag_count_initial"/>
-                <field name="bag_count_final"/>
-                <field name="bagging_duration"/>
-                <field name="weight_initial"/>
-                <field name="weight_final"/>
+                <group>
+                    <field name="bag_count_initial"/>
+                    <field name="bag_count_final"/>
+                    <field name="bagging_duration"/>
+                    <field name="weight_initial"/>
+                    <field name="weight_final"/>
+                </group>
             </xpath>
         </field>
     </record>
