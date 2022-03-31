@@ -8,6 +8,7 @@ from datetime import datetime
 class IotInputData(models.Model):
     _name = 'iot.input.data'
     _description = 'Input data for IOT'
+    _order = 'timestamp DESC'
 
     name = fields.Char(required=True)
     value = fields.Char(required=True)
