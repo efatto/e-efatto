@@ -84,13 +84,13 @@ class BaseExternalDbsource(models.Model):
                 dbsource.id
             )
             wizard_obj = self.env['wizard.sync.stock.whs.mssql']
-            wizard_vals = wizard_obj.with_context(
-                active_ids=dbsource.ids,
-                active_model='base.external.dbsource').default_get(
+            wizard_vals = wizard_obj.default_get(
                 ['do_sync']
             )
             wizard_vals.update(do_sync=True)
-            wizard = wizard_obj.create(wizard_vals)
+            wizard = wizard_obj.with_context(
+                active_ids=dbsource.ids,
+                active_model='base.external.dbsource').create(wizard_vals)
             wizard.apply()
 
     @api.multi
