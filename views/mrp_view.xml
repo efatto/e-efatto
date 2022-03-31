@@ -34,6 +34,18 @@
                     <div class="o_row">
                         <field name="iot_device_input_id"/>
                     </div>
+                    <label for="weight_variable_name"/>
+                    <div class="o_row">
+                        <field name="weight_variable_name"/>
+                    </div>
+                    <label for="bag_variable_name"/>
+                    <div class="o_row">
+                        <field name="bag_variable_name"/>
+                    </div>
+                    <label for="duration_variable_name"/>
+                    <div class="o_row">
+                        <field name="duration_variable_name"/>
+                    </div>
                 </group>
             </xpath>
         </field>

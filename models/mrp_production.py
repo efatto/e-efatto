@@ -1,7 +1,8 @@
 # Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from odoo.addons import decimal_precision as dp
+from odoo.exceptions import ValidationError
 from datetime import timedelta
 
 
@@ -64,16 +65,23 @@ class MrpProduction(models.Model):
         # get info from iot.input.data for device linked to this workcenter
         for production in self:
             values = dict()
-            for key in ['weight', 'bag']:
+            if not (
+                workcenter_id.weight_variable_name and workcenter_id.bag_variable_name
+            ):
+                raise ValidationError(_('Missing variable name in workcenter!'))
+            keys = [workcenter_id.weight_variable_name, workcenter_id.bag_variable_name]
+            for key in keys:
                 iot_input_data_ids = self.env['iot.input.data'].search([
                     ('iot_device_input_id', '=', workcenter_id.iot_device_input_id.id),
                     ('timestamp', '<', fields.Datetime.now()),
-                    ('name', 'ilike', key)
+                    ('name', '=', key)
                 ], order='timestamp DESC', limit=1)
                 for iot_input_data in iot_input_data_ids:
-                    if key == 'weight' and not production.weight_initial:
+                    if key == workcenter_id.weight_variable_name\
+                            and not production.weight_initial:
                         values.update(weight_initial=iot_input_data.value)
-                    if key == 'bag' and not production.bag_count_initial:
+                    if key == workcenter_id.bag_variable_name\
+                            and not production.bag_count_initial:
                         values.update(bag_count_initial=iot_input_data.value)
             if values:
                 production.write(values)
@@ -85,18 +93,31 @@ class MrpProduction(models.Model):
         for production in self:
             values = dict()
             duration = 0
-            for key in ['weight', 'bag', 'duration']:
+            if not (
+                workcenter_id.weight_variable_name
+                and workcenter_id.bag_variable_name
+                and workcenter_id.duration_variable_name
+            ):
+                raise ValidationError(_('Missing variable name in workcenter!'))
+            keys = [workcenter_id.weight_variable_name,
+                    workcenter_id.bag_variable_name,
+                    workcenter_id.duration_variable_name]
+            if len(keys) != 3:
+                raise ValidationError(_('Missing variable name in workcenter!'))
+            for key in keys:
                 iot_input_data_ids = self.env['iot.input.data'].search([
                     ('iot_device_input_id', '=', workcenter_id.iot_device_input_id.id),
                     ('timestamp', '<', fields.Datetime.now()),
-                    ('name', 'ilike', key)
+                    ('name', '=', key)
                 ], order='timestamp DESC', limit=1)
                 for iot_input_data in iot_input_data_ids:
-                    if key == 'weight' and not production.weight_final:
+                    if key == workcenter_id.weight_variable_name\
+                            and not production.weight_final:
                         values.update(weight_final=iot_input_data.value)
-                    if key == 'bag' and not production.bag_count_final:
+                    if key == workcenter_id.bag_variable_name\
+                            and not production.bag_count_final:
                         values.update(bag_count_final=iot_input_data.value)
-                    if key == 'duration':
+                    if key == workcenter_id.duration_variable_name:
                         duration = int(iot_input_data.value)
             if values:
                 production.write(values)
