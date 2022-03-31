@@ -78,7 +78,7 @@ class BaseExternalDbsource(models.Model):
             dbsource.whs_insert_read_and_synchronize_list()
 
     @api.model
-    def _cron_whs_synchronize_stock(self):
+    def _cron_whs_synchronize_stock(self, do_sync=False):
         for dbsource in self.search([]):
             self.env['hyddemo.mssql.log'].whs_update_products(
                 dbsource.id
@@ -87,7 +87,7 @@ class BaseExternalDbsource(models.Model):
             wizard_vals = wizard_obj.default_get(
                 ['do_sync']
             )
-            wizard_vals.update(do_sync=True)
+            wizard_vals.update(do_sync=do_sync)
             wizard = wizard_obj.with_context(
                 active_ids=dbsource.ids,
                 active_model='base.external.dbsource').create(wizard_vals)
