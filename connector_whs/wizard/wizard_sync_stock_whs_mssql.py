@@ -141,7 +141,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 inventory.action_validate()
 
             hyddemo_mssql_log = hyddemo_mssql_log_obj.create({
-                'errori': '',
+                'errori': 'Stock inventory %s' % ('sync' if wizard.do_sync else 'check'),
                 'ultimo_invio': new_last_update,
                 'dbsource_id': dbsource.id,
                 'inventory_id': inventory.id if wizard.do_sync else False,
