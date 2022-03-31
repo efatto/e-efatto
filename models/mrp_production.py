@@ -16,15 +16,41 @@ class MrpWorkorder(models.Model):
             )
         return res
 
+    @api.multi
+    def record_production(self):
+        if not self:
+            return True
+        self.ensure_one()
+        res = super().record_production()
+        if res:
+            self.production_id.mrp_end_produce(
+                self.workcenter_id
+            )
+        return res
+
 
 class MrpProduction(models.Model):
     _inherit = 'mrp.production'
 
-    bag_count_initial = fields.Integer()
-    bag_count_final = fields.Integer()
-    bagging_duration = fields.Float()
-    weight_initial = fields.Float()
-    weight_final = fields.Float()
+    bag_count_initial = fields.Integer(copy=False)
+    bag_count_final = fields.Integer(copy=False)
+    bag_count = fields.Integer(compute='_compute_bag_count', store=True)
+    bagging_duration = fields.Float(copy=False)
+    weight_initial = fields.Float(copy=False)
+    weight_final = fields.Float(copy=False)
+    weight = fields.Float(compute='_compute_weight', store=True)
+
+    @api.multi
+    @api.depends('bag_count_initial', 'bag_count_final')
+    def _compute_bag_count(self):
+        for mrp in self:
+            mrp.bag_count = mrp.bag_count_final - mrp.bag_count_initial
+
+    @api.multi
+    @api.depends('weight_initial', 'weight_final')
+    def _compute_weight(self):
+        for mrp in self:
+            mrp.weight = mrp.weight_final - mrp.weight_initial
 
     @api.multi
     def mrp_start_produce(self, workcenter_id):
@@ -47,8 +73,27 @@ class MrpProduction(models.Model):
                 production.write(values)
 
     @api.multi
-    def mrp_end_produce(self):
-        #todo
+    def mrp_end_produce(self, workcenter_id):
+        # this function can be called many times, so we set initial fields only once
+        # get info from iot.input.data for device linked to this workcenter
+        for production in self:
+            values = dict()
+            for key in ['weight', 'bag', 'duration']:
+                iot_input_data_ids = self.env['iot.input.data'].search([
+                    ('iot_device_input_id', '=', workcenter_id.iot_device_input_id.id),
+                    ('timestamp', '<', fields.Datetime.now()),
+                    ('name', 'ilike', key)
+                ], order='timestamp DESC', limit=1)
+                for iot_input_data in iot_input_data_ids:
+                    if key == 'weight' and not production.weight_final:
+                        values.update(weight_final=iot_input_data.value)
+                    if key == 'bag' and not production.bag_count_final:
+                        values.update(bag_count_final=iot_input_data.value)
+                    if key == 'duration' and not production.bagging_duration:
+                        values.update(bagging_duration=iot_input_data.value)
+            if values:
+                production.write(values)
+        #todo in una funzione successiva?
         # set moves weight proportionally to weight received
         # weight_uom_cat_id = self.env['uom.category'].search([
         #     ('measure_type', '=', 'weight')

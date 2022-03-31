@@ -8,11 +8,17 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='finished_move_line_ids']" position="after">
                 <group>
-                    <field name="bag_count_initial"/>
-                    <field name="bag_count_final"/>
-                    <field name="bagging_duration"/>
-                    <field name="weight_initial"/>
-                    <field name="weight_final"/>
+                    <group>
+                        <field name="bag_count_initial"/>
+                        <field name="bag_count_final"/>
+                        <field name="bag_count"/>
+                        <field name="bagging_duration"/>
+                    </group>
+                    <group>
+                        <field name="weight_initial"/>
+                        <field name="weight_final"/>
+                        <field name="weight"/>
+                    </group>
                 </group>
             </xpath>
         </field>
