@@ -1,6 +1,7 @@
 # Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, fields, models
+from datetime import timedelta
 
 
 class MrpWorkorder(models.Model):
@@ -23,9 +24,13 @@ class MrpWorkorder(models.Model):
         self.ensure_one()
         res = super().record_production()
         if res:
-            self.production_id.mrp_end_produce(
+            duration = self.production_id.mrp_end_produce(
                 self.workcenter_id
             )
+            if duration:
+                timesheet = self.time_ids[0]
+                timesheet.date_end = timesheet.date_start + timedelta(
+                    minutes=duration)
         return res
 
 
@@ -35,7 +40,6 @@ class MrpProduction(models.Model):
     bag_count_initial = fields.Integer(copy=False)
     bag_count_final = fields.Integer(copy=False)
     bag_count = fields.Integer(compute='_compute_bag_count', store=True)
-    bagging_duration = fields.Float(copy=False)
     weight_initial = fields.Float(copy=False)
     weight_final = fields.Float(copy=False)
     weight = fields.Float(compute='_compute_weight', store=True)
@@ -78,6 +82,7 @@ class MrpProduction(models.Model):
         # get info from iot.input.data for device linked to this workcenter
         for production in self:
             values = dict()
+            duration = 0
             for key in ['weight', 'bag', 'duration']:
                 iot_input_data_ids = self.env['iot.input.data'].search([
                     ('iot_device_input_id', '=', workcenter_id.iot_device_input_id.id),
@@ -89,10 +94,12 @@ class MrpProduction(models.Model):
                         values.update(weight_final=iot_input_data.value)
                     if key == 'bag' and not production.bag_count_final:
                         values.update(bag_count_final=iot_input_data.value)
-                    if key == 'duration' and not production.bagging_duration:
-                        values.update(bagging_duration=iot_input_data.value)
+                    if key == 'duration':
+                        duration = int(iot_input_data.value)
             if values:
                 production.write(values)
+            return duration
+
         #todo in una funzione successiva?
         # set moves weight proportionally to weight received
         # weight_uom_cat_id = self.env['uom.category'].search([
@@ -118,20 +125,3 @@ class MrpProduction(models.Model):
         #     for move in moves:
         #         move.product_uom_qty = move.product_uom_qty * coef
         #     res = True
-        #todo creare in automatico il product_lot?
-        # lot_id = self.env['stock.production.lot'].create([{
-        #     'product_id': production.product_id.id,
-        #     'name': 'new lot name?',
-        # }])
-        # if lot_id:
-        #     values.update(
-        #         dict(lot_id=lot_id.id)
-        #     )
-        #todo produrre solo alla fine? questa funzione viene chiamata solo alla fine
-        # quando c'è il routing
-        # produce = self.env['mrp.product.produce'].with_context(
-        #     default_production_id=production.id,
-        #     active_id=production.id).create(values)
-        # produce._onchange_product_qty()
-        # res = produce.do_produce()
-        pass

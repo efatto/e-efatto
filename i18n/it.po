@@ -31,11 +31,6 @@ msgid "Bag Count Initial"
 msgstr "Conteggio Sacchi Iniziale"
 
 #. module: iot_input_mrp
-#: model:ir.model.fields,field_description:iot_input_mrp.field_mrp_production__bagging_duration
-msgid "Bagging Duration"
-msgstr "Durata Insaccaggio"
-
-#. module: iot_input_mrp
 #: model:ir.model.fields,field_description:iot_input_mrp.field_mrp_workcenter__iot_device_input_id
 msgid "Iot Device Input"
 msgstr "IOT Input"

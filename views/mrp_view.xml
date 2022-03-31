@@ -12,7 +12,6 @@
                         <field name="bag_count_initial"/>
                         <field name="bag_count_final"/>
                         <field name="bag_count"/>
-                        <field name="bagging_duration"/>
                     </group>
                     <group>
                         <field name="weight_initial"/>
