@@ -26,7 +26,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 inventory_obj = self.env['stock.inventory']
                 inventory_line_obj = self.env['stock.inventory.line']
                 inventory = inventory_obj.create({
-                    'name': 'INV ' + new_last_update.strftime("%Y-%m-%d"),
+                    'name': 'WHS sync inventory ' + new_last_update.strftime("%Y-%m-%d"),
                     'location_id': dbsource.location_id.id,
                     'filter': 'products',
                 })
