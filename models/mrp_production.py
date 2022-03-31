@@ -1,6 +1,7 @@
 # Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, fields, models
+from odoo.addons import decimal_precision as dp
 from datetime import timedelta
 
 
@@ -40,9 +41,10 @@ class MrpProduction(models.Model):
     bag_count_initial = fields.Integer(copy=False)
     bag_count_final = fields.Integer(copy=False)
     bag_count = fields.Integer(compute='_compute_bag_count', store=True)
-    weight_initial = fields.Float(copy=False)
-    weight_final = fields.Float(copy=False)
-    weight = fields.Float(compute='_compute_weight', store=True)
+    weight_initial = fields.Float(copy=False, digits=dp.get_precision('Stock Weight'))
+    weight_final = fields.Float(copy=False, digits=dp.get_precision('Stock Weight'))
+    weight = fields.Float(compute='_compute_weight', store=True,
+                          digits=dp.get_precision('Stock Weight'))
 
     @api.multi
     @api.depends('bag_count_initial', 'bag_count_final')
@@ -98,30 +100,33 @@ class MrpProduction(models.Model):
                         duration = int(iot_input_data.value)
             if values:
                 production.write(values)
+                if production.weight:
+                    production.align_weight(production.weight)
             return duration
 
-        #todo in una funzione successiva?
-        # set moves weight proportionally to weight received
-        # weight_uom_cat_id = self.env['uom.category'].search([
-        #     ('measure_type', '=', 'weight')
-        # ])[0]
-        # reference_weight_uom_id = self.env['uom.uom'].search([
-        #     ('category_id', '=', weight_uom_cat_id.id),
-        #     ('uom_type', '=', 'reference'),
-        # ])
-        # moves = production.move_raw_ids.filtered(
-        #     lambda x: x.product_uom.category_id == weight_uom_cat_id
-        # )
-        # # sum all weights converted to reference uom weight
-        # total_weight = sum(
-        #     x.product_uom._compute_quantity(
-        #         x.product_uom_qty,
-        #         reference_weight_uom_id,
-        #         round=False)
-        #     for x in moves
-        # )
-        # if total_weight:
-        #     coef = production_weight / total_weight
-        #     for move in moves:
-        #         move.product_uom_qty = move.product_uom_qty * coef
-        #     res = True
+    def align_weight(self, weight):
+        # set moves with weight proportionally to weight received
+        self.ensure_one()
+        production = self
+        weight_uom_cat_id = self.env['uom.category'].search([
+            ('measure_type', '=', 'weight')
+        ])[0]
+        reference_weight_uom_id = self.env['uom.uom'].search([
+            ('category_id', '=', weight_uom_cat_id.id),
+            ('uom_type', '=', 'reference'),
+        ])
+        moves = production.move_raw_ids.filtered(
+            lambda x: x.product_uom.category_id == weight_uom_cat_id
+        )
+        # sum all weights converted to reference uom weight to compute coefficient
+        total_weight = sum(
+            x.product_uom._compute_quantity(
+                x.product_uom_qty,
+                reference_weight_uom_id,
+                round=False)
+            for x in moves
+        )
+        if total_weight:
+            coef = weight / total_weight
+            for move in moves:
+                move.quantity_done = move.product_uom_qty * coef
