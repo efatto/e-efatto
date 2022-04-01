@@ -29,3 +29,20 @@ class TestProductionData(common.TransactionCase):
         self.main_bom = self.env.ref('mrp_production_demo.mrp_bom_manuf_1')
         self.sub_bom1 = self.env.ref('mrp_production_demo.mrp_bom_manuf_1_1')
         self.sub_bom2 = self.env.ref('mrp_production_demo.mrp_bom_manuf_1_2')
+        self.workcenter1 = self.env['mrp.workcenter'].create({
+            'name': 'Base Workcenter',
+            'capacity': 1,
+            'time_start': 10,
+            'time_stop': 5,
+            'time_efficiency': 80,
+        })
+        self.routing1 = self.env['mrp.routing'].create({
+            'name': 'Simple routing',
+        })
+        self.operation1 = self.env['mrp.routing.workcenter'].create({
+            'name': 'Operation 1',
+            'workcenter_id': self.workcenter1.id,
+            'routing_id': self.routing1.id,
+            'time_cycle': 15,
+            'sequence': 1,
+        })
