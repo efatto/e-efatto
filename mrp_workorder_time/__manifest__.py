@@ -9,7 +9,7 @@
     'website': 'https://efatto.it',
     'description': 'Add facility to set worked time on workorder.',
     'depends': [
-        'mrp',
+        'mrp_production_demo',
     ],
     'data': [
         'views/mrp_workorder.xml',

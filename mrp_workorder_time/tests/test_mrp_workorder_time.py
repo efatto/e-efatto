@@ -1,21 +1,24 @@
 # Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo.addons.mrp.tests.common import TestMrpCommon
+from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
 
 
-class TestMrpWorkorderTime(TestMrpCommon):
+class TestMrpWorkorderTime(TestProductionData):
 
     def setUp(self):
         super(TestMrpWorkorderTime, self).setUp()
+        self.main_bom.write({
+            'routing_id': self.routing1.id,
+        })
 
     def test_update_product_qty(self):
         man_order = self.env['mrp.production'].create({
             'name': 'MO-Test',
-            'product_id': self.product_6.id,
-            'product_uom_id': self.product_6.uom_id.id,
+            'product_id': self.top_product.id,
+            'product_uom_id': self.top_product.uom_id.id,
             'product_qty': 1,
-            'bom_id': self.bom_3.id,
+            'bom_id': self.main_bom.id,
         })
         man_order.button_plan()
         self.assertTrue(man_order.workorder_ids)
