@@ -4,7 +4,10 @@
 from odoo.addons.mrp.tests.common import TestMrpCommon
 
 
-class TestMrpProductionChangeQty(TestMrpCommon):
+class TestMrpProductionComponentChange(TestMrpCommon):
+
+    def setUp(self):
+        super(TestMrpProductionComponentChange, self).setUp()
 
     def test_01_update_product(self):
         man_order, bom, product_build, comp, comp1 = self.generate_mo()
