@@ -8,6 +8,9 @@
     "author": "Sergio Corato",
     "category": "Product",
     "website": "https://efatto.it",
-    "depends": ["product"],
-    "installable": False,
+    "depends": ["stock"],
+    "data": [
+        "views/product.xml",
+    ],
+    "installable": True,
 }
