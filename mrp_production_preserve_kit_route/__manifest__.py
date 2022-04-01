@@ -9,7 +9,7 @@
     'author': 'Sergio Corato Efatto.it',
     'website': 'https://efatto.it',
     'depends': [
-        'mrp',
+        'mrp_production_demo',
         'purchase_stock',
     ],
     'installable': True,
