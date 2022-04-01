@@ -11,7 +11,7 @@
     'description': 'Fix non-removed lines in MO where sub-bom or its components are '
                    'removed.',
     'depends': [
-        'mrp',
+        'mrp_production_demo',
     ],
     'installable': True,
 }
