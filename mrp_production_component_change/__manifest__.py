@@ -10,7 +10,7 @@
     'website': 'https://efatto.it',
     'description': 'Change component in production.',
     'depends': [
-        'mrp',
+        'mrp_production_demo',
     ],
     'data': [
         'wizard/mrp_production_component_change.xml',
