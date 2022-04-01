@@ -10,11 +10,10 @@
     'website': 'https://efatto.it',
     'license': 'AGPL-3',
     'maintainers': ['sergiocorato'],
-    'depends': ['mrp'],
+    'depends': ['mrp_production_demo'],
     'data': [
         'wizard/production_group_line_wizard.xml',
         'views/mrp_production.xml',
     ],
     'installable': True,
-    'demo': ['demo/product.xml'],
 }

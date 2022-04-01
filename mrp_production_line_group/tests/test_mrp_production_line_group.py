@@ -3,31 +3,13 @@
 
 from odoo.tests import common
 from odoo.tests import Form
+from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
 
 
-class TestProductionGroupLine(common.TransactionCase):
+class TestProductionGroupLine(TestProductionData):
 
     def setUp(self, *args, **kwargs):
         super(TestProductionGroupLine, self).setUp(*args, **kwargs)
-        self.production_model = self.env['mrp.production']
-        self.procurement_model = self.env['procurement.group']
-        self.bom_model = self.env['mrp.bom']
-        self.stock_location_stock = self.env.ref('stock.stock_location_stock')
-        self.manufacture_route = self.env.ref(
-            'mrp.route_warehouse0_manufacture')
-        self.uom_unit = self.env.ref('uom.product_uom_unit')
-        self.warehouse = self.env.ref('stock.warehouse0')
-        self.top_product = self.env.ref(
-            'mrp_production_line_group.product_product_manufacture_1')
-        self.subproduct1 = self.env.ref(
-            'mrp_production_line_group.product_product_manufacture_1_1')
-        self.subproduct2 = self.env.ref(
-            'mrp_production_line_group.product_product_manufacture_1_2')
-        self.subproduct_1_1 = self.env.ref(
-            'mrp_production_line_group.product_product_manufacture_1_1_1')
-        self.subproduct_2_1 = self.env.ref(
-            'mrp_production_line_group.product_product_manufacture_1_2_1')
-        self.main_bom = self.env.ref('mrp_production_line_group.mrp_bom_manuf_1')
 
     def _get_production_vals(self):
         return {
