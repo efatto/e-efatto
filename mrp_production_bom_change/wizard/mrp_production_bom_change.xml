@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="change_production_bom" model="ir.ui.view">
+        <field name="name">mrp.production.bom.change</field>
+        <field name="model">mrp.production.bom.change</field>
+        <field name="arch" type="xml">
+            <form string="Change BoM">
+                <div>
+                    <group>
+                        <field name="bom_id"/>
+                    </group>
+                </div>
+                <div>
+                    Are you sure you want to change BoM for this production order?
+                </div>
+                <footer>
+                    <button string="Discard" special="cancel" class="btn-secondary"/>
+                    <button name="action_done" string="Confirm" type="object" class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <act_window id="action_change_production_bom"
+        name="Change production BoM"
+        res_model="mrp.production.bom.change"
+        src_model="mrp.production"
+        view_mode="form"
+        target="new"
+    />
+
+</odoo>
