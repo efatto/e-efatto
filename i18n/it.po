@@ -64,16 +64,6 @@ msgid "Weight"
 msgstr "Peso"
 
 #. module: iot_input_mrp
-#: model:ir.model.fields,field_description:iot_input_mrp.field_mrp_production__weight_final
-msgid "Weight Final"
-msgstr "Peso Finale"
-
-#. module: iot_input_mrp
-#: model:ir.model.fields,field_description:iot_input_mrp.field_mrp_production__weight_initial
-msgid "Weight Initial"
-msgstr "Peso Iniziale"
-
-#. module: iot_input_mrp
 #: model:ir.model.fields,field_description:iot_input_mrp.field_mrp_workcenter__weight_variable_name
 msgid "Weight Variable Name"
 msgstr "Nome Variabile Peso"

@@ -42,9 +42,7 @@ class MrpProduction(models.Model):
     bag_count_initial = fields.Integer(copy=False)
     bag_count_final = fields.Integer(copy=False)
     bag_count = fields.Integer(compute='_compute_bag_count', store=True)
-    weight_initial = fields.Float(copy=False, digits=dp.get_precision('Stock Weight'))
-    weight_final = fields.Float(copy=False, digits=dp.get_precision('Stock Weight'))
-    weight = fields.Float(compute='_compute_weight', store=True,
+    weight = fields.Float(copy=False,
                           digits=dp.get_precision('Stock Weight'))
 
     @api.multi
@@ -54,35 +52,21 @@ class MrpProduction(models.Model):
             mrp.bag_count = mrp.bag_count_final - mrp.bag_count_initial
 
     @api.multi
-    @api.depends('weight_initial', 'weight_final')
-    def _compute_weight(self):
-        for mrp in self:
-            mrp.weight = mrp.weight_final - mrp.weight_initial
-
-    @api.multi
     def mrp_start_produce(self, workcenter_id):
         # this function can be called many times, so we set initial fields only once
         # get info from iot.input.data for device linked to this workcenter
         for production in self:
             values = dict()
-            if not (
-                workcenter_id.weight_variable_name and workcenter_id.bag_variable_name
-            ):
+            if not workcenter_id.bag_variable_name:
                 raise ValidationError(_('Missing variable name in workcenter!'))
-            keys = [workcenter_id.weight_variable_name, workcenter_id.bag_variable_name]
-            for key in keys:
-                iot_input_data_ids = self.env['iot.input.data'].search([
-                    ('iot_device_input_id', '=', workcenter_id.iot_device_input_id.id),
-                    ('timestamp', '<', fields.Datetime.now()),
-                    ('name', '=', key)
-                ], order='timestamp DESC', limit=1)
-                for iot_input_data in iot_input_data_ids:
-                    if key == workcenter_id.weight_variable_name\
-                            and not production.weight_initial:
-                        values.update(weight_initial=iot_input_data.value)
-                    if key == workcenter_id.bag_variable_name\
-                            and not production.bag_count_initial:
-                        values.update(bag_count_initial=iot_input_data.value)
+            iot_input_data_ids = self.env['iot.input.data'].search([
+                ('iot_device_input_id', '=', workcenter_id.iot_device_input_id.id),
+                ('timestamp', '<', fields.Datetime.now()),
+                ('name', '=', workcenter_id.bag_variable_name)
+            ], order='timestamp DESC', limit=1)
+            for iot_input_data in iot_input_data_ids:
+                if not production.bag_count_initial:
+                    values.update(bag_count_initial=iot_input_data.value)
             if values:
                 production.write(values)
 
@@ -112,7 +96,7 @@ class MrpProduction(models.Model):
                 ], order='timestamp DESC', limit=1)
                 for iot_input_data in iot_input_data_ids:
                     if key == workcenter_id.weight_variable_name:
-                        values.update(weight_final=iot_input_data.value)
+                        values.update(weight=iot_input_data.value)
                     if key == workcenter_id.bag_variable_name:
                         values.update(bag_count_final=iot_input_data.value)
                     if key == workcenter_id.duration_variable_name:

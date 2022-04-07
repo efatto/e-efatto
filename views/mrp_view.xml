@@ -14,8 +14,6 @@
                         <field name="bag_count"/>
                     </group>
                     <group>
-                        <field name="weight_initial"/>
-                        <field name="weight_final"/>
                         <field name="weight"/>
                     </group>
                 </group>
