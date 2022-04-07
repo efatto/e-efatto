@@ -111,11 +111,9 @@ class MrpProduction(models.Model):
                     ('name', '=', key)
                 ], order='timestamp DESC', limit=1)
                 for iot_input_data in iot_input_data_ids:
-                    if key == workcenter_id.weight_variable_name\
-                            and not production.weight_final:
+                    if key == workcenter_id.weight_variable_name:
                         values.update(weight_final=iot_input_data.value)
-                    if key == workcenter_id.bag_variable_name\
-                            and not production.bag_count_final:
+                    if key == workcenter_id.bag_variable_name:
                         values.update(bag_count_final=iot_input_data.value)
                     if key == workcenter_id.duration_variable_name:
                         duration = int(iot_input_data.value)
