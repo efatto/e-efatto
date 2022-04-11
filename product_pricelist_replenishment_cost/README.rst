@@ -10,9 +10,9 @@ Product pricelist based on replenishment cost
 .. |badge1| image:: https://img.shields.io/badge/maturity-Beta-yellow.png
     :target: https://odoo-community.org/page/development-status
     :alt: Beta
-.. |badge2| image:: https://img.shields.io/badge/github-efatto%2Fefatto-lightgray.png?logo=github
-    :target: https://github.com/efatto/efatto/tree/12.0/product_pricelist_replenishment_cost
-    :alt: efatto/efatto
+.. |badge2| image:: https://img.shields.io/badge/github-sergiocorato%2Fe--efatto-lightgray.png?logo=github
+    :target: https://github.com/sergiocorato/e-efatto/tree/12.0/product_pricelist_replenishment_cost
+    :alt: sergiocorato/e-efatto
 
 |badge1| |badge2| 
 
@@ -28,26 +28,26 @@ Configuration
 
 Nel listino prezzi impostare il tipo di costo su 'Costo sostituzione gestito':
 
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/product_pricelist_replenishment_cost/static/description/listino.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_pricelist_replenishment_cost/static/description/listino.png
     :alt: Listino
 
 Quindi a partire da un prodotto con questa situazione di costi:
 
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/product_pricelist_replenishment_cost/static/description/costi.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_pricelist_replenishment_cost/static/description/costi.png
     :alt: Costi
 
 Il prezzo di vendita e il margine saranno calcolati sul costo sostituzione gestito:
 
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/product_pricelist_replenishment_cost/static/description/vendita.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_pricelist_replenishment_cost/static/description/vendita.png
     :alt: Vendita
 
 Bug Tracker
 ===========
 
-Bugs are tracked on `GitHub Issues <https://github.com/efatto/efatto/issues>`_.
+Bugs are tracked on `GitHub Issues <https://github.com/sergiocorato/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us smashing it by providing a detailed and welcomed
-`feedback <https://github.com/efatto/efatto/issues/new?body=module:%20product_pricelist_replenishment_cost%0Aversion:%2012.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/sergiocorato/e-efatto/issues/new?body=module:%20product_pricelist_replenishment_cost%0Aversion:%2012.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -67,6 +67,6 @@ Contributors
 Maintainers
 ~~~~~~~~~~~
 
-This module is part of the `efatto/efatto <https://github.com/efatto/efatto/tree/12.0/product_pricelist_replenishment_cost>`_ project on GitHub.
+This module is part of the `sergiocorato/e-efatto <https://github.com/sergiocorato/e-efatto/tree/12.0/product_pricelist_replenishment_cost>`_ project on GitHub.
 
 You are welcome to contribute.
