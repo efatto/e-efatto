@@ -6,14 +6,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-30 08:23+0000\n"
-"PO-Revision-Date: 2021-07-30 08:23+0000\n"
+"POT-Creation-Date: 2022-04-11 08:41+0000\n"
+"PO-Revision-Date: 2022-04-11 08:41+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: product_pricelist_replenishment_cost
+#: model_terms:ir.ui.view,arch_db:product_pricelist_replenishment_cost.product_pricelist_item_form_view
+msgid "<span attrs=\"{'invisible': [('base', '!=', 'managed_replenishment_cost')]}\">Managed replenishment Cost - </span>"
+msgstr "<span attrs=\"{'invisible': [('base', '!=', 'managed_replenishment_cost')]}\">Costo sostituzione gestito - </span>"
 
 #. module: product_pricelist_replenishment_cost
 #: model:ir.model.fields,help:product_pricelist_replenishment_cost.field_product_pricelist_item__base
@@ -45,6 +50,11 @@ msgstr "Costo Sostituzione Gestito"
 #: selection:product.pricelist.item,base:0
 msgid "Other Pricelist"
 msgstr "Altro listino prezzi"
+
+#. module: product_pricelist_replenishment_cost
+#: selection:product.pricelist.item,base:0
+msgid "Partner Prices on the product form"
+msgstr "Prezzi del partner nel form prodotto"
 
 #. module: product_pricelist_replenishment_cost
 #: model:ir.model,name:product_pricelist_replenishment_cost.model_product_pricelist_item
