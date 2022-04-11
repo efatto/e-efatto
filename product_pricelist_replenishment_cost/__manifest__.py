@@ -10,8 +10,9 @@
         'sale_margin',
     ],
     'data': [
+        'views/product_pricelist_views.xml',
     ],
     'summary': "This module add option 'based on managed replenishment cost' "
-                   "to product pricelist",
+               "to product pricelist",
     'installable': True,
 }
