@@ -13,7 +13,7 @@ class MrpWorkcenterProductivity(models.Model):
         result = super(MrpWorkcenterProductivity, self).default_get(field_list)
         if not self.env.context.get('default_employee_id') \
                 and 'employee_id' in field_list:
-            user_id = result.get('user_id', self._context.get('user_id'))
+            user_id = result.get('user_id', self.env.user.id)
             employee_id = self.env['hr.employee'].search(
                 [('user_id', '=', user_id)], limit=1).id
             if not employee_id:
