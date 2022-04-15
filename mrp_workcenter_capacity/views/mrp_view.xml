@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="action_mrp_workcenter_running_production" model="ir.actions.act_window">
+        <field name="res_model">mrp.production</field>
+        <field name="view_type">form</field>
+        <field name="name">Running Productions</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_inprogress': True, 'search_default_workcenter_ids': [active_id], 'create':False, 'edit':False}</field>
+        <field name="view_id" ref="mrp.mrp_production_tree_view"/>
+        <field name="search_view_id" ref="mrp.view_mrp_production_filter"/>
+    </record>
+
+    <record model="ir.ui.view" id="mrp_workcenter_kanban">
+        <field name="name">mrp.workcenter.kanban</field>
+        <field name="model">mrp.workcenter</field>
+        <field name="inherit_id" ref="mrp.mrp_workcenter_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('col-6', 'o_kanban_primary_right')]" position="inside">
+                <div class="row" t-if="record.production_running_count.raw_value &gt; 0">
+                    <div class="col-8">
+                        <a name="%(action_mrp_workcenter_running_production)d" type="action" context="{'search_default_inprogress': True, 'search_default_workcenter_ids': [active_id]}">
+                            Running Productions
+                        </a>
+                    </div>
+                    <div class="col-4 text-right">
+                        <field name="production_running_count"/>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mrp_production_form_view" model="ir.ui.view">
+        <field name="name">mrp.production.form.input</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet//field[@name='routing_id']" position="after">
+                <field name="workcenter_ids" widget="many2many_tags"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_mrp_production_filter" model="ir.ui.view">
+        <field name="name">mrp.production.select</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.view_mrp_production_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='routing_id']" position="after">
+                <field name="workcenter_ids" groups="mrp.group_mrp_routings"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mrp_workcenter_view" model="ir.ui.view">
+        <field name="name">mrp.workcenter.form</field>
+        <field name="model">mrp.workcenter</field>
+        <field name="inherit_id" ref="mrp.mrp_workcenter_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="%(action_mrp_workcenter_running_production)d" type="action" class="oe_stat_button" icon="fa-list">
+                    <field name="production_running_count" widget="statinfo" string="Running Productions"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
