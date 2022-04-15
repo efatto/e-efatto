@@ -32,7 +32,7 @@ class MrpWorkorder(models.Model):
             if duration:
                 timesheet = self.time_ids[0]
                 timesheet.date_end = timesheet.date_start + timedelta(
-                    minutes=duration)
+                    seconds=duration)
         return res
 
 
