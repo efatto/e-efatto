@@ -16,10 +16,8 @@ class MrpWorkcenterProductivity(models.Model):
             user_id = result.get('user_id', self.env.user.id)
             employee_id = self.env['hr.employee'].search(
                 [('user_id', '=', user_id)], limit=1).id
-            if not employee_id:
-                raise ValidationError(_('Current user does not have a linked '
-                                        'valid employee!'))
-            result['employee_id'] = employee_id
+            if employee_id:
+                result['employee_id'] = employee_id
         return result
 
     employee_id = fields.Many2one('hr.employee', "Employee", required=True)
