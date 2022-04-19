@@ -11,6 +11,7 @@
     "author": "Sergio Corato",
     "website": "https://efatto.it",
     "depends": [
+        "iot",
         "iot_input_data",
         "mrp_workcenter_capacity",
     ],
