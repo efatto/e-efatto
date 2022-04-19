@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+
+    <record id="decimal_stock_net" model="decimal.precision">
+        <field name="name">Net</field>
+        <field name="digits">3</field>
+    </record>
+
+</odoo>

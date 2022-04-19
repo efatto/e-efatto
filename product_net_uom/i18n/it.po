@@ -1,0 +1,107 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* product_net_uom
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-04-19 13:19+0000\n"
+"PO-Revision-Date: 2022-04-19 13:19+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: product_net_uom
+#: model_terms:ir.ui.view,arch_db:product_net_uom.res_config_settings_view_form
+msgid "Choose the unit to measure net"
+msgstr "Scelgi l'unità di misura dell'area"
+
+#. module: product_net_uom
+#: model:ir.model,name:product_net_uom.model_res_config_settings
+msgid "Config Settings"
+msgstr "Impostazioni di configurazione"
+
+#. module: product_net_uom
+#: model:ir.model.fields,field_description:product_net_uom.field_res_config_settings__product_default_net_uom_id
+msgid "Default Net Unit of Measure"
+msgstr "Unità di misura di default dell'Area"
+
+#. module: product_net_uom
+#: model:ir.model.fields,help:product_net_uom.field_res_config_settings__product_default_net_uom_id
+msgid "Default unit of measure to express product net solid development"
+msgstr "Unità di misura di default per indicare lo sviluppo dell'area del solido"
+
+#. module: product_net_uom
+#: model:ir.model.fields,help:product_net_uom.field_product_product__net
+#: model:ir.model.fields,help:product_net_uom.field_product_template__net
+msgid "Development of solid"
+msgstr "Sviluppo del solido"
+
+#. module: product_net_uom
+#: selection:uom.category,measure_type:0
+msgid "Length"
+msgstr "Lunghezza"
+
+#. module: product_net_uom
+#: model:ir.model.fields,field_description:product_net_uom.field_product_product__net
+#: model:ir.model.fields,field_description:product_net_uom.field_product_template__net
+#: selection:uom.category,measure_type:0
+msgid "Net"
+msgstr "Area"
+
+#. module: product_net_uom
+#: model_terms:ir.ui.view,arch_db:product_net_uom.res_config_settings_view_form
+msgid "Net Measurement"
+msgstr "Misura dell'Area"
+
+#. module: product_net_uom
+#: model:ir.model.fields,field_description:product_net_uom.field_product_product__net_uom_id
+#: model:ir.model.fields,field_description:product_net_uom.field_product_template__net_uom_id
+msgid "Net Unit of Measure"
+msgstr "Unità di Misura dell'Area"
+
+#. module: product_net_uom
+#: model:ir.model.fields,field_description:product_net_uom.field_product_product__net_uom_name
+#: model:ir.model.fields,field_description:product_net_uom.field_product_template__net_uom_name
+msgid "Net unit of measure label"
+msgstr "Etichetta unità di misura dell'Area"
+
+#. module: product_net_uom
+#: model:ir.model,name:product_net_uom.model_product_template
+msgid "Product Template"
+msgstr "Modello prodotto"
+
+#. module: product_net_uom
+#: model:ir.model,name:product_net_uom.model_uom_category
+msgid "Product UoM Categories"
+msgstr "Categorie UM prodotto"
+
+#. module: product_net_uom
+#: selection:uom.category,measure_type:0
+msgid "Time"
+msgstr "Periodo"
+
+#. module: product_net_uom
+#: model:ir.model.fields,field_description:product_net_uom.field_uom_category__measure_type
+msgid "Type of Measure"
+msgstr "Tipo di misura"
+
+#. module: product_net_uom
+#: selection:uom.category,measure_type:0
+msgid "Units"
+msgstr "Unità"
+
+#. module: product_net_uom
+#: selection:uom.category,measure_type:0
+msgid "Volume"
+msgstr ""
+
+#. module: product_net_uom
+#: selection:uom.category,measure_type:0
+msgid "Weight"
+msgstr "Peso"
+
