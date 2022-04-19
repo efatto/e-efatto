@@ -18,7 +18,7 @@ msgstr ""
 #. module: product_net_uom
 #: model_terms:ir.ui.view,arch_db:product_net_uom.res_config_settings_view_form
 msgid "Choose the unit to measure net"
-msgstr "Scelgi l'unità di misura dell'area"
+msgstr "Scegli l'unità di misura dell'area"
 
 #. module: product_net_uom
 #: model:ir.model,name:product_net_uom.model_res_config_settings
