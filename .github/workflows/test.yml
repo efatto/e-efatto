@@ -32,10 +32,12 @@ jobs:
       - uses: actions/checkout@v2
         with:
           persist-credentials: false
-      - name: Install pip
-        run: pip3 install pika odoo12-addon-iot
+      - name: Install pip dep
+        run: pip3 install pika
       - name: Install addons and dependencies
         run: oca_install_addons
+      - name: Install pip iot
+        run: pip3 install odoo12-addon-iot
       - name: Initialize test db
         run: oca_init_test_database
       - name: Run tests
