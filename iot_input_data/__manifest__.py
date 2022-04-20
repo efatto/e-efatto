@@ -11,7 +11,6 @@
     "author": "Sergio Corato, Pretecno",
     "website": "https://efatto.it",
     "depends": [
-        "iot",
         "iot_input",
     ],
     "data": [
