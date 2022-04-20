@@ -57,12 +57,6 @@ class TestIotInputMrp(TestProductionData):
         self.bag_variable_name = 'variable_bag_count'
         self.weight_variable_name = 'variable_weight'
         self.duration_variable_name = 'variable_duration'
-        self.workcenter1.write(dict(
-            bag_variable_name=self.bag_variable_name,
-            weight_variable_name=self.weight_variable_name,
-            duration_variable_name=self.duration_variable_name,
-            iot_device_input_id=self.iot_device_input.id,
-        ))
 
     def input_data(self, variable_weight, variable_duration, variable_bag_count):
         self.variable_weight = variable_weight
@@ -85,6 +79,12 @@ class TestIotInputMrp(TestProductionData):
         'odoo.models', 'odoo.models.unlink', 'odoo.addons.base.ir.ir_model'
     )
     def test_00_production_weight_more(self):
+        self.workcenter1.write(dict(
+            bag_variable_name=self.bag_variable_name,
+            weight_variable_name=self.weight_variable_name,
+            duration_variable_name=self.duration_variable_name,
+            iot_device_input_id=self.iot_device_input.id,
+        ))
         production = self.env['mrp.production'].create({
             'name': 'MO-Test',
             'product_id': self.top_product.id,
@@ -119,6 +119,12 @@ class TestIotInputMrp(TestProductionData):
         'odoo.models', 'odoo.models.unlink', 'odoo.addons.base.ir.ir_model'
     )
     def test_01_production_weight_less(self):
+        self.workcenter1.write(dict(
+            bag_variable_name=self.bag_variable_name,
+            weight_variable_name=self.weight_variable_name,
+            duration_variable_name=self.duration_variable_name,
+            iot_device_input_id=self.iot_device_input.id,
+        ))
         production = self.env['mrp.production'].create({
             'name': 'MO-Test',
             'product_id': self.top_product.id,
@@ -153,6 +159,12 @@ class TestIotInputMrp(TestProductionData):
         'odoo.models', 'odoo.models.unlink', 'odoo.addons.base.ir.ir_model'
     )
     def test_02_production_bag_count(self):
+        self.workcenter1.write(dict(
+            bag_variable_name=self.bag_variable_name,
+            weight_variable_name=self.weight_variable_name,
+            duration_variable_name=self.duration_variable_name,
+            iot_device_input_id=self.iot_device_input.id,
+        ))
         production = self.env['mrp.production'].sudo(self.mrp_user).create({
             'name': 'MO-Test',
             'product_id': self.top_product.id,
