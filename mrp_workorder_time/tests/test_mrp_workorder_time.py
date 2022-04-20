@@ -23,7 +23,7 @@ class TestMrpWorkorderTime(TestProductionData):
         man_order.button_plan()
         self.assertTrue(man_order.workorder_ids)
         workorder = man_order.workorder_ids[0]
-        workorder.button_start()
+        workorder.sudo(self.mrp_user).button_start()
         self.assertTrue(workorder.time_ids)
         workorder.time_ids[0].unit_amount = 1.25
         workorder.time_ids._onchange_unit_amount()
