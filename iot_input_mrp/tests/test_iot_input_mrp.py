@@ -84,7 +84,7 @@ class TestIotInputMrp(TestProductionData):
     @mute_logger(
         'odoo.models', 'odoo.models.unlink', 'odoo.addons.base.ir.ir_model'
     )
-    def test_production_weight_more(self):
+    def test_00_production_weight_more(self):
         production = self.env['mrp.production'].create({
             'name': 'MO-Test',
             'product_id': self.top_product.id,
@@ -109,12 +109,14 @@ class TestIotInputMrp(TestProductionData):
         last_workorder.record_production()
         production.button_mark_done()
         self.assertAlmostEqual(
+            sum(x.qty_done for x in production.finished_move_line_ids), 116)
+        self.assertAlmostEqual(
             sum(x.quantity_done for x in production.move_raw_ids), 12.78)
 
     @mute_logger(
         'odoo.models', 'odoo.models.unlink', 'odoo.addons.base.ir.ir_model'
     )
-    def test_production_weight_less(self):
+    def test_01_production_weight_less(self):
         production = self.env['mrp.production'].create({
             'name': 'MO-Test',
             'product_id': self.top_product.id,
@@ -146,7 +148,7 @@ class TestIotInputMrp(TestProductionData):
     @mute_logger(
         'odoo.models', 'odoo.models.unlink', 'odoo.addons.base.ir.ir_model'
     )
-    def test_production_bag_count(self):
+    def test_02_production_bag_count(self):
         production = self.env['mrp.production'].create({
             'name': 'MO-Test',
             'product_id': self.top_product.id,
