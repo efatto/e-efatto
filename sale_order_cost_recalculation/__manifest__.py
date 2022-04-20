@@ -5,7 +5,7 @@
     'version': '12.0.1.0.0',
     'category': 'other',
     'author': 'Sergio Corato',
-    'description': 'Add recalculation of cost when recalculating prices on sale order.',
+    'summary': 'Add recalculation of cost when recalculating prices on sale order.',
     'website': 'https://efatto.it',
     'depends': [
         'sale_margin',
