@@ -34,11 +34,11 @@ class TestIotInputMrp(TestProductionData):
             'uom_id': self.uom_kgm.id,
             'uom_po_id': self.uom_kgm.id}])
         self.product_weight1 = self.env['product.product'].create([{
-            'name': 'Component',
+            'name': 'Component 1',
             'uom_id': self.uom_kgm.id,
             'uom_po_id': self.uom_kgm.id}])
         self.product_weight2 = self.env['product.product'].create([{
-            'name': 'Component',
+            'name': 'Component 2',
             'uom_id': self.uom_kgm.id,
             'uom_po_id': self.uom_kgm.id}])
         self.bom_weight = self.env['mrp.bom'].create([{
