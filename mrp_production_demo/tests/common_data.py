@@ -46,6 +46,23 @@ class TestProductionData(common.TransactionCase):
             'time_cycle': 15,
             'sequence': 1,
         })
+        self.workcenter2 = self.env['mrp.workcenter'].create({
+            'name': 'Base Workcenter 2',
+            'capacity': 1,
+            'time_start': 10,
+            'time_stop': 5,
+            'time_efficiency': 80,
+        })
+        self.routing2 = self.env['mrp.routing'].create({
+            'name': 'Simple routing 2',
+        })
+        self.operation2 = self.env['mrp.routing.workcenter'].create({
+            'name': 'Operation 2',
+            'workcenter_id': self.workcenter2.id,
+            'routing_id': self.routing2.id,
+            'time_cycle': 15,
+            'sequence': 1,
+        })
         self.mrp_user = self.env.ref("base.user_demo")
         self.mrp_user.write({
             'groups_id': [(4, self.env.ref('mrp.group_mrp_user').id)],
