@@ -10,7 +10,7 @@ import datetime
 class TestIotInputMrp(TestProductionData):
 
     def setUp(self):
-        super().setUp()
+        super(TestIotInputMrp, self).setUp()
         self.env = self.env(context=dict(self.env.context, tracking_disable=True))
         self.serial = 'testingdeviceserial'
         self.device_identification = 'test_device_name'
@@ -99,7 +99,7 @@ class TestIotInputMrp(TestProductionData):
         self.input_data(
             variable_weight=12.78,
             variable_duration=600,
-            variable_bag_count=121)
+            variable_bag_count=116)
         for workorder in production.workorder_ids:
             workorder.button_start()
             time.sleep(2)
@@ -139,6 +139,37 @@ class TestIotInputMrp(TestProductionData):
         last_workorder.record_production()
         production.button_mark_done()
         self.assertAlmostEqual(
+            sum(x.qty_done for x in production.finished_move_line_ids), 121)
+        self.assertAlmostEqual(
             sum(x.quantity_done for x in production.move_raw_ids), 10.14)
 
-    # todo test bag count
+    @mute_logger(
+        'odoo.models', 'odoo.models.unlink', 'odoo.addons.base.ir.ir_model'
+    )
+    def test_production_bag_count(self):
+        production = self.env['mrp.production'].create({
+            'name': 'MO-Test',
+            'product_id': self.top_product.id,
+            'product_uom_id': self.top_product.uom_id.id,
+            'product_qty': 100,
+            'bom_id': self.bom_weight.id,
+        })
+        production.button_plan()
+        production.action_assign()
+        self.assertTrue(production.workorder_ids)
+        self.input_data(
+            variable_weight=120.57,
+            variable_duration=7200,
+            variable_bag_count=233)
+        for workorder in production.workorder_ids:
+            workorder.button_start()
+            time.sleep(2)
+        self.assertEqual(production.state, 'progress')
+        last_workorder = production.workorder_ids.filtered(
+            lambda x: x.state == 'progress')
+        last_workorder.record_production()
+        production.button_mark_done()
+        self.assertAlmostEqual(
+            sum(x.qty_done for x in production.finished_move_line_ids), 233)
+        self.assertAlmostEqual(
+            sum(x.quantity_done for x in production.move_raw_ids), 120.57)

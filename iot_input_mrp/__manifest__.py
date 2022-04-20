@@ -13,6 +13,7 @@
     "depends": [
         "iot",
         "iot_input_data",
+        "mrp_production_demo",
         "mrp_workcenter_capacity",
     ],
     "data": [

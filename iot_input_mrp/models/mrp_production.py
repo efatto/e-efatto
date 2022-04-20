@@ -24,6 +24,8 @@ class MrpWorkorder(models.Model):
         if not self:
             return True
         self.ensure_one()
+        self.production_id.mrp_end_count(self.workcenter_id)
+        self.qty_producing = self.production_id.bag_count
         res = super().record_production()
         if res:
             duration = self.production_id.mrp_end_produce(
@@ -71,6 +73,26 @@ class MrpProduction(models.Model):
                 production.write(values)
 
     @api.multi
+    def mrp_end_count(self, workcenter_id):
+        # this function can be called many times, so we set initial fields only once
+        # get info from iot.input.data for device linked to this workcenter
+        for production in self:
+            values = dict()
+            if not (
+                workcenter_id.bag_variable_name
+            ):
+                raise ValidationError(_('Missing variable bag count in workcenter!'))
+            iot_input_data_ids = self.env['iot.input.data'].search([
+                ('iot_device_input_id', '=', workcenter_id.iot_device_input_id.id),
+                ('timestamp', '<', fields.Datetime.now()),
+                ('name', '=', workcenter_id.bag_variable_name)
+            ], order='timestamp DESC', limit=1)
+            for iot_input_data in iot_input_data_ids:
+                values.update(bag_count_final=iot_input_data.value)
+            if values:
+                production.write(values)
+
+    @api.multi
     def mrp_end_produce(self, workcenter_id):
         # this function can be called many times, so we set initial fields only once
         # get info from iot.input.data for device linked to this workcenter
@@ -79,14 +101,12 @@ class MrpProduction(models.Model):
             duration = 0
             if not (
                 workcenter_id.weight_variable_name
-                and workcenter_id.bag_variable_name
                 and workcenter_id.duration_variable_name
             ):
                 raise ValidationError(_('Missing variable name in workcenter!'))
             keys = [workcenter_id.weight_variable_name,
-                    workcenter_id.bag_variable_name,
                     workcenter_id.duration_variable_name]
-            if len(keys) != 3:
+            if len(keys) != 2:
                 raise ValidationError(_('Missing variable name in workcenter!'))
             for key in keys:
                 iot_input_data_ids = self.env['iot.input.data'].search([
@@ -97,8 +117,6 @@ class MrpProduction(models.Model):
                 for iot_input_data in iot_input_data_ids:
                     if key == workcenter_id.weight_variable_name:
                         values.update(weight=iot_input_data.value)
-                    if key == workcenter_id.bag_variable_name:
-                        values.update(bag_count_final=iot_input_data.value)
                     if key == workcenter_id.duration_variable_name:
                         duration = int(iot_input_data.value)
             if values:
