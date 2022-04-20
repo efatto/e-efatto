@@ -13,7 +13,7 @@ class MrpWorkorder(models.Model):
     def button_start(self):
         self.ensure_one()
         res = super().button_start()
-        if res:
+        if res and self.workcenter_id.iot_device_input_id:
             self.production_id.mrp_start_produce(
                 self.workcenter_id
             )
