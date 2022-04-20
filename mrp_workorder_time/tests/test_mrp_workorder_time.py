@@ -9,7 +9,7 @@ class TestMrpWorkorderTime(TestProductionData):
     def setUp(self):
         super(TestMrpWorkorderTime, self).setUp()
         self.main_bom.write({
-            'routing_id': self.routing2.id,
+            'routing_id': self.routing1.id,
         })
 
     def test_update_product_qty(self):
