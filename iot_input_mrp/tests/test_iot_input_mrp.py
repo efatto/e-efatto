@@ -101,12 +101,12 @@ class TestIotInputMrp(TestProductionData):
             variable_duration=453,
             variable_bag_count=116)
         for workorder in production.workorder_ids:
-            workorder.button_start()
+            workorder.sudo(self.mrp_user).button_start()
             time.sleep(2)
         self.assertEqual(production.state, 'progress')
         last_workorder = production.workorder_ids.filtered(
             lambda x: x.state == 'progress')
-        last_workorder.record_production()
+        last_workorder.sudo(self.mrp_user).record_production()
         production.button_mark_done()
         self.assertAlmostEqual(
             sum(x.qty_done for x in production.finished_move_line_ids), 116)
@@ -135,12 +135,12 @@ class TestIotInputMrp(TestProductionData):
             variable_duration=600,
             variable_bag_count=121)
         for workorder in production.workorder_ids:
-            workorder.button_start()
+            workorder.sudo(self.mrp_user).button_start()
             time.sleep(2)
         self.assertEqual(production.state, 'progress')
         last_workorder = production.workorder_ids.filtered(
             lambda x: x.state == 'progress')
-        last_workorder.record_production()
+        last_workorder.sudo(self.mrp_user).record_production()
         production.button_mark_done()
         self.assertAlmostEqual(
             sum(x.qty_done for x in production.finished_move_line_ids), 121)
@@ -153,7 +153,7 @@ class TestIotInputMrp(TestProductionData):
         'odoo.models', 'odoo.models.unlink', 'odoo.addons.base.ir.ir_model'
     )
     def test_02_production_bag_count(self):
-        production = self.env['mrp.production'].create({
+        production = self.env['mrp.production'].sudo(self.mrp_user).create({
             'name': 'MO-Test',
             'product_id': self.top_product.id,
             'product_uom_id': self.top_product.uom_id.id,
@@ -168,12 +168,12 @@ class TestIotInputMrp(TestProductionData):
             variable_duration=7200,
             variable_bag_count=233)
         for workorder in production.workorder_ids:
-            workorder.button_start()
+            workorder.sudo(self.mrp_user).button_start()
             time.sleep(2)
         self.assertEqual(production.state, 'progress')
         last_workorder = production.workorder_ids.filtered(
             lambda x: x.state == 'progress')
-        last_workorder.record_production()
+        last_workorder.sudo(self.mrp_user).record_production()
         production.button_mark_done()
         self.assertAlmostEqual(
             sum(x.qty_done for x in production.finished_move_line_ids), 233)
