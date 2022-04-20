@@ -98,7 +98,7 @@ class TestIotInputMrp(TestProductionData):
         # production weight more than estimated: 12.787 instead of 11.345
         self.input_data(
             variable_weight=12.78,
-            variable_duration=600,
+            variable_duration=453,
             variable_bag_count=116)
         for workorder in production.workorder_ids:
             workorder.button_start()
@@ -112,6 +112,8 @@ class TestIotInputMrp(TestProductionData):
             sum(x.qty_done for x in production.finished_move_line_ids), 116)
         self.assertAlmostEqual(
             sum(x.quantity_done for x in production.move_raw_ids), 12.78)
+        self.assertAlmostEqual(
+            sum(x.duration for x in production.workorder_ids), 453/60)
 
     @mute_logger(
         'odoo.models', 'odoo.models.unlink', 'odoo.addons.base.ir.ir_model'
@@ -144,6 +146,8 @@ class TestIotInputMrp(TestProductionData):
             sum(x.qty_done for x in production.finished_move_line_ids), 121)
         self.assertAlmostEqual(
             sum(x.quantity_done for x in production.move_raw_ids), 10.14)
+        self.assertAlmostEqual(
+            sum(x.duration for x in production.workorder_ids), 600/60)
 
     @mute_logger(
         'odoo.models', 'odoo.models.unlink', 'odoo.addons.base.ir.ir_model'
@@ -175,3 +179,5 @@ class TestIotInputMrp(TestProductionData):
             sum(x.qty_done for x in production.finished_move_line_ids), 233)
         self.assertAlmostEqual(
             sum(x.quantity_done for x in production.move_raw_ids), 120.57)
+        self.assertAlmostEqual(
+            sum(x.duration for x in production.workorder_ids), 7200/60)
