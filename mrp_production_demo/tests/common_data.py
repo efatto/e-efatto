@@ -46,3 +46,7 @@ class TestProductionData(common.TransactionCase):
             'time_cycle': 15,
             'sequence': 1,
         })
+        self.mrp_user = self.env.ref("base.user_demo")
+        self.mrp_user.write({
+            'groups_id': [(4, self.env.ref('mrp.group_mrp_user').id)],
+        })
