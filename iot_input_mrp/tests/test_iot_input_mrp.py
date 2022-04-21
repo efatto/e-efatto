@@ -69,7 +69,7 @@ class TestIotInputMrp(TestProductionData):
         self.variable_duration = variable_duration
         self.variable_bag_count = variable_bag_count
         for var in ['variable_weight', 'variable_duration', 'variable_bag_count']:
-            iot_values = {
+            iot_values = [{
                 "name": var,
                 "value": getattr(self, var),
                 "iot_device_input_id": self.iot_device_input.id,
@@ -78,7 +78,7 @@ class TestIotInputMrp(TestProductionData):
                         "%Y-%m-%dT%H:%M:%S.%fz"
                     )
                 ),
-            }
+            }]
             self.env['iot.input.data'].create(iot_values)
 
     @mute_logger(
