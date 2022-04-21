@@ -47,12 +47,9 @@ class TestPurchaseSaleMrpLink(SavepointCase):
     def test_sale_link_product_simple(self):
         lead = self.env['crm.lead'].create([{
             'name': 'test',
-            'lead_line_ids': [(
-                6, 0, {
-                    'name': 'test line',
-                    'product_id': self.product.id,
-                }
-            )]
+            'lead_line_ids': [
+                (0, 0, {'name': 'test line', 'product_id': self.product.id}),
+            ]
         }])
         sale_order = self.env['sale.order'].create({
             'partner_id': self.partner.id,
@@ -76,41 +73,3 @@ class TestPurchaseSaleMrpLink(SavepointCase):
         # test unlink
         purchase_order.lead_line_id = False
         self.assertFalse(purchase_order.sale_order_ids)
-
-    # def test_sale_link_product_bom(self):
-    #     sale_order = self.env['sale.order'].create({
-    #         'partner_id': self.partner.id
-    #     })
-    #     # todo add product with bom
-    #     self._create_sale_order_line(sale_order, self.product, 5.0)
-    #     purchase_order = self.env['purchase.order'].create({
-    #         'partner_id': self.partner.id
-    #     })
-    #     self._create_purchase_order_line(purchase_order, self.product, 5.0)
-    #     purchase_order.order_line[0]._onchange_quantity()
-    #     self.assertEqual(
-    #         len(purchase_order.order_line), 1, msg="Order line was not created")
-    #     wizard_obj = self.env['purchase.sale.mrp.link.wizard']
-    #     wizard_vals = wizard_obj.with_context(
-    #             active_id=purchase_order.id,
-    #             active_ids=[purchase_order.id],
-    #             active_model='purchase.order',
-    #         ).default_get(['purchase_order_id'])
-    #     wizard_vals.update({
-    #         'sale_order_id': sale_order.id,
-    #     })
-    #     wizard = wizard_obj.create(wizard_vals)
-    #     wizard.action_done()
-    #     self.assertEqual(
-    #         purchase_order.sale_order_ids.ids, sale_order.ids
-    #     )
-    #     # test unlink
-    #     wizard_obj = self.env['purchase.sale.mrp.unlink.wizard']
-    #     wizard_vals = wizard_obj.with_context(
-    #         active_id=purchase_order.id,
-    #         active_ids=[purchase_order.id],
-    #         active_model='purchase.order',
-    #     ).default_get(['purchase_order_id'])
-    #     wizard = wizard_obj.create(wizard_vals)
-    #     wizard.action_done()
-    #     self.assertFalse(purchase_order.sale_order_ids)
