@@ -3,7 +3,7 @@
 {
     'name': 'Production Demo',
     'summary': 'Demo data',
-    'version': '12.0.1.0.1',
+    'version': '12.0.1.0.2',
     'category': 'MRP',
     'author': 'Sergio Corato Efatto.it',
     'website': 'https://efatto.it',
