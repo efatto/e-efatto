@@ -65,13 +65,15 @@ class TestIotInputMrp(TestProductionData):
         ))
 
     def input_data(self, variable_weight, variable_duration, variable_bag_count):
-        self.variable_weight = variable_weight
-        self.variable_duration = variable_duration
-        self.variable_bag_count = variable_bag_count
-        for var in ['variable_weight', 'variable_duration', 'variable_bag_count']:
+        data = {
+            'variable_weight': variable_weight,
+            'variable_duration': variable_duration,
+            'variable_bag_count': variable_bag_count,
+        }
+        for name in data:
             iot_values = [{
-                "name": var,
-                "value": getattr(self, var),
+                "name": name,
+                "value": data[name],
                 "iot_device_input_id": self.iot_device_input.id,
                 "timestamp": str(
                     datetime.datetime.now(tz=datetime.timezone.utc).strftime(
