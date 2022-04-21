@@ -1,7 +1,6 @@
 # Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo.tests.common import SavepointCase
-from odoo.tests import Form
 from odoo import fields
 
 
@@ -46,8 +45,18 @@ class TestPurchaseSaleMrpLink(SavepointCase):
         return line
 
     def test_sale_link_product_simple(self):
+        lead = self.env['crm.lead'].create([{
+            'name': 'test',
+            'lead_line_ids': [(
+                6, 0, {
+                    'name': 'test line',
+                    'product_id': self.product.id,
+                }
+            )]
+        }])
         sale_order = self.env['sale.order'].create({
-            'partner_id': self.partner.id
+            'partner_id': self.partner.id,
+            'opportunity_id': lead.id,
         })
         self._create_sale_order_line(sale_order, self.product, 5.0)
         self._create_sale_order_line(sale_order, self.product, 5.0)
@@ -60,69 +69,48 @@ class TestPurchaseSaleMrpLink(SavepointCase):
         purchase_order.order_line[0]._onchange_quantity()
         self.assertEqual(
             len(purchase_order.order_line), 2, msg="Order line was not created")
-        wizard_obj = self.env['purchase.sale.mrp.link.wizard']
-        wizard_vals = wizard_obj.with_context(
-                active_id=purchase_order.id,
-                active_ids=[purchase_order.id],
-                active_model='purchase.order',
-            ).default_get(['purchase_order_id'])
-        wizard_vals.update({
-            'sale_order_id': sale_order.id,
-        })
-        wizard = wizard_obj.create(wizard_vals)
-        wizard.action_done()
+        purchase_order.lead_line_id = lead.lead_line_ids[0]
         self.assertEqual(
             purchase_order.sale_order_ids.ids, sale_order.ids
         )
-        self.assertFalse(
-            sale_order.order_line.filtered(
-                lambda x: x.product_id == self.product1).purchase_line_id
-        )
         # test unlink
-        wizard_obj = self.env['purchase.sale.mrp.unlink.wizard']
-        wizard_vals = wizard_obj.with_context(
-            active_id=purchase_order.id,
-            active_ids=[purchase_order.id],
-            active_model='purchase.order',
-        ).default_get(['purchase_order_id'])
-        wizard = wizard_obj.create(wizard_vals)
-        wizard.action_done()
+        purchase_order.lead_line_id = False
         self.assertFalse(purchase_order.sale_order_ids)
 
-    def test_sale_link_product_bom(self):
-        sale_order = self.env['sale.order'].create({
-            'partner_id': self.partner.id
-        })
-        # todo add product with bom
-        self._create_sale_order_line(sale_order, self.product, 5.0)
-        purchase_order = self.env['purchase.order'].create({
-            'partner_id': self.partner.id
-        })
-        self._create_purchase_order_line(purchase_order, self.product, 5.0)
-        purchase_order.order_line[0]._onchange_quantity()
-        self.assertEqual(
-            len(purchase_order.order_line), 1, msg="Order line was not created")
-        wizard_obj = self.env['purchase.sale.mrp.link.wizard']
-        wizard_vals = wizard_obj.with_context(
-                active_id=purchase_order.id,
-                active_ids=[purchase_order.id],
-                active_model='purchase.order',
-            ).default_get(['purchase_order_id'])
-        wizard_vals.update({
-            'sale_order_id': sale_order.id,
-        })
-        wizard = wizard_obj.create(wizard_vals)
-        wizard.action_done()
-        self.assertEqual(
-            purchase_order.sale_order_ids.ids, sale_order.ids
-        )
-        # test unlink
-        wizard_obj = self.env['purchase.sale.mrp.unlink.wizard']
-        wizard_vals = wizard_obj.with_context(
-            active_id=purchase_order.id,
-            active_ids=[purchase_order.id],
-            active_model='purchase.order',
-        ).default_get(['purchase_order_id'])
-        wizard = wizard_obj.create(wizard_vals)
-        wizard.action_done()
-        self.assertFalse(purchase_order.sale_order_ids)
+    # def test_sale_link_product_bom(self):
+    #     sale_order = self.env['sale.order'].create({
+    #         'partner_id': self.partner.id
+    #     })
+    #     # todo add product with bom
+    #     self._create_sale_order_line(sale_order, self.product, 5.0)
+    #     purchase_order = self.env['purchase.order'].create({
+    #         'partner_id': self.partner.id
+    #     })
+    #     self._create_purchase_order_line(purchase_order, self.product, 5.0)
+    #     purchase_order.order_line[0]._onchange_quantity()
+    #     self.assertEqual(
+    #         len(purchase_order.order_line), 1, msg="Order line was not created")
+    #     wizard_obj = self.env['purchase.sale.mrp.link.wizard']
+    #     wizard_vals = wizard_obj.with_context(
+    #             active_id=purchase_order.id,
+    #             active_ids=[purchase_order.id],
+    #             active_model='purchase.order',
+    #         ).default_get(['purchase_order_id'])
+    #     wizard_vals.update({
+    #         'sale_order_id': sale_order.id,
+    #     })
+    #     wizard = wizard_obj.create(wizard_vals)
+    #     wizard.action_done()
+    #     self.assertEqual(
+    #         purchase_order.sale_order_ids.ids, sale_order.ids
+    #     )
+    #     # test unlink
+    #     wizard_obj = self.env['purchase.sale.mrp.unlink.wizard']
+    #     wizard_vals = wizard_obj.with_context(
+    #         active_id=purchase_order.id,
+    #         active_ids=[purchase_order.id],
+    #         active_model='purchase.order',
+    #     ).default_get(['purchase_order_id'])
+    #     wizard = wizard_obj.create(wizard_vals)
+    #     wizard.action_done()
+    #     self.assertFalse(purchase_order.sale_order_ids)
