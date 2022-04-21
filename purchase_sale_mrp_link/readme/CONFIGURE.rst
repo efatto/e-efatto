@@ -1,18 +1,16 @@
-Collega un preventivo/ordine di vendita all'ordine di acquisto. La casistica è la creazione di RdP a fornitori prima della conferma del preventivo di vendita, per cui il processo è invertito rispetto al solito.
+Questo modulo permett di collegare un ordine di acquisto ad una riga di un'opportunità, in modo da tener traccia delle RdP ricevute da fornitori prima della conferma del preventivo di vendita. Queste RdP saranno poi utilizzabili per inserire i prezzi di acquisto dei componenti delle distinte base dei prodotti venduti.
 
-Cliccando sul bottone:
+Nelle righe prodotti dei lead è stato aggiunto un campo in cui è possibile collegare le RdP/Ordini di Acquisto ricevuti per la riga.
 
-.. image:: ../static/description/bottone.png
-    :alt: Bottone
+.. image:: ../static/description/riga_lead.png
+    :alt: Riga lead
 
-si apre un wizard che permette di selezionare l'ordine di vendita:
+Nell'ordine di acquisto è stato aggiunto il campo `Lead line` per collegarli direttamente dal documento:
 
-.. image:: ../static/description/wizard.png
-    :alt: Wizard
+.. image:: ../static/description/acquisto.png
+    :alt: Acquisto
 
-Verranno collegate le righe dell'ordine di vendita se sono presenti dei prodotti proposti in questa RdP, oppure le righe delle distinte basi dei prodotti se sono presenti dei componenti proposti in questa RdP.
-
-Si vedranno quindi in questo campo:
+Nell'ordine di acquisto è presente un campo per vedere gli ordini di vendita collegati:
 
 .. image:: ../static/description/vendite.png
     :alt: Vendite

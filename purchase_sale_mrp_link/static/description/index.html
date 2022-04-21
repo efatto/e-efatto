@@ -368,7 +368,7 @@ ul.auto-toc {
 !! changes will be overwritten.                   !!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 <p><a class="reference external image-reference" href="https://odoo-community.org/page/development-status"><img alt="Beta" src="https://img.shields.io/badge/maturity-Beta-yellow.png" /></a> <a class="reference external image-reference" href="http://www.gnu.org/licenses/agpl-3.0-standalone.html"><img alt="License: AGPL-3" src="https://img.shields.io/badge/licence-AGPL--3-blue.png" /></a> <a class="reference external image-reference" href="https://github.com/sergiocorato/e-efatto/tree/12.0/purchase_sale_mrp_link"><img alt="sergiocorato/e-efatto" src="https://img.shields.io/badge/github-sergiocorato%2Fe--efatto-lightgray.png?logo=github" /></a></p>
-<p>This module add the ability to link a sale order to a purchase order prior to its confirmation.</p>
+<p>This module add the ability to link a crm line to many purchase order.</p>
 <p><strong>Table of contents</strong></p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
@@ -384,13 +384,12 @@ ul.auto-toc {
 </div>
 <div class="section" id="configuration">
 <h1><a class="toc-backref" href="#toc-entry-1">Configuration</a></h1>
-<p>Collega un preventivo/ordine di vendita all’ordine di acquisto. La casistica è la creazione di RdP a fornitori prima della conferma del preventivo di vendita, per cui il processo è invertito rispetto al solito.</p>
-<p>Cliccando sul bottone:</p>
-<img alt="Bottone" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/purchase_sale_mrp_link/static/description/bottone.png" />
-<p>si apre un wizard che permette di selezionare l’ordine di vendita:</p>
-<img alt="Wizard" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/purchase_sale_mrp_link/static/description/wizard.png" />
-<p>Verranno collegate le righe dell’ordine di vendita se sono presenti dei prodotti proposti in questa RdP, oppure le righe delle distinte basi dei prodotti se sono presenti dei componenti proposti in questa RdP.</p>
-<p>Si vedranno quindi in questo campo:</p>
+<p>Questo modulo permett di collegare un ordine di acquisto ad una riga di un’opportunità, in modo da tener traccia delle RdP ricevute da fornitori prima della conferma del preventivo di vendita. Queste RdP saranno poi utilizzabili per inserire i prezzi di acquisto dei componenti delle distinte base dei prodotti venduti.</p>
+<p>Nelle righe prodotti dei lead è stato aggiunto un campo in cui è possibile collegare le RdP/Ordini di Acquisto ricevuti per la riga.</p>
+<img alt="Riga lead" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/purchase_sale_mrp_link/static/description/riga_lead.png" />
+<p>Nell’ordine di acquisto è stato aggiunto il campo <cite>Lead line</cite> per collegarli direttamente dal documento:</p>
+<img alt="Acquisto" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/purchase_sale_mrp_link/static/description/acquisto.png" />
+<p>Nell’ordine di acquisto è presente un campo per vedere gli ordini di vendita collegati:</p>
 <img alt="Vendite" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/purchase_sale_mrp_link/static/description/vendite.png" />
 </div>
 <div class="section" id="bug-tracker">

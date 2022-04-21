@@ -4,9 +4,8 @@
         <field name="model">purchase.order</field>
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//header" position="inside">
-                <button name="%(purchase_sale_mrp_link.action_purchase_sale_mrp_link)d" type="action"
-                    string="Link to Sale Order"/>
+            <xpath expr="//notebook/page[@name='purchase_delivery_invoice']//field[@name='date_approve']" position="after">
+                <field name="lead_line_id"/>
             </xpath>
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button type="object"

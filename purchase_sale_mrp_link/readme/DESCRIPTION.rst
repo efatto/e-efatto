@@ -1,1 +1,1 @@
-This module add the ability to link a sale order to a purchase order prior to its confirmation.
+This module add the ability to link a crm line to many purchase order.
