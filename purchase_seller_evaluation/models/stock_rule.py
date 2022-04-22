@@ -56,7 +56,7 @@ class StockRule(models.Model):
             # remove break to get all acceptable suppliers
             # break
         if len(res) > 1:
-            # get best suppliers on price
+            # get the best suppliers on price
             # (evaluate lead time too? on date_planned)
             seller_dict = {'seller': False, 'price': 0.0}
             product_uom = False
@@ -77,7 +77,7 @@ class StockRule(models.Model):
                         'price': price_unit,
                     }
             res = seller_dict['seller']
-        if not res and suppliers:
+        if not res:
             # no acceptable suppliers, assign the first
             return super()._make_po_select_supplier(values=values, suppliers=suppliers)
         return res
