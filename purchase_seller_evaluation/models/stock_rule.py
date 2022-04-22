@@ -25,7 +25,7 @@ class StockRule(models.Model):
         """
         quantity = values.get('product_qty')
         uom_id = values.get('product_uom')
-        date_planned = values.get('date_planned')
+        # date_planned = values.get('date_planned')
         product_id = values.get('product_id')
         date = fields.Date.context_today(self)
         precision = self.env['decimal.precision'].precision_get(

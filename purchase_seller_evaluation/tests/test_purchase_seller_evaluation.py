@@ -14,7 +14,7 @@ class PurchaseSellerEvaluation(TransactionCase):
         mto = self.env.ref('stock.route_warehouse0_mto')
         buy = self.env.ref('purchase_stock.route_warehouse0_buy')
         self.product_model = self.env['product.template']
-        self.product_template = self.product_model.create({
+        self.product_template = self.product_model.create([{
             'name': 'Product test',
             'type': 'product',
             'uom_id': self.env.ref('uom.product_uom_meter').id,
@@ -50,17 +50,17 @@ class PurchaseSellerEvaluation(TransactionCase):
                     'date_end': fields.Date.today() - timedelta(days=50),
                 }),
             ]
-        })
+        }])
         self.product = self.env['product.product'].search([
             ('product_tmpl_id', '=', self.product_template.id)
         ], limit=1)
-        self.uom_po = self.env['uom.uom'].create({
+        self.uom_po = self.env['uom.uom'].create([{
             'name': 'Bar 6 meter',
             'category_id': self.env.ref('uom.uom_categ_length').id,
             'uom_type': 'bigger',
             'factor_inv': 6.0,
-        })
-        self.product_template_uom_po = self.product_model.create({
+        }])
+        self.product_template_uom_po = self.product_model.create([{
             'name': 'Product with uom po',
             'type': 'product',
             'uom_id': self.env.ref('uom.product_uom_meter').id,
@@ -96,7 +96,7 @@ class PurchaseSellerEvaluation(TransactionCase):
                     'date_end': fields.Date.today() - timedelta(days=50),
                 }),
             ]
-        })
+        }])
         self.product_uom_po = self.env['product.product'].search([
             ('product_tmpl_id', '=', self.product_template_uom_po.id)
         ], limit=1)
@@ -106,6 +106,7 @@ class PurchaseSellerEvaluation(TransactionCase):
             'partner_id': self.env.ref('base.res_partner_12').id,
             'date_order': fields.Date.today(),
             'picking_policy': 'direct',
+            'expected_date': fields.Date.today() + timedelta(days=20),
             'order_line': [
                 (0, 0, {
                     'product_id': self.product.id,
@@ -113,7 +114,6 @@ class PurchaseSellerEvaluation(TransactionCase):
                     'product_uom': self.product.uom_po_id.id,
                     'price_unit': self.product.list_price,
                     'name': self.product.name,
-                    'expected_date': fields.Date.today() + timedelta(days=20),
                 }),
             ]
         })
@@ -142,6 +142,7 @@ class PurchaseSellerEvaluation(TransactionCase):
             'partner_id': self.env.ref('base.res_partner_12').id,
             'date_order': fields.Date.today(),
             'picking_policy': 'direct',
+            'expected_date': fields.Date.today() + timedelta(days=20),
             'order_line': [
                 (0, 0, {
                     'product_id': self.product_uom_po.id,
@@ -149,7 +150,6 @@ class PurchaseSellerEvaluation(TransactionCase):
                     'product_uom': self.product_uom_po.uom_po_id.id,
                     'price_unit': self.product_uom_po.list_price,
                     'name': self.product_uom_po.name,
-                    'expected_date': fields.Date.today() + timedelta(days=20),
                 }),
             ]
         })
