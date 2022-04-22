@@ -100,6 +100,38 @@ class PurchaseSellerEvaluation(TransactionCase):
         self.product_uom_po = self.env['product.product'].search([
             ('product_tmpl_id', '=', self.product_template_uom_po.id)
         ], limit=1)
+        self.product_template_min_qty = self.product_model.create([{
+            'name': 'Product with min qty',
+            'type': 'product',
+            'uom_id': self.env.ref('uom.product_uom_meter').id,
+            'uom_po_id': self.env.ref('uom.product_uom_meter').id,
+            'list_price': 50.0,
+            'taxes_id': [(6, 0, self.env['account.tax'].search(
+                [('type_tax_use', '=', 'sale')], limit=1).ids)],
+            'supplier_taxes_id': [(6, 0, self.env['account.tax'].search(
+                [('type_tax_use', '=', 'purchase')], limit=1).ids)],
+            'weight': 0.15,
+            'route_ids': [(6, 0, [buy.id, mto.id])],
+            'seller_ids': [
+                (0, 0, {
+                    'name': self.env.ref('base.res_partner_3').id,
+                    'price': 5.0,
+                    'min_qty': 10.0,
+                    'sequence': 1,
+                    'date_start': fields.Date.today() - timedelta(days=100),
+                }),
+                (0, 0, {
+                    'name': self.env.ref('base.res_partner_4').id,
+                    'price': 4.0,
+                    'min_qty': 5.0,
+                    'sequence': 2,
+                    'date_start': fields.Date.today() - timedelta(days=100),
+                }),
+            ]
+        }])
+        self.product_min_qty = self.env['product.product'].search([
+            ('product_tmpl_id', '=', self.product_template_min_qty.id)
+        ], limit=1)
 
     def test_sale_order(self):
         sale_order = self.env['sale.order'].create({
@@ -173,3 +205,29 @@ class PurchaseSellerEvaluation(TransactionCase):
                 purchase_order.company_id, purchase_order.date_order)
         self.assertEqual(po_line.price_unit, round(price_unit, 2))
         self.assertEqual(po_line.product_uom, self.uom_po)
+
+    def test_sale_order_min_qty(self):
+        sale_order = self.env['sale.order'].create({
+            'partner_id': self.env.ref('base.res_partner_12').id,
+            'date_order': fields.Date.today(),
+            'picking_policy': 'direct',
+            'expected_date': fields.Date.today() + timedelta(days=20),
+            'order_line': [
+                (0, 0, {
+                    'product_id': self.product_min_qty.id,
+                    'product_uom_qty': 2,
+                    'product_uom': self.product_min_qty.uom_po_id.id,
+                    'price_unit': self.product_min_qty.list_price,
+                    'name': self.product_min_qty.name,
+                }),
+            ]
+        })
+        sale_order.action_confirm()
+        with mute_logger('odoo.addons.stock.models.procurement'):
+            self.env['procurement.group'].run_scheduler()
+        self.assertEqual(
+            len(sale_order.order_line), 1, msg="Order line was not created")
+        purchase_order = self.env['purchase.order'].search([
+            ('order_line.product_id', 'in', [self.product_min_qty.id]),
+        ])
+        self.assertTrue(purchase_order)

@@ -77,6 +77,9 @@ class StockRule(models.Model):
                         'price': price_unit,
                     }
             res = seller_dict['seller']
+        if not res and suppliers:
+            # no acceptable suppliers, assign the first
+            return super()._make_po_select_supplier(values=values, suppliers=suppliers)
         return res
 
     def _get_seller_price(self, seller, product_uom):
