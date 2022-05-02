@@ -32,6 +32,7 @@ class TestSaleStockPartnerDeposit(SavepointCase):
             'groups_id': [
                 (4, cls.env.ref('stock.group_adv_location').id),
                 (4, cls.env.ref('sales_team.group_sale_salesman').id),
+                (4, cls.env.ref('stock.group_stock_user').id),
             ]
         }])
 
