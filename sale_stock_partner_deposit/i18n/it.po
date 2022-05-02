@@ -21,8 +21,8 @@ msgid "Contact"
 msgstr "Contatto"
 
 #. module: sale_stock_partner_deposit
-#: model:ir.model.fields,field_description:sale_stock_partner_deposit.field_res_partner__property_stock_deposit_id
-#: model:ir.model.fields,field_description:sale_stock_partner_deposit.field_res_users__property_stock_deposit_id
+#: model:ir.model.fields,field_description:sale_stock_partner_deposit.field_res_partner__property_stock_deposit
+#: model:ir.model.fields,field_description:sale_stock_partner_deposit.field_res_users__property_stock_deposit
 msgid "Deposit Location"
 msgstr "Ubicazione di c/deposito"
 
@@ -32,8 +32,8 @@ msgid "Stock Rule"
 msgstr "Regola Stock"
 
 #. module: sale_stock_partner_deposit
-#: model:ir.model.fields,help:sale_stock_partner_deposit.field_res_partner__property_stock_deposit_id
-#: model:ir.model.fields,help:sale_stock_partner_deposit.field_res_users__property_stock_deposit_id
+#: model:ir.model.fields,help:sale_stock_partner_deposit.field_res_partner__property_stock_deposit
+#: model:ir.model.fields,help:sale_stock_partner_deposit.field_res_users__property_stock_deposit
 msgid "The stock location used as source when sending goods to this contact using a rule with `use_partner_stock_deposit` enabled."
 msgstr "L'ubicazione di magazzino usata come origine quando si inviato merci a questo partner con una regola in cui sia abilitato `Usa l'Ubicazione di c/deposito del partner`."
 

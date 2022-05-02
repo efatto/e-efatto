@@ -55,21 +55,25 @@ class TestSaleStockPartnerDeposit(SavepointCase):
             'name': 'Generic deposit location',
             'usage': 'customer',
             'location_id': self.env.ref('stock.stock_location_customers').id,
+            'deposit_location': True,
         }])
         deposit_location = self.env['stock.location'].create([{
             'name': 'Deposit location for %s' % self.partner.name,
             'partner_id': self.partner.id,
             'usage': 'customer',
-            'location_id': self.env.ref('stock.stock_location_customers').id,
+            'location_id': generic_deposit_location.id,
+            'deposit_location': True,
         }])
-        self.partner.property_stock_deposit_id = deposit_location
+        self.partner.property_stock_deposit = deposit_location
         picking_type_to_deposit = self.env['stock.picking.type'].create([{
             'name': 'Delivery to generic deposit location',
-            'code': 'internal',
+            # needed to show customer on picking
+            'code': 'outgoing',
             'sequence_id': self.env['ir.sequence'].create({
                 'name': 'Deposit incoming sequence',
             }).id,
             'default_location_src_id': self.ref('stock.stock_location_stock'),
+            # this will be change to partner deposit from onchange
             'default_location_dest_id': generic_deposit_location.id,
         }])
         picking_type_from_deposit = self.env['stock.picking.type'].create([{
@@ -78,17 +82,18 @@ class TestSaleStockPartnerDeposit(SavepointCase):
             'sequence_id': self.env['ir.sequence'].create({
                 'name': 'Deposit outgoing sequence',
             }).id,
+            # this will be changed to partner deposit by function
             'default_location_src_id': self.env.ref('stock.stock_location_stock').id,
             'default_location_dest_id': self.env.ref(
                 'stock.stock_location_customers').id,
         }])
         stock_location_route = self.env['stock.location.route'].create([{
-            'name': 'Delivery from partner stock deposit',
+            'name': 'Delivery from partner stock deposit to partner',
             'sale_selectable': True,
             'rule_ids': [
                 (0, 0, {
                     'name': 'move from deposit to customer',
-                    'action': 'push',
+                    'action': 'pull',
                     'picking_type_id': picking_type_from_deposit.id,
                     'location_src_id': generic_deposit_location.id,
                     'location_id': self.ref('stock.stock_location_customers'),
@@ -104,7 +109,7 @@ class TestSaleStockPartnerDeposit(SavepointCase):
             'partner_id': self.partner.id,
             'picking_type_id': picking_type_to_deposit.id,
             'location_id': self.ref('stock.stock_location_stock'),
-            'location_dest_id': deposit_location.id,
+            'location_dest_id': generic_deposit_location.id,
             'move_lines': [(0, 0, {
                 'name': '/',
                 'product_id': self.product.id,
@@ -113,12 +118,13 @@ class TestSaleStockPartnerDeposit(SavepointCase):
             })],
         }
         pick_to_deposit = picking_obj.create(vals)
-        #todo fare in modo che l'ubicazione di destinazione venga assegnata in automatic
+        # call the onchange to change dest location
+        pick_to_deposit.onchange_picking_type()
         self.assertEqual(pick_to_deposit.location_dest_id, deposit_location)
         self.env['stock.quant']._update_available_quantity(
             self.product, pick_to_deposit.location_id, 3.0)
         pick_to_deposit.action_assign()
-        pick_to_deposit.move_lines[0].move_line_ids[0].qty_done = 3
+        pick_to_deposit.move_lines[0].move_line_ids[0].qty_done = 3.0
         pick_to_deposit.action_done()
         # - verificare la quantità di merce in c/deposito con il report per ubicazione,
         # v. https://github.com/OCA/stock-logistics-reporting/tree/12.0/
@@ -126,7 +132,8 @@ class TestSaleStockPartnerDeposit(SavepointCase):
         quants = self.env['stock.quant'].search([
             ('location_id', 'child_of', deposit_location.id)
         ])
-
+        self.assertEqual(quants.product_id, self.product)
+        self.assertAlmostEqual(quants.quantity, 3.0)
         sale_order = self.env['sale.order'].sudo(self.stock_user).create({
             'partner_id': self.partner.id,
             'route_id': stock_location_route.id,
@@ -136,6 +143,14 @@ class TestSaleStockPartnerDeposit(SavepointCase):
         sale_order.action_confirm()
         picking = sale_order.picking_ids[0]
         self.assertEqual(picking.location_id, deposit_location)
+        picking.action_assign()
+        picking.move_lines[0].move_line_ids[0].qty_done = 2.0
+        picking.action_done()
+        quants1 = self.env['stock.quant'].search([
+            ('location_id', 'child_of', deposit_location.id)
+        ])
+        self.assertEqual(quants1.product_id, self.product)
+        self.assertAlmostEqual(quants1.quantity, 1.0)
         # possibile sviluppo: creare un automatismo per generare un Ordine di vendita
         #  dall'ubicazione del deposito)
 

@@ -23,7 +23,7 @@ class StockRule(models.Model):
                     if isinstance(sale_line_id, int):
                         sale_line_id = self.env['sale.order.line'].browse(sale_line_id)
                     location_src_id = sale_line_id.order_id.partner_id.\
-                        property_stock_deposit_id
+                        property_stock_deposit
                     if location_src_id:
                         move_values['location_id'] = location_src_id.id
         return move_values

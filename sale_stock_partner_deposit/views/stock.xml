@@ -10,4 +10,14 @@
             </field>
         </field>
     </record>
+    <record id="stock_location_view_form_editable" model="ir.ui.view">
+        <field name="name">stock.location.form</field>
+        <field name="model">stock.location</field>
+        <field name="inherit_id" ref="stock.stock_location_view_form_editable"/>
+        <field name="arch" type="xml">
+            <field name="return_location" position="after">
+                <field name="deposit_location"/>
+            </field>
+        </field>
+    </record>
 </odoo>

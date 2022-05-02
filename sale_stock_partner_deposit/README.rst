@@ -28,7 +28,7 @@ Configuration
 
 Nel partner è stata aggiunta l'ubicazione di deposito, che va creata specifica per il partner:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_partner_deposit/static/description/deposito.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_partner_deposit/static/description/ubicazione_partner_deposito.png
     :alt: deposito
 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_partner_deposit/static/description/partner.png
@@ -41,12 +41,12 @@ Va quindi attivata l'opzione per le rotte specifiche sugli ordini di vendita:
 
 e va creato il percorso generico per la vendita da conto deposito:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_partner_deposit/static/description/percorso.png
-    :alt: percorso
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_partner_deposit/static/description/percorso_da_deposito.png
+    :alt: percorso da deposito
 
 in cui andrà creata la regola come segue:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_partner_deposit/static/description/regola.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_partner_deposit/static/description/regola_da_deposito_a_clienti.png
     :alt: regola
 
 Questo percorso verrà usato in maniera generica per qualsiasi trasferimento/vendita di questo tipo, in quanto l'ubicazione di prelievo verrà rilevata dal partner.
@@ -56,7 +56,12 @@ Questo percorso verrà usato in maniera generica per qualsiasi trasferimento/ven
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_partner_deposit/static/description/operazione_consegna_da_deposito.png
     :alt: operazione consegna da deposito
 
-con l'ubicazione di origine predefinita:
+e un tipo di operazione per la consegna al conto deposito:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_partner_deposit/static/description/operazione_consegna_a_deposito.png
+    :alt: operazione consegna a deposito
+
+con l'ubicazione di destinazione predefinita:
 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_partner_deposit/static/description/ubicazione_generica_deposito.png
     :alt: ubicazione generica deposito

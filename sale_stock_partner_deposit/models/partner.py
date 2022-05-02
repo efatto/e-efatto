@@ -6,7 +6,7 @@ from odoo import models, fields
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    property_stock_deposit_id = fields.Many2one(
+    property_stock_deposit = fields.Many2one(
         'stock.location', string="Deposit Location",
         company_dependent=True,
         help="The stock location used as source when sending goods to this contact "
