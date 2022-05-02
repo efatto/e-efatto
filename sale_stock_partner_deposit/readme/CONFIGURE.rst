@@ -37,3 +37,11 @@ con l'ubicazione di destinazione predefinita:
 
 .. image:: ../static/description/ubicazione_generica_deposito.png
     :alt: ubicazione generica deposito
+
+Facendo quindi una vendita con il percorso definito sopra verso un cliente che ha un deposito, il trasferimento partirà dal deposito specifico:
+
+.. image:: ../static/description/percorso_vendita.png
+    :alt: percorso vendita
+
+.. image:: ../static/description/trasferimento_vendita.png
+    :alt: trasferimento vendita
