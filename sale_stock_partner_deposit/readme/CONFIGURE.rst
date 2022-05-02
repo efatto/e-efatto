@@ -3,6 +3,11 @@ Nel partner è stata aggiunta l'ubicazione di deposito, che va creata specifica 
 .. image:: ../static/description/ubicazione_partner_deposito.png
     :alt: deposito
 
+crendo e impostando come padre l'ubicazione generica deposito partner:
+
+.. image:: ../static/description/ubicazione_generica_deposito.png
+    :alt: ubicazione generica deposito
+
 .. image:: ../static/description/partner.png
     :alt: partner
 
@@ -33,10 +38,7 @@ e un tipo di operazione per la consegna al conto deposito:
 .. image:: ../static/description/operazione_consegna_a_deposito.png
     :alt: operazione consegna a deposito
 
-con l'ubicazione di destinazione predefinita:
-
-.. image:: ../static/description/ubicazione_generica_deposito.png
-    :alt: ubicazione generica deposito
+con l'ubicazione di destinazione predefinita del deposito generico.
 
 Facendo quindi una vendita con il percorso definito sopra verso un cliente che ha un deposito, il trasferimento partirà dal deposito specifico:
 

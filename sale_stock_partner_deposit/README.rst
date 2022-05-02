@@ -31,6 +31,11 @@ Nel partner è stata aggiunta l'ubicazione di deposito, che va creata specifica 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_partner_deposit/static/description/ubicazione_partner_deposito.png
     :alt: deposito
 
+crendo e impostando come padre l'ubicazione generica deposito partner:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_partner_deposit/static/description/ubicazione_generica_deposito.png
+    :alt: ubicazione generica deposito
+
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_partner_deposit/static/description/partner.png
     :alt: partner
 
@@ -61,10 +66,7 @@ e un tipo di operazione per la consegna al conto deposito:
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_partner_deposit/static/description/operazione_consegna_a_deposito.png
     :alt: operazione consegna a deposito
 
-con l'ubicazione di destinazione predefinita:
-
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_partner_deposit/static/description/ubicazione_generica_deposito.png
-    :alt: ubicazione generica deposito
+con l'ubicazione di destinazione predefinita del deposito generico.
 
 Facendo quindi una vendita con il percorso definito sopra verso un cliente che ha un deposito, il trasferimento partirà dal deposito specifico:
 
