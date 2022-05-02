@@ -6,4 +6,4 @@ from odoo import models, fields
 class StockLocation(models.Model):
     _inherit = 'stock.location'
 
-    deposit_location = fields.Boolean()
+    deposit_location = fields.Boolean(string='Is a deposit location?')
