@@ -10,9 +10,15 @@ class StockPicking(models.Model):
     def onchange_picking_type(self):
         super().onchange_picking_type()
         if self.picking_type_id and self.partner_id:
-            # change dest location only for incoming picking (not coming from a deposit)
+            # change dest location only for outgoing picking (not coming from a deposit)
             if self.picking_type_id.default_location_dest_id.deposit_location \
                     and not self.location_id.deposit_location \
                     and self.partner_id.property_stock_deposit \
-                    and self.picking_type_id != self.partner_id.property_stock_deposit:
+                    and self.location_dest_id != self.partner_id.property_stock_deposit:
                 self.location_dest_id = self.partner_id.property_stock_deposit
+            # change location only for incoming picking (coming from a deposit)
+            if self.picking_type_id.default_location_src_id.deposit_location \
+                    and not self.location_dest_id.deposit_location \
+                    and self.partner_id.property_stock_deposit \
+                    and self.location_id != self.partner_id.property_stock_deposit:
+                self.location_id = self.partner_id.property_stock_deposit
