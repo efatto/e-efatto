@@ -5,14 +5,20 @@
         <field name="name">mrp.production.bom.change</field>
         <field name="model">mrp.production.bom.change</field>
         <field name="arch" type="xml">
-            <form string="Change BoM">
+            <form string="Change Product or BoM">
                 <div>
                     <group>
-                        <field name="bom_id"/>
+                        <field name="product_id"
+                            domain="[('bom_ids', '!=', False), ('bom_ids.active', '=', True), ('bom_ids.type', '=', 'normal')]"/>
+                        <field name="bom_id"
+                            domain="['&amp;', '|',
+                                        ('product_id','=',product_id),
+                                        ('product_tmpl_id.product_variant_ids', 'in', product_id),
+                                        ('type', '=', 'normal')]"/>
                     </group>
                 </div>
                 <div>
-                    Are you sure you want to change BoM for this production order?
+                    Are you sure you want to change Product or BoM for this production order?
                 </div>
                 <footer>
                     <button string="Discard" special="cancel" class="btn-secondary"/>

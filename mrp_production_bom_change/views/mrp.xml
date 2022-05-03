@@ -8,7 +8,7 @@
         <field name="arch" type="xml">
             <xpath expr="//header" position="inside">
                 <button type="action" name="%(action_change_production_bom)d"
-                        string="Change BoM" attrs="{'invisible': [('state', 'in', ['done', 'cancel'])]}"/>
+                        string="Change Product or BoM" attrs="{'invisible': [('state', 'in', ['done', 'cancel'])]}"/>
             </xpath>
         </field>
     </record>
