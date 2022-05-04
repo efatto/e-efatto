@@ -26,12 +26,7 @@ class TestMrpProductionBomChange(TestProductionData):
         ).create({
             'bom_id': self.sub_bom1.id,
         }).action_done()
-        self.assertEqual(len(man_order.move_raw_ids.filtered(
-            lambda x: x.state != 'cancel'
-        )), 1)
-        self.assertEqual(len(man_order.move_raw_ids.filtered(
-            lambda x: x.state == 'cancel'
-        )), 3)
+        self.assertEqual(len(man_order.move_raw_ids), 1)
         self.assertEqual(man_order.bom_id.id, self.sub_bom1.id)
 
     def test_01_update_product_production_running(self):
@@ -53,11 +48,8 @@ class TestMrpProductionBomChange(TestProductionData):
             active_model='mrp.production',
         ).create({
             'bom_id': self.sub_bom1.id,
+            'product_id': self.subproduct1.id,
         }).action_done()
-        self.assertEqual(len(man_order.move_raw_ids.filtered(
-            lambda x: x.state != 'cancel'
-        )), 1)
-        self.assertEqual(len(man_order.move_raw_ids.filtered(
-            lambda x: x.state == 'cancel'
-        )), 3)
+        self.assertEqual(len(man_order.move_raw_ids), 1)
         self.assertEqual(man_order.bom_id.id, self.sub_bom1.id)
+        self.assertEqual(man_order.product_id.id, self.subproduct1.id)
