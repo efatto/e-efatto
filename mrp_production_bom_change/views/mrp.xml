@@ -7,8 +7,9 @@
         <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//header" position="inside">
+                <field name="is_almost_partially_produced" invisible="True"/>
                 <button type="action" name="%(action_change_production_bom)d"
-                        string="Change Product or BoM" attrs="{'invisible': [('state', 'in', ['done', 'cancel'])]}"/>
+                        string="Change Product or BoM" attrs="{'invisible': [('is_almost_partially_produced', '!=', False)]}"/>
             </xpath>
         </field>
     </record>
