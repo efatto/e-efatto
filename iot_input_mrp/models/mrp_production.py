@@ -24,10 +24,11 @@ class MrpWorkorder(models.Model):
         if not self:
             return True
         self.ensure_one()
-        self.production_id.mrp_end_count(self.workcenter_id)
-        self.qty_producing = self.production_id.bag_count
+        if self.workcenter_id.iot_device_input_id:
+            self.production_id.mrp_end_count(self.workcenter_id)
+            self.qty_producing = self.production_id.bag_count
         res = super().record_production()
-        if res:
+        if res and self.workcenter_id.iot_device_input_id:
             duration = self.production_id.mrp_end_produce(
                 self.workcenter_id
             )
