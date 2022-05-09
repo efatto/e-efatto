@@ -1,52 +1,55 @@
 # Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo.tests import common
+from odoo.tests.common import SavepointCase
 
 
-class TestProductionData(common.TransactionCase):
+class TestProductionData(SavepointCase):
 
-    def setUp(self, *args, **kwargs):
-        super(TestProductionData, self).setUp(*args, **kwargs)
-        self.production_model = self.env['mrp.production']
-        self.procurement_model = self.env['procurement.group']
-        self.bom_model = self.env['mrp.bom']
-        self.stock_location_stock = self.env.ref('stock.stock_location_stock')
-        self.manufacture_route = self.env.ref(
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
+        cls.user_model = cls.env['res.users'].with_context(no_reset_password=True)
+        cls.production_model = cls.env['mrp.production']
+        cls.procurement_model = cls.env['procurement.group']
+        cls.bom_model = cls.env['mrp.bom']
+        cls.stock_location_stock = cls.env.ref('stock.stock_location_stock')
+        cls.manufacture_route = cls.env.ref(
             'mrp.route_warehouse0_manufacture')
-        self.uom_unit = self.env.ref('uom.product_uom_unit')
-        self.warehouse = self.env.ref('stock.warehouse0')
-        self.top_product = self.env.ref(
+        cls.uom_unit = cls.env.ref('uom.product_uom_unit')
+        cls.warehouse = cls.env.ref('stock.warehouse0')
+        cls.top_product = cls.env.ref(
             'mrp_production_demo.product_product_manufacture_1')
-        self.subproduct1 = self.env.ref(
+        cls.subproduct1 = cls.env.ref(
             'mrp_production_demo.product_product_manufacture_1_1')
-        self.subproduct2 = self.env.ref(
+        cls.subproduct2 = cls.env.ref(
             'mrp_production_demo.product_product_manufacture_1_2')
-        self.subproduct_1_1 = self.env.ref(
+        cls.subproduct_1_1 = cls.env.ref(
             'mrp_production_demo.product_product_manufacture_1_1_1')
-        self.subproduct_2_1 = self.env.ref(
+        cls.subproduct_2_1 = cls.env.ref(
             'mrp_production_demo.product_product_manufacture_1_2_1')
-        self.main_bom = self.env.ref('mrp_production_demo.mrp_bom_manuf_1')
-        self.sub_bom1 = self.env.ref('mrp_production_demo.mrp_bom_manuf_1_1')
-        self.sub_bom2 = self.env.ref('mrp_production_demo.mrp_bom_manuf_1_2')
-        self.workcenter1 = self.env['mrp.workcenter'].create({
+        cls.main_bom = cls.env.ref('mrp_production_demo.mrp_bom_manuf_1')
+        cls.sub_bom1 = cls.env.ref('mrp_production_demo.mrp_bom_manuf_1_1')
+        cls.sub_bom2 = cls.env.ref('mrp_production_demo.mrp_bom_manuf_1_2')
+        cls.workcenter1 = cls.env['mrp.workcenter'].create({
             'name': 'Base Workcenter',
             'capacity': 1,
             'time_start': 10,
             'time_stop': 5,
             'time_efficiency': 80,
         })
-        self.routing1 = self.env['mrp.routing'].create({
+        cls.routing1 = cls.env['mrp.routing'].create({
             'name': 'Simple routing',
         })
-        self.operation1 = self.env['mrp.routing.workcenter'].create({
+        cls.operation1 = cls.env['mrp.routing.workcenter'].create({
             'name': 'Operation 1',
-            'workcenter_id': self.workcenter1.id,
-            'routing_id': self.routing1.id,
+            'workcenter_id': cls.workcenter1.id,
+            'routing_id': cls.routing1.id,
             'time_cycle': 15,
             'sequence': 1,
         })
-        self.mrp_user = self.env.ref("base.user_demo")
-        self.mrp_user.write({
-            'groups_id': [(4, self.env.ref('mrp.group_mrp_user').id)],
+        cls.mrp_user = cls.env.ref("base.user_demo")
+        cls.mrp_user.write({
+            'groups_id': [(4, cls.env.ref('mrp.group_mrp_user').id)],
         })
