@@ -14,11 +14,13 @@ class MrpWorkorder(models.Model):
             return True
         self.ensure_one()
         final_lot_id = self.final_lot_id
-        if final_lot_id not in self.production_id.mapped(
+        expected_final_lots = self.production_id.mapped(
             'finished_move_line_ids.lot_id'
-        ):
+        )
+        if expected_final_lots and final_lot_id not in expected_final_lots:
             raise UserError(_(
-                "Final lot not in expected lots!"
+                "Final lot not in expected lots %s!" %
+                expected_final_lots.mapped('name')
             ))
         res = super().record_production()
         if final_lot_id and self.production_id.product_id.tracking == 'serial':
