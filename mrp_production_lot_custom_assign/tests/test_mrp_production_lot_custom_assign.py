@@ -7,12 +7,12 @@ from odoo.exceptions import UserError
 
 class TestMrpProductionLotCustomAssign(TestProductionData):
 
-    def setUp(self):
-        super().setUp()
-        self.main_bom.write({
-            'routing_id': self.routing1.id,
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.main_bom.write({
+            'routing_id': cls.routing1.id,
         })
-        self.workcenter1.iot_device_input_id = False
 
     def _create_production(self, tracking):
         self.top_product.tracking = tracking
