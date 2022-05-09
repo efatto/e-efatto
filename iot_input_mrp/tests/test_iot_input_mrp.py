@@ -25,7 +25,7 @@ class TestIotInputMrp(TestProductionData):
             'name': 'Input',
             'device_id': cls.device.id,
             'address': cls.address_1,
-            'call_model_id': cls.ref('iot_input_data.model_iot_input_data').id,
+            'call_model_id': cls.env.ref('iot_input_data.model_iot_input_data').id,
             'call_function': 'input_data',
         }])
         cls.uom_kgm = cls.env.ref('uom.product_uom_kgm')
