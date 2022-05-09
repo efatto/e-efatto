@@ -16,11 +16,11 @@ class TestMrpProductionPreserveKitRoute(TestProductionData):
             'name': vendor.id,
         })
         # Acoustic Bloc Screens, 16 on hand
-        cls.product1 = cls.ref('product.product_product_25').id
+        cls.product1 = cls.env.ref('product.product_product_25')
         # Large Cabinet, 250 on hand
-        cls.product3 = cls.ref('product.product_product_6').id
+        cls.product3 = cls.env.ref('product.product_product_6')
         # Drawer Black, 0 on hand
-        cls.product4 = cls.ref('product.product_product_16').id
+        cls.product4 = cls.env.ref('product.product_product_16')
         cls.product2 = cls.env['product.product'].create({
             'name': 'Component product',
             'default_code': 'code1234',
