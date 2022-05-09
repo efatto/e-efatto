@@ -1,7 +1,7 @@
 # Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import api, models
+from odoo import _, api, models
 from odoo.exceptions import UserError
 
 
@@ -18,7 +18,7 @@ class MrpWorkorder(models.Model):
             'finished_move_line_ids.lot_id'
         ):
             raise UserError(_(
-
+                "Final lot not in expected lots!"
             ))
         res = super().record_production()
         if final_lot_id and self.production_id.product_id.tracking == 'serial':
