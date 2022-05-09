@@ -13,6 +13,10 @@ class MrpProductionBomChange(models.TransientModel):
     product_id = fields.Many2one(comodel_name='product.product', required=True,
                                  string='Product')
 
+    @api.onchange('product_id')
+    def onchange_product_id(self):
+        self.bom_id = False
+
     @api.model
     def default_get(self, fields_list):
         defaults = super().default_get(fields_list)

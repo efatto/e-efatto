@@ -9,7 +9,7 @@
             <xpath expr="//header" position="inside">
                 <field name="is_almost_partially_produced" invisible="True"/>
                 <button type="action" name="%(action_change_production_bom)d"
-                        string="Change Product or BoM" attrs="{'invisible': [('is_almost_partially_produced', '!=', False)]}"/>
+                        string="Change Product or BoM" attrs="{'invisible': [('is_almost_partially_produced', '=', True)]}"/>
             </xpath>
         </field>
     </record>
