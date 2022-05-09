@@ -25,6 +25,10 @@ class TestMrpProductionLotCustomAssign(TestProductionData):
         self.assertEqual(len(man_order.move_raw_ids), 3)
         # check at creation finished_move_line_ids are present and with qty_done 0
         if tracking != 'none':
+            final_lot_id = self.env['stock.production.lot'].create({
+                'name': 'Final lot %s' % tracking,
+                'product_id': self.top_product.id,
+            })
             self.assertTrue(man_order.finished_move_line_ids)
             self.assertAlmostEqual(
                 sum(man_order.mapped('finished_move_line_ids.qty_done')), 0.0)
@@ -36,9 +40,16 @@ class TestMrpProductionLotCustomAssign(TestProductionData):
             self.assertEqual(move_raw.product_uom_qty, 8)
             self.assertEqual(len(man_order.move_raw_ids), 3)
             man_order.action_assign()
-            # TODO check UserError when trying to button_plan without lot in finished_move_lines
+            # user cannot plan mo if no final lot are set
             with self.assertRaises(UserError):
                 man_order.button_plan()
+            for finished_product in man_order.finished_move_line_ids:
+                finished_product.lot_id = final_lot_id
+            man_order.button_plan()
+            self.assertEqual(
+                man_order.workorder_ids[0].final_lot_id,
+                man_order.finished_move_line_ids[0].lot_id,
+            )
             # self.assertEqual(man_order.state, 'confirmed')
             # move_raw = man_order.move_raw_ids[1]
             # self.assertEqual(move_raw.product_uom_qty, 8)
