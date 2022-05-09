@@ -27,22 +27,22 @@ class TestMrpProductionPreserveKitRoute(TestProductionData):
             'type': 'product',
             'purchase_ok': True,
             'route_ids': [
-                (4, cls.ref('purchase_stock.route_warehouse0_buy')),
-                (4, cls.ref('stock.route_warehouse0_mto'))],
+                (4, cls.ref('purchase_stock.route_warehouse0_buy').id),
+                (4, cls.ref('stock.route_warehouse0_mto').id)],
             'seller_ids': [(6, 0, [supplierinfo.id])],
         })
         cls.product_bom = cls.env['product.product'].create({
             'name': 'Product with bom',
-            'route_ids': [(4, cls.ref('mrp.route_warehouse0_manufacture')),
-                          (4, cls.ref('stock.route_warehouse0_mto'))],
+            'route_ids': [(4, cls.ref('mrp.route_warehouse0_manufacture').id),
+                          (4, cls.ref('stock.route_warehouse0_mto').id)],
             'default_code': 'code123',
             'type': 'product',
             'sale_ok': True,
         })
         cls.product_kit = cls.env['product.product'].create({
             'name': 'Product with kit bom',
-            'route_ids': [(4, cls.ref('mrp.route_warehouse0_manufacture')),
-                          (4, cls.ref('stock.route_warehouse0_mto'))],
+            'route_ids': [(4, cls.ref('mrp.route_warehouse0_manufacture').id),
+                          (4, cls.ref('stock.route_warehouse0_mto').id)],
             'default_code': 'code1234',
             'type': 'product',
             'sale_ok': True,
