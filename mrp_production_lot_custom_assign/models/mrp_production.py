@@ -27,7 +27,8 @@ class MrpProduction(models.Model):
             if order.product_id.tracking != 'none' and not \
                     order.mapped('finished_move_line_ids.lot_id'):
                 raise UserError(_(
-                    "Missing final lot/serial number in finished product!"
+                    "Missing final lot/serial number in finished product!\n"
+                    "(tip: unlock manufacturing order, set lots and lock to continue)"
                 ))
         res = super().button_plan()
         for order in orders_to_plan:
