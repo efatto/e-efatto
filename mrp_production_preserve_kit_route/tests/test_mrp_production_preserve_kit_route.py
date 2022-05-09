@@ -27,22 +27,22 @@ class TestMrpProductionPreserveKitRoute(TestProductionData):
             'type': 'product',
             'purchase_ok': True,
             'route_ids': [
-                (4, cls.ref('purchase_stock.route_warehouse0_buy').id),
-                (4, cls.ref('stock.route_warehouse0_mto').id)],
+                (4, cls.env.ref('purchase_stock.route_warehouse0_buy').id),
+                (4, cls.env.ref('stock.route_warehouse0_mto').id)],
             'seller_ids': [(6, 0, [supplierinfo.id])],
         })
         cls.product_bom = cls.env['product.product'].create({
             'name': 'Product with bom',
-            'route_ids': [(4, cls.ref('mrp.route_warehouse0_manufacture').id),
-                          (4, cls.ref('stock.route_warehouse0_mto').id)],
+            'route_ids': [(4, cls.env.ref('mrp.route_warehouse0_manufacture').id),
+                          (4, cls.env.ref('stock.route_warehouse0_mto').id)],
             'default_code': 'code123',
             'type': 'product',
             'sale_ok': True,
         })
         cls.product_kit = cls.env['product.product'].create({
             'name': 'Product with kit bom',
-            'route_ids': [(4, cls.ref('mrp.route_warehouse0_manufacture').id),
-                          (4, cls.ref('stock.route_warehouse0_mto').id)],
+            'route_ids': [(4, cls.env.ref('mrp.route_warehouse0_manufacture').id),
+                          (4, cls.env.ref('stock.route_warehouse0_mto').id)],
             'default_code': 'code1234',
             'type': 'product',
             'sale_ok': True,
@@ -56,7 +56,7 @@ class TestMrpProductionPreserveKitRoute(TestProductionData):
             'code': cls.product_kit.default_code,
             'type': 'phantom',
             'product_qty': 1,
-            'product_uom_id': cls.ref('uom.product_uom_unit'),
+            'product_uom_id': cls.env.ref('uom.product_uom_unit').id,
             'bom_line_ids': [
                 (0, 0, x) for x in kit_component_values]
         })
@@ -69,7 +69,7 @@ class TestMrpProductionPreserveKitRoute(TestProductionData):
             'code': cls.product_bom.default_code,
             'type': 'normal',
             'product_qty': 1,
-            'product_uom_id': cls.ref('uom.product_uom_unit'),
+            'product_uom_id': cls.env.ref('uom.product_uom_unit').id,
             'bom_line_ids': [
                 (0, 0, x) for x in bom_component_values]
         })
