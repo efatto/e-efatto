@@ -23,13 +23,12 @@ class MrpWorkorder(models.Model):
                 expected_final_lots.mapped('name')
             ))
         res = super().record_production()
-        if final_lot_id and self.production_id.product_id.tracking == 'serial':
-            # set next lot to workorders for serial tracking
+        if final_lot_id and self.production_id.product_id.tracking != 'none' and \
+                self.state != 'done':
+            # set next lot to workorders for lot or serial tracking
             lot_ids = self.production_id.mapped(
                 'finished_move_line_ids.lot_id').filtered(
                     lambda x: x != final_lot_id)
-            if lot_ids and self.final_lot_id:
-                lot = lot_ids[0]
-                if lot:
-                    self.final_lot_id = lot
+            if lot_ids:
+                self.final_lot_id = lot_ids[0]
         return res

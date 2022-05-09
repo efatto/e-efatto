@@ -19,40 +19,63 @@ class TestMrpProductionLotCustomAssign(TestProductionData):
             'name': 'MO-Test-to-update',
             'product_id': self.top_product.id,
             'product_uom_id': self.top_product.uom_id.id,
-            'product_qty': 1,
+            'product_qty': 3,
             'bom_id': self.main_bom.id,
         })
         self.assertEqual(len(man_order.move_raw_ids), 3)
-        # check at creation finished_move_line_ids are present and with qty_done 0
         if tracking != 'none':
-            final_lot_id = self.env['stock.production.lot'].create({
-                'name': 'Final lot %s' % tracking,
+            for i_lot in range(0, int(man_order.product_qty)):
+                self.env['stock.production.lot'].create({
+                    'name': 'Final lot %s %s' % (i_lot, tracking),
+                    'product_id': self.top_product.id,
+                })
+            first_final_lot = self.env['stock.production.lot'].search([
+                ('name', '=', 'Final lot %s %s' % (0, tracking))
+            ])
+            other_lot_id = self.env['stock.production.lot'].create({
+                'name': 'Other lot',
                 'product_id': self.top_product.id,
             })
             self.assertTrue(man_order.finished_move_line_ids)
+            # check at creation finished_move_line_ids are present and with qty_done 0
             self.assertAlmostEqual(
                 sum(man_order.mapped('finished_move_line_ids.qty_done')), 0.0)
-            # TODO test workorders have final_lot_id set
-            # TODO test workorders for serial tracking product have progressive final_lot_id
-            # TODO test that user can set a custom serial inside ones present in
-            #  finished_move_line_ids
             move_raw = man_order.move_raw_ids[1]
-            self.assertEqual(move_raw.product_uom_qty, 8)
+            self.assertEqual(move_raw.product_uom_qty, 24)
             self.assertEqual(len(man_order.move_raw_ids), 3)
             man_order.action_assign()
             # user cannot plan mo if no final lot are set
             with self.assertRaises(UserError):
                 man_order.button_plan()
-            for finished_product in man_order.finished_move_line_ids:
-                finished_product.lot_id = final_lot_id
+            if tracking == 'lot':
+                for finished_product in man_order.finished_move_line_ids:
+                    finished_product.lot_id = first_final_lot
+            elif tracking == 'serial':
+                i = 0
+                for finished_product in man_order.finished_move_line_ids:
+                    finished_product.lot_id = self.env['stock.production.lot'].\
+                        search([('name', '=', 'Final lot %s %s' % (i, tracking))
+                                ])
+                    i += 1
             man_order.button_plan()
             self.assertEqual(
                 man_order.workorder_ids[0].final_lot_id,
                 man_order.finished_move_line_ids[0].lot_id,
             )
-            # self.assertEqual(man_order.state, 'confirmed')
-            # move_raw = man_order.move_raw_ids[1]
-            # self.assertEqual(move_raw.product_uom_qty, 8)
+            # user cannot set a custom serial if not present in finished_move_line_ids
+            workorder = man_order.workorder_ids[0]
+            workorder.button_start()
+            workorder.final_lot_id = other_lot_id
+            with self.assertRaises(UserError):
+                workorder.record_production()
+            workorder.final_lot_id = first_final_lot
+            workorder.record_production()
+            # test progressive final lot for workorders for serial
+            if tracking == 'serial':
+                self.assertIn(workorder.final_lot_id, man_order.mapped(
+                    'finished_move_line_ids.lot_id'
+                ))
+                self.assertNotEqual(workorder.final_lot_id, first_final_lot)
 
     def test_no_tracking(self):
         self._create_production(tracking='none')

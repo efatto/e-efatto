@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-06 15:44+0000\n"
-"PO-Revision-Date: 2022-05-06 15:44+0000\n"
+"POT-Creation-Date: 2022-05-09 09:06+0000\n"
+"PO-Revision-Date: 2022-05-09 09:06+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,10 +16,18 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: mrp_production_lot_custom_assign
+#: code:addons/mrp_production_lot_custom_assign/models/mrp_workorder.py:23
+#, python-format
+msgid "Final lot not in expected lots %s!"
+msgstr "Il lotto finale non è nei lotti attesi %s!"
+
+#. module: mrp_production_lot_custom_assign
 #: code:addons/mrp_production_lot_custom_assign/models/mrp_production.py:29
 #, python-format
-msgid "Missing final lot/serial number in finished product!"
-msgstr "Lotto/seriale finale mancante nei prodotti finiti!"
+msgid "Missing final lot/serial number in finished product!\n"
+"(tip: unlock manufacturing order, set lots and lock to continue)"
+msgstr "Lotto/seriale mancante nei prodotti finiti!\n"
+"(tip: sbloccare la produzione, impostare i lotti e ribloccare per continuare)"
 
 #. module: mrp_production_lot_custom_assign
 #: model:ir.model,name:mrp_production_lot_custom_assign.model_stock_move_line
