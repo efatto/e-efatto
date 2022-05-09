@@ -1,15 +1,15 @@
 # Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo.tests import common
 from odoo.tests import Form
 from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
 
 
 class TestProductionGroupLine(TestProductionData):
 
-    def setUp(self, *args, **kwargs):
-        super(TestProductionGroupLine, self).setUp(*args, **kwargs)
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
 
     def _get_production_vals(self):
         return {

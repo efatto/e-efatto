@@ -6,10 +6,11 @@ from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
 
 class TestMrpWorkorderTime(TestProductionData):
 
-    def setUp(self):
-        super(TestMrpWorkorderTime, self).setUp()
-        self.main_bom.write({
-            'routing_id': self.routing1.id,
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.main_bom.write({
+            'routing_id': cls.routing1.id,
         })
 
     def test_update_product_qty(self):

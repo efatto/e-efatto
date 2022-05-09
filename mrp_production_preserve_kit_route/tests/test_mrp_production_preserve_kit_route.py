@@ -6,42 +6,43 @@ from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
 
 class TestMrpProductionPreserveKitRoute(TestProductionData):
 
-    def setUp(self):
-        super().setUp()
-        vendor = self.env['res.partner'].create({
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        vendor = cls.env['res.partner'].create({
             'name': 'Partner #2',
         })
-        supplierinfo = self.env['product.supplierinfo'].create({
+        supplierinfo = cls.env['product.supplierinfo'].create({
             'name': vendor.id,
         })
         # Acoustic Bloc Screens, 16 on hand
-        self.product1 = self.env.ref('product.product_product_25')
+        cls.product1 = cls.ref('product.product_product_25')
         # Large Cabinet, 250 on hand
-        self.product3 = self.env.ref('product.product_product_6')
+        cls.product3 = cls.ref('product.product_product_6')
         # Drawer Black, 0 on hand
-        self.product4 = self.env.ref('product.product_product_16')
-        self.product2 = self.env['product.product'].create({
+        cls.product4 = cls.ref('product.product_product_16')
+        cls.product2 = cls.env['product.product'].create({
             'name': 'Component product',
             'default_code': 'code1234',
             'type': 'product',
             'purchase_ok': True,
             'route_ids': [
-                (4, self.env.ref('purchase_stock.route_warehouse0_buy').id),
-                (4, self.env.ref('stock.route_warehouse0_mto').id)],
+                (4, cls.ref('purchase_stock.route_warehouse0_buy')),
+                (4, cls.ref('stock.route_warehouse0_mto'))],
             'seller_ids': [(6, 0, [supplierinfo.id])],
         })
-        self.product_bom = self.env['product.product'].create({
+        cls.product_bom = cls.env['product.product'].create({
             'name': 'Product with bom',
-            'route_ids': [(4, self.env.ref('mrp.route_warehouse0_manufacture').id),
-                          (4, self.env.ref('stock.route_warehouse0_mto').id)],
+            'route_ids': [(4, cls.ref('mrp.route_warehouse0_manufacture')),
+                          (4, cls.ref('stock.route_warehouse0_mto'))],
             'default_code': 'code123',
             'type': 'product',
             'sale_ok': True,
         })
-        self.product_kit = self.env['product.product'].create({
+        cls.product_kit = cls.env['product.product'].create({
             'name': 'Product with kit bom',
-            'route_ids': [(4, self.env.ref('mrp.route_warehouse0_manufacture').id),
-                          (4, self.env.ref('stock.route_warehouse0_mto').id)],
+            'route_ids': [(4, cls.ref('mrp.route_warehouse0_manufacture')),
+                          (4, cls.ref('stock.route_warehouse0_mto'))],
             'default_code': 'code1234',
             'type': 'product',
             'sale_ok': True,
@@ -49,26 +50,26 @@ class TestMrpProductionPreserveKitRoute(TestProductionData):
         kit_component_values = [{
             'product_id': x.id,
             'product_qty': 1,
-        } for x in self.product1 | self.product2]
-        self.kit = self.env['mrp.bom'].create({
-            'product_tmpl_id': self.product_kit.product_tmpl_id.id,
-            'code': self.product_kit.default_code,
+        } for x in cls.product1 | cls.product2]
+        cls.kit = cls.env['mrp.bom'].create({
+            'product_tmpl_id': cls.product_kit.product_tmpl_id.id,
+            'code': cls.product_kit.default_code,
             'type': 'phantom',
             'product_qty': 1,
-            'product_uom_id': self.env.ref('uom.product_uom_unit').id,
+            'product_uom_id': cls.ref('uom.product_uom_unit'),
             'bom_line_ids': [
                 (0, 0, x) for x in kit_component_values]
         })
         bom_component_values = [{
             'product_id': x.id,
             'product_qty': 1,
-        } for x in self.product3 | self.product4 | self.product_kit]
-        self.bom = self.env['mrp.bom'].create({
-            'product_tmpl_id': self.product_bom.product_tmpl_id.id,
-            'code': self.product_bom.default_code,
+        } for x in cls.product3 | cls.product4 | cls.product_kit]
+        cls.bom = cls.env['mrp.bom'].create({
+            'product_tmpl_id': cls.product_bom.product_tmpl_id.id,
+            'code': cls.product_bom.default_code,
             'type': 'normal',
             'product_qty': 1,
-            'product_uom_id': self.env.ref('uom.product_uom_unit').id,
+            'product_uom_id': cls.ref('uom.product_uom_unit'),
             'bom_line_ids': [
                 (0, 0, x) for x in bom_component_values]
         })

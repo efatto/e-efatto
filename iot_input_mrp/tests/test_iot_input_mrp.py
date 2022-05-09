@@ -9,59 +9,59 @@ import datetime
 
 class TestIotInputMrp(TestProductionData):
 
-    def setUp(self):
-        super(TestIotInputMrp, self).setUp()
-        self.env = self.env(context=dict(self.env.context, tracking_disable=True))
-        self.serial = 'testingdeviceserial'
-        self.device_identification = 'test_device_name'
-        self.passphrase = 'password'
-        self.device = self.env['iot.device'].create([{
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.serial = 'testingdeviceserial'
+        cls.device_identification = 'test_device_name'
+        cls.passphrase = 'password'
+        cls.device = cls.env['iot.device'].create([{
             'name': 'Device',
-            'device_identification': self.device_identification,
-            'passphrase': self.passphrase,
+            'device_identification': cls.device_identification,
+            'passphrase': cls.passphrase,
         }])
-        self.address_1 = 'I0'
-        self.iot_device_input = self.env['iot.device.input'].create([{
+        cls.address_1 = 'I0'
+        cls.iot_device_input = cls.env['iot.device.input'].create([{
             'name': 'Input',
-            'device_id': self.device.id,
-            'address': self.address_1,
-            'call_model_id': self.ref('iot_input_data.model_iot_input_data'),
+            'device_id': cls.device.id,
+            'address': cls.address_1,
+            'call_model_id': cls.ref('iot_input_data.model_iot_input_data'),
             'call_function': 'input_data',
         }])
-        self.uom_kgm = self.env.ref('uom.product_uom_kgm')
-        self.product_weight = self.env['product.product'].create([{
+        cls.uom_kgm = cls.env.ref('uom.product_uom_kgm')
+        cls.product_weight = cls.env['product.product'].create([{
             'name': 'Component',
-            'uom_id': self.uom_kgm.id,
-            'uom_po_id': self.uom_kgm.id}])
-        self.product_weight1 = self.env['product.product'].create([{
+            'uom_id': cls.uom_kgm.id,
+            'uom_po_id': cls.uom_kgm.id}])
+        cls.product_weight1 = cls.env['product.product'].create([{
             'name': 'Component 1',
-            'uom_id': self.uom_kgm.id,
-            'uom_po_id': self.uom_kgm.id}])
-        self.product_weight2 = self.env['product.product'].create([{
+            'uom_id': cls.uom_kgm.id,
+            'uom_po_id': cls.uom_kgm.id}])
+        cls.product_weight2 = cls.env['product.product'].create([{
             'name': 'Component 2',
-            'uom_id': self.uom_kgm.id,
-            'uom_po_id': self.uom_kgm.id}])
-        self.bom_weight = self.env['mrp.bom'].create([{
-            'product_id': self.top_product.id,
-            'product_tmpl_id': self.top_product.product_tmpl_id.id,
-            'product_uom_id': self.uom_unit.id,
+            'uom_id': cls.uom_kgm.id,
+            'uom_po_id': cls.uom_kgm.id}])
+        cls.bom_weight = cls.env['mrp.bom'].create([{
+            'product_id': cls.top_product.id,
+            'product_tmpl_id': cls.top_product.product_tmpl_id.id,
+            'product_uom_id': cls.uom_unit.id,
             'product_qty': 2.0,
-            'routing_id': self.routing1.id,
+            'routing_id': cls.routing1.id,
             'type': 'normal',
             'bom_line_ids': [
-                (0, 0, {'product_id': self.product_weight.id, 'product_qty': 2.55}),
-                (0, 0, {'product_id': self.product_weight1.id, 'product_qty': 8.13}),
-                (0, 0, {'product_id': self.product_weight2.id, 'product_qty': 12.01})
+                (0, 0, {'product_id': cls.product_weight.id, 'product_qty': 2.55}),
+                (0, 0, {'product_id': cls.product_weight1.id, 'product_qty': 8.13}),
+                (0, 0, {'product_id': cls.product_weight2.id, 'product_qty': 12.01})
             ]}])
         # total: (2.55 + 8.13 + 12.01) = 22.69 / 2 = 11.345
-        self.bag_variable_name = 'variable_bag_count'
-        self.weight_variable_name = 'variable_weight'
-        self.duration_variable_name = 'variable_duration'
-        self.workcenter1.write(dict(
-            bag_variable_name=self.bag_variable_name,
-            weight_variable_name=self.weight_variable_name,
-            duration_variable_name=self.duration_variable_name,
-            iot_device_input_id=self.iot_device_input.id,
+        cls.bag_variable_name = 'variable_bag_count'
+        cls.weight_variable_name = 'variable_weight'
+        cls.duration_variable_name = 'variable_duration'
+        cls.workcenter1.write(dict(
+            bag_variable_name=cls.bag_variable_name,
+            weight_variable_name=cls.weight_variable_name,
+            duration_variable_name=cls.duration_variable_name,
+            iot_device_input_id=cls.iot_device_input.id,
         ))
 
     def input_data(self, variable_weight, variable_duration, variable_bag_count):

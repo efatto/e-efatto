@@ -6,8 +6,9 @@ from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
 
 class TestMrpProductionBomChange(TestProductionData):
 
-    def setUp(self):
-        super(TestMrpProductionBomChange, self).setUp()
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
 
     def test_01_update_product(self):
         man_order = self.env['mrp.production'].create({
