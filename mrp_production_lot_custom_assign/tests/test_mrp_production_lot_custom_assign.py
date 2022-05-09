@@ -64,12 +64,12 @@ class TestMrpProductionLotCustomAssign(TestProductionData):
             )
             # user cannot set a custom serial if not present in finished_move_line_ids
             workorder = man_order.workorder_ids[0]
-            workorder.button_start()
+            workorder.sudo(self.mrp_user).button_start()
             workorder.final_lot_id = other_lot_id
             with self.assertRaises(UserError):
-                workorder.record_production()
+                workorder.sudo(self.mrp_user).record_production()
             workorder.final_lot_id = first_final_lot
-            workorder.record_production()
+            workorder.sudo(self.mrp_user).record_production()
             # test progressive final lot for workorders for serial
             if tracking == 'serial':
                 self.assertIn(workorder.final_lot_id, man_order.mapped(
