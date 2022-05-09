@@ -6,8 +6,9 @@ from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
 
 class TestMrpProductionChangeQty(TestProductionData):
 
-    def setUp(self):
-        super(TestMrpProductionChangeQty, self).setUp()
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
 
     def test_update_product_qty(self):
         # bom_3 (product_6) = product_2:12 + product_4:8 [normal]
