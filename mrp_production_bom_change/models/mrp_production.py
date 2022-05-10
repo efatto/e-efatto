@@ -9,9 +9,11 @@ class MrpProduction(models.Model):
 
     is_almost_partially_produced = fields.Boolean(
         string="Is almost partially produced",
-        compute='_compute_is_almost_partially_produced')
+        compute='_compute_is_almost_partially_produced',
+        store=True)
 
     @api.multi
+    @api.depends('move_finished_ids')
     def _compute_is_almost_partially_produced(self):
         for production in self:
             done_moves = production.move_finished_ids.filtered(
