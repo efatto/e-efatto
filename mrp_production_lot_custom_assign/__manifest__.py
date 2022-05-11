@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 {
     'name': 'MRP Production Lot Custom Assign',
-    'version': '12.0.1.0.0',
+    'version': '12.0.1.0.1',
     'development_status': 'Beta',
     'license': 'AGPL-3',
     'category': 'Manufacturing',
