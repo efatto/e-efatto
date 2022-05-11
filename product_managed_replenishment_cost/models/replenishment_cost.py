@@ -58,7 +58,7 @@ class ReplenishmentCost(models.Model):
     @api.multi
     def update_products_replenishment_cost(self):
         for repl in self:
-            domain = [('type', 'in', ['product', 'consu'])]
+            domain = [('type', 'in', ['product', 'consu', 'service'])]
             if repl.product_ctg_ids:
                 domain.append(('categ_id', 'in', repl.product_ctg_ids.ids))
             products = self.env['product.product'].search(domain)
