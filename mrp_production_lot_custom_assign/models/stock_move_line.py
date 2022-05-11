@@ -10,8 +10,13 @@ class StockMoveLine(models.Model):
     @api.onchange('lot_name', 'lot_id')
     def onchange_serial_number(self):
         res = super().onchange_serial_number()
-        if self.product_id.tracking == 'serial' and self.move_id.production_id:
-            # remove switch to 1 for serial product to avoid duplication in
-            # manufacturing process
-            self.qty_done = 0
+        if self.product_id.tracking == 'serial':
+            if isinstance(self.id, models.NewId):
+                move_id = self._origin.move_id
+            else:
+                move_id = self.move_id
+            if move_id.production_id:
+                # remove switch to 1 for serial product to avoid duplication in
+                # manufacturing process
+                self.qty_done = 0
         return res

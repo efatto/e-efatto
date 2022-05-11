@@ -58,9 +58,7 @@ class TestMrpProductionLotCustomAssign(TestProductionData):
                         search(
                             [('name', '=', 'Final lot %s %s' % (i, tracking))],
                         )
-                    finished_move_line.with_context(
-                        params={'model': 'mrp.production'}
-                    ).onchange_serial_number()
+                    finished_move_line.onchange_serial_number()
                     i += 1
             man_order.button_plan()
             self.assertEqual(
