@@ -32,7 +32,7 @@ class MrpProduction(models.Model):
                 ))
         res = super().button_plan()
         for order in orders_to_plan:
-            # assign first lot to workorders, for serial we must assign in production
+            # assign first lot workorders, serial will be assigned recording production
             if order.product_id.tracking != 'none' \
                     and order.finished_move_line_ids[0].lot_id:
                 lot = order.finished_move_line_ids[0].lot_id

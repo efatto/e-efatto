@@ -26,9 +26,10 @@ class MrpWorkorder(models.Model):
         if final_lot_id and self.production_id.product_id.tracking != 'none' and \
                 self.state != 'done':
             # set next lot to workorders for lot or serial tracking
-            lot_ids = self.production_id.mapped(
-                'finished_move_line_ids.lot_id').filtered(
-                    lambda x: x != final_lot_id)
-            if lot_ids:
-                self.final_lot_id = lot_ids[0]
+            lots = self.production_id.mapped('finished_move_line_ids.lot_id')
+            used_lots = self.production_id.mapped(
+                'move_raw_ids.active_move_line_ids.lot_produced_id')
+            available_lots = lots - (final_lot_id + used_lots)
+            if available_lots:
+                self.final_lot_id = available_lots[0]
         return res
