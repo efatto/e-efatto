@@ -20,7 +20,7 @@ class TestMrpProductionLotCustomAssign(TestProductionData):
             'name': 'MO-Test-to-update',
             'product_id': self.top_product.id,
             'product_uom_id': self.top_product.uom_id.id,
-            'product_qty': 3,
+            'product_qty': 5,
             'bom_id': self.main_bom.id,
         })
         self.assertEqual(len(man_order.move_raw_ids), 3)
@@ -42,21 +42,25 @@ class TestMrpProductionLotCustomAssign(TestProductionData):
             self.assertAlmostEqual(
                 sum(man_order.mapped('finished_move_line_ids.qty_done')), 0.0)
             move_raw = man_order.move_raw_ids[1]
-            self.assertEqual(move_raw.product_uom_qty, 24)
+            self.assertEqual(move_raw.product_uom_qty, 40)
             self.assertEqual(len(man_order.move_raw_ids), 3)
             man_order.action_assign()
             # user cannot plan mo if no final lot are set
             with self.assertRaises(UserError):
                 man_order.button_plan()
             if tracking == 'lot':
-                for finished_product in man_order.finished_move_line_ids:
-                    finished_product.lot_id = first_final_lot
+                for finished_move_line in man_order.finished_move_line_ids:
+                    finished_move_line.lot_id = first_final_lot
             elif tracking == 'serial':
                 i = 0
-                for finished_product in man_order.finished_move_line_ids:
-                    finished_product.lot_id = self.env['stock.production.lot'].\
-                        search([('name', '=', 'Final lot %s %s' % (i, tracking))
-                                ])
+                for finished_move_line in man_order.finished_move_line_ids:
+                    finished_move_line.lot_id = self.env['stock.production.lot'].\
+                        search(
+                            [('name', '=', 'Final lot %s %s' % (i, tracking))],
+                        )
+                    finished_move_line.with_context(
+                        params={'model': 'mrp.production'}
+                    ).onchange_serial_number()
                     i += 1
             man_order.button_plan()
             self.assertEqual(
@@ -76,7 +80,11 @@ class TestMrpProductionLotCustomAssign(TestProductionData):
                 self.assertIn(workorder.final_lot_id, man_order.mapped(
                     'finished_move_line_ids.lot_id'
                 ))
-                self.assertNotEqual(workorder.final_lot_id, first_final_lot)
+                for qty in range(0, int(workorder.qty_remaining)):
+                    workorder.sudo(self.mrp_user).record_production()
+                # test a serial is not used more times
+                for finished_move_line in man_order.finished_move_line_ids:
+                    self.assertEqual(finished_move_line.qty_done, 1)
 
     def test_no_tracking(self):
         self._create_production(tracking='none')
