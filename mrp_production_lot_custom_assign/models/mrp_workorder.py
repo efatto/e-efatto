@@ -31,5 +31,7 @@ class MrpWorkorder(models.Model):
                 'move_raw_ids.active_move_line_ids.lot_produced_id')
             available_lots = lots - (final_lot_id + used_lots)
             if available_lots:
-                self.final_lot_id = available_lots[0]
+                # override only if not in available lots
+                if self.final_lot_id not in available_lots:
+                    self.final_lot_id = available_lots[0]
         return res
