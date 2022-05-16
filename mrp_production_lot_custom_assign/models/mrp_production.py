@@ -32,11 +32,14 @@ class MrpProduction(models.Model):
                 ))
         res = super().button_plan()
         for order in orders_to_plan:
-            # assign first lot workorders, serial will be assigned recording production
+            # assign first lot to final workorder
+            # serial will be assigned recording production
             if order.product_id.tracking != 'none' \
                     and order.finished_move_line_ids[0].lot_id:
                 lot = order.finished_move_line_ids[0].lot_id
-                order.workorder_ids.write({
+                order.workorder_ids.filtered(
+                    lambda x: not x.next_work_order_id
+                ).write({
                     'final_lot_id': lot.id,
                 })
         return res
