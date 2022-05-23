@@ -1,0 +1,44 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* mrp_bom_sale_pricelist
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-05-23 17:01+0000\n"
+"PO-Revision-Date: 2022-05-23 17:01+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: mrp_bom_sale_pricelist
+#: model:ir.model.fields,help:mrp_bom_sale_pricelist.field_product_product__compute_pricelist_on_bom_component
+#: model:ir.model.fields,help:mrp_bom_sale_pricelist.field_product_template__compute_pricelist_on_bom_component
+msgid "Compute price on pricelist rules of component of bom, generating a total price mixing multiple rules."
+msgstr "Calcola il prezzo sulle regole di listino dei componenti della DiBa, generando un prezzo totale dalle diverse regole."
+
+#. module: mrp_bom_sale_pricelist
+#: model:ir.model.fields,field_description:mrp_bom_sale_pricelist.field_product_product__compute_pricelist_on_bom_component
+#: model:ir.model.fields,field_description:mrp_bom_sale_pricelist.field_product_template__compute_pricelist_on_bom_component
+msgid "Price from BOM"
+msgstr "Prezzo da DiBa"
+
+#. module: mrp_bom_sale_pricelist
+#: model:ir.model,name:mrp_bom_sale_pricelist.model_product_pricelist
+msgid "Pricelist"
+msgstr "Listino prezzi"
+
+#. module: mrp_bom_sale_pricelist
+#: model:ir.model,name:mrp_bom_sale_pricelist.model_product_product
+msgid "Product"
+msgstr "Prodotto"
+
+#. module: mrp_bom_sale_pricelist
+#: model:ir.model,name:mrp_bom_sale_pricelist.model_product_template
+msgid "Product Template (Multi-Company)"
+msgstr ""
+
