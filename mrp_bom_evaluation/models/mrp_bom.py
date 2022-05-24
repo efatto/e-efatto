@@ -1,6 +1,7 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, fields, models, _
+from odoo.exceptions import UserError
 
 
 class MrpBom(models.Model):
@@ -9,6 +10,7 @@ class MrpBom(models.Model):
     total_amount = fields.Float(
         compute='_compute_total_amount',
         store=True)
+    use_component_finishing = fields.Boolean()
 
     @api.multi
     @api.depends('bom_operation_ids.price_subtotal',
@@ -39,12 +41,45 @@ class MrpBom(models.Model):
         self.ensure_one()
         # get finishing products for mrp_bom product computing weight from mrp component
         # wich belongs to product category where a finishing product is set
-        finishing_product_id = self.product_tmpl_id.categ_id.finishing_product_id
-        if finishing_product_id:
-            to_finish_bom_line_ids = self.mapped('bom_line_ids').filtered(
-                lambda x: x.product_id.categ_id.finishing_product_id
-                and x.product_id.type != 'service'
-            )
+        to_finish_bom_line_ids = self.mapped('bom_line_ids').filtered(
+            lambda x: x.product_id.categ_id.finishing_product_id
+            and x.product_id.type != 'service'
+        )
+        to_delete_lines = self.bom_line_ids.filtered(
+            lambda x: x.product_id.is_finishing
+        )
+        to_delete_lines.unlink()
+        if self.use_component_finishing:
+            for finishing_product in to_finish_bom_line_ids.mapped(
+                    'product_id.categ_id.finishing_product_id'):
+                to_finish_lines = to_finish_bom_line_ids.filtered(
+                    lambda y: y.product_id.categ_id.finishing_product_id
+                    == finishing_product
+                )
+                bom_product_weight_to_finish = sum([
+                    x.product_id.weight_uom_id._compute_quantity(
+                        x.product_id.weight * x.product_qty, finishing_product.uom_id
+                    ) for x in to_finish_lines
+                ]) * (
+                    1 + finishing_product.finishing_surcharge_percent / 100.0
+                )
+                if bom_product_weight_to_finish:
+                    values = {
+                        'product_id': finishing_product.id,
+                        'product_qty': bom_product_weight_to_finish,
+                        'product_uom_id': finishing_product.uom_id.id,
+                        'price_unit': finishing_product.standard_price,
+                    }
+                    values.update({
+                        'bom_id': self.id,
+                    })
+                    self.env['mrp.bom.line'].create(values)
+        else:
+            finishing_product_id = self.product_tmpl_id.categ_id.finishing_product_id
+            if not finishing_product_id:
+                raise UserError(_('Missing finishing product for category %s') % (
+                    self.product_tmpl_id.categ_id.name
+                ))
             total_bom_product_weight_to_finish = sum(
                 x.product_id.weight_uom_id._compute_quantity(
                     x.product_id.weight * x.product_qty, finishing_product_id.uom_id
