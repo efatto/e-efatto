@@ -17,6 +17,7 @@
         "mrp_workcenter_capacity",
     ],
     "data": [
+        "data/cron.xml",
         "views/mrp_view.xml",
     ],
     "installable": True,

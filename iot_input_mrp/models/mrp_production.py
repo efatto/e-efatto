@@ -55,6 +55,25 @@ class MrpProduction(models.Model):
             mrp.bag_count = mrp.bag_count_final - mrp.bag_count_initial
 
     @api.multi
+    def button_plan(self):
+        for production in self.filtered(
+            lambda x: x.workcenter_ids
+        ):
+            if production.workcenter_ids[0].is_busy:
+                raise ValidationError(_('Production cannot be started as workcenter '
+                                        'is busy!'))
+        res = super().button_plan()
+        for production in self.filtered(
+            lambda x: x.workcenter_ids
+        ):
+            self.env.cr.execute('NOTIFY "%s:%s:%s"' % (
+                production.workcenter_ids[0].iot_device_input_id.device_id.
+                    device_identification,
+                production.name,
+                production.product_qty))
+        return res
+
+    @api.multi
     def mrp_start_produce(self, workcenter_id):
         # this function can be called many times, so we set initial fields only once
         # get info from iot.input.data for device linked to this workcenter

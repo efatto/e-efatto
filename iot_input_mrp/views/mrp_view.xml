@@ -26,6 +26,9 @@
         <field name="model">mrp.workcenter</field>
         <field name="inherit_id" ref="mrp.mrp_workcenter_view"/>
         <field name="arch" type="xml">
+            <field name="resource_calendar_id" position="after">
+                <field name="is_busy" readonly="True"/>
+            </field>
             <xpath expr="//notebook/page/group" position="inside">
                 <group name="iot_device_input">
                     <label for="iot_device_input_id"/>
@@ -43,6 +46,14 @@
                     <label for="duration_variable_name"/>
                     <div class="o_row">
                         <field name="duration_variable_name"/>
+                    </div>
+                    <label for="mo_done_variable_name"/>
+                    <div class="o_row">
+                        <field name="mo_done_variable_name"/>
+                    </div>
+                    <label for="mo_dosing_variable_name"/>
+                    <div class="o_row">
+                        <field name="mo_dosing_variable_name"/>
                     </div>
                 </group>
             </xpath>

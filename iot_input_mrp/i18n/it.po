@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-31 14:21+0000\n"
-"PO-Revision-Date: 2022-03-31 14:21+0000\n"
+"POT-Creation-Date: 2022-05-26 15:13+0000\n"
+"PO-Revision-Date: 2022-05-26 15:13+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -36,6 +36,13 @@ msgid "Bag Variable Name"
 msgstr "Nome Variabile Sacchi"
 
 #. module: iot_input_mrp
+#: model:ir.actions.server,name:iot_input_mrp.ir_cron_busy_check_ir_actions_server
+#: model:ir.cron,cron_name:iot_input_mrp.ir_cron_busy_check
+#: model:ir.cron,name:iot_input_mrp.ir_cron_busy_check
+msgid "Check busy workcenter"
+msgstr "Controlla occupazione centro di lavoro"
+
+#. module: iot_input_mrp
 #: model:ir.model.fields,field_description:iot_input_mrp.field_mrp_workcenter__duration_variable_name
 msgid "Duration Variable Name"
 msgstr "Nome Variable Durata"
@@ -46,17 +53,50 @@ msgid "Iot Device Input"
 msgstr "IOT Input"
 
 #. module: iot_input_mrp
-#: code:addons/iot_input_mrp/models/mrp_production.py:71
-#: code:addons/iot_input_mrp/models/mrp_production.py:101
-#: code:addons/iot_input_mrp/models/mrp_production.py:106
+#: model:ir.model.fields,field_description:iot_input_mrp.field_mrp_workcenter__is_busy
+msgid "Is Busy"
+msgstr "Occupato"
+
+#. module: iot_input_mrp
+#: code:addons/iot_input_mrp/models/mrp_production.py:104
+#, python-format
+msgid "Missing variable bag count in workcenter!"
+msgstr "Nome variabile mancante conteggio sacchi nel centro di lavoro!"
+
+#. module: iot_input_mrp
+#: code:addons/iot_input_mrp/models/mrp_production.py:83
+#: code:addons/iot_input_mrp/models/mrp_production.py:126
+#: code:addons/iot_input_mrp/models/mrp_production.py:130
 #, python-format
 msgid "Missing variable name in workcenter!"
 msgstr "Nome variabile mancante nel centro di lavoro!"
 
 #. module: iot_input_mrp
+#: code:addons/iot_input_mrp/models/mrp_workcenter.py:25
+#, python-format
+msgid "Missing variable name mo done in workcenter!"
+msgstr "Nome variabile mancante per MO completati nel centro di lavoro!"
+
+#. module: iot_input_mrp
+#: model:ir.model.fields,field_description:iot_input_mrp.field_mrp_workcenter__mo_done_variable_name
+msgid "Mo Done Variable Name"
+msgstr "Nome Variabile MO Completato"
+
+#. module: iot_input_mrp
+#: model:ir.model.fields,field_description:iot_input_mrp.field_mrp_workcenter__mo_dosing_variable_name
+msgid "Mo Dosing Variable Name"
+msgstr "Nome Variabile MO Dosaggio"
+
+#. module: iot_input_mrp
 #: model:ir.model,name:iot_input_mrp.model_mrp_production
 msgid "Production Order"
 msgstr "Ordine di Produzione"
+
+#. module: iot_input_mrp
+#: code:addons/iot_input_mrp/models/mrp_production.py:63
+#, python-format
+msgid "Production cannot be started as workcenter is busy!"
+msgstr "La produzione non può essere avviata in quanto il centro di lavoro è occupato!"
 
 #. module: iot_input_mrp
 #: model:ir.model.fields,field_description:iot_input_mrp.field_mrp_production__weight
