@@ -66,11 +66,12 @@ class MrpProduction(models.Model):
         for production in self.filtered(
             lambda x: x.workcenter_ids
         ):
-            self.env.cr.execute('NOTIFY "%s:%s:%s"' % (
+            self.env.cr.execute("NOTIFY \"mrp-wo\",'%s:%s:%s'" % (
                 production.workcenter_ids[0].iot_device_input_id.device_id.
-                    device_identification,
+                device_identification,
                 production.name,
-                production.product_qty))
+                production.product_qty
+            ))
         return res
 
     @api.multi
