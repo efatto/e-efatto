@@ -51,7 +51,7 @@ class TestSaleStockPartnerDeposit(SavepointCase):
     @mute_logger(
         'odoo.models', 'odoo.models.unlink', 'odoo.addons.base.ir.ir_model'
     )
-    def test_00_todo(self):
+    def test_00_deposit(self):
         generic_deposit_location = self.env['stock.location'].create([{
             'name': 'Generic deposit location',
             'usage': 'customer',
