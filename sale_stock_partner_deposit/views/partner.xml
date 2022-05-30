@@ -9,6 +9,14 @@
                 <field name="property_stock_deposit"/>
                 <separator/>
             </xpath>
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <button string="Stock Deposit"
+                        name="open_stock_deposit"
+                        class="oe_stat_button"
+                        icon="fa-building-o"
+                        type="object"
+                />
+            </xpath>
         </field>
     </record>
 </odoo>
