@@ -76,6 +76,11 @@ Facendo quindi una vendita con il percorso definito sopra verso un cliente che h
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_partner_deposit/static/description/trasferimento_vendita.png
     :alt: trasferimento vendita
 
+Dal partner è possibile aprire direttamente lo stock in deposito presso l'ubicazione con il bottone:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_partner_deposit/static/description/deposito_partner.png
+    :alt: deposito del partner
+
 Bug Tracker
 ===========
 

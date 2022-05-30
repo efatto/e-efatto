@@ -47,3 +47,8 @@ Facendo quindi una vendita con il percorso definito sopra verso un cliente che h
 
 .. image:: ../static/description/trasferimento_vendita.png
     :alt: trasferimento vendita
+
+Dal partner è possibile aprire direttamente lo stock in deposito presso l'ubicazione con il bottone:
+
+.. image:: ../static/description/deposito_partner.png
+    :alt: deposito del partner
