@@ -69,9 +69,11 @@ class MrpProduction(models.Model):
             self.env.cr.execute("NOTIFY \"mrp-wo\",'%s:%s:%s'" % (
                 production.workcenter_ids[0].iot_device_input_id.device_id.
                 device_identification,
-                production.name,
-                production.product_qty
+                production.name.encode('latin', errors='replace').decode('latin'),
+                production.product_qty,
             ))
+            # TODO after this notify, client will send something to know the communi-
+            #  cation was successfull?
         return res
 
     @api.multi
