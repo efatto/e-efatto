@@ -17,13 +17,14 @@ class MrpWorkcenter(models.Model):
 
     @api.model
     def _cron_busy_check(self):
-        workcenters = self.env['mrp.workcenter'].search([
+        new_self = self.sudo()
+        workcenters = new_self.env['mrp.workcenter'].search([
             ('iot_device_input_id', '!=', False)
         ])
         for workcenter_id in workcenters:
             if not workcenter_id.mo_done_variable_name:
                 raise ValidationError(_('Missing variable name mo done in workcenter!'))
-            mo_done = self.env['iot.input.data'].search([
+            mo_done = new_self.env['iot.input.data'].search([
                 ('iot_device_input_id', '=', workcenter_id.iot_device_input_id.id),
                 ('timestamp', '<', fields.Datetime.now()),
                 ('name', '=', workcenter_id.mo_done_variable_name),

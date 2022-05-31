@@ -94,8 +94,8 @@ class TestIotInputMrp(TestProductionData):
             'product_qty': 1,
             'bom_id': self.bom_weight.id,
         })
-        production.button_plan()
-        production.action_assign()
+        production.sudo(self.mrp_user).button_plan()
+        production.sudo(self.mrp_user).action_assign()
         self.assertTrue(production.workorder_ids)
         # production weight more than estimated: 12.787 instead of 11.345
         self.input_data(
@@ -128,8 +128,8 @@ class TestIotInputMrp(TestProductionData):
             'product_qty': 1,
             'bom_id': self.bom_weight.id,
         })
-        production.button_plan()
-        production.action_assign()
+        production.sudo(self.mrp_user).button_plan()
+        production.sudo(self.mrp_user).action_assign()
         self.assertTrue(production.workorder_ids)
         # production weight less than estimated: 10.143 instead of 11.345
         self.input_data(
@@ -162,8 +162,8 @@ class TestIotInputMrp(TestProductionData):
             'product_qty': 100,
             'bom_id': self.bom_weight.id,
         })
-        production.button_plan()
-        production.action_assign()
+        production.sudo(self.mrp_user).button_plan()
+        production.sudo(self.mrp_user).action_assign()
         self.assertTrue(production.workorder_ids)
         self.input_data(
             variable_weight=120.57,

@@ -12,10 +12,11 @@ class MrpWorkorder(models.Model):
     @api.multi
     def button_start(self):
         self.ensure_one()
+        new_self = self.sudo()
         res = super().button_start()
-        if res and self.workcenter_id.iot_device_input_id:
+        if res and new_self.workcenter_id.iot_device_input_id:
             self.production_id.mrp_start_produce(
-                self.workcenter_id
+                new_self.workcenter_id
             )
         return res
 
@@ -24,13 +25,14 @@ class MrpWorkorder(models.Model):
         if not self:
             return True
         self.ensure_one()
-        if self.workcenter_id.iot_device_input_id:
+        new_self = self.sudo()
+        if new_self.workcenter_id.iot_device_input_id:
             self.production_id.mrp_end_count(self.workcenter_id)
             self.qty_producing = self.production_id.bag_count
         res = super().record_production()
-        if res and self.workcenter_id.iot_device_input_id:
+        if res and new_self.workcenter_id.iot_device_input_id:
             duration = self.production_id.mrp_end_produce(
-                self.workcenter_id
+                new_self.workcenter_id
             )
             if duration:
                 timesheet = self.time_ids[0]
@@ -67,7 +69,7 @@ class MrpProduction(models.Model):
             lambda x: x.workcenter_ids
         ):
             self.env.cr.execute("NOTIFY \"mrp-wo\",'%s:%s:%s'" % (
-                production.workcenter_ids[0].iot_device_input_id.device_id.
+                production.sudo().workcenter_ids[0].iot_device_input_id.device_id.
                 device_identification,
                 production.name.encode('latin', errors='replace').decode('latin'),
                 production.product_qty,
@@ -84,7 +86,7 @@ class MrpProduction(models.Model):
             values = dict()
             if not workcenter_id.bag_variable_name:
                 raise ValidationError(_('Missing variable name in workcenter!'))
-            iot_input_data_ids = self.env['iot.input.data'].search([
+            iot_input_data_ids = self.sudo().env['iot.input.data'].search([
                 ('iot_device_input_id', '=', workcenter_id.iot_device_input_id.id),
                 ('timestamp', '<', fields.Datetime.now()),
                 ('name', '=', workcenter_id.bag_variable_name)
@@ -105,7 +107,7 @@ class MrpProduction(models.Model):
                 workcenter_id.bag_variable_name
             ):
                 raise ValidationError(_('Missing variable bag count in workcenter!'))
-            iot_input_data_ids = self.env['iot.input.data'].search([
+            iot_input_data_ids = self.sudo().env['iot.input.data'].search([
                 ('iot_device_input_id', '=', workcenter_id.iot_device_input_id.id),
                 ('timestamp', '<', fields.Datetime.now()),
                 ('name', '=', workcenter_id.bag_variable_name)
@@ -132,7 +134,7 @@ class MrpProduction(models.Model):
             if len(keys) != 2:
                 raise ValidationError(_('Missing variable name in workcenter!'))
             for key in keys:
-                iot_input_data_ids = self.env['iot.input.data'].search([
+                iot_input_data_ids = self.sudo().env['iot.input.data'].search([
                     ('iot_device_input_id', '=', workcenter_id.iot_device_input_id.id),
                     ('timestamp', '<', fields.Datetime.now()),
                     ('name', '=', key)
