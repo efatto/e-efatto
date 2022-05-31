@@ -29,6 +29,7 @@ class MrpWorkcenter(models.Model):
                 ('name', '=', workcenter_id.mo_done_variable_name),
             ], order='timestamp DESC', limit=1)
             if mo_done:
-                workcenter_id.is_busy = False
-            else:
-                workcenter_id.is_busy = True
+                if mo_done.value == '0':
+                    workcenter_id.is_busy = False
+                else:
+                    workcenter_id.is_busy = True
