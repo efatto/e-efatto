@@ -8,7 +8,7 @@
                    'validity.',
     'author': 'Sergio Corato',
     'website': 'https://efatto.it',
-    'license': 'LGPL-3',
+    'license': 'AGPL-3',
     'depends': [
         'account',
         'hr_timesheet',
