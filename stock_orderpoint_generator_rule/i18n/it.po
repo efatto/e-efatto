@@ -1,0 +1,204 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* stock_orderpoint_generator_rule
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-06-03 14:20+0000\n"
+"PO-Revision-Date: 2022-06-03 14:20+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_stock_warehouse_orderpoint_template__auto_max_qty_criteria
+msgid "Auto Max Qty Criteria"
+msgstr "Criterio Auto Max per quantità"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_stock_warehouse_orderpoint_template__auto_min_qty_criteria
+msgid "Auto Min Qty Criteria"
+msgstr "Criterio Auto Min per quantità"
+
+#. module: stock_orderpoint_generator_rule
+#: selection:stock.warehouse.orderpoint.template,auto_max_qty_criteria:0
+#: selection:stock.warehouse.orderpoint.template,auto_min_qty_criteria:0
+msgid "Average"
+msgstr "Medio"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_stock_warehouse_orderpoint_template__variable_period
+msgid "Compute on rules"
+msgstr "Calcola su regole"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,help:stock_orderpoint_generator_rule.field_stock_warehouse_orderpoint_template__variable_period
+msgid "Compute rules on a bunch of time, e.g. \"Last 90 days\"."
+msgstr "Calcola le regole su un arco di tempo, es. \"Ultimi 90 giorni\"."
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_orderpoint_template_rule__create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_orderpoint_template_rule__create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_orderpoint_template_rule__move_days
+msgid "Days of customer moves"
+msgstr "Giorni di movimenti clienti"
+
+#. module: stock_orderpoint_generator_rule
+#: model_terms:ir.ui.view,arch_db:stock_orderpoint_generator_rule.view_warehouse_orderpoint_template_search
+msgid "Deactivated"
+msgstr "Disattivato"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_orderpoint_template_rule__display_name
+msgid "Display Name"
+msgstr "Nome Visualizzato"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_orderpoint_template_rule__id
+msgid "ID"
+msgstr ""
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_orderpoint_template_rule____last_update
+msgid "Last Modified on"
+msgstr "Ultima modifica il"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_orderpoint_template_rule__write_uid
+msgid "Last Updated by"
+msgstr "Ultima modifica di"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_orderpoint_template_rule__write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: stock_orderpoint_generator_rule
+#: selection:stock.warehouse.orderpoint.template,auto_max_qty_criteria:0
+#: selection:stock.warehouse.orderpoint.template,auto_min_qty_criteria:0
+msgid "Maximum"
+msgstr "Massimo"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_orderpoint_template_rule__max_move_qty
+msgid "Maximum customer moved Qty"
+msgstr "Massima Q.tà mossa v/clienti"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_orderpoint_template_rule__max_orderpoint_qty
+msgid "Maximum orderpoint Qty"
+msgstr "Massima Q.tà regola riordino"
+
+#. module: stock_orderpoint_generator_rule
+#: selection:stock.warehouse.orderpoint.template,auto_max_qty_criteria:0
+#: selection:stock.warehouse.orderpoint.template,auto_min_qty_criteria:0
+msgid "Minimum"
+msgstr "Minimo"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model,name:stock_orderpoint_generator_rule.model_stock_warehouse_orderpoint
+msgid "Minimum Inventory Rule"
+msgstr "Regola di scorta minima"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_orderpoint_template_rule__min_move_qty
+msgid "Minimum customer moved Qty"
+msgstr "Minima Q.tà mossa v/clienti"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_orderpoint_template_rule__min_orderpoint_qty
+msgid "Minimum orderpoint Qty"
+msgstr "Minima Q.tà regola riordino"
+
+#. module: stock_orderpoint_generator_rule
+#: selection:stock.warehouse.orderpoint.template,auto_max_qty_criteria:0
+#: selection:stock.warehouse.orderpoint.template,auto_min_qty_criteria:0
+msgid "Most frequent"
+msgstr "Più frequente"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_orderpoint_template_rule__name
+msgid "Name"
+msgstr "Nome"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_orderpoint_template_rule__orderpoint_tmpl_id
+msgid "Ordepoint Template"
+msgstr "Modello Regola di Riordino"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model,name:stock_orderpoint_generator_rule.model_orderpoint_template_rule
+msgid "Orderpoint Template Rule"
+msgstr "Regola di Modello Riordino"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_stock_warehouse_orderpoint__orderpoint_tmpl_id
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_stock_warehouse_orderpoint_template__orderpoint_tmpl_id
+msgid "Orderpoint Tmpl"
+msgstr "Modello Regola di Riordino"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,help:stock_orderpoint_generator_rule.field_orderpoint_template_rule__move_days
+msgid "Period of time on which are computed the conditions of the rule. Priority will be given to rule with less sequence value (viewed on top by default)."
+msgstr "Periodo di tempo sul quale saranno calcolate le condizioni della regola. La priorità sarà data alle condizioni con la sequenza più basse (visualizzate in alto per default)."
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model,name:stock_orderpoint_generator_rule.model_product_product
+msgid "Product"
+msgstr "Prodotto"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_stock_warehouse_orderpoint_template__product_ctg_id
+msgid "Product Category"
+msgstr "Categoria prodotto"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model,name:stock_orderpoint_generator_rule.model_stock_warehouse_orderpoint_template
+msgid "Reordering Rule Templates"
+msgstr "Modello regole di riordino"
+
+#. module: stock_orderpoint_generator_rule
+#: selection:stock.warehouse.orderpoint.template,auto_max_qty_criteria:0
+#: selection:stock.warehouse.orderpoint.template,auto_min_qty_criteria:0
+msgid "Rule"
+msgstr "Regola"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_stock_warehouse_orderpoint_template__max_min_rule_ids
+#: model_terms:ir.ui.view,arch_db:stock_orderpoint_generator_rule.view_warehouse_orderpoint_template_form
+msgid "Rules"
+msgstr "Regole"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,help:stock_orderpoint_generator_rule.field_stock_warehouse_orderpoint_template__auto_max_qty_criteria
+msgid "Select a criteria to auto compute the maximum"
+msgstr "Seleziona un criterio per calcolare il massimo"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,help:stock_orderpoint_generator_rule.field_stock_warehouse_orderpoint_template__auto_min_qty_criteria
+msgid "Select a criteria to auto compute the minimum"
+msgstr "Selezionare  un criterio per calcolare in automatico il minimo"
+
+#. module: stock_orderpoint_generator_rule
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_orderpoint_template_rule__sequence
+msgid "Sequence"
+msgstr "Sequenza"
+
+#. module: stock_orderpoint_generator_rule
+#: constraint:stock.warehouse.orderpoint.template:0
+msgid "You have to select a product unit of measure in the same category than the default unit of measure of the product"
+msgstr "È necessario selezionare un'unità di misura prodotto nella stessa categoria di quella di default del prodotto"
+
