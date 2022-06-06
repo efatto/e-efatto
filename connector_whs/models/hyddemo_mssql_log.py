@@ -304,9 +304,9 @@ class HyddemoMssqlLog(models.Model):
                 num_lista = esito_lista[1]
                 num_riga = int(esito_lista[2])
                 if not num_riga or not num_lista:
-                    _logger.info('WHS LOG: list %s in db without NumLista or NumRiga' %
-                                 esito_lista
-                                 )
+                    _logger.debug(
+                        'WHS LOG: list %s in db without NumLista or NumRiga' %
+                        esito_lista)
                     continue
                 hyddemo_whs_lists = self.env['hyddemo.whs.liste'].search([
                     ('num_lista', '=', num_lista),
@@ -315,7 +315,7 @@ class HyddemoMssqlLog(models.Model):
                 if not hyddemo_whs_lists:
                     # ROADMAP: if the user want to create the list directly in WHS, do
                     # the reverse synchronization (not requested so far)
-                    _logger.info(
+                    _logger.debug(
                         'WHS LOG: list num_riga %s num_lista %s not found in '
                         'lists (found list %s but not row)' % (
                             num_riga,
