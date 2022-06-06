@@ -33,7 +33,7 @@ class OrderpointTemplate(models.Model):
             ('rule', 'Rule'),
         ],
     )
-    variable_period = fields.Boolean(
+    compute_on_rule = fields.Boolean(
         'Compute on rules',
         default=True,
         help='Compute rules on a bunch of time, e.g. "Last 90 days".')

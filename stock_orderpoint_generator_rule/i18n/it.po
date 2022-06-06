@@ -32,12 +32,12 @@ msgid "Average"
 msgstr "Medio"
 
 #. module: stock_orderpoint_generator_rule
-#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_stock_warehouse_orderpoint_template__variable_period
+#: model:ir.model.fields,field_description:stock_orderpoint_generator_rule.field_stock_warehouse_orderpoint_template__compute_on_rule
 msgid "Compute on rules"
 msgstr "Calcola su regole"
 
 #. module: stock_orderpoint_generator_rule
-#: model:ir.model.fields,help:stock_orderpoint_generator_rule.field_stock_warehouse_orderpoint_template__variable_period
+#: model:ir.model.fields,help:stock_orderpoint_generator_rule.field_stock_warehouse_orderpoint_template__compute_on_rule
 msgid "Compute rules on a bunch of time, e.g. \"Last 90 days\"."
 msgstr "Calcola le regole su un arco di tempo, es. \"Ultimi 90 giorni\"."
 

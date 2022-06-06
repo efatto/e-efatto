@@ -69,34 +69,34 @@
                 </div>
             </xpath>
             <xpath expr="//form/sheet//field[@name='auto_min_qty']" position="before">
-                <field name="variable_period"/>
+                <field name="compute_on_rule"/>
             </xpath>
             <field name="auto_generate" position="after">
                 <field name="product_ctg_id"/>
             </field>
             <xpath expr="//form/sheet//group[@name='auto_minimum']" position="attributes">
-                <attribute name="attrs">{'invisible': ['|', ('auto_min_qty','=', False), ('variable_period', '=', True)]}</attribute>
+                <attribute name="attrs">{'invisible': ['|', ('auto_min_qty','=', False), ('compute_on_rule', '=', True)]}</attribute>
             </xpath>
             <xpath expr="//form/sheet//group[@name='auto_minimum']/field[@name='auto_min_qty_criteria']" position="attributes">
-                <attribute name="attrs">{'required': [('auto_min_qty','!=', False), ('variable_period', '=', False)]}</attribute>
+                <attribute name="attrs">{'required': [('auto_min_qty','!=', False), ('compute_on_rule', '=', False)]}</attribute>
             </xpath>
             <xpath expr="//form/sheet//group[@name='auto_minimum']/field[@name='auto_min_date_start']" position="attributes">
-                <attribute name="attrs">{'required': [('auto_min_qty','!=', False), ('variable_period', '=', False)]}</attribute>
+                <attribute name="attrs">{'required': [('auto_min_qty','!=', False), ('compute_on_rule', '=', False)]}</attribute>
             </xpath>
             <xpath expr="//form/sheet//group[@name='auto_minimum']/field[@name='auto_min_date_end']" position="attributes">
-                <attribute name="attrs">{'required': [('auto_min_qty','!=', False), ('variable_period', '=', False)]}</attribute>
+                <attribute name="attrs">{'required': [('auto_min_qty','!=', False), ('compute_on_rule', '=', False)]}</attribute>
             </xpath>
             <xpath expr="//form/sheet//group[@name='auto_maximum']" position="attributes">
-                <attribute name="attrs">{'invisible': ['|', ('auto_max_qty','=', False), ('variable_period', '=', True)]}</attribute>
+                <attribute name="attrs">{'invisible': ['|', ('auto_max_qty','=', False), ('compute_on_rule', '=', True)]}</attribute>
             </xpath>
             <xpath expr="//form/sheet//group[@name='auto_maximum']/field[@name='auto_max_qty_criteria']" position="attributes">
-                <attribute name="attrs">{'required': [('auto_max_qty','!=', False), ('variable_period', '=', False)]}</attribute>
+                <attribute name="attrs">{'required': [('auto_max_qty','!=', False), ('compute_on_rule', '=', False)]}</attribute>
             </xpath>
             <xpath expr="//form/sheet//group[@name='auto_maximum']/field[@name='auto_max_date_start']" position="attributes">
-                <attribute name="attrs">{'required': [('auto_max_qty','!=', False), ('variable_period', '=', False)]}</attribute>
+                <attribute name="attrs">{'required': [('auto_max_qty','!=', False), ('compute_on_rule', '=', False)]}</attribute>
             </xpath>
             <xpath expr="//form/sheet//group[@name='auto_maximum']/field[@name='auto_max_date_end']" position="attributes">
-                <attribute name="attrs">{'required': [('auto_max_qty','!=', False), ('variable_period', '=', False)]}</attribute>
+                <attribute name="attrs">{'required': [('auto_max_qty','!=', False), ('compute_on_rule', '=', False)]}</attribute>
             </xpath>
             <xpath expr="//notebook/page[@name='auto_rules']" position="before">
                 <page string="Rules" name="max_min_rules">
