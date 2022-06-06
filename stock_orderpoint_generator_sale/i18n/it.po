@@ -33,8 +33,8 @@ msgstr "Medio"
 
 #. module: stock_orderpoint_generator_sale
 #: model:ir.model.fields,field_description:stock_orderpoint_generator_sale.field_stock_warehouse_orderpoint_template__variable_period
-msgid "Compute on variable time period"
-msgstr "Calcola su un periodo di tempo variabile"
+msgid "Compute on rules"
+msgstr "Calcola su regole"
 
 #. module: stock_orderpoint_generator_sale
 #: model:ir.model.fields,help:stock_orderpoint_generator_sale.field_stock_warehouse_orderpoint_template__variable_period

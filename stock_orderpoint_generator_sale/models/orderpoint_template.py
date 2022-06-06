@@ -34,7 +34,7 @@ class OrderpointTemplate(models.Model):
         ],
     )
     variable_period = fields.Boolean(
-        'Compute on variable time period',
+        'Compute on rules',
         default=True,
         help='Compute rules on a bunch of time, e.g. "Last 90 days".')
     product_ctg_id = fields.Many2one('product.category', string='Product Category')
