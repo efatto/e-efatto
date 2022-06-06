@@ -6,26 +6,9 @@
         <field name="model">stock.warehouse.orderpoint.template</field>
         <field name="inherit_id" ref="stock_orderpoint_generator.view_warehouse_orderpoint_template_tree"/>
         <field name="arch" type="xml">
-            <field name="product_min_qty" position="attributes">
-                <attribute name="attrs">{'invisible': [('auto_min_qty', '!=', False)]}</attribute>
-            </field>
-            <field name="product_max_qty" position="attributes">
-                <attribute name="attrs">{'invisible': [('auto_min_qty', '!=', False)]}</attribute>
-            </field>
             <field name="auto_generate" position="after">
-                <field name="product_ctg_id"/>
+                <field name="move_days"/>
             </field>
-        </field>
-    </record>
-
-    <record model="ir.ui.view" id="view_warehouse_orderpoint_template_search">
-        <field name="name">stock.warehouse.orderpoint.template.search</field>
-        <field name="model">stock.warehouse.orderpoint.template</field>
-        <field name="inherit_id" ref="stock_orderpoint_generator.view_warehouse_orderpoint_template_search"/>
-        <field name="arch" type="xml">
-            <xpath expr="//search" position="inside">
-                <filter name="deactivated" string="Deactivated" domain="[('active', '=', False)]"/>
-            </xpath>
         </field>
     </record>
 
@@ -40,22 +23,16 @@
         </field>
     </record>
 
-    <record model="ir.ui.view" id="view_warehouse_orderpoint_tree">
-        <field name="name">stock.warehouse.orderpoint.tree</field>
-        <field name="model">stock.warehouse.orderpoint</field>
-        <field name="inherit_id" ref="stock.view_warehouse_orderpoint_tree"/>
-        <field name="arch" type="xml">
-            <xpath expr="//tree/field[@name='name']" position="after">
-                <field name="orderpoint_tmpl_id"/>
-            </xpath>
-        </field>
-    </record>
-
     <record id="view_warehouse_orderpoint_template_form" model="ir.ui.view">
         <field name="name">stock.warehouse.orderpoint.template.form</field>
         <field name="model">stock.warehouse.orderpoint.template</field>
         <field name="inherit_id" ref="stock_orderpoint_generator.view_warehouse_orderpoint_template_form"/>
         <field name="arch" type="xml">
+            <field name="auto_generate" position="after">
+                <field name="compute_on_sale"/>
+                <field name="move_days"/>
+                <field name="variation_percent"/>
+            </field>
             <xpath expr="//form/sheet/group" position="before">
                 <div class="oe_button_box" name="button_box">
                     <button name="%(stock.action_orderpoint_form)d"
@@ -67,54 +44,6 @@
 <!--                        </div>-->
                     </button>
                 </div>
-            </xpath>
-            <xpath expr="//form/sheet//field[@name='auto_min_qty']" position="before">
-                <field name="variable_period"/>
-            </xpath>
-            <field name="auto_generate" position="after">
-                <field name="product_ctg_id"/>
-            </field>
-            <xpath expr="//form/sheet//group[@name='auto_minimum']" position="attributes">
-                <attribute name="attrs">{'invisible': ['|', ('auto_min_qty','=', False), ('variable_period', '=', True)]}</attribute>
-            </xpath>
-            <xpath expr="//form/sheet//group[@name='auto_minimum']/field[@name='auto_min_qty_criteria']" position="attributes">
-                <attribute name="attrs">{'required': [('auto_min_qty','!=', False), ('variable_period', '=', False)]}</attribute>
-            </xpath>
-            <xpath expr="//form/sheet//group[@name='auto_minimum']/field[@name='auto_min_date_start']" position="attributes">
-                <attribute name="attrs">{'required': [('auto_min_qty','!=', False), ('variable_period', '=', False)]}</attribute>
-            </xpath>
-            <xpath expr="//form/sheet//group[@name='auto_minimum']/field[@name='auto_min_date_end']" position="attributes">
-                <attribute name="attrs">{'required': [('auto_min_qty','!=', False), ('variable_period', '=', False)]}</attribute>
-            </xpath>
-            <xpath expr="//form/sheet//group[@name='auto_maximum']" position="attributes">
-                <attribute name="attrs">{'invisible': ['|', ('auto_max_qty','=', False), ('variable_period', '=', True)]}</attribute>
-            </xpath>
-            <xpath expr="//form/sheet//group[@name='auto_maximum']/field[@name='auto_max_qty_criteria']" position="attributes">
-                <attribute name="attrs">{'required': [('auto_max_qty','!=', False), ('variable_period', '=', False)]}</attribute>
-            </xpath>
-            <xpath expr="//form/sheet//group[@name='auto_maximum']/field[@name='auto_max_date_start']" position="attributes">
-                <attribute name="attrs">{'required': [('auto_max_qty','!=', False), ('variable_period', '=', False)]}</attribute>
-            </xpath>
-            <xpath expr="//form/sheet//group[@name='auto_maximum']/field[@name='auto_max_date_end']" position="attributes">
-                <attribute name="attrs">{'required': [('auto_max_qty','!=', False), ('variable_period', '=', False)]}</attribute>
-            </xpath>
-            <xpath expr="//notebook/page[@name='auto_rules']" position="before">
-                <page string="Rules" name="max_min_rules">
-                    <field name="max_min_rule_ids">
-                        <tree editable="bottom">
-                            <field name="sequence" widget="handle"/>
-                            <field name="name"/>
-                            <field name="move_days"/>
-                            <field name="min_move_qty"/>
-                            <field name="max_move_qty"/>
-                            <field name="min_orderpoint_qty"/>
-                            <field name="max_orderpoint_qty"/>
-                        </tree>
-                    </field>
-                </page>
-            </xpath>
-            <xpath expr="//notebook/page[@name='auto_rules']" position="attributes">
-                <attribute name="attrs">{'invisible': ['|', ('auto_generate', '=', False), ('product_ctg_id', '!=', False)]}</attribute>
             </xpath>
         </field>
     </record>
