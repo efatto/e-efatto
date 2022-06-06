@@ -331,7 +331,7 @@ class HyddemoMssqlLog(models.Model):
                         hyddemo_whs_lists)
                 hyddemo_whs_list = hyddemo_whs_lists[0]
                 if hyddemo_whs_list.stato == '3':
-                    _logger.info('WHS LOG: list not processable: %s-%s' % (
+                    _logger.debug('WHS LOG: list not processable: %s-%s' % (
                         hyddemo_whs_list.num_lista,
                         hyddemo_whs_list.riga,
                     ))
