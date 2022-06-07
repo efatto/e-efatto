@@ -27,6 +27,7 @@ class MrpBomLine(models.Model):
     purchase_order_line_id = fields.Many2one(
         'purchase.order.line',
         string='Linked RDP/PO line')
+    note = fields.Char()
 
     @api.depends('product_id', 'product_id.weight', 'product_qty')
     def _compute_weight_total(self):
