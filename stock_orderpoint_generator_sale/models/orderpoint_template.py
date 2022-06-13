@@ -4,6 +4,8 @@
 from datetime import datetime
 from odoo.tools.date_utils import relativedelta
 from odoo import api, fields, models
+from scipy.stats import norm
+import math
 
 
 class Orderpoint(models.Model):
@@ -19,6 +21,8 @@ class OrderpointTemplate(models.Model):
 
     compute_on_sale = fields.Boolean()
     move_days = fields.Integer()
+    service_level = fields.Float()
+    order_mngt_cost = fields.Float()
     variation_percent = fields.Float(
         help="Increment/decrement value of qty by this percent")
     auto_min_date_start = fields.Datetime(
@@ -35,6 +39,20 @@ class OrderpointTemplate(models.Model):
         help="This date is auto-computed every time this template is used.")
     auto_max_qty_criteria = fields.Selection(
         selection_add=[('sum', 'Sum')])
+
+    def _check_compute_on_sale(self):
+        for rule in self:
+            if rule.compute_on_sale:
+                if rule.auto_max_qty_criteria != 'sum':
+                    return False
+        return True
+
+    _constraints = [
+        (_check_compute_on_sale,
+         'You have to select "sum" as auto max qty criteria when "compute on sale" '
+         'is selected',
+         ['compute_on_sale', 'auto_max_qty_criteria']),
+    ]
 
     @api.multi
     def _compute_auto_date(self):
@@ -61,7 +79,7 @@ class OrderpointTemplate(models.Model):
         for removed_field in ['auto_min_date_start', 'auto_min_date_end',
                               'auto_max_date_start', 'auto_max_date_end']:
             res.remove(removed_field)
-        res.append('move_days')
+        res += ['move_days', 'service_level', 'order_mngt_cost']
         return res
 
     def _create_instances(self, product_ids):
@@ -114,23 +132,39 @@ class OrderpointTemplate(models.Model):
                 for product_id in product_ids:
                     vals = data.copy()
                     vals['product_id'] = product_id.id
+                    # function taken from calc file
+                    qty_by_day = stock_max_qty[product_id.id] / record.move_days
+                    consumed_qty_by_lead_time = (
+                            qty_by_day * (1 + record.variation_percent / 100.0)
+                        ) * product_id.purchase_delay
+                    service_factor = norm.ppf(record.service_level/100.0)
+                    lead_time_factor = product_id.purchase_delay ** (1/2)
+                    security_stock = int(math.ceil(
+                        qty_by_day *
+                        service_factor *
+                        lead_time_factor))
+                    min_qty = int(math.ceil(
+                        consumed_qty_by_lead_time + security_stock
+                    ))
+                    lot_to_reorder = int(math.ceil(
+                        (
+                            2 *
+                            record.order_mngt_cost *
+                            qty_by_day *
+                            record.move_days / (
+                                0.15 * product_id.standard_price
+                            )
+                        ) ** (1/2)
+                    ))
+                    max_qty = min_qty + lot_to_reorder
+                    # end function
                     if record.auto_min_qty:
-                        vals['product_min_qty'] = int(stock_min_qty.get(
-                            product_id.id, 0))
-                        if record.variation_percent:
-                            vals['product_min_qty'] = int(vals['product_min_qty'] * (
-                                1 + record.variation_percent / 100.0
-                            ))
+                        vals['product_min_qty'] = min_qty
                     if record.auto_max_qty:
-                        vals['product_max_qty'] = int(stock_max_qty.get(
-                            product_id.id, 0))
-                        if record.variation_percent:
-                            vals['product_max_qty'] = int(vals['product_max_qty'] * (
-                                1 + record.variation_percent / 100.0
-                            ))
-                    # MODIFIED to add current tmpl op
+                        vals['product_max_qty'] = max_qty
+                    vals['lead_days'] = product_id.purchase_delay
+                    vals['qty_multiple'] = product_id.purchase_multiple_qty
                     vals['orderpoint_tmpl_id'] = record.id
-                    # END MODIFIED
                     orderpoint_model.create(vals)
 
     @api.model

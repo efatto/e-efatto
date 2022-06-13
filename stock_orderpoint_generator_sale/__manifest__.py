@@ -10,6 +10,7 @@
     'license': 'AGPL-3',
     'website': "https://efatto.it",
     'depends': [
+        'product_sellers_info',
         'stock_orderpoint_generator',
     ],
     'data': [

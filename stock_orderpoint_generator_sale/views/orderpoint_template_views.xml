@@ -32,7 +32,27 @@
                 <field name="compute_on_sale"/>
                 <field name="move_days"/>
                 <field name="variation_percent"/>
+                <field name="service_level"/>
+                <field name="order_mngt_cost"/>
             </field>
+            <field name="auto_min_qty" position="attributes">
+                <attribute name="attrs">{'invisible': [('compute_on_sale', '=', True)]}</attribute>
+            </field>
+            <field name="product_min_qty" position="attributes">
+                <attribute name="attrs">{'required': [('auto_min_qty','=', False)], 'invisible': [('compute_on_sale', '=', True)]}</attribute>
+            </field>
+            <field name="qty_multiple" position="attributes">
+                <attribute name="attrs">{'invisible': [('compute_on_sale', '=', True)]}</attribute>
+            </field>
+            <label for="lead_days" position="attributes">
+                <attribute name="attrs">{'invisible': [('compute_on_sale', '=', True)]}</attribute>
+            </label>
+            <xpath expr="//div[hasclass('o_row')]" position="attributes">
+                <attribute name="attrs">{'invisible': [('compute_on_sale', '=', True)]}</attribute>
+            </xpath>
+            <group name="auto_minimum" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('auto_min_qty','=', False), ('compute_on_sale', '=', True)]}</attribute>
+            </group>
             <xpath expr="//form/sheet/group" position="before">
                 <div class="oe_button_box" name="button_box">
                     <button name="%(stock.action_orderpoint_form)d"
