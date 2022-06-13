@@ -1,13 +1,13 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* product_pricelist_replenishment_cost
+#	* product_pricelist_bom_cost
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-11 08:41+0000\n"
-"PO-Revision-Date: 2022-04-11 08:41+0000\n"
+"POT-Creation-Date: 2022-06-13 12:09+0000\n"
+"PO-Revision-Date: 2022-06-13 12:09+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -15,13 +15,23 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
-#. module: product_pricelist_replenishment_cost
-#: model_terms:ir.ui.view,arch_db:product_pricelist_replenishment_cost.product_pricelist_item_form_view
-msgid "<span attrs=\"{'invisible': [('base', '!=', 'managed_replenishment_cost')]}\">Managed replenishment Cost - </span>"
-msgstr "<span attrs=\"{'invisible': [('base', '!=', 'managed_replenishment_cost')]}\">Costo sostituzione gestito - </span>"
+#. module: product_pricelist_bom_cost
+#: selection:product.pricelist.item,applied_on:0
+msgid " Product Category"
+msgstr "Categoria prodotto"
 
-#. module: product_pricelist_replenishment_cost
-#: model:ir.model.fields,help:product_pricelist_replenishment_cost.field_product_pricelist_item__base
+#. module: product_pricelist_bom_cost
+#: model_terms:ir.ui.view,arch_db:product_pricelist_bom_cost.product_pricelist_item_form_view
+msgid "<span attrs=\"{'invisible': [('base', '!=', 'bom_cost')]}\">Bom Cost - </span>"
+msgstr "<span attrs=\"{'invisible': [('base', '!=', 'bom_cost')]}\">Costo DiBa - </span>"
+
+#. module: product_pricelist_bom_cost
+#: model:ir.model.fields,field_description:product_pricelist_bom_cost.field_product_pricelist_item__applied_on
+msgid "Apply On"
+msgstr "Applica a"
+
+#. module: product_pricelist_bom_cost
+#: model:ir.model.fields,help:product_pricelist_bom_cost.field_product_pricelist_item__base
 msgid "Base price for computation.\n"
 "Public Price: The base price will be the Sale/public Price.\n"
 "Cost Price : The base price will be the cost price.\n"
@@ -31,48 +41,136 @@ msgstr "Prezzo di base per il calcolo.\n"
 "Prezzo di costo : il prezzo di base sarà il prezzo di costo.\n"
 "Altro listino prezzi : calcolo del prezzo di base sulla base di un altro listino prezzi."
 
-#. module: product_pricelist_replenishment_cost
-#: model:ir.model.fields,field_description:product_pricelist_replenishment_cost.field_product_pricelist_item__base
+#. module: product_pricelist_bom_cost
+#: model:ir.model.fields,field_description:product_pricelist_bom_cost.field_product_pricelist_item__base
 msgid "Based on"
 msgstr "Basato su"
 
-#. module: product_pricelist_replenishment_cost
+#. module: product_pricelist_bom_cost
+#: selection:product.pricelist.item,base:0
+msgid "Bom Cost"
+msgstr "Costo DiBa"
+
+#. module: product_pricelist_bom_cost
 #: selection:product.pricelist.item,base:0
 msgid "Cost"
 msgstr "Costo"
 
-#. module: product_pricelist_replenishment_cost
-#: selection:product.pricelist.item,base:0
-msgid "Managed Replenishment Cost"
-msgstr "Costo Sostituzione Gestito"
+#. module: product_pricelist_bom_cost
+#: model:ir.model.fields,field_description:product_pricelist_bom_cost.field_listprice_category__create_uid
+msgid "Created by"
+msgstr "Creato da"
 
-#. module: product_pricelist_replenishment_cost
+#. module: product_pricelist_bom_cost
+#: model:ir.model.fields,field_description:product_pricelist_bom_cost.field_listprice_category__create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: product_pricelist_bom_cost
+#: model:ir.model.fields,field_description:product_pricelist_bom_cost.field_listprice_category__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
+
+#. module: product_pricelist_bom_cost
+#: selection:product.pricelist.item,applied_on:0
+msgid "Global"
+msgstr "Globale"
+
+#. module: product_pricelist_bom_cost
+#: model:ir.model.fields,field_description:product_pricelist_bom_cost.field_listprice_category__id
+msgid "ID"
+msgstr ""
+
+#. module: product_pricelist_bom_cost
+#: model:ir.model.fields,field_description:product_pricelist_bom_cost.field_listprice_category____last_update
+msgid "Last Modified on"
+msgstr "Ultima Modifica il"
+
+#. module: product_pricelist_bom_cost
+#: model:ir.model.fields,field_description:product_pricelist_bom_cost.field_listprice_category__write_uid
+msgid "Last Updated by"
+msgstr "Ultimo aggiornamento di"
+
+#. module: product_pricelist_bom_cost
+#: model:ir.model.fields,field_description:product_pricelist_bom_cost.field_listprice_category__write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: product_pricelist_bom_cost
+#: model:ir.model.fields,field_description:product_pricelist_bom_cost.field_product_category__listprice_categ_id
+msgid "Listprice Categ"
+msgstr "Categoria Listino Prezzi"
+
+#. module: product_pricelist_bom_cost
+#: model:ir.model,name:product_pricelist_bom_cost.model_listprice_category
+#: model:ir.model.fields,field_description:product_pricelist_bom_cost.field_product_pricelist_item__listprice_categ_id
+#: selection:product.pricelist.item,applied_on:0
+msgid "Listprice Category"
+msgstr "Categoria Listino Prezzi"
+
+#. module: product_pricelist_bom_cost
+#: model_terms:ir.ui.view,arch_db:product_pricelist_bom_cost.product_category_form_view
+msgid "Listprice category"
+msgstr "Categoria Listino Prezzi"
+
+#. module: product_pricelist_bom_cost
+#: model:ir.model.fields,field_description:product_pricelist_bom_cost.field_product_pricelist_item__max_value
+msgid "Max Value"
+msgstr "Valore Massimo"
+
+#. module: product_pricelist_bom_cost
+#: model:ir.model.fields,field_description:product_pricelist_bom_cost.field_product_pricelist_item__min_value
+msgid "Min Value"
+msgstr "Valore Minimo"
+
+#. module: product_pricelist_bom_cost
+#: model:ir.model.fields,field_description:product_pricelist_bom_cost.field_listprice_category__name
+msgid "Name"
+msgstr "Nome"
+
+#. module: product_pricelist_bom_cost
 #: selection:product.pricelist.item,base:0
 msgid "Other Pricelist"
 msgstr "Altro listino prezzi"
 
-#. module: product_pricelist_replenishment_cost
-#: selection:product.pricelist.item,base:0
-msgid "Partner Prices on the product form"
-msgstr "Prezzi del partner nel form prodotto"
-
-#. module: product_pricelist_replenishment_cost
-#: model:ir.model,name:product_pricelist_replenishment_cost.model_product_pricelist_item
+#. module: product_pricelist_bom_cost
+#: model:ir.model,name:product_pricelist_bom_cost.model_product_pricelist_item
 msgid "Pricelist Item"
 msgstr "Articolo listino prezzi"
 
-#. module: product_pricelist_replenishment_cost
-#: model:ir.model,name:product_pricelist_replenishment_cost.model_product_product
+#. module: product_pricelist_bom_cost
+#: model:ir.model.fields,help:product_pricelist_bom_cost.field_product_pricelist_item__applied_on
+msgid "Pricelist Item applicable on selected option"
+msgstr "Articolo del listino prezzi valido per l'opzione selezionata"
+
+#. module: product_pricelist_bom_cost
+#: model:ir.model,name:product_pricelist_bom_cost.model_product_product
+#: selection:product.pricelist.item,applied_on:0
 msgid "Product"
 msgstr "Prodotto"
 
-#. module: product_pricelist_replenishment_cost
+#. module: product_pricelist_bom_cost
+#: model:ir.model,name:product_pricelist_bom_cost.model_product_category
+msgid "Product Category"
+msgstr "Categoria prodotto"
+
+#. module: product_pricelist_bom_cost
+#: model:ir.model,name:product_pricelist_bom_cost.model_product_template
+msgid "Product Template"
+msgstr "Modello prodotto"
+
+#. module: product_pricelist_bom_cost
+#: selection:product.pricelist.item,applied_on:0
+msgid "Product Variant"
+msgstr "Variante prodotto"
+
+#. module: product_pricelist_bom_cost
 #: selection:product.pricelist.item,base:0
 msgid "Public Price"
 msgstr "Prezzo al pubblico"
 
-#. module: product_pricelist_replenishment_cost
-#: model:ir.model,name:product_pricelist_replenishment_cost.model_sale_order_line
-msgid "Sales Order Line"
-msgstr "Linea d'ordine di vendita"
+#. module: product_pricelist_bom_cost
+#: model:ir.model.fields,help:product_pricelist_bom_cost.field_product_pricelist_item__listprice_categ_id
+msgid "Specify listprice product category on which this rule is applicable"
+msgstr "Specificare la categoria di listino prezzi prodotto sul quale questa regola è applicabile"
 
