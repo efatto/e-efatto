@@ -19,7 +19,11 @@ class PricelistItem(models.Model):
         ondelete='cascade',
         help="Specify listprice product category on which this rule is applicable"
     )
-    min_value = fields.Monetary()
-    max_value = fields.Monetary()
+    min_value = fields.Monetary(
+        help="Value above or equal this one will be included in this rule."
+    )
+    max_value = fields.Monetary(
+        help="Value under this value will be included in this rule."
+    )
 
     # todo check overlapping values
