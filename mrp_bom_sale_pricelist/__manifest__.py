@@ -12,6 +12,8 @@
     'website': 'https://efatto.it',
     'depends': [
         'product_pricelist_bom_cost',
+        'mrp_bom_evaluation',
+        'mrp_bom_operation_estimate',
         'mrp_production_demo',
         'sale_stock',
     ],
