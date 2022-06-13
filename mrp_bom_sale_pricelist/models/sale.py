@@ -20,7 +20,7 @@ class SaleOrderLine(models.Model):
             product = product.with_context(
                 no_variant_attributes_price_extra=no_variant_attributes_price_extra
             )
-        if product.compute_pricelist_on_bom_component and product.bom_ids:
+        if product.compute_pricelist_on_bom_component:
             product_context = dict(self.env.context,
                                    partner_id=self.order_id.partner_id.id,
                                    date=self.order_id.date_order,
