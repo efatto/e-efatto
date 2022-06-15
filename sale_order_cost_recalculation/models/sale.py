@@ -1,6 +1,12 @@
 # Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, models
+from odoo import api, fields, models
+
+
+class SaleOrderLine(models.Model):
+    _inherit = "sale.order.line"
+
+    purchase_date = fields.Date()
 
 
 class SaleOrder(models.Model):
@@ -18,5 +24,6 @@ class SaleOrder(models.Model):
             line2.product_id_change_margin()
             line.write({
                 'purchase_price': line2.purchase_price,
+                'purchase_date': fields.Date.context_today(line),
             })
         return res
