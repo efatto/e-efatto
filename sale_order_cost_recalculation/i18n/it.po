@@ -18,7 +18,7 @@ msgstr ""
 #. module: sale_order_cost_recalculation
 #: model:ir.model.fields,field_description:sale_order_cost_recalculation.field_sale_order_line__purchase_date
 msgid "Purchase Date"
-msgstr "Data acquisto"
+msgstr "Data costo"
 
 #. module: sale_order_cost_recalculation
 #: model:ir.model,name:sale_order_cost_recalculation.model_sale_order
