@@ -11,10 +11,15 @@
         'purchase_stock',
         'sale_stock',
         'sale_order_global_stock_route',
+        'stock_move_location',
+    ],
+    'excludes': [
+        'stock_rule_partner',
     ],
     'data': [
         'views/partner.xml',
         'views/stock.xml',
+        'wizard/stock_move_location.xml',
     ],
     'installable': True,
 }

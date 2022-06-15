@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_wiz_stock_move_location_form_stock_move_location" model="ir.ui.view">
+        <field name="name">wiz.stock.move.location.form.stock_move_location</field>
+        <field name="model">wiz.stock.move.location</field>
+        <field name="inherit_id" ref="stock_move_location.view_wiz_stock_move_location_form_stock_move_location"/>
+        <field name="arch" type="xml">
+            <field name="origin_location_id" position="after">
+                <field name="partner_id" attrs="{'invisible': [('partner_id', '=', False)]}"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>
