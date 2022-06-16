@@ -9,6 +9,7 @@
     'website': 'https://efatto.it',
     'depends': [
         'purchase_stock',
+        'sale_order_lot_selection',
         'sale_stock',
         'sale_order_global_stock_route',
         'stock_move_location',

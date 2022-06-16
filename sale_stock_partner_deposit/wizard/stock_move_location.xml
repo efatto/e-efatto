@@ -8,6 +8,7 @@
         <field name="arch" type="xml">
             <field name="origin_location_id" position="after">
                 <field name="partner_id" attrs="{'invisible': [('partner_id', '=', False)]}"/>
+                <field name="create_sale_order" attrs="{'invisible': [('partner_id', '=', False)]}"/>
             </field>
         </field>
     </record>
