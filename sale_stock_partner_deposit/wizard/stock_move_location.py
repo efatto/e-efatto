@@ -10,6 +10,12 @@ class StockMoveLocationWizard(models.TransientModel):
     partner_id = fields.Many2one('res.partner')
     create_sale_order = fields.Boolean()
 
+    @api.onchange('create_sale_order')
+    def onchange_create_sale_order(self):
+        if self.create_sale_order:
+            self.destination_location_id = self.env.ref(
+                'stock.stock_location_customers')
+
     @api.onchange('origin_location_id')
     def onchange_origin_location(self):
         super().onchange_origin_location()
@@ -20,6 +26,8 @@ class StockMoveLocationWizard(models.TransientModel):
     def action_move_location(self):
         self.ensure_one()
         if not self.picking_id:
+            if not any([x.move_quantity for x in self.stock_move_location_line_ids]):
+                raise ValidationError(_('No move quantity found!'))
             picking = self._create_picking()
         else:
             picking = self.picking_id
