@@ -6,8 +6,13 @@
         <field name="model">wiz.stock.move.location</field>
         <field name="inherit_id" ref="stock_move_location.view_wiz_stock_move_location_form_stock_move_location"/>
         <field name="arch" type="xml">
+            <xpath expr="//label[@for='edit_locations']/ancestor::*[1]" position="before">
+                <div>
+                    <label for="partner_id"/>
+                    <field name="partner_id"/>
+                </div>
+            </xpath>
             <field name="origin_location_id" position="after">
-                <field name="partner_id" attrs="{'invisible': [('partner_id', '=', False)]}"/>
                 <field name="create_sale_order" attrs="{'invisible': [('partner_id', '=', False)]}"/>
             </field>
         </field>

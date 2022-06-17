@@ -52,3 +52,11 @@ Dal partner è possibile aprire direttamente lo stock in deposito presso l'ubica
 
 .. image:: ../static/description/deposito_partner.png
     :alt: deposito del partner
+
+* Funzionalità collegata con il modulo stock_move_location: *
+
+È stata aggiunta la possibilità di creare un ordine di vendita nella procedura di spostamento tra ubicazioni, che provvede in automatico a generare il trasferimento che risulta quindi collegato e fatturabile con la procedura abituale.
+Aprendo la procedura di spostamento tra ubicazioni con il bottone, se viene selezionato un'ubicazione di origine collegata ad un cliente e di tipo deposito, è possibile impostare 'Crea ordine di vendita':
+
+.. image:: ../static/description/wizard_vendita.png
+    :alt: wizard vendita

@@ -10,17 +10,17 @@ class StockMoveLocationWizard(models.TransientModel):
     partner_id = fields.Many2one('res.partner')
     create_sale_order = fields.Boolean()
 
-    @api.onchange('create_sale_order')
-    def onchange_create_sale_order(self):
-        if self.create_sale_order:
+    @api.onchange('partner_id')
+    def onchange_partner_id(self):
+        if self.partner_id and self.partner_id.property_stock_deposit:
+            self.create_sale_order = True
+            self.origin_location_id = self.partner_id.property_stock_deposit
             self.destination_location_id = self.env.ref(
                 'stock.stock_location_customers')
-
-    @api.onchange('origin_location_id')
-    def onchange_origin_location(self):
-        super().onchange_origin_location()
-        if self.origin_location_id and self.origin_location_id.deposit_location:
-            self.partner_id = self.origin_location_id.partner_id
+        else:
+            self.create_sale_order = False
+            self.origin_location_id = self.picking_type_id.default_location_src_id
+            self.destination_location_id = self.picking_type_id.default_location_dest_id
 
     @api.multi
     def action_move_location(self):
