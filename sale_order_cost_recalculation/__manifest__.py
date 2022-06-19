@@ -13,6 +13,7 @@
     ],
     'data': [
         'views/sale_margin_view.xml',
+        'views/product_template.xml',
     ],
     'installable': True,
     'auto_install': True,
