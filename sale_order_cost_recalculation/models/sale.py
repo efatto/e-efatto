@@ -24,6 +24,6 @@ class SaleOrder(models.Model):
             line2.product_id_change_margin()
             line.write({
                 'purchase_price': line2.purchase_price,
-                'purchase_date': fields.Date.context_today(line),
+                'purchase_date': line2.product_id.standard_price_write_date,
             })
         return res

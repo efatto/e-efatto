@@ -1,0 +1,48 @@
+# Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+from odoo import api, fields, models
+
+
+class ProductTemplate(models.Model):
+    _inherit = "product.template"
+
+    standard_price_write_date = fields.Datetime(
+        compute='_compute_standard_price_write_date',
+        search='_search_standard_price_write_date',
+        groups="base.group_user",
+    )
+
+    @api.depends('product_variant_ids', 'product_variant_ids.standard_price')
+    def _compute_standard_price_write_date(self):
+        price_history_obj = self.env['product.price.history']
+        unique_variants = self.filtered(
+            lambda template: len(template.product_variant_ids) == 1)
+        for template in unique_variants:
+            template.standard_price_write_date = price_history_obj.search([
+                ('product_id', '=', template.product_variant_ids[0].id),
+            ], order='datetime DESC', limit=1).write_date
+        for template in (self - unique_variants):
+            template.standard_price_write_date = False
+
+    def _search_standard_price_write_date(self, operator, value):
+        products = self.env['product.product'].search([
+            ('standard_price_write_date', operator, value)], limit=None)
+        return [('id', 'in', products.mapped('product_tmpl_id').ids)]
+
+
+class ProductProduct(models.Model):
+    _inherit = "product.product"
+
+    standard_price_write_date = fields.Datetime(
+        compute='_compute_product_standard_price_write_date',
+        store=True,
+        groups="base.group_user",
+    )
+
+    @api.depends('standard_price')
+    def _compute_product_standard_price_write_date(self):
+        price_history_obj = self.env['product.price.history']
+        for record in self:
+            record.standard_price_write_date = price_history_obj.search([
+                ('product_id', '=', record.id),
+            ], order='datetime DESC', limit=1).write_date
