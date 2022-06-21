@@ -6,7 +6,7 @@ from odoo import api, fields, models
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    purchase_date = fields.Date()
+    purchase_date = fields.Datetime()
 
 
 class SaleOrder(models.Model):
