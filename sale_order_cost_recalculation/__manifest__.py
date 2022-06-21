@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     'name': 'Sale order cost recalculation',
-    'version': '12.0.1.0.2',
+    'version': '12.0.1.0.5',
     'category': 'other',
     'author': 'Sergio Corato',
     'summary': 'Add recalculation of cost when recalculating prices on sale order.',
