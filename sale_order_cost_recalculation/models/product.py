@@ -14,13 +14,11 @@ class ProductTemplate(models.Model):
 
     @api.depends('product_variant_ids', 'product_variant_ids.standard_price')
     def _compute_standard_price_write_date(self):
-        price_history_obj = self.env['product.price.history']
         unique_variants = self.filtered(
             lambda template: len(template.product_variant_ids) == 1)
         for template in unique_variants:
-            template.standard_price_write_date = price_history_obj.search([
-                ('product_id', '=', template.product_variant_ids[0].id),
-            ], order='datetime DESC', limit=1).write_date
+            template.standard_price_write_date = template.product_variant_ids[0].\
+                standard_price_write_date
         for template in (self - unique_variants):
             template.standard_price_write_date = False
 
@@ -41,8 +39,5 @@ class ProductProduct(models.Model):
 
     @api.depends('standard_price')
     def _compute_product_standard_price_write_date(self):
-        price_history_obj = self.env['product.price.history']
         for record in self:
-            record.standard_price_write_date = price_history_obj.search([
-                ('product_id', '=', record.id),
-            ], order='datetime DESC', limit=1).write_date
+            record.standard_price_write_date = fields.Datetime.now()
