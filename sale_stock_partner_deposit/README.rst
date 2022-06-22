@@ -94,7 +94,13 @@ Configuration
     :alt: deposito del partner
 
 **2. Nel caso del trasferimento automatico, la vendita va creata automaticamente dal magazzino dalla procedura di spostamento tra ubicazioni, che provvede in automatico a generare il trasferimento che risulta quindi collegato e fatturabile con la procedura abituale.**
-**Aprendo la procedura di spostamento tra ubicazioni con il bottone, se viene selezionato un cliente con un deposito, verrà creato in automatico un ordine di vendita con lo scarico dal c/deposito:**
+
+**Aprendo la procedura di spostamento tra ubicazioni con il bottone:**
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_partner_deposit/static/description/sposta_da_ubicazione.png
+    :alt: sposta da ubicazione
+
+**se viene selezionato un cliente con un deposito, verrà creato in automatico un ordine di vendita con lo scarico dal c/deposito:**
 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/sale_stock_partner_deposit/static/description/wizard_vendita.png
     :alt: wizard vendita
