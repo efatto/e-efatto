@@ -187,8 +187,3 @@ class TestSaleStockPartnerDeposit(SavepointCase):
         ])
         self.assertEqual(quants1.product_id, self.product)
         self.assertAlmostEqual(quants1.quantity, 0.0)
-        # possibile sviluppo: creare un automatismo per generare un Ordine di vendita
-        #  dall'ubicazione del deposito)
-
-        # - a fine anno creare un'inventario specifico per l'ubicazione per avere il
-        #  dettaglio di quanto in deposito e per valorizzarlo come il resto del magazzin
