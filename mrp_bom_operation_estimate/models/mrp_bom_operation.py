@@ -4,12 +4,24 @@
 from odoo import api, fields, models
 
 
+class MrpRoutingWorkcenter(models.Model):
+    _inherit = 'mrp.workcenter'
+
+    product_id = fields.Many2one(
+        'product.product',
+        domain=[('type', '=', 'service')],
+        required=True,
+    )
+
+
 class MrpBomOperation(models.Model):
     _name = 'mrp.bom.operation'
     _description = 'Mrp Bom Estimated Operation'
 
     name = fields.Char('Description')
     time = fields.Float('Estimated Duration (in hours)')
+    product_id = fields.Many2one(
+        related='operation_id.workcenter_id.product_id')
     price_unit = fields.Float(
         related='operation_id.workcenter_id.costs_hour',
         groups='account.group_account_user')
