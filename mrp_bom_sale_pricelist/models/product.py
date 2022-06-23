@@ -25,10 +25,11 @@ class ProductProduct(models.Model):
             boms_to_recompute = []
         total = 0
         operation_total_price = 0
-        rule_obj = self.env['product.pricelist.item']
         for opt in bom.bom_operation_ids:
-            res = pricelist._compute_price_rule([(opt.product_id, opt.time, partner)])
-            rule = rule_obj.browse(res[opt.product_id.id][1])
+            rule = pricelist.item_ids.filtered(
+                lambda x: x.listprice_categ_id ==
+                opt.product_id.categ_id.listprice_categ_id
+            )
             operation_total_price += \
                 opt.time * \
                 rule._compute_price(
