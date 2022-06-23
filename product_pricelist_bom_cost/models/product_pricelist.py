@@ -35,11 +35,6 @@ class PricelistItem(models.Model):
                 raise ValidationError(
                     _('Min value must be minor and different of max value!')
                 )
-            if rec.listprice_categ_id and not rec.max_value and not rec.min_value:
-                raise ValidationError(
-                    _('Min value or max value must be present for listprice category '
-                      'rules!')
-                )
             value_domain = [
                 ('pricelist_id', '=', rec.pricelist_id.id),
                 ('listprice_categ_id', '=', rec.listprice_categ_id.id),

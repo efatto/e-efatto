@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-23 16:41+0000\n"
-"PO-Revision-Date: 2022-06-23 16:41+0000\n"
+"POT-Creation-Date: 2022-06-23 16:57+0000\n"
+"PO-Revision-Date: 2022-06-23 16:57+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -109,7 +109,7 @@ msgid "Listprice Category"
 msgstr "Categoria Listino Prezzi"
 
 #. module: product_pricelist_bom_cost
-#: code:addons/product_pricelist_bom_cost/models/product_pricelist.py:62
+#: code:addons/product_pricelist_bom_cost/models/product_pricelist.py:57
 #, python-format
 msgid "Listprice Category: %s"
 msgstr "Categoria Listino Prezzi: %s"
@@ -141,12 +141,6 @@ msgid "Min value must be minor and different of max value!"
 msgstr "Il valore minimo deve essere minore e differente dal valore massimo!"
 
 #. module: product_pricelist_bom_cost
-#: code:addons/product_pricelist_bom_cost/models/product_pricelist.py:40
-#, python-format
-msgid "Min value or max value must be present for listprice category rules!"
-msgstr "Il valore minimo o il valore massimo devono essere presenti per le regole di listino con categoria di listino prezzi!"
-
-#. module: product_pricelist_bom_cost
 #: model:ir.model.fields,field_description:product_pricelist_bom_cost.field_listprice_category__name
 msgid "Name"
 msgstr "Nome"
@@ -157,10 +151,10 @@ msgid "Other Pricelist"
 msgstr "Altro listino prezzi"
 
 #. module: product_pricelist_bom_cost
-#: code:addons/product_pricelist_bom_cost/models/product_pricelist.py:52
+#: code:addons/product_pricelist_bom_cost/models/product_pricelist.py:47
 #, python-format
 msgid "Overlapping value in pricelist: %s-%s overlaps with %s-%s"
-msgstr "Valore sovrapposto nel listino prezzi: %s-%s si sovrappone a %s-%s"
+msgstr "Valori sovrapposti nel listino prezzi: %s-%s si sovrappone a %s-%s"
 
 #. module: product_pricelist_bom_cost
 #: model:ir.model,name:product_pricelist_bom_cost.model_product_pricelist_item
