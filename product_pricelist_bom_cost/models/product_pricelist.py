@@ -1,6 +1,6 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import fields, models
+from odoo import _, api, fields, models
 
 
 class PricelistItem(models.Model):
@@ -27,3 +27,12 @@ class PricelistItem(models.Model):
     )
 
     # todo check overlapping values
+
+    @api.one
+    @api.depends('categ_id', 'product_tmpl_id', 'product_id', 'compute_price',
+                 'fixed_price', 'pricelist_id', 'percent_price', 'price_discount',
+                 'price_surcharge')
+    def _get_pricelist_item_name_price(self):
+        super()._get_pricelist_item_name_price()
+        if self.listprice_categ_id:
+            self.name = _("Listprice Category: %s") % self.listprice_categ_id.name
