@@ -19,7 +19,7 @@ msgstr ""
 #: model:ir.model.fields,help:mrp_bom_sale_pricelist.field_product_product__compute_pricelist_on_bom_component
 #: model:ir.model.fields,help:mrp_bom_sale_pricelist.field_product_template__compute_pricelist_on_bom_component
 msgid "Compute price on pricelist rules of component of bom, generating a total price mixing multiple rules."
-msgstr "Calcola il prezzo sulle regole di listino dei componenti della DiBa, generando un prezzo totale dalle diverse regole."
+msgstr "Calcola il prezzo di vendita sulle regole di listino dei componenti della DiBa, generando un prezzo totale dalle diverse regole."
 
 #. module: mrp_bom_sale_pricelist
 #: code:addons/mrp_bom_sale_pricelist/models/product.py:44
@@ -31,7 +31,7 @@ msgstr "Costo mancante nella riga DiBa per il prodotto %s!"
 #: model:ir.model.fields,field_description:mrp_bom_sale_pricelist.field_product_product__compute_pricelist_on_bom_component
 #: model:ir.model.fields,field_description:mrp_bom_sale_pricelist.field_product_template__compute_pricelist_on_bom_component
 msgid "Price from BOM"
-msgstr "Prezzo da DiBa"
+msgstr "Prezzo di vendita da DiBa"
 
 #. module: mrp_bom_sale_pricelist
 #: model:ir.model,name:mrp_bom_sale_pricelist.model_product_pricelist

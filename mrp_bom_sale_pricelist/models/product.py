@@ -24,9 +24,15 @@ class ProductProduct(models.Model):
         if not boms_to_recompute:
             boms_to_recompute = []
         total = 0
-        operation_total_price = sum([
-            opt.time * opt.price_unit for opt in bom.bom_operation_ids])
-        # FIXME what pricelist item use to compute working time price?
+        operation_total_price = 0
+        rule_obj = self.env['product.pricelist.item']
+        for opt in bom.bom_operation_ids:
+            res = pricelist._compute_price_rule([(opt.product_id, opt.time, partner)])
+            rule = rule_obj.browse(res[opt.product_id.id][1])
+            operation_total_price += \
+                opt.time * \
+                rule._compute_price(
+                    opt.price_unit, opt.product_id.uom_id, opt.product_id)
         total += operation_total_price
         # group cost of components by listprice categories defined in pricelist
         # to compute prices on brackets
@@ -54,7 +60,8 @@ class ProductProduct(models.Model):
                             'Some product of child bom for product %s have a different '
                             'listiprice category!') % line.product_id.name)
                     child_total = line.product_id.get_bom_price(
-                        line.child_bom_id, boms_to_recompute=boms_to_recompute)
+                        pricelist, line.child_bom_id, line.product_qty,
+                        partner, boms_to_recompute=boms_to_recompute)
                     bom_lines_cost += child_total * line.product_qty
                 else:
                     bom_lines_cost += line.price_unit * line.product_qty
