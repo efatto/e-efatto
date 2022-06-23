@@ -1,6 +1,7 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class PricelistItem(models.Model):
@@ -26,7 +27,25 @@ class PricelistItem(models.Model):
         help="Value under this value will be included in this rule."
     )
 
-    # todo check overlapping values
+    @api.multi
+    @api.constrains('min_value', 'max_value')
+    def check_overlap(self):
+        for rec in self:
+            if rec.min_value >= rec.max_value:
+                raise ValidationError(
+                    _('Min value must be minor and different of max value!')
+                )
+            value_domain = [
+                ('pricelist_id', '=', rec.pricelist_id.id),
+                ('listprice_categ_id', '=', rec.listprice_categ_id.id),
+                ('id', '!=', rec.id),
+                ('min_value', '<', rec.max_value),
+                ('max_value', '>', rec.min_value)]
+            overlap = self.search(value_domain)
+            if overlap:
+                raise ValidationError(
+                    _('Overlapping value in pricelist: %s-%s overlaps with %s-%s') %
+                    (rec.name, rec.price, overlap[0].name, overlap[0].price))
 
     @api.one
     @api.depends('categ_id', 'product_tmpl_id', 'product_id', 'compute_price',
