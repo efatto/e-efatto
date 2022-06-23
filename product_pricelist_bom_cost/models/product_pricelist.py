@@ -31,9 +31,14 @@ class PricelistItem(models.Model):
     @api.constrains('min_value', 'max_value')
     def check_overlap(self):
         for rec in self:
-            if rec.min_value >= rec.max_value:
+            if rec.max_value and rec.min_value >= rec.max_value:
                 raise ValidationError(
                     _('Min value must be minor and different of max value!')
+                )
+            if rec.listprice_categ_id and not rec.max_value and not rec.min_value:
+                raise ValidationError(
+                    _('Min value or max value must be present for listprice category '
+                      'rules!')
                 )
             value_domain = [
                 ('pricelist_id', '=', rec.pricelist_id.id),

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-13 12:09+0000\n"
-"PO-Revision-Date: 2022-06-13 12:09+0000\n"
+"POT-Creation-Date: 2022-06-23 16:41+0000\n"
+"PO-Revision-Date: 2022-06-23 16:41+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -109,9 +109,20 @@ msgid "Listprice Category"
 msgstr "Categoria Listino Prezzi"
 
 #. module: product_pricelist_bom_cost
+#: code:addons/product_pricelist_bom_cost/models/product_pricelist.py:62
+#, python-format
+msgid "Listprice Category: %s"
+msgstr "Categoria Listino Prezzi: %s"
+
+#. module: product_pricelist_bom_cost
 #: model_terms:ir.ui.view,arch_db:product_pricelist_bom_cost.product_category_form_view
 msgid "Listprice category"
 msgstr "Categoria Listino Prezzi"
+
+#. module: product_pricelist_bom_cost
+#: selection:product.pricelist.item,base:0
+msgid "Managed Replenishment Cost"
+msgstr "Costo Sostituzione Gestito"
 
 #. module: product_pricelist_bom_cost
 #: model:ir.model.fields,field_description:product_pricelist_bom_cost.field_product_pricelist_item__max_value
@@ -124,6 +135,18 @@ msgid "Min Value"
 msgstr "Valore Minimo"
 
 #. module: product_pricelist_bom_cost
+#: code:addons/product_pricelist_bom_cost/models/product_pricelist.py:36
+#, python-format
+msgid "Min value must be minor and different of max value!"
+msgstr "Il valore minimo deve essere minore e differente dal valore massimo!"
+
+#. module: product_pricelist_bom_cost
+#: code:addons/product_pricelist_bom_cost/models/product_pricelist.py:40
+#, python-format
+msgid "Min value or max value must be present for listprice category rules!"
+msgstr "Il valore minimo o il valore massimo devono essere presenti per le regole di listino con categoria di listino prezzi!"
+
+#. module: product_pricelist_bom_cost
 #: model:ir.model.fields,field_description:product_pricelist_bom_cost.field_listprice_category__name
 msgid "Name"
 msgstr "Nome"
@@ -132,6 +155,12 @@ msgstr "Nome"
 #: selection:product.pricelist.item,base:0
 msgid "Other Pricelist"
 msgstr "Altro listino prezzi"
+
+#. module: product_pricelist_bom_cost
+#: code:addons/product_pricelist_bom_cost/models/product_pricelist.py:52
+#, python-format
+msgid "Overlapping value in pricelist: %s-%s overlaps with %s-%s"
+msgstr "Valore sovrapposto nel listino prezzi: %s-%s si sovrappone a %s-%s"
 
 #. module: product_pricelist_bom_cost
 #: model:ir.model,name:product_pricelist_bom_cost.model_product_pricelist_item
@@ -173,4 +202,14 @@ msgstr "Prezzo al pubblico"
 #: model:ir.model.fields,help:product_pricelist_bom_cost.field_product_pricelist_item__listprice_categ_id
 msgid "Specify listprice product category on which this rule is applicable"
 msgstr "Specificare la categoria di listino prezzi prodotto sul quale questa regola è applicabile"
+
+#. module: product_pricelist_bom_cost
+#: model:ir.model.fields,help:product_pricelist_bom_cost.field_product_pricelist_item__min_value
+msgid "Value above or equal this one will be included in this rule."
+msgstr "Un valore superiore o uguale a questo sarà incluso in questa regola."
+
+#. module: product_pricelist_bom_cost
+#: model:ir.model.fields,help:product_pricelist_bom_cost.field_product_pricelist_item__max_value
+msgid "Value under this value will be included in this rule."
+msgstr "Un valore inferiore a questo valore sarà incluso in questa regola."
 

@@ -46,6 +46,8 @@ Che se selezionato comporta che il prezzo di vendita viene valorizzato in base a
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_pricelist_bom_cost/static/description/vendita.png
     :alt: Vendita
 
+N.B. I valori sono valutati sulla base del prezzo della singola distinta base, per cui gli scaglioni vengono raggiunti se i componenti della distinta base raggiungono lo scaglione. L'impostazione di una quantità superiore ad 1 nella riga dell'ordine di vendita non ha effetti sul prezzo unitario.
+
 Bug Tracker
 ===========
 
