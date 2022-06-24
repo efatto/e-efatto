@@ -1,16 +1,20 @@
 # Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
-from odoo import fields
 
 
 class TestMrpBomSalePricelist(TestProductionData):
+
+    def _create_pricelist_item(self, vals):
+        item = self.create(vals)
+        item.onchange_listprice_categ_id()
+        item._convert_to_write(item._cache)
+        return item
 
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
         cls.partner = cls.env.ref('base.res_partner_2')
-        # todo set ctg and pricelist rules to test
         cls.material_listprice_ctg = cls.env['listprice.category'].create([{
             'name': 'Listprice category material',
         }])
@@ -51,81 +55,84 @@ class TestMrpBomSalePricelist(TestProductionData):
             'categ_id': cls.service_ctg.id,
             'list_price': 50,
         }])
+        cls.workcenter1.product_id = cls.service_product
 
         cls.pricelist = cls.env['product.pricelist'].create([{
             'name': 'Test pricelist',
             'discount_policy': 'without_discount',
-            'item_ids': [
-                (0, 0, {
-                    'name': 'Rule subproduct1',
-                    'applied_on': '1_product',
-                    'product_tmpl_id': cls.subproduct1.product_tmpl_id.id,
-                    'compute_price': 'fixed',
-                    'fixed_price': 150,
-                    'min_quantity': 1,
-                }),
-                (0, 0, {
-                    'name': 'Rule material ctg to 10000',
-                    'applied_on': '21_listprice_category',
-                    'listprice_categ_id': cls.material_listprice_ctg.id,
-                    'compute_price': 'formula',
-                    'min_value': 0,
-                    'max_value': 10000,
-                    'base': 'bom_cost',
-                    'price_discount': -40.0,
-                }),
-                (0, 0, {
-                    'name': 'Rule material ctg from 10000 to 30000',
-                    'applied_on': '21_listprice_category',
-                    'listprice_categ_id': cls.material_listprice_ctg.id,
-                    'compute_price': 'formula',
-                    'min_value': 10000,
-                    'max_value': 30000,
-                    'base': 'bom_cost',
-                    'price_discount': -30.0,
-                }),
-                (0, 0, {
-                    'name': 'Rule material ctg from 30000 to 50000',
-                    'applied_on': '21_listprice_category',
-                    'listprice_categ_id': cls.material_listprice_ctg.id,
-                    'compute_price': 'formula',
-                    'min_value': 30000,
-                    'max_value': 50000,
-                    'base': 'bom_cost',
-                    'price_discount': -20.0,
-                }),
-                (0, 0, {
-                    'name': 'Rule material ctg from 50000 to 100000',
-                    'applied_on': '21_listprice_category',
-                    'listprice_categ_id': cls.material_listprice_ctg.id,
-                    'compute_price': 'formula',
-                    'min_value': 50000,
-                    'max_value': 100000,
-                    'base': 'bom_cost',
-                    'price_discount': -15.0,
-                }),
-                (0, 0, {
-                    'name': 'Rule material ctg over 100000',
-                    'applied_on': '21_listprice_category',
-                    'listprice_categ_id': cls.material_listprice_ctg.id,
-                    'compute_price': 'formula',
-                    'min_value': 100000,
-                    'max_value': 0,
-                    'base': 'bom_cost',
-                    'price_discount': -10.0,
-                }),
-                (0, 0, {
-                    'name': 'Rule service ctg',
-                    'applied_on': '21_listprice_category',
-                    'listprice_categ_id': cls.service_listprice_ctg.id,
-                    'compute_price': 'formula',
-                    'min_value': 0,
-                    'max_value': 0,
-                    'base': 'bom_cost',
-                    'price_discount': -15.0,
-                }),
-            ]
         }])
+        cls.pricelist_item = cls.env['product.pricelist.item']
+        for vals in [
+            {
+                'pricelist_id': cls.pricelist.id,
+                'applied_on': '1_product',
+                'product_tmpl_id': cls.subproduct1.product_tmpl_id.id,
+                'compute_price': 'fixed',
+                'fixed_price': 150,
+                'min_quantity': 1,
+            },
+            {
+                'pricelist_id': cls.pricelist.id,
+                'applied_on': '21_listprice_category',
+                'listprice_categ_id': cls.material_listprice_ctg.id,
+                'compute_price': 'formula',
+                'min_value': 0,
+                'max_value': 10000,
+                'base': 'bom_cost',
+                'price_discount': -40.0,
+            },
+            {
+                'pricelist_id': cls.pricelist.id,
+                'applied_on': '21_listprice_category',
+                'listprice_categ_id': cls.material_listprice_ctg.id,
+                'compute_price': 'formula',
+                'min_value': 10000,
+                'max_value': 30000,
+                'base': 'bom_cost',
+                'price_discount': -30.0,
+            },
+            {
+                'pricelist_id': cls.pricelist.id,
+                'applied_on': '21_listprice_category',
+                'listprice_categ_id': cls.material_listprice_ctg.id,
+                'compute_price': 'formula',
+                'min_value': 30000,
+                'max_value': 50000,
+                'base': 'bom_cost',
+                'price_discount': -20.0,
+            },
+            {
+                'pricelist_id': cls.pricelist.id,
+                'applied_on': '21_listprice_category',
+                'listprice_categ_id': cls.material_listprice_ctg.id,
+                'compute_price': 'formula',
+                'min_value': 50000,
+                'max_value': 100000,
+                'base': 'bom_cost',
+                'price_discount': -15.0,
+            },
+            {
+                'pricelist_id': cls.pricelist.id,
+                'applied_on': '21_listprice_category',
+                'listprice_categ_id': cls.material_listprice_ctg.id,
+                'compute_price': 'formula',
+                'min_value': 100000,
+                'max_value': 0,
+                'base': 'bom_cost',
+                'price_discount': -10.0,
+            },
+            {
+                'pricelist_id': cls.pricelist.id,
+                'applied_on': '21_listprice_category',
+                'listprice_categ_id': cls.service_listprice_ctg.id,
+                'compute_price': 'formula',
+                'min_value': 0,
+                'max_value': 0,
+                'base': 'bom_cost',
+                'price_discount': -15.0,
+            }
+        ]:
+            cls._create_pricelist_item(cls.pricelist_item, vals=vals)
 
     def _create_sale_order_line(self, order, product, qty):
         vals = {
@@ -149,7 +156,7 @@ class TestMrpBomSalePricelist(TestProductionData):
         self.execute_test()
 
     def execute_test(self):
-        self.assertEqual(len(self.pricelist.item_ids), 7)
+        self.assertEqual(len(self.pricelist.item_ids), 8)
         self.assertEqual(len(self.main_bom.bom_line_ids), 2)
         order1 = self.env['sale.order'].create({
             'partner_id': self.partner.id,
@@ -167,14 +174,15 @@ class TestMrpBomSalePricelist(TestProductionData):
         line2 = self._create_sale_order_line(order2, self.subproduct1, 3)
         self.assertEqual(line2.price_subtotal, 150 * 3)
 
-        # test price without bom computation FIXME non va, non viene passato il context ma fa un calcolo lo stesso
-        # order3 = self.env['sale.order'].create({
-        #     'partner_id': self.partner.id,
-        # })
-        # order3.pricelist_id = self.pricelist
-        # self.assertEqual(order3.pricelist_id, self.pricelist)
-        # line3 = self._create_sale_order_line(order3, self.top_product, 3)
-        # self.assertEqual(line3.price_subtotal, 200 * 3)
+        # test price without bom computation
+        # added exclusion with date_end
+        order3 = self.env['sale.order'].create({
+            'partner_id': self.partner.id,
+        })
+        order3.pricelist_id = self.pricelist
+        self.assertEqual(order3.pricelist_id, self.pricelist)
+        line3 = self._create_sale_order_line(order3, self.top_product, 3)
+        self.assertEqual(line3.price_unit, 400)
 
         # test price with bom computation
         # main_bom contains 5 subproduct1 and 2 subproduct2
