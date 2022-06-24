@@ -187,6 +187,17 @@ class TestMrpBomSalePricelist(TestProductionData):
         # test price with bom computation
         # main_bom contains 5 subproduct1 and 2 subproduct2
         self.top_product.compute_pricelist_on_bom_component = True
+        self.top_product_bom = self.top_product.bom_ids[0]
+        self.workcenter1.costs_hour = 50.0
+        self.top_product_bom.write({
+            'bom_operation_ids': [
+                (0, 0, {
+                    'name': 'Operation',
+                    'time': 5.0,
+                    'operation_id': self.operation1.id,
+                })
+            ]
+        })
         order4 = self.env['sale.order'].create({
             'partner_id': self.partner.id,
         })
@@ -196,8 +207,8 @@ class TestMrpBomSalePricelist(TestProductionData):
         costs_hour_total = sum([
             opt.time * opt.price_unit for opt in
             self.top_product.bom_ids.bom_operation_ids])
-        self.assertEqual(line4.price_subtotal, ((5 * 350 + 2 * 105) * (1 + 0.4) +
-                                                costs_hour_total) * 10)
+        self.assertEqual(line4.price_subtotal, ((5 * 350 + 2 * 105) * 1.4 +
+                                                costs_hour_total * 1.15) * 10)
 
         # test price with bom computation on all boms and sub-boms
         # main_bom contains 5 subproduct1 and 2 subproduct2
@@ -212,12 +223,8 @@ class TestMrpBomSalePricelist(TestProductionData):
         order5.pricelist_id = self.pricelist
         self.assertEqual(order5.pricelist_id, self.pricelist)
         line5 = self._create_sale_order_line(order5, self.top_product, 10)
-        costs_hour_total = 0
-        for opt in self.top_product.bom_ids.routing_id.operation_ids:
-            duration_expected = (
-                opt.workcenter_id.time_start +
-                opt.workcenter_id.time_stop +
-                opt.time_cycle)
-            costs_hour_total += (duration_expected / 60) * opt.workcenter_id.costs_hour
+        costs_hour_total = sum([
+            opt.time * opt.price_unit for opt in
+            self.top_product.bom_ids.bom_operation_ids])
         self.assertEqual(line5.price_subtotal, (
-            (5 * 350 + 2 * 105) * (1 + 0.4) + costs_hour_total) * 10)
+            (5 * 350 + 2 * 105) * 1.4 + costs_hour_total * 1.15) * 10)
