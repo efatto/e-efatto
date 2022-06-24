@@ -38,22 +38,19 @@ class TestMrpBomSalePricelist(TestProductionData):
         cls.subproduct2.categ_id = cls.material1_ctg
         cls.subproduct_1_1.categ_id = cls.material_ctg
         cls.subproduct_2_1.categ_id = cls.material1_ctg
-        cls.subproduct1.list_price = 100
-        cls.subproduct2.list_price = 150
-        cls.subproduct_2_1.list_price = 65
-
-        cls.main_bom.bom_line_ids.filtered(
-            lambda x: x.product_id == cls.subproduct1
-        ).price_unit = 350.0
-        cls.main_bom.bom_line_ids.filtered(
-            lambda x: x.product_id == cls.subproduct2
-        ).price_unit = 105.0
+        cls.subproduct1.standard_price = 100
+        cls.subproduct2.standard_price = 150
+        cls.subproduct_2_1.standard_price = 65
+        for line in cls.main_bom.bom_line_ids | cls.sub_bom1.bom_line_ids \
+                | cls.sub_bom2.bom_line_ids:
+            line.onchange_product_id()
+            line._convert_to_write(line._cache)
 
         cls.service_product = cls.env['product.product'].create([{
             'name': 'Service',
             'type': 'service',
             'categ_id': cls.service_ctg.id,
-            'list_price': 50,
+            'standard_price': 50,
         }])
         cls.workcenter1.product_id = cls.service_product
 
@@ -151,11 +148,51 @@ class TestMrpBomSalePricelist(TestProductionData):
     def test_01_sale_order_bom(self):
         self.execute_test()
 
-    def test_02_sale_order_bom(self):
+    def test_02_sale_order_bom_change_price(self):
+        self.execute_test(350, 105)
+
+    def test_03_sale_order_bom_change_price(self):
+        self.execute_test(3500, 1050)
+
+    def test_04_sale_order_bom_discount(self):
         self.pricelist.discount_policy = 'with_discount'
         self.execute_test()
 
-    def execute_test(self):
+    def test_05_sale_order_bom_discount_change_price(self):
+        self.pricelist.discount_policy = 'with_discount'
+        self.execute_test(350, 105)
+
+    def test_06_sale_order_bom_discount_change_price(self):
+        self.pricelist.discount_policy = 'with_discount'
+        self.execute_test(3500, 1050)
+
+    @staticmethod
+    def compute_price(price):
+        list_price = 0
+        if price > 100000:
+            list_price += (price - 100000) * 1.1
+        if price > 50000:
+            list_price += min([price - 50000, 50000]) * 1.15
+        if price > 30000:
+            list_price += min([price - 30000, 20000]) * 1.2
+        if price > 10000:
+            list_price += min([price - 10000, 20000]) * 1.3
+        list_price += min([price, 10000]) * 1.4
+        return list_price
+
+    def execute_test(self, price_subproduct1=False, price_subproduct2=False):
+        if price_subproduct1:
+            self.main_bom.bom_line_ids.filtered(
+                lambda x: x.product_id == self.subproduct1
+            ).price_unit = price_subproduct1
+        else:
+            price_subproduct1 = self.subproduct1.standard_price
+        if price_subproduct2:
+            self.main_bom.bom_line_ids.filtered(
+                lambda x: x.product_id == self.subproduct2
+            ).price_unit = price_subproduct2
+        else:
+            price_subproduct2 = self.subproduct2.standard_price
         self.assertEqual(len(self.pricelist.item_ids), 8)
         self.assertEqual(len(self.main_bom.bom_line_ids), 2)
         order1 = self.env['sale.order'].create({
@@ -187,9 +224,8 @@ class TestMrpBomSalePricelist(TestProductionData):
         # test price with bom computation
         # main_bom contains 5 subproduct1 and 2 subproduct2
         self.top_product.compute_pricelist_on_bom_component = True
-        self.top_product_bom = self.top_product.bom_ids[0]
         self.workcenter1.costs_hour = 50.0
-        self.top_product_bom.write({
+        self.main_bom.write({
             'bom_operation_ids': [
                 (0, 0, {
                     'name': 'Operation',
@@ -207,8 +243,9 @@ class TestMrpBomSalePricelist(TestProductionData):
         costs_hour_total = sum([
             opt.time * opt.price_unit for opt in
             self.top_product.bom_ids.bom_operation_ids])
-        self.assertEqual(line4.price_subtotal, ((5 * 350 + 2 * 105) * 1.4 +
-                                                costs_hour_total * 1.15) * 10)
+        self.assertEqual(line4.price_subtotal, (
+            self.compute_price(5 * price_subproduct1 + 2 * price_subproduct2)
+            + costs_hour_total * 1.15) * 10)
 
         # test price with bom computation on all boms and sub-boms
         # main_bom contains 5 subproduct1 and 2 subproduct2
@@ -227,4 +264,26 @@ class TestMrpBomSalePricelist(TestProductionData):
             opt.time * opt.price_unit for opt in
             self.top_product.bom_ids.bom_operation_ids])
         self.assertEqual(line5.price_subtotal, (
-            (5 * 350 + 2 * 105) * 1.4 + costs_hour_total * 1.15) * 10)
+            self.compute_price(5 * price_subproduct1 + 2 * price_subproduct2)
+            + costs_hour_total * 1.15) * 10)
+
+        # test price with bom computation on all boms and sub-boms with value on
+        # many items (bracket computation)
+        # main_bom contains 5 subproduct1 and 2 subproduct2
+        self.subproduct2.compute_pricelist_on_bom_component = True
+        # 2*4 subproduct_2_1 = 8 > tot 8 * 10 = 80
+        # 2*3 subproduct_1_1 = 6 > see under
+        self.subproduct1.compute_pricelist_on_bom_component = True
+        # 5*2 subproduct_1_1 = 10 > tot 16 * 10 = 160
+        order5 = self.env['sale.order'].create({
+            'partner_id': self.partner.id,
+        })
+        order5.pricelist_id = self.pricelist
+        self.assertEqual(order5.pricelist_id, self.pricelist)
+        line5 = self._create_sale_order_line(order5, self.top_product, 10)
+        costs_hour_total = sum([
+            opt.time * opt.price_unit for opt in
+            self.top_product.bom_ids.bom_operation_ids])
+        self.assertEqual(line5.price_subtotal, (
+            self.compute_price(5 * price_subproduct1 + 2 * price_subproduct2)
+            + costs_hour_total * 1.15) * 10)
