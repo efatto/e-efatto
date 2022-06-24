@@ -6,8 +6,7 @@
         <field name="model">product.category</field>
         <field name="inherit_id" ref="product.product_category_form_view"/>
         <field name="arch" type="xml">
-            <xpath expr="//div[hasclass('oe_title')]" position="inside">
-                <label for="listprice_categ_id" string="Listprice category" class="oe_edit_only"/>
+            <xpath expr="//field[@name='parent_id']" position="after">
                 <field name="listprice_categ_id"/>
             </xpath>
         </field>

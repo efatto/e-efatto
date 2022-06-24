@@ -16,6 +16,12 @@
                 <field name="min_value"/>
                 <field name="max_value"/>
             </xpath>
+            <xpath expr="//field[@name='date_end']" position="attributes">
+                <attribute name="attrs">{'invisible': [('listprice_categ_id', '!=', False)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='date_start']" position="attributes">
+                <attribute name="attrs">{'invisible': [('listprice_categ_id', '!=', False)]}</attribute>
+            </xpath>
         </field>
     </record>
 

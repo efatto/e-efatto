@@ -27,6 +27,19 @@ class PricelistItem(models.Model):
         help="Value under this value will be included in this rule."
     )
 
+    @api.onchange('applied_on')
+    def _onchange_applied_on(self):
+        if self.applied_on != '21_listprice_category':
+            self.listprice_categ_id = False
+
+    @api.onchange('listprice_categ_id')
+    def onchange_listprice_categ_id(self):
+        if self.listprice_categ_id:
+            self.date_end = self.date_start = \
+                fields.Date.today().replace(year=1970, month=1, day=1)
+        else:
+            self.date_end = self.date_start = False
+
     @api.multi
     @api.constrains('min_value', 'max_value')
     def check_overlap(self):
