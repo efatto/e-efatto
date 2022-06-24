@@ -10,7 +10,6 @@ class MrpRoutingWorkcenter(models.Model):
     product_id = fields.Many2one(
         'product.product',
         domain=[('type', '=', 'service')],
-        required=True,
     )
 
 
