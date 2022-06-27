@@ -53,3 +53,13 @@ class TestProductionData(SavepointCase):
         cls.mrp_user.write({
             'groups_id': [(4, cls.env.ref('mrp.group_mrp_user').id)],
         })
+
+    def _update_product_qty(self, product, location, quantity):
+        """Update Product quantity."""
+        product_qty = self.env['stock.change.product.qty'].create({
+            'location_id': location.id,
+            'product_id': product.id,
+            'new_quantity': quantity,
+        })
+        product_qty.change_product_qty()
+        return product_qty
