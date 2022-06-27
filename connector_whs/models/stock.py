@@ -246,10 +246,9 @@ class StockMove(models.Model):
                     if pick.origin:
                         whsliste_data['riferimento'] = pick.origin[:50]
 
-                    # ROADMAP: set priority
-                    # if move.procurement_id and move.procurement_id.sale_line_id:
-                    #   whsliste_data['priorita'] = move.procurement_id.\
-                    #       sale_line_id.order_id.priorita
+                    if move.picking_id.priority:
+                        whsliste_data['priorita'] = max(
+                            [int(move.picking_id.priority), 1]) - 1
 
                     if ragsoc:
                         whsliste_data['ragsoc'] = ragsoc[0:100]
