@@ -13,12 +13,13 @@ import time
 @tagged('post_install', '-at_install')
 class TestConnectorWhs(TransactionCase):
 
-    def _create_sale_order_line(self, order, product, qty):
+    def _create_sale_order_line(self, order, product, qty, priority='0'):
         line = self.env['sale.order.line'].create({
             'order_id': order.id,
             'product_id': product.id,
             'product_uom_qty': qty,
             'price_unit': 100,
+            'priority': priority,
             })
         line.product_id_change()
         line._convert_to_write(line._cache)
@@ -66,7 +67,7 @@ class TestConnectorWhs(TransactionCase):
         })
         self.product2.invoice_policy = 'order'
 
-    def test_complete_picking_from_sale(self):
+    def test_00_complete_picking_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
         self.dbsource.with_context(no_return=True).execute_mssql(
@@ -124,7 +125,7 @@ class TestConnectorWhs(TransactionCase):
         self.assertEqual(order1.picking_ids.move_lines[0].state, 'assigned')
         self.assertEqual(order1.picking_ids[0].state, 'assigned')
 
-    def test_partial_picking_from_sale(self):
+    def test_01_partial_picking_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
         self.dbsource.with_context(no_return=True).execute_mssql(
@@ -135,10 +136,11 @@ class TestConnectorWhs(TransactionCase):
             'partner_id': self.partner.id,
             'client_order_ref': 'Rif. SO customer',
             })
-        self._create_sale_order_line(order1, self.product1, 5)
+        self._create_sale_order_line(order1, self.product1, 5, "2")
         self._create_sale_order_line(order1, self.product1, 5)
         order1.action_confirm()
         self.assertEqual(order1.state, 'sale')
+        self.assertEqual(order1.priority, '2')
         self.assertEqual(order1.mapped('picking_ids.state'), ['waiting'])
         picking = order1.picking_ids[0]
         self.assertEqual(len(picking.mapped('move_lines.whs_list_ids')), 2)
@@ -168,14 +170,14 @@ class TestConnectorWhs(TransactionCase):
             sqlquery=set_liste_elaborated_query, sqlparams=None, metadata=None)
 
         whs_select_query = \
-            "SELECT Qta, QtaMovimentata FROM HOST_LISTE WHERE Elaborato = 4 AND " \
-            "NumLista = '%s' AND NumRiga = '%s'" % (
+            "SELECT Qta, QtaMovimentata, Priorita FROM HOST_LISTE WHERE Elaborato = 4 "\
+            "AND NumLista = '%s' AND NumRiga = '%s'" % (
                 whs_list.num_lista, whs_list.riga
             )
         result_liste = self.dbsource.execute_mssql(
             sqlquery=whs_select_query, sqlparams=None, metadata=None)
         self.assertEqual(str(result_liste[0]),
-                         "[(Decimal('5.000'), Decimal('3.000'))]")
+                         "[(Decimal('5.000'), Decimal('3.000'), 1)]")
 
         self.dbsource.whs_insert_read_and_synchronize_list()
 
@@ -219,9 +221,9 @@ class TestConnectorWhs(TransactionCase):
         self.assertEqual(len(order1.picking_ids), 2)
         backorder_picking = order1.picking_ids - picking
         self.assertEqual(backorder_picking.state, 'waiting')
-        self.assertEqual(backorder_picking.move_lines[0].state, 'assigned')
+        self.assertEqual(backorder_picking.move_lines[0].state, 'waiting')
 
-    def test_partial_picking_partial_available_from_sale(self):
+    def test_02_partial_picking_partial_available_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
         self.dbsource.with_context(no_return=True).execute_mssql(
@@ -232,10 +234,11 @@ class TestConnectorWhs(TransactionCase):
             'partner_id': self.partner.id,
             'client_order_ref': 'Rif. SO customer',
             })
-        self._create_sale_order_line(order1, self.product1, 5)
+        self._create_sale_order_line(order1, self.product1, 5, "3")
         self._create_sale_order_line(order1, self.product2, 20)
         order1.action_confirm()
         self.assertEqual(order1.state, 'sale')
+        self.assertEqual(order1.priority, '3')
         picking = order1.picking_ids[0]
         self.assertEqual(len(picking.mapped('move_lines.whs_list_ids')), 2)
         self.assertEqual(picking.state, 'waiting')
@@ -269,17 +272,17 @@ class TestConnectorWhs(TransactionCase):
 
         for whs_list in whs_lists:
             whs_select_query = \
-                "SELECT Qta, QtaMovimentata FROM HOST_LISTE WHERE Elaborato = 4 AND " \
-                "NumLista = '%s' AND NumRiga = '%s'" % (
+                "SELECT Qta, QtaMovimentata, Priorita FROM HOST_LISTE WHERE Elaborato "\
+                "= 4 AND NumLista = '%s' AND NumRiga = '%s'" % (
                     whs_list.num_lista, whs_list.riga
                 )
             result_liste = self.dbsource.execute_mssql(
                 sqlquery=whs_select_query, sqlparams=None, metadata=None)
             self.assertEqual(
                 str(result_liste[0]),
-                "[(Decimal('5.000'), Decimal('3.000'))]"
+                "[(Decimal('5.000'), Decimal('3.000'), 2)]"
                 if whs_list.product_id == self.product1 else
-                "[(Decimal('20.000'), Decimal('20.000'))]")
+                "[(Decimal('20.000'), Decimal('20.000'), 2)]")
 
         self.dbsource.whs_insert_read_and_synchronize_list()
 
@@ -348,7 +351,7 @@ class TestConnectorWhs(TransactionCase):
         backorder_picking.button_validate()
         self.assertEqual(backorder_picking.state, 'done')
 
-    def test_partial_picking_from_sale(self):
+    def test_03_partial_picking_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
         self.dbsource.with_context(no_return=True).execute_mssql(
@@ -361,7 +364,7 @@ class TestConnectorWhs(TransactionCase):
             })
         self._create_sale_order_line(order1, self.product1, 5)  # 16
         self._create_sale_order_line(order1, self.product2, 10)  # 8
-        self._create_sale_order_line(order1, self.product3, 20)  # 250
+        self._create_sale_order_line(order1, self.product3, 20, "1")  # 250
         self._create_sale_order_line(order1, self.product4, 20)  # 0
         order1.action_confirm()
         self.assertEqual(order1.state, 'sale')
@@ -397,21 +400,21 @@ class TestConnectorWhs(TransactionCase):
 
         for whs_l in whs_lists:
             whs_select_query = \
-                "SELECT Qta, QtaMovimentata FROM HOST_LISTE WHERE Elaborato = 4 AND " \
-                "NumLista = '%s' AND NumRiga = '%s'" % (
+                "SELECT Qta, QtaMovimentata, Priorita FROM HOST_LISTE WHERE Elaborato" \
+                " = 4 AND NumLista = '%s' AND NumRiga = '%s'" % (
                     whs_l.num_lista, whs_l.riga
                 )
             result_liste = self.dbsource.execute_mssql(
                 sqlquery=whs_select_query, sqlparams=None, metadata=None)
             self.assertEqual(
                 str(result_liste[0]),
-                "[(Decimal('5.000'), Decimal('5.000'))]"
+                "[(Decimal('5.000'), Decimal('5.000'), 0)]"
                 if whs_l.product_id == self.product1 else
-                "[(Decimal('10.000'), Decimal('5.000'))]"
+                "[(Decimal('10.000'), Decimal('5.000'), 0)]"
                 if whs_l.product_id == self.product2 else
-                "[(Decimal('20.000'), Decimal('0.000'))]"
+                "[(Decimal('20.000'), Decimal('0.000'), 0)]"
                 if whs_l.product_id == self.product3 else
-                "[(Decimal('20.000'), Decimal('5.000'))]")
+                "[(Decimal('20.000'), Decimal('5.000'), 0)]")
 
         self.dbsource.whs_insert_read_and_synchronize_list()
 
@@ -460,7 +463,7 @@ class TestConnectorWhs(TransactionCase):
         self.assertEqual(backorder_picking.mapped('move_lines.state'),
                          ['waiting', 'waiting', 'waiting'])
 
-    def test_unlink_sale_order(self):
+    def test_04_unlink_sale_order(self):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
         self.dbsource.with_context(no_return=True).execute_mssql(
@@ -531,7 +534,7 @@ class TestConnectorWhs(TransactionCase):
         line._convert_to_write(line._cache)
         return line
 
-    def test_repair(self):
+    def test_05_repair(self):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
         self.dbsource.with_context(no_return=True).execute_mssql(
@@ -618,7 +621,7 @@ class TestConnectorWhs(TransactionCase):
             })
         return line
 
-    def test_purchase(self):
+    def test_06_purchase(self):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
         self.dbsource.with_context(no_return=True).execute_mssql(
