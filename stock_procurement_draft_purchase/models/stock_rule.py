@@ -6,6 +6,7 @@ from odoo import api, models, fields
 class StockWarehouseOrderpoint(models.Model):
     _inherit = 'stock.warehouse.orderpoint'
 
+    include_draft_purchase = fields.Boolean()
     draft_purchase_order_qty = fields.Float(
         string='Purchase RdP On Location',
         compute='_compute_product_purchase_qty'
@@ -41,7 +42,7 @@ class ProcurementGroup(models.Model):
         if values.get('orderpoint_id', False):
             # subtract qty in PO in draft and sent states for current OP
             orderpoint_id = values['orderpoint_id']
-            if (
+            if orderpoint_id.include_draft_purchase and (
                 orderpoint_id.draft_purchase_order_qty
                 + orderpoint_id.incoming_location_qty
                 + orderpoint_id.product_location_qty

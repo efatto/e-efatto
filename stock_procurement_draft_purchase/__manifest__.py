@@ -10,6 +10,8 @@
     'website': 'https://efatto.it',
     'depends': [
         'purchase_stock',
+        'sale_management',
+        'stock_orderpoint_manual_procurement',
         'stock_warehouse_orderpoint_stock_info',
     ],
     'data': [
