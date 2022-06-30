@@ -11,11 +11,13 @@
     'depends': [
         'crm_lead_product',
         'mrp_bom_evaluation',
+        'mrp_sale_info',
         'purchase_stock',
         'sale_crm',
         'sale_stock',
     ],
     'data': [
+        'views/mrp_production.xml',
         'views/purchase.xml',
         'views/crm_lead_line.xml',
     ],
