@@ -21,6 +21,6 @@ class StockMove(models.Model):
                 lambda x: x.state not in ('done', 'cancel'))
             if all(x not in self for x in (finish_moves | raw_moves)):
                 for production in productions:
-                    production.action_canc:el()
+                    production.action_cancel()
             return res
         return super()._action_cancel()
