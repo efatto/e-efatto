@@ -20,6 +20,7 @@ class StockMove(models.Model):
             raw_moves = productions.mapped('move_raw_ids').filtered(
                 lambda x: x.state not in ('done', 'cancel'))
             if all(x not in self for x in (finish_moves | raw_moves)):
-                productions.action_cancel()
+                for production in productions:
+                    production.action_canc:el()
             return res
         return super()._action_cancel()
