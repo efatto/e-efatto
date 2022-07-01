@@ -14,3 +14,7 @@ Nell'ordine di acquisto è presente un campo per vedere gli ordini di vendita co
 
 .. image:: ../static/description/vendite.png
     :alt: Vendite
+
+La produzione è collegata con la lead line relativa all'opportunità collegata all'ordine di vendita il cui prodotto è uguale a quello prodotto.
+
+Limitazione attuale: nel caso ci siano più prodotti uguali nelle righe dell'opportunità, verrà collegato sempre il primo di questi.
