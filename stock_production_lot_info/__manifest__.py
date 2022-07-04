@@ -11,7 +11,7 @@
     "application": False,
     "installable": True,
     "depends": [
-        "stock_picking_filter_lot",
+        "stock",
     ],
     "data": [
     ],
