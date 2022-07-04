@@ -10,6 +10,7 @@ class ProductionLot(models.Model):
     product_qty = fields.Float(search='_search_product_qty')
 
     def _search_product_qty(self, operator, value):
+        lot_ids = []
         quants = self.env['stock.quant'].read_group([
             ('location_id.usage', 'in', ['internal', 'transit']),
             ('lot_id', '!=', False),
