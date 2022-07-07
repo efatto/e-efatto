@@ -20,3 +20,19 @@ class StockMoveLine(models.Model):
                 # manufacturing process
                 self.qty_done = 0
         return res
+
+    @api.onchange('product_id')
+    def onchange_product_id(self):
+        res = super().onchange_product_id()
+        # this is needed as stock move in NewId, as is stock move line, so it is
+        # impossible to retrieve lot ids from this recursive NewId
+        if self._context.get('default_production_id', False):
+            production = self.env['mrp.production'].browse(
+                self._context['default_production_id']
+            )
+            lots = production.move_finished_ids.mapped('move_line_ids.lot_id')
+            if lots:
+                res['domain'].update({
+                    'lot_produced_id': [('id', 'in', lots.ids)],
+                })
+        return res
