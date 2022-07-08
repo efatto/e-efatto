@@ -26,6 +26,9 @@ class SaleOrderLine(models.Model):
                                    date=self.order_id.date_order,
                                    uom=self.product_uom.id)
             bom = self.env['mrp.bom']._bom_find(product=product)
+            if any([not x.price_validated for x in bom.bom_line_ids]):
+                # price is computable only if all component prices are validated
+                return 0
             product = product or self.product_id
             price = product.get_bom_price(
                 self.order_id.pricelist_id.with_context(product_context),
