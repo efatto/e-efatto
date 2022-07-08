@@ -21,7 +21,8 @@
                      'default_default_code': product_default_code,
                      'default_categ_id': product_categ_id,
                      'default_route_ids': product_route_ids,
-                     'default_mrp_mts_mto_location_ids': False}</attribute>
+                     'default_mrp_mts_mto_location_ids': False,
+                     'default_compute_pricelist_on_bom_component': True,}</attribute>
             </xpath>
         </field>
     </record>
