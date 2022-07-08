@@ -28,6 +28,7 @@ class MrpBomLine(models.Model):
         'purchase.order.line',
         string='Linked RDP/PO line')
     note = fields.Char()
+    price_validated = fields.Boolean()
 
     @api.depends('product_id', 'product_id.weight', 'product_qty')
     def _compute_weight_total(self):
