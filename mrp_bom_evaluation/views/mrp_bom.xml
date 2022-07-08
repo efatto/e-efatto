@@ -28,7 +28,7 @@
                 <field name="price_unit"/>
                 <field name="note"/>
                 <field name="purchase_order_line_id"/>
-                <field name="price_write_date" readonly="1"/>
+                <field name="price_write_date"/>
                 <field name="price_subtotal" sum="Total"/>
             </xpath>
             <xpath expr="//field[@name='bom_line_ids']/ancestor::page[last()]" position="inside">
