@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_invoice_form_fatturapa_in" model="ir.ui.view">
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="l10n_it_fatturapa_in.view_invoice_form_fatturapa_in"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='e_invoice_amount_untaxed']/ancestor::*[1]" position="after">
+                <group>
+                    <group string="Import Precisions">
+                        <field name="price_decimal_digits"/>
+                        <field name="quantity_decimal_digits"/>
+                        <field name="discount_decimal_digits"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
