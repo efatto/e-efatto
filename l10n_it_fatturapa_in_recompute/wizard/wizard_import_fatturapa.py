@@ -9,10 +9,18 @@ class WizardImportFatturapa(models.TransientModel):
     @api.multi
     def importFatturaPA(self):
         res = super().importFatturaPA()
-        new_invoices = self.env['account.invoice'].search(res.get('domain'))
-        new_invoices.write({
-            'price_decimal_digits': self.price_decimal_digits,
-            'quantity_decimal_digits': self.quantity_decimal_digits,
-            'discount_decimal_digits': self.discount_decimal_digits,
-        })
+        if (
+        self.price_decimal_digits != self.env['decimal.precision'].search([
+            ('name', '=', 'Product Price')
+        ], limit=1).digits or
+        self.quantity_decimal_digits != self.env['decimal.precision'].search([
+            ('name', '=', 'Product Unit of Measure')
+        ], limit=1).digits or
+            self.discount_decimal_digits != self.env['decimal.precision'].search([
+            ('name', '=', 'Discount')
+        ], limit=1).digits):
+            new_invoices = self.env['account.invoice'].search(res.get('domain'))
+            new_invoices.write({
+                'compute_on_einvoice_values': True,
+            })
         return res

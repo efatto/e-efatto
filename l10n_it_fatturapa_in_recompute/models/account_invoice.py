@@ -19,7 +19,7 @@ class AccountInvoiceLine(models.Model):
         )
         if self._context.get('active_model', '') != 'fatturapa.attachment.in' \
                 and self.e_invoice_line_id \
-                and self.invoice_id.price_decimal_digits != price_precision.digits:
+                and self.invoice_id.compute_on_einvoice_values:
             currency = self.invoice_id and self.invoice_id.currency_id or self.\
                 company_id.currency_id
             round_curr = currency.round
@@ -56,9 +56,7 @@ class AccountInvoiceLine(models.Model):
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
-    price_decimal_digits = fields.Integer()
-    quantity_decimal_digits = fields.Integer()
-    discount_decimal_digits = fields.Integer()
+    compute_on_einvoice_values = fields.Boolean()
 
     @api.one
     @api.depends('invoice_line_ids.price_subtotal', 'tax_line_ids.amount',
@@ -66,12 +64,9 @@ class AccountInvoice(models.Model):
                  'date_invoice', 'type', 'date')
     def _compute_amount(self):
         super()._compute_amount()
-        #
-        price_precision = self.env['decimal.precision'].search(
-            [('name', '=', 'Product Price')], limit=1
-        )
+        # Compute total and tax on lines price total
         if self._context.get('active_model', '') != 'fatturapa.attachment.in' \
-                and self.price_decimal_digits != price_precision.digits:
+                and self.compute_on_einvoice_values:
             self.amount_untaxed = sum(
                 line.price_subtotal for line in self.invoice_line_ids)
             self.amount_total = sum(line.price_total for line in self.invoice_line_ids)
@@ -96,34 +91,35 @@ class AccountInvoice(models.Model):
     @api.multi
     def get_taxes_values(self):
         taxes_grouped = super().get_taxes_values()
-        tax_grouped = {}
-        for line in self.invoice_line_ids:
-            if not line.account_id or line.display_type:
-                continue
-            if len(line.invoice_line_tax_ids) != 1:
-                continue
-            invoice_line_tax = line.invoice_line_tax_ids[0]
-            if invoice_line_tax not in tax_grouped:
-                tax_grouped.update({invoice_line_tax: {
-                    'base': line.price_subtotal,
-                    'amount': 0}}
-                )
-            else:
-                tax_grouped[invoice_line_tax]['base'] += line.price_subtotal
-        # compute taxes by group
-        for key in taxes_grouped:
-            for tax_group in tax_grouped:
-                if taxes_grouped[key]['tax_id'] == tax_group.id:
-                    taxes_recomputed = tax_group.compute_all(
-                        tax_grouped[tax_group]['base'])
-                    if any(t.get('price_include', False) for t
-                           in taxes_recomputed['taxes']):
-                        # no need to do this check for price included taxes
-                        continue
-                    amount_recomputed = sum(
-                        [x['amount'] for x in taxes_recomputed['taxes']])
-                    taxes_grouped[key]['amount'] = amount_recomputed
-                    taxes_grouped[key]['base'] = float_round(
-                        tax_grouped[tax_group]['base'],
-                        precision_rounding=self.currency_id.rounding)
+        if self.compute_on_einvoice_values:
+            tax_grouped = {}
+            for line in self.invoice_line_ids:
+                if not line.account_id or line.display_type:
+                    continue
+                if len(line.invoice_line_tax_ids) != 1:
+                    continue
+                invoice_line_tax = line.invoice_line_tax_ids[0]
+                if invoice_line_tax not in tax_grouped:
+                    tax_grouped.update({invoice_line_tax: {
+                        'base': line.price_subtotal,
+                        'amount': 0}}
+                    )
+                else:
+                    tax_grouped[invoice_line_tax]['base'] += line.price_subtotal
+            # compute taxes by group
+            for key in taxes_grouped:
+                for tax_group in tax_grouped:
+                    if taxes_grouped[key]['tax_id'] == tax_group.id:
+                        taxes_recomputed = tax_group.compute_all(
+                            tax_grouped[tax_group]['base'])
+                        if any(t.get('price_include', False) for t
+                               in taxes_recomputed['taxes']):
+                            # no need to do this check for price included taxes
+                            continue
+                        amount_recomputed = sum(
+                            [x['amount'] for x in taxes_recomputed['taxes']])
+                        taxes_grouped[key]['amount'] = amount_recomputed
+                        taxes_grouped[key]['base'] = float_round(
+                            tax_grouped[tax_group]['base'],
+                            precision_rounding=self.currency_id.rounding)
         return taxes_grouped

@@ -7,9 +7,7 @@
             <xpath expr="//field[@name='e_invoice_amount_untaxed']/ancestor::*[1]" position="after">
                 <group>
                     <group string="Import Precisions">
-                        <field name="price_decimal_digits"/>
-                        <field name="quantity_decimal_digits"/>
-                        <field name="discount_decimal_digits"/>
+                        <field name="compute_on_einvoice_values"/>
                     </group>
                 </group>
             </xpath>

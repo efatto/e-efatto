@@ -6,9 +6,9 @@
     'category': 'Accounting & Finance',
     'author': 'Sergio Corato',
     'website': 'https://efatto.it',
-    'summary': 'Invoice is recomputed automatically at every change, resetting '
-               'importation precisions. This module add a button to recompute invoice '
-               'correctly.',
+    'summary': 'This module enables recomputation of the invoice on e-invoices values '
+               'as if imported with custom precisions, these values will not be '
+               'mantained.',
     'depends': [
         'l10n_it_fatturapa_in',
     ],
