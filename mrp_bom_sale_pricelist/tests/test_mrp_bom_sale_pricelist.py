@@ -43,6 +43,7 @@ class TestMrpBomSalePricelist(TestProductionData):
         cls.subproduct_2_1.standard_price = 65
         for line in cls.main_bom.bom_line_ids | cls.sub_bom1.bom_line_ids \
                 | cls.sub_bom2.bom_line_ids:
+            line.price_validated = True
             line.onchange_product_id()
             line._convert_to_write(line._cache)
 
