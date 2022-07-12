@@ -28,7 +28,8 @@ class MrpWorkorder(models.Model):
         new_self = self.sudo()
         if new_self.workcenter_id.iot_device_input_id:
             self.production_id.mrp_end_count(self.workcenter_id)
-            self.qty_producing = self.production_id.bag_count
+            if self.production_id.bag_count:
+                self.qty_producing = self.production_id.bag_count
         res = super().record_production()
         if res and new_self.workcenter_id.iot_device_input_id:
             duration = self.production_id.mrp_end_produce(

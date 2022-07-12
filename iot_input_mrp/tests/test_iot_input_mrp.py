@@ -108,7 +108,6 @@ class TestIotInputMrp(TestProductionData):
         self.assertEqual(production.state, 'progress')
         last_workorder = production.workorder_ids.filtered(
             lambda x: x.state == 'progress')
-        last_workorder.qty_producing = 1
         last_workorder.sudo(self.mrp_user).record_production()
         production.button_mark_done()
         self.assertAlmostEqual(
@@ -143,7 +142,6 @@ class TestIotInputMrp(TestProductionData):
         self.assertEqual(production.state, 'progress')
         last_workorder = production.workorder_ids.filtered(
             lambda x: x.state == 'progress')
-        last_workorder.qty_producing = 1
         last_workorder.sudo(self.mrp_user).record_production()
         production.button_mark_done()
         self.assertAlmostEqual(
@@ -177,7 +175,6 @@ class TestIotInputMrp(TestProductionData):
         self.assertEqual(production.state, 'progress')
         last_workorder = production.workorder_ids.filtered(
             lambda x: x.state == 'progress')
-        last_workorder.qty_producing = 1
         last_workorder.sudo(self.mrp_user).record_production()
         production.button_mark_done()
         self.assertAlmostEqual(
