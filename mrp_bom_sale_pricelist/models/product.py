@@ -30,6 +30,16 @@ class ProductProduct(models.Model):
                 lambda x: x.listprice_categ_id ==
                 opt.product_id.categ_id.listprice_categ_id
             )
+            if not rule:
+                raise ValidationError(_(
+                    "No pricelist rule found for pricelist category %s" %
+                    opt.product_id.categ_id.listprice_categ_id.name
+                ))
+            if len(rule) > 1:
+                raise ValidationError(_(
+                    "More than 1 pricelist rule found for pricelist category %s" %
+                    opt.product_id.categ_id.listprice_categ_id.name
+                ))
             operation_total_price += \
                 opt.time * \
                 rule._compute_price(
