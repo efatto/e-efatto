@@ -13,14 +13,14 @@
                 <field name="listprice_categ_id" attrs="{'invisible':[('applied_on', '!=', '21_listprice_category')], 'required':[('applied_on', '=', '21_listprice_category')]}"/>
             </xpath>
             <xpath expr="//field[@name='min_quantity']" position="after">
-                <field name="min_value"/>
-                <field name="max_value"/>
+                <field name="min_value" attrs="{'invisible':[('applied_on', '!=', '21_listprice_category')]}"/>
+                <field name="max_value" attrs="{'invisible':[('applied_on', '!=', '21_listprice_category')]}"/>
             </xpath>
             <xpath expr="//field[@name='date_end']" position="attributes">
-                <attribute name="attrs">{'invisible': [('listprice_categ_id', '!=', False)]}</attribute>
+                <attribute name="attrs">{'invisible':[('applied_on', '=', '21_listprice_category')]}</attribute>
             </xpath>
             <xpath expr="//field[@name='date_start']" position="attributes">
-                <attribute name="attrs">{'invisible': [('listprice_categ_id', '!=', False)]}</attribute>
+                <attribute name="attrs">{'invisible':[('applied_on', '=', '21_listprice_category')]}</attribute>
             </xpath>
         </field>
     </record>
