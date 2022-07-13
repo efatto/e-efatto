@@ -38,8 +38,8 @@ Nel listino prezzi è quindi possibile creare delle regole con queste categorie 
 
 Nel prodotto, se è installato il modulo https://github.com/sergiocorato/e-efatto/tree/12.0/mrp_bom_sale_pricelist, è disponibile un'opzione 'Calcola prezzo da DiBa':
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_pricelist_bom_cost/static/description/vendita.png
-    :alt: Vendita
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_pricelist_bom_cost/static/description/abilita.png
+    :alt: Abilitazione calcolo
 
 Che se selezionata comporta che il prezzo di vendita venga valorizzato in base alle regole presenti nel listino, in base agli scaglioni di valore indicati. Sono stati aggiungi i campi: 'Valore minimo', 'Valore Massimo' sulle regole di listino per questo scopo:
 
