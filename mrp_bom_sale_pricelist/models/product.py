@@ -16,6 +16,12 @@ class ProductTemplate(models.Model):
 class ProductProduct(models.Model):
     _inherit = 'product.product'
 
+    def _get_listprice_categ_id(self, categ_id):
+        product_listprice_categ_id = categ_id.listprice_categ_id
+        if not product_listprice_categ_id and categ_id.parent_id:
+            product_listprice_categ_id = self._get_listprice_categ_id(categ_id.parent_id)
+        return product_listprice_categ_id
+
     def get_bom_price(self, pricelist, bom, quantity, partner, date=False, uom_id=False,
                       boms_to_recompute=False):
         self.ensure_one()
@@ -26,35 +32,30 @@ class ProductProduct(models.Model):
         total = 0
         operation_total_price = 0
         for opt in bom.bom_operation_ids:
-            rule = pricelist.item_ids.filtered(
-                lambda x: x.listprice_categ_id ==
-                opt.product_id.categ_id.listprice_categ_id
-            )
-            if not rule:
-                raise ValidationError(_(
-                    "No pricelist rule found for pricelist category %s" %
-                    opt.product_id.categ_id.listprice_categ_id.name
-                ))
-            if len(rule) > 1:
-                raise ValidationError(_(
-                    "More than 1 pricelist rule found for pricelist category %s" %
-                    opt.product_id.categ_id.listprice_categ_id.name
-                ))
-            operation_total_price += \
-                opt.time * \
-                rule._compute_price(
-                    opt.price_unit, opt.product_id.uom_id, opt.product_id)
+            product_listprice_categ_id = self._get_listprice_categ_id(
+                opt.product_id.categ_id)
+            for rule in pricelist.item_ids:
+                if rule.base == 'pricelist' and rule.base_pricelist_id:
+                    operation_total_price = self.get_bom_price(
+                        rule.base_pricelist_id, bom, quantity, partner, date, uom_id,
+                        boms_to_recompute)
+                if rule.listprice_categ_id != product_listprice_categ_id:
+                    continue
+                operation_total_price += \
+                    opt.time * \
+                    rule._compute_price(
+                        opt.price_unit, opt.product_id.uom_id, opt.product_id)
         total += operation_total_price
         # group cost of components by listprice categories defined in pricelist
         # to compute prices on brackets
         listprice_categ_ids = pricelist.mapped('item_ids.listprice_categ_id')
         for listprice_categ_id in listprice_categ_ids:
-            bom_lines = bom.bom_line_ids.filtered(
-                lambda x: x.product_id.categ_id.listprice_categ_id ==
-                listprice_categ_id
-            )
             bom_lines_cost = 0
-            for line in bom_lines:
+            for line in bom.bom_line_ids:
+                line_product_listprice_categ_id = self._get_listprice_categ_id(
+                    line.product_id.categ_id)
+                if line_product_listprice_categ_id != listprice_categ_id:
+                    continue
                 if line._skip_bom_line(self):
                     continue
                 if not line.price_unit:
@@ -63,7 +64,7 @@ class ProductProduct(models.Model):
                 # Compute recursive if line has `child_line_ids`
                 if line.child_bom_id and line.child_bom_id in boms_to_recompute:
                     # check all component of child bom are in the same listprice
-                    # category
+                    # category FIXME questo non va più visto che usiamo le ctg padri
                     if any([x.listprice_categ_id != listprice_categ_id for x in
                             line.child_bom_id.mapped(
                                 'bom_line_ids.product_id.categ_id.listprice_categ_id')]):
