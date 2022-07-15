@@ -36,7 +36,10 @@ class SaleOrderLine(models.Model):
                 return 0
             self.price_on_bom_valid = True
             product = product or self.product_id
-            price = product.get_bom_price(
+            price = product.get_bom_operation_price(
+                self.order_id.pricelist_id.with_context(product_context),
+                bom, self.product_uom_qty or 1.0, self.order_id.partner_id)
+            price += product.get_bom_price(
                 self.order_id.pricelist_id.with_context(product_context),
                 bom, self.product_uom_qty or 1.0, self.order_id.partner_id)
             return price

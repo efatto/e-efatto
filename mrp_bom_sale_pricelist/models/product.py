@@ -22,21 +22,20 @@ class ProductProduct(models.Model):
             product_listprice_categ_id = self._get_listprice_categ_id(categ_id.parent_id)
         return product_listprice_categ_id
 
-    def get_bom_price(self, pricelist, bom, quantity, partner, date=False, uom_id=False,
-                      boms_to_recompute=False):
+    def get_bom_operation_price(self, pricelist, bom, quantity, partner, date=False,
+                                uom_id=False, boms_to_recompute=False):
         self.ensure_one()
         if not bom:
             return 0
         if not boms_to_recompute:
             boms_to_recompute = []
-        total = 0
         operation_total_price = 0
         for opt in bom.bom_operation_ids:
             product_listprice_categ_id = self._get_listprice_categ_id(
                 opt.product_id.categ_id)
             for rule in pricelist.item_ids:
                 if rule.base == 'pricelist' and rule.base_pricelist_id:
-                    operation_total_price = self.get_bom_price(
+                    operation_total_price += self.get_bom_operation_price(
                         rule.base_pricelist_id, bom, quantity, partner, date, uom_id,
                         boms_to_recompute)
                 if rule.listprice_categ_id != product_listprice_categ_id:
@@ -45,7 +44,17 @@ class ProductProduct(models.Model):
                     opt.time * \
                     rule._compute_price(
                         opt.price_unit, opt.product_id.uom_id, opt.product_id)
-        total += operation_total_price
+        return bom.product_uom_id._compute_price(
+            operation_total_price / (bom.product_qty or 1), self.uom_id)
+
+    def get_bom_price(self, pricelist, bom, quantity, partner, date=False, uom_id=False,
+                      boms_to_recompute=False):
+        self.ensure_one()
+        if not bom:
+            return 0
+        if not boms_to_recompute:
+            boms_to_recompute = []
+        total = 0
         # group cost of components by listprice categories defined in pricelist
         # to compute prices on brackets
         listprice_categ_ids = pricelist.mapped('item_ids.listprice_categ_id')
@@ -80,9 +89,14 @@ class ProductProduct(models.Model):
             # integrato qui una funzione di calcolo del prezzo sulle regole applicabili
             # basato sul valore totale per categoria
             price = 0
-            for rule in pricelist.item_ids.filtered(
-                lambda x: x.listprice_categ_id == listprice_categ_id
-            ):
+            for rule in pricelist.item_ids:
+                if rule.base == 'pricelist' and rule.base_pricelist_id:
+                    price += self.get_bom_price(
+                        rule.base_pricelist_id, bom, quantity, partner, date, uom_id,
+                        boms_to_recompute)
+                    continue
+                if rule.listprice_categ_id != listprice_categ_id:
+                    continue
                 if bom_lines_cost < rule.min_value:
                     continue
                 if rule.min_value <= bom_lines_cost and (

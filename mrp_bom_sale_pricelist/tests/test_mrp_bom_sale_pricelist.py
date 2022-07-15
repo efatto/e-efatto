@@ -268,7 +268,7 @@ class TestMrpBomSalePricelist(TestProductionData):
             'partner_id': self.partner.id,
         })
         line1 = self._create_sale_order_line(order1, self.subproduct1, 3)
-        self.assertEqual(line1.price_subtotal, 100 * 3)
+        self.assertEqual(line1.price_subtotal, self.subproduct1.standard_price * 3)
 
         self.partner.pricelist_id = pricelist
         self.assertEqual(self.partner.pricelist_id, pricelist)
@@ -323,7 +323,7 @@ class TestMrpBomSalePricelist(TestProductionData):
             ) * (
                 1.1 if pricelist == self.pricelist_parent else 1
             )
-            + 10 * 100 * (  # external service cost
+            + 10 * self.ext_service_product.standard_price * (
                 1.2 if pricelist == self.pricelist_parent else 0
             )
         ) * line4.product_uom_qty)
@@ -351,7 +351,7 @@ class TestMrpBomSalePricelist(TestProductionData):
             ) * (
                 1.1 if pricelist == self.pricelist_parent else 1
             )
-            + 10 * 100 * (  # external service cost
+            + 10 * self.ext_service_product.standard_price * (
                 1.2 if pricelist == self.pricelist_parent else 0
             )
         ) * line5.product_uom_qty)
@@ -380,7 +380,7 @@ class TestMrpBomSalePricelist(TestProductionData):
             ) * (
                 1.1 if pricelist == self.pricelist_parent else 1
             )
-            + 10 * 100 * (  # external service cost
+            + 10 * self.ext_service_product.standard_price * (
                 1.2 if pricelist == self.pricelist_parent else 0
             )
         ) * line5.product_uom_qty)
