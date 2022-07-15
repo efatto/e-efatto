@@ -316,7 +316,7 @@ class TestMrpBomSalePricelist(TestProductionData):
         costs_hour_total = sum([
             opt.time * opt.price_unit for opt in
             self.top_product.bom_ids.bom_operation_ids])
-        self.assertEqual(line4.price_subtotal, (
+        self.assertAlmostEqual(line4.price_subtotal, (
             (
                 self.compute_price(5 * price_subproduct1 + 2 * price_subproduct2)
                 + costs_hour_total * 1.15
@@ -344,7 +344,7 @@ class TestMrpBomSalePricelist(TestProductionData):
         costs_hour_total = sum([
             opt.time * opt.price_unit for opt in
             self.top_product.bom_ids.bom_operation_ids])
-        self.assertEqual(line5.price_subtotal, (
+        self.assertAlmostEqual(line5.price_subtotal, (
             (
                 self.compute_price(5 * price_subproduct1 + 2 * price_subproduct2)
                 + costs_hour_total * 1.15
