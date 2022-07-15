@@ -2,3 +2,8 @@ Nel prodotto è disponibile un campo per impostare il calcolo del prezzo tramite
 
 .. image:: ../static/description/abilita.png
     :alt: Abilitazione calcolo
+
+Nel caso un prodotto abbia un prezzo dipendente da DiBa e non sia stato calcolato, viene mostrata un'icona di avvertimento:
+
+.. image:: ../static/description/icona-prezzo-non-valido.png
+    :alt: Icona avvertimento

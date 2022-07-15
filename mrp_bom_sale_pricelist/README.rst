@@ -34,6 +34,11 @@ Nel prodotto è disponibile un campo per impostare il calcolo del prezzo tramite
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_sale_pricelist/static/description/abilita.png
     :alt: Abilitazione calcolo
 
+Nel caso un prodotto abbia un prezzo dipendente da DiBa e non sia stato calcolato, viene mostrata un'icona di avvertimento:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_sale_pricelist/static/description/icona-prezzo-non-valido.png
+    :alt: Icona avvertimento
+
 Bug Tracker
 ===========
 
