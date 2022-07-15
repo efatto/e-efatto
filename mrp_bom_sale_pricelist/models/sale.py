@@ -1,10 +1,14 @@
 # Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, models
+from odoo import api, fields, models
 
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
+
+    compute_pricelist_on_bom_component = fields.Boolean(
+        related='product_id.compute_pricelist_on_bom_component')
+    price_on_bom_valid = fields.Boolean()
 
     @api.multi
     def _get_display_price(self, product):
@@ -28,7 +32,9 @@ class SaleOrderLine(models.Model):
             bom = self.env['mrp.bom']._bom_find(product=product)
             if any([not x.price_validated for x in bom.bom_line_ids]):
                 # price is computable only if all component prices are validated
+                self.price_on_bom_valid = False
                 return 0
+            self.price_on_bom_valid = True
             product = product or self.product_id
             price = product.get_bom_price(
                 self.order_id.pricelist_id.with_context(product_context),

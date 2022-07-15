@@ -320,6 +320,8 @@ class TestMrpBomSalePricelist(TestProductionData):
             (
                 self.compute_price(5 * price_subproduct1 + 2 * price_subproduct2)
                 + costs_hour_total * 1.15
+            ) * (
+                1.1 if pricelist == self.pricelist_parent else 1
             )
             + 10 * 100 * (  # external service cost
                 1.2 if pricelist == self.pricelist_parent else 0
@@ -346,6 +348,8 @@ class TestMrpBomSalePricelist(TestProductionData):
             (
                 self.compute_price(5 * price_subproduct1 + 2 * price_subproduct2)
                 + costs_hour_total * 1.15
+            ) * (
+                1.1 if pricelist == self.pricelist_parent else 1
             )
             + 10 * 100 * (  # external service cost
                 1.2 if pricelist == self.pricelist_parent else 0
@@ -373,6 +377,8 @@ class TestMrpBomSalePricelist(TestProductionData):
             (
                 self.compute_price(5 * price_subproduct1 + 2 * price_subproduct2)
                 + costs_hour_total * 1.15
+            ) * (
+                1.1 if pricelist == self.pricelist_parent else 1
             )
             + 10 * 100 * (  # external service cost
                 1.2 if pricelist == self.pricelist_parent else 0

@@ -19,6 +19,7 @@
     ],
     'data': [
         'views/product_template.xml',
+        'views/sale_order_view.xml',
     ],
     'installable': True,
 }

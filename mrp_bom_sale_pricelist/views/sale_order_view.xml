@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form" model="ir.ui.view">
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook/page[@name='order_lines']/field[@name='order_line']/tree/field[@name='price_unit']" position="after">
+                <field name="price_on_bom_valid" invisible="1"/>
+                <field name="compute_pricelist_on_bom_component" invisible="1"/>
+                <button string="Price on bom invalid"
+                        attrs="{'invisible': ['|', ('price_on_bom_valid', '=', True), ('compute_pricelist_on_bom_component', '=', False)]}"
+                        type="object"
+                        icon="fa-exclamation-triangle"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
