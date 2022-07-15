@@ -44,17 +44,35 @@ class ProductProduct(models.Model):
                     opt.time * \
                     rule._compute_price(
                         opt.price_unit, opt.product_id.uom_id, opt.product_id)
+            if all([x.listprice_categ_id != product_listprice_categ_id for x in
+                    pricelist.item_ids]):
+                # there aren't applicable rules of type listprice category for current
+                # product in this pricelist, so use normal function to find rule to
+                # compute price
+                product_context = dict(
+                    self.env.context, partner_id=partner.id, date=date, uom=uom_id)
+                fake_price, rule_id = pricelist.with_context(
+                    product_context).get_product_price_rule(
+                        opt.product_id, quantity, partner)
+                rule = self.env['product.pricelist.item'].browse(rule_id)
+                operation_total_price = rule._compute_price(
+                    operation_total_price, opt.product_id.uom_id, opt.product_id
+                )
         return bom.product_uom_id._compute_price(
             operation_total_price / (bom.product_qty or 1), self.uom_id)
 
     def get_bom_price(self, pricelist, bom, quantity, partner, date=False, uom_id=False,
-                      boms_to_recompute=False):
+                      boms_to_recompute=False, total_to_exclude_from_global_rule=0):
         self.ensure_one()
         if not bom:
             return 0
         if not boms_to_recompute:
             boms_to_recompute = []
         total = 0
+        global_rules = pricelist.item_ids.filtered(
+            lambda x: not x.listprice_categ_id and x.applied_on == '3_global'
+            and x.base == 'pricelist' and x.base_pricelist_id
+        )
         # group cost of components by listprice categories defined in pricelist
         # to compute prices on brackets
         listprice_categ_ids = pricelist.mapped('item_ids.listprice_categ_id')
@@ -89,11 +107,14 @@ class ProductProduct(models.Model):
             # integrato qui una funzione di calcolo del prezzo sulle regole applicabili
             # basato sul valore totale per categoria
             price = 0
+            base_pricelist_rule_found = bool(any(
+                [x.base == 'pricelist' and x.base_pricelist_id
+                 for x in pricelist.item_ids]))
             for rule in pricelist.item_ids:
                 if rule.base == 'pricelist' and rule.base_pricelist_id:
                     price += self.get_bom_price(
                         rule.base_pricelist_id, bom, quantity, partner, date, uom_id,
-                        boms_to_recompute)
+                        boms_to_recompute, total_to_exclude_from_global_rule)
                     continue
                 if rule.listprice_categ_id != listprice_categ_id:
                     continue
@@ -110,6 +131,14 @@ class ProductProduct(models.Model):
                     if value > 0:
                         price += rule._compute_price(
                             value, self.uom_id, self)
+                        if base_pricelist_rule_found:
+                            total_to_exclude_from_global_rule += price
             total += price
+
+        for global_rule in global_rules:
+            total = global_rule._compute_price(
+                total - total_to_exclude_from_global_rule, self.uom_id, self
+            )
+            total += total_to_exclude_from_global_rule
         return bom.product_uom_id._compute_price(
                 total / (bom.product_qty or 1), self.uom_id)

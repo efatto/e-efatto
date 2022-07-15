@@ -159,14 +159,6 @@ class TestMrpBomSalePricelist(TestProductionData):
         for vals in [
             {
                 'pricelist_id': cls.pricelist_parent.id,
-                'applied_on': '3_global',
-                'compute_price': 'formula',
-                'base': 'pricelist',
-                'price_discount': -10.0,
-                'base_pricelist_id': cls.pricelist.id,
-            },
-            {
-                'pricelist_id': cls.pricelist_parent.id,
                 'applied_on': '21_listprice_category',
                 'listprice_categ_id': cls.ext_service_listprice_ctg.id,
                 'compute_price': 'formula',
@@ -174,9 +166,17 @@ class TestMrpBomSalePricelist(TestProductionData):
                 'max_value': 0,
                 'base': 'bom_cost',
                 'price_discount': -20.0,
-            }
+            },
         ]:
             cls._create_pricelist_item(cls.pricelist_item, vals=vals)
+        cls.pricelist_parent.item_ids.filtered(
+            lambda x: x.applied_on == '3_global'
+        ).write({
+            'price_discount': -10.0,
+            'compute_price': 'formula',
+            'base': 'pricelist',
+            'base_pricelist_id': cls.pricelist.id,
+        })
 
     def _create_sale_order_line(self, order, product, qty):
         vals = {
