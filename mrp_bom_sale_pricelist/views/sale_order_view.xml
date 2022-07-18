@@ -10,6 +10,7 @@
                 <button string="Price on bom invalid"
                         attrs="{'invisible': ['|', ('price_on_bom_valid', '=', True), ('compute_pricelist_on_bom_component', '=', False)]}"
                         type="object"
+                        name="invalid_bom_price"
                         icon="fa-exclamation-triangle"/>
             </xpath>
         </field>

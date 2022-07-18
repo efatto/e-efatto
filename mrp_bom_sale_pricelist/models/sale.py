@@ -1,6 +1,7 @@
 # Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 
 
 class SaleOrderLine(models.Model):
@@ -20,6 +21,21 @@ class SaleOrderLine(models.Model):
                 [x.price_validated for x in
                  line.product_id.bom_ids.mapped('bom_line_ids')]
             ))
+
+    @api.multi
+    def invalid_bom_price(self):
+        raise UserError(_(
+            'This product is set to be computed on bom lines, but %s on %s '
+            'are not validated!') % (
+                len([
+                    x for x in self.product_id.mapped('bom_ids.bom_line_ids')
+                    if not x.price_validated
+                ]),
+                len([
+                    x for x in self.product_id.mapped('bom_ids.bom_line_ids')
+                ])
+            )
+        )
 
     @api.multi
     def _get_display_price(self, product):
