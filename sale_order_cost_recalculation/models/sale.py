@@ -6,7 +6,23 @@ from odoo import api, fields, models
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    purchase_date = fields.Datetime()
+    purchase_date = fields.Datetime(
+        compute="_compute_purchase_date",
+        store=True)
+    purchase_price = fields.Float(digits=(20, 8))
+
+    @api.depends('product_id', 'purchase_price', 'product_id.standard_price')
+    def _compute_purchase_date(self):
+        for line in self.filtered('product_id'):
+            purchase_date = self.env['product.price.history'].search([
+                ('product_id', '=', line.product_id.id),
+                ('cost', '=', line.purchase_price),
+                ('datetime', '<=', line.write_date or fields.Datetime.now()),
+            ])
+            if purchase_date:
+                line.purchase_date = purchase_date[0].datetime
+            else:
+                line.purchase_date = line.product_id.standard_price_write_date
 
 
 class SaleOrder(models.Model):
