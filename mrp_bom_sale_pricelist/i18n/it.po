@@ -75,5 +75,5 @@ msgstr "Alcuni prodotti della DiBa figlia del prodotto %s hanno una categoria di
 #: code:addons/mrp_bom_sale_pricelist/models/sale.py:27
 #, python-format
 msgid "This product is set to be computed on bom lines, but %s on %s are not validated!"
-msgstr "Questo prodotto è impostato per avere il prezzo calcolato sulle righe DiBa, ma %s su %s non sono validate!"
+msgstr "Questo prodotto è impostato per il calcolo del prezzo sulle righe DiBa, ma %s su %s non sono validate!"
 
