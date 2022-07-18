@@ -8,7 +8,18 @@ class SaleOrderLine(models.Model):
 
     compute_pricelist_on_bom_component = fields.Boolean(
         related='product_id.compute_pricelist_on_bom_component')
-    price_on_bom_valid = fields.Boolean()
+    price_on_bom_valid = fields.Boolean(
+        compute='_compute_price_on_bom_valid',
+        store=True,
+    )
+
+    @api.depends('product_id.bom_ids', 'product_id.bom_ids.bom_line_ids')
+    def _compute_price_on_bom_valid(self):
+        for line in self.filtered('product_id.bom_ids'):
+            line.price_on_bom_valid = bool(all(
+                [x.price_validated for x in
+                 line.product_id.bom_ids.mapped('bom_line_ids')]
+            ))
 
     @api.multi
     def _get_display_price(self, product):
@@ -32,9 +43,7 @@ class SaleOrderLine(models.Model):
             bom = self.env['mrp.bom']._bom_find(product=product)
             if any([not x.price_validated for x in bom.bom_line_ids]):
                 # price is computable only if all component prices are validated
-                self.price_on_bom_valid = False
                 return 0
-            self.price_on_bom_valid = True
             product = product or self.product_id
             price = product.get_bom_operation_price(
                 self.order_id.pricelist_id.with_context(product_context),
