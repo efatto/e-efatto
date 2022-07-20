@@ -1,7 +1,7 @@
 # Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import _, api, fields, models
-from odoo.exceptions import ValidationError, UserError
+from odoo import _, fields, models
+from odoo.exceptions import ValidationError
 
 
 class ProductTemplate(models.Model):
@@ -81,19 +81,20 @@ class ProductProduct(models.Model):
                     total_to_exclude_from_global_rule += price
             if all([x.listprice_categ_id != listprice_categ_id for x in
                     pricelist.item_ids]):
-                # there aren't applicable rules of type listprice category for current
+                # there are no applicable rules of type listprice category for current
                 # product in this pricelist, so use normal function to find rule to
                 # compute price
                 product_context = dict(
                     self.env.context, partner_id=partner.id, date=date, uom=uom_id)
-                for operation in operation_price:  # FIXME
-                    fake_price, rule_id = pricelist.with_context(
-                        product_context).get_product_price_rule(
-                            operation.product_id, quantity, partner)
-                    rule = self.env['product.pricelist.item'].browse(rule_id)
-                    price = rule._compute_price(
-                        price, operation.product_id.uom_id, operation.product_id
-                    )
+                for operation_price in operation_prices:
+                    for operation in operation_price:
+                        fake_price, rule_id = pricelist.with_context(
+                            product_context).get_product_price_rule(
+                                operation.product_id, quantity, partner)
+                        rule = self.env['product.pricelist.item'].browse(rule_id)
+                        price = operation_price[operation] * rule._compute_price(
+                            price, operation.product_id.uom_id, operation.product_id
+                        )
             total += price
         for global_rule in global_rules:
             total = global_rule._compute_price(

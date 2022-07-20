@@ -199,6 +199,17 @@ class TestMrpBomSalePricelist(TestProductionData):
         line._convert_to_write(line._cache)
         return line
 
+    def _add_bom_operation(self):
+        self.main_bom.write({
+            'bom_operation_ids': [
+                (0, 0, {
+                    'name': 'Operation 2',
+                    'time': 10.0,
+                    'operation_id': self.operation2.id,
+                })
+            ]
+        })
+
     def test_01_sale_order_bom(self):
         self.execute_test()
 
@@ -241,16 +252,58 @@ class TestMrpBomSalePricelist(TestProductionData):
         self.pricelist.discount_policy = 'with_discount'
         self.execute_test(3500, 1050, pricelist=self.pricelist_parent)
 
-    def test_00_with_multiple_operations(self):
-        self.main_bom.write({
-            'bom_operation_ids': [
-                (0, 0, {
-                    'name': 'Operation 2',
-                    'time': 10.0,
-                    'operation_id': self.operation2.id,
-                })
-            ]
-        })
+    def test_13_sale_order_bom(self):
+        self._add_bom_operation()
+        self.execute_test()
+
+    def test_14_sale_order_bom_change_price(self):
+        self._add_bom_operation()
+        self.execute_test(350, 105)
+
+    def test_15_sale_order_bom_change_price(self):
+        self._add_bom_operation()
+        self.execute_test(3500, 1050)
+
+    def test_16_sale_order_bom_discount(self):
+        self.pricelist.discount_policy = 'with_discount'
+        self._add_bom_operation()
+        self.execute_test()
+
+    def test_17_sale_order_bom_discount_change_price(self):
+        self.pricelist.discount_policy = 'with_discount'
+        self._add_bom_operation()
+        self.execute_test(350, 105)
+
+    def test_18_sale_order_bom_discount_change_price(self):
+        self.pricelist.discount_policy = 'with_discount'
+        self._add_bom_operation()
+        self.execute_test(3500, 1050)
+
+    def test_19_sale_order_bom(self):
+        self._add_bom_operation()
+        self.execute_test(pricelist=self.pricelist_parent)
+
+    def test_20_sale_order_bom_change_price(self):
+        self._add_bom_operation()
+        self.execute_test(350, 105, pricelist=self.pricelist_parent)
+
+    def test_21_sale_order_bom_change_price(self):
+        self._add_bom_operation()
+        self.execute_test(3500, 1050, pricelist=self.pricelist_parent)
+
+    def test_22_sale_order_bom_discount(self):
+        self.pricelist.discount_policy = 'with_discount'
+        self._add_bom_operation()
+        self.execute_test(pricelist=self.pricelist_parent)
+
+    def test_23_sale_order_bom_discount_change_price(self):
+        self.pricelist.discount_policy = 'with_discount'
+        self._add_bom_operation()
+        self.execute_test(350, 105, pricelist=self.pricelist_parent)
+
+    def test_24_sale_order_bom_discount_change_price(self):
+        self.pricelist.discount_policy = 'with_discount'
+        self._add_bom_operation()
         self.execute_test(3500, 1050, pricelist=self.pricelist_parent)
 
     @staticmethod
