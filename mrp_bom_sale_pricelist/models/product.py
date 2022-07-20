@@ -12,22 +12,6 @@ class ProductTemplate(models.Model):
         help="Compute price on pricelist rules of component of bom, generating a total "
              "price mixing multiple rules.")
 
-    @api.multi
-    @api.constrains('compute_pricelist_on_bom_component')
-    def check_bom_component_pricelist_ctg(self):
-        for template in self.filtered('compute_pricelist_on_bom_component'):
-            if any([
-                not product._get_listprice_categ_id(product.categ_id)
-                for product in (
-                    template.bom_ids.mapped('bom_line_ids.product_id') |
-                    template.bom_ids.mapped('bom_operation_ids.product_id')
-                )
-            ]):
-                raise UserError(
-                    "All components and product operation of bom when product price "
-                    "is computed on bom must have a category with a listprice category!"
-                )
-
 
 class ProductProduct(models.Model):
     _inherit = 'product.product'
@@ -99,7 +83,7 @@ class ProductProduct(models.Model):
                 # compute price
                 product_context = dict(
                     self.env.context, partner_id=partner.id, date=date, uom=uom_id)
-                for operation in operation_price:
+                for operation in operation_price:  # FIXME
                     fake_price, rule_id = pricelist.with_context(
                         product_context).get_product_price_rule(
                             operation.product_id, quantity, partner)

@@ -14,22 +14,42 @@ class SaleOrderLine(models.Model):
         store=True,
     )
 
-    @api.depends('product_id.bom_ids', 'product_id.bom_ids.bom_line_ids')
+    @api.depends('product_id.bom_ids', 'product_id.bom_ids.bom_line_ids',
+                 'price_unit')
     def _compute_price_on_bom_valid(self):
-        for line in self.filtered('product_id.bom_ids'):
-            line.price_on_bom_valid = bool(all(
-                [x.price_validated for x in
-                 line.product_id.bom_ids.mapped('bom_line_ids')]
-            ))
+        for line in self:
+            if not line.product_id.bom_ids \
+                    and not line.compute_pricelist_on_bom_component:
+                line.price_on_bom_valid = False
+            else:
+                res = bool(all(
+                    [x.price_validated for x in
+                     line.product_id.bom_ids.mapped('bom_line_ids')]
+                ))
+                if any([
+                    not product._get_listprice_categ_id(product.categ_id)
+                    for product in (
+                        line.product_id.bom_ids.mapped('bom_line_ids.product_id') |
+                        line.product_id.bom_ids.mapped('bom_operation_ids.product_id')
+                    )
+                ]):
+                    res = False
+                line.price_on_bom_valid = res
 
     @api.multi
     def invalid_bom_price(self):
         raise UserError(_(
             'This product is set to be computed on bom lines, but %s on %s '
-            'are not validated!') % (
+            'are not valid!') % (
                 len([
                     x for x in self.product_id.mapped('bom_ids.bom_line_ids')
                     if not x.price_validated
+                ])
+                + len([
+                    x for x in (
+                        self.product_id.bom_ids.mapped('bom_line_ids.product_id') |
+                        self.product_id.bom_ids.mapped('bom_operation_ids.product_id')
+                    ) if not x._get_listprice_categ_id(x.categ_id)
                 ]),
                 len([
                     x for x in self.product_id.mapped('bom_ids.bom_line_ids')
