@@ -13,6 +13,9 @@
                         name="invalid_bom_price"
                         icon="fa-exclamation-triangle"/>
             </xpath>
+            <xpath expr="//notebook/page[@name='order_lines']/field[@name='order_line']/tree" position="attributes">
+                <attribute name="decoration-warning">compute_pricelist_on_bom_component and not price_on_bom_valid</attribute>
+            </xpath>
         </field>
     </record>
 </odoo>
