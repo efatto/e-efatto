@@ -177,6 +177,13 @@ class TestMrpBomSalePricelist(TestProductionData):
             'base': 'pricelist',
             'base_pricelist_id': cls.pricelist.id,
         })
+        cls.operation2 = cls.env['mrp.routing.workcenter'].create({
+            'name': 'Operation 2',
+            'workcenter_id': cls.workcenter1.id,
+            'routing_id': cls.routing1.id,
+            'time_cycle': 15,
+            'sequence': 1,
+        })
 
     def _create_sale_order_line(self, order, product, qty):
         vals = {
@@ -232,6 +239,18 @@ class TestMrpBomSalePricelist(TestProductionData):
 
     def test_12_sale_order_bom_discount_change_price(self):
         self.pricelist.discount_policy = 'with_discount'
+        self.execute_test(3500, 1050, pricelist=self.pricelist_parent)
+
+    def test_00_with_multiple_operations(self):
+        self.main_bom.write({
+            'bom_operation_ids': [
+                (0, 0, {
+                    'name': 'Operation 2',
+                    'time': 10.0,
+                    'operation_id': self.operation2.id,
+                })
+            ]
+        })
         self.execute_test(3500, 1050, pricelist=self.pricelist_parent)
 
     @staticmethod

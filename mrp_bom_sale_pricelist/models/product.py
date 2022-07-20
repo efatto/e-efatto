@@ -1,7 +1,7 @@
 # Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import _, fields, models
-from odoo.exceptions import ValidationError
+from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError, UserError
 
 
 class ProductTemplate(models.Model):
@@ -11,6 +11,22 @@ class ProductTemplate(models.Model):
         string="Price from BOM",
         help="Compute price on pricelist rules of component of bom, generating a total "
              "price mixing multiple rules.")
+
+    @api.multi
+    @api.constrains('compute_pricelist_on_bom_component')
+    def check_bom_component_pricelist_ctg(self):
+        for template in self.filtered('compute_pricelist_on_bom_component'):
+            if any([
+                not product._get_listprice_categ_id(product.categ_id)
+                for product in (
+                    template.bom_ids.mapped('bom_line_ids.product_id') |
+                    template.bom_ids.mapped('bom_operation_ids.product_id')
+                )
+            ]):
+                raise UserError(
+                    "All components and product operation of bom when product price "
+                    "is computed on bom must have a category with a listprice category!"
+                )
 
 
 class ProductProduct(models.Model):
@@ -23,43 +39,82 @@ class ProductProduct(models.Model):
         return product_listprice_categ_id
 
     def get_bom_operation_price(self, pricelist, bom, quantity, partner, date=False,
-                                uom_id=False, boms_to_recompute=False):
+                                uom_id=False, boms_to_recompute=False,
+                                total_to_exclude_from_global_rule=0):
         self.ensure_one()
         if not bom:
             return 0
         if not boms_to_recompute:
             boms_to_recompute = []
-        operation_total_price = 0
+        total = 0
+        global_rules = pricelist.item_ids.filtered(
+            lambda x: not x.listprice_categ_id and x.applied_on == '3_global'
+            and x.base == 'pricelist' and x.base_pricelist_id
+        )
+        # group cost of components by listprice categories defined in pricelist
+        # to compute prices on brackets
+        listprice_categ_ids = pricelist.mapped('item_ids.listprice_categ_id')
+        operation_prices = {}
         for opt in bom.bom_operation_ids:
-            product_listprice_categ_id = self._get_listprice_categ_id(
+            listprice_ctg = self._get_listprice_categ_id(opt.product_id.categ_id)
+            if listprice_ctg not in operation_prices:
+                operation_prices.update({listprice_ctg: {}})
+        for opt in bom.bom_operation_ids:
+            listprice_categ_id = self._get_listprice_categ_id(
                 opt.product_id.categ_id)
+            if not opt.price_unit:
+                raise ValidationError(_('Missing cost in bom line for product %s!'
+                                        ) % opt.product_id.name)
+            if opt not in operation_prices[listprice_categ_id]:
+                operation_prices[listprice_categ_id].update({
+                    opt: opt.time
+                })
+        for listprice_categ_id in listprice_categ_ids:
+            price = 0
+            base_pricelist_rule_found = bool(any(
+                [x.base == 'pricelist' and x.base_pricelist_id
+                 for x in pricelist.item_ids]))
             for rule in pricelist.item_ids:
                 if rule.base == 'pricelist' and rule.base_pricelist_id:
-                    operation_total_price += self.get_bom_operation_price(
+                    price += self.get_bom_operation_price(
                         rule.base_pricelist_id, bom, quantity, partner, date, uom_id,
-                        boms_to_recompute)
-                if rule.listprice_categ_id != product_listprice_categ_id:
+                        boms_to_recompute, total_to_exclude_from_global_rule)
                     continue
-                operation_total_price += \
-                    opt.time * \
-                    rule._compute_price(
-                        opt.price_unit, opt.product_id.uom_id, opt.product_id)
-            if all([x.listprice_categ_id != product_listprice_categ_id for x in
+                if rule.listprice_categ_id != listprice_categ_id:
+                    continue
+                if listprice_categ_id in operation_prices:
+                    operation_price = operation_prices[listprice_categ_id]
+                    price += sum([
+                        operation_price[operation] *
+                        rule._compute_price(
+                            operation.price_unit, operation.product_id.uom_id,
+                            operation.product_id)
+                        for operation in operation_price])
+                if base_pricelist_rule_found:
+                    total_to_exclude_from_global_rule += price
+            if all([x.listprice_categ_id != listprice_categ_id for x in
                     pricelist.item_ids]):
                 # there aren't applicable rules of type listprice category for current
                 # product in this pricelist, so use normal function to find rule to
                 # compute price
                 product_context = dict(
                     self.env.context, partner_id=partner.id, date=date, uom=uom_id)
-                fake_price, rule_id = pricelist.with_context(
-                    product_context).get_product_price_rule(
-                        opt.product_id, quantity, partner)
-                rule = self.env['product.pricelist.item'].browse(rule_id)
-                operation_total_price = rule._compute_price(
-                    operation_total_price, opt.product_id.uom_id, opt.product_id
-                )
+                for operation in operation_price:
+                    fake_price, rule_id = pricelist.with_context(
+                        product_context).get_product_price_rule(
+                            operation.product_id, quantity, partner)
+                    rule = self.env['product.pricelist.item'].browse(rule_id)
+                    price = rule._compute_price(
+                        price, operation.product_id.uom_id, operation.product_id
+                    )
+            total += price
+        for global_rule in global_rules:
+            total = global_rule._compute_price(
+                total - total_to_exclude_from_global_rule, self.uom_id, self
+            )
+            total += total_to_exclude_from_global_rule
         return bom.product_uom_id._compute_price(
-            operation_total_price / (bom.product_qty or 1), self.uom_id)
+            total / (bom.product_qty or 1), self.uom_id)
 
     def get_bom_price(self, pricelist, bom, quantity, partner, date=False, uom_id=False,
                       boms_to_recompute=False, total_to_exclude_from_global_rule=0):
