@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-18 15:30+0000\n"
-"PO-Revision-Date: 2022-07-18 15:30+0000\n"
+"POT-Creation-Date: 2022-07-20 14:06+0000\n"
+"PO-Revision-Date: 2022-07-20 14:06+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -23,10 +23,22 @@ msgid "Compute price on pricelist rules of component of bom, generating a total 
 msgstr "Calcola il prezzo sulle regole di listino dei componenti della DiBa, generando un prezzo totale dalle diverse regole."
 
 #. module: mrp_bom_sale_pricelist
-#: code:addons/mrp_bom_sale_pricelist/models/product.py:89
+#: code:addons/mrp_bom_sale_pricelist/models/product.py:131
 #, python-format
 msgid "Missing cost in bom line for product %s!"
 msgstr "Costo mancante nella riga DiBa per il prodotto %s!"
+
+#. module: mrp_bom_sale_pricelist
+#: code:addons/mrp_bom_sale_pricelist/models/product.py:50
+#, python-format
+msgid "Missing cost in bom operation for product %s!"
+msgstr "Costo mancante per l'operazione DiBa per il prodotto %s!"
+
+#. module: mrp_bom_sale_pricelist
+#: code:addons/mrp_bom_sale_pricelist/models/product.py:53
+#, python-format
+msgid "Missing time in bom operation for product %s!"
+msgstr "Tempo mancante per l'operazione DiBa per il prodotto %s!"
 
 #. module: mrp_bom_sale_pricelist
 #: model:ir.model.fields,field_description:mrp_bom_sale_pricelist.field_sale_order_line__price_on_bom_valid
@@ -66,14 +78,14 @@ msgid "Sales Order Line"
 msgstr "Linea d'ordine di vendita"
 
 #. module: mrp_bom_sale_pricelist
-#: code:addons/mrp_bom_sale_pricelist/models/product.py:98
+#: code:addons/mrp_bom_sale_pricelist/models/product.py:140
 #, python-format
 msgid "Some product of child bom for product %s have a different listiprice category!"
 msgstr "Alcuni prodotti della DiBa figlia del prodotto %s hanno una categoria di listino prezzi differente!"
 
 #. module: mrp_bom_sale_pricelist
-#: code:addons/mrp_bom_sale_pricelist/models/sale.py:27
+#: code:addons/mrp_bom_sale_pricelist/models/sale.py:41
 #, python-format
-msgid "This product is set to be computed on bom lines, but %s on %s are not validated!"
-msgstr "Questo prodotto è impostato per il calcolo del prezzo sulle righe DiBa, ma %s su %s non sono validate!"
+msgid "This product is set to be computed on bom lines, but %s on %s are not valid!"
+msgstr "Questo prodotto è impostato per il calcolo sulle righe DiBa, ma %s su %s non sono valide!"
 

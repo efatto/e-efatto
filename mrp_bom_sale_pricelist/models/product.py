@@ -47,7 +47,10 @@ class ProductProduct(models.Model):
             listprice_categ_id = self._get_listprice_categ_id(
                 opt.product_id.categ_id)
             if not opt.price_unit:
-                raise ValidationError(_('Missing cost in bom line for product %s!'
+                raise ValidationError(_('Missing cost in bom operation for product %s!'
+                                        ) % opt.product_id.name)
+            if not opt.time:
+                raise ValidationError(_('Missing time in bom operation for product %s!'
                                         ) % opt.product_id.name)
             if opt not in operation_prices[listprice_categ_id]:
                 operation_prices[listprice_categ_id].update({
