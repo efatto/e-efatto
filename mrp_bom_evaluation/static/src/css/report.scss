@@ -1,8 +1,10 @@
 .o_mrp_layout {
     font-size: 9pt;
-    thead tr th {color: black;}
+    thead tr th {color: black; border-bottom: 1px solid grey !important; border-top: 1px solid grey !important;}
+    tbody tr td {color: black; border-bottom: 1px solid grey !important;}
+    tfoot tr td {color: black; border-bottom: 1px solid grey !important;}
     h2 {color: black;}
 }
 .o_mrp_total {
-    background-color: rgba(220, 205, 216, 0.1);
+    background-color: rgba(220, 205, 216, 0.2);
 }
