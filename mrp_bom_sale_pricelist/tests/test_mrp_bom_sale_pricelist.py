@@ -1,6 +1,7 @@
 # Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
+from odoo.tools import mute_logger
 
 
 class TestMrpBomSalePricelist(TestProductionData):
@@ -306,6 +307,133 @@ class TestMrpBomSalePricelist(TestProductionData):
         self._add_bom_operation()
         self.execute_test(3500, 1050, pricelist=self.pricelist_parent)
 
+    @mute_logger('odoo.models', 'odoo.models.unlink', 'odoo.addons.base.ir.ir_model')
+    def _unlink_pricelist_line(self):
+        self.pricelist_parent.item_ids.filtered(
+            lambda x: x.applied_on == '21_listprice_category'
+        ).unlink()
+        self.assertEqual(len(self.pricelist_parent.item_ids), 1)
+
+    def test_25_sale_order_bom(self):
+        self._unlink_pricelist_line()
+        self.execute_test()
+
+    def test_26_sale_order_bom_change_price(self):
+        self._unlink_pricelist_line()
+        self.execute_test(350, 105)
+
+    def test_27_sale_order_bom_change_price(self):
+        self._unlink_pricelist_line()
+        self.execute_test(3500, 1050)
+
+    def test_28_sale_order_bom_discount(self):
+        self._unlink_pricelist_line()
+        self.pricelist.discount_policy = 'with_discount'
+        self.execute_test()
+
+    def test_29_sale_order_bom_discount_change_price(self):
+        self._unlink_pricelist_line()
+        self.pricelist.discount_policy = 'with_discount'
+        self.execute_test(350, 105)
+
+    def test_30_sale_order_bom_discount_change_price(self):
+        self._unlink_pricelist_line()
+        self.pricelist.discount_policy = 'with_discount'
+        self.execute_test(3500, 1050)
+
+    def test_31_sale_order_bom(self):
+        self._unlink_pricelist_line()
+        self.execute_test(pricelist=self.pricelist_parent)
+
+    def test_32_sale_order_bom_change_price(self):
+        self._unlink_pricelist_line()
+        self.execute_test(350, 105, pricelist=self.pricelist_parent)
+
+    def test_33_sale_order_bom_change_price(self):
+        self._unlink_pricelist_line()
+        self.execute_test(3500, 1050, pricelist=self.pricelist_parent)
+
+    def test_34_sale_order_bom_discount(self):
+        self._unlink_pricelist_line()
+        self.pricelist.discount_policy = 'with_discount'
+        self.execute_test(pricelist=self.pricelist_parent)
+
+    def test_35_sale_order_bom_discount_change_price(self):
+        self._unlink_pricelist_line()
+        self.pricelist.discount_policy = 'with_discount'
+        self.execute_test(350, 105, pricelist=self.pricelist_parent)
+
+    def test_36_sale_order_bom_discount_change_price(self):
+        self._unlink_pricelist_line()
+        self.pricelist.discount_policy = 'with_discount'
+        self.execute_test(3500, 1050, pricelist=self.pricelist_parent)
+
+    def test_37_sale_order_bom(self):
+        self._unlink_pricelist_line()
+        self._add_bom_operation()
+        self.execute_test()
+
+    def test_38_sale_order_bom_change_price(self):
+        self._unlink_pricelist_line()
+        self._add_bom_operation()
+        self.execute_test(350, 105)
+
+    def test_39_sale_order_bom_change_price(self):
+        self._unlink_pricelist_line()
+        self._add_bom_operation()
+        self.execute_test(3500, 1050)
+
+    def test_40_sale_order_bom_discount(self):
+        self._unlink_pricelist_line()
+        self.pricelist.discount_policy = 'with_discount'
+        self._add_bom_operation()
+        self.execute_test()
+
+    def test_41_sale_order_bom_discount_change_price(self):
+        self._unlink_pricelist_line()
+        self.pricelist.discount_policy = 'with_discount'
+        self._add_bom_operation()
+        self.execute_test(350, 105)
+
+    def test_42_sale_order_bom_discount_change_price(self):
+        self._unlink_pricelist_line()
+        self.pricelist.discount_policy = 'with_discount'
+        self._add_bom_operation()
+        self.execute_test(3500, 1050)
+
+    def test_43_sale_order_bom(self):
+        self._unlink_pricelist_line()
+        self._add_bom_operation()
+        self.execute_test(pricelist=self.pricelist_parent)
+
+    def test_44_sale_order_bom_change_price(self):
+        self._unlink_pricelist_line()
+        self._add_bom_operation()
+        self.execute_test(350, 105, pricelist=self.pricelist_parent)
+
+    def test_45_sale_order_bom_change_price(self):
+        self._unlink_pricelist_line()
+        self._add_bom_operation()
+        self.execute_test(3500, 1050, pricelist=self.pricelist_parent)
+
+    def test_46_sale_order_bom_discount(self):
+        self._unlink_pricelist_line()
+        self.pricelist.discount_policy = 'with_discount'
+        self._add_bom_operation()
+        self.execute_test(pricelist=self.pricelist_parent)
+
+    def test_47_sale_order_bom_discount_change_price(self):
+        self._unlink_pricelist_line()
+        self.pricelist.discount_policy = 'with_discount'
+        self._add_bom_operation()
+        self.execute_test(350, 105, pricelist=self.pricelist_parent)
+
+    def test_48_sale_order_bom_discount_change_price(self):
+        self._unlink_pricelist_line()
+        self.pricelist.discount_policy = 'with_discount'
+        self._add_bom_operation()
+        self.execute_test(3500, 1050, pricelist=self.pricelist_parent)
+
     @staticmethod
     def compute_price(price):
         list_price = 0
@@ -396,7 +524,8 @@ class TestMrpBomSalePricelist(TestProductionData):
                 1.1 if pricelist == self.pricelist_parent else 1
             )
             + 10 * self.ext_service_product.standard_price * (
-                1.2 if pricelist == self.pricelist_parent else 0
+                1.2 if pricelist == self.pricelist_parent
+                and len(self.pricelist_parent.item_ids) == 2 else 0
             )
         ) * line4.product_uom_qty)
 
@@ -424,7 +553,8 @@ class TestMrpBomSalePricelist(TestProductionData):
                 1.1 if pricelist == self.pricelist_parent else 1
             )
             + 10 * self.ext_service_product.standard_price * (
-                1.2 if pricelist == self.pricelist_parent else 0
+                1.2 if pricelist == self.pricelist_parent
+                and len(self.pricelist_parent.item_ids) == 2 else 0
             )
         ) * line5.product_uom_qty)
 
@@ -453,6 +583,7 @@ class TestMrpBomSalePricelist(TestProductionData):
                 1.1 if pricelist == self.pricelist_parent else 1
             )
             + 10 * self.ext_service_product.standard_price * (
-                1.2 if pricelist == self.pricelist_parent else 0
+                1.2 if pricelist == self.pricelist_parent
+                and len(self.pricelist_parent.item_ids) == 2 else 0
             )
         ) * line5.product_uom_qty)

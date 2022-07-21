@@ -81,11 +81,12 @@ class SaleOrderLine(models.Model):
                 # price is computable only if all component prices are validated
                 return 0
             product = product or self.product_id
-            price = product.get_bom_operation_price(
+            operation_price = product.get_bom_operation_price(
                 self.order_id.pricelist_id.with_context(product_context),
                 bom, self.product_uom_qty or 1.0, self.order_id.partner_id)
-            price += product.get_bom_price(
+            component_price = product.get_bom_price(
                 self.order_id.pricelist_id.with_context(product_context),
                 bom, self.product_uom_qty or 1.0, self.order_id.partner_id)
+            price = operation_price + component_price
             return price
         return super()._get_display_price(product)

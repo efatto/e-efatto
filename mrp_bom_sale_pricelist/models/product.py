@@ -96,6 +96,31 @@ class ProductProduct(models.Model):
                             price, operation.product_id.uom_id, operation.product_id
                         )
             total += price
+        if not listprice_categ_ids:
+            # there are no rules of type listprice category for current
+            # product in this pricelist, so use normal function to find rule to
+            # compute price
+            product_context = dict(
+                self.env.context, partner_id=partner.id, date=date, uom=uom_id)
+            price = 0
+            for operation_price in operation_prices:
+                for operation in operation_prices[operation_price]:
+                    fake_price, rule_id = pricelist.with_context(
+                        product_context).get_product_price_rule(
+                        operation.product_id, quantity, partner)
+                    rule = self.env['product.pricelist.item'].browse(rule_id)
+                    if rule.base == 'pricelist' and rule.base_pricelist_id:
+                        price = self.get_bom_operation_price(
+                            rule.base_pricelist_id, bom, quantity, partner, date,
+                            uom_id,
+                            boms_to_recompute, total_to_exclude_from_global_rule)
+                        continue
+                    price = operation_prices[operation_price][operation] \
+                        * rule._compute_price(
+                            operation.price_unit, operation.product_id.uom_id,
+                            operation.product_id
+                        )
+            total += price
         for global_rule in global_rules:
             total = global_rule._compute_price(
                 total - total_to_exclude_from_global_rule, self.uom_id, self
@@ -176,6 +201,29 @@ class ProductProduct(models.Model):
                             value, self.uom_id, self)
                         if base_pricelist_rule_found:
                             total_to_exclude_from_global_rule += price
+            total += price
+
+        if not listprice_categ_ids:
+            # there are no rules of type listprice category for current
+            # product in this pricelist, so use normal function to find rule to
+            # compute price
+            product_context = dict(
+                self.env.context, partner_id=partner.id, date=date, uom=uom_id)
+            price = 0
+            for line in bom.bom_line_ids:
+                fake_price, rule_id = pricelist.with_context(
+                    product_context).get_product_price_rule(
+                    line.product_id, quantity, partner)
+                rule = self.env['product.pricelist.item'].browse(rule_id)
+                if rule.base == 'pricelist' and rule.base_pricelist_id:
+                    price = self.get_bom_price(
+                        rule.base_pricelist_id, bom, line.product_qty, partner,
+                        boms_to_recompute, total_to_exclude_from_global_rule)
+                    continue
+                price = rule._compute_price(
+                    line.price_unit, line.product_id.uom_id,
+                    line.product_id, line.product_qty
+                )
             total += price
 
         for global_rule in global_rules:
