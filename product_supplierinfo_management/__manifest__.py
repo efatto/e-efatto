@@ -10,6 +10,7 @@
     'license': 'AGPL-3',
     'depends': [
         'account_invoice_triple_discount',
+        'product_pricelist_supplierinfo',
         'purchase_last_price_info',
         'sale_stock',
     ],

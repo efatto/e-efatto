@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-26 08:58+0000\n"
-"PO-Revision-Date: 2022-07-26 08:58+0000\n"
+"POT-Creation-Date: 2022-07-26 13:00+0000\n"
+"PO-Revision-Date: 2022-07-26 13:00+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -36,9 +36,19 @@ msgid "Created on"
 msgstr "Creato il"
 
 #. module: product_supplierinfo_management
-#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__date_obsolete_price
-msgid "Date Obsolete Price"
-msgstr "Data Obsolescenza Prezzi"
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__date_check_supplierinfo_price
+msgid "Date Check Supplierinfo Price"
+msgstr "Data Verifica Prezzi Fornitori"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__date_obsolete_supplierinfo_price
+msgid "Date Obsolete Supplierinfo Price"
+msgstr "Data Obsolescenza Prezzi Fornitori"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,help:product_supplierinfo_management.field_product_supplierinfo_check__date_check_supplierinfo_price
+msgid "Date to filter date validity of supplierinfo prices"
+msgstr "Data per filtro validità prezzi fornitori"
 
 #. module: product_supplierinfo_management
 #: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_invoice_discount
@@ -86,17 +96,6 @@ msgid "Keep empty to use the current date"
 msgstr "Lasciare vuoto per usare la data odierna"
 
 #. module: product_supplierinfo_management
-#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_id
-#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_id
-msgid "Last Supplier"
-msgstr "Ultima Fornitore"
-
-#. module: product_supplierinfo_management
-#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check____last_update
-msgid "Last Modified on"
-msgstr "Data di ultima modifica"
-
-#. module: product_supplierinfo_management
 #: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_invoice_id
 #: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_invoice_id
 msgid "Last Invoice"
@@ -104,6 +103,25 @@ msgstr "Ultima Fattura"
 
 #. module: product_supplierinfo_management
 #: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_invoice_line_id
+msgid "Last Invoice Line"
+msgstr "Ultima Riga Fattura"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_id
+msgid "Last Invoice"
+msgstr "Ultima Fattura"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check____last_update
+msgid "Last Modified on"
+msgstr "Data di ultima modifica"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_id
+msgid "Last Supplier"
+msgstr "Ultimo Fornitore"
+
+#. module: product_supplierinfo_management
 #: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_invoice_line_id
 msgid "Last Invoice Line"
 msgstr "Ultima Riga Fattura"
@@ -132,6 +150,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__name
 msgid "Name"
 msgstr "Nome"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__listprice_id
+msgid "Pricelist for recomputation"
+msgstr "Listino Prezzi per Ricalcolo"
 
 #. module: product_supplierinfo_management
 #: model:ir.model,name:product_supplierinfo_management.model_product_product
@@ -221,7 +244,7 @@ msgid "Update Products Standard Price and Replenishment Cost"
 msgstr "Aggiorna Costo Prodotti e Costo di Sostituzione"
 
 #. module: product_supplierinfo_management
-#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:89
+#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:96
 #, python-format
 msgid "Update of %s"
 msgstr "Aggiornamento di %s"
