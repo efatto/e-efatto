@@ -64,11 +64,14 @@ class ProductProduct(models.Model):
                 last_line)
 
     @api.multi
-    def do_update_managed_replenishment_cost(self):
+    def do_update_managed_replenishment_cost(
+            self, date_obsolete_supplierinfo_price=False,
+            date_check_supplierinfo_price=False, listprice_id=False):
         update_standard_price = self.env.context.get('update_standard_price', False)
         update_managed_replenishment_cost = self.env.context.get(
             'update_managed_replenishment_cost', False)
-        date_obsolete_price = self.env.context.get('date_obsolete_price', False)
+        if not date_check_supplierinfo_price:
+            date_check_supplierinfo_price = fields.Date.today()
         # update cost for products to be purchased first, then them to be manufactured
         products_tobe_purchased = self.filtered(lambda x: x.seller_ids)
         # and not x.bom_count)
@@ -80,7 +83,21 @@ class ProductProduct(models.Model):
         products_without_seller_price = self.env['product.product']
         for product in products_tobe_purchased:
             price_unit = 0.0
-            seller = product.seller_ids[0]
+            # prendo i prezzi con una data di validità corretta, poi però si dovrebbe
+            #  valutare quale è stato aggiornato per ultimo? o che ha l'ultima fattura?
+            seller = product.seller_ids.filtered(
+                lambda y:
+                (y.date_end and y.date_end >= date_check_supplierinfo_price or True)
+                and
+                (y.date_start and y.date_start <= date_check_supplierinfo_price or True)
+            )
+            if len(seller) > 1:
+                # todo serve controllare vari prezzi?
+                if product.last_supplier_id and product.last_supplier_invoice_price:
+                    pass
+                    # todo che si fa se l'ultimo fornitore è diverso dal fornitore
+                    #  di default?
+                seller = seller[0]
             if seller.price:
                 price_unit = seller.price
                 if hasattr(seller, 'discount'):
@@ -95,23 +112,33 @@ class ProductProduct(models.Model):
                         self.env.user.company_id,
                         fields.Date.today(),
                         round=False)
-                if date_obsolete_price and seller.write_date < date_obsolete_price:
+                if date_obsolete_supplierinfo_price and seller.write_date \
+                        < date_obsolete_supplierinfo_price:
                     products_with_obsolete_price |= product
             else:
                 # this product is without seller price
                 products_without_seller_price |= product
-            if seller.product_uom != product.uom_id:
+            if seller and seller.product_uom != product.uom_id:
                 price_unit = seller.product_uom._compute_price(
                     price_unit, product.uom_id)
-            # todo aggiungere qui il calcolo del costo con le regole del listino collegato
-            price_unit = price_unit  # ...
+                # FIXME questo price_unit non serve più no? e i vari calcoli sul
+                #  price_unit sopra altrettanto no?
+            # todo il prezzo unitario preso dal fornitore non ha nulla a che fare con
+            #  il prezzo calcolato con il listino, quale usare?
+            # todo aggiungere qui il calcolo del costo con le regole del listino
+            #  collegato
+            if listprice_id:
+                listprice_price_unit = listprice_id.get_product_price(
+                    product, 1, self.env.user.company_id.partner_id,
+                    date=date_check_supplierinfo_price)
             if update_managed_replenishment_cost:
-                product.managed_replenishment_cost = price_unit
+                product.managed_replenishment_cost = listprice_price_unit
             if update_standard_price:
-                product.standard_price = price_unit
+                product.standard_price = listprice_price_unit
         # compute replenishment cost for product without suppliers
         for product in products_nottobe_purchased:
             if update_managed_replenishment_cost:
+                # todo ricalcolare il prezzo anche qui?
                 product.managed_replenishment_cost = product.standard_price
             # these products are without seller nor bom
 
@@ -125,7 +152,7 @@ class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
     last_supplier_invoice_line_id = fields.Many2one(
-        comodel_name='account.invoice.line', string='Last Supplier Invoice Line')
+        comodel_name='account.invoice.line', string='Last Invoice Line')
     last_supplier_invoice_id = fields.Many2one(
         comodel_name='account.invoice',
         related='last_supplier_invoice_line_id.invoice_id',
@@ -141,7 +168,7 @@ class ProductTemplate(models.Model):
     last_supplier_invoice_date = fields.Date(
         related='last_supplier_invoice_id.date_invoice')
     last_supplier_id = fields.Many2one(
-        related='last_supplier_invoice_id.partner_id', string='Last Invoice Supplier')
+        related='last_supplier_invoice_id.partner_id', string='Last Invoice')
 
     def set_product_template_last_supplier_invoice(self, last_line):
         return self.write({

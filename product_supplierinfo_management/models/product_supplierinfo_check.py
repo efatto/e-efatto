@@ -9,7 +9,10 @@ class ProductSupplierinfoCheck(models.Model):
     _description = 'Product Supplierinfo Check'
 
     name = fields.Char()
-    date_obsolete_price = fields.Datetime()
+    date_obsolete_supplierinfo_price = fields.Datetime()
+    date_check_supplierinfo_price = fields.Datetime(
+        help="Date to filter date validity of supplierinfo prices"
+    )
     last_update = fields.Datetime()
     company_id = fields.Many2one(
         comodel_name='res.company',
@@ -49,7 +52,6 @@ class ProductSupplierinfoCheck(models.Model):
         res = self.with_context(
             update_standard_price=True,
             update_managed_replenishment_cost=True,
-            date_obsolete_price=self.date_obsolete_price,
         ).update_products_replenishment_cost()
         return res
 
@@ -57,7 +59,6 @@ class ProductSupplierinfoCheck(models.Model):
     def update_products_standard_price_only(self):
         res = self.with_context(
             update_standard_price=True,
-            date_obsolete_price=self.date_obsolete_price,
         ).update_products_replenishment_cost()
         return res
 
@@ -65,15 +66,12 @@ class ProductSupplierinfoCheck(models.Model):
     def update_products_replenishment_cost_only(self):
         res = self.with_context(
             update_managed_replenishment_cost=True,
-            date_obsolete_price=self.date_obsolete_price,
         ).update_products_replenishment_cost()
         return res
 
     @api.multi
     def check_products_supplierinfo(self):
-        res = self.with_context(
-            date_obsolete_price=self.date_obsolete_price,
-        ).update_products_replenishment_cost()
+        res = self.update_products_replenishment_cost()
         return res
 
     @api.multi
@@ -86,7 +84,12 @@ class ProductSupplierinfoCheck(models.Model):
             started_at = time.time()
             products_without_seller, products_without_seller_price,\
                 products_with_obsolete_price = \
-                products.do_update_managed_replenishment_cost()
+                products.do_update_managed_replenishment_cost(
+                    date_obsolete_supplierinfo_price=
+                    self.date_obsolete_supplierinfo_price,
+                    date_check_supplierinfo_price=self.date_check_supplierinfo_price,
+                    listprice_id=self.listprice_id
+                )
             duration = time.time() - started_at
             last_update = fields.Datetime.now()
             if not supplierinfo_check.name:

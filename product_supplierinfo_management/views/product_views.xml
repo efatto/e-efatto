@@ -79,7 +79,6 @@
 		</field>
 	</record>
 
-
 	<record id="product_product_tree_view" model="ir.ui.view">
 		<field name="name">product.product.tree</field>
 		<field name="model">product.product</field>

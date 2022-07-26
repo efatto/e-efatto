@@ -25,7 +25,8 @@
                         </group>
                         <group>
                             <field name="last_update" readonly="True"/>
-                            <field name="date_obsolete_price" widget="date"/>
+                            <field name="date_obsolete_supplierinfo_price" widget="date"/>
+                            <field name="date_check_supplierinfo_price" widget="date"/>
                             <field name="product_ctg_ids" widget="many2many_tags"/>
                             <field name="listprice_id"/>
                         </group>
