@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models
-from odoo.tools.date_utils import relativedelta
+from odoo.tools.float_utils import float_compare
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -91,13 +91,48 @@ class ProductProduct(models.Model):
                 and
                 (y.date_start and y.date_start <= date_check_supplierinfo_price or True)
             )
+            if not seller and not product.last_supplier_invoice_price \
+                    and not product.last_purchase_price:
+                # no cost info available
+                continue
             if len(seller) > 1:
                 # todo serve controllare vari prezzi?
-                if product.last_supplier_id and product.last_supplier_invoice_price:
-                    pass
-                    # todo che si fa se l'ultimo fornitore è diverso dal fornitore
-                    #  di default?
                 seller = seller[0]
+            if product.last_supplier_invoice_id and product.last_supplier_invoice_price:
+                # todo che si fa se l'ultimo fornitore è diverso dal fornitore
+                #  di default?
+                diff = float_compare(
+                    product.last_supplier_invoice_price,
+                    seller.price,
+                    precision_digits=self.env['decimal.precision'].search([
+                        ('name', '=', 'Product Price')
+                    ], limit=1).digits)
+                if diff < 0:
+                    # todo che si fa se l'ultimo prezzo in fattura è diverso?
+                    #  last_supplier_invoice_price is < seller.price
+                    pass
+                elif diff > 0:
+                    # todo che si fa se l'ultimo prezzo in fattura è diverso?
+                    #  last_supplier_invoice_price is > seller.price
+                    pass
+            elif product.last_supplier_id and product.last_purchase_price:
+                # todo che si fa se l'ultimo fornitore è diverso dal fornitore
+                #  di default?
+                diff = float_compare(
+                    product.last_purchase_price,
+                    seller.price,
+                    precision_digits=self.env['decimal.precision'].search([
+                        ('name', '=', 'Product Price')
+                    ], limit=1).digits)
+                if diff < 0:
+                    # todo che si fa se l'ultimo prezzo in fattura è diverso?
+                    #  last_supplier_invoice_price is < seller.price
+                    pass
+                elif diff > 0:
+                    # todo che si fa se l'ultimo prezzo in fattura è diverso?
+                    #  last_supplier_invoice_price is > seller.price
+                    pass
+
             if seller.price:
                 price_unit = seller.price
                 if hasattr(seller, 'discount'):
@@ -128,6 +163,9 @@ class ProductProduct(models.Model):
             # todo aggiungere qui il calcolo del costo con le regole del listino
             #  collegato
             if listprice_id:
+                # todo: se si vuole calcolare il prezzo sulla base di uno dei prezzi
+                #  cercati sopra, va cercata la regola applicabile e applicata sul
+                #  prezzo trovato (qui viene usato il prezzo impostato nel listino)
                 listprice_price_unit = listprice_id.get_product_price(
                     product, 1, self.env.user.company_id.partner_id,
                     date=date_check_supplierinfo_price)
