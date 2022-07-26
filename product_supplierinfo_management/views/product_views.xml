@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+	<record id="product_product_last_supplier_invoice_form_view" model="ir.ui.view">
+		<field name="name">product.product.last.supplier.invoice.form</field>
+		<field name="model">product.product</field>
+		<field name="inherit_id" ref="purchase_last_price_info.product_product_last_purchase_info_form_view" />
+		<field name="arch" type="xml">
+			<xpath expr="//group[@name='last_purchase_info']" position="attributes">
+				<attribute name="string"></attribute>
+			</xpath>
+			<xpath expr="//group[@name='last_purchase_info']/field[@name='last_supplier_id']" position="replace"/>
+			<xpath expr="//group[@name='last_purchase_info']/field[@name='last_purchase_date']" position="replace"/>
+			<xpath expr="//group[@name='last_purchase_info']/field[@name='last_purchase_price']" position="replace"/>
+			<group name="last_purchase_info" position="inside">
+				<group string="Purchase Info" name="purchase_info"
+					   attrs="{'invisible': [('product_variant_count', '&lt;=', 1)]}">
+					<field name="last_supplier_id" position="move"/>
+					<field name="last_purchase_date" position="move"/>
+					<field name="last_purchase_price" position="move"/>
+					</group>
+				<group string="Supplier Invoice" name="last_supplier_invoice"
+					   attrs="{'invisible': [('product_variant_count', '&lt;=', 1)]}">
+					<group col="2" colspan="2">
+						<field name="last_supplier_id"/>
+						<field name="last_supplier_invoice_date"/>
+					</group>
+					<group col="8">
+						<field name="last_supplier_invoice_price"/>
+						<field name="last_supplier_invoice_discount"/>
+						<field name="last_supplier_invoice_discount2"/>
+						<field name="last_supplier_invoice_discount3"/>
+					</group>
+					<group col="2" colspan="8">
+						<field name="last_supplier_invoice_id"/>
+						<field name="last_supplier_invoice_line_id"/>
+					</group>
+				</group>
+			</group>
+		</field>
+	</record>
+
+	<record id="product_template_last_supplier_invoice_form_view" model="ir.ui.view">
+		<field name="name">product.template.form.last.supplier.invoice</field>
+		<field name="model">product.template</field>
+		<field name="inherit_id" ref="purchase_last_price_info.product_template_last_purchase_info_form_view" />
+		<field name="arch" type="xml">
+			<xpath expr="//group[@name='last_purchase_info']" position="attributes">
+				<attribute name="string"></attribute>
+			</xpath>
+			<xpath expr="//group[@name='last_purchase_info']/field[@name='last_supplier_id']" position="replace"/>
+			<xpath expr="//group[@name='last_purchase_info']/field[@name='last_purchase_date']" position="replace"/>
+			<xpath expr="//group[@name='last_purchase_info']/field[@name='last_purchase_price']" position="replace"/>
+			<group name="last_purchase_info" position="inside">
+				<group string="Purchase Info" name="purchase_info"
+					   attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}">
+					<field name="last_supplier_id" position="move"/>
+					<field name="last_purchase_date" position="move"/>
+					<field name="last_purchase_price" position="move"/>
+				</group>
+				<group string="Supplier Invoice" name="last_supplier_invoice"
+					   attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}">
+					<group col="2" colspan="2">
+						<field name="last_supplier_id"/>
+						<field name="last_supplier_invoice_date"/>
+					</group>
+					<group col="8">
+						<field name="last_supplier_invoice_price"/>
+						<field name="last_supplier_invoice_discount"/>
+						<field name="last_supplier_invoice_discount2"/>
+						<field name="last_supplier_invoice_discount3"/>
+					</group>
+					<group col="2" colspan="8">
+						<field name="last_supplier_invoice_id"/>
+						<field name="last_supplier_invoice_line_id"/>
+					</group>
+				</group>
+			</group>
+		</field>
+	</record>
+
+
+	<record id="product_product_tree_view" model="ir.ui.view">
+		<field name="name">product.product.tree</field>
+		<field name="model">product.product</field>
+		<field name="inherit_id" ref="product.product_product_tree_view" />
+		<field name="arch" type="xml">
+			<field name="price" position="after">
+				<field name="last_supplier_invoice_price"/>
+			</field>
+		</field>
+	</record>
+
+	<record id="product_template_tree_view" model="ir.ui.view">
+        <field name="name">product.template.product.tree</field>
+        <field name="model">product.template</field>
+		<field name="inherit_id" ref="product.product_template_tree_view"/>
+        <field name="arch" type="xml">
+			<field name="standard_price" position="after">
+				<field name="last_supplier_invoice_price"/>
+			</field>
+        </field>
+    </record>
+
+</odoo>
