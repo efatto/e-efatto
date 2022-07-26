@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<odoo>
+    <record model="ir.ui.view" id="view_product_supplierinfo_check_tree">
+        <field name="name">product.supplierinfo.check.tree</field>
+        <field name="model">product.supplierinfo.check</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Product Supplierinfo Check">
+                <field name="name"/>
+                <field name="last_update"/>
+            </tree>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="view_product_supplierinfo_check_form">
+        <field name="name">product.supplierinfo.check.form</field>
+        <field name="model">product.supplierinfo.check</field>
+        <field name="arch" type="xml">
+            <form string="Product Supplierinfo Check">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="company_id" groups="base.group_multi_company"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="last_update" readonly="True"/>
+                            <field name="date_obsolete_price" widget="date"/>
+                            <field name="product_ctg_ids" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                            <button name="check_products_supplierinfo" string="Check Supplierinfo Values" type="object"/>
+                        </group>
+                        <group/>
+                        <group>
+                            <button name="update_products_replenishment_cost_only" string="Update Products Replenishment Cost" type="object"/>
+                        </group>
+                        <group/>
+                        <group>
+                            <button name="update_products_standard_price_only" string="Update Products Standard Price" type="object"/>
+                        </group>
+                        <group/>
+                        <group>
+                            <button name="update_products_standard_price_and_replenishment_cost" string="Update Products Standard Price and Replenishment Cost" type="object"/>
+                        </group>
+                        <group/>
+                        <group>
+                            <field name="log"/>
+                        </group>
+                    </group>
+                    <group string="Products without seller price">
+                        <field name="missing_seller_price_ids" nolabel="1">
+                            <tree>
+                                <field name="default_code"/>
+                                <field name="name"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group string="Products without seller">
+                        <field name="missing_seller_ids" nolabel="1">
+                            <tree>
+                                <field name="default_code"/>
+                                <field name="name"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group string="Products with obsolet price">
+                        <field name="obsolete_seller_price_ids" nolabel="1">
+                            <tree>
+                                <field name="default_code"/>
+                                <field name="name"/>
+                                <field name="last_supplier_invoice_id"/>
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_product_supplierinfo_check">
+        <field name="name">Product Supplierinfo Check</field>
+        <field name="res_model">product.supplierinfo.check</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_product_supplierinfo_check_tree"/>
+    </record>
+    <menuitem name="Product Supplierinfo Check"
+              id="menu_product_supplierinfo_check"
+              parent="stock.menu_warehouse_config"
+              action="action_product_supplierinfo_check"/>
+</odoo>
