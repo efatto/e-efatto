@@ -12,11 +12,11 @@ class ProductProduct(models.Model):
     _inherit = 'product.product'
 
     last_supplier_invoice_line_id = fields.Many2one(
-        comodel_name='account.invoice.line', string='Last Supplier Invoice Line')
+        comodel_name='account.invoice.line', string='Last Invoice Line')
     last_supplier_invoice_id = fields.Many2one(
         comodel_name='account.invoice',
         related='last_supplier_invoice_line_id.invoice_id',
-        string='Last Supplier Invoice')
+        string='Last Invoice')
     last_supplier_invoice_price = fields.Float(
         related='last_supplier_invoice_line_id.price_unit')
     last_supplier_invoice_discount = fields.Float(
@@ -28,7 +28,7 @@ class ProductProduct(models.Model):
     last_supplier_invoice_date = fields.Date(
         related='last_supplier_invoice_id.date_invoice')
     last_supplier_id = fields.Many2one(
-        related='last_supplier_invoice_id.partner_id', string='Last Invoice Supplier')
+        related='last_supplier_invoice_id.partner_id', string='Last Supplier')
 
     @api.multi
     def set_product_last_supplier_invoice(self, invoice_id=False):
@@ -129,7 +129,7 @@ class ProductTemplate(models.Model):
     last_supplier_invoice_id = fields.Many2one(
         comodel_name='account.invoice',
         related='last_supplier_invoice_line_id.invoice_id',
-        string='Last Supplier Invoice')
+        string='Last Invoice')
     last_supplier_invoice_price = fields.Float(
         related='last_supplier_invoice_line_id.price_unit')
     last_supplier_invoice_discount = fields.Float(

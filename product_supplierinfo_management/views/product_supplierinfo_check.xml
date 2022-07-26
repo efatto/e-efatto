@@ -27,6 +27,7 @@
                             <field name="last_update" readonly="True"/>
                             <field name="date_obsolete_price" widget="date"/>
                             <field name="product_ctg_ids" widget="many2many_tags"/>
+                            <field name="listprice_id"/>
                         </group>
                         <group>
                             <button name="check_products_supplierinfo" string="Check Supplierinfo Values" type="object"/>
@@ -64,7 +65,7 @@
                             </tree>
                         </field>
                     </group>
-                    <group string="Products with obsolet price">
+                    <group string="Products with obsolete price">
                         <field name="obsolete_seller_price_ids" nolabel="1">
                             <tree>
                                 <field name="default_code"/>

@@ -1,13 +1,13 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* product_managed_replenishment_cost
+#	* product_supplierinfo_management
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-10 17:50+0000\n"
-"PO-Revision-Date: 2022-03-10 17:50+0000\n"
+"POT-Creation-Date: 2022-07-26 08:58+0000\n"
+"PO-Revision-Date: 2022-07-26 08:58+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -15,139 +15,220 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
-#. module: product_managed_replenishment_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_customerinfo__adjustment_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_supplierinfo__adjustment_cost
-msgid "Adjustment Cost (€/pz)"
-msgstr "Costo Adeguamento (€/pz)"
+#. module: product_supplierinfo_management
+#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplierinfo_check_form
+msgid "Check Supplierinfo Values"
+msgstr "Verifica Valori Listini Fornitori"
 
-#. module: product_managed_replenishment_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__company_id
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__company_id
 msgid "Company"
 msgstr "Azienda"
 
-#. module: product_managed_replenishment_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__create_uid
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__create_uid
 msgid "Created by"
 msgstr "Creato da"
 
-#. module: product_managed_replenishment_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__create_date
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__create_date
 msgid "Created on"
 msgstr "Creato il"
 
-#. module: product_managed_replenishment_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_customerinfo__depreciation_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_supplierinfo__depreciation_cost
-msgid "Depreciation Cost (€/pz)"
-msgstr "Costo Ammortamento (€/pz)"
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__date_obsolete_price
+msgid "Date Obsolete Price"
+msgstr "Data Obsolescenza Prezzi"
 
-#. module: product_managed_replenishment_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__display_name
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_invoice_discount
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_invoice_discount
+msgid "Discount (%)"
+msgstr "Sconto (%)"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_invoice_discount2
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_invoice_discount2
+msgid "Discount 2 (%)"
+msgstr "Sconto 2 (%)"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_invoice_discount3
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_invoice_discount3
+msgid "Discount 3 (%)"
+msgstr "Sconto 3 (%)"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__display_name
 msgid "Display Name"
-msgstr "Nome Visualizzato"
+msgstr "Nome da visualizzare"
 
-#. module: product_managed_replenishment_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__id
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__id
 msgid "ID"
 msgstr ""
 
-#. module: product_managed_replenishment_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost____last_update
-msgid "Last Modified on"
-msgstr "Ultima modifica il"
+#. module: product_supplierinfo_management
+#: model:ir.model,name:product_supplierinfo_management.model_account_invoice
+msgid "Invoice"
+msgstr "Fattura"
 
-#. module: product_managed_replenishment_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__last_update
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_invoice_date
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_invoice_date
+msgid "Invoice Date"
+msgstr "Data fattura"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,help:product_supplierinfo_management.field_product_product__last_supplier_invoice_date
+#: model:ir.model.fields,help:product_supplierinfo_management.field_product_template__last_supplier_invoice_date
+msgid "Keep empty to use the current date"
+msgstr "Lasciare vuoto per usare la data odierna"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_id
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_id
+msgid "Last Supplier"
+msgstr "Ultima Fornitore"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check____last_update
+msgid "Last Modified on"
+msgstr "Data di ultima modifica"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_invoice_id
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_invoice_id
+msgid "Last Invoice"
+msgstr "Ultima Fattura"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_invoice_line_id
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_invoice_line_id
+msgid "Last Invoice Line"
+msgstr "Ultima Riga Fattura"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__last_update
 msgid "Last Update"
 msgstr "Ultimo Aggiornamento"
 
-#. module: product_managed_replenishment_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__write_uid
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__write_uid
 msgid "Last Updated by"
 msgstr "Ultima modifica di"
 
-#. module: product_managed_replenishment_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__write_date
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__write_date
 msgid "Last Updated on"
 msgstr "Ultima modifica il"
 
-#. module: product_managed_replenishment_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__log
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__log
 msgid "Log"
 msgstr ""
 
-#. module: product_managed_replenishment_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__name
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__name
 msgid "Name"
 msgstr "Nome"
 
-#. module: product_managed_replenishment_cost
-#: model:ir.model,name:product_managed_replenishment_cost.model_product_product
+#. module: product_supplierinfo_management
+#: model:ir.model,name:product_supplierinfo_management.model_product_product
 msgid "Product"
 msgstr "Prodotto"
 
-#. module: product_managed_replenishment_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__product_ctg_ids
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__product_ctg_ids
 msgid "Product Categories"
 msgstr "Categorie prodotto"
 
-#. module: product_managed_replenishment_cost
-#: model:ir.actions.act_window,name:product_managed_replenishment_cost.action_replenishment_cost
-#: model:ir.model,name:product_managed_replenishment_cost.model_replenishment_cost
-msgid "Product Replenishment Cost"
-msgstr "Costo Sostituzione Prodotto"
+#. module: product_supplierinfo_management
+#: model:ir.actions.act_window,name:product_supplierinfo_management.action_product_supplierinfo_check
+#: model:ir.model,name:product_supplierinfo_management.model_product_supplierinfo_check
+#: model:ir.ui.menu,name:product_supplierinfo_management.menu_product_supplierinfo_check
+#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplierinfo_check_form
+#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplierinfo_check_tree
+msgid "Product Supplierinfo Check"
+msgstr "Verifica Prezzi Fornitori Prodotto"
 
-#. module: product_managed_replenishment_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__missing_seller_price_ids
+#. module: product_supplierinfo_management
+#: model:ir.model,name:product_supplierinfo_management.model_product_template
+msgid "Product Template"
+msgstr "Modello prodotto"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__missing_seller_price_ids
 msgid "Product missing price"
 msgstr "Prodotti senza prezzo"
 
-#. module: product_managed_replenishment_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__missing_seller_ids
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__missing_seller_ids
 msgid "Product missing seller"
 msgstr "Prodotti senza fornitore"
 
-#. module: product_managed_replenishment_cost
-#: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__obsolete_seller_price_ids
+msgid "Product obsolete price"
+msgstr "Prodotto con prezzi obsoleti"
+
+#. module: product_supplierinfo_management
+#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplierinfo_check_form
+msgid "Products with obsolete price"
+msgstr "Prodotti con prezzi obsoleti"
+
+#. module: product_supplierinfo_management
+#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplierinfo_check_form
 msgid "Products without seller"
 msgstr "Prodotti senza fornitore"
 
-#. module: product_managed_replenishment_cost
-#: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
+#. module: product_supplierinfo_management
+#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplierinfo_check_form
 msgid "Products without seller price"
-msgstr "Prodotti senza prezzo"
+msgstr "Prodotti senza prezzo fornitore"
 
-#. module: product_managed_replenishment_cost
-#: model:ir.ui.menu,name:product_managed_replenishment_cost.menu_replenishment_stock
-#: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
-#: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_tree
-msgid "Replenishment Cost"
-msgstr "Costo Sostituzione"
+#. module: product_supplierinfo_management
+#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.product_product_last_supplier_invoice_form_view
+#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.product_template_last_supplier_invoice_form_view
+msgid "Purchase Info"
+msgstr "Informazioni acquisto"
 
-#. module: product_managed_replenishment_cost
-#: model:ir.model,name:product_managed_replenishment_cost.model_product_supplierinfo
-msgid "Supplier Pricelist"
-msgstr "Listino prezzi fornitore"
+#. module: product_supplierinfo_management
+#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.product_product_last_supplier_invoice_form_view
+#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.product_template_last_supplier_invoice_form_view
+msgid "Supplier Invoice"
+msgstr "Fatture Fornitori"
 
-#. module: product_managed_replenishment_cost
-#: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_invoice_price
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_invoice_price
+msgid "Unit Price"
+msgstr "Prezzo unitario"
+
+#. module: product_supplierinfo_management
+#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplierinfo_check_form
 msgid "Update Products Replenishment Cost"
-msgstr "Aggiorna il Costo di sostituzione dei Prodotti"
+msgstr "Aggiorna Costo Sostituzione Prodotti"
 
-#. module: product_managed_replenishment_cost
-#: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
+#. module: product_supplierinfo_management
+#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplierinfo_check_form
 msgid "Update Products Standard Price"
-msgstr "Aggiorna il Costo Standard dei Prodotti"
+msgstr "Aggiorna Costo Prodotti"
 
-#. module: product_managed_replenishment_cost
-#: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
+#. module: product_supplierinfo_management
+#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplierinfo_check_form
 msgid "Update Products Standard Price and Replenishment Cost"
-msgstr "Aggiorna il Costo Standard e il Costo di sostituzione dei Prodotti"
+msgstr "Aggiorna Costo Prodotti e Costo di Sostituzione"
 
-#. module: product_managed_replenishment_cost
-#: code:addons/product_managed_replenishment_cost/models/replenishment_cost.py:71
+#. module: product_supplierinfo_management
+#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:89
 #, python-format
 msgid "Update of %s"
 msgstr "Aggiornamento di %s"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,help:product_supplierinfo_management.field_product_product__last_supplier_id
+#: model:ir.model.fields,help:product_supplierinfo_management.field_product_template__last_supplier_id
+msgid "You can find a contact by its Name, TIN, Email or Internal Reference."
+msgstr "È possibile trovare un contatto per nome, partita IVA, e-mail o riferimento interno."
 
