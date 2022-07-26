@@ -79,7 +79,8 @@ class ProductSupplierinfoCheck(models.Model):
         for supplierinfo_check in self:
             domain = [('type', 'in', ['product', 'consu', 'service'])]
             if supplierinfo_check.product_ctg_ids:
-                domain.append(('categ_id', 'in', supplierinfo_check.product_ctg_ids.ids))
+                domain.append(
+                    ('categ_id', 'in', supplierinfo_check.product_ctg_ids.ids))
             products = self.env['product.product'].search(domain)
             started_at = time.time()
             products_without_seller, products_without_seller_price,\
