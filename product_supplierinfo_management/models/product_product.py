@@ -32,12 +32,11 @@ class ProductProduct(models.Model):
 
     @api.multi
     def set_product_last_supplier_invoice(self, invoice_id=False):
-        """ Get last purchase price, last purchase date and last supplier """
+        """ Get last supplier invoice price, last invoice date and last supplier """
         invoice_line_obj = self.env['account.invoice.line']
         if not self.check_access_rights('write', raise_exception=False):
             return
         for product in self:
-            price_unit_uom = 0.0
             last_line = False
             # Check if Invoice ID was passed, to speed up the search
             if invoice_id:
@@ -52,7 +51,7 @@ class ProductProduct(models.Model):
                     key=lambda l: l.invoice_id.date_invoice, reverse=True)
 
             if lines:
-                # Get most recent Purchase Order Line
+                # Get most recent Invoice Line
                 last_line = lines[:1]
 
             # Assign values to record
