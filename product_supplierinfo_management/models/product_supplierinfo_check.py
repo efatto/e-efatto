@@ -39,6 +39,10 @@ class ProductSupplierinfoCheck(models.Model):
         column1='supplierinfo_id',
         column2='prod_id',
         string="Product obsolete price")
+    listprice_id = fields.Many2one(
+        comodel_name='product.pricelist',
+        string='Pricelist for recomputation'
+    )
 
     @api.multi
     def update_products_standard_price_and_replenishment_cost(self):
