@@ -9,6 +9,7 @@
                 <button type="action"
                     name="%(mrp_production_line_group.action_production_group_line)d"
                     string="Group Lines"
+                    help="Group lines created by sub-bom of type phantom"
                     attrs="{'invisible': ['|', ('state', 'not in', ('confirmed','planned')), ('id', '=', False)]}"/>
             </xpath>
         </field>
