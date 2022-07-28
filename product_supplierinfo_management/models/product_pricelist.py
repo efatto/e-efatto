@@ -23,5 +23,5 @@ class ProductPricelistItem(models.Model):
             if item.compute_price != 'formula':
                 raise ValidationError(
                     _('Item of pricelist with supplierinfo managament enabled '
-                      'cannot hava a compute price different of formula!')
+                      'cannot have a compute price different of formula!')
                 )
