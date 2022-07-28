@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-26 13:00+0000\n"
-"PO-Revision-Date: 2022-07-26 13:00+0000\n"
+"POT-Creation-Date: 2022-07-28 07:30+0000\n"
+"PO-Revision-Date: 2022-07-28 07:30+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -36,23 +36,41 @@ msgid "Created on"
 msgstr "Creato il"
 
 #. module: product_supplierinfo_management
-#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__date_check_supplierinfo_price
-msgid "Date Check Supplierinfo Price"
-msgstr "Data Verifica Prezzi Fornitori"
-
-#. module: product_supplierinfo_management
 #: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__date_obsolete_supplierinfo_price
 msgid "Date Obsolete Supplierinfo Price"
 msgstr "Data Obsolescenza Prezzi Fornitori"
 
 #. module: product_supplierinfo_management
-#: model:ir.model.fields,help:product_supplierinfo_management.field_product_supplierinfo_check__date_check_supplierinfo_price
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__date_validity_supplierinfo
+msgid "Date Validity Supplierinfo"
+msgstr "Data Validità Prezzi Fornitori"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,help:product_supplierinfo_management.field_product_supplierinfo_check__date_validity_supplierinfo
 msgid "Date to filter date validity of supplierinfo prices"
 msgstr "Data per filtro validità prezzi fornitori"
 
 #. module: product_supplierinfo_management
-#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_invoice_discount
-#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_invoice_discount
+#: model:ir.model.fields,help:product_supplierinfo_management.field_product_product__last_purchase_date
+#: model:ir.model.fields,help:product_supplierinfo_management.field_product_template__last_purchase_date
+msgid "Depicts the date where the Quotation should be validated and converted into a purchase order."
+msgstr "Rappresenta la data di quando la quotazione sarà validata e convertita in un ordine d'acquisto."
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_purchase_discount2
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_purchase_discount2
+msgid "Disc. 2 (%)"
+msgstr "Sconto 2 (%)"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_purchase_discount3
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_purchase_discount3
+msgid "Disc. 3 (%)"
+msgstr "Sconto 3 (%)"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_purchase_discount
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_purchase_discount
 msgid "Discount (%)"
 msgstr "Sconto (%)"
 
@@ -90,6 +108,18 @@ msgid "Invoice Date"
 msgstr "Data fattura"
 
 #. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_invoice_discount
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_invoice_discount
+msgid "Invoice Discount (%)"
+msgstr "Sconto (%) (Fattura)"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_invoice_price
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_invoice_price
+msgid "Invoice Unit Price"
+msgstr "Prezzo Unitario (Fattura)"
+
+#. module: product_supplierinfo_management
 #: model:ir.model.fields,help:product_supplierinfo_management.field_product_product__last_supplier_invoice_date
 #: model:ir.model.fields,help:product_supplierinfo_management.field_product_template__last_supplier_invoice_date
 msgid "Keep empty to use the current date"
@@ -103,13 +133,14 @@ msgstr "Ultima Fattura"
 
 #. module: product_supplierinfo_management
 #: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_invoice_line_id
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_invoice_line_id
 msgid "Last Invoice Line"
 msgstr "Ultima Riga Fattura"
 
 #. module: product_supplierinfo_management
-#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_id
-msgid "Last Invoice"
-msgstr "Ultima Fattura"
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_invoice_partner_id
+msgid "Last Invoice Supplier"
+msgstr "Ultimo Fornitore (Fattura)"
 
 #. module: product_supplierinfo_management
 #: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check____last_update
@@ -117,14 +148,22 @@ msgid "Last Modified on"
 msgstr "Data di ultima modifica"
 
 #. module: product_supplierinfo_management
-#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_id
-msgid "Last Supplier"
-msgstr "Ultimo Fornitore"
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_purchase_id
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_purchase_id
+msgid "Last Purchase"
+msgstr "Ultimo Acquisto"
 
 #. module: product_supplierinfo_management
-#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_invoice_line_id
-msgid "Last Invoice Line"
-msgstr "Ultima Riga Fattura"
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_purchase_line_id
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_purchase_line_id
+msgid "Last Purchase Line"
+msgstr "Ultima Riga Acquisto"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_id
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_id
+msgid "Last Supplier"
+msgstr "Ultimo fornitore"
 
 #. module: product_supplierinfo_management
 #: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__last_update
@@ -150,6 +189,17 @@ msgstr ""
 #: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__name
 msgid "Name"
 msgstr "Nome"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_purchase_date
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_purchase_date
+msgid "Order Date"
+msgstr "Data ordine"
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_invoice_partner_id
+msgid "Partner"
+msgstr ""
 
 #. module: product_supplierinfo_management
 #: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__listprice_id
@@ -211,20 +261,20 @@ msgid "Products without seller price"
 msgstr "Prodotti senza prezzo fornitore"
 
 #. module: product_supplierinfo_management
-#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.product_product_last_supplier_invoice_form_view
-#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.product_template_last_supplier_invoice_form_view
+#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.product_normal_form_view
+#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplier_inherit
 msgid "Purchase Info"
 msgstr "Informazioni acquisto"
 
 #. module: product_supplierinfo_management
-#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.product_product_last_supplier_invoice_form_view
-#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.product_template_last_supplier_invoice_form_view
+#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.product_normal_form_view
+#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplier_inherit
 msgid "Supplier Invoice"
 msgstr "Fatture Fornitori"
 
 #. module: product_supplierinfo_management
-#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_supplier_invoice_price
-#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_supplier_invoice_price
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_purchase_price
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_template__last_purchase_price
 msgid "Unit Price"
 msgstr "Prezzo unitario"
 
@@ -244,14 +294,20 @@ msgid "Update Products Standard Price and Replenishment Cost"
 msgstr "Aggiorna Costo Prodotti e Costo di Sostituzione"
 
 #. module: product_supplierinfo_management
-#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:96
+#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:98
 #, python-format
 msgid "Update of %s"
 msgstr "Aggiornamento di %s"
 
 #. module: product_supplierinfo_management
-#: model:ir.model.fields,help:product_supplierinfo_management.field_product_product__last_supplier_id
-#: model:ir.model.fields,help:product_supplierinfo_management.field_product_template__last_supplier_id
+#: model:ir.model.fields,help:product_supplierinfo_management.field_product_product__last_supplier_invoice_partner_id
+#: model:ir.model.fields,help:product_supplierinfo_management.field_product_template__last_supplier_invoice_partner_id
 msgid "You can find a contact by its Name, TIN, Email or Internal Reference."
 msgstr "È possibile trovare un contatto per nome, partita IVA, e-mail o riferimento interno."
+
+#. module: product_supplierinfo_management
+#: model:ir.model.fields,help:product_supplierinfo_management.field_product_product__last_supplier_id
+#: model:ir.model.fields,help:product_supplierinfo_management.field_product_template__last_supplier_id
+msgid "You can find a vendor by its Name, TIN, Email or Internal Reference."
+msgstr "È possibile trovare un fornitore per nome, codice fiscale, e-mail o riferimento interno."
 

@@ -2,7 +2,7 @@
 # Copyright 2019 Eficent Business and IT Consulting Services S.L.
 #   (http://www.eficent.com)
 
-from odoo import api, models
+from odoo import api, fields, models
 
 
 class AccountInvoice(models.Model):
@@ -23,3 +23,10 @@ class AccountInvoice(models.Model):
             rec.invoice_line_ids.mapped('product_id').set_product_last_supplier_invoice(
                 )
         return res
+
+
+class AccountInvoiceLine(models.Model):
+    _inherit = "account.invoice.line"
+
+    invoice_state = fields.Selection(
+        related='invoice_id.state', store=True, readonly=False)
