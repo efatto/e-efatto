@@ -130,13 +130,22 @@ class ProductProduct(models.Model):
         if not date_validity_supplierinfo:
             date_validity_supplierinfo = fields.Date.today()
         products_with_obsolete_price = self.env['product.product']
-        products_without_seller_price = self.env['product.product']
         products_without_seller = self.env['product.product']
         products_seller_mismatch = self.env['product.product']
         for product in self:
             price_unit = 0.0
-            if not product.seller_ids:
-                # compute on standard price
+            # prendo i prezzi con una data di validità corretta, poi però si dovrebbe
+            #  valutare quale è stato aggiornato per ultimo? o che ha l'ultima fattura?
+            seller_ids = product.seller_ids.filtered(
+                lambda y:
+                (y.date_end and y.date_end >= date_validity_supplierinfo or True)
+                and
+                (y.date_start and y.date_start <= date_validity_supplierinfo or True)
+                and y.price != 0.0
+            )
+            if not seller_ids and not product.last_supplier_invoice_price \
+                    and not product.last_purchase_price:
+                # no valid seller nor purchase nor invoice, so compute on standard price
                 price_unit = product._get_price_unit_from_pricelist(
                     listprice_id, product.standard_price, 1,
                     self.env.user.company_id.partner_id, date_validity_supplierinfo,
@@ -148,116 +157,112 @@ class ProductProduct(models.Model):
                     copy_managed_replenishment_cost_to_standard_price,
                 )
                 products_without_seller |= product
+                continue
 
-            # prendo i prezzi con una data di validità corretta, poi però si dovrebbe
-            #  valutare quale è stato aggiornato per ultimo? o che ha l'ultima fattura?
-            seller = product.seller_ids.filtered(
-                lambda y:
-                (y.date_end and y.date_end >= date_validity_supplierinfo or True)
-                and
-                (y.date_start and y.date_start <= date_validity_supplierinfo or True)
-            )
-            if not seller and not product.last_supplier_invoice_price \
-                    and not product.last_purchase_price:
-                # no cost info available - use standard_price
-                price_unit = product.standard_price
-            if len(seller) > 1:
-                # take the first valid seller
-                seller = seller[0]
+            # take the first valid seller and compute price unit net
+            seller = seller_ids[0]
+            seller_price_unit = seller.price
+            if seller.currency_id != self.env.user.company_id.currency_id:
+                seller_price_unit = seller.currency_id._convert(
+                    seller_price_unit,
+                    self.env.user.company_id.currency_id,
+                    self.env.user.company_id,
+                    fields.Date.today(),
+                    round=False)
+            seller_price_unit = seller_price_unit * \
+                (1 - seller.discount) * \
+                (1 - seller.discount2) * \
+                (1 - seller.discount3)
+            if seller.product_uom != product.uom_id:
+                seller_price_unit = seller.product_uom._compute_price(
+                    seller_price_unit, product.uom_id)
 
-            # first check purchase order
-            if product.last_supplier_id and product.last_purchase_price:
-                if not seller:
-                    price_unit = product.last_purchase_price * \
-                         (1 - product.last_purchase_discount) * \
-                         (1 - product.discount2) * \
-                         (1 - product.discount3)
-                if seller and product.last_supplier_id != seller.name:
+            # add obsolete price products
+            if date_obsolete_supplierinfo_price and \
+                    fields.Date.to_date(seller.write_date) \
+                    < date_obsolete_supplierinfo_price:
+                products_with_obsolete_price |= product
+
+            # first check purchase order if date more recent of seller write date
+            if product.last_purchase_price:
+                if product.last_supplier_id != seller.name:
                     # l'ultimo fornitore è diverso dal fornitore di default
                     # -> fare una segnalazione per fattura diversa da
                     #  fornitore abituale, ma usare il prezzo del fornitore abituale
                     products_seller_mismatch |= product
-                    price_unit = seller.price * \
-                        (1 - seller.discount) * \
-                        (1 - seller.discount2) * \
-                        (1 - seller.discount3)
-                diff = float_compare(
-                    product.last_purchase_price,
-                    seller.price,
-                    precision_digits=self.env['decimal.precision'].search([
-                        ('name', '=', 'Product Price')
-                    ], limit=1).digits)
-                if diff < 0:
-                    # todo che si fa se l'ultimo prezzo in fattura è diverso?
-                    #  last_supplier_invoice_price is < seller.price
-                    pass
-                elif diff > 0:
-                    # todo che si fa se l'ultimo prezzo in fattura è diverso?
-                    #  last_supplier_invoice_price is > seller.price
-                    pass
-            elif product.last_supplier_invoice_id and product.last_supplier_invoice_price:
-                # todo che si fa se l'ultimo fornitore è diverso dal fornitore
-                #  di default? > prendere il primo non scaduto!
-                diff = float_compare(
-                    product.last_supplier_invoice_price,
-                    seller.price,
-                    precision_digits=self.env['decimal.precision'].search([
-                        ('name', '=', 'Product Price')
-                    ], limit=1).digits)
-                if diff < 0:
-                    # todo che si fa se l'ultimo prezzo in fattura è diverso?
-                    #  last_supplier_invoice_price is < seller.price
-                    pass
-                elif diff > 0:
-                    # todo che si fa se l'ultimo prezzo in fattura è diverso?
-                    #  last_supplier_invoice_price is > seller.price
-                    pass
+                if product.last_purchase_date > seller.write_date:
+                    purchase_price_unit = product.last_purchase_price * \
+                        (1 - product.last_purchase_discount) * \
+                        (1 - product.last_purchase_discount2) * \
+                        (1 - product.last_purchase_discount3)
+                    diff = float_compare(
+                        purchase_price_unit,
+                        seller_price_unit,
+                        precision_digits=self.env['decimal.precision'].search([
+                            ('name', '=', 'Product Price')
+                        ], limit=1).digits)
+                    if diff != 0:
+                        price_unit = product._get_price_unit_from_pricelist(
+                            listprice_id, purchase_price_unit, 1,
+                            self.env.user.company_id.partner_id,
+                            date_validity_supplierinfo,
+                        )
+                        product._update_prices(
+                            price_unit,
+                            update_managed_replenishment_cost,
+                            update_standard_price,
+                            copy_managed_replenishment_cost_to_standard_price,
+                        )
+                    continue
 
-            if seller.price:
-                price_unit = seller.price
-                if hasattr(seller, 'discount'):
-                    price_unit = price_unit * (1 - seller.discount / 100.0)
-                if hasattr(seller, 'discount2'):
-                    price_unit = price_unit * (1 - seller.discount2 / 100.0)
-                    price_unit = price_unit * (1 - seller.discount3 / 100.0)
-                if seller.currency_id != self.env.user.company_id.currency_id:
-                    price_unit = seller.currency_id._convert(
-                        seller.price,
-                        self.env.user.company_id.currency_id,
-                        self.env.user.company_id,
-                        fields.Date.today(),
-                        round=False)
-                if date_obsolete_supplierinfo_price and \
-                        fields.Date.to_date(seller.write_date) \
-                        < date_obsolete_supplierinfo_price:
-                    products_with_obsolete_price |= product
-            else:
-                # this product is without seller price
-                products_without_seller_price |= product
-            if seller and seller.product_uom != product.uom_id:
-                price_unit = seller.product_uom._compute_price(
-                    price_unit, product.uom_id)
-                # FIXME questo price_unit non serve più no? e i vari calcoli sul
-                #  price_unit sopra altrettanto no?
-            # todo usare sempre il netto già detratti gli sconti
-            # todo il prezzo unitario preso dal fornitore non ha nulla a che fare con
-            #  il prezzo calcolato con il listino, quale usare? questo e non il prezzo
-            #  calcolato da listino
-            # todo aggiungere qui il calcolo del costo con le regole del listino
-            #  collegato
-            if listprice_id:
-                # todo: se si vuole calcolare il prezzo sulla base di uno dei prezzi
-                #  cercati sopra, va cercata la regola applicabile e applicata sul
-                #  prezzo trovato (qui viene usato il prezzo impostato nel listino)
-                listprice_price_unit = listprice_id.get_product_price(
-                    product, 1, self.env.user.company_id.partner_id,
-                    date=date_validity_supplierinfo)
+            # second check invoice if date more recent of seller write date
+            if product.last_supplier_invoice_price:
+                if product.last_supplier_invoice_partner_id != seller.name:
+                    # l'ultimo fornitore in fattura è diverso dal fornitore di default
+                    # -> fare una segnalazione per fattura diversa da
+                    #  fornitore abituale, ma usare il prezzo del fornitore abituale
+                    products_seller_mismatch |= product
+                if product.last_supplier_invoice_date > seller.write_date:
+                    invoice_price_unit = product.last_supplier_invoice_price * \
+                        (1 - product.last_supplier_invoice_discount) * \
+                        (1 - product.last_supplier_invoice_discount2) * \
+                        (1 - product.last_supplier_invoice_discount3)
+                    diff = float_compare(
+                        invoice_price_unit,
+                        seller_price_unit,
+                        precision_digits=self.env['decimal.precision'].search([
+                            ('name', '=', 'Product Price')
+                        ], limit=1).digits)
+                    if diff != 0:
+                        price_unit = product._get_price_unit_from_pricelist(
+                            listprice_id, invoice_price_unit, 1,
+                            self.env.user.company_id.partner_id,
+                            date_validity_supplierinfo,
+                        )
+                        product._update_prices(
+                            price_unit,
+                            update_managed_replenishment_cost,
+                            update_standard_price,
+                            copy_managed_replenishment_cost_to_standard_price,
+                        )
+                    continue
 
+            # no purchase or invoice price more recent, so use seller price
+            price_unit = product._get_price_unit_from_pricelist(
+                listprice_id, seller_price_unit, 1,
+                self.env.user.company_id.partner_id,
+                date_validity_supplierinfo,
+            )
+            product._update_prices(
+                price_unit,
+                update_managed_replenishment_cost,
+                update_standard_price,
+                copy_managed_replenishment_cost_to_standard_price,
+            )
 
         # Note: bom are not considered, possible improvement
-
-        return products_without_seller, products_without_seller_price, \
-            products_with_obsolete_price, products_seller_mismatch
+        return products_without_seller, products_with_obsolete_price,\
+            products_seller_mismatch
 
     @api.multi
     def _update_prices(
@@ -273,6 +278,7 @@ class ProductProduct(models.Model):
 
     @api.multi
     def _get_price_unit_from_pricelist(self, pricelist, price, qty, partner, date):
+        # search applicable rule and use to compute price
         self.ensure_one()
         product_context = dict(
             self.env.context, partner_id=partner.id, date=date)
