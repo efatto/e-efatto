@@ -10,6 +10,7 @@
     'license': 'AGPL-3',
     'depends': [
         'account_invoice_triple_discount',
+        'product_template_replenishment_cost',
         'product_pricelist_supplierinfo',
         'purchase_triple_discount',
         'sale_stock',
@@ -17,6 +18,7 @@
     'data': [
         'security/ir.model.access.csv',
         'security/replenishment_cost_security.xml',
+        'views/product_pricelist.xml',
         'views/product_supplierinfo_check.xml',
         'views/product_views.xml',
     ],
