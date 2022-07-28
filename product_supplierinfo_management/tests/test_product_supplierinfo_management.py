@@ -2,6 +2,7 @@
 from odoo.tests.common import SavepointCase
 from odoo.tools.date_utils import date, relativedelta
 from odoo.exceptions import ValidationError
+import time
 
 
 class TestProductManagedReplenishmentCost(SavepointCase):
@@ -12,19 +13,20 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         item._convert_to_write(item._cache)
         return item
 
-    def _create_purchase_order_line(self, order, product, qty):
+    def _create_purchase_order_line(self, order, product, qty, price):
         vals = {
             'order_id': order.id,
             'product_id': product.id,
             'product_qty': qty,
             'product_uom': product.uom_po_id.id,
-            'price_unit': product.list_price,
+            'price_unit': price,
             'name': product.name,
             'date_planned': date.today(),
         }
         line = self.env['purchase.order.line'].create(vals)
         line.onchange_product_id()
         line._convert_to_write(line._cache)
+        line.price_unit = price
         return line
 
     @classmethod
@@ -131,6 +133,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 'compute_price': 'formula',
                 'base': 'list_price',
                 'price_discount': -15.0,
+                'date_end': today + relativedelta(days=-59),
             },
             {
                 'pricelist_id': cls.pricelist.id,
@@ -147,6 +150,8 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 'compute_price': 'formula',
                 'base': 'standard_price',
                 'price_discount': -15.0,
+                'date_start': today + relativedelta(days=-90),
+                'date_end': today + relativedelta(days=-60),
             }
         ]:
             cls._create_pricelist_item(cls.pricelist_item, vals=vals)
@@ -184,33 +189,39 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                     'min_quantity': 1,
                 }
             self._create_pricelist_item(self.pricelist_item, vals=vals)
-        purchase_order = self.env['purchase.order'].create({
-            'partner_id': self.partner.id
-        })
-        self._create_purchase_order_line(purchase_order, self.product, 5.0)
 
         check = self.env['product.supplierinfo.check'].create([{
             'name': 'Test cost update',
-            'product_ctg_ids': self.child_expense_categ.ids,
+            'product_ctg_ids': [(6, 0, self.child_expense_categ.ids)],
             'listprice_id': self.pricelist.id,
         }])
+        self.assertAlmostEqual(self.product.managed_replenishment_cost, 0)
+        check.check_products_supplierinfo()
+        self.assertEqual(len(check.product_ids), 1)
 
         check.update_products_replenishment_cost()
+        self.assertAlmostEqual(
+            self.product.managed_replenishment_cost,
+            20 * (
+               1.1 if not check.date_validity_supplierinfo else 1
+            )
+        )
         # todo verificare la possibile sovrapposizione di categorie prodotti
         #  es. se nel listino c'è la categoria padre e quella figlia in due diverse
         #  righe verrebbe applicata in successione (sovrascrivendo) o solo la prima?
         #  credo la seconda opzione
         #####
-        self.assertEqual(self.product.standard_price, 50.0)
-        self.assertEqual(self.product.managed_replenishment_cost, 0.0)
-        self.product.standard_price = 70.0
-        self.assertEqual(self.product.managed_replenishment_cost, 0.0)
-
-        # Test Update via template
-        self.product.product_tmpl_id.standard_price = 100.0
-        self.assertEqual(self.product.managed_replenishment_cost, 0.0)
-
-        self.product.seller_ids[0].write({
-            'price': 60.0,
-            'discount': 10.0,
+        time.sleep(2)
+        purchase_order = self.env['purchase.order'].create({
+            'partner_id': self.vendor.id
         })
+        self._create_purchase_order_line(purchase_order, self.product, 5.0, 77.55)
+        purchase_order.button_approve()
+        check.update_products_replenishment_cost()
+        self.assertAlmostEqual(
+            self.product.managed_replenishment_cost,
+            77.55 * (
+                1.1 if not check.date_validity_supplierinfo else 1
+            ),
+            places=2
+        )
