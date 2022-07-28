@@ -18,19 +18,30 @@
         <field name="model">product.supplierinfo.check</field>
         <field name="arch" type="xml">
             <form string="Product Supplierinfo Check">
+                <header/>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" name="action_view_product_ids"
+                            class="oe_stat_button" icon="fa-database">
+                            <field string="Products" name="products_count" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
                     <group>
                         <group>
-                            <field name="name"/>
-                            <field name="company_id" groups="base.group_multi_company"
-                                   options="{'no_create': True}"/>
-                        </group>
-                        <group>
-                            <field name="last_update" readonly="True"/>
                             <field name="date_obsolete_supplierinfo_price"/>
                             <field name="date_validity_supplierinfo"/>
                             <field name="product_ctg_ids" widget="many2many_tags"/>
                             <field name="listprice_id"/>
+                        </group>
+                        <group>
+                            <field name="last_update" readonly="True"/>
+                            <field name="company_id" groups="base.group_multi_company"
+                                   options="{'no_create': True}"/>
                         </group>
                         <group>
                             <button name="check_products_supplierinfo" string="Check Supplierinfo Values" type="object"/>

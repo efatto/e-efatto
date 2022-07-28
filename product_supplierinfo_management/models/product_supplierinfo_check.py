@@ -23,6 +23,10 @@ class ProductSupplierinfoCheck(models.Model):
         comodel_name='product.category',
         string='Product Categories'
     )
+    product_ids = fields.Many2many(
+        comodel_name='product.product')
+    products_count = fields.Integer(
+        compute='_compute_products_count', store=True)
     log = fields.Text()
     missing_seller_product_ids = fields.Many2many(
         comodel_name='product.product',
@@ -54,6 +58,12 @@ class ProductSupplierinfoCheck(models.Model):
         string='Pricelist for recomputation',
         domain=[('enable_supplierinfo_management', '=', True)],
     )
+
+    @api.multi
+    @api.depends('product_ids')
+    def _compute_products_count(self):
+        for check in self:
+            check.products_count = len(check.product_ids)
 
     @api.multi
     def copy_products_replenishment_cost_to_standard_price(self):
@@ -105,13 +115,17 @@ class ProductSupplierinfoCheck(models.Model):
                 supplierinfo_check.name = _('Update of %s' % last_update)
             supplierinfo_check.write(dict(
                 last_update=last_update,
-                log='%s for %s products in %.2f minutes.' % (
-                    '"Updated standard price"'
+                log=_('%s %s products in %.2f minutes.') % (
+                    _('Updated standard price of')
                     if self.env.context.get('update_standard_price')
                     else
-                    '"Updated replenishment cost"'
+                    _('Updated replenishment cost of')
                     if self.env.context.get('update_managed_replenishment_cost')
-                    else '"Checked"',
+                    else
+                    _('Copied replenishment cost to standard price of')
+                    if self.env.context.get(
+                        'copy_managed_replenishment_cost_to_standard_price')
+                    else _('Checked'),
                     len(products),
                     duration / 60,
                     ),
@@ -123,4 +137,13 @@ class ProductSupplierinfoCheck(models.Model):
             supplierinfo_check.obsolete_seller_price_product_ids = \
                 products_with_obsolete_price
             supplierinfo_check.mismatch_seller_product_ids = products_seller_mismatch
+            supplierinfo_check.product_ids = products
         return True
+
+    def action_view_product_ids(self):
+        self.ensure_one()
+        action = self.env.ref('stock.stock_product_normal_action').read()[0]
+        action.update({
+            'domain': [('id', 'in', self.product_ids.ids)],
+        })
+        return action
