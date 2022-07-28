@@ -12,7 +12,7 @@
 						   attrs="{'invisible': [('product_variant_count', '&lt;=', 1)]}">
 						<group col="2" colspan="2">
 							<field name="last_supplier_id"/>
-							<field name="last_purchase_date"/>
+							<field name="last_purchase_date" widget="date"/>
 						</group>
 						<group col="8">
 							<field name="last_purchase_price"/>
@@ -58,7 +58,7 @@
 						   attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}">
 						<group col="2" colspan="2">
 							<field name="last_supplier_id"/>
-							<field name="last_purchase_date"/>
+							<field name="last_purchase_date" widget="date"/>
 						</group>
 						<group col="8">
 							<field name="last_purchase_price"/>
