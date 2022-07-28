@@ -1,12 +1,14 @@
 
 from odoo.tests.common import SavepointCase
 from odoo.tools.date_utils import date, relativedelta
+from odoo.exceptions import ValidationError
 
 
 class TestProductManagedReplenishmentCost(SavepointCase):
 
-    def _create_pricelist_item(self, vals):
-        item = self.create(vals)
+    @staticmethod
+    def _create_pricelist_item(pricelist, vals):
+        item = pricelist.create(vals)
         item._convert_to_write(item._cache)
         return item
 
@@ -100,14 +102,6 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         for vals in [
             {
                 'pricelist_id': cls.pricelist.id,
-                'applied_on': '1_product',
-                'product_tmpl_id': cls.product2.product_tmpl_id.id,
-                'compute_price': 'fixed',
-                'fixed_price': 150,
-                'min_quantity': 1,
-            },
-            {
-                'pricelist_id': cls.pricelist.id,
                 'applied_on': '2_product_category',
                 'categ_id': cls.sub_child_expense_categ.id,
                 'compute_price': 'formula',
@@ -180,6 +174,16 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         })
 
     def test_01_sellers(self):
+        with self.assertRaises(ValidationError):
+            vals = {
+                    'pricelist_id': self.pricelist.id,
+                    'applied_on': '1_product',
+                    'product_tmpl_id': self.product2.product_tmpl_id.id,
+                    'compute_price': 'fixed',
+                    'fixed_price': 150,
+                    'min_quantity': 1,
+                }
+            self._create_pricelist_item(self.pricelist_item, vals=vals)
         purchase_order = self.env['purchase.order'].create({
             'partner_id': self.partner.id
         })
