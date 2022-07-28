@@ -93,7 +93,7 @@ class ProductProduct(models.Model):
             # Check if Invoice ID was passed, to speed up the search
             if invoice_id:
                 lines = invoice_line_obj.search([
-                    ('invoice_id', '=', invoice_id.id),
+                    ('invoice_id', '=', invoice_id),
                     ('product_id', '=', product.id)], limit=1)
             else:
                 lines = invoice_line_obj.search(
@@ -123,17 +123,32 @@ class ProductProduct(models.Model):
         update_standard_price = self.env.context.get('update_standard_price', False)
         update_managed_replenishment_cost = self.env.context.get(
             'update_managed_replenishment_cost', False)
+        copy_managed_replenishment_cost_to_standard_price = self.env.context.get(
+            'copy_managed_replenishment_cost_to_standard_price', False)
         if not date_obsolete_supplierinfo_price:
             date_obsolete_supplierinfo_price = fields.Date.today()
         if not date_validity_supplierinfo:
             date_validity_supplierinfo = fields.Date.today()
-        products_tobe_purchased = self.filtered(lambda x: x.seller_ids)
-        products_nottobe_purchased = self.filtered(lambda x: not x.seller_ids)
         products_with_obsolete_price = self.env['product.product']
         products_without_seller_price = self.env['product.product']
+        products_without_seller = self.env['product.product']
         products_seller_mismatch = self.env['product.product']
-        for product in products_tobe_purchased:
+        for product in self:
             price_unit = 0.0
+            if not product.seller_ids:
+                # compute on standard price
+                price_unit = product._get_price_unit_from_pricelist(
+                    listprice_id, product.standard_price, 1,
+                    self.env.user.company_id.partner_id, date_validity_supplierinfo,
+                )
+                product._update_prices(
+                    price_unit,
+                    update_managed_replenishment_cost,
+                    update_standard_price,
+                    copy_managed_replenishment_cost_to_standard_price,
+                )
+                products_without_seller |= product
+
             # prendo i prezzi con una data di validità corretta, poi però si dovrebbe
             #  valutare quale è stato aggiornato per ultimo? o che ha l'ultima fattura?
             seller = product.seller_ids.filtered(
@@ -237,22 +252,38 @@ class ProductProduct(models.Model):
                 listprice_price_unit = listprice_id.get_product_price(
                     product, 1, self.env.user.company_id.partner_id,
                     date=date_validity_supplierinfo)
-            if update_managed_replenishment_cost:
-                product.managed_replenishment_cost = listprice_price_unit
-            if update_standard_price:
-                product.standard_price = listprice_price_unit
-        # compute replenishment cost for product without suppliers
-        for product in products_nottobe_purchased:
-            if update_managed_replenishment_cost:
-                # todo ricalcolare il prezzo anche qui? si, sullo standard_price
-                #  ricalcolato con il listino collegato
-                product.managed_replenishment_cost = product.standard_price
-            # these products are without seller nor bom
 
-        #todo products_tobe_manufactured are excluded
 
-        return products_nottobe_purchased, products_without_seller_price, \
-            products_with_obsolete_price
+        # Note: bom are not considered, possible improvement
+
+        return products_without_seller, products_without_seller_price, \
+            products_with_obsolete_price, products_seller_mismatch
+
+    @api.multi
+    def _update_prices(self,
+                       price,
+                       update_managed_replenishment_cost,
+                       update_standard_price,
+                       copy_managed_replenishment_cost_to_standard_price):
+        self.ensure_one()
+        if update_managed_replenishment_cost:
+            self.managed_replenishment_cost = price
+        if update_standard_price:
+            self.standard_price = price
+        if copy_managed_replenishment_cost_to_standard_price:
+            self.standard_price = self.managed_replenishment_cost
+
+    @api.multi
+    def _get_price_unit_from_pricelist(self, pricelist, price, qty, partner, date):
+        self.ensure_one()
+        product_context = dict(
+            self.env.context, partner_id=partner.id, date=date)
+        fake_price, rule_id = pricelist.with_context(
+            product_context).get_product_price_rule(
+            self, qty, partner)
+        rule = self.env['product.pricelist.item'].browse(rule_id)
+        price = rule._compute_price(price, self.uom_id, self)
+        return price
 
 
 class ProductTemplate(models.Model):

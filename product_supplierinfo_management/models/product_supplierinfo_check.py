@@ -24,58 +24,65 @@ class ProductSupplierinfoCheck(models.Model):
         string='Product Categories'
     )
     log = fields.Text()
-    missing_seller_ids = fields.Many2many(
+    missing_seller_product_ids = fields.Many2many(
         comodel_name='product.product',
         relation='supplierinfo_missing_seller_rel',
         column1='supplierinfo_id',
         column2='prod_id',
         string="Product missing seller")
-    missing_seller_price_ids = fields.Many2many(
+    missing_seller_price_product_ids = fields.Many2many(
         comodel_name='product.product',
         relation='supplierinfo_missing_price_rel',
         column1='supplierinfo_id',
         column2='prod_id',
         string="Product missing price")
-    obsolete_seller_price_ids = fields.Many2many(
+    obsolete_seller_price_product_ids = fields.Many2many(
         comodel_name='product.product',
         relation='supplierinfo_obsolete_price_rel',
         column1='supplierinfo_id',
         column2='prod_id',
         string="Product obsolete price")
+    mismatch_seller_product_ids = fields.Many2many(
+        comodel_name='product.product',
+        relation='supplierinfo_mismatch_rel',
+        column1='supplierinfo_id',
+        column2='prod_id',
+        string="Product mismatch seller")
     listprice_id = fields.Many2one(
         comodel_name='product.pricelist',
-        string='Pricelist for recomputation'
+        required=True,
+        string='Pricelist for recomputation',
+        domain=[('enable_supplierinfo_management', '=', True)],
     )
 
     @api.multi
-    def update_products_standard_price_and_replenishment_cost(self):
+    def copy_products_replenishment_cost_to_standard_price(self):
+        res = self.with_context(
+            copy_managed_replenishment_cost_to_standard_price=True,
+        ).update_products_cost()
+        return res
+
+    @api.multi
+    def update_products_standard_price(self):
         res = self.with_context(
             update_standard_price=True,
-            update_managed_replenishment_cost=True,
-        ).update_products_replenishment_cost()
-        return res
-
-    @api.multi
-    def update_products_standard_price_only(self):
-        res = self.with_context(
-            update_standard_price=True,
-        ).update_products_replenishment_cost()
-        return res
-
-    @api.multi
-    def update_products_replenishment_cost_only(self):
-        res = self.with_context(
-            update_managed_replenishment_cost=True,
-        ).update_products_replenishment_cost()
-        return res
-
-    @api.multi
-    def check_products_supplierinfo(self):
-        res = self.update_products_replenishment_cost()
+        ).update_products_cost()
         return res
 
     @api.multi
     def update_products_replenishment_cost(self):
+        res = self.with_context(
+            update_managed_replenishment_cost=True,
+        ).update_products_cost()
+        return res
+
+    @api.multi
+    def check_products_supplierinfo(self):
+        res = self.update_products_cost()
+        return res
+
+    @api.multi
+    def update_products_cost(self):
         for supplierinfo_check in self:
             domain = [('purchase_ok', '=', True)]
             if supplierinfo_check.product_ctg_ids:
@@ -84,7 +91,7 @@ class ProductSupplierinfoCheck(models.Model):
             products = self.env['product.product'].search(domain)
             started_at = time.time()
             products_without_seller, products_without_seller_price,\
-                products_with_obsolete_price = \
+                products_with_obsolete_price, products_seller_mismatch = \
                 products.do_update_managed_replenishment_cost(
                     date_obsolete_supplierinfo_price=
                     supplierinfo_check.date_obsolete_supplierinfo_price,
@@ -110,7 +117,10 @@ class ProductSupplierinfoCheck(models.Model):
                     ),
                 )
             )
-            supplierinfo_check.missing_seller_ids = products_without_seller
-            supplierinfo_check.missing_seller_price_ids = products_without_seller_price
-            supplierinfo_check.obsolete_seller_price_ids = products_with_obsolete_price
+            supplierinfo_check.missing_seller_product_ids = products_without_seller
+            supplierinfo_check.missing_seller_price_product_ids = \
+                products_without_seller_price
+            supplierinfo_check.obsolete_seller_price_product_ids = \
+                products_with_obsolete_price
+            supplierinfo_check.mismatch_seller_product_ids = products_seller_mismatch
         return True

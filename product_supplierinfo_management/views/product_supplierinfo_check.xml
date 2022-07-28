@@ -8,6 +8,8 @@
             <tree string="Product Supplierinfo Check">
                 <field name="name"/>
                 <field name="last_update"/>
+                <field name="listprice_id"/>
+                <field name="product_ctg_ids" widget="many2many_tags"/>
             </tree>
         </field>
     </record>
@@ -35,15 +37,15 @@
                         </group>
                         <group/>
                         <group>
-                            <button name="update_products_replenishment_cost_only" string="Update Products Replenishment Cost" type="object"/>
+                            <button name="update_products_replenishment_cost" string="Update Products Replenishment Cost" type="object"/>
                         </group>
                         <group/>
                         <group>
-                            <button name="update_products_standard_price_only" string="Update Products Standard Price" type="object"/>
+                            <button name="update_products_standard_price" string="Update Products Standard Price" type="object"/>
                         </group>
                         <group/>
                         <group>
-                            <button name="update_products_standard_price_and_replenishment_cost" string="Update Products Standard Price and Replenishment Cost" type="object"/>
+                            <button name="copy_products_replenishment_cost_to_standard_price" string="Copy Products Replenishment Cost to Standard Price" type="object"/>
                         </group>
                         <group/>
                         <group>
@@ -51,7 +53,7 @@
                         </group>
                     </group>
                     <group string="Products without seller price">
-                        <field name="missing_seller_price_ids" nolabel="1">
+                        <field name="missing_seller_price_product_ids" nolabel="1">
                             <tree>
                                 <field name="default_code"/>
                                 <field name="name"/>
@@ -59,7 +61,7 @@
                         </field>
                     </group>
                     <group string="Products without seller">
-                        <field name="missing_seller_ids" nolabel="1">
+                        <field name="missing_seller_product_ids" nolabel="1">
                             <tree>
                                 <field name="default_code"/>
                                 <field name="name"/>
@@ -67,7 +69,16 @@
                         </field>
                     </group>
                     <group string="Products with obsolete price">
-                        <field name="obsolete_seller_price_ids" nolabel="1">
+                        <field name="obsolete_seller_price_product_ids" nolabel="1">
+                            <tree>
+                                <field name="default_code"/>
+                                <field name="name"/>
+                                <field name="last_supplier_invoice_id"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group string="Products with mismatch seller">
+                        <field name="mismatch_seller_product_ids" nolabel="1">
                             <tree>
                                 <field name="default_code"/>
                                 <field name="name"/>
