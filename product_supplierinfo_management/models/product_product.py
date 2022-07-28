@@ -260,11 +260,9 @@ class ProductProduct(models.Model):
             products_with_obsolete_price, products_seller_mismatch
 
     @api.multi
-    def _update_prices(self,
-                       price,
-                       update_managed_replenishment_cost,
-                       update_standard_price,
-                       copy_managed_replenishment_cost_to_standard_price):
+    def _update_prices(
+            self, price, update_managed_replenishment_cost, update_standard_price,
+            copy_managed_replenishment_cost_to_standard_price):
         self.ensure_one()
         if update_managed_replenishment_cost:
             self.managed_replenishment_cost = price
