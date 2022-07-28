@@ -34,12 +34,6 @@ class ProductSupplierinfoCheck(models.Model):
         column1='supplierinfo_id',
         column2='prod_id',
         string="Product missing seller")
-    missing_seller_price_product_ids = fields.Many2many(
-        comodel_name='product.product',
-        relation='supplierinfo_missing_price_rel',
-        column1='supplierinfo_id',
-        column2='prod_id',
-        string="Product missing price")
     obsolete_seller_price_product_ids = fields.Many2many(
         comodel_name='product.product',
         relation='supplierinfo_obsolete_price_rel',
@@ -100,8 +94,8 @@ class ProductSupplierinfoCheck(models.Model):
                     ('categ_id', 'child_of', supplierinfo_check.product_ctg_ids.ids))
             products = self.env['product.product'].search(domain)
             started_at = time.time()
-            products_without_seller, products_without_seller_price,\
-                products_with_obsolete_price, products_seller_mismatch = \
+            products_without_seller, products_with_obsolete_price,\
+                products_seller_mismatch = \
                 products.do_update_managed_replenishment_cost(
                     date_obsolete_supplierinfo_price=
                     supplierinfo_check.date_obsolete_supplierinfo_price,
@@ -132,8 +126,6 @@ class ProductSupplierinfoCheck(models.Model):
                 )
             )
             supplierinfo_check.missing_seller_product_ids = products_without_seller
-            supplierinfo_check.missing_seller_price_product_ids = \
-                products_without_seller_price
             supplierinfo_check.obsolete_seller_price_product_ids = \
                 products_with_obsolete_price
             supplierinfo_check.mismatch_seller_product_ids = products_seller_mismatch
