@@ -9,8 +9,8 @@ class ProductSupplierinfoCheck(models.Model):
     _description = 'Product Supplierinfo Check'
 
     name = fields.Char()
-    date_obsolete_supplierinfo_price = fields.Datetime()
-    date_check_supplierinfo_price = fields.Datetime(
+    date_obsolete_supplierinfo_price = fields.Date()
+    date_validity_supplierinfo = fields.Date(
         help="Date to filter date validity of supplierinfo prices"
     )
     last_update = fields.Datetime()
@@ -77,19 +77,20 @@ class ProductSupplierinfoCheck(models.Model):
     @api.multi
     def update_products_replenishment_cost(self):
         for supplierinfo_check in self:
-            domain = [('type', 'in', ['product', 'consu', 'service'])]
+            domain = [('purchase_ok', '=', True)]
             if supplierinfo_check.product_ctg_ids:
                 domain.append(
-                    ('categ_id', 'in', supplierinfo_check.product_ctg_ids.ids))
+                    ('categ_id', 'child_of', supplierinfo_check.product_ctg_ids.ids))
             products = self.env['product.product'].search(domain)
             started_at = time.time()
             products_without_seller, products_without_seller_price,\
                 products_with_obsolete_price = \
                 products.do_update_managed_replenishment_cost(
                     date_obsolete_supplierinfo_price=
-                    self.date_obsolete_supplierinfo_price,
-                    date_check_supplierinfo_price=self.date_check_supplierinfo_price,
-                    listprice_id=self.listprice_id
+                    supplierinfo_check.date_obsolete_supplierinfo_price,
+                    date_validity_supplierinfo=
+                    supplierinfo_check.date_validity_supplierinfo,
+                    listprice_id=supplierinfo_check.listprice_id
                 )
             duration = time.time() - started_at
             last_update = fields.Datetime.now()

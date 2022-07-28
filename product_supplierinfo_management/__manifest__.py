@@ -11,7 +11,7 @@
     'depends': [
         'account_invoice_triple_discount',
         'product_pricelist_supplierinfo',
-        'purchase_last_price_info',
+        'purchase_triple_discount',
         'sale_stock',
     ],
     'data': [
@@ -20,6 +20,7 @@
         'views/product_supplierinfo_check.xml',
         'views/product_views.xml',
     ],
+    'excludes': 'purchase_last_price_info',
     'installable': True,
     "post_init_hook": "set_last_supplier_invoice_info",
 }
