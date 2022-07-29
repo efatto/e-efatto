@@ -132,8 +132,8 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 'categ_id': cls.child_expense_categ.id,
                 'compute_price': 'formula',
                 'base': 'list_price',
-                'price_discount': -15.0,
-                'date_end': today + relativedelta(days=-59),
+                'price_discount': -20.0,
+                'date_end': today + relativedelta(days=-91),
             },
             {
                 'pricelist_id': cls.pricelist.id,
@@ -178,7 +178,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
             'base_pricelist_id': cls.pricelist.id,
         })
 
-    def test_01_sellers(self):
+    def test_00_check_pricelist(self):
         with self.assertRaises(ValidationError):
             vals = {
                     'pricelist_id': self.pricelist.id,
@@ -190,10 +190,32 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 }
             self._create_pricelist_item(self.pricelist_item, vals=vals)
 
+    def test_01_today(self):
+        today = date.today()
+        day_check_validity = today
+        with self.assertRaises(ValidationError):
+            vals = {
+                    'pricelist_id': self.pricelist.id,
+                    'applied_on': '1_product',
+                    'product_tmpl_id': self.product2.product_tmpl_id.id,
+                    'compute_price': 'fixed',
+                    'fixed_price': 150,
+                    'min_quantity': 1,
+                }
+            self._create_pricelist_item(self.pricelist_item, vals=vals)
+        self.execute_test(today, day_check_validity)
+
+    def test_02_65_days_ago(self):
+        today = date.today()
+        day_check_validity = today + relativedelta(days=-65)
+        self.execute_test(today, day_check_validity)
+
+    def execute_test(self, today, day_check_validity):
         check = self.env['product.supplierinfo.check'].create([{
             'name': 'Test cost update',
             'product_ctg_ids': [(6, 0, self.child_expense_categ.ids)],
             'listprice_id': self.pricelist.id,
+            'date_validity_supplierinfo': day_check_validity,
         }])
         self.assertAlmostEqual(self.product.managed_replenishment_cost, 0)
         check.check_products_supplierinfo()
@@ -203,7 +225,15 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         self.assertAlmostEqual(
             self.product.managed_replenishment_cost,
             20 * (
-               1.1 if not check.date_validity_supplierinfo else 1
+                1.1 if not check.date_validity_supplierinfo or
+                (today + relativedelta(
+                    days=-59)) <= check.date_validity_supplierinfo
+                else 1.15 if (today + relativedelta(days=-60))
+                >= check.date_validity_supplierinfo >= (
+                    today + relativedelta(days=-90))
+                else 1.2 if check.date_validity_supplierinfo
+                <= (today + relativedelta(days=-91))
+                else 1
             )
         )
         # todo verificare la possibile sovrapposizione di categorie prodotti
@@ -211,6 +241,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         #  righe verrebbe applicata in successione (sovrascrivendo) o solo la prima?
         #  credo la seconda opzione
         #####
+        # wait 2 seconds to ensure purchase date is later than seller price write date
         time.sleep(2)
         purchase_order = self.env['purchase.order'].create({
             'partner_id': self.vendor.id
@@ -221,7 +252,15 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         self.assertAlmostEqual(
             self.product.managed_replenishment_cost,
             77.55 * (
-                1.1 if not check.date_validity_supplierinfo else 1
+                1.1 if not check.date_validity_supplierinfo or
+                (today + relativedelta(
+                    days=-59)) <= check.date_validity_supplierinfo
+                else 1.15 if (today + relativedelta(days=-60))
+                >= check.date_validity_supplierinfo >= (
+                     today + relativedelta(days=-90))
+                else 1.2 if check.date_validity_supplierinfo
+                <= (today + relativedelta(days=-91))
+                else 1
             ),
             places=2
         )
