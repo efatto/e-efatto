@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_stock_move_lots" model="ir.ui.view">
+        <field name="name">stock.move.lots.form</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="mrp.view_stock_move_lots"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='active_move_line_ids']" position="attributes">
+                <attribute name="attrs">{'invisible': [('product_id', '=', False)]}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
