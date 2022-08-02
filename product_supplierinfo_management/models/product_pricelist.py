@@ -13,11 +13,7 @@ class ProductPricelist(models.Model):
 class ProductPricelistItem(models.Model):
     _inherit = 'product.pricelist.item'
 
-    enable_supplierinfo_management = fields.Boolean(
-        related='pricelist_id.enable_supplierinfo_management'
-    )
-
-    @api.constrains('compute_price', 'enable_supplierinfo_management')
+    @api.constrains('compute_price')
     def check_compute_price(self):
         for item in self.filtered('pricelist_id.enable_supplierinfo_management'):
             if item.compute_price != 'formula':
