@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-28 15:35+0000\n"
-"PO-Revision-Date: 2022-07-28 15:35+0000\n"
+"POT-Creation-Date: 2022-08-02 12:41+0000\n"
+"PO-Revision-Date: 2022-08-02 12:41+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -29,7 +29,7 @@ msgstr " * Lo stato «Bozza» viene usato in presenza di una nuova fattura non a
 " * Lo stato «Annullata» viene usato quando l'utente annulla una fattura."
 
 #. module: product_supplierinfo_management
-#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:118
+#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:112
 #, python-format
 msgid "%s %s products in %.2f minutes."
 msgstr "%s %s prodotti in %.2f minuti."
@@ -40,7 +40,7 @@ msgid "Check Supplierinfo Values"
 msgstr "Verifica Valori Listini Fornitori"
 
 #. module: product_supplierinfo_management
-#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:128
+#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:122
 #, python-format
 msgid "Checked"
 msgstr "Verificati"
@@ -51,7 +51,7 @@ msgid "Company"
 msgstr "Azienda"
 
 #. module: product_supplierinfo_management
-#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:125
+#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:119
 #, python-format
 msgid "Copied replenishment cost to standard price of"
 msgstr "Copiato il costo di sostituzione sul costo di"
@@ -129,7 +129,6 @@ msgstr "Nome da visualizzare"
 
 #. module: product_supplierinfo_management
 #: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_pricelist__enable_supplierinfo_management
-#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_pricelist_item__enable_supplierinfo_management
 msgid "Enable Supplierinfo Management"
 msgstr "Abilita Gestione Prezzi Fornitori"
 
@@ -167,7 +166,7 @@ msgid "Invoice Unit Price"
 msgstr "Prezzo Unitario (Fattura)"
 
 #. module: product_supplierinfo_management
-#: code:addons/product_supplierinfo_management/models/product_pricelist.py:25
+#: code:addons/product_supplierinfo_management/models/product_pricelist.py:21
 #, python-format
 msgid "Item of pricelist with supplierinfo managament enabled cannot have a compute price different of formula!"
 msgstr "Voci di listino con gestione dei prezzi fornitori abilitata non possono avere un sistema di calcolo del prezzo diverso da formula!"
@@ -300,11 +299,6 @@ msgid "Product mismatch seller"
 msgstr "Prodotto con fornitore non coicidente"
 
 #. module: product_supplierinfo_management
-#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__missing_seller_price_product_ids
-msgid "Product missing price"
-msgstr "Prodotti senza prezzo"
-
-#. module: product_supplierinfo_management
 #: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__missing_seller_product_ids
 msgid "Product missing seller"
 msgstr "Prodotti senza fornitore"
@@ -338,11 +332,6 @@ msgstr "Prodotti con prezzi obsoleti"
 #: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplierinfo_check_form
 msgid "Products without seller"
 msgstr "Prodotti senza fornitore"
-
-#. module: product_supplierinfo_management
-#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplierinfo_check_form
-msgid "Products without seller price"
-msgstr "Prodotti senza prezzo fornitore"
 
 #. module: product_supplierinfo_management
 #: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.product_normal_form_view
@@ -383,19 +372,19 @@ msgid "Update Products Standard Price"
 msgstr "Aggiorna Costo Prodotti"
 
 #. module: product_supplierinfo_management
-#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:115
+#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:109
 #, python-format
 msgid "Update of %s"
 msgstr "Aggiornamento di %s"
 
 #. module: product_supplierinfo_management
-#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:122
+#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:116
 #, python-format
 msgid "Updated replenishment cost of"
 msgstr "Aggiornato costo di sostituzione di"
 
 #. module: product_supplierinfo_management
-#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:119
+#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:113
 #, python-format
 msgid "Updated standard price of"
 msgstr "Aggiornato costo di"
