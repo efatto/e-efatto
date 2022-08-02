@@ -131,15 +131,6 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 'applied_on': '2_product_category',
                 'categ_id': cls.child_expense_categ.id,
                 'compute_price': 'formula',
-                'base': 'list_price',
-                'price_discount': -20.0,
-                'date_end': today + relativedelta(days=-91),
-            },
-            {
-                'pricelist_id': cls.pricelist.id,
-                'applied_on': '2_product_category',
-                'categ_id': cls.child_expense_categ.id,
-                'compute_price': 'formula',
                 'base': 'standard_price',
                 'price_discount': -10.0,
             },
@@ -152,7 +143,16 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 'price_discount': -15.0,
                 'date_start': today + relativedelta(days=-90),
                 'date_end': today + relativedelta(days=-60),
-            }
+            },
+            {
+                'pricelist_id': cls.pricelist.id,
+                'applied_on': '2_product_category',
+                'categ_id': cls.child_expense_categ.id,
+                'compute_price': 'formula',
+                'base': 'list_price',
+                'price_discount': -20.0,
+                'date_end': today + relativedelta(days=-91),
+            },
         ]:
             cls._create_pricelist_item(cls.pricelist_item, vals=vals)
         cls.pricelist_parent = cls.env['product.pricelist'].create([{
@@ -208,6 +208,11 @@ class TestProductManagedReplenishmentCost(SavepointCase):
     def test_02_65_days_ago(self):
         today = date.today()
         day_check_validity = today + relativedelta(days=-65)
+        self.execute_test(today, day_check_validity)
+
+    def test_03_95_days_ago(self):
+        today = date.today()
+        day_check_validity = today + relativedelta(days=-95)
         self.execute_test(today, day_check_validity)
 
     def execute_test(self, today, day_check_validity):
