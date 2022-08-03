@@ -12,6 +12,7 @@
                    'on views.',
     'depends': [
         'mrp_production_demo',
+        'mrp_workorder_hierarchy',
         'web_timeline',
     ],
     'data': [
