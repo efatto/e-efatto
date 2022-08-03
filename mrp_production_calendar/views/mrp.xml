@@ -47,12 +47,17 @@
                       default_group_by="workcenter_id"
                       event_open_popup="true"
                       mode="week"
+                      dependency_arrow="parent_id"
             />
         </field>
     </record>
 
     <record id="mrp.mrp_workorder_todo" model="ir.actions.act_window">
         <field name="view_mode">kanban,tree,form,timeline,calendar,pivot,graph</field>
+    </record>
+
+    <record id="mrp.action_mrp_workorder_production_specific" model="ir.actions.act_window">
+        <field name="view_mode">tree,form,gantt,timeline,calendar,pivot,graph</field>
     </record>
 
     <record id="mrp_routing_form_view" model="ir.ui.view">
