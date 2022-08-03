@@ -35,6 +35,6 @@ class MrpWorkorder(models.Model):
     @api.multi
     def button_start(self):
         self.ensure_one()
-        if self.parent_id and self.parent_id.state != 'done':
+        if self.parent_id and self.parent_id.state not in ['progress', 'done']:
             raise UserError(_('Parent workorder has not been processed!'))
         return super().button_start()
