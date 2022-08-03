@@ -1,0 +1,61 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* mrp_production_calendar
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-08-03 16:21+0000\n"
+"PO-Revision-Date: 2022-08-03 16:21+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_production__estimated_days_duration
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing__estimated_days_duration
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing_workcenter__estimated_days_duration
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder__estimated_days_duration
+msgid "Estimated Days Duration"
+msgstr "Durata prevista in giorni"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_production__estimated_duration
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing__estimated_duration
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing_workcenter__estimated_duration
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder__estimated_duration
+msgid "Estimated Duration"
+msgstr "Durata prevista"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_production__estimated_duration
+#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_routing__estimated_duration
+#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_routing_workcenter__estimated_duration
+#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_workorder__estimated_duration
+msgid "Estimated duration in hours splitted on days"
+msgstr "Durata prevista in ore parametrata in giorni"
+
+#. module: mrp_production_calendar
+#: model:ir.model,name:mrp_production_calendar.model_mrp_production
+msgid "Production Order"
+msgstr "Ordine di Produzione"
+
+#. module: mrp_production_calendar
+#: model:ir.model,name:mrp_production_calendar.model_mrp_routing
+msgid "Routings"
+msgstr "Cicli di lavorazione"
+
+#. module: mrp_production_calendar
+#: model:ir.model,name:mrp_production_calendar.model_mrp_routing_workcenter
+msgid "Work Center Usage"
+msgstr "Utilizzo Centri di Lavoro"
+
+#. module: mrp_production_calendar
+#: model:ir.model,name:mrp_production_calendar.model_mrp_workorder
+msgid "Work Order"
+msgstr "Ordine di Lavoro"
+
