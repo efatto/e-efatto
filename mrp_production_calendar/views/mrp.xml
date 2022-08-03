@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="mrp_routing_workcenter_form_view" model="ir.ui.view">
+        <field name="name">mrp.routing.form</field>
+        <field name="model">mrp.routing.workcenter</field>
+        <field name="inherit_id" ref="mrp.mrp_routing_workcenter_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='time_cycle']" position="after">
+                <field name="estimated_days_duration"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="workcenter_line_calendar" model="ir.ui.view">
+        <field name="name">mrp.production.work.order.calendar</field>
+        <field name="model">mrp.workorder</field>
+        <field name="inherit_id" ref="mrp.workcenter_line_calendar"/>
+        <field name="arch" type="xml">
+            <xpath expr="//calendar" position="attributes">
+                <attribute name="date_stop"></attribute>
+                <attribute name="date_delay">estimated_duration</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mrp_production_workorder_form_view_inherit" model="ir.ui.view">
+        <field name="name">mrp.production.work.order.form</field>
+        <field name="model">mrp.workorder</field>
+        <field name="inherit_id" ref="mrp.mrp_production_workorder_form_view_inherit"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div/field[@name='duration_expected']/ancestor::*[1]" position="after">
+                <label for="estimated_days_duration"/>
+                <div>
+                    <field name="estimated_days_duration" class="oe_inline"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mrp_workorder_timeline" model="ir.ui.view">
+        <field name="model">mrp.workorder</field>
+        <field name="type">timeline</field>
+        <field name="arch" type="xml">
+            <timeline date_start="date_planned_start"
+                      date_delay="estimated_duration"
+                      default_group_by="workcenter_id"
+                      event_open_popup="true"
+                      mode="week"
+            />
+        </field>
+    </record>
+
+    <record id="mrp.mrp_workorder_todo" model="ir.actions.act_window">
+        <field name="view_mode">kanban,tree,form,timeline,calendar,pivot,graph</field>
+    </record>
+
+    <record id="mrp_routing_form_view" model="ir.ui.view">
+        <field name="name">mrp.routing.form</field>
+        <field name="model">mrp.routing</field>
+        <field name="inherit_id" ref="mrp.mrp_routing_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="estimated_days_duration"/>
+                <field name="estimated_duration" widget="float_time"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mrp_production_kanban_view" model="ir.ui.view">
+        <field name="name">mrp.production.kanban</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_kanban_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="default_group_by">state</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mrp_production_form_view" model="ir.ui.view">
+        <field name="name">mrp.production.form</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <field name="routing_id" position="after">
+                <field name="estimated_days_duration"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_production_calendar" model="ir.ui.view">
+        <field name="name">mrp.production.calendar</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.view_production_calendar"/>
+        <field name="arch" type="xml">
+            <xpath expr="//calendar" position="attributes">
+                <attribute name="date_delay">estimated_duration</attribute>
+                <attribute name="color">name</attribute>
+                <attribute name="mode">month</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mrp_production_timeline" model="ir.ui.view">
+        <field name="model">mrp.production</field>
+        <field name="type">timeline</field>
+        <field name="arch" type="xml">
+            <timeline date_start="date_planned_start"
+                      date_delay="estimated_duration"
+                      default_group_by="routing_id"
+                      event_open_popup="true"
+                      mode="month"
+            />
+        </field>
+    </record>
+
+    <record id="mrp.mrp_production_action" model="ir.actions.act_window">
+        <field name="view_mode">tree,kanban,form,timeline,calendar,pivot,graph</field>
+    </record>
+
+    <record id="workcenter_line_kanban" model="ir.ui.view">
+        <field name="name">mrp.workorder.kanban</field>
+        <field name="model">mrp.workorder</field>
+        <field name="inherit_id" ref="mrp.workcenter_line_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="default_group_by">state</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
