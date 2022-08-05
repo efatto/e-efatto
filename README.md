@@ -1,4 +1,4 @@
-![Alt License](https://img.shields.io/badge/licence-LGPL--3-blue.svg)
+![Alt License](https://img.shields.io/badge/licence-AGPL--3-blue.svg)
 
 Some useful modules for Italy
 
