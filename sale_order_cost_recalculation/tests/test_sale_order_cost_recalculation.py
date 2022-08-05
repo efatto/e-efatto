@@ -3,11 +3,13 @@
 
 from odoo.tests.common import TransactionCase
 from odoo.tools.date_utils import relativedelta, datetime
+import time
 
 
 class TestSaleOrderCostRecalculation(TransactionCase):
 
     def _create_sale_order_line(self, order, product, qty):
+        time.sleep(2)  # add some time to ensure difference from dates
         line = self.env['sale.order.line'].create({
             'order_id': order.id,
             'product_id': product.id,
