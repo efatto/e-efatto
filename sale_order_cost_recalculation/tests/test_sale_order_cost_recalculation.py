@@ -2,7 +2,8 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo.tests.common import TransactionCase
-from odoo.tools.date_utils import relativedelta, datetime
+from odoo.tools.date_utils import relativedelta
+from odoo import fields
 import time
 
 
@@ -44,7 +45,7 @@ class TestSaleOrderCostRecalculation(TransactionCase):
 
     def test_02_purchase_date(self):
         price_history_obj = self.env['product.price.history']
-        now_dt = datetime.now().replace(microsecond=0)
+        now_dt = fields.Date.today()
         for vals in [
             {'product_id': self.product1.id, 'cost': 5.2789,
              'datetime': now_dt + relativedelta(days=-10)},
@@ -76,17 +77,17 @@ class TestSaleOrderCostRecalculation(TransactionCase):
         self._create_sale_order_line(order, self.product1, 5)
         self.assertEqual(order.state, 'draft')
         order_line = order.order_line[0]
-        self.assertEqual(order_line.purchase_date, now_dt)
+        self.assertEqual(fields.Date.from_string(order_line.purchase_date), now_dt)
 
         self._create_sale_order_line(order, self.product2, 5)
         order_line1 = order.order_line - order_line
         order_line1.purchase_price = 7.278
-        self.assertEqual(order_line1.purchase_date,
+        self.assertEqual(fields.Date.from_string(order_line1.purchase_date),
                          now_dt + relativedelta(days=-20))
 
         order_line1.product_id = self.product1
-        self.assertEqual(order_line1.purchase_date, now_dt)
+        self.assertEqual(fields.Date.from_string(order_line1.purchase_date), now_dt)
 
         order_line.purchase_price = 7.77
-        self.assertEqual(order_line.purchase_date,
+        self.assertEqual(fields.Date.from_string(order_line.purchase_date),
                          now_dt + relativedelta(days=-40))
