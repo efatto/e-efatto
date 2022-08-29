@@ -132,6 +132,7 @@ class ProductProduct(models.Model):
         products_with_obsolete_price = self.env['product.product']
         products_without_seller = self.env['product.product']
         products_seller_mismatch = self.env['product.product']
+        products_price_rule_not_found = self.env['product.product']
         for product in self:
             price_unit = 0.0
             # prendo i prezzi con una data di validità corretta, poi però si dovrebbe
@@ -143,19 +144,23 @@ class ProductProduct(models.Model):
                 (y.date_start and y.date_start <= date_validity_supplierinfo or True)
                 and y.price != 0.0
             )
-            if not seller_ids and not product.last_supplier_invoice_price \
-                    and not product.last_purchase_price:
-                # no valid seller nor purchase nor invoice, so compute on standard price
-                price_unit = product._get_price_unit_from_pricelist(
-                    listprice_id, product.standard_price, 1,
-                    self.env.user.company_id.partner_id, date_validity_supplierinfo,
-                )
-                product._update_prices(
-                    price_unit,
-                    update_managed_replenishment_cost,
-                    update_standard_price,
-                    copy_managed_replenishment_cost_to_standard_price,
-                )
+            if not seller_ids:
+                if not product.last_supplier_invoice_price \
+                        and not product.last_purchase_price:
+                    # no valid seller nor purchase nor invoice, so compute on standard price
+                    price_unit = product._get_price_unit_from_pricelist(
+                        listprice_id, product.standard_price, 1,
+                        self.env.user.company_id.partner_id, date_validity_supplierinfo,
+                    )
+                    if price_unit:
+                        product._update_prices(
+                            price_unit,
+                            update_managed_replenishment_cost,
+                            update_standard_price,
+                            copy_managed_replenishment_cost_to_standard_price,
+                        )
+                    else:
+                        products_price_rule_not_found |= product
                 products_without_seller |= product
                 continue
 
@@ -207,12 +212,15 @@ class ProductProduct(models.Model):
                             self.env.user.company_id.partner_id,
                             date_validity_supplierinfo,
                         )
-                        product._update_prices(
-                            price_unit,
-                            update_managed_replenishment_cost,
-                            update_standard_price,
-                            copy_managed_replenishment_cost_to_standard_price,
-                        )
+                        if price_unit:
+                            product._update_prices(
+                                price_unit,
+                                update_managed_replenishment_cost,
+                                update_standard_price,
+                                copy_managed_replenishment_cost_to_standard_price,
+                            )
+                        else:
+                            products_price_rule_not_found |= product
                     continue
 
             # second check invoice if date more recent of seller write date
@@ -222,7 +230,8 @@ class ProductProduct(models.Model):
                     # -> fare una segnalazione per fattura diversa da
                     #  fornitore abituale, ma usare il prezzo del fornitore abituale
                     products_seller_mismatch |= product
-                if product.last_supplier_invoice_date > seller.write_date:
+                if product.last_supplier_invoice_date > \
+                        fields.Date.from_string(seller.write_date):
                     invoice_price_unit = product.last_supplier_invoice_price * \
                         (1 - product.last_supplier_invoice_discount) * \
                         (1 - product.last_supplier_invoice_discount2) * \
@@ -239,12 +248,15 @@ class ProductProduct(models.Model):
                             self.env.user.company_id.partner_id,
                             date_validity_supplierinfo,
                         )
-                        product._update_prices(
-                            price_unit,
-                            update_managed_replenishment_cost,
-                            update_standard_price,
-                            copy_managed_replenishment_cost_to_standard_price,
-                        )
+                        if price_unit:
+                            product._update_prices(
+                                price_unit,
+                                update_managed_replenishment_cost,
+                                update_standard_price,
+                                copy_managed_replenishment_cost_to_standard_price,
+                            )
+                        else:
+                            products_price_rule_not_found |= product
                     continue
 
             # no purchase or invoice price more recent, so use seller price
@@ -253,16 +265,19 @@ class ProductProduct(models.Model):
                 self.env.user.company_id.partner_id,
                 date_validity_supplierinfo,
             )
-            product._update_prices(
-                price_unit,
-                update_managed_replenishment_cost,
-                update_standard_price,
-                copy_managed_replenishment_cost_to_standard_price,
-            )
+            if price_unit:
+                product._update_prices(
+                    price_unit,
+                    update_managed_replenishment_cost,
+                    update_standard_price,
+                    copy_managed_replenishment_cost_to_standard_price,
+                )
+            else:
+                products_price_rule_not_found |= product
 
         # Note: bom are not considered, possible improvement
         return products_without_seller, products_with_obsolete_price,\
-            products_seller_mismatch
+            products_seller_mismatch, products_price_rule_not_found
 
     @api.multi
     def _update_prices(
@@ -285,9 +300,11 @@ class ProductProduct(models.Model):
         fake_price, rule_id = pricelist.with_context(
             product_context).get_product_price_rule(
             self, qty, partner)
-        rule = self.env['product.pricelist.item'].browse(rule_id)
-        price = rule._compute_price(price, self.uom_id, self)
-        return price
+        if rule_id:
+            rule = self.env['product.pricelist.item'].browse(rule_id)
+            price = rule._compute_price(price, self.uom_id, self)
+            return price
+        return 0
 
 
 class ProductTemplate(models.Model):
