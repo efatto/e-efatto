@@ -63,6 +63,14 @@
                             <field name="log"/>
                         </group>
                     </group>
+                    <group string="Products without price rule">
+                        <field name="price_rule_not_found_product_ids" nolabel="1">
+                            <tree>
+                                <field name="default_code"/>
+                                <field name="name"/>
+                            </tree>
+                        </field>
+                    </group>
                     <group string="Products without seller">
                         <field name="missing_seller_product_ids" nolabel="1">
                             <tree>
