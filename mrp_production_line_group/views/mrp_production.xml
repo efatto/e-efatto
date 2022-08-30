@@ -12,6 +12,9 @@
                     help="Group lines created by sub-bom of type phantom"
                     attrs="{'invisible': ['|', ('state', 'not in', ('confirmed','planned')), ('id', '=', False)]}"/>
             </xpath>
+            <xpath expr="//field[@name='move_raw_ids']/tree" position="attributes">
+                <attribute name="default_order">product_id,is_done,sequence</attribute>
+            </xpath>
         </field>
     </record>
 </odoo>
