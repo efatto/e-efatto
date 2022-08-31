@@ -1,0 +1,34 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* stock_reserve_date_check
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-08-31 21:03+0000\n"
+"PO-Revision-Date: 2022-08-31 21:03+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: stock_reserve_date_check
+#: code:addons/stock_reserve_date_check/models/stock_move.py:86
+#, python-format
+msgid "Reservation of product %s not possible for date %s!\n"
+"Purchasable date: %s\n"
+"Exception availability info:\n"
+"%s"
+msgstr "Non è possibile riservare il prodotto %s per la data %s!\n"
+"Possibile data d'acquisto: %s\n"
+"Informazioni sulle eccezioni disponibilità:\n"
+"%s"
+
+#. module: stock_reserve_date_check
+#: model:ir.model,name:stock_reserve_date_check.model_stock_move
+msgid "Stock Move"
+msgstr "Movimento di magazzino"
+
