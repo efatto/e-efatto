@@ -39,6 +39,8 @@ jobs:
         run: pip3 install pika
       - name: Install pip iot
         run: pip3 install odoo12-addon-iot
+      - name: Install custom module from other repo
+        run: pip3 install -e "git+https://github.com/sergiocorato/efatto@12.0#egg=odoo12-addon-stock_move_available_date_expected&subdirectory=setup/stock_move_available_date_expected"
       - name: Install addons and dependencies
         run: oca_install_addons
       - name: Initialize test db
