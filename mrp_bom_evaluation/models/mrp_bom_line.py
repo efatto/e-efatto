@@ -36,8 +36,10 @@ class MrpBomLine(models.Model):
         product_uom_kgm = self.env.ref('uom.product_uom_kgm')
         product_ctg_uom_kgm = self.env.ref('uom.product_uom_categ_kgm')
         for line in self:
+            # product without weight and with uom not in kg ctg will be ignored
             # compute products with not weight uom
-            if line.product_id.weight:
+            if line.product_id.uom_id.category_id != product_ctg_uom_kgm \
+                    and line.product_id.weight:
                 # transform all weight to base kgm u.m.
                 line.weight_total = line.product_id.weight_uom_id._compute_quantity(
                     line.product_id.weight, product_uom_kgm
