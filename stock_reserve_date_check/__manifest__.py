@@ -10,7 +10,7 @@
                'possible',
     'website': 'https://efatto.it',
     'depends': [
-        'stock',
+        'stock_move_available_date_expected',
     ],
     'data': [
     ],
