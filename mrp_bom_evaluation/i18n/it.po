@@ -6,19 +6,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-23 18:45+0000\n"
-"PO-Revision-Date: 2022-07-23 18:45+0000\n"
+"POT-Creation-Date: 2022-09-01 14:18+0000\n"
+"PO-Revision-Date: 2022-09-01 14:18+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
-
-#. module: mrp_bom_evaluation
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
-msgid "(Weight"
-msgstr "(Peso"
 
 #. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
@@ -49,6 +44,11 @@ msgstr "<span>Ore</span>"
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.mrp_bom_form_view
 msgid "Add finishing product"
 msgstr "Aggiungi finitura"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom__amount_media_by_product_uom_kgm
+msgid "Amount Media By Product Uom Kgm"
+msgstr "Importo Medio per u.m. kg (€/kg)"
 
 #. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.view_mrp_bom_purchase_link
@@ -117,6 +117,11 @@ msgid "Finishing Weight"
 msgstr "Peso Finitura"
 
 #. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom__finishing_weight_total
+msgid "Finishing Weight Total"
+msgstr "Peso Totale Grezzo"
+
+#. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_purchase_link__id
 msgid "ID"
 msgstr ""
@@ -168,7 +173,7 @@ msgid "Linked RDP/PO line"
 msgstr "Riga ordine fornitore"
 
 #. module: mrp_bom_evaluation
-#: code:addons/mrp_bom_evaluation/models/mrp_bom.py:80
+#: code:addons/mrp_bom_evaluation/models/mrp_bom.py:105
 #, python-format
 msgid "Missing finishing product for category %s"
 msgstr "Prodotto di finitura mancante per la categoria %s"
@@ -284,4 +289,24 @@ msgstr "Finitura sui componenti"
 #: model:ir.model.fields,help:mrp_bom_evaluation.field_product_template__exclude_from_mo
 msgid "Used to exclude products that will be used outside manufacturing process, e.g. during the assembly on site, but included in bom for evaluation purpose."
 msgstr "Usato per escludere prodotti che saranno usati al di fuori del processo produttivo, ad es. durante l'assemblaggio in cantiere, ma inclusi nella bom per fini di valutazione."
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
+msgid "Weight"
+msgstr "Peso"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom__weight_total
+msgid "Weight Total"
+msgstr "Peso Totale"
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
+msgid "Weights"
+msgstr "Pesi"
+
+#. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
+msgid "€/kg"
+msgstr ""
 

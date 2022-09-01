@@ -35,6 +35,9 @@
             <xpath expr="//field[@name='bom_line_ids']/ancestor::page[last()]" position="inside">
                 <div class="oe_clear"/>
                 <group class="oe_subtotal_footer oe_right">
+                    <field name="finishing_weight_total" style="font-style: italic;" class="oe_subtotal_footer"/>
+                    <field name="weight_total" class="oe_subtotal_footer"/>
+                    <field name="amount_media_by_product_uom_kgm" class="oe_subtotal_footer"/>
                     <field name="total_amount" class="oe_subtotal_footer_separator"/>
                 </group>
             </xpath>

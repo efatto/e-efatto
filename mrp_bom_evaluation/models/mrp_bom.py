@@ -11,6 +11,31 @@ class MrpBom(models.Model):
         compute='_compute_total_amount',
         store=True)
     use_component_finishing = fields.Boolean()
+    finishing_weight_total = fields.Float(
+        compute='_compute_finishing_weight',
+        store=True)
+    weight_total = fields.Float(
+        compute='_compute_finishing_weight',
+        store=True)
+    amount_media_by_product_uom_kgm = fields.Float(
+        compute='_compute_finishing_weight',
+        digits=(16, 8),
+        store=True)
+
+    @api.multi
+    @api.depends('bom_line_ids.weight_total')
+    def _compute_finishing_weight(self):
+        for bom in self:
+            bom.finishing_weight_total = sum([
+                line.weight_total for line in bom.bom_line_ids
+                if line.product_id.categ_id.finishing_product_id
+            ])
+            bom.weight_total = sum([
+                line.weight_total for line in bom.bom_line_ids
+            ])
+            bom.amount_media_by_product_uom_kgm = bom.total_amount / (
+                bom.weight_total or 1.0
+            )
 
     @api.multi
     @api.depends('bom_operation_ids.price_subtotal',

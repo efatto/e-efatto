@@ -30,10 +30,23 @@ class MrpBomLine(models.Model):
     note = fields.Char()
     price_validated = fields.Boolean()
 
-    @api.depends('product_id', 'product_id.weight', 'product_qty')
+    @api.depends('product_id', 'product_id.weight', 'product_qty', 'product_id.uom_id',
+                 'product_id.weight_uom_id')
     def _compute_weight_total(self):
+        product_uom_kgm = self.env.ref('uom.product_uom_kgm')
+        product_ctg_uom_kgm = self.env.ref('uom.product_uom_categ_kgm')
         for line in self:
-            line.weight_total = line.product_id.weight * line.product_qty
+            # compute products with not weight uom
+            if line.product_id.weight:
+                # transform all weight to base kgm u.m.
+                line.weight_total = line.product_id.weight_uom_id._compute_quantity(
+                    line.product_id.weight, product_uom_kgm
+                ) * line.product_qty
+            # compute products directly on their uom as it is a weight
+            elif line.product_id.uom_id.category_id == product_ctg_uom_kgm:
+                line.weight_total = line.product_id.uom_id._compute_quantity(
+                    line.product_qty, product_uom_kgm
+                )
 
     @api.onchange('product_id')
     def onchange_product_id(self):
