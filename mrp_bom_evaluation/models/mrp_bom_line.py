@@ -44,6 +44,12 @@ class MrpBomLine(models.Model):
                 line.weight_total = line.product_id.weight_uom_id._compute_quantity(
                     line.product_id.weight, product_uom_kgm
                 ) * line.product_qty
+            # case of product wich is computed on weight over weight (as finishing)
+            elif line.product_id.uom_id.category_id == product_ctg_uom_kgm \
+                    and line.product_id.weight:
+                line.weight_total = line.product_id.uom_id._compute_quantity(
+                    line.product_qty * line.product_id.weight, product_uom_kgm
+                )
             # compute products directly on their uom as it is a weight
             elif line.product_id.uom_id.category_id == product_ctg_uom_kgm:
                 line.weight_total = line.product_id.uom_id._compute_quantity(
