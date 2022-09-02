@@ -18,6 +18,7 @@ class MrpBom(models.Model):
         compute='_compute_finishing_weight',
         store=True)
     amount_media_by_product_uom_kgm = fields.Float(
+        string="Amount avg/kg",
         compute='_compute_finishing_weight',
         digits=(16, 8),
         store=True)

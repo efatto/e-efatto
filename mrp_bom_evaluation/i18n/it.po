@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-01 14:34+0000\n"
-"PO-Revision-Date: 2022-09-01 14:34+0000\n"
+"POT-Creation-Date: 2022-09-02 09:33+0000\n"
+"PO-Revision-Date: 2022-09-02 09:33+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -47,8 +47,8 @@ msgstr "Aggiungi finitura"
 
 #. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom__amount_media_by_product_uom_kgm
-msgid "Amount Media By Product Uom Kgm"
-msgstr "Importo Medio per u.m. kg (€/kg)"
+msgid "Amount avg/kg"
+msgstr "Importo medio €/kg"
 
 #. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.view_mrp_bom_purchase_link
@@ -173,7 +173,7 @@ msgid "Linked RDP/PO line"
 msgstr "Riga ordine fornitore"
 
 #. module: mrp_bom_evaluation
-#: code:addons/mrp_bom_evaluation/models/mrp_bom.py:105
+#: code:addons/mrp_bom_evaluation/models/mrp_bom.py:106
 #, python-format
 msgid "Missing finishing product for category %s"
 msgstr "Prodotto di finitura mancante per la categoria %s"
