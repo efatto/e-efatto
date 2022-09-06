@@ -63,8 +63,32 @@
                             <field name="log"/>
                         </group>
                     </group>
-                    <group string="Products without price rule">
-                        <field name="price_rule_not_found_product_ids" nolabel="1">
+                    <group string="Product price zero without purchase or invoice recent">
+                        <field name="no_purchase_invoice_recent_zero_product_ids" nolabel="1">
+                            <tree>
+                                <field name="default_code"/>
+                                <field name="name"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group string="Product price zero without purchase or invoice">
+                        <field name="no_purchase_invoice_zero_product_ids" nolabel="1">
+                            <tree>
+                                <field name="default_code"/>
+                                <field name="name"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group string="Product price zero with purchase">
+                        <field name="purchase_recent_zero_product_ids" nolabel="1">
+                            <tree>
+                                <field name="default_code"/>
+                                <field name="name"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group string="Product price zero with invoice">
+                        <field name="invoice_recent_zero_product_ids" nolabel="1">
                             <tree>
                                 <field name="default_code"/>
                                 <field name="name"/>

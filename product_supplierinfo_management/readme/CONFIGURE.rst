@@ -35,3 +35,25 @@ La quarta copia il costo di sostituzione sul costo del prodotto:
     :alt: Copia
 
 N.B.: Nel caso sia installato il modulo https://github.com/sergiocorato/e-efatto/tree/12.0/product_pricelist_replenishment_cost è possibile impostare i listini di vendita sulla base del costo di sostituzione, su cui sarà calcolato il margine di vendita, senza andare a toccare il costo del prodotto.
+
+Dettaglio del funzionamento:
+
+#. se il prodotto non ha fornitori con data di validità in corso e prezzo diverso da zero e non ci sono ultime fatture o ultimi acquisti, il nuovo costo viene calcolato dal costo del prodotto con la regola del listino selezionato;
+#. (i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in "Prodotti a costo zero senza acquisto né fattura")
+#. (i prodotti di cui sopra senza un fornitore valido vengono mostrati in 'Prodotti senza fornitore')
+
+Tra i prodotti con fornitore valido:
+
+#. viene selezionato il primo fornitore valido, gli altri sono ignorati
+#. se è indicata la Data Obsolescenza Prezzi Fornitori, i prodotti con la data di ultima modifica del prezzo di questo fornitore precedente alla data indicata vengono mostrati nei 'Prodotti con prezzo fornitore obsoleto';
+#. se il prodotto ha un ultimo acquisto:
+    #. se l'ultimo fornitore è diverso dal fornitore valido, viene mostrato in 'Prodotti con fornitore non coincidente';
+    #. se l'ultimo acquisto è diverso è più recente dell'ultimo prezzo fornitore, viene calcolato il nuovo costo dal costo dell'ultimo acquisto con la regola del listino selezionato;
+    #. (i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in "Prodotti a costo zero con acquisto")
+#. altrimenti, se il prodotto ha un'ultima fattura:
+    #. se l'ultima fattura è di un fornitore diverso dal fornitore valido, viene mostrato in 'Prodotti con fornitore non coincidente';
+    #. se l'ultimo acquisto da fattura è diverso e più recente dell'ultimo prezzo fornitore, viene calcolato il nuovo costo dal costo dell'ultima fattura con la regola del listino selezionato;
+    #. (i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in "Prodotti a costo zero con fattura")
+#. per i prodotti senza ultima fattura né ultimo acquisto:
+    #. viene calcolato il nuovo costo dal costo del fornitore valido;
+    #. (i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in "Prodotti a costo zero senza acquisto o fattura recenti")
