@@ -56,4 +56,4 @@ Tra i prodotti con fornitore valido:
     #. (i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in "Prodotti a costo calcolato zero con fattura")
 #. per i prodotti senza ultima fattura né ultimo acquisto:
     #. viene calcolato il nuovo costo dal costo del fornitore valido;
-    #. (i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in "Prodotti a costo calcolato zero senza acquisto o fattura recenti")
+    #. (i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in "Prodotti a costo calcolato zero con acquisto o fattura più vecchi")
