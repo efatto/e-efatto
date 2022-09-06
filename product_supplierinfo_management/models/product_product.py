@@ -175,9 +175,9 @@ class ProductProduct(models.Model):
                     fields.Date.today(),
                     round=False)
             seller_price_unit = seller_price_unit * \
-                (1 - seller.discount) * \
-                (1 - seller.discount2) * \
-                (1 - seller.discount3)
+                (1 - seller.discount / 100.0) * \
+                (1 - seller.discount2 / 100.0) * \
+                (1 - seller.discount3 / 100.0)
             if seller.product_uom != product.uom_id:
                 seller_price_unit = seller.product_uom._compute_price(
                     seller_price_unit, product.uom_id)
@@ -197,9 +197,9 @@ class ProductProduct(models.Model):
                     products_seller_mismatch |= product
                 if product.last_purchase_date > seller.write_date:
                     purchase_price_unit = product.last_purchase_price * \
-                        (1 - product.last_purchase_discount) * \
-                        (1 - product.last_purchase_discount2) * \
-                        (1 - product.last_purchase_discount3)
+                        (1 - product.last_purchase_discount / 100.0) * \
+                        (1 - product.last_purchase_discount2 / 100.0) * \
+                        (1 - product.last_purchase_discount3 / 100.0)
                     diff = float_compare(
                         purchase_price_unit,
                         seller_price_unit,
@@ -233,9 +233,9 @@ class ProductProduct(models.Model):
                 if product.last_supplier_invoice_date > \
                         fields.Date.from_string(seller.write_date):
                     invoice_price_unit = product.last_supplier_invoice_price * \
-                        (1 - product.last_supplier_invoice_discount) * \
-                        (1 - product.last_supplier_invoice_discount2) * \
-                        (1 - product.last_supplier_invoice_discount3)
+                        (1 - product.last_supplier_invoice_discount / 100.0) * \
+                        (1 - product.last_supplier_invoice_discount2 / 100.0) * \
+                        (1 - product.last_supplier_invoice_discount3 / 100.0)
                     diff = float_compare(
                         invoice_price_unit,
                         seller_price_unit,
