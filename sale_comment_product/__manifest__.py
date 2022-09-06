@@ -6,11 +6,13 @@
     "category": "Sales",
     "author": "Sergio Corato - Efatto.it",
     "website": "https://efatto.it",
+    "license": "AGPL-3",
     "depends": [
         "sale_comment_template",
     ],
     "data": [
         "views/product.xml",
+        "views/sale.xml",
     ],
     "installable": True
 }
