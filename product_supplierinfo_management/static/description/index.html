@@ -407,7 +407,7 @@ In other cases (without BOM and sellers) it isn’t recomputed.</p>
 <p>Dettaglio del funzionamento:</p>
 <ol class="arabic simple">
 <li>se il prodotto non ha fornitori con data di validità in corso e prezzo diverso da zero e non ci sono ultime fatture o ultimi acquisti, il nuovo costo viene calcolato dal costo del prodotto con la regola del listino selezionato;</li>
-<li>(i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in “Prodotti a costo zero senza acquisto né fattura”)</li>
+<li>(i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in “Prodotti a costo calcolato zero senza acquisto né fattura”)</li>
 <li>(i prodotti di cui sopra senza un fornitore valido vengono mostrati in ‘Prodotti senza fornitore’)</li>
 </ol>
 <p>Tra i prodotti con fornitore valido:</p>
@@ -419,7 +419,7 @@ In other cases (without BOM and sellers) it isn’t recomputed.</p>
 <dd><ol class="first last arabic">
 <li>se l’ultimo fornitore è diverso dal fornitore valido, viene mostrato in ‘Prodotti con fornitore non coincidente’;</li>
 <li>se l’ultimo acquisto è diverso è più recente dell’ultimo prezzo fornitore, viene calcolato il nuovo costo dal costo dell’ultimo acquisto con la regola del listino selezionato;</li>
-<li>(i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in “Prodotti a costo zero con acquisto”)</li>
+<li>(i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in “Prodotti a costo calcolato zero con acquisto”)</li>
 </ol>
 </dd>
 </dl>
@@ -429,7 +429,7 @@ In other cases (without BOM and sellers) it isn’t recomputed.</p>
 <dd><ol class="first last arabic">
 <li>se l’ultima fattura è di un fornitore diverso dal fornitore valido, viene mostrato in ‘Prodotti con fornitore non coincidente’;</li>
 <li>se l’ultimo acquisto da fattura è diverso e più recente dell’ultimo prezzo fornitore, viene calcolato il nuovo costo dal costo dell’ultima fattura con la regola del listino selezionato;</li>
-<li>(i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in “Prodotti a costo zero con fattura”)</li>
+<li>(i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in “Prodotti a costo calcolato zero con fattura”)</li>
 </ol>
 </dd>
 </dl>
@@ -438,7 +438,7 @@ In other cases (without BOM and sellers) it isn’t recomputed.</p>
 <dt>per i prodotti senza ultima fattura né ultimo acquisto:</dt>
 <dd><ol class="first last arabic">
 <li>viene calcolato il nuovo costo dal costo del fornitore valido;</li>
-<li>(i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in “Prodotti a costo zero senza acquisto o fattura recenti”)</li>
+<li>(i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in “Prodotti a costo calcolato zero senza acquisto o fattura recenti”)</li>
 </ol>
 </dd>
 </dl>
