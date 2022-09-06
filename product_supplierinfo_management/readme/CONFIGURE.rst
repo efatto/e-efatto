@@ -39,7 +39,7 @@ N.B.: Nel caso sia installato il modulo https://github.com/sergiocorato/e-efatto
 Dettaglio del funzionamento:
 
 #. se il prodotto non ha fornitori con data di validità in corso e prezzo diverso da zero e non ci sono ultime fatture o ultimi acquisti, il nuovo costo viene calcolato dal costo del prodotto con la regola del listino selezionato;
-#. (i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in "Prodotti a costo zero senza acquisto né fattura")
+#. (i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in "Prodotti a costo calcolato zero senza acquisto né fattura")
 #. (i prodotti di cui sopra senza un fornitore valido vengono mostrati in 'Prodotti senza fornitore')
 
 Tra i prodotti con fornitore valido:
@@ -49,11 +49,11 @@ Tra i prodotti con fornitore valido:
 #. se il prodotto ha un ultimo acquisto:
     #. se l'ultimo fornitore è diverso dal fornitore valido, viene mostrato in 'Prodotti con fornitore non coincidente';
     #. se l'ultimo acquisto è diverso è più recente dell'ultimo prezzo fornitore, viene calcolato il nuovo costo dal costo dell'ultimo acquisto con la regola del listino selezionato;
-    #. (i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in "Prodotti a costo zero con acquisto")
+    #. (i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in "Prodotti a costo calcolato zero con acquisto")
 #. altrimenti, se il prodotto ha un'ultima fattura:
     #. se l'ultima fattura è di un fornitore diverso dal fornitore valido, viene mostrato in 'Prodotti con fornitore non coincidente';
     #. se l'ultimo acquisto da fattura è diverso e più recente dell'ultimo prezzo fornitore, viene calcolato il nuovo costo dal costo dell'ultima fattura con la regola del listino selezionato;
-    #. (i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in "Prodotti a costo zero con fattura")
+    #. (i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in "Prodotti a costo calcolato zero con fattura")
 #. per i prodotti senza ultima fattura né ultimo acquisto:
     #. viene calcolato il nuovo costo dal costo del fornitore valido;
-    #. (i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in "Prodotti a costo zero senza acquisto o fattura recenti")
+    #. (i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in "Prodotti a costo calcolato zero senza acquisto o fattura recenti")
