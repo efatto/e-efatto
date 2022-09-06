@@ -3,18 +3,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 <title>Product Supplierinfo Management</title>
 <style type="text/css">
 
 /*
 :Author: David Goodger (goodger@python.org)
-:Id: $Id: html4css1.css 7952 2016-07-26 18:15:59Z milde $
+:Id: $Id: html4css1.css 8954 2022-01-20 10:10:25Z milde $
 :Copyright: This stylesheet has been placed in the public domain.
 
 Default cascading style sheet for the HTML output of Docutils.
 
-See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+See https://docutils.sourceforge.io/docs/howto/html-stylesheets.html for how to
 customize this style sheet.
 */
 
@@ -404,6 +404,46 @@ In other cases (without BOM and sellers) it isn’t recomputed.</p>
 <p>La quarta copia il costo di sostituzione sul costo del prodotto:</p>
 <img alt="Copia" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_supplierinfo_management/static/description/copia.png" />
 <p>N.B.: Nel caso sia installato il modulo <a class="reference external" href="https://github.com/sergiocorato/e-efatto/tree/12.0/product_pricelist_replenishment_cost">https://github.com/sergiocorato/e-efatto/tree/12.0/product_pricelist_replenishment_cost</a> è possibile impostare i listini di vendita sulla base del costo di sostituzione, su cui sarà calcolato il margine di vendita, senza andare a toccare il costo del prodotto.</p>
+<p>Dettaglio del funzionamento:</p>
+<ol class="arabic simple">
+<li>se il prodotto non ha fornitori con data di validità in corso e prezzo diverso da zero e non ci sono ultime fatture o ultimi acquisti, il nuovo costo viene calcolato dal costo del prodotto con la regola del listino selezionato;</li>
+<li>(i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in “Prodotti a costo zero senza acquisto né fattura”)</li>
+<li>(i prodotti di cui sopra senza un fornitore valido vengono mostrati in ‘Prodotti senza fornitore’)</li>
+</ol>
+<p>Tra i prodotti con fornitore valido:</p>
+<ol class="arabic simple">
+<li>viene selezionato il primo fornitore valido, gli altri sono ignorati</li>
+<li>se è indicata la Data Obsolescenza Prezzi Fornitori, i prodotti con la data di ultima modifica del prezzo di questo fornitore precedente alla data indicata vengono mostrati nei ‘Prodotti con prezzo fornitore obsoleto’;</li>
+<li><dl class="first docutils">
+<dt>se il prodotto ha un ultimo acquisto:</dt>
+<dd><ol class="first last arabic">
+<li>se l’ultimo fornitore è diverso dal fornitore valido, viene mostrato in ‘Prodotti con fornitore non coincidente’;</li>
+<li>se l’ultimo acquisto è diverso è più recente dell’ultimo prezzo fornitore, viene calcolato il nuovo costo dal costo dell’ultimo acquisto con la regola del listino selezionato;</li>
+<li>(i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in “Prodotti a costo zero con acquisto”)</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>altrimenti, se il prodotto ha un’ultima fattura:</dt>
+<dd><ol class="first last arabic">
+<li>se l’ultima fattura è di un fornitore diverso dal fornitore valido, viene mostrato in ‘Prodotti con fornitore non coincidente’;</li>
+<li>se l’ultimo acquisto da fattura è diverso e più recente dell’ultimo prezzo fornitore, viene calcolato il nuovo costo dal costo dell’ultima fattura con la regola del listino selezionato;</li>
+<li>(i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in “Prodotti a costo zero con fattura”)</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>per i prodotti senza ultima fattura né ultimo acquisto:</dt>
+<dd><ol class="first last arabic">
+<li>viene calcolato il nuovo costo dal costo del fornitore valido;</li>
+<li>(i prodotti di cui sopra con il nuovo costo pari a zero vengono mostrati in “Prodotti a costo zero senza acquisto o fattura recenti”)</li>
+</ol>
+</dd>
+</dl>
+</li>
+</ol>
 </div>
 <div class="section" id="bug-tracker">
 <h1><a class="toc-backref" href="#toc-entry-2">Bug Tracker</a></h1>

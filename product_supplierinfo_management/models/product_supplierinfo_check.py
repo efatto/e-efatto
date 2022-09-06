@@ -11,6 +11,7 @@ class ProductSupplierinfoCheck(models.Model):
     name = fields.Char()
     date_obsolete_supplierinfo_price = fields.Date()
     date_validity_supplierinfo = fields.Date(
+        default=fields.Date.context_today,
         help="Date to filter date validity of supplierinfo prices"
     )
     last_update = fields.Datetime()
@@ -46,12 +47,30 @@ class ProductSupplierinfoCheck(models.Model):
         column1='supplierinfo_id',
         column2='prod_id',
         string="Product mismatch seller")
-    price_rule_not_found_product_ids = fields.Many2many(
+    no_purchase_invoice_recent_zero_product_ids = fields.Many2many(
         comodel_name='product.product',
-        relation='supplierinfo_not_found_rel',
+        relation='supplierinfo_no_recent_zero_rel',
         column1='supplierinfo_id',
         column2='prod_id',
-        string="Product price rule not found")
+        string="Product price zero without purchase or invoice recent")
+    no_purchase_invoice_zero_product_ids = fields.Many2many(
+        comodel_name='product.product',
+        relation='supplierinfo_no_zero_rel',
+        column1='supplierinfo_id',
+        column2='prod_id',
+        string="Product price zero without purchase or invoice")
+    purchase_recent_zero_product_ids = fields.Many2many(
+        comodel_name='product.product',
+        relation='supplierinfo_purchase_zero_rel',
+        column1='supplierinfo_id',
+        column2='prod_id',
+        string="Product price zero with purchase")
+    invoice_recent_zero_product_ids = fields.Many2many(
+        comodel_name='product.product',
+        relation='supplierinfo_invoice_zero_rel',
+        column1='supplierinfo_id',
+        column2='prod_id',
+        string="Product price zero with invoice")
     listprice_id = fields.Many2one(
         comodel_name='product.pricelist',
         required=True,
@@ -101,7 +120,11 @@ class ProductSupplierinfoCheck(models.Model):
             products = self.env['product.product'].search(domain)
             started_at = time.time()
             products_without_seller, products_with_obsolete_price,\
-                products_seller_mismatch, products_price_rule_not_found = \
+                products_seller_mismatch, \
+                products_price_no_purchase_no_invoice_recent_zero,\
+                products_price_no_purchase_no_invoice_zero, \
+                products_price_purchase_recent_zero, \
+                products_price_supplier_invoice_recent_zero = \
                 products.do_update_managed_replenishment_cost(
                     date_obsolete_supplierinfo_price=
                     supplierinfo_check.date_obsolete_supplierinfo_price,
@@ -135,8 +158,14 @@ class ProductSupplierinfoCheck(models.Model):
             supplierinfo_check.obsolete_seller_price_product_ids = \
                 products_with_obsolete_price
             supplierinfo_check.mismatch_seller_product_ids = products_seller_mismatch
-            supplierinfo_check.price_rule_not_found_product_ids = \
-                products_price_rule_not_found
+            supplierinfo_check.no_purchase_invoice_recent_zero_product_ids = \
+                products_price_no_purchase_no_invoice_recent_zero
+            supplierinfo_check.no_purchase_invoice_zero_product_ids = \
+                products_price_no_purchase_no_invoice_zero
+            supplierinfo_check.purchase_recent_zero_product_ids = \
+                products_price_purchase_recent_zero
+            supplierinfo_check.invoice_recent_zero_product_ids = \
+                products_price_supplier_invoice_recent_zero
             supplierinfo_check.product_ids = products
         return True
 

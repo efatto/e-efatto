@@ -12,4 +12,24 @@
 		</field>
 	</record>
 
+	<record id="product_pricelist_item_form_view" model="ir.ui.view">
+		<field name="name">product.pricelist.item.form</field>
+		<field name="model">product.pricelist.item</field>
+		<field name="inherit_id" ref="product.product_pricelist_item_form_view" />
+		<field name="arch" type="xml">
+			<field name="base" position="before">
+				<field name="enable_supplierinfo_management" invisible="True"/>
+			</field>
+			<field name="base" position="attributes">
+				<attribute name="attrs">{'invisible': [('enable_supplierinfo_management', '!=', False)]}</attribute>
+			</field>
+			<xpath expr="//field[@name='base']/following-sibling::label" position="attributes">
+				<attribute name="attrs">{'invisible': [('enable_supplierinfo_management', '!=', False)]}</attribute>
+			</xpath>
+			<xpath expr="//field[@name='base']/following-sibling::div" position="attributes">
+				<attribute name="attrs">{'invisible': [('enable_supplierinfo_management', '!=', False)]}</attribute>
+			</xpath>
+		</field>
+	</record>
+
 </odoo>
