@@ -125,14 +125,13 @@ class ProductProduct(models.Model):
             'update_managed_replenishment_cost', False)
         copy_managed_replenishment_cost_to_standard_price = self.env.context.get(
             'copy_managed_replenishment_cost_to_standard_price', False)
-        if not date_obsolete_supplierinfo_price:
-            date_obsolete_supplierinfo_price = fields.Date.today()
-        if not date_validity_supplierinfo:
-            date_validity_supplierinfo = fields.Date.today()
         products_with_obsolete_price = self.env['product.product']
         products_without_seller = self.env['product.product']
         products_seller_mismatch = self.env['product.product']
-        products_price_rule_not_found = self.env['product.product']
+        products_price_no_purchase_no_invoice_recent_zero = self.env['product.product']
+        products_price_no_purchase_no_invoice_zero = self.env['product.product']
+        products_price_purchase_recent_zero = self.env['product.product']
+        products_price_supplier_invoice_recent_zero = self.env['product.product']
         for product in self:
             price_unit = 0.0
             # prendo i prezzi con una data di validità corretta, poi però si dovrebbe
@@ -147,7 +146,8 @@ class ProductProduct(models.Model):
             if not seller_ids:
                 if not product.last_supplier_invoice_price \
                         and not product.last_purchase_price:
-                    # no valid seller nor purchase nor invoice, so compute on standard price
+                    # no valid seller nor purchase nor invoice, so compute on standard
+                    # price
                     price_unit = product._get_price_unit_from_pricelist(
                         listprice_id, product.standard_price, 1,
                         self.env.user.company_id.partner_id, date_validity_supplierinfo,
@@ -160,7 +160,9 @@ class ProductProduct(models.Model):
                             copy_managed_replenishment_cost_to_standard_price,
                         )
                     else:
-                        products_price_rule_not_found |= product
+                        # product with no purchase order nor invoice and which price
+                        # computed from standard price with current pricelist gives zero
+                        products_price_no_purchase_no_invoice_zero |= product
                 products_without_seller |= product
                 continue
 
@@ -220,7 +222,10 @@ class ProductProduct(models.Model):
                                 copy_managed_replenishment_cost_to_standard_price,
                             )
                         else:
-                            products_price_rule_not_found |= product
+                            # product with purchase order more recent than seller
+                            # price and which price computed from purchase order with
+                            # current pricelist gives zero
+                            products_price_purchase_recent_zero |= product
                     continue
 
             # second check invoice if date more recent of seller write date
@@ -256,7 +261,10 @@ class ProductProduct(models.Model):
                                 copy_managed_replenishment_cost_to_standard_price,
                             )
                         else:
-                            products_price_rule_not_found |= product
+                            # product with supplier invoice more recent than seller
+                            # price and which price computed from invoice with current
+                            # pricelist gives zero
+                            products_price_supplier_invoice_recent_zero |= product
                     continue
 
             # no purchase or invoice price more recent, so use seller price
@@ -273,11 +281,18 @@ class ProductProduct(models.Model):
                     copy_managed_replenishment_cost_to_standard_price,
                 )
             else:
-                products_price_rule_not_found |= product
+                # product with supplier invoice or purchase order no more recent than
+                # seller price and which price computed from seller price with current
+                # pricelist gives zero
+                products_price_no_purchase_no_invoice_recent_zero |= product
 
         # Note: bom are not considered, possible improvement
         return products_without_seller, products_with_obsolete_price,\
-            products_seller_mismatch, products_price_rule_not_found
+            products_seller_mismatch, \
+            products_price_no_purchase_no_invoice_recent_zero,\
+            products_price_no_purchase_no_invoice_zero, \
+            products_price_purchase_recent_zero, \
+            products_price_supplier_invoice_recent_zero
 
     @api.multi
     def _update_prices(
