@@ -52,7 +52,7 @@ class ProductSupplierinfoCheck(models.Model):
         relation='supplierinfo_no_recent_zero_rel',
         column1='supplierinfo_id',
         column2='prod_id',
-        string="Product price zero without purchase or invoice recent")
+        string="Product price zero with purchase or invoice older")
     no_purchase_invoice_zero_product_ids = fields.Many2many(
         comodel_name='product.product',
         relation='supplierinfo_no_zero_rel',

@@ -281,10 +281,14 @@ class ProductProduct(models.Model):
                     copy_managed_replenishment_cost_to_standard_price,
                 )
             else:
-                # product with supplier invoice or purchase order no more recent than
-                # seller price and which price computed from seller price with current
-                # pricelist gives zero
-                products_price_no_purchase_no_invoice_recent_zero |= product
+                if not product.last_supplier_invoice_price \
+                        and not product.last_purchase_price:
+                    products_price_no_purchase_no_invoice_zero |= product
+                else:
+                    # product with supplier invoice or purchase order no more recent
+                    # than seller price and which price computed from seller price with
+                    # current pricelist gives zero
+                    products_price_no_purchase_no_invoice_recent_zero |= product
 
         # Note: bom are not considered, possible improvement
         return products_without_seller, products_with_obsolete_price,\
