@@ -3,8 +3,16 @@
 from odoo import api, fields, models
 
 
+class SaleOrder(models.Model):
+    _inherit = 'sale.order'
+
+    show_formatted_note = fields.Boolean()
+
+
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
+
+    show_formatted_note = fields.Boolean(related='order_id.show_formatted_note')
 
     @api.onchange('product_id')
     def onchange_product_id(self):
