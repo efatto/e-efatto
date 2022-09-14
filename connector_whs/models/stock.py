@@ -26,7 +26,7 @@ class Picking(models.Model):
     def action_pack_operation_auto_fill(self):
         super(Picking, self).action_pack_operation_auto_fill()
         for op in self.mapped('move_line_ids'):
-            if op.product_id.type == 'product':
+            if op.product_id.type == 'product' and op.move_id.whs_list_ids:
                 op.qty_done = op.move_id.whs_list_ids[0].qtamov
 
     @api.multi
