@@ -32,6 +32,7 @@ class MrpProductionBomChange(models.TransientModel):
     def action_done(self):
         self.ensure_one()
         mo = self.env['mrp.production'].browse(self.env.context['active_id'])
+        mo.button_unreserve()
         for move in mo.move_raw_ids:
             move.write({
                 "product_uom_qty": 0,
@@ -48,8 +49,14 @@ class MrpProductionBomChange(models.TransientModel):
                 "product_id": self.product_id.id,
             }
         )
+        for finished_move_line in mo.finished_move_line_ids:
+            finished_move_line.write({
+                'product_id': self.product_id.id,
+                'lot_id': False,
+            })
         wizard = self.env['change.production.qty'].create({
             'mo_id': mo.id,
             'product_qty': mo.product_qty,
         })
         wizard.change_prod_qty()
+        mo.action_assign()
