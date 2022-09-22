@@ -11,6 +11,7 @@
     'description': 'Change BoM in production.',
     'depends': [
         'mrp_production_demo',
+        'mrp_production_lot_custom_assign',  # added for tests
     ],
     'data': [
         'wizard/mrp_production_bom_change.xml',

@@ -77,4 +77,3 @@ class MrpProductionBomChange(models.TransientModel):
                 'res_model_id': self.env.ref('mrp.model_mrp_production').id,
                 'res_id': mo.id,
             })
-
