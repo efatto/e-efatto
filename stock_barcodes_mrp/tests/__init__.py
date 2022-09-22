@@ -1,1 +1,1 @@
-from . import test_mrp_bom_evaluation
+from . import test_stock_barcodes_mrp
