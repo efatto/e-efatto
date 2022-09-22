@@ -1,0 +1,1 @@
+This module add ability to scan consumed materials on production.
