@@ -28,3 +28,10 @@ class MrpWorkcenterProductivity(models.Model):
             self.user_id = self.employee_id.user_id
         else:
             self.user_id = self.env.context.get('user_id', self.env.user.id)
+
+    @api.onchange('workorder_id')
+    def _onchange_workorder_id(self):
+        if self.workorder_id:
+            self.workcenter_id = self.workorder_id.workcenter_id
+        else:
+            self.workcenter_id = False
