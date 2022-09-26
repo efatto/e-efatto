@@ -10,6 +10,7 @@
     'description': 'View employee productivity time in employee view.',
     'depends': [
         'hr',
+        'mrp_sale_info_link',
         'mrp_workorder_time',
     ],
     'data': [
