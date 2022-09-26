@@ -7,6 +7,9 @@ from odoo import api, fields, models
 class MrpWorkcenterProductivity(models.Model):
     _inherit = 'mrp.workcenter.productivity'
 
+    sale_id = fields.Many2one(related='workorder_id.sale_id',
+                              string='Sale order', readonly=True, store=True)
+
     @api.model
     def default_get(self, field_list):
         result = super(MrpWorkcenterProductivity, self).default_get(field_list)
