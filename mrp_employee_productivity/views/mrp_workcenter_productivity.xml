@@ -47,9 +47,7 @@
                                 <field name="workorder_id" required="True"/>
                                 <field name="date_start"/>
                                 <field name="unit_amount"/>
-                            </group>
-                            <field name="description"/>
-                            <group>
+                                <field name="description"/>
                                 <field name="sale_id"/>
                                 <field name="workcenter_id"/>
                                 <field name="date_end"/>
