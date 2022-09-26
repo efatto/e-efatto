@@ -39,6 +39,8 @@ jobs:
         run: pip3 install pika
       - name: Install pip iot
         run: pip3 install odoo12-addon-iot
+      - name: Install mrp_sale_info_link module from other repo
+        run: pip3 install -e "git+https://github.com/sergiocorato/efatto@12.0#egg=odoo12-addon-mrp_sale_info_link&subdirectory=setup/mrp_sale_info_link"
       - name: Install addons and dependencies
         run: oca_install_addons
       - name: Initialize test db
