@@ -12,6 +12,8 @@ class MrpWorkorder(models.Model):
             args += [
                 '|',
                 ('name', operator, name),
+                ('production_id.name', operator, name),
+                ('product_id.product_tmpl_id.name', operator, name),
                 ('sale_id.name', operator, name),
             ]
             if operator == 'ilike':

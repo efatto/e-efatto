@@ -9,6 +9,7 @@ class MrpWorkcenterProductivity(models.Model):
 
     sale_id = fields.Many2one(related='workorder_id.sale_id',
                               string='Sale order', readonly=True, store=True)
+    duration = fields.Float(string='Duration (minutes)')
 
     @api.model
     def default_get(self, field_list):
