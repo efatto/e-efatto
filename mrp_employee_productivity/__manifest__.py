@@ -10,7 +10,7 @@
     'description': 'View employee productivity time in employee view.',
     'depends': [
         'hr',
-        'mrp',
+        'mrp_workorder_time',
     ],
     'data': [
         'views/mrp_workcenter_productivity.xml',
