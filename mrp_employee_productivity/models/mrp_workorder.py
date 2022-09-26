@@ -10,7 +10,7 @@ class MrpWorkorder(models.Model):
         if not name == '' and operator in ('ilike', 'like', '=', '=like', '=ilike'):
             args = [] if args is None else args.copy()
             args += [
-                '|',
+                '|', '|', '|',
                 ('name', operator, name),
                 ('production_id.name', operator, name),
                 ('product_id.product_tmpl_id.name', operator, name),
