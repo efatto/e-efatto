@@ -1,4 +1,4 @@
-from odoo import api, models
+from odoo import api, fields, models
 
 
 class MrpWorkorder(models.Model):
@@ -12,7 +12,7 @@ class MrpWorkorder(models.Model):
             args += [
                 '|',
                 ('name', operator, name),
-                ('production_id.sale_id.name', operator, name),
+                ('sale_id.name', operator, name),
             ]
             if operator == 'ilike':
                 # to exclude extension of args with and & domain
