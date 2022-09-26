@@ -32,7 +32,7 @@ msgstr "Tempi Lavorazioni"
 #: model:ir.actions.act_window,name:mrp_employee_productivity.action_mrp_workcenter_productivity_employee
 #: model_terms:ir.ui.view,arch_db:mrp_employee_productivity.view_employee_form_inherit_mrp_productivity
 msgid "Productivity"
-msgstr "Lavorazioni"
+msgstr "Operazioni"
 
 #. module: mrp_employee_productivity
 #: model:ir.model.fields,field_description:mrp_employee_productivity.field_hr_employee__productivity_count
