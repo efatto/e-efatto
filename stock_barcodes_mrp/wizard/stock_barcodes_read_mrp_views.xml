@@ -7,9 +7,19 @@
         <field name="inherit_id" ref="stock_barcodes.view_stock_barcodes_read_form"/>
         <field name="arch" type="xml">
             <field name="location_id" position="before">
-                <field name="mrp_id" attrs="{'invisible': [('mrp_id', '=', False)]}"/>
+                <div attrs="{'invisible': [('mrp_id', '=', False)]}">
+                    <label for="mrp_id">
+                    MO
+                    </label>
+                    <field name="mrp_id"/>
+                </div>
                 <field name="finished_lot_ids" invisible="True"/>
-                <field name="produced_lot_id" domain="[('id', 'in', finished_lot_ids)]" attrs="{'invisible': [('finished_lot_ids', '=', False)]}" options="{'no_create_edit': True, 'no_open': True, 'no_create': True}"/>
+                <div attrs="{'invisible': [('finished_lot_ids', '=', False)]}">
+                    <label for="produced_lot_id">
+                        Produced Lot
+                    </label>
+                    <field name="produced_lot_id" domain="[('id', 'in', finished_lot_ids)]" options="{'no_create_edit': True, 'no_open': True, 'no_create': True}"/>
+                </div>
             </field>
             <field name="location_id" position="attributes">
                 <attribute name="attrs">{'invisible': 1}</attribute>
