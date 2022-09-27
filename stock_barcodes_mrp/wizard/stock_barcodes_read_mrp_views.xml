@@ -7,9 +7,9 @@
         <field name="inherit_id" ref="stock_barcodes.view_stock_barcodes_read_form"/>
         <field name="arch" type="xml">
             <field name="location_id" position="before">
-                <field name="mrp_id"/>
-                <field name="finished_lot_ids" widget="many2many_tags"/>
-                <field name="produced_lot_id" domain="[('id', 'in', finished_lot_ids)]"/>
+                <field name="mrp_id" attrs="{'invisible': [('mrp_id', '=', False)]}"/>
+                <field name="finished_lot_ids" invisible="True"/>
+                <field name="produced_lot_id" domain="[('id', 'in', finished_lot_ids)]" attrs="{'invisible': [('finished_lot_ids', '=', False)]}" options="{'no_create_edit': True, 'no_open': True, 'no_create': True}"/>
             </field>
             <field name="location_id" position="attributes">
                 <attribute name="attrs">{'invisible': 1}</attribute>
@@ -21,7 +21,7 @@
                 <attribute name="attrs">{'invisible': True}</attribute>
             </field>
             <xpath expr="//field[@name='scan_log_ids']/tree/field[@name='lot_id']" position="after">
-                <field name="produced_lot_id"/>
+                <field name="produced_lot_id" options="{'no_create_edit': True, 'no_open': True, 'no_create': True}"/>
             </xpath>
         </field>
     </record>
