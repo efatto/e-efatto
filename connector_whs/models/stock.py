@@ -270,3 +270,16 @@ class StockMove(models.Model):
                     ))
                     move.state = 'waiting'
         return True
+
+
+class Location(models.Model):
+    _inherit = "stock.location"
+
+    def should_bypass_reservation(self):
+        self.ensure_one()
+        res = super(Location, self).should_bypass_reservation()
+        if self.env['base.external.dbsource'].search([
+            ('location_id', '=', self.id)
+        ]):
+            res = True
+        return res
