@@ -100,7 +100,7 @@ class Picking(models.Model):
         moves = self.mapped('move_lines').filtered(
             lambda move: not move.whs_list_ids)
         moves.create_whs_list()
-        for pick in moves.mapped('picking_id'):
+        for pick in self:
             pick.state = 'waiting'
         return res
 
