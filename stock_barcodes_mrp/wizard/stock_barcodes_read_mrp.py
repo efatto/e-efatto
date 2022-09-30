@@ -3,7 +3,6 @@
 import logging
 from odoo import _, fields, models
 from odoo.fields import first
-from odoo.addons import decimal_precision as dp
 
 _logger = logging.getLogger(__name__)
 
@@ -24,11 +23,6 @@ class WizStockBarcodesReadMrp(models.TransientModel):
     mrp_id = fields.Many2one(
         comodel_name='mrp.production',
         string='Production Order',
-        readonly=True,
-    )
-    mrp_product_qty = fields.Float(
-        string='Component quantities',
-        digits=dp.get_precision('Product Unit of Measure'),
         readonly=True,
     )
     produced_lot_id = fields.Many2one(
@@ -76,7 +70,8 @@ class WizStockBarcodesReadMrp(models.TransientModel):
                 (0, 0, {
                     'product_uom_qty': 0,
                     'product_uom_id': product_id.uom_id.id,
-                    'qty_done': 1,  # default to 1 as if > 1 write on existing move line
+                    'qty_done': self.product_qty if self.manual_entry else 1,
+                    # default to 1 as if > 1 write on existing move line
                     'production_id': self.mrp_id.id,
                     # 'workorder_id': self.id,
                     'product_id': product_id.id,
@@ -177,8 +172,6 @@ class WizStockBarcodesReadMrp(models.TransientModel):
                         })
                     ]})
                 # recompute all onchange fields
-                # line.write({'product_uom_qty': line.product_uom_qty + product_qty})
-                # _execute_onchanges(line, 'product_uom_qty')
                 stock_move_lines_dict[line.id] = product_qty
                 return stock_move_lines_dict
             # create a new stock.move.line if not exists or lot is set
@@ -203,6 +196,14 @@ class WizStockBarcodesReadMrp(models.TransientModel):
 
     def check_done_conditions(self):
         res = super().check_done_conditions()
+        # on mrp we create row when missing, so if manual_entry is set and product is
+        # not found, this check must return True to create the row
+        if not self.product_qty and not self.manual_entry:
+            self._set_messagge_info('info', _('Waiting quantities'))
+            return False
+        if self.manual_entry:
+            self._set_messagge_info('success', _('Manual entry OK'))
+            return True
         return res
 
     def _prepare_scan_log_values(self, log_detail=False):
@@ -219,13 +220,13 @@ class WizStockBarcodesReadMrp(models.TransientModel):
 
     def remove_scanning_log(self, scanning_log):
         for log in scanning_log:
-            #todo remove qty from stock_move_id.move_line_ids
             for log_scan_line in log.log_line_ids:
                 qty = (log_scan_line.stock_move_id.product_uom_qty -
                        log_scan_line.product_qty)
                 log_scan_line.stock_move_id.product_uom_qty = max(qty, 0.0)
-            self.stock_product_qty = sum(log.log_line_ids.mapped(
-                'stock_move_id.product_uom_qty'))
+                log_scan_line.stock_move_id.move_line_ids.qty_done = max(qty, 0.0)
+            self.product_qty = sum(log.log_line_ids.mapped(
+                'stock_move_id.move_line_ids.qty_done'))
             log.unlink()
 
     def action_undo_last_scan(self):
