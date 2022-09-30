@@ -83,11 +83,11 @@ class TestStockBarcodesMrp(TestStockBarcodes):
             self.wiz_scan_mo.product_id, self.product_tracking)
         sm = self.mo_01.move_raw_ids.filtered(
             lambda x: x.product_id == self.product_tracking)
-        self.assertEqual(sm.mapped('move_line_ids.qty_done')[0], 1.0)
+        # qty done is 0 as waiting for lot
+        self.assertEqual(sum(sm.mapped('move_line_ids.qty_done')), 0.0)
         # Scan product with tracking lot enable
         self.assertEqual(self.wiz_scan_mo.message,
-                         'Barcode: 8433281006850 (Barcode read correctly)')
-        # fixme 'Barcode: 8433281006850 (Waiting for input lot)')
+                         'Barcode: 8433281006850 (Waiting for input lot)')
         # Scan a lot. Increment quantities if scan product or other lot from
         # this product
         self.action_barcode_scanned(self.wiz_scan_mo, '8411822222568')
@@ -165,8 +165,7 @@ class TestStockBarcodesMrp(TestStockBarcodes):
         # Scan product with tracking lot enable
         self.action_barcode_scanned(self.wiz_scan_mo, '8433281006850')
         self.assertEqual(self.wiz_scan_mo.message,
-                         'Barcode: 8433281006850 (Barcode read correctly)')
-        # fixme Waiting for input lot
+                         'Barcode: 8433281006850 (Waiting for input lot)')
 
         self.wiz_scan_mo.auto_lot = True
         self.action_barcode_scanned(self.wiz_scan_mo, '8433281006850')

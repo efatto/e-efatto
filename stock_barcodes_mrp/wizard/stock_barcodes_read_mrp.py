@@ -198,6 +198,9 @@ class WizStockBarcodesReadMrp(models.TransientModel):
         res = super().check_done_conditions()
         # on mrp we create row when missing, so if manual_entry is set and product is
         # not found, this check must return True to create the row
+        if self.product_id.tracking != 'none' and not self.lot_id:
+            self._set_messagge_info('info', _('Waiting for input lot'))
+            return False
         if not self.product_qty and not self.manual_entry:
             self._set_messagge_info('info', _('Waiting quantities'))
             return False
