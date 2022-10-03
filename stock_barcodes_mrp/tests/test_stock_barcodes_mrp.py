@@ -56,12 +56,6 @@ class TestStockBarcodesMrp(TestStockBarcodes):
             vals['context']
         ).create([{}])
 
-    # def test_wiz_mo_values(self):
-    #     self.assertIn(
-    #         "Barcode reader - %s - " % self.mo_01.name,
-    #         self.wiz_scan_mo.display_name,
-    #     )
-
     def test_mo_wizard_scan_product(self):
         # todo crea sale order che assegnerà il partner_id all'mo
         # n.b. there are 3 rows, 2 of subproduct 1-1 and 1 of subproduct 2-1
@@ -108,10 +102,6 @@ class TestStockBarcodesMrp(TestStockBarcodes):
         self.assertEqual(sum(sml.mapped('qty_done')), 3.0)
         self.assertEqual(self.wiz_scan_mo.message,
                          'Barcode: 8433281006850 (Barcode read correctly)')
-        # Scan a package #todo packaging
-        # self.action_barcode_scanned(self.wiz_scan_mo, '5420008510489')
-        # Package of 5 product units. Already three unit exists
-        # self.assertEqual(sum(sml.mapped('qty_done')), 8.0)
 
     def test_mo_wizard_scan_product_manual_entry(self):
         self.wiz_scan_mo.manual_entry = True  # stock move is created after qty entry

@@ -238,13 +238,3 @@ class WizStockBarcodesReadMrp(models.TransientModel):
             lambda x: x.create_uid == self.env.user))
         self.remove_scanning_log(log_scan)
         return res
-
-
-class StockBarcodesReadLogLine(models.Model):
-    _inherit = 'stock.barcodes.read.log.line'
-
-    stock_move_id = fields.Many2one(
-        comodel_name='stock.move',
-        string='Stock move',
-        readonly=True,
-    )

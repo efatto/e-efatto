@@ -12,3 +12,14 @@ class StockBarcodesReadLog(models.Model):
         comodel_name='stock.production.lot',
         string='Lot produced',
     )
+
+
+class StockBarcodesReadLogLine(models.Model):
+    _inherit = 'stock.barcodes.read.log.line'
+
+    stock_move_id = fields.Many2one(
+        comodel_name='stock.move',
+        string='Stock move',
+        readonly=True,
+    )
+
