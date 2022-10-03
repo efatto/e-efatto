@@ -10,7 +10,7 @@
     'website': 'https://efatto.it',
     'description': 'Add product component in production by barcode scan.',
     'depends': [
-        'mrp_sale_info',
+        'mrp_sale_info_link',
         'mrp_production_demo',
         'stock_barcodes',
     ],

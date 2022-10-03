@@ -56,8 +56,21 @@ class TestStockBarcodesMrp(TestStockBarcodes):
             vals['context']
         ).create([{}])
 
-    def test_mo_wizard_scan_product(self):
-        # todo crea sale order che assegnerà il partner_id all'mo
+    def _create_sale_order_line(self, order, product, qty):
+        vals = {
+            'order_id': order.id,
+            'product_id': product.id,
+            'product_uom_qty': qty,
+            'price_unit': product.list_price,
+            }
+        line = self.env['sale.order.line'].create(vals)
+        line.product_id_change()
+        line.product_uom_change()
+        line._onchange_discount()
+        line._convert_to_write(line._cache)
+        return line
+
+    def test_01_mo_wizard_scan_product(self):
         # n.b. there are 3 rows, 2 of subproduct 1-1 and 1 of subproduct 2-1
         # scan existing subproduct 1
         self.action_barcode_scanned(self.wiz_scan_mo, '8473281006850')
@@ -103,7 +116,7 @@ class TestStockBarcodesMrp(TestStockBarcodes):
         self.assertEqual(self.wiz_scan_mo.message,
                          'Barcode: 8433281006850 (Barcode read correctly)')
 
-    def test_mo_wizard_scan_product_manual_entry(self):
+    def test_02_mo_wizard_scan_product_manual_entry(self):
         self.wiz_scan_mo.manual_entry = True  # stock move is created after qty entry
         self.action_barcode_scanned(self.wiz_scan_mo, '8480000723208')
         self.assertEqual(self.wiz_scan_mo.product_id,
@@ -116,7 +129,7 @@ class TestStockBarcodesMrp(TestStockBarcodes):
         self.assertEqual(sm.quantity_done, 12.0)
         self.assertEqual(sum(sm.mapped('move_line_ids.qty_done')), 12.0)
 
-    def test_mo_wizard_remove_last_scan(self):
+    def test_03_mo_wizard_remove_last_scan(self):
         self.action_barcode_scanned(self.wiz_scan_mo, '8480000723208')
         self.assertEqual(self.wiz_scan_mo.product_id,
                          self.product_wo_tracking)
@@ -127,7 +140,7 @@ class TestStockBarcodesMrp(TestStockBarcodes):
         self.assertEqual(sum(sml.mapped('move_line_ids.qty_done')), 0.0)
         self.assertEqual(self.wiz_scan_mo.product_qty, 0.0)
 
-    def test_mo_wizard_scan_product_auto_lot(self):
+    def test_04_mo_wizard_scan_product_auto_lot(self):
         # Prepare more data
         lot_2 = self.StockProductionLot.create([{
             'name': '8411822222578',
@@ -160,3 +173,30 @@ class TestStockBarcodesMrp(TestStockBarcodes):
         self.wiz_scan_mo.auto_lot = True
         self.action_barcode_scanned(self.wiz_scan_mo, '8433281006850')
         self.assertFalse(self.wiz_scan_mo.lot_id)
+
+    def test_05_mo_sale(self):
+        # create sale order which will assign partner_id to mo
+        order1 = self.env['sale.order'].create({
+            'partner_id': self.partner_agrolite.id,
+        })
+        self._create_sale_order_line(order1, self.top_product, 3)
+        order1.action_confirm()
+        self.assertTrue(order1.production_ids)
+        self.mo_02 = order1.production_ids.filtered(
+            lambda x: x.product_id == self.top_product
+        )
+        self.assertEqual(self.mo_02.partner_id, self.partner_agrolite)
+        vals = self.mo_02.action_barcode_scan()
+        self.wiz_scan_mo_02 = self.ScanReadMrp.with_context(
+            vals['context']
+        ).create([{}])
+        self.action_barcode_scanned(self.wiz_scan_mo_02, '8473281006850')
+        self.assertEqual(
+            self.wiz_scan_mo_02.product_id, self.subproduct_1_1)
+        sm_ids = self.mo_02.move_raw_ids.filtered(
+            lambda x: x.product_id == self.subproduct_1_1)
+        self.assertEqual(sum(sm_ids.mapped('move_line_ids.qty_done')), 1.0)
+        self.action_barcode_scanned(self.wiz_scan_mo_02, '8473281006850')
+        self.assertEqual(sum(sm_ids.mapped('move_line_ids.qty_done')), 2.0)
+        self.action_barcode_scanned(self.wiz_scan_mo_02, '8473281006850')
+        self.assertEqual(sum(sm_ids.mapped('move_line_ids.qty_done')), 3.0)
