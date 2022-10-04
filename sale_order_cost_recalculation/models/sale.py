@@ -1,6 +1,8 @@
 # Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, fields, models
+import logging
+import time
 
 
 class SaleOrderLine(models.Model):
@@ -13,7 +15,12 @@ class SaleOrderLine(models.Model):
 
     @api.depends('product_id', 'purchase_price', 'product_id.standard_price')
     def _compute_purchase_date(self):
-        for line in self.filtered('product_id'):
+        # added function to show estimated time for old databases with big datas
+        started_at = time.time()
+        lines = self.filtered('product_id')
+        imax = len(lines)
+        i = 0
+        for line in lines:
             purchase_date = self.env['product.price.history'].search([
                 ('product_id', '=', line.product_id.id),
                 ('cost', '=', line.purchase_price),
@@ -23,6 +30,16 @@ class SaleOrderLine(models.Model):
                 line.purchase_date = purchase_date[0].datetime
             else:
                 line.purchase_date = line.product_id.standard_price_write_date
+            if imax > 1000:
+                i += 1
+                total_time = time.time() - started_at
+                logging.info(
+                    'Updated purchase date in sale order line %s/%s. '
+                    'Elapsed time %.2f (minutes)'
+                    'Estimated residual time %.0f (minutes)' % (
+                        i, imax, total_time / 60, (total_time / i) * (imax - i) / 60,
+                    )
+                )
 
 
 class SaleOrder(models.Model):
