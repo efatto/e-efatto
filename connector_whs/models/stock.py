@@ -105,6 +105,14 @@ class Picking(models.Model):
         return res
 
     @api.multi
+    def button_assign(self):
+        # add extra button to manually change state from waiting to assign,
+        # as it is controlled by user intervention
+        for pick in self:
+            if pick.state == 'waiting':
+                pick.state = 'assigned'
+
+    @api.multi
     def unlink(self):
         self.cancel_whs_list(unlink=True)
         return super(Picking, self).unlink()
