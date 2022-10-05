@@ -13,9 +13,10 @@ class SaleOrderLine(models.Model):
         store=True)
     purchase_price = fields.Float(digits=(20, 8))
 
-    @api.depends('product_id', 'purchase_price', 'product_id.standard_price')
+    @api.depends('product_id', 'purchase_price')
     def _compute_purchase_date(self):
-        # added function to show estimated time for old databases with big datas
+        # Removed depends on product_id.standard_price as lead to eternal recompute
+        # Added function to show estimated time for old databases with big datas
         started_at = time.time()
         lines = self.filtered('product_id')
         imax = len(lines)
