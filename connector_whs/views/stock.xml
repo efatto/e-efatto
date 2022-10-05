@@ -21,4 +21,14 @@
         </field>
     </record>
 
+    <record id="view_picking_form" model="ir.ui.view">
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <button name="button_validate" position="after">
+                <button name="button_assign" attrs="{'invisible': ['|', ('state', '!=', 'waiting'), ('show_check_availability', '=', True)]}" string="Mark as Ready" type="object" class="oe_highlight" groups="stock.group_stock_user"/>
+            </button>
+        </field>
+    </record>
+
 </odoo>
