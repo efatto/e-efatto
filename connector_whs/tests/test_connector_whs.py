@@ -47,10 +47,29 @@ class TestConnectorWhs(TransactionCase):
         self.src_location = self.env.ref('stock.stock_location_stock')
         self.dest_location = self.env.ref('stock.stock_location_customers')
         self.partner = self.env.ref('base.res_partner_2')
-        # Acoustic Bloc Screens, 16 on hand
-        self.product1 = self.env.ref('product.product_product_25')
-        # Cabinet with Doors, 8 on hand
-        self.product2 = self.env.ref('product.product_product_10')
+        # Create product with 16 on hand
+        self.product1 = self.env['product.product'].create([{
+            'name': 'test product1',
+            'default_code': 'PRODUCT1',
+            'type': 'product',
+        }])
+        self.StockQuant = self.env['stock.quant']
+        self.quant_product1 = self.StockQuant.create([{
+            'product_id': self.product1.id,
+            'location_id': self.src_location.id,
+            'quantity': 16.0,
+        }])
+        # Create product with 8 on hand
+        self.product2 = self.env['product.product'].create([{
+            'name': 'test product2',
+            'default_code': 'PRODUCT2',
+            'type': 'product',
+        }])
+        self.quant_product2 = self.StockQuant.create([{
+            'product_id': self.product2.id,
+            'location_id': self.src_location.id,
+            'quantity': 8.0,
+        }])
         # Large Cabinet, 250 on hand
         self.product3 = self.env.ref('product.product_product_6')
         # Drawer Black, 0 on hand
@@ -81,7 +100,8 @@ class TestConnectorWhs(TransactionCase):
         self._create_sale_order_line(order1, self.product1, 5)
         order1.action_confirm()
         self.assertEqual(order1.state, 'sale')
-        self.assertEqual(len(order1.picking_ids.move_lines.whs_list_ids), 1)
+        picking1 = order1.picking_ids[0]
+        self.assertEqual(len(picking1.move_lines.whs_list_ids), 1)
         self.assertEqual(order1.mapped('picking_ids.state'), ['waiting'])
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -97,7 +117,7 @@ class TestConnectorWhs(TransactionCase):
                 self.assertFalse(self.product1.customer_ids[0].product_code in
                                  whs_record.values())
 
-        whs_list = order1.picking_ids.move_lines.whs_list_ids[0]
+        whs_list = picking1.move_lines.whs_list_ids[0]
         # simulate whs work
         # todo inserire un while per verificare se è stato fatto e attendere
         #  l'intervento utente su WHS
@@ -122,8 +142,12 @@ class TestConnectorWhs(TransactionCase):
         self.dbsource.whs_insert_read_and_synchronize_list()
 
         # check move and picking linked to sale order have changed state to done
-        self.assertEqual(order1.picking_ids.move_lines[0].state, 'assigned')
-        self.assertEqual(order1.picking_ids[0].state, 'assigned')
+        self.assertEqual(picking1.move_lines[0].state, 'assigned')
+        # picking stay in 'waiting' state even after user click on action_assign,
+        # but check availability disappear
+        self.assertEqual(picking1.state, 'waiting')
+        picking1.action_assign()
+        self.assertFalse(picking1.show_check_availability)
 
     def test_01_partial_picking_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
@@ -182,9 +206,11 @@ class TestConnectorWhs(TransactionCase):
         self.dbsource.whs_insert_read_and_synchronize_list()
 
         # check move and picking linked to sale order have changed state to done
-        self.assertEqual(picking.move_lines[0].state, 'assigned')
+        self.assertEqual(set(picking.move_lines.mapped('state')), {'assigned'})
+        picking.action_assign()
+        self.assertFalse(picking.show_check_availability)
         self.assertAlmostEqual(picking.move_lines[0].move_line_ids[0].qty_done, 3.0)
-        self.assertEqual(picking.state, 'assigned')
+        self.assertEqual(picking.state, 'waiting')
 
         # simulate user partial validate of picking and check backorder exist
         backorder_wiz_id = picking.button_validate()['res_id']
@@ -289,6 +315,10 @@ class TestConnectorWhs(TransactionCase):
         # check move and picking linked to sale order have changed state to done
         self.assertEqual(picking.move_lines[0].state, 'assigned')
         self.assertAlmostEqual(picking.move_lines[0].move_line_ids[0].qty_done, 3.0)
+        self.assertEqual(picking.state, 'waiting')
+        picking.action_assign()
+        self.assertFalse(picking.show_check_availability)
+        picking.button_assign()
         self.assertEqual(picking.state, 'assigned')
 
         # simulate user partial validate of picking and check backorder exist
@@ -419,14 +449,36 @@ class TestConnectorWhs(TransactionCase):
         self.dbsource.whs_insert_read_and_synchronize_list()
 
         # check move and picking linked to sale order have changed state to done
-        self.assertEqual(picking.move_lines[0].state, 'assigned')
-        self.assertAlmostEqual(picking.move_lines[0].move_line_ids[0].qty_done, 5.0)
+        for move_line in picking.move_lines:
+            self.assertEqual(
+                move_line.state,
+                'assigned' if move_line.product_id in [
+                    self.product1, self.product3] else 'waiting')
+            for stock_move_line in move_line.move_line_ids:
+                if stock_move_line.product_id in [
+                        self.product1, self.product2, self.product4]:
+                    self.assertAlmostEqual(stock_move_line.qty_done, 5.0)
+                if stock_move_line.product_id == self.product3:
+                    self.assertAlmostEqual(stock_move_line.qty_done, 0)
+        self.assertEqual(picking.state, 'waiting')
+        self.assertTrue(picking.show_check_availability)
+        picking.action_assign()
+        self.assertEqual(picking.state, 'waiting')
+        self.assertTrue(picking.show_check_availability)
+        picking.button_assign()
         self.assertEqual(picking.state, 'assigned')
 
         # simulate user partial validate of picking and check backorder exist
         backorder_wiz_id = picking.button_validate()['res_id']
         backorder_wiz = self.env['stock.backorder.confirmation'].browse(
             backorder_wiz_id)
+        # User must set correctly quantity as set by WHS user, ignoring qty set
+        # automatically by Odoo, so check that error is raised without intervention
+        with self.assertRaises(UserError):
+            backorder_wiz.process()
+        for move_line in picking.move_lines:
+            move_line.quantity_done = 5 if move_line.product_id in [
+                self.product1, self.product2, self.product4] else 0
         backorder_wiz.process()
         # check backorder whs list has the correct qty
         self.assertEqual(len(order1.picking_ids), 2)
@@ -460,8 +512,12 @@ class TestConnectorWhs(TransactionCase):
 
         # check back picking is waiting for whs process
         self.assertEqual(backorder_picking.state, 'waiting')
-        self.assertEqual(backorder_picking.mapped('move_lines.state'),
-                         ['waiting', 'waiting', 'waiting'])
+        backorder_picking.action_assign()
+        for move_line in backorder_picking.move_lines:
+            self.assertEqual(
+                move_line.state,
+                'confirmed' if move_line.product_id == self.product2 else
+                'waiting' if move_line.product_id == self.product4 else 'assigned')
 
     def test_04_unlink_sale_order(self):
         with self.assertRaises(ConnectionSuccessError):
@@ -688,6 +744,9 @@ class TestConnectorWhs(TransactionCase):
 
         # simulate user partial validate of picking and check backorder exist
         picking = purchase.picking_ids[0]
+        self.assertEqual(picking.state, 'waiting')
+        picking.action_assign()
+        picking.button_assign()
         picking.action_pack_operation_auto_fill()
         backorder_wiz_id = picking.button_validate()['res_id']
         backorder_wiz = self.env['stock.backorder.confirmation'].browse(
