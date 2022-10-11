@@ -58,6 +58,16 @@
         <field name="context">{'search_default_year': True}</field>
     </record>
 
+    <act_window id="action_mrp_production_deviation_report_mo"
+        name="MRP Production Deviation Report"
+        res_model="mrp.production.deviation.report"
+        src_model="mrp.production"
+        view_mode="pivot,graph"
+        context="{'search_default_production_id': active_id}"
+        target="current"
+        key2="client_action_multi"
+    />
+
     <menuitem id="menu_mrp_production_deviation_report"
               parent="mrp.menu_mrp_reporting"
               action="action_mrp_production_deviation_report"
