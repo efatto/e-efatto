@@ -25,6 +25,7 @@ class MrpProductionDeviationReport(models.Model):
     cost_expected = fields.Float(string="Cost Expected", readonly=True)
     cost_expected_rw = fields.Float(string="Cost Routing Expected", readonly=True)
     cost = fields.Float(string="Cost", readonly=True)
+    unit_cost = fields.Float(string="Unit Cost", readonly=True)
     cost_deviation = fields.Float(string="Cost Deviation", readonly=True)
     cost_deviation_rw = fields.Float(string="Cost Routing Deviation", readonly=True)
 
@@ -53,6 +54,7 @@ class MrpProductionDeviationReport(models.Model):
                 coalesce(SUM(sub.cost_expected), 0) AS cost_expected,
                 coalesce(SUM(sub.cost_expected_rw), 0) AS cost_expected_rw,
                 coalesce(SUM(sub.cost), 0) AS cost,
+                coalesce(SUM(sub.unit_cost), 0) AS unit_cost,
                 coalesce(sum(sub.cost), 0) - 
                     coalesce(sum(sub.cost_expected), 0) AS cost_deviation,
                 coalesce(sum(sub.cost), 0) - 
@@ -73,7 +75,8 @@ class MrpProductionDeviationReport(models.Model):
                 w.duration_expected * wc.costs_hour / 60 AS cost_expected,
                 rw.time_cycle_manual * p.product_qty * wc.costs_hour / 60 
                  AS cost_expected_rw,
-                w.duration * wc.costs_hour / 60 AS cost
+                w.duration * wc.costs_hour / 60 AS cost,
+                0 AS unit_cost
             FROM mrp_workorder w 
                 LEFT JOIN mrp_production p ON w.production_id = p.id
                 LEFT JOIN mrp_workcenter wc ON wc.id = w.workcenter_id
@@ -91,11 +94,11 @@ class MrpProductionDeviationReport(models.Model):
                 0 AS duration_expected,
                 0 AS duration_expected_rw,
                 0 AS duration,
-                coalesce(MAX(bl.product_qty * p.product_qty * ABS(s.price_unit)), 0)
+                coalesce(MAX(s.product_uom_qty * ABS(s.price_unit)), 0)
                  AS cost_expected,
-                coalesce(MAX(bl.product_qty * p.product_qty * ABS(s.price_unit)), 0)
-                 AS cost_expected_rw,
-                coalesce(SUM(sml.qty_done * ABS(s.price_unit)), 0) AS cost
+                0 AS cost_expected_rw,
+                coalesce(SUM(sml.qty_done * ABS(s.price_unit)), 0) AS cost,
+                MAX(ABS(s.price_unit)) AS unit_cost
             FROM stock_move s
                 LEFT JOIN mrp_bom_line bl ON bl.id = s.bom_line_id
                 LEFT JOIN mrp_production p ON s.raw_material_production_id = p.id
@@ -106,3 +109,21 @@ class MrpProductionDeviationReport(models.Model):
             GROUP BY date, production_id, product_id, workorder_id
         )
         """ % self._table)
+
+    """
+    Notes:
+    cost_expected = workorder.duration_expected * workcenter.costs_hour / 60 +
+        coalesce(MAX(bomline.product_qty * production.product_qty
+            * ABS(stockmove.price_unit)), 0) => costo previsto inizialmente sulla base 
+         del tempo di lavorazione iniziale salvato nel workorder + costo delle righe
+         della bom moltiplicato per i pezzi da produrre
+    cost_expected_rw = routing.time_cycle_manual * production.product_qty 
+            * workcenter.costs_hour / 60 +
+        coalesce(MAX(bomline.product_qty * production.product_qty 
+            * ABS(stockmove.price_unit)), 0) => costo attuale del tempo di lavorazione
+         calcolato dal routing moltiplicato per i pezzi da produrre + resto come sopra
+    cost = workorder.duration * workcenter.costs_hour / 60 +
+        coalesce(SUM(stockmoveline.qty_done * ABS(stockmove.price_unit)), 0)
+        => costo della durata effettiva delle operazioni + costo dei trasferimenti 
+        finali al costo salvato nello stock move
+    """
