@@ -9,7 +9,7 @@
     'website': 'https://efatto.it',
     'description': 'Add deviation info to production pivot.',
     'depends': [
-        'mrp',
+        'mrp_production_demo',
     ],
     'data': [
         'security/ir.model.access.csv',
