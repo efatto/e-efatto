@@ -25,6 +25,7 @@ class MrpProductionDeviationReport(models.Model):
     cost_expected = fields.Float(string="Cost Expected", readonly=True)
     cost_expected_rw = fields.Float(string="Cost Routing Expected", readonly=True)
     cost = fields.Float(string="Cost", readonly=True)
+    current_cost = fields.Float(string="Current Cost", readonly=True)
     unit_cost = fields.Float(string="Unit Cost", readonly=True)
     cost_deviation = fields.Float(string="Cost Deviation", readonly=True)
     cost_deviation_rw = fields.Float(string="Cost Routing Deviation", readonly=True)
@@ -54,6 +55,7 @@ class MrpProductionDeviationReport(models.Model):
                 coalesce(SUM(sub.cost_expected), 0) AS cost_expected,
                 coalesce(SUM(sub.cost_expected_rw), 0) AS cost_expected_rw,
                 coalesce(SUM(sub.cost), 0) AS cost,
+                coalesce(SUM(sub.current_cost), 0) AS current_cost,
                 coalesce(SUM(sub.unit_cost), 0) AS unit_cost,
                 coalesce(sum(sub.cost), 0) - 
                     coalesce(sum(sub.cost_expected), 0) AS cost_deviation,
@@ -76,6 +78,7 @@ class MrpProductionDeviationReport(models.Model):
                 rw.time_cycle_manual * p.product_qty * wc.costs_hour / 60 
                  AS cost_expected_rw,
                 w.duration * wc.costs_hour / 60 AS cost,
+                w.duration * wc.costs_hour / 60 AS current_cost,
                 0 AS unit_cost
             FROM mrp_workorder w 
                 LEFT JOIN mrp_production p ON w.production_id = p.id
@@ -98,8 +101,14 @@ class MrpProductionDeviationReport(models.Model):
                  AS cost_expected,
                 0 AS cost_expected_rw,
                 coalesce(SUM(sml.qty_done * ABS(s.price_unit)), 0) AS cost,
+                coalesce(SUM(sml.qty_done * (
+                      SELECT ip.value_float FROM ir_property ip
+                         WHERE ip.res_id = CONCAT('product.product,', pp.id)
+                         AND ip.name = 'standard_price'
+                    )), 0) AS current_cost,
                 MAX(ABS(s.price_unit)) AS unit_cost
             FROM stock_move s
+                LEFT JOIN product_product pp ON pp.id = s.product_id
                 LEFT JOIN mrp_bom_line bl ON bl.id = s.bom_line_id
                 LEFT JOIN mrp_production p ON s.raw_material_production_id = p.id
                 LEFT JOIN stock_move_line sml ON sml.move_id = s.id
