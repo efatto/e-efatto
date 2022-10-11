@@ -8,6 +8,14 @@ class TestProductionData(SavepointCase):
 
     @classmethod
     def setUpClass(cls):
+        """
+        #  top product [MANUF] (bom):
+        #    -> 2pc subproduct2 [MANUF 1-2] = 2pc (bom) * produced_qty:
+        #       -> 3pc subproduct_1_1 [MANUF 1-1-1] = 6pc * produced_qty
+        #       -> 4pc subproduct_2_1 [MANUF 1-2-1] = 8pc * produced_qty
+        #    -> 5pc subproduct1 [MANUF 1-1] = 5pc (bom):
+        #       -> 2pc subproduct_1_1 [MANUF 1-1-1] = 10pc * produced_qty
+        """
         super().setUpClass()
         cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
         cls.user_model = cls.env['res.users'].with_context(no_reset_password=True)
