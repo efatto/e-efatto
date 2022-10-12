@@ -105,6 +105,7 @@ class MrpProductionDeviationReport(models.Model):
                       SELECT ip.value_float FROM ir_property ip
                          WHERE ip.res_id = CONCAT('product.product,', pp.id)
                          AND ip.name = 'standard_price'
+                         ORDER BY id DESC LIMIT 1
                     )), 0) AS current_cost,
                 MAX(ABS(s.price_unit)) AS unit_cost
             FROM stock_move s
