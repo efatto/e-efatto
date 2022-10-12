@@ -15,7 +15,7 @@ class TestMrpProductionDeviation(TestProductionData):
             [('production_id', '=', production.id)],
             ['product_id', 'unit_cost', 'cost', 'cost_expected', 'cost_expected_rw',
              'duration_expected', 'duration_expected_rw', 'workorder_id',
-             'quantity_expected', 'product_qty', 'current_cost'],
+             'quantity_expected', 'product_qty', 'cost_current'],
             ['product_id'])
         return res
 
@@ -130,5 +130,5 @@ class TestMrpProductionDeviation(TestProductionData):
         deviation_data_4 = self.get_deviation_data(man_order)
         self.assertAlmostEqual(deviation_data_4[0].get('cost'),
                                old_standard_price * 16 * produced_qty)
-        self.assertAlmostEqual(deviation_data_4[0].get('current_cost'),
+        self.assertAlmostEqual(deviation_data_4[0].get('cost_current'),
                                self.subproduct_1_1.standard_price * 16 * produced_qty)

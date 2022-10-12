@@ -46,6 +46,7 @@
                 <field name="duration_deviation_rw" type="measure"/>
                 <field name="cost_expected_rw" type="measure"/>
                 <field name="cost" type="measure"/>
+                <field name="cost_current" type="measure"/>
                 <field name="cost_deviation_rw" type="measure"/>
             </pivot>
         </field>
