@@ -11,6 +11,10 @@ e costi degli ordini di produzione:
 .. image:: ../static/description/statistica.png
     :alt: Statistica
 
+Note:
+#. se il componente non è presente nella DiBa a video (nel caso sia stato modificato oppure sia parte di un kit) la quantità prevista e il costo previsto sono relativi alla quantità prevista nella produzione, non rilevando quindi la previsione iniziale nella DiBa principale o nelle DiBa figlie
+#.
+
 I costi dei tempi lavorati sono valorizzati al costo del centro di lavoro collegato.
 
 I costi dei materiali sono valorizzati al costo registrato nel movimento di magazzino di scarico.
