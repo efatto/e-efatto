@@ -31,14 +31,14 @@ APPROVATO B. creare un wizard lanciabile da ogni singola produzione che fa le st
 
 Imposto come lo voglio prima di stamparlo
 
-3. stamparlo direttamente dall'ordine di produzione => farlo aprire dalla produzione filtrata per quella produzione specifica
+FATTO 3. stamparlo direttamente dall'ordine di produzione => farlo aprire dalla produzione filtrata per quella produzione specifica
 
 BOCCIATO quindi diresti di mettere il tutto nello stesso wizard? (modifica/ricalcola prezzi e poi apri il report?): Non credo che il report sia il punto giusto per fare modifiche ai costi nel DB in modo permanente, da dove fare l'aggiornamento di questi campi lo lascerei decidere ad Alberico/Manuel.
 
-Il report prende i costi dal movimento di magazzino per quanto riguarda i trasferimenti, a questo punto
-DA FARE: si potrebbero aggiungere delle colonne con dei costi diversi, ad es. una colonna calcolata con il costo prodotto e una con il costo di sostituzione (qui dipende da come andrete a gestire i costi, se il costo prodotto sarà sempre il costo ultimo allora basta questo)
+FATTO aggiunta una colonna calcolata con il costo prodotto
+DA APPROVARE: aggiungere una colonna con il costo di sostituzione (qui dipende da come andrete a gestire i costi, se il costo prodotto sarà sempre il costo ultimo allora basta questo)
 DA FARE se ci sono valori a zero direi di evidenziarli, come suggerito la settimana scorsa.
 
 Oggi devo, 1. Andare nel DV, 2. passare dalla riga del DV al prodotto, 3. passare alla produzione, 4. aprire un tab e 5. andare nel report per 6. cercare il codice produzione che mi serve analizzare
 
-DA FARE: Se quando mi trovo nel punto 3. potessi stampare il report per quella produzione eviterei di fare altri passaggi
+FATTO: Se quando mi trovo nel punto 3. potessi stampare il report per quella produzione eviterei di fare altri passaggi
