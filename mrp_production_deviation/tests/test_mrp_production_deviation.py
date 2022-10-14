@@ -31,19 +31,27 @@ class TestMrpProductionDeviation(TestProductionData):
         })
         deviation_data = self.get_deviation_data(man_order)
         self.assertTrue(deviation_data)
-        self.assertEqual(deviation_data[0].get('product_id')[0], self.subproduct_1_1.id)
-        self.assertAlmostEqual(deviation_data[0].get('cost'), 0)
-        self.assertAlmostEqual(deviation_data[0].get('unit_cost'),
-                               self.subproduct_1_1.standard_price)
-        self.assertAlmostEqual(deviation_data[0].get('duration_expected'), 0)
-        self.assertAlmostEqual(deviation_data[0].get('duration_expected_rw'), 0)
-        self.assertAlmostEqual(deviation_data[0].get('quantity_expected'),
-                               3 * production_qty)
-        self.assertAlmostEqual(deviation_data[0].get('product_qty'), 0)
+        subproduct_1_1_deviation_datas = [
+            x for x in deviation_data if x['product_id'][0] == self.subproduct_1_1.id]
         self.assertAlmostEqual(
-            deviation_data[0].get('cost_expected'),
-            (10 * production_qty) * self.subproduct_1_1.standard_price)
-        self.assertAlmostEqual(deviation_data[0].get('cost_expected_rw'), 0)
+            sum([x['cost'] for x in subproduct_1_1_deviation_datas]), 0)
+        self.assertAlmostEqual(
+            max([x['unit_cost'] for x in subproduct_1_1_deviation_datas]),
+            self.subproduct_1_1.standard_price)
+        self.assertAlmostEqual(
+            sum([x['duration_expected'] for x in subproduct_1_1_deviation_datas]), 0)
+        self.assertAlmostEqual(
+            sum([x['duration_expected_rw'] for x in subproduct_1_1_deviation_datas]), 0)
+        self.assertAlmostEqual(
+            sum([x['quantity_expected'] for x in subproduct_1_1_deviation_datas]),
+            ((3 * 2) + (5 * 2)) * production_qty)
+        self.assertAlmostEqual(
+            sum([x['product_qty'] for x in subproduct_1_1_deviation_datas]), 0)
+        self.assertAlmostEqual(
+            sum([x['cost_expected'] for x in subproduct_1_1_deviation_datas]),
+            ((3 * 2) + (5 * 2)) * production_qty * self.subproduct_1_1.standard_price)
+        self.assertAlmostEqual(
+            sum([x['cost_expected_rw'] for x in subproduct_1_1_deviation_datas]), 0)
 
         # create workorder to add relative costs
         man_order.action_assign()
@@ -83,17 +91,24 @@ class TestMrpProductionDeviation(TestProductionData):
 
         deviation_data_2 = self.get_deviation_data(man_order)
         self.assertTrue(deviation_data_2)
-        self.assertEqual(deviation_data_2[0].get('product_id')[0],
-                         self.subproduct_1_1.id)
-        self.assertAlmostEqual(deviation_data_2[0].get('cost'),
-                               self.subproduct_1_1.standard_price * 16 * produced_qty)
-        self.assertAlmostEqual(deviation_data_2[0].get('quantity_expected'),
-                               3 * production_qty)
-        self.assertAlmostEqual(deviation_data_2[0].get('product_qty'),
-                               16 * produced_qty)
-        self.assertAlmostEqual(deviation_data_2[0].get('cost_expected'),
-                               (10 * production_qty) * 10)
-        self.assertAlmostEqual(deviation_data_2[0].get('cost_expected_rw'), 0)
+        subproduct_1_1_deviation_datas_2 = [
+            x for x in deviation_data_2 if x.get('product_id', False)
+            and x['product_id'][0] == self.subproduct_1_1.id]
+        self.assertAlmostEqual(
+            sum([x['cost'] for x in subproduct_1_1_deviation_datas_2]),
+            self.subproduct_1_1.standard_price * 16 * produced_qty)
+        self.assertAlmostEqual(
+            sum([x['quantity_expected'] for x in subproduct_1_1_deviation_datas_2]),
+            ((3 * 2) + (5 * 2)) * production_qty)
+        self.assertAlmostEqual(
+            sum([x['product_qty'] for x in subproduct_1_1_deviation_datas_2]),
+            16 * produced_qty)
+        self.assertAlmostEqual(
+            sum([x['cost_expected'] for x in subproduct_1_1_deviation_datas_2]),
+            ((3 * 2) + (5 * 2)) * production_qty * self.subproduct_1_1.standard_price)
+        self.assertAlmostEqual(
+            sum([x['cost_expected_rw'] for x in subproduct_1_1_deviation_datas_2]),
+            0)
         workorders_data_1 = [x for x in deviation_data_2 if not x['product_id']]
         self.assertAlmostEqual(workorders_data_1[0].get('duration_expected_rw'),
                                duration_expected_rw)
@@ -112,18 +127,25 @@ class TestMrpProductionDeviation(TestProductionData):
         self.assertEqual(man_order.state, 'done')
         deviation_data_3 = self.get_deviation_data(man_order)
         self.assertTrue(deviation_data_3)
-        self.assertEqual(deviation_data_3[0].get('product_id')[0],
-                         self.subproduct_1_1.id)
-        self.assertAlmostEqual(deviation_data_3[0].get('cost'),
-                               self.subproduct_1_1.standard_price * 16 * produced_qty)
-        self.assertAlmostEqual(deviation_data_3[0].get('unit_cost'), 10)
-        self.assertAlmostEqual(deviation_data_3[0].get('quantity_expected'),
-                               3 * production_qty)
-        self.assertAlmostEqual(deviation_data_3[0].get('product_qty'),
-                               16 * produced_qty)
-        self.assertAlmostEqual(deviation_data_3[0].get('cost_expected'),
-                               (10 * production_qty) * 10)
-        self.assertAlmostEqual(deviation_data_3[0].get('cost_expected_rw'), 0)
+        subproduct_1_1_deviation_datas_3 = [
+            x for x in deviation_data_3 if x.get('product_id', False)
+            and x['product_id'][0] == self.subproduct_1_1.id]
+        self.assertAlmostEqual(
+            sum([x['cost'] for x in subproduct_1_1_deviation_datas_3]),
+            self.subproduct_1_1.standard_price * 16 * produced_qty)
+        self.assertAlmostEqual(
+            sum([x['unit_cost'] for x in subproduct_1_1_deviation_datas_3]), 10)
+        self.assertAlmostEqual(
+            sum([x['quantity_expected'] for x in subproduct_1_1_deviation_datas_3]),
+            ((3 * 2) + (5 * 2)) * production_qty)
+        self.assertAlmostEqual(
+            sum([x['product_qty'] for x in subproduct_1_1_deviation_datas_3]),
+            16 * produced_qty)
+        self.assertAlmostEqual(
+            sum([x['cost_expected'] for x in subproduct_1_1_deviation_datas_3]),
+            ((3 * 2) + (5 * 2)) * production_qty * self.subproduct_1_1.standard_price)
+        self.assertAlmostEqual(
+            sum([x['cost_expected_rw'] for x in subproduct_1_1_deviation_datas_3]), 0)
 
         old_standard_price = self.subproduct_1_1.standard_price
         self.subproduct_1_1.standard_price = 33.45
@@ -132,3 +154,4 @@ class TestMrpProductionDeviation(TestProductionData):
                                old_standard_price * 16 * produced_qty)
         self.assertAlmostEqual(deviation_data_4[0].get('cost_current'),
                                self.subproduct_1_1.standard_price * 16 * produced_qty)
+        self.subproduct_1_1.standard_price = 10
