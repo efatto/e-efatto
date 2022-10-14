@@ -92,25 +92,13 @@ class MrpProductionDeviationReport(models.Model):
                 to_char(p.date_planned_start, 'YYYY-MM-DD') AS date,
                 p.id AS production_id,
                 s.product_id,
-                coalesce(MAX(
-                    CASE
-                        WHEN bl.product_id = s.product_id 
-                            THEN bl.product_qty * p.product_qty
-                        ELSE s.product_uom_qty
-                    END
-                    ), 0) 
+                coalesce(SUM(s.product_uom_qty), 0) 
                  AS quantity_expected,
                 coalesce(SUM(sml.qty_done), 0) AS product_qty,
                 0 AS duration_expected,
                 0 AS duration_expected_rw,
                 0 AS duration,
-                coalesce(MAX(
-                    CASE
-                        WHEN bl.product_id = s.product_id 
-                            THEN bl.product_qty * p.product_qty
-                        ELSE s.product_uom_qty
-                    END
-                    * ABS(s.price_unit)), 0)
+                coalesce(SUM(s.product_uom_qty* ABS(s.price_unit)), 0)
                  AS cost_expected,
                 0 AS cost_expected_rw,
                 coalesce(SUM(sml.qty_done * ABS(s.price_unit)), 0) AS cost,
