@@ -11,7 +11,7 @@
     "application": False,
     "installable": True,
     "depends": [
-        "sale",
+        "sale_cancel_reason",
     ],
     "data": [
         "views/sale_order_view.xml",

@@ -6,6 +6,9 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//button[@name='%(sale_cancel_reason.action_sale_order_cancel)d']" position="attributes">
+                <attribute name="states">draft,sent,approved,sale</attribute>
+            </xpath>
             <xpath expr="//header/field[@name='state']" position="attributes">
                 <attribute name="statusbar_visible">draft,sent,approved,sale</attribute>
             </xpath>
