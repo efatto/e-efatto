@@ -181,6 +181,9 @@ class TestStockBarcodesMrp(TestStockBarcodes):
         })
         self._create_sale_order_line(order1, self.top_product, 3)
         order1.action_confirm()
+        if order1.state != 'sale':
+            # do the second confirmation to comply extra state 'approved'
+            order1.action_confirm()
         self.assertTrue(order1.production_ids)
         self.mo_02 = order1.production_ids.filtered(
             lambda x: x.product_id == self.top_product
