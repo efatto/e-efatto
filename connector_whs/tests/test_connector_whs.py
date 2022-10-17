@@ -119,25 +119,33 @@ class TestConnectorWhs(TransactionCase):
 
         whs_list = picking1.move_lines.whs_list_ids[0]
         # simulate whs work
-        # todo inserire un while per verificare se è stato fatto e attendere
-        #  l'intervento utente su WHS
+        lotto = '55A1'
+        lotto2 = '55A2'
+        lotto3 = '55A3'
+        lotto4 = '55A4'
+        lotto5 = '55A5'
         set_liste_elaborated_query = \
-            "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=%s WHERE " \
+            "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=%s, " \
+            "Lotto='%s', Lotto2='%s', Lotto3='%s', Lotto4='%s', Lotto5='%s' WHERE " \
             "NumLista = '%s' AND NumRiga = '%s'" % (
-                whs_list.qta, whs_list.num_lista, whs_list.riga
+                whs_list.qta, lotto, lotto2, lotto3, lotto4, lotto5, whs_list.num_lista,
+                whs_list.riga
             )
         self.dbsource.with_context(no_return=True).execute_mssql(
             sqlquery=set_liste_elaborated_query, sqlparams=None, metadata=None)
 
         whs_select_query = \
-            "SELECT Qta, QtaMovimentata FROM HOST_LISTE WHERE Elaborato = 4 AND " \
+            "SELECT Qta, QtaMovimentata, Lotto, Lotto3, Lotto3, Lotto4, Lotto5 " \
+            "FROM HOST_LISTE WHERE Elaborato = 4 AND " \
             "NumLista = '%s' AND NumRiga = '%s'" % (
                 whs_list.num_lista, whs_list.riga
             )
         result_liste = self.dbsource.execute_mssql(
             sqlquery=whs_select_query, sqlparams=None, metadata=None)
-        self.assertEqual(str(result_liste[0]),
-                         "[(Decimal('5.000'), Decimal('5.000'))]")
+        self.assertEqual(
+            str(result_liste[0]),
+            "[(Decimal('5.000'), Decimal('5.000'), '55A1', '55A3', '55A3', '55A4', "
+            "'55A5')]")
 
         self.dbsource.whs_insert_read_and_synchronize_list()
 
@@ -148,6 +156,12 @@ class TestConnectorWhs(TransactionCase):
         self.assertEqual(picking1.state, 'waiting')
         picking1.action_assign()
         self.assertFalse(picking1.show_check_availability)
+        # check lot info
+        self.assertEqual(whs_list.lotto, lotto)
+        self.assertEqual(whs_list.lotto2, lotto2)
+        self.assertEqual(whs_list.lotto3, lotto3)
+        self.assertEqual(whs_list.lotto4, lotto4)
+        self.assertEqual(whs_list.lotto5, lotto5)
 
     def test_01_partial_picking_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
