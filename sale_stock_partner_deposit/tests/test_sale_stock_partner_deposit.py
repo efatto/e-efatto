@@ -177,7 +177,7 @@ class TestSaleStockPartnerDeposit(SavepointCase):
         # Sell remaining 2 products in deposit
         self._create_sale_order_line(sale_order, self.product, 2.0)
         sale_order.action_confirm()
-        if 'approved' in sale_order._fields['state'].selection:
+        if sale_order.state != 'sale':
             # do the second confirmation to comply extra state 'approved'
             sale_order.action_confirm()
         picking = sale_order.picking_ids[0]
