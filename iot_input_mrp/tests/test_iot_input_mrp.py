@@ -163,7 +163,7 @@ class TestIotInputMrp(TestProductionData):
             'name': 'MO-Test',
             'product_id': self.top_product.id,
             'product_uom_id': self.top_product.uom_id.id,
-            'product_qty': 100,
+            'product_qty': 300,
             'bom_id': self.bom_weight.id,
         })
         production.sudo(self.mrp_user).button_plan()
