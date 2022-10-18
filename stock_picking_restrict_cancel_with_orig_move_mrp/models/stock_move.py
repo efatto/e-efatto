@@ -11,7 +11,7 @@ class StockMove(models.Model):
         orig_moves = self.mapped('move_orig_ids')
         productions = orig_moves.mapped('production_id')
         if productions and all(
-            production.state == 'confirmed' for production in productions
+            production.state in ['cancel', 'confirmed'] for production in productions
         ):
             res = super(StockMove, self.with_context(
                 bypass_check_state=True))._action_cancel()
