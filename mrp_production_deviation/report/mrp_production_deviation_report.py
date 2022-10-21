@@ -114,6 +114,36 @@ class MrpProductionDeviationReport(models.Model):
                 LEFT JOIN mrp_bom_line bl ON bl.id = s.bom_line_id
                 LEFT JOIN mrp_production p ON s.raw_material_production_id = p.id
                 LEFT JOIN stock_move_line sml ON sml.move_id = s.id
+            WHERE s.bom_line_id is not null
+            GROUP BY p.date_planned_start, p.id, s.product_id, bl.product_id
+            UNION
+            SELECT
+                -MIN(s.id) AS id,
+                NULL AS workorder_id,
+                MIN(s.name),
+                to_char(p.date_planned_start, 'YYYY-MM-DD') AS date,
+                p.id AS production_id,
+                s.product_id,
+                0 AS quantity_expected,
+                coalesce(SUM(sml.qty_done), 0) AS product_qty,
+                0 AS duration_expected,
+                0 AS duration_expected_rw,
+                0 AS duration,
+                0 AS cost_expected,
+                0 AS cost_expected_rw,
+                coalesce(SUM(sml.qty_done * ABS(s.price_unit)), 0) AS cost,
+                coalesce(SUM(sml.qty_done * (
+                      SELECT ip.value_float FROM ir_property ip
+                         WHERE ip.res_id = CONCAT('product.product,', pp.id)
+                         AND ip.name = 'standard_price'
+                         ORDER BY id DESC LIMIT 1
+                    )), 0) AS cost_current,
+                MAX(ABS(s.price_unit)) AS unit_cost
+            FROM stock_move s
+                LEFT JOIN product_product pp ON pp.id = s.product_id
+                LEFT JOIN mrp_production p ON s.raw_material_production_id = p.id
+                LEFT JOIN stock_move_line sml ON sml.move_id = s.id
+            WHERE s.bom_line_id is null
             GROUP BY p.date_planned_start, p.id, s.product_id
             )
             AS sub
@@ -123,6 +153,10 @@ class MrpProductionDeviationReport(models.Model):
 
     """
     Notes:
+    Se una riga è stata aggiunta durante la produzione, il previsto deve essere 0,
+    per cui va considerato 0 se la riga non è collegata ad una bom line. 
+    Soluzione: aggiunta una ricerca sql aggiuntiva per le righe senza bom line, che 
+    nelle ricerche sopra sono escluse.    
     cost_expected = workorder.duration_expected * workcenter.costs_hour / 60 +
         coalesce(MAX(bomline.product_qty * production.product_qty
             * ABS(stockmove.price_unit)), 0) => costo previsto inizialmente sulla base 

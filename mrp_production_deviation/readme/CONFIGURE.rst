@@ -19,6 +19,9 @@ I costi dei tempi lavorati sono valorizzati al costo del centro di lavoro colleg
 
 I costi dei materiali sono valorizzati al costo registrato nel movimento di magazzino di scarico.
 
+NOTA BENE: nel caso un componente sia proveniente da una sub-bom di tipo kit, la quantità prevista è quella indicata a video. In caso venga modificata, sarà quindi indicata come quantità prevista, anche se inizialmente era diversa, essendo tale valore calcolato e non disponibile.
+
+### NOTE PER SVILUPPO
 1. prende i costi di acquisto al momento in cui viene consolidata la produzione
    Come aggiorno i costi se li conosco dopo che è stata consolidata?
    Gli articoli che vedi sottolineati, l'IRON su tutti, sono stati acquistati dopo la conferma della produzione e abbiamo conosciuto il costo solo dalla fattura...
