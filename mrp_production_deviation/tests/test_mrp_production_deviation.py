@@ -154,13 +154,21 @@ class TestMrpProductionDeviation(TestProductionData):
         self.assertEqual(move_raw.product_uom_qty, 3)
         self.assertEqual(move_raw.quantity_done, 0)
 
-        # complete production
-        move_raw.write({'quantity_done': 3})
-        self.assertEqual(move_raw.quantity_done, 3)
+        # complete production, changing quantity done for additional component
         produce_form.product_qty = 3.0
         produced_qty += produce_form.product_qty
         wizard_1 = produce_form.save()
         wizard_1.do_produce()
+        move_raw.write({'quantity_done': 3})
+        self.assertEqual(move_raw.quantity_done, 3)
+        move_raw_sub_2_1 = man_order.move_raw_ids.filtered(
+            lambda x: x.product_id == self.subproduct_2_1
+        )
+        sml_ids = self.env['stock.move.line'].search([
+            ('move_id', '=', move_raw_sub_2_1.id)])
+        self.assertAlmostEqual(move_raw_sub_2_1.quantity_done, 40.0)
+        sml_ids.unlink()
+        self.assertAlmostEqual(move_raw_sub_2_1.quantity_done, 0.0)
         man_order.button_mark_done()
         self.assertEqual(man_order.state, 'done')
         deviation_data_3 = self.get_deviation_data(man_order)
@@ -198,6 +206,7 @@ class TestMrpProductionDeviation(TestProductionData):
             self.subproduct_1_1.standard_price * 16 * produced_qty)
         self.subproduct_1_1.standard_price = 10
 
+        # check product_2 has correct report values
         product_2_deviation_datas_4 = [
             x for x in deviation_data_4 if x.get('product_id', False)
             and x['product_id'][0] == self.product_2.id]
@@ -210,3 +219,18 @@ class TestMrpProductionDeviation(TestProductionData):
         self.assertAlmostEqual(
             sum(x['cost'] for x in product_2_deviation_datas_4),
             3 * self.product_2.standard_price)
+
+        # check subproduct_2_1 has correct report values
+        subproduct_2_1_deviation_datas_4 = [
+            x for x in deviation_data_4 if x.get('product_id', False)
+            and x['product_id'][0] == self.subproduct_2_1.id]
+        self.assertAlmostEqual(
+            sum(x['cost_expected'] for x in subproduct_2_1_deviation_datas_4),
+            8 * self.subproduct_2_1.standard_price * produced_qty)
+        self.assertAlmostEqual(
+            sum(x['quantity_expected'] for x in subproduct_2_1_deviation_datas_4),
+            8 * produced_qty)
+        self.assertAlmostEqual(
+            sum(x['product_qty'] for x in subproduct_2_1_deviation_datas_4), 0)
+        self.assertAlmostEqual(
+            sum(x['cost'] for x in subproduct_2_1_deviation_datas_4), 0)
