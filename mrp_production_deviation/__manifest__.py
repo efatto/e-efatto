@@ -10,7 +10,7 @@
     'description': 'Add deviation info to production pivot.',
     'depends': [
         'mrp_production_component_change',
-        'mrp_production_demo',
+        'mrp_production_expected_qty',
     ],
     'data': [
         'security/ir.model.access.csv',
