@@ -102,7 +102,6 @@ class TestMrpProductionManualProcurement(TestProductionData):
                     'product_uom_qty': 10,
                     'location_id': man_order.location_src_id.id,
                     'location_dest_id': man_order.location_dest_id.id,
-                    'origin': man_order.name,
                     'state': 'confirmed',
                     'raw_material_production_id': man_order.id,
                     'picking_type_id': man_order.picking_type_id.id,
@@ -125,6 +124,7 @@ class TestMrpProductionManualProcurement(TestProductionData):
             lambda x: x.product_id == self.product_to_purchase)
         self.assertEqual(sum(po_line.product_qty for po_line in po_lines),
                          7 * product_qty)
+        self.assertTrue(po_lines.mapped('procurement_group_id'))
 
         self.assertEqual(len(to_confirm_po_ids), 1)
         to_confirm_po_ids.button_confirm()
