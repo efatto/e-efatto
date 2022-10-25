@@ -10,7 +10,8 @@ class StockMove(models.Model):
         for move in res:
             if move.state == 'confirmed' and move.raw_material_production_id:
                 move.write({
-                    'origin': move.raw_material_production_id.name,
+                    'origin': move.raw_material_production_id.origin or
+                    move.raw_material_production_id.name,
                     'state': 'draft',
                     'procure_method': 'make_to_order',  # possibile prenderlo da rule?
                 })
