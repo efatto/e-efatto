@@ -70,11 +70,12 @@ class TestMrpProductionManualProcurement(TestProductionData):
         man_order.button_start_procurement()
         po_ids = self.env['purchase.order'].search([
             ('origin', '=', man_order.name),
-            ('state', '=', 'draft'),
         ])
         self.assertEqual(len(po_ids), 1)
-        po_ids.button_confirm()
-        self.assertEqual(po_ids.state, 'purchase')
+        po_lines = po_ids.order_line.filtered(
+            lambda x: x.product_id == self.product_to_purchase)
+        self.assertEqual(sum(po_line.product_qty for po_line in po_lines),
+                         7 * product_qty)
         # create workorder to add relative costs
         man_order.action_assign()
         man_order.button_plan()
@@ -114,13 +115,20 @@ class TestMrpProductionManualProcurement(TestProductionData):
         )
         # re-start procurement must create new orders
         man_order.button_start_procurement()
-        po_ids = self.env['purchase.order'].search([
+        new_po_ids = self.env['purchase.order'].search([
             ('origin', '=', man_order.name),
-            ('state', '=', 'draft'),
         ])
-        self.assertEqual(len(po_ids), 1)
-        po_ids.button_confirm()
-        self.assertEqual(po_ids.state, 'purchase')
+        self.assertEqual(len(new_po_ids), 2)
+        to_confirm_po_ids = new_po_ids - po_ids
+        # check purchase line are not duplicated
+        po_lines = po_ids.order_line.filtered(
+            lambda x: x.product_id == self.product_to_purchase)
+        self.assertEqual(sum(po_line.product_qty for po_line in po_lines),
+                         7 * product_qty)
+
+        self.assertEqual(len(to_confirm_po_ids), 1)
+        to_confirm_po_ids.button_confirm()
+        self.assertEqual(to_confirm_po_ids.state, 'purchase')
         # complete production
         move_raw.write({'quantity_done': 3})
         self.assertEqual(move_raw.quantity_done, 3)
