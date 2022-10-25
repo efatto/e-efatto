@@ -41,4 +41,4 @@ class MrpProduction(models.Model):
     @api.multi
     def button_start_procurement(self):
         self.ensure_one()
-        self.move_raw_ids._action_confirm()
+        self.move_raw_ids.filtered(lambda x: x.state == 'draft')._action_confirm()
