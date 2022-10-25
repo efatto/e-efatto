@@ -79,7 +79,7 @@ class TestMrpProductionManualProcurement(TestProductionData):
         # create workorder to add relative costs
         man_order.action_assign()
         man_order.button_plan()
-        # procuce partially
+        # produce partially
         produce_form = Form(
             self.env['mrp.product.produce'].with_context(
                 active_id=man_order.id,
