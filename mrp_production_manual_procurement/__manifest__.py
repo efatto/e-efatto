@@ -12,6 +12,7 @@
                    'creation.',
     'depends': [
         'mrp_production_demo',
+        'purchase_line_procurement_group',
         'purchase_stock',
     ],
     'data': [
