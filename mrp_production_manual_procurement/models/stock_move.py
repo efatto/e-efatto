@@ -11,6 +11,6 @@ class StockMove(models.Model):
             if move.state == 'confirmed' and move.raw_material_production_id:
                 move.write({
                     'state': 'draft',
-                    'procure_method': 'make_to_order',
+                    'procure_method': 'make_to_order',  # possibile prenderlo da rule?
                 })
         return res
