@@ -23,9 +23,19 @@ class TestMrpProductionLotCustomAssign(TestProductionData):
         self.assertEqual(len(man_order.move_raw_ids), 3)
         for move in man_order.move_raw_ids:
             self.assertEqual(move.product_uom_qty, move.expected_product_uom_qty)
+
+        # Change production qty before producing would change equally expected qty
+        new_production_qty = man_order.product_qty + 100
+        factor = new_production_qty / man_order.product_qty
+        self.env['change.production.qty'].create({
+            'mo_id': man_order.id,
+            'product_qty': man_order.product_qty + 100,
+        }).change_prod_qty()
+        for move in man_order.move_raw_ids:
+            self.assertEqual(move.product_uom_qty, move.expected_product_uom_qty)
         man_order.action_assign()
         man_order.button_plan()
-        # procuce partially
+        # produce partially
         produce_form = Form(
             self.env['mrp.product.produce'].with_context(
                 active_id=man_order.id,
@@ -40,8 +50,22 @@ class TestMrpProductionLotCustomAssign(TestProductionData):
         self.assertAlmostEqual(
             sum(man_order.mapped('finished_move_line_ids.qty_done')), 2.0)
         move_raw = man_order.move_raw_ids[1]
-        self.assertEqual(move_raw.product_uom_qty, 40)
+        self.assertEqual(move_raw.product_uom_qty, 40 * factor)
         self.assertEqual(len(man_order.move_raw_ids), 3)
+
+        new_production_qty = man_order.product_qty - 50
+        factor = new_production_qty / man_order.product_qty
+        old_move_raw_qty_dict = {
+            move.id: move.product_uom_qty
+            for move in man_order.move_raw_ids
+        }
+        self.env['change.production.qty'].create({
+            'mo_id': man_order.id,
+            'product_qty': new_production_qty,
+        }).change_prod_qty()
+        for move in man_order.move_raw_ids:
+            self.assertAlmostEqual(
+                old_move_raw_qty_dict[move.id] * factor, move.expected_product_uom_qty)
 
         # set 0 to move_raw quantity_done unlink related move lines
         sml = self.env['stock.move.line'].search([('move_id', '=', move_raw.id)])
