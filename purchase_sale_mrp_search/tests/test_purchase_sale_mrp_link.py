@@ -68,4 +68,4 @@ class TestPurchaseSaleMrpLink(TestProductionData):
             ('order_line.product_id', 'in', [self.product_bom_purchase.id]),
         ])
         self.assertTrue(purchase_order)
-        self.assertEqual(purchase_order.mrp_origin, self.production.origin)
+        self.assertIn(self.production.origin, purchase_order.mrp_origin)

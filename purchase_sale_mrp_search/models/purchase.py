@@ -35,5 +35,8 @@ class PurchaseOrder(models.Model):
     @api.depends('order_line.mrp_origin')
     def _compute_mrp_origin(self):
         for order in self:
-            order.mrp_origin = " ".join([
-                x for x in order.order_line.mapped('mrp_origin') if x])
+            if any(line.mrp_origin for line in order.order_line):
+                order.mrp_origin = " ".join([
+                    x for x in order.order_line.mapped('mrp_origin') if x])
+            else:
+                order.mrp_origin = order.origin
