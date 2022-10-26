@@ -9,7 +9,7 @@ class StockRule(models.Model):
 
     @api.multi
     def _prepare_purchase_requisition_line(
-            self, product_id, product_qty, product_uom, values, pr):
+            self, product_id, product_qty, product_uom, values, pr, origin):
         return {
             'requisition_id': pr.id,
             'product_id': product_id.id,
@@ -17,6 +17,8 @@ class StockRule(models.Model):
             'product_qty': product_qty,
             'move_dest_id': values.get('move_dest_ids')
             and values['move_dest_ids'][0].id or False,
+            'origin': origin,
+            'group_id': values.get('group_id') and values['group_id'][0].id or False,
         }
 
     @api.multi
@@ -63,6 +65,6 @@ class StockRule(models.Model):
         else:
             # Only ability to create Line in existing purchase requisition
             vals = self._prepare_purchase_requisition_line(
-                product_id, product_qty, product_uom, values, pr)
+                product_id, product_qty, product_uom, values, pr, origin)
             self.env['purchase.requisition.line'].sudo().create(vals)
         return True

@@ -8,9 +8,13 @@
     'description': 'Create grouped purchase requisition.',
     'website': 'https://efatto.it',
     'depends': [
-        'purchase_requisition',
+        'mrp_production_demo',
+        'purchase_line_procurement_group',
+        'purchase_requisition_auto_rfq',
+        'sale_stock',
     ],
     'data': [
+        'views/purchase_requisition.xml',
     ],
     'installable': True,
 }
