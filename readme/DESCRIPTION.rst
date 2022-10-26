@@ -1,1 +1,1 @@
-This module add procurement group, sale line and specific origin fields to request purchase line.
+This module add procurement group and origin to purchase requisition.

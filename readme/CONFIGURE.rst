@@ -1,9 +1,11 @@
-Il modulo rende disponibili i seguenti campi aggiuntivi alla riga della richiesta d'acquisto:
- #. ordine di vendita
- #. cliente
- #. data impegno di vendita
+Il modulo aggiunge i seguenti campi aggiuntivi, compilati automaticamente dal sistema, alla riga del bando di gara:
+ #. gruppo di approvvigionamento
+ #. origine (non visibile a video)
 
-Inoltre sostituisce il campo di origine collegato di default alle varie origini della richiesta d'acquisto con un campo di origine collegato all'origine della singola riga.
+.. image:: ../static/description/gruppo.png
+    :alt: Gruppo
 
-.. image:: ../static/description/riga_richiesta.png
-    :alt: Riga richiesta
+Inoltre aggiunge l'origine del bando di gara all'ordine di acquisto, oltre al già presente nome del bando di gara:
+
+.. image:: ../static/description/origine_acquisto.png
+    :alt: Origine acquisto
