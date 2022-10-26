@@ -75,16 +75,6 @@ class PurchaseRequisitionGrouping(TestProductionData):
             ('origin', '=', man_order.name),
             ('state', '=', 'draft'),
         ])
-        self.assertFalse(pr_ids)
-        man_order.button_start_procurement()
-        po_ids = self.env['purchase.order'].search([
-            ('origin', '=', man_order.name),
-        ])
-        self.assertEqual(len(po_ids), 0)
-        pr_ids = self.env['purchase.requisition'].search([
-            ('origin', '=', man_order.name),
-            ('state', '=', 'draft'),
-        ])
         self.assertEqual(len(pr_ids), 1)
         pr_lines = pr_ids.line_ids.filtered(
             lambda x: x.product_id == self.component_sale_to_purchase_1)
@@ -122,22 +112,6 @@ class PurchaseRequisitionGrouping(TestProductionData):
                 }),
             ]
         })
-        man_order.action_toggle_is_locked()
-        # re-start procurement must create new orders
-        man_order.button_start_procurement()
-        new_po_ids = self.env['purchase.order'].search([
-            ('origin', '=', man_order.name),
-        ])
-        self.assertEqual(len(new_po_ids), 0)
-        new_pr_ids = self.env['purchase.requisition'].search([
-            ('origin', '=', man_order.name),
-        ])
-        self.assertEqual(len(new_pr_ids), 1)
-        # check purchase line are not duplicated
-        pr_lines = pr_ids.line_ids.filtered(
-            lambda x: x.product_id == self.component_sale_to_purchase_1)
-        self.assertEqual(sum(pr_line.product_qty for pr_line in pr_lines),
-                         7 * product_qty + 10)
         # creare i PO e verificare che ci sia il procurement group
         self.assertTrue(pr_lines.mapped('group_id'))
         pr_ids.auto_rfq_from_suppliers()
