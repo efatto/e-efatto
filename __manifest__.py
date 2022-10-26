@@ -14,6 +14,7 @@
         'sale_stock',
     ],
     'data': [
+        'views/product.xml',
         'views/purchase_requisition.xml',
     ],
     'installable': True,
