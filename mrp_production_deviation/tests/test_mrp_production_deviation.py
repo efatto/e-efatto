@@ -82,7 +82,7 @@ class TestMrpProductionDeviation(TestProductionData):
                                duration_expected_rw / 60 * self.workcenter1.costs_hour)
         self.assertEqual(deviation_data[0], deviation_data_1[0])
         self.assertEqual(deviation_data[1], deviation_data_1[1])
-        # procuce partially
+        # produce partially
         produce_form = Form(
             self.env['mrp.product.produce'].with_context(
                 active_id=man_order.id,
