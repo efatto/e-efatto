@@ -31,6 +31,7 @@
             </search>
         </field>
     </record>
+
     <record id="view_mrp_production_deviation_report_pivot" model="ir.ui.view">
         <field name="name">MRP production deviation report: Pivot</field>
         <field name="model">mrp.production.deviation.report</field>
@@ -41,13 +42,24 @@
                 <field name="quantity_expected" type="measure"/>
                 <field name="product_qty" type="measure"/>
                 <field name="quantity_deviation" type="measure"/>
-                <field name="duration_expected_rw" type="measure"/>
+                <field name="cost_expected" type="measure"/>
+                <field name="cost" type="measure"/>
+                <field name="cost_deviation" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_mrp_production_current_cost_report_pivot" model="ir.ui.view">
+        <field name="name">MRP production current cost report: Pivot</field>
+        <field name="model">mrp.production.deviation.report</field>
+        <field name="arch" type="xml">
+            <pivot string="production deviation">
+                <field name="production_id" type="row"/>
+                <field name="product_id" type="row"/>
+                <field name="product_qty" type="measure"/>
                 <field name="duration" type="measure"/>
-                <field name="duration_deviation_rw" type="measure"/>
-                <field name="cost_expected_rw" type="measure"/>
                 <field name="cost" type="measure"/>
                 <field name="cost_current" type="measure"/>
-                <field name="cost_deviation_rw" type="measure"/>
             </pivot>
         </field>
     </record>
@@ -63,6 +75,18 @@
         name="MRP Production Deviation Report"
         res_model="mrp.production.deviation.report"
         src_model="mrp.production"
+        view_id="view_mrp_production_deviation_report_pivot"
+        view_mode="pivot,graph"
+        context="{'search_default_production_id': active_id}"
+        target="current"
+        key2="client_action_multi"
+    />
+
+    <act_window id="action_mrp_production_current_cost_report_mo"
+        name="MRP Production Current Cost Report"
+        res_model="mrp.production.deviation.report"
+        src_model="mrp.production"
+        view_id="view_mrp_production_current_cost_report_pivot"
         view_mode="pivot,graph"
         context="{'search_default_production_id': active_id}"
         target="current"
