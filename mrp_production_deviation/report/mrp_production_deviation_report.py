@@ -24,7 +24,7 @@ class MrpProductionDeviationReport(models.Model):
     quantity_deviation = fields.Float('Qty Deviation', readonly=True)
     cost_expected = fields.Float(string="Cost Expected", readonly=True)
     cost_expected_rw = fields.Float(string="Cost Routing Expected", readonly=True)
-    cost = fields.Float(string="Cost", readonly=True)
+    cost = fields.Float(string="Final Cost", readonly=True)
     cost_current = fields.Float(string="Current Cost", readonly=True)
     unit_cost = fields.Float(string="Unit Cost", readonly=True)
     cost_deviation = fields.Float(string="Cost Deviation", readonly=True)
