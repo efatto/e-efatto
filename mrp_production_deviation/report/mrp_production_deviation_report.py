@@ -65,15 +65,15 @@ class MrpProductionDeviationReport(models.Model):
             SELECT
                 w.id AS id,
                 w.id AS workorder_id,
-                w.name,
+                w.name AS name,
                 to_char(p.date_planned_start, 'YYYY-MM-DD') AS date,
                 p.id AS production_id,
                 NULL AS product_id,
                 0 AS quantity_expected,
                 0 AS product_qty,
-                w.duration_expected,
+                w.duration_expected AS duration_expected,
                 rw.time_cycle_manual * p.product_qty AS duration_expected_rw,
-                w.duration,
+                w.duration AS duration,
                 w.duration_expected * wc.costs_hour / 60 AS cost_expected,
                 rw.time_cycle_manual * p.product_qty * wc.costs_hour / 60 
                  AS cost_expected_rw,

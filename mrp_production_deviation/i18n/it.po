@@ -93,7 +93,7 @@ msgstr "Data di ultima modifica"
 #. module: mrp_production_deviation
 #: model:ir.actions.act_window,name:mrp_production_deviation.action_mrp_production_current_cost_report_mo
 msgid "MRP Production Current Cost Report"
-msgstr "Repost Costo Corrente"
+msgstr "Report Costo Corrente"
 
 #. module: mrp_production_deviation
 #: model:ir.actions.act_window,name:mrp_production_deviation.action_mrp_production_deviation_report
