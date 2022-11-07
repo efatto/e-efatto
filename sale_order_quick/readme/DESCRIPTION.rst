@@ -1,0 +1,1 @@
+This module adds a tab where user can pre-insert sale order line without all onchange function in sale order, to speed-up user interface. Currently, every add of line triggers many onchange that recalculates all old lines too.
