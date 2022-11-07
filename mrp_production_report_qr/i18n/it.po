@@ -1,0 +1,175 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* mrp_production_complete_report
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-07-23 14:04+0000\n"
+"PO-Revision-Date: 2022-07-23 14:04+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "(agg)"
+msgstr ""
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "(agg)("
+msgstr ""
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "<strong>Finished Product:</strong><br/>"
+msgstr "<strong>Prodotto finito:</strong><br/>"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "<strong>No. Of Minutes</strong>"
+msgstr "<strong>No. di minuti</strong>"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "<strong>Operation</strong>"
+msgstr "<strong>Operazione</strong>"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "<strong>Printing date:</strong><br/>"
+msgstr "<strong>Data di Stampa</strong><br/>"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "<strong>Quantity to Produce:</strong><br/>"
+msgstr "<strong>Quantita' da produrre:</strong><br/>"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "<strong>Responsible:</strong><br/>"
+msgstr "<strong>Responsabile:</strong><br/>"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "<strong>Scheduled Date:</strong><br/>"
+msgstr "<strong>Data prevista:</strong><br/>"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "<strong>Source Document:</strong><br/>"
+msgstr "<strong>Documento di origine:</strong><br/>"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "<strong>Total Cost Components</strong>"
+msgstr "<strong>Costo Totale Componenti</strong>"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "<strong>Total Cost Timesheets</strong>"
+msgstr "<strong>Costo Totale Lavoro</strong>"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "<strong>Total Cost</strong>"
+msgstr "<strong>Costo Totale</strong>"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "<strong>WorkCenter</strong>"
+msgstr "<strong>Centro di Lavorazione</strong>"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "All components could not be reserved. Click on the \"Check Availability button\" to try to reserve components."
+msgstr "Non è stato possibile prenotare tutti i prodotti. Clicca sul pulsante \"Verifica la disponibilità\" per provare a prenotare i prodotti."
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "Barcode"
+msgstr "Codice a barre"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder
+msgid "Components not reserved:"
+msgstr "Componenti non riservati:"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "Consumed Products"
+msgstr "Prodotti Utilizzati"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "From"
+msgstr "Da"
+
+#. module: mrp_production_complete_report
+#: model:ir.actions.report,name:mrp_production_complete_report.mrp_production_complete_report
+msgid "Mrp flat report"
+msgstr "Ordine di produzione piatto"
+
+#. module: mrp_production_complete_report
+#: model:ir.actions.report,name:mrp_production_complete_report.mrp_production_complete_report_cost
+msgid "Mrp flat report with cost"
+msgstr "Ordine di produzione piatto valorizzato"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "Operations Done"
+msgstr "Operazioni completate"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "Operations Planned"
+msgstr "Operazioni pianificate"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "Product"
+msgstr "Prodotto"
+
+#. module: mrp_production_complete_report
+#: model:ir.model,name:mrp_production_complete_report.model_mrp_production
+msgid "Production Order"
+msgstr "Ordine di Produzione"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "Products to Consume"
+msgstr "Prodotti da Utilizzare"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "Quantity"
+msgstr "Quantità"
+
+#. module: mrp_production_complete_report
+#: model:ir.model.fields,field_description:mrp_production_complete_report.field_mrp_production__sort_by_product_code
+msgid "Sort By Product Code"
+msgstr "Ordina per Rif. interno Prodotto"
+
+#. module: mrp_production_complete_report
+#: model:ir.model.fields,field_description:mrp_production_complete_report.field_mrp_production__sort_by_product_ctg
+msgid "Sort By Product Ctg"
+msgstr "Ordina per Categoria Prodotto"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "Total Cost / (at standard price)"
+msgstr "Costo Totale / (al costo)"
+
+#. module: mrp_production_complete_report
+#: model_terms:ir.ui.view,arch_db:mrp_production_complete_report.report_mrporder_flat_common
+msgid "WITH COSTS"
+msgstr "CON COSTI"
+

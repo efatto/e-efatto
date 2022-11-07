@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<template id="report_mrporder" inherit_id="mrp.report_mrporder">
+    <xpath expr="//img[@style='width:350px;height:60px']" position="attributes">
+        <attribute name="t-att-src">'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', '%s%s' %(o.id, o._name), 128, 128)</attribute>
+        <attribute name="class">border border-dark rounded</attribute>
+        <attribute name="style"></attribute>
+    </xpath>
+    <xpath expr="//div[@t-if='o.workorder_ids']/table/tr/th[1]" position="before">
+        <th><strong>Qr Code</strong></th>
+    </xpath>
+    <xpath expr="//div[@t-if='o.workorder_ids']/table/tr/th[last()]" position="after">
+        <th><strong>Qr Code</strong></th>
+    </xpath>
+    <xpath expr="//tr[@t-foreach='o.workorder_ids']" position="before">
+        <t t-set="row" t-value="0"/>
+    </xpath>
+    <xpath expr="//tr[@t-foreach='o.workorder_ids']/td[1]" position="before">
+        <td>
+            <t t-set="row" t-value="row + 1"/>
+            <span t-if="row % 2 != 0">
+                <img class="border border-dark rounded"
+                     t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', '%s%s' %(line2.id, line2._name), 128, 128)"/>
+            </span>
+        </td>
+    </xpath>
+    <xpath expr="//tr[@t-foreach='o.workorder_ids']/td[last()]" position="after">
+        <td>
+            <span t-if="row % 2 == 0">
+                <img class="border border-dark rounded"
+                     t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', '%s%s' %(line2.id, line2._name), 128, 128)"/>
+            </span>
+        </td>
+    </xpath>
+</template>
+
+</odoo>
