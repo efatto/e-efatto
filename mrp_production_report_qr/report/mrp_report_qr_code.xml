@@ -3,7 +3,7 @@
 
 <template id="report_mrporder" inherit_id="mrp.report_mrporder">
     <xpath expr="//img[@style='width:350px;height:60px']" position="attributes">
-        <attribute name="t-att-src">'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', '%s%s' %(o.id, o._name), 128, 128)</attribute>
+        <attribute name="t-att-src">'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', '%s_%s' %(o._name, o.id), 128, 128)</attribute>
         <attribute name="class">border border-dark rounded</attribute>
         <attribute name="style"></attribute>
     </xpath>
@@ -21,7 +21,7 @@
             <t t-set="row" t-value="row + 1"/>
             <span t-if="row % 2 != 0">
                 <img class="border border-dark rounded"
-                     t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', '%s%s' %(line2.id, line2._name), 128, 128)"/>
+                     t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', '%s_%s' %(line2._name, line2.id), 128, 128)"/>
             </span>
         </td>
     </xpath>

@@ -6,7 +6,7 @@
     'category': 'Manufacture',
     'license': 'AGPL-3',
     'description': """
-    Add qr code to production.
+    Add qr code to production in form <res_model>_<res_id>.
     """,
     'author': 'Sergio Corato',
     'website': 'https://efatto.it',
