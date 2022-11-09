@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_hr_timesheet_barcodes_read_form" model="ir.ui.view">
+        <field name="name">wiz.hr.timesheet.barcodes.read.form</field>
+        <field name="model">wiz.hr.timesheet.barcodes.read</field>
+        <field name="arch" type="xml">
+            <form string="Barcodes">
+                <sheet>
+                    <div class="text-center">
+                        <div class="alert alert-success" role="status" attrs="{'invisible': [('message_type', '!=', 'success')]}">
+                            <field name="message"/>
+                        </div>
+                        <div class="alert alert-info" role="status" attrs="{'invisible': [('message_type', '!=', 'info')]}">
+                            <field name="message"/>
+                        </div>
+                        <div class="alert alert-danger" role="status" attrs="{'invisible': [('message_type', '!=', 'more_match')]}">
+                            <field name="message"/>
+                        </div>
+                        <div class="alert alert-danger" role="status" attrs="{'invisible': [('message_type', '!=', 'not_found')]}">
+                            <field name="message"/>
+                        </div>
+                    </div>
+                    <field name="message_type" invisible="1" />
+                    <field name="barcode" invisible="1" force_save="1"/>
+                    <field name="res_model_id" invisible="1"/>
+                    <field name="res_id" invisible="1"/>
+                    <field name="_barcode_scanned" widget="barcode_handler" invisible="1"/>
+                    <group>
+                        <field name="employee_id" option="{'no_edit_create': True}"
+                               attrs="{'readonly': True, 'required': True}"
+                               force_save="1"/>
+                    </group>
+                    <group>
+                        <field name="task_id" options="{'no_create': True}"
+                               attrs="{'readonly': True, 'required': [('workcenter_productivity_id', '=', True)]}"
+                               force_save="1"/>
+                    </group>
+                    <group groups="mrp.group_mrp_user">
+                        <field name="workcenter_productivity_id" options="{'no_create': True}"
+                               context="{'default_employee_id': employee_id}"
+                               attrs="{'readonly': True, 'required': [('task_id', '=', False)]}"
+                               force_save="1"/>
+                    </group>
+                    <group>
+                        <field name="date_start"/>
+                    </group>
+                    <group>
+                        <field name="hour_amount"/>
+                    </group>
+                    <group>
+                        <field name="minute_amount"/>
+                    </group>
+                    <group>
+                        <button name="action_done" string="Done" icon="fa-add-remove" type="object"/>
+                    </group>
+                    <group/>
+                    <group/>
+                    <group string="Current scanning log" attrs="{'invisible': [('scan_log_ids', '=', [])]}">
+                        <group>
+                            <button name="action_undo_last_scan" type="object" string="Remove last yours" icon="fa-trash"/>
+                        </group>
+                        <field name="scan_log_ids" options="{'no_open': True}" nolabel="1" mode="tree,kanban">
+                            <tree string="Current product scanning log">
+                                <field name="create_date"/>
+                                <field name="create_uid"/>
+                                <field name="name"/>
+                                <field name="employee_id"/>
+                                <field name="task_id"/>
+                                <field name="workcenter_productivity_id"/>
+                                <field name="date_start"/>
+                                <field name="hour_amount"/>
+                                <field name="minute_amount"/>
+                            </tree>
+                            <kanban class="o_kanban_mobile">
+                                <field name="create_date"/>
+                                <field name="create_uid"/>
+                                <field name="date_start"/>
+                                <field name="hour_amount"/>
+                                <field name="minute_amount"/>
+                                <templates>
+                                    <t t-name="kanban-box">
+                                        <div t-attf-class="oe_kanban_card">
+                                            <div class="row">
+                                                <div class="col-8">
+                                                    <strong>
+                                                        <span><t t-esc="record.create_date.value"/></span>
+                                                        <span><t t-esc="record.create_uid.value"/></span>
+                                                    </strong>
+                                                </div>
+                                                <div class="col-4">
+                                                    <strong>
+                                                        <span class="pull-right text-right">
+                                                            <t t-esc="record.hour_amount.value"/>
+                                                            <t t-esc="record.minute_amount.value"/>
+                                                        </span>
+                                                    </strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </templates>
+                            </kanban>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_hr_timesheet_barcodes_read" model="ir.actions.act_window">
+        <field name="res_model">wiz.hr.timesheet.barcodes.read</field>
+        <field name="name">Barcodes Read</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="context">{}</field>
+        <field name="view_id" ref="view_hr_timesheet_barcodes_read_form"/>
+        <field name="target">current</field>
+    </record>
+
+</odoo>
