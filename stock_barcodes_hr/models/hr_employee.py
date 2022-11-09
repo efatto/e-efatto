@@ -1,7 +1,7 @@
 # Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import models
+from odoo import fields, models
 
 
 class HrEmployee(models.Model):
@@ -10,5 +10,8 @@ class HrEmployee(models.Model):
 
     def action_barcode_scan(self):
         action = self.env.ref(
-            'hr_timesheet_barcodes.action_hr_timesheet_barcodes_read').read()[0]
+            'stock_barcodes_hr.action_stock_barcodes_read_hr').read()[0]
+        action['context'] = {
+            'default_date_start': fields.Datetime.now(),
+        }
         return action

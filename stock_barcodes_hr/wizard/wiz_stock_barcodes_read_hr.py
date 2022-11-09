@@ -12,18 +12,11 @@ def _execute_onchanges(records, field_name):
             onchange(record)
 
 
-class WizHrTimesheetBarcodesRead(models.TransientModel):
-    _name = 'wiz.hr.timesheet.barcodes.read'
-    _inherit = 'barcodes.barcode_events_mixin'
+class WizStockBarcodesReadHr(models.TransientModel):
+    _name = 'wiz.stock.barcodes.read.hr'
+    _inherit = 'wiz.stock.barcodes.read'
     _description = 'Wizard to create timesheet and workcenter productivity by barcode'
-    _transient_max_hours = 48
 
-    barcode = fields.Char()
-    res_model_id = fields.Many2one(
-        comodel_name='ir.model',
-        index=True,
-    )
-    res_id = fields.Integer(index=True)
     employee_id = fields.Many2one(
         comodel_name='hr.employee',
         string='Employee',
@@ -44,17 +37,6 @@ class WizHrTimesheetBarcodesRead(models.TransientModel):
         string='Workorder',
         readonly=True,
     )
-    scan_log_ids = fields.Many2many(
-        comodel_name='hr.timesheet.barcodes.read.log',
-        compute='_compute_scan_log_ids',
-    )
-    message_type = fields.Selection([
-        ('info', 'Barcode read with additional info'),
-        ('not_found', 'No barcode found'),
-        ('more_match', 'More than one matches found'),
-        ('success', 'Barcode read correctly'),
-    ], readonly=True)
-    message = fields.Char(readonly=True)
     hour_amount = fields.Integer(
         string="Worked Hours",
         default=0,
@@ -119,13 +101,6 @@ class WizHrTimesheetBarcodesRead(models.TransientModel):
         self.barcode = barcode
         self.reset_amount()
         self.process_barcode(barcode)
-
-    def _set_messagge_info(self, message_type, message):
-        self.message_type = message_type
-        if self.barcode:
-            self.message = _('Barcode: %s (%s)') % (self.barcode, message)
-        else:
-            self.message = '%s' % message
 
     def process_barcode(self, barcode):
         self._set_messagge_info('success', _('Barcode read correctly'))
@@ -233,7 +208,7 @@ class WizHrTimesheetBarcodesRead(models.TransientModel):
     def _add_read_log(self, log_detail=False):
         if self.hour_amount or self.minute_amount:
             vals = self._prepare_scan_log_values(log_detail)
-            self.env['hr.timesheet.barcodes.read.log'].create(vals)
+            self.env['stock.barcodes.read.log'].create(vals)
 
     @staticmethod
     def remove_scanning_log(scanning_log):
@@ -242,7 +217,7 @@ class WizHrTimesheetBarcodesRead(models.TransientModel):
 
     @api.depends('employee_id')
     def _compute_scan_log_ids(self):
-        logs = self.env['hr.timesheet.barcodes.read.log'].search([
+        logs = self.env['stock.barcodes.read.log'].search([
             ('res_model_id', '=', self.res_model_id.id),
             ('res_id', '=', self.res_id),
             ('employee_id', '=', self.employee_id.id),

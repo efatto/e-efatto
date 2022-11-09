@@ -1,17 +1,11 @@
 from odoo import fields, models
 
 
-class HrTimesheetBarcodesReadLog(models.Model):
-    _name = 'hr.timesheet.barcodes.read.log'
-    _description = 'Log barcode scanner'
+class StockBarcodesReadLog(models.Model):
+    _inherit = 'stock.barcodes.read.log'
+    _description = 'Log hr barcode scan'
     _order = 'id DESC'
 
-    name = fields.Char(string='Barcode Scanned')
-    res_model_id = fields.Many2one(
-        comodel_name='ir.model',
-        index=True,
-    )
-    res_id = fields.Integer(index=True)
     employee_id = fields.Many2one(
         comodel_name='hr.employee',
         string='Employee',
