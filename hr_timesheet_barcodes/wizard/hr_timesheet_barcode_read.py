@@ -39,11 +39,6 @@ class WizHrTimesheetBarcodesRead(models.TransientModel):
         string='Task',
         readonly=True,
     )
-    workcenter_productivity_id = fields.Many2one(
-        comodel_name='mrp.workcenter.productivity',
-        string='Workcenter Productivity',
-        readonly=True,
-    )
     workorder_id = fields.Many2one(
         comodel_name='mrp.workorder',
         string='Workorder',
@@ -88,15 +83,15 @@ class WizHrTimesheetBarcodesRead(models.TransientModel):
                 res = self._process_productivity()
             if res:
                 self._add_read_log(res)
+                self.reset_all()
 
-    def _prepare_productivity_values(self, unit_amount):
+    def _prepare_productivity_values(self, unit_amount, loss_id):
         return {
             'description': self.workorder_id.name,
             'date_start': self.date_start,
-            'production_id': self.workorder_id.production_id.id,
-            'workcenter_id': self.workorder_id.workcenter_id.id,
             'workorder_id': self.workorder_id.id,
             'employee_id': self.employee_id.id,
+            'loss_id': loss_id.id,
             'unit_amount': unit_amount,
         }
 
@@ -110,6 +105,11 @@ class WizHrTimesheetBarcodesRead(models.TransientModel):
             'amount': - unit_amount * self.employee_id.timesheet_cost,
             'unit_amount': unit_amount,
         }
+
+    def reset_all(self):
+        self.reset_amount()
+        self.task_id = False
+        self.workorder_id = False
 
     def reset_amount(self):
         self.hour_amount = 0
@@ -131,7 +131,7 @@ class WizHrTimesheetBarcodesRead(models.TransientModel):
         self._set_messagge_info('success', _('Barcode read correctly'))
         if '_' in barcode:
             res_model, res_id = barcode.split('_')
-            record = self.env[res_model].browse(res_id)
+            record = self.env[res_model].browse(int(res_id))
         else:
             res_model = 'hr.employee'
             record = self.env[res_model].search([
@@ -143,6 +143,7 @@ class WizHrTimesheetBarcodesRead(models.TransientModel):
             return
         if res_model == 'hr.employee':
             self.action_employee_scaned_post(record)
+            self.reset_all()
             return
         if res_model == 'mrp.workorder':
             self.action_workorder_scaned_post(record)
@@ -168,8 +169,10 @@ class WizHrTimesheetBarcodesRead(models.TransientModel):
         hour_amount = self.hour_amount
         minute_amount = self.minute_amount
         unit_amount = hour_amount + (minute_amount / 60.0)
+        loss_id = self.env['mrp.workcenter.productivity.loss'].search(
+            [('loss_type', '=', 'productive')], limit=1)
         log_lines_dict = {}
-        vals = self._prepare_productivity_values(unit_amount)
+        vals = self._prepare_productivity_values(unit_amount, loss_id)
 
         if not vals:
             self._set_messagge_info(
@@ -177,6 +180,8 @@ class WizHrTimesheetBarcodesRead(models.TransientModel):
             return
         line = productivity_obj.new(vals)
         # recompute all onchange fields
+        _execute_onchanges(line, 'employee_id')  # to compute user_id
+        _execute_onchanges(line, 'workorder_id')  # to compute workcenter_id
         _execute_onchanges(line, 'unit_amount')
         line.update({'date_start': self.date_start})
         _execute_onchanges(line, 'date_start')
@@ -205,7 +210,7 @@ class WizHrTimesheetBarcodesRead(models.TransientModel):
         res = bool(
             self.employee_id and self.date_start
             and (
-                self.task_id or self.workcenter_productivity_id)
+                self.task_id or self.workorder_id)
             and (
                 self.hour_amount or self.minute_amount
             )

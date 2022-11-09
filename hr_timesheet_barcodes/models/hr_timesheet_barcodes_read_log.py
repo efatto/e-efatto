@@ -27,11 +27,6 @@ class HrTimesheetBarcodesReadLog(models.Model):
         string='Task',
         readonly=True,
     )
-    workcenter_productivity_id = fields.Many2one(
-        comodel_name='mrp.workcenter.productivity',
-        string='Workcenter Productivity',
-        readonly=True,
-    )
     workorder_id = fields.Many2one(
         comodel_name='mrp.workorder',
         string='Workorder',

@@ -9,6 +9,7 @@
     "description": "Create timesheet and workcenter productivity by barcode scan",
     "license": "AGPL-3",
     "depends": [
+        "barcodes",
         "hr_timesheet",
         "mrp_employee_productivity",
         "mrp_production_demo",
@@ -20,6 +21,7 @@
     "data": [
         "security/ir.model.access.csv",
         "wizard/hr_timesheet_barcode_read_views.xml",
+        "views/hr_employee.xml",
         "views/hr_timesheet.xml",
     ],
     "installable": True
