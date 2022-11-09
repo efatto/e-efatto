@@ -2,6 +2,11 @@
 <odoo>
 
 <template id="report_mrporder" inherit_id="mrp.report_mrporder">
+    <xpath expr="//img[@style='width:350px;height:60px']" position="attributes">
+        <attribute name="t-att-src"></attribute>
+        <attribute name="class"></attribute>
+        <attribute name="style"></attribute>
+    </xpath>
     <xpath expr="//div[@t-if='o.workorder_ids']/table/tr/th[1]" position="before">
         <th><strong>Qr Code</strong></th>
     </xpath>
@@ -24,7 +29,7 @@
         <td>
             <span t-if="row % 2 == 0">
                 <img class="border border-dark rounded"
-                     t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', '%s%s' %(line2.id, line2._name), 128, 128)"/>
+                     t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', '%s_%s' %(line2._name, line2.id), 128, 128)"/>
             </span>
         </td>
     </xpath>
