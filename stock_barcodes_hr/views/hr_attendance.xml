@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_hr_attendance_time_recording"
+        name="Time Recording"
+        parent="hr_attendance.menu_hr_attendance_root"
+        sequence="19"
+        groups="hr_attendance.group_hr_attendance"
+        action="action_stock_barcodes_read_hr"/>
+
+</odoo>

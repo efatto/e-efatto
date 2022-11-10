@@ -21,22 +21,22 @@
             <field name="location_id" position="attributes">
                 <attribute name="attrs">{'invisible': True}</attribute>
             </field>
-            <field name="location_id" position="after">
-                <field name="employee_id" option="{'no_create': True}"
-                   attrs="{'readonly': True, 'required': True}"
-                   force_save="1"/>
-            </field>
             <xpath expr="//field[@name='_barcode_scanned']" position="after">
                 <group>
+                    <field name="employee_id" option="{'no_create': True}"
+                       attrs="{'readonly': True, 'required': True}"
+                       force_save="1"/>
+                </group>
+                <group>
                     <field name="task_id" options="{'no_create': True}"
-                           attrs="{'readonly': True, 'required': [('workorder_id', '=', False)]}"
-                           force_save="1"/>
+                       attrs="{'readonly': True, 'required': [('workorder_id', '=', False)]}"
+                       force_save="1"/>
                 </group>
                 <group groups="mrp.group_mrp_user">
                     <field name="workorder_id" options="{'no_create': True}"
-                           context="{'default_employee_id': employee_id}"
-                           attrs="{'readonly': True, 'required': [('task_id', '=', False)]}"
-                           force_save="1"/>
+                       context="{'default_employee_id': employee_id}"
+                       attrs="{'readonly': True, 'required': [('task_id', '=', False)]}"
+                       force_save="1"/>
                 </group>
                 <group>
                     <field name="date_start"/>

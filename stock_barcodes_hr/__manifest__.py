@@ -9,18 +9,18 @@
     "description": "Create timesheet and workcenter productivity by barcode scan",
     "license": "AGPL-3",
     "depends": [
-        "hr_timesheet",
+        "hr_attendance",
         "mrp_employee_productivity",
         "mrp_production_demo",
         "mrp_production_report_qr",
         "mrp_workorder_time",
         "project_hr",
+        "project_report_qr",
         "stock_barcodes",
     ],
     "data": [
         "wizard/wiz_stock_barcodes_read_hr_views.xml",
-        "views/hr_employee.xml",
-        "views/hr_timesheet.xml",
+        "views/hr_attendance.xml",
     ],
     "installable": True
 }
