@@ -13,7 +13,7 @@
     'website': 'https://efatto.it',
     'depends': [
         'project',
-        'sale_timesheet',
+        'sale_timesheet_task_exclude',
     ],
     'data': [
         'report/project_report_qr_code.xml',

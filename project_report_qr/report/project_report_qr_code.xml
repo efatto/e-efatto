@@ -18,7 +18,7 @@
                         </thead>
                         <tbody>
                             <t t-set="row" t-value="0"/>
-                            <tr t-foreach="doc.task_ids.filtered(lambda x: x.sale_line_id)" t-as="line">
+                            <tr t-foreach="doc.task_ids.filtered(lambda x: not x.exclude_from_sale_order)" t-as="line">
                                 <td>
                                     <t t-set="row" t-value="row + 1"/>
                                     <span t-if="row % 2 != 0">
