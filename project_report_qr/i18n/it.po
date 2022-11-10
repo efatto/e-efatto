@@ -1,0 +1,43 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* project_report_qr
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-11-10 17:57+0000\n"
+"PO-Revision-Date: 2022-11-10 17:57+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: project_report_qr
+#: model_terms:ir.ui.view,arch_db:project_report_qr.project_task_report_doc
+msgid "<strong>Description</strong>"
+msgstr "<strong>Descrizione</strong>"
+
+#. module: project_report_qr
+#: model_terms:ir.ui.view,arch_db:project_report_qr.project_task_report_doc
+msgid "<strong>Project</strong>"
+msgstr ""
+
+#. module: project_report_qr
+#: model_terms:ir.ui.view,arch_db:project_report_qr.project_task_report_doc
+msgid "<strong>Qr Code</strong>"
+msgstr ""
+
+#. module: project_report_qr
+#: model_terms:ir.ui.view,arch_db:project_report_qr.project_task_report_doc
+msgid "<strong>Task</strong>"
+msgstr ""
+
+#. module: project_report_qr
+#: model:ir.actions.report,name:project_report_qr.report_project_task
+#: model:ir.actions.report,name:project_report_qr.report_project_task_sale
+msgid "Project Task Report"
+msgstr ""
+

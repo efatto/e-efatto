@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<template id="project_task_report_doc">
+    <t t-call="web.html_container">
+        <t t-call="web.external_layout">
+            <div class="page">
+                <div class="row">
+                    <table id="task_details" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th><strong>Qr Code</strong></th>
+                                <th><strong>Project</strong></th>
+                                <th><strong>Task</strong></th>
+                                <th><strong>Description</strong></th>
+                                <th><strong>Qr Code</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="row" t-value="0"/>
+                            <tr t-foreach="doc.task_ids.filtered(lambda x: x.sale_line_id)" t-as="line">
+                                <td>
+                                    <t t-set="row" t-value="row + 1"/>
+                                    <span t-if="row % 2 != 0">
+                                        <img class="border border-dark rounded"
+                                             t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', '%s_%s' %(line._name, line.id), 128, 128)"/>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span t-field="doc.name"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.name"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.description"/>
+                                </td>
+                                <td>
+                                    <span t-if="row % 2 == 0">
+                                        <img class="border border-dark rounded"
+                                             t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', '%s_%s' %(line._name, line.id), 128, 128)"/>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </t>
+    </t>
+</template>
+
+<template id="project_task_report">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="doc">
+            <div class="page">
+                <t t-call="project_report_qr.project_task_report_doc"/>
+            </div>
+            <p style="page-break-before:always;"> </p>
+        </t>
+    </t>
+</template>
+
+<template id="project_task_report_sale">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="order">
+            <t t-foreach="order.project_ids" t-as="doc">
+                <div class="page">
+                    <t t-call="project_report_qr.project_task_report_doc"/>
+                </div>
+                <p style="page-break-before:always;"> </p>
+            </t>
+        </t>
+    </t>
+</template>
+
+<report
+    string="Project Task Report"
+    id="report_project_task"
+    model="project.project"
+    report_type="qweb-pdf"
+    name="project_report_qr.project_task_report"
+    file="project_report_qr.project_task_report"
+    print_report_name="'Project Task Report'"
+/>
+
+<report
+    string="Project Task Report"
+    id="report_project_task_sale"
+    model="sale.order"
+    report_type="qweb-pdf"
+    name="project_report_qr.project_task_report_sale"
+    file="project_report_qr.project_task_report_sale"
+    print_report_name="'Project Task Report'"
+/>
+
+</odoo>
