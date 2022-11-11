@@ -26,16 +26,12 @@
                     <field name="employee_id" option="{'no_create': True}"
                        attrs="{'readonly': True, 'required': True}"
                        force_save="1"/>
-                </group>
-                <group>
                     <field name="task_id" options="{'no_create': True}"
-                       attrs="{'readonly': True, 'required': [('workorder_id', '=', False)]}"
+                       attrs="{'readonly': True, 'required': [('workorder_id', '=', False), '|', ('hour_amount', '!=', 0), ('minute_amount', '!=', 0)]}"
                        force_save="1"/>
-                </group>
-                <group groups="mrp.group_mrp_user">
                     <field name="workorder_id" options="{'no_create': True}"
                        context="{'default_employee_id': employee_id}"
-                       attrs="{'readonly': True, 'required': [('task_id', '=', False)]}"
+                       attrs="{'readonly': True, 'required': [('task_id', '=', False), '|', ('hour_amount', '!=', 0), ('minute_amount', '!=', 0)]}"
                        force_save="1"/>
                 </group>
                 <group>
@@ -48,7 +44,8 @@
                     <field name="minute_amount" widget="FieldFloatNumericMode"/>
                 </group>
                 <group>
-                    <button name="action_done" string="Done" icon="fa-save" type="object"/>
+                    <button name="action_next" class="btn btn-info center" string="Next" type="object"/>
+                    <button name="action_end" class="btn btn-info centered" string="End" type="object"/>
                 </group>
             </xpath>
             <field name="product_id" position="attributes">
@@ -77,10 +74,6 @@
             </xpath>
             <xpath expr="//field[@name='scan_log_ids']/kanban/field[@name='product_qty']" position="attributes">
                 <attribute name="attrs">{'invisible': True}</attribute>
-            </xpath>
-            <xpath expr="//t[@t-esc='record.product_qty.value']" position="after">
-                <t t-esc="record.hour_amount.value"/>
-                <t t-esc="record.minute_amount.value"/>
             </xpath>
             <xpath expr="//t[@t-esc='record.product_qty.value']" position="attributes">
                 <attribute name="attrs">{'invisible': True}</attribute>

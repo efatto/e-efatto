@@ -56,22 +56,26 @@ class WizStockBarcodesReadHr(models.TransientModel):
                 _('Barcode reader'),
                 rec.employee_id.name, self.env.user.name)) for rec in self]
 
-    def action_done(self):
+    def action_next(self):
         if self.check_done_conditions():
             res = False
             if self.task_id:
                 res = self._process_timesheet()
-            elif self.sudo().workorder_id:
+            elif self.workorder_id:
                 res = self._process_productivity()
             if res:
                 self._add_read_log(res)
                 self.reset_all()
 
+    def action_end(self):
+        self.reset_all()
+        self.employee_id = False
+
     def _prepare_productivity_values(self, unit_amount, loss_id):
         return {
-            'description': self.sudo().workorder_id.name,
+            'description': self.workorder_id.sudo().name,
             'date_start': self.date_start,
-            'workorder_id': self.sudo().workorder_id.id,
+            'workorder_id': self.workorder_id.id,
             'employee_id': self.employee_id.id,
             'loss_id': loss_id.id,
             'unit_amount': unit_amount,
@@ -91,7 +95,7 @@ class WizStockBarcodesReadHr(models.TransientModel):
     def reset_all(self):
         self.reset_amount()
         self.task_id = False
-        self.sudo().workorder_id = False
+        self.workorder_id = False
 
     def reset_amount(self):
         self.hour_amount = 0
@@ -134,7 +138,7 @@ class WizStockBarcodesReadHr(models.TransientModel):
         self.minute_amount = 0
 
     def action_workorder_scaned_post(self, workorder):
-        self.sudo().workorder_id = workorder
+        self.workorder_id = workorder
 
     def action_task_scaned_post(self, task):
         self.task_id = task
@@ -185,7 +189,7 @@ class WizStockBarcodesReadHr(models.TransientModel):
         res = bool(
             self.employee_id and self.date_start
             and (
-                self.task_id or self.sudo().workorder_id)
+                self.task_id or self.workorder_id)
             and (
                 self.hour_amount or self.minute_amount
             )
@@ -197,7 +201,7 @@ class WizStockBarcodesReadHr(models.TransientModel):
             name=self.barcode,
             employee_id=self.employee_id.id,
             task_id=self.task_id.id,
-            workorder_id=self.sudo().workorder_id.id,
+            workorder_id=self.workorder_id.id,
             hour_amount=self.hour_amount,
             minute_amount=self.minute_amount,
             res_model_id=self.res_model_id.id,

@@ -252,11 +252,11 @@ msgstr "Minuti Lavorati"
 #: model:ir.model.fields,field_description:stock_barcodes_hr.field_stock_barcodes_read_log__workorder_id
 #: model:ir.model.fields,field_description:stock_barcodes_hr.field_wiz_stock_barcodes_read_hr__workorder_id
 msgid "Workorder"
-msgstr "Ordine di lavoro"
+msgstr "Operazione"
 
 #. module: stock_barcodes_hr
 #: code:addons/stock_barcodes_hr/wizard/wiz_stock_barcodes_read_hr.py:154
 #, python-format
 msgid "Workorder not found"
-msgstr "Ordine di lavoro non trovato"
+msgstr "Operazione non trovata"
 
