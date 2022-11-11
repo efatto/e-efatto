@@ -1,12 +1,12 @@
 # Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
-    "name": "Timesheet & Productivity record by Barcode",
+    "name": "Timesheet & Productivity Barcode Recording",
     "version": "12.0.1.0.0",
     "category": "Timesheet",
     "author": "Sergio Corato - Efatto.it",
     "website": "https://efatto.it",
-    "description": "Create timesheet and workcenter productivity by barcode scan",
+    "description": "Record worked time on tasks and workorder by barcode scan",
     "license": "AGPL-3",
     "depends": [
         "hr_attendance",
