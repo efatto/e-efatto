@@ -44,8 +44,8 @@
                     <field name="minute_amount" widget="FieldFloatNumericMode"/>
                 </group>
                 <group>
-                    <button name="action_next" class="btn btn-info center" string="Next" type="object"/>
-                    <button name="action_end" class="btn btn-info centered" string="End" type="object"/>
+                    <button name="action_next" class="btn btn-info" style="font-weight: bold; font-size: 24px; padding: 20px;" string="Next" type="object"/>
+                    <button name="action_end" class="btn btn-info oe_right" style="font-weight: bold; font-size: 24px; padding: 20px;" string="End" type="object"/>
                 </group>
             </xpath>
             <field name="product_id" position="attributes">
