@@ -16,7 +16,7 @@ Purchase requisition group by default vendor
 
 |badge1| |badge2| 
 
-This module add procurement group and origin to purchase requisition.
+This module add the ability to group purchase requisition by vendor.
 
 **Table of contents**
 

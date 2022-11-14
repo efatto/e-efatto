@@ -1,1 +1,1 @@
-This module add procurement group and origin to purchase requisition.
+This module add the ability to group purchase requisition by vendor.
