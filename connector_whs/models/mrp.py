@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import api, fields, models, _
+from odoo.exceptions import UserError
 
 
 class MrpProduction(models.Model):
@@ -12,6 +13,15 @@ class MrpProduction(models.Model):
     def button_mark_done(self):
         res = super().button_mark_done()
         self._generate_whs()
+        return res
+
+    @api.multi
+    def post_inventory(self):
+        if any(
+                x.stato != '4' and x.qta
+                for x in self.move_raw_ids.mapped('whs_list_ids')):
+            raise UserError(_('Almost a WHS list is not in state "Ricevuto Esito"!'))
+        res = super().post_inventory()
         return res
 
     @api.multi
