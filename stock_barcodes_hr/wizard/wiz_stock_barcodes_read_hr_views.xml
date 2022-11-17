@@ -39,13 +39,13 @@
                     <field name="date_start"/>
                 </group>
                 <group>
-                    <field name="hour_amount" widget="FieldFloatNumericMode"/>
+                    <field name="hour_amount" widget="FieldFloatNumericModeOnReturn"/>
                 </group>
                 <group>
-                    <field name="minute_amount" widget="FieldFloatNumericMode"/>
+                    <field name="minute_amount" widget="FieldFloatNumericModeOnReturn"/>
                 </group>
                 <group>
-                    <button name="action_done" class="btn btn-info" style="font-weight: bold; font-size: 24px; padding: 20px;" string="Done" type="object"/>
+                    <button name="action_done" id="action_done_button" class="btn btn-info" style="font-weight: bold; font-size: 24px; padding: 20px;" string="Done" type="object"/>
                 </group>
             </xpath>
             <field name="product_id" position="attributes">
