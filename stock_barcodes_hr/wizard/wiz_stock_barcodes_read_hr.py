@@ -22,14 +22,13 @@ class WizStockBarcodesReadHr(models.TransientModel):
         string='Employee',
         readonly=True,
     )
-    project_id = fields.Many2one(
-        comodel_name='project.project',
-        string='Project',
-        readonly=True,
-    )
     task_id = fields.Many2one(
         comodel_name='project.task',
         string='Task',
+        readonly=True,
+    )
+    project_id = fields.Many2one(
+        related='task_id.project_id',
         readonly=True,
     )
     workorder_id = fields.Many2one(
@@ -56,7 +55,7 @@ class WizStockBarcodesReadHr(models.TransientModel):
                 _('Barcode reader'),
                 rec.employee_id.name, self.env.user.name)) for rec in self]
 
-    def action_next(self):
+    def action_done(self):
         if self.check_done_conditions():
             res = False
             if self.task_id:
@@ -67,7 +66,8 @@ class WizStockBarcodesReadHr(models.TransientModel):
                 self._add_read_log(res)
                 self.reset_all()
 
-    def action_end(self):
+    def timeout(self):
+        # todo howto call this function after x seconds of inactivity?
         self.reset_all()
         self.employee_id = False
 

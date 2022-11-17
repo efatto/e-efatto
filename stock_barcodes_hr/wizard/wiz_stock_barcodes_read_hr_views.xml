@@ -29,6 +29,7 @@
                     <field name="task_id" options="{'no_create': True}"
                        attrs="{'readonly': True, 'required': [('workorder_id', '=', False), '|', ('hour_amount', '!=', 0), ('minute_amount', '!=', 0)]}"
                        force_save="1"/>
+                    <field name="project_id" attrs="{'readonly': True, 'invisible': [('task_id', '=', False)]}"/>
                     <field name="workorder_id" options="{'no_create': True}"
                        context="{'default_employee_id': employee_id}"
                        attrs="{'readonly': True, 'required': [('task_id', '=', False), '|', ('hour_amount', '!=', 0), ('minute_amount', '!=', 0)]}"
@@ -44,8 +45,7 @@
                     <field name="minute_amount" widget="FieldFloatNumericMode"/>
                 </group>
                 <group>
-                    <button name="action_next" class="btn btn-info" style="font-weight: bold; font-size: 24px; padding: 20px;" string="Next" type="object"/>
-                    <button name="action_end" class="btn btn-info oe_right" style="font-weight: bold; font-size: 24px; padding: 20px;" string="End" type="object"/>
+                    <button name="action_done" class="btn btn-info" style="font-weight: bold; font-size: 24px; padding: 20px;" string="Done" type="object"/>
                 </group>
             </xpath>
             <field name="product_id" position="attributes">
