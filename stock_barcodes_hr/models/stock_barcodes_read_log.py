@@ -12,8 +12,7 @@ class StockBarcodesReadLog(models.Model):
         readonly=True,
     )
     project_id = fields.Many2one(
-        comodel_name='project.project',
-        string='Project',
+        related='task_id.project_id',
         readonly=True,
     )
     task_id = fields.Many2one(
@@ -29,12 +28,14 @@ class StockBarcodesReadLog(models.Model):
     hour_amount = fields.Integer(
         string="Worked Hours",
         default=0,
+        readonly=True,
     )
     minute_amount = fields.Integer(
         string="Worked Minutes",
         default=0,
+        readonly=True,
     )
-    date_start = fields.Datetime(
+    datetime_start = fields.Datetime(
         string="Date/time Start Work",
-        default=fields.Datetime.now,
+        readonly=True,
     )

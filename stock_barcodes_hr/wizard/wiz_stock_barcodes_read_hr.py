@@ -1,6 +1,9 @@
 import logging
+from pytz import timezone, utc
 from odoo import api, fields, models, _
 from odoo.fields import first
+from odoo.tools.date_utils import relativedelta
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
 _logger = logging.getLogger(__name__)
 
@@ -44,10 +47,29 @@ class WizStockBarcodesReadHr(models.TransientModel):
         string="Worked Minutes",
         default=0,
     )
-    date_start = fields.Datetime(
-        string="Date/time Start Work",
-        default=fields.Datetime.now,
+    date_start = fields.Date(
+        string="Date Start Work",
+        default=fields.Date.today,
     )
+    hour_start = fields.Float(
+        string="Hour Start Work",
+    )
+    datetime_start = fields.Datetime(
+        compute="_compute_datetime_start",
+        string="Date/time Start Work",
+        store=True,
+    )
+
+    @api.onchange('date_start', 'employee_id')
+    def onchange_hour_start(self):
+        if self.employee_id and self.date_start:
+            # get start hour of date from employee calendar
+            attendance_ids = self.employee_id.resource_calendar_id.attendance_ids.\
+                filtered(lambda x: x.dayofweek == str(self.date_start.weekday()))
+            if attendance_ids:
+                self.hour_start = min(attendance_ids).hour_from
+            else:
+                self.hour_start = 8.0
 
     def name_get(self):
         return [
@@ -71,10 +93,25 @@ class WizStockBarcodesReadHr(models.TransientModel):
         self.reset_all()
         self.employee_id = False
 
+    @api.multi
+    @api.depends('date_start', 'hour_start', 'employee_id')
+    def _compute_datetime_start(self):
+        for rec in self:
+            if rec.employee_id and rec.date_start and rec.hour_start:
+                employee_tz = timezone(rec.employee_id.tz or 'Europe/Rome')
+                dt_start = fields.Datetime.from_string(rec.date_start) + relativedelta(
+                    hours=rec.hour_start)
+                date_tz_start = employee_tz.localize(dt_start).astimezone(utc)
+                datetime_start = fields.Datetime.to_datetime(
+                    date_tz_start.strftime(DEFAULT_SERVER_DATETIME_FORMAT))
+                rec.datetime_start = datetime_start
+            else:
+                rec.datetime_start = False
+
     def _prepare_productivity_values(self, unit_amount, loss_id):
         return {
             'description': self.workorder_id.sudo().name,
-            'date_start': self.date_start,
+            'date_start': self.datetime_start,
             'workorder_id': self.workorder_id.id,
             'employee_id': self.employee_id.id,
             'loss_id': loss_id.id,
@@ -84,7 +121,7 @@ class WizStockBarcodesReadHr(models.TransientModel):
     def _prepare_timesheet_values(self, unit_amount):
         return {
             'name': self.task_id.name,
-            'date_time': self.date_start,
+            'date_time': self.datetime_start,
             'project_id': self.task_id.project_id.id,
             'task_id': self.task_id.id,
             'employee_id': self.employee_id.id,
@@ -162,7 +199,7 @@ class WizStockBarcodesReadHr(models.TransientModel):
         _execute_onchanges(line, 'employee_id')  # to compute user_id
         _execute_onchanges(line.sudo(), 'workorder_id')  # to compute workcenter_id
         _execute_onchanges(line, 'unit_amount')
-        line.update({'date_start': self.date_start})
+        line.update({'date_start': self.datetime_start})
         _execute_onchanges(line, 'date_start')
         productivity_data = line._convert_to_write(line._cache)
         productivity = productivity_obj.create(productivity_data)
@@ -187,7 +224,7 @@ class WizStockBarcodesReadHr(models.TransientModel):
 
     def check_done_conditions(self):
         res = bool(
-            self.employee_id and self.date_start
+            self.employee_id and self.date_start and self.hour_start
             and (
                 self.task_id or self.workorder_id)
             and (
@@ -206,6 +243,7 @@ class WizStockBarcodesReadHr(models.TransientModel):
             minute_amount=self.minute_amount,
             res_model_id=self.res_model_id.id,
             res_id=self.res_id,
+            datetime_start=self.datetime_start,
         )
         return vals
 
