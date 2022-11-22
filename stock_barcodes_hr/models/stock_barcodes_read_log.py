@@ -25,6 +25,11 @@ class StockBarcodesReadLog(models.Model):
         string='Workorder',
         readonly=True,
     )
+    sale_id = fields.Many2one(
+        related='workorder_id.production_id.sale_id',
+        string='Sale Order',
+        readonly=True,
+    )
     hour_amount = fields.Integer(
         string="Worked Hours",
         default=0,
