@@ -1,0 +1,53 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* hide_menu_user
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-11-22 16:30+0000\n"
+"PO-Revision-Date: 2022-11-22 16:30+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: hide_menu_user
+#: model_terms:ir.ui.view,arch_db:hide_menu_user.hide_user_menu
+msgid "Hide Specific Menu"
+msgstr "Nascondi Menu Specifici"
+
+#. module: hide_menu_user
+#: model:ir.model.fields,field_description:hide_menu_user.field_res_users__is_admin
+msgid "Is Admin"
+msgstr "È un Amministratore"
+
+#. module: hide_menu_user
+#: model:ir.model,name:hide_menu_user.model_ir_ui_menu
+#: model:ir.model.fields,field_description:hide_menu_user.field_res_users__hide_menu_ids
+msgid "Menu"
+msgstr "Menù"
+
+#. module: hide_menu_user
+#: model:ir.model.fields,field_description:hide_menu_user.field_ir_ui_menu__restrict_user_ids
+msgid "Restrict User"
+msgstr "Limita Utente"
+
+#. module: hide_menu_user
+#: model_terms:ir.ui.view,arch_db:hide_menu_user.ir_ui_menu_users
+msgid "Restrict users"
+msgstr "Limita utenti"
+
+#. module: hide_menu_user
+#: model:ir.model.fields,help:hide_menu_user.field_res_users__hide_menu_ids
+msgid "Select menu items that needs to be hidden to this user "
+msgstr "Seleziona le voci di menu che devono essere nascoste a questo utente"
+
+#. module: hide_menu_user
+#: model:ir.model,name:hide_menu_user.model_res_users
+msgid "Users"
+msgstr "Utenti"
+
