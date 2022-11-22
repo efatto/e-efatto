@@ -42,10 +42,10 @@
                     <field name="hour_start" widget="float_time"/>
                 </group>
                 <group>
-                    <field name="hour_amount" widget="FieldFloatNumericModeOnReturn"/>
+                    <field name="hour_amount" widget="FieldFloatTimeNumericModeOnReturn"/>
                 </group>
                 <group>
-                    <field name="minute_amount" widget="FieldFloatNumericModeOnReturn"/>
+                    <field name="minute_amount" widget="FieldFloatTimeNumericModeOnReturn"/>
                 </group>
                 <group>
                     <button name="action_done" id="action_done_button" class="btn btn-info" style="font-weight: bold; font-size: 24px; padding: 20px;" string="Done" type="object"/>
