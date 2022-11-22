@@ -24,15 +24,15 @@
             <xpath expr="//field[@name='_barcode_scanned']" position="after">
                 <group>
                     <field name="employee_id" option="{'no_create': True}"
-                       attrs="{'readonly': True, 'required': True}"
+                       attrs="{'readonly': True, 'required': True, 'invisible': [('employee_id', '=', False)]}"
                        force_save="1"/>
                     <field name="task_id" options="{'no_create': True}"
-                       attrs="{'readonly': True, 'required': [('workorder_id', '=', False), '|', ('hour_amount', '!=', 0), ('minute_amount', '!=', 0)]}"
+                       attrs="{'readonly': True, 'required': [('workorder_id', '=', False), '|', ('hour_amount', '!=', 0), ('minute_amount', '!=', 0)], 'invisible': [('task_id', '=', False)]}"
                        force_save="1"/>
-                    <field name="project_id" attrs="{'readonly': True, 'invisible': [('task_id', '=', False)]}"/>
+                    <field name="project_id" options="{'no_create': True}"
+                       attrs="{'readonly': True, 'invisible': [('project_id', '=', False)]}"/>
                     <field name="workorder_id" options="{'no_create': True}"
-                       context="{'default_employee_id': employee_id}"
-                       attrs="{'readonly': True, 'required': [('task_id', '=', False), '|', ('hour_amount', '!=', 0), ('minute_amount', '!=', 0)]}"
+                       attrs="{'readonly': True, 'required': [('task_id', '=', False), '|', ('hour_amount', '!=', 0), ('minute_amount', '!=', 0)], 'invisible': [('workorder_id', '=', False)]}"
                        force_save="1"/>
                 </group>
                 <group>
@@ -64,13 +64,23 @@
             <button name="action_manual_entry" position="attributes">
                 <attribute name="attrs">{'invisible': True}</attribute>
             </button>
+            <xpath expr="//button[@name='action_undo_last_scan']/ancestor::*[2]" position="attributes">
+                <attribute name="string">Entries logged</attribute>
+            </xpath>
+            <xpath expr="//field[@name='scan_log_ids']/tree" position="attributes">
+                <attribute name="string">Entries logged</attribute>
+            </xpath>
             <xpath expr="//field[@name='scan_log_ids']/tree/field[@name='name']" position="replace">
+                <field name="employee_id"/>
+                <field name="datetime_start"/>
                 <field name="project_id"/>
                 <field name="task_id"/>
                 <field name="workorder_id"/>
                 <field name="hour_amount"/>
                 <field name="minute_amount"/>
             </xpath>
+            <xpath expr="//field[@name='scan_log_ids']/tree/field[@name='create_date']" position="replace"/>
+            <xpath expr="//field[@name='scan_log_ids']/tree/field[@name='create_uid']" position="replace"/>
             <xpath expr="//field[@name='scan_log_ids']/tree/field[@name='product_id']" position="replace"/>
             <xpath expr="//field[@name='scan_log_ids']/tree/field[@name='product_qty']" position="replace"/>
             <xpath expr="//field[@name='scan_log_ids']/tree/field[@name='lot_id']" position="replace"/>
