@@ -163,9 +163,11 @@ class WizStockBarcodesReadHr(models.TransientModel):
             return
         if res_model == 'mrp.workorder':
             self.action_workorder_scaned_post(record)
+            self.task_id = False
             return
         if res_model == 'project.task':
             self.action_task_scaned_post(record)
+            self.workorder_id = False
             return
         self._set_messagge_info('not_found', _('Barcode not found'))
 
