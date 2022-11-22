@@ -19,24 +19,3 @@ odoo.define('stock_barcodes_hr.FieldFloatNumericModeOnReturn', function (require
     field_registry.add('FieldFloatNumericModeOnReturn', FieldFloatNumericModeOnReturn);
 
 });
-//
-// odoo.define('stock_barcodes_hr.FormControllerOnEnter', function (require) {
-// "use strict";
-//
-//     var BasicController = require('web.BasicController');
-//     var FormController = require('web.FormController')
-//
-//     FormController.extend({
-//         custom_events: _.extend({}, FormController.prototype.custom_events, {
-//             return_clicked: '_onKeydownClicked',
-//         }),
-//         _onKeydownClicked: function (ev) {
-//             if (ev.which === $.ui.keyCode.ENTER) {
-//                 if (this.getElementsByClassName('btn-primary')) {
-//                     this.getElementsByClassName('btn-primary').click()
-//                 }
-//             }
-//         },
-//     });
-//
-// });
