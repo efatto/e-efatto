@@ -32,7 +32,7 @@
                     <field name="project_id" options="{'no_create': True}"
                        attrs="{'readonly': True, 'invisible': [('project_id', '=', False)]}"/>
                     <field name="workorder_id" options="{'no_create': True}"
-                       attrs="{'readonly': True, 'required': [('task_id', '=', False), '|', ('hour_amount', '!=', 0), ('minute_amount', '!=', 0)], 'invisible': True}"
+                       attrs="{'readonly': True, 'required': [('task_id', '=', False), '|', ('hour_amount', '!=', 0), ('minute_amount', '!=', 0)], 'invisible': [('workorder_id', '=', False)]}"
                        force_save="1"/>
                     <field name="sale_id" options="{'no_create': True}"
                        attrs="{'readonly': True, 'invisible': [('workorder_id', '=', False)]}"/>
