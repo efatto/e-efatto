@@ -177,9 +177,11 @@ class WizStockBarcodesReadHr(models.TransientModel):
         self._set_messagge_info('not_found', _('Barcode not found'))
 
     def action_employee_scaned_post(self, employee):
-        self.employee_id = employee
-        self.hour_amount = 0
-        self.minute_amount = 0
+        if self.employee_id != employee:
+            self.employee_id = employee
+            self.date_start = fields.Date.today()
+            self.hour_amount = 0
+            self.minute_amount = 0
 
     def action_workorder_scaned_post(self, workorder):
         self.workorder_id = workorder
