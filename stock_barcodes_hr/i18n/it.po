@@ -267,7 +267,7 @@ msgstr "Ore lavorate"
 #: model:ir.model.fields,field_description:stock_barcodes_hr.field_stock_barcodes_read_log__minute_amount
 #: model:ir.model.fields,field_description:stock_barcodes_hr.field_wiz_stock_barcodes_read_hr__minute_amount
 msgid "Worked Minutes"
-msgstr "Minuti Lavorati"
+msgstr "Minuti lavorati"
 
 #. module: stock_barcodes_hr
 #: model:ir.model.fields,field_description:stock_barcodes_hr.field_stock_barcodes_read_log__workorder_id
