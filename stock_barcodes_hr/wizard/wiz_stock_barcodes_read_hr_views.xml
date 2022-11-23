@@ -43,11 +43,11 @@
                            attrs="{'readonly': ['|', ('employee_id', '=', False), ('workorder_id', '=', False), ('task_id', '=', False)]}"/>
                 </group>
                 <group>
-                    <field name="hour_amount"
+                    <field name="hour_amount" widget="FieldFloatNumericModeOnReturn"
                         attrs="{'readonly': ['|', ('employee_id', '=', False), ('workorder_id', '=', False), ('task_id', '=', False)]}"/>
                 </group>
                 <group>
-                    <field name="minute_amount"
+                    <field name="minute_amount" widget="FieldFloatNumericModeOnReturn"
                         attrs="{'readonly': ['|', ('employee_id', '=', False), ('workorder_id', '=', False), ('task_id', '=', False)]}"/>
                 </group>
                 <group>
