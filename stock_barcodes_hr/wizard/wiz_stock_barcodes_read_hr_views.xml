@@ -39,13 +39,16 @@
                 </group>
                 <group>
                     <field name="date_start"/>
-                    <field name="hour_start" widget="float_time"/>
+                    <field name="hour_start" widget="float_time"
+                           attrs="{'readonly': ['|', ('employee_id', '=', False), ('workorder_id', '=', False), ('task_id', '=', False)]}"/>
                 </group>
                 <group>
-                    <field name="hour_amount" widget="FieldFloatTimeNumericModeOnReturn"/>
+                    <field name="hour_amount"
+                        attrs="{'readonly': ['|', ('employee_id', '=', False), ('workorder_id', '=', False), ('task_id', '=', False)]}"/>
                 </group>
                 <group>
-                    <field name="minute_amount" widget="FieldFloatTimeNumericModeOnReturn"/>
+                    <field name="minute_amount"
+                        attrs="{'readonly': ['|', ('employee_id', '=', False), ('workorder_id', '=', False), ('task_id', '=', False)]}"/>
                 </group>
                 <group>
                     <button name="action_done" id="action_done_button" class="btn btn-info" style="font-weight: bold; font-size: 24px; padding: 20px;" string="Done" type="object"/>
