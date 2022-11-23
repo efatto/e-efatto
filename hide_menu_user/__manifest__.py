@@ -20,13 +20,11 @@
 #############################################################################
 
 {
-    'name': 'Hide Any Menu User Wise',
-    'version': '12.0.1.0.0',
-    'summary': 'Hide Any Menu Item User Wise',
+    'name': 'Hide or Show Any Menu User Wise',
+    'version': '12.0.1.0.1',
+    'summary': 'Hide or Show Any Menu Item User Wise',
     'description': 'Hide Any Menu Item User Wise, Hide Menu Items, Hide Menu',
     'author': 'Cybrosys Techno Solutions',
-    'company': 'Cybrosys Techno Solutions',
-    'website': "https://www.cybrosys.com",
     'depends': ['base'],
     'data': [
         'views/res_users.xml',

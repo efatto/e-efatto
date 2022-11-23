@@ -7,9 +7,20 @@
             <field name="arch" type="xml">
                 <xpath expr="//notebook" position="inside">
                     <page string="Hide Specific Menu"  attrs="{'invisible': [('is_admin','=', True)]}">
-                        <tree>
-                            <field name="hide_menu_ids"/>
-                        </tree>
+                        <group string="Show Menu">
+                            <field name="show_menu_ids" nolabel="1">
+                                <tree>
+                                    <field name="complete_name"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group string="Hide Menu">
+                            <field name="hide_menu_ids" nolabel="1">
+                                <tree>
+                                    <field name="complete_name"/>
+                                </tree>
+                            </field>
+                        </group>
                     </page>
                 </xpath>
                 <field name="name" position="after">

@@ -31,14 +31,19 @@ class HideMenuUser(models.Model):
         Else the menu will be still hidden even after removing from the list
         """
         self.clear_caches()
-        return super(HideMenuUser, self).create(vals)
+        return super().create(vals)
 
     def write(self, vals):
         """
         Else the menu will be still hidden even after removing from the list
         """
-        res = super(HideMenuUser, self).write(vals)
-        for menu in self.hide_menu_ids:
+        res = super().write(vals)
+        if self.show_menu_ids:
+            all_menu_ids = self.env['ir.ui.menu'].search([])
+            hide_menu_ids = all_menu_ids - self.show_menu_ids
+        else:
+            hide_menu_ids = self.hide_menu_ids
+        for menu in hide_menu_ids:
             menu.write({
                 'restrict_user_ids': [(4, self.id)]
             })
@@ -55,9 +60,23 @@ class HideMenuUser(models.Model):
             if rec.id == self.env.ref('base.user_admin').id:
                 rec.is_admin = True
 
-    hide_menu_ids = fields.Many2many('ir.ui.menu', string="Menu", store=True,
-                                     help='Select menu items that needs to be '
-                                          'hidden to this user ')
+    hide_menu_ids = fields.Many2many(
+        comodel_name='ir.ui.menu',
+        relation='res_user_menu_hide',
+        column1='res_user_id',
+        column2='menu_id',
+        string="Menu",
+        help='Select menu items that needs to be hidden to this user.\n'
+             'If a selection in Show menu items list is present, these selection will '
+             'be ignored.')
+    show_menu_ids = fields.Many2many(
+        comodel_name='ir.ui.menu',
+        relation='res_user_menu_show',
+        column1='res_user_id',
+        column2='menu_id',
+        string="Menu",
+        help='Select menu items that needs to be shown to this user. These selection '
+             'prevails on Hide menu items.')
     is_admin = fields.Boolean(compute=_get_is_admin)
 
 
