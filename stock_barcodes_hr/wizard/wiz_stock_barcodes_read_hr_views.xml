@@ -39,7 +39,7 @@
                 </group>
                 <group>
                     <field name="date_start"/>
-                    <field name="hour_start" widget="float_time"
+                    <field name="hour_start" widget="FieldFloatTimeIgnoreBarcode"
                            attrs="{'readonly': ['|', ('employee_id', '=', False), ('workorder_id', '=', False), ('task_id', '=', False)]}"/>
                 </group>
                 <group>
