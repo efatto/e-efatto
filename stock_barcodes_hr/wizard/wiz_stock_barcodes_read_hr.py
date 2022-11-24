@@ -82,6 +82,9 @@ class WizStockBarcodesReadHr(models.TransientModel):
                 _('Barcode reader'),
                 rec.employee_id.name, self.env.user.name)) for rec in self]
 
+    def update_hour_start(self):
+        self.hour_start += (self.hour_amount + self.minute_amount / 60.0)
+
     def action_done(self):
         if self.check_done_conditions():
             res = False
@@ -91,6 +94,7 @@ class WizStockBarcodesReadHr(models.TransientModel):
                 res = self._process_productivity()
             if res:
                 self._add_read_log(res)
+                self.update_hour_start()
                 self.reset_all()
 
     def timeout(self):
