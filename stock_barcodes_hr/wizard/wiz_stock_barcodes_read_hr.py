@@ -84,6 +84,17 @@ class WizStockBarcodesReadHr(models.TransientModel):
 
     def update_hour_start(self):
         self.hour_start += (self.hour_amount + self.minute_amount / 60.0)
+        attendance_ids = self.employee_id.resource_calendar_id.attendance_ids.\
+            filtered(lambda x: x.dayofweek == str(self.date_start.weekday()))
+        used_attendance_ids = attendance_ids.filtered(
+            lambda x: x.hour_to >= self.hour_start >= x.hour_from
+        )
+        if not used_attendance_ids:
+            # hour_start is not in a valide attendance range, so put in first possible
+            for attendance_id in attendance_ids:
+                if attendance_id.hour_to > self.hour_start:
+                    self.hour_start = attendance_id.hour_from
+                    break
 
     def action_done(self):
         if self.check_done_conditions():
