@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-10 17:57+0000\n"
-"PO-Revision-Date: 2022-11-10 17:57+0000\n"
+"POT-Creation-Date: 2022-11-24 11:01+0000\n"
+"PO-Revision-Date: 2022-11-24 11:01+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,8 +17,8 @@ msgstr ""
 
 #. module: project_report_qr
 #: model_terms:ir.ui.view,arch_db:project_report_qr.project_task_report_doc
-msgid "<strong>Description</strong>"
-msgstr "<strong>Descrizione</strong>"
+msgid "<strong>Customer</strong>"
+msgstr "<strong>Cliente</strong>"
 
 #. module: project_report_qr
 #: model_terms:ir.ui.view,arch_db:project_report_qr.project_task_report_doc
