@@ -3,18 +3,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 <title>Mrp bom component pricelist</title>
 <style type="text/css">
 
 /*
 :Author: David Goodger (goodger@python.org)
-:Id: $Id: html4css1.css 7952 2016-07-26 18:15:59Z milde $
+:Id: $Id: html4css1.css 8954 2022-01-20 10:10:25Z milde $
 :Copyright: This stylesheet has been placed in the public domain.
 
 Default cascading style sheet for the HTML output of Docutils.
 
-See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+See https://docutils.sourceforge.io/docs/howto/html-stylesheets.html for how to
 customize this style sheet.
 */
 
@@ -386,8 +386,10 @@ ul.auto-toc {
 <h1><a class="toc-backref" href="#toc-entry-1">Configuration</a></h1>
 <p>Nel prodotto è disponibile un campo per impostare il calcolo del prezzo tramite il listino, sulla base dei prezzi dei componenti valutati per categoria di listino (collegata alla categoria prodotto) secondo le regole del listino per costo bom per valore raggruppato (vedi README <a class="reference external" href="https://github.com/sergiocorato/e-efatto/blob/12.0/product_pricelist_bom_cost/README.rst">https://github.com/sergiocorato/e-efatto/blob/12.0/product_pricelist_bom_cost/README.rst</a> del modulo padre):</p>
 <img alt="Abilitazione calcolo" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_sale_pricelist/static/description/abilita.png" />
-<p>Nel caso un prodotto abbia un prezzo dipendente da DiBa e non sia stato calcolato, viene mostrata un’icona di avvertimento:</p>
+<p>Nel caso un prodotto abbia un prezzo dipendente da DiBa e non sia stato calcolato, viene mostrata un’icona di avvertimento nella riga dell’ordine di vendita e nella riga della DiBa:</p>
 <img alt="Icona avvertimento" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_sale_pricelist/static/description/icona-prezzo-non-valido.png" />
+<p>che se cliccata porta ad una avviso con i dettagli:</p>
+<img alt="Avviso nella DiBa" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_sale_pricelist/static/description/avviso-diba.png" />
 </div>
 <div class="section" id="bug-tracker">
 <h1><a class="toc-backref" href="#toc-entry-2">Bug Tracker</a></h1>
