@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mrp_bom_form_view" model="ir.ui.view">
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='bom_line_ids']/tree/field[@name='operation_id']" position="after">
+                <field name="price_on_bom_valid" invisible="1"/>
+                <field name="compute_pricelist_on_bom_component" invisible="1"/>
+                <button string="Price on bom invalid"
+                        attrs="{'invisible': ['|', ('price_on_bom_valid', '=', True), ('compute_pricelist_on_bom_component', '=', False)]}"
+                        type="object"
+                        name="invalid_bom_price"
+                        icon="fa-exclamation-triangle"/>
+            </xpath>
+            <xpath expr="//field[@name='bom_line_ids']/tree" position="attributes">
+                <attribute name="decoration-bf">compute_pricelist_on_bom_component and not price_on_bom_valid</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>
