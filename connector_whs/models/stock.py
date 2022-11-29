@@ -22,6 +22,8 @@ class StockBackorderConfirmation(models.TransientModel):
 class Picking(models.Model):
     _inherit = "stock.picking"
 
+    is_assigned = fields.Boolean()
+
     @api.multi
     def action_pack_operation_auto_fill(self):
         super(Picking, self).action_pack_operation_auto_fill()
@@ -100,7 +102,7 @@ class Picking(models.Model):
         moves = self.mapped('move_lines').filtered(
             lambda move: not move.whs_list_ids)
         moves.create_whs_list()
-        for pick in self:
+        for pick in self.filtered(lambda picking: not picking.is_assigned):
             pick.state = 'waiting'
         return res
 
@@ -110,7 +112,10 @@ class Picking(models.Model):
         # as it is controlled by user intervention
         for pick in self:
             if pick.state == 'waiting':
-                pick.state = 'assigned'
+                pick.write({
+                    'is_assigned': True,
+                    'state': 'assigned',
+                })
 
     @api.multi
     def unlink(self):
