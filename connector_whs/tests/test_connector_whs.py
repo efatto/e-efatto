@@ -5,6 +5,7 @@ from odoo import fields
 from odoo.tests.common import TransactionCase
 from odoo.addons.base_external_dbsource.exceptions import ConnectionSuccessError
 from odoo.tests import tagged
+from odoo.tools import mute_logger
 from odoo.exceptions import UserError
 import os
 import time
@@ -46,6 +47,7 @@ class TestConnectorWhs(TransactionCase):
         self.dbsource = dbsource
         self.src_location = self.env.ref('stock.stock_location_stock')
         self.dest_location = self.env.ref('stock.stock_location_customers')
+        self.procurement_model = self.env['procurement.group']
         self.partner = self.env.ref('base.res_partner_2')
         # Create product with 16 on hand
         self.product1 = self.env['product.product'].create([{
@@ -334,6 +336,11 @@ class TestConnectorWhs(TransactionCase):
         self.assertFalse(picking.show_check_availability)
         picking.button_assign()
         self.assertEqual(picking.state, 'assigned')
+        # check that action_assign run by scheduler do not change state
+        with mute_logger('odoo.addons.stock.models.procurement'):
+            self.procurement_model.run_scheduler()
+        picking.action_assign()
+        self.assertEqual(picking.state, 'assigned')
 
         # simulate user partial validate of picking and check backorder exist
         backorder_wiz_id = picking.button_validate()['res_id']
@@ -480,6 +487,11 @@ class TestConnectorWhs(TransactionCase):
         self.assertEqual(picking.state, 'waiting')
         self.assertTrue(picking.show_check_availability)
         picking.button_assign()
+        self.assertEqual(picking.state, 'assigned')
+        # check that action_assign run by scheduler do not change state
+        with mute_logger('odoo.addons.stock.models.procurement'):
+            self.procurement_model.run_scheduler()
+        picking.action_assign()
         self.assertEqual(picking.state, 'assigned')
 
         # simulate user partial validate of picking and check backorder exist
@@ -761,6 +773,12 @@ class TestConnectorWhs(TransactionCase):
         self.assertEqual(picking.state, 'waiting')
         picking.action_assign()
         picking.button_assign()
+        self.assertEqual(picking.state, 'assigned')
+        # check that action_assign run by scheduler do not change state
+        with mute_logger('odoo.addons.stock.models.procurement'):
+            self.procurement_model.run_scheduler()
+        picking.action_assign()
+        self.assertEqual(picking.state, 'assigned')
         picking.action_pack_operation_auto_fill()
         backorder_wiz_id = picking.button_validate()['res_id']
         backorder_wiz = self.env['stock.backorder.confirmation'].browse(
