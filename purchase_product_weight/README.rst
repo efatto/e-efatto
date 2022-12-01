@@ -13,9 +13,9 @@ Purchase product on weight
 .. |badge2| image:: https://img.shields.io/badge/licence-AGPL--3-blue.png
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
-.. |badge3| image:: https://img.shields.io/badge/github-efatto%2Fefatto-lightgray.png?logo=github
-    :target: https://github.com/efatto/efatto/tree/12.0/purchase_product_weight
-    :alt: efatto/efatto
+.. |badge3| image:: https://img.shields.io/badge/github-sergiocorato%2Fe--efatto-lightgray.png?logo=github
+    :target: https://github.com/sergiocorato/e-efatto/tree/12.0/purchase_product_weight
+    :alt: sergiocorato/e-efatto
 
 |badge1| |badge2| |badge3| 
 
@@ -31,43 +31,37 @@ with purchase product on weight but manage it on a different u.m.
 Configuration
 =============
 
+Questo modulo fornisce  una soluzione semplice per gestire i prodotti acquistati a peso ma che vengono gestiti internamente con una diversa unità di misura, senza appesantire la logica di gestione.
 
-Crea un prodotto di tipo consumabile o stoccabile con:
+Sul prodotto (di tipo consumabile o stoccabile) che abbia un peso e un fornitore con un prezzo:
 
-* un valore nel campo peso:
-
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/purchase_product_weight/static/description/peso.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/purchase_product_weight/static/description/peso.png
     :alt: Peso prodotto
 
-* il campo 'Calcola prezzo sul peso' selezionato:
-
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/purchase_product_weight/static/description/prodotto.png
-    :alt: Prodotto
-
-* un Fornitore con un prezzo:
-
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/purchase_product_weight/static/description/prezzo-fornitore-kg.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/purchase_product_weight/static/description/prezzo-fornitore-kg.png
     :alt: Fornitore
 
-Quindi creando un ordine di acquisto con questo prodotto, il prezzo unitario
-sarà calcolato con la formula: prezzo fornitore * peso prodotto.
+si può impostare il 'Calcola prezzo sul peso':
 
-Un campo calcolato 'Peso totale' è mostrato nella riga dell'ordine di acquisto.
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/purchase_product_weight/static/description/prodotto.png
+    :alt: Prodotto
 
-.. image:: https://raw.githubusercontent.com/efatto/efatto/12.0/purchase_product_weight/static/description/acquisto.png
+In questo modo, creando un ordine di acquisto con questo prodotto, il prezzo unitario sarà calcolato con la formula: prezzo fornitore * peso prodotto (con trasformazione in base all'u.m. di acquisto).
+
+Nella riga dell'ordine di acquisto sono inoltre mostrati il 'Peso totale', il 'Prezzo Peso' e l'U.M. Peso' che riportano i valori del prodotto:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/purchase_product_weight/static/description/acquisto.png
     :alt: Ordine di acquisto
 
-In questo modo, con logica di gestione invariata, si ha una soluzione semplice
-per gestire i prodotti acquistati a peso ma che vengono gestiti internamente
-con una diversa unità di misura.
+È possibile indicare un 'Prezzo Peso' diverso da quello proposto, in tal caso il prezzo unitario verrà ricalcolato (come pure il prezzo totale).
 
 Bug Tracker
 ===========
 
-Bugs are tracked on `GitHub Issues <https://github.com/efatto/efatto/issues>`_.
+Bugs are tracked on `GitHub Issues <https://github.com/sergiocorato/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us smashing it by providing a detailed and welcomed
-`feedback <https://github.com/efatto/efatto/issues/new?body=module:%20purchase_product_weight%0Aversion:%2012.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/sergiocorato/e-efatto/issues/new?body=module:%20purchase_product_weight%0Aversion:%2012.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -95,6 +89,6 @@ Current maintainer:
 
 |maintainer-sergiocorato| 
 
-This module is part of the `efatto/efatto <https://github.com/efatto/efatto/tree/12.0/purchase_product_weight>`_ project on GitHub.
+This module is part of the `sergiocorato/e-efatto <https://github.com/sergiocorato/e-efatto/tree/12.0/purchase_product_weight>`_ project on GitHub.
 
 You are welcome to contribute.

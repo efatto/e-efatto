@@ -3,6 +3,7 @@
 
 from odoo.tests.common import TransactionCase
 from odoo import fields
+from odoo.tools import float_round
 
 
 class PurchaseProductWeight(TransactionCase):
@@ -22,6 +23,7 @@ class PurchaseProductWeight(TransactionCase):
                 [('type_tax_use', '=', 'purchase')], limit=1).ids)],
             'compute_price_on_weight': True,
             'weight': 0.15,
+            'weight_uom_id': self.env.ref('uom.product_uom_ton').id,
             'seller_ids': [
                 (0, 0, {
                     'name': self.env.ref('base.res_partner_3').id,
@@ -50,11 +52,12 @@ class PurchaseProductWeight(TransactionCase):
             'supplier_taxes_id': [(6, 0, self.env['account.tax'].search(
                 [('type_tax_use', '=', 'purchase')], limit=1).ids)],
             'compute_price_on_weight': True,
-            'weight': 0.15,
+            'weight': 3.15,
+            'weight_uom_id': self.env.ref('uom.product_uom_qt').id,
             'seller_ids': [
                 (0, 0, {
                     'name': self.env.ref('base.res_partner_3').id,
-                    'price': 5.0,
+                    'price': 3.49,
                     'min_qty': 0.0,
                 })
             ]
@@ -79,15 +82,32 @@ class PurchaseProductWeight(TransactionCase):
             ]
         })
 
-        purchase_order.order_line[0]._onchange_quantity()
+        purchase_line = purchase_order.order_line[0]
+        purchase_line._onchange_quantity()
         self.assertEqual(
             len(purchase_order.order_line), 1, msg="Order line was not created")
-        self.assertAlmostEqual(purchase_order.order_line[0].price_unit, 5 * 0.15)
-        self.assertAlmostEqual(purchase_order.order_line[0].weight_total, 20 * 0.15)
-        purchase_order.order_line[0].product_qty = 25
-        purchase_order.order_line[0]._onchange_quantity()
-        self.assertAlmostEqual(purchase_order.order_line[0].price_unit, 5 * 0.15)
-        self.assertAlmostEqual(purchase_order.order_line[0].weight_total, 25 * 0.15)
+        self.assertAlmostEqual(purchase_line.price_unit, 5 * 0.15)
+        self.assertAlmostEqual(purchase_line.weight_total, 20 * 0.15)
+        self.assertAlmostEqual(purchase_line.weight_price_unit, 5)
+        purchase_line.product_qty = 25
+        purchase_line._onchange_quantity()
+        self.assertAlmostEqual(purchase_line.price_unit, 5 * 0.15)
+        self.assertAlmostEqual(purchase_line.weight_total, 25 * 0.15)
+        self.assertAlmostEqual(purchase_line.weight_price_unit, 5)
+        purchase_line.weight_price_unit = 7.77
+        purchase_line._onchange_weight_price_unit()
+        line_price = float_round(
+                7.77 * 0.15,
+                self.env['decimal.precision'].precision_get('Product Price')
+            )
+        self.assertAlmostEqual(purchase_line.price_unit, line_price)
+        self.assertAlmostEqual(purchase_line.weight_total, 25 * 0.15)
+        self.assertAlmostEqual(purchase_line.weight_price_unit, 7.77)
+        purchase_line.product_qty = 25
+        purchase_line._onchange_quantity()
+        self.assertAlmostEqual(purchase_line.price_unit, 5 * 0.15)
+        self.assertAlmostEqual(purchase_line.weight_total, 25 * 0.15)
+        self.assertAlmostEqual(purchase_line.weight_price_unit, 5)
 
     def test_purchase_order_on_weight_different_uom_po(self):
         purchase_order = self.env['purchase.order'].create({
@@ -105,12 +125,29 @@ class PurchaseProductWeight(TransactionCase):
             ]
         })
 
-        purchase_order.order_line[0]._onchange_quantity()
+        purchase_line = purchase_order.order_line[0]
+        purchase_line._onchange_quantity()
         self.assertEqual(
             len(purchase_order.order_line), 1, msg="Order line was not created")
-        self.assertAlmostEqual(purchase_order.order_line[0].price_unit, 5 * 0.15 * 6)
-        self.assertAlmostEqual(purchase_order.order_line[0].weight_total, 20 * 0.15 * 6)
-        purchase_order.order_line[0].product_qty = 25
-        purchase_order.order_line[0]._onchange_quantity()
-        self.assertAlmostEqual(purchase_order.order_line[0].price_unit, 5 * 0.15 * 6)
-        self.assertAlmostEqual(purchase_order.order_line[0].weight_total, 25 * 0.15 * 6)
+        self.assertAlmostEqual(purchase_line.price_unit, 3.49 * 3.15 * 6)
+        self.assertAlmostEqual(purchase_line.weight_total, 20 * 3.15 * 6)
+        self.assertAlmostEqual(purchase_line.weight_price_unit, 3.49)
+        purchase_line.product_qty = 25
+        purchase_line._onchange_quantity()
+        self.assertAlmostEqual(purchase_line.price_unit, 3.49 * 3.15 * 6)
+        self.assertAlmostEqual(purchase_line.weight_total, 25 * 3.15 * 6)
+        self.assertAlmostEqual(purchase_line.weight_price_unit, 3.49)
+        purchase_line.weight_price_unit = 0.03
+        purchase_line._onchange_weight_price_unit()
+        line_price = float_round(
+                0.03 * 3.15 * 6,
+                self.env['decimal.precision'].precision_get('Product Price')
+            )
+        self.assertAlmostEqual(purchase_line.price_unit, line_price)
+        self.assertAlmostEqual(purchase_line.weight_total, 25 * 3.15 * 6)
+        self.assertAlmostEqual(purchase_line.weight_price_unit, 0.03)
+        purchase_line.product_qty = 25
+        purchase_line._onchange_quantity()
+        self.assertAlmostEqual(purchase_line.price_unit, 3.49 * 3.15 * 6)
+        self.assertAlmostEqual(purchase_line.weight_total, 25 * 3.15 * 6)
+        self.assertAlmostEqual(purchase_line.weight_price_unit, 3.49)

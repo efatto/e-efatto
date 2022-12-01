@@ -9,6 +9,7 @@
     'website': 'https://efatto.it',
     'maintainers': ['sergiocorato'],
     'depends': [
+        'product_logistics_uom',
         'purchase',
         'stock',
     ],

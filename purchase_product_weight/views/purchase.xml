@@ -7,6 +7,8 @@
         <field name="arch" type="xml">
             <xpath expr="//notebook/page/field[@name='order_line']/tree/field[@name='product_uom']" position="after">
                 <field name="weight_total"/>
+                <field name="weight_price_unit"/>
+                <field name="weight_uom_id"/>
             </xpath>
         </field>
     </record>

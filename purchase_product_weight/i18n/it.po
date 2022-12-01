@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-08 19:43+0000\n"
-"PO-Revision-Date: 2021-06-08 19:43+0000\n"
+"POT-Creation-Date: 2022-12-01 08:00+0000\n"
+"PO-Revision-Date: 2022-12-01 08:00+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,6 @@ msgid "<span class=\"oe_inline\" attrs=\"{'invisible': [('compute_price_on_weigh
 msgstr ""
 
 #. module: purchase_product_weight
-#: model:ir.model.fields,field_description:purchase_product_weight.field_product_customerinfo__compute_price_on_weight
 #: model:ir.model.fields,field_description:purchase_product_weight.field_product_product__compute_price_on_weight
 #: model:ir.model.fields,field_description:purchase_product_weight.field_product_supplierinfo__compute_price_on_weight
 #: model:ir.model.fields,field_description:purchase_product_weight.field_product_template__compute_price_on_weight
@@ -29,7 +28,11 @@ msgid "Compute Price On Weight"
 msgstr "Calcola Prezzo Sul Peso"
 
 #. module: purchase_product_weight
-#: model:ir.model.fields,help:purchase_product_weight.field_product_customerinfo__compute_price_on_weight
+#: model:ir.model.fields,field_description:purchase_product_weight.field_purchase_order_line__weight_price_unit
+msgid "Price Weight"
+msgstr "Prezzo Peso"
+
+#. module: purchase_product_weight
 #: model:ir.model.fields,help:purchase_product_weight.field_product_product__compute_price_on_weight
 #: model:ir.model.fields,help:purchase_product_weight.field_product_supplierinfo__compute_price_on_weight
 #: model:ir.model.fields,help:purchase_product_weight.field_product_template__compute_price_on_weight
@@ -37,14 +40,19 @@ msgid "Price is computed on weight of product and not on default u.m."
 msgstr "Il prezzo è calcolato sul peso del prodotto e non sull'unità di misura in acquisto"
 
 #. module: purchase_product_weight
+#: model:ir.model.fields,help:purchase_product_weight.field_purchase_order_line__weight_price_unit
+msgid "Price unit for weight u.m., shown from product vendor. If set, it will override vendor price in product."
+msgstr "Prezzo unitario a u.m. peso, visibile dal venditore del prodotto. Se impostato, sovrascriverà il prezzo del fornitore nel prodotto."
+
+#. module: purchase_product_weight
 #: model:ir.model,name:purchase_product_weight.model_product_template
-msgid "Product Template (Multi-Company)"
-msgstr "Modello prodotto (Multi-Azienda)"
+msgid "Product Template"
+msgstr "Modello prodotto"
 
 #. module: purchase_product_weight
 #: model:ir.model,name:purchase_product_weight.model_purchase_order
 msgid "Purchase Order"
-msgstr "Ordine di Acquisto"
+msgstr "Ordine di acquisto"
 
 #. module: purchase_product_weight
 #: model:ir.model,name:purchase_product_weight.model_purchase_order_line
@@ -54,7 +62,7 @@ msgstr "Riga ordine di acquisto"
 #. module: purchase_product_weight
 #: model:ir.model,name:purchase_product_weight.model_product_supplierinfo
 msgid "Supplier Pricelist"
-msgstr "Listino prezzi fornitore"
+msgstr "Listino Fornitore"
 
 #. module: purchase_product_weight
 #: model:ir.model.fields,field_description:purchase_product_weight.field_purchase_order_line__weight_total
@@ -65,4 +73,9 @@ msgstr "Peso totale"
 #: model:ir.model.fields,help:purchase_product_weight.field_purchase_order_line__weight_total
 msgid "Total weight computed from product weight * product quantity"
 msgstr "Peso totale calcolato dal peso del prodotto * la quantità del prodotto"
+
+#. module: purchase_product_weight
+#: model:ir.model.fields,field_description:purchase_product_weight.field_purchase_order_line__weight_uom_id
+msgid "UoM Weight"
+msgstr "U.M. Peso"
 
