@@ -90,10 +90,7 @@ class Picking(models.Model):
     @api.multi
     def action_confirm(self):
         res = super(Picking, self).action_confirm()
-        if not self._context.get('not_create_whs_list', False):
-            self.mapped('move_lines').create_whs_list()
-            for pick in self:
-                pick.state = 'waiting'
+        self.write({'state': 'waiting'})
         return res
 
     @api.multi
