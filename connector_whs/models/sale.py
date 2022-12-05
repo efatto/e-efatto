@@ -10,10 +10,9 @@ class SaleOrder(models.Model):
     @api.multi
     def action_confirm(self):
         res = super(SaleOrder, self).action_confirm()
-        if not self._context.get('not_create_whs_list', False):
-            for order in self:
-                order.picking_ids.filtered(lambda x: x.state != 'cancel').mapped(
-                    'move_lines').create_whs_list()
+        for order in self:
+            order.picking_ids.filtered(lambda x: x.state != 'cancel').mapped(
+                'move_lines').create_whs_list()
         return res
 
     @api.multi
