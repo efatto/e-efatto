@@ -9,7 +9,8 @@
             <button name="action_unlock" position="after">
                 <button name="recalculate_prices" class="ml-2 btn btn-default"
                         string="Recalculate prices" Help="Apply the current pricelist on sale state"
-                        type="object" attrs="{'invisible': [('state', '!=', 'sale')]}"/>
+                        type="object" attrs="{'invisible': [('state', '!=', 'sale')]}"
+                        groups="sale_order_recalculation_visibility.group_recalculation_on_sale_state"/>
             </button>
         </field>
     </record>
