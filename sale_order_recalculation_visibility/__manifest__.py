@@ -12,6 +12,7 @@
         'sale_order_price_recalculation',
     ],
     'data': [
+        'security/security.xml',
         'views/sale_order_view.xml',
     ],
     'installable': True,
