@@ -10,10 +10,9 @@ class PurchaseOrder(models.Model):
     @api.multi
     def button_approve(self, force=False):
         res = super(PurchaseOrder, self).button_approve(force=force)
-        if not self._context.get('not_create_whs_list', False):
-            for order in self:
-                order.picking_ids.filtered(lambda x: x.state != 'cancel').mapped(
-                    'move_lines').create_whs_list()
+        for order in self:
+            order.picking_ids.filtered(lambda x: x.state != 'cancel').mapped(
+                'move_lines').create_whs_list()
         return res
 
     @api.multi
