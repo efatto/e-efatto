@@ -1,0 +1,32 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* mrp_production_manual_consume
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-12-12 08:57+0000\n"
+"PO-Revision-Date: 2022-12-12 08:57+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: mrp_production_manual_consume
+#: model:ir.model.fields,field_description:mrp_production_manual_consume.field_mrp_production__is_manual_consume
+msgid "Is Manual Consume"
+msgstr "Scarico Manuale"
+
+#. module: mrp_production_manual_consume
+#: model:ir.model,name:mrp_production_manual_consume.model_mrp_production
+msgid "Production Order"
+msgstr "Ordine di Produzione"
+
+#. module: mrp_production_manual_consume
+#: model:ir.model,name:mrp_production_manual_consume.model_mrp_workorder
+msgid "Work Order"
+msgstr "Ordine di Lavoro"
+
