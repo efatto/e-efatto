@@ -1,1 +1,1 @@
-from . import test_mrp_production_is_manual_consume
+from . import test_mrp_production_manual_consume
