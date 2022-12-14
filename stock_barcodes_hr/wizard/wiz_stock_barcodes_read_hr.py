@@ -128,15 +128,14 @@ class WizStockBarcodesReadHr(models.TransientModel):
             else:
                 rec.datetime_start = False
 
-    def _prepare_productivity_values(self, unit_amount, loss_id):
+    def _prepare_productivity_values(self, amount, loss_id):
         return {
             'description': self.workorder_id.sudo().name,
             'date_start': self.datetime_start,
             'workorder_id': self.workorder_id.id,
             'employee_id': self.employee_id.id,
-            'amount': - unit_amount * self.employee_id.timesheet_cost,
             'loss_id': loss_id.id,
-            'unit_amount': unit_amount,
+            'duration': amount,
         }
 
     def _prepare_timesheet_values(self, unit_amount):
@@ -209,11 +208,11 @@ class WizStockBarcodesReadHr(models.TransientModel):
         productivity_obj = self.env['mrp.workcenter.productivity'].sudo()
         hour_amount = self.hour_amount
         minute_amount = self.minute_amount
-        unit_amount = hour_amount + (minute_amount / 60.0)
+        amount = hour_amount * 60 + minute_amount
         loss_id = self.env['mrp.workcenter.productivity.loss'].sudo().search(
             [('loss_type', '=', 'productive')], limit=1)
         log_lines_dict = {}
-        vals = self._prepare_productivity_values(unit_amount, loss_id)
+        vals = self._prepare_productivity_values(amount, loss_id)
 
         if not vals:
             self._set_messagge_info(
