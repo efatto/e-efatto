@@ -19,7 +19,7 @@ class MrpWorkcenterProductivity(models.Model):
     @api.multi
     def write(self, values):
         result = super().write(values)
-        self.filtered(lambda x: x.employee_id)._timesheet_postprocess(values)
+        self.filtered(lambda x: x.employee_id)._productivity_postprocess(values)
         return result
 
     @api.multi
