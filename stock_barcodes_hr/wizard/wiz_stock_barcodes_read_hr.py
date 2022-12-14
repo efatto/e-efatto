@@ -134,6 +134,7 @@ class WizStockBarcodesReadHr(models.TransientModel):
             'date_start': self.datetime_start,
             'workorder_id': self.workorder_id.id,
             'employee_id': self.employee_id.id,
+            'amount': - unit_amount * self.employee_id.timesheet_cost,
             'loss_id': loss_id.id,
             'unit_amount': unit_amount,
         }
