@@ -1,13 +1,13 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* mrp_workorder_hierarchy
+#	* mrp_workorder_timesheet_cost
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-03 17:22+0000\n"
-"PO-Revision-Date: 2022-08-03 17:22+0000\n"
+"POT-Creation-Date: 2022-12-14 17:59+0000\n"
+"PO-Revision-Date: 2022-12-14 17:59+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -15,34 +15,18 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
-#. module: mrp_workorder_hierarchy
-#: model:ir.model.fields,field_description:mrp_workorder_hierarchy.field_mrp_workorder__child_workorder_ids
-msgid "Child Workorders"
-msgstr "Ordini di lavoro figli"
+#. module: mrp_workorder_timesheet_cost
+#: model:ir.model.fields,field_description:mrp_workorder_timesheet_cost.field_mrp_workcenter_productivity__amount
+msgid "Amount"
+msgstr "Importo"
 
-#. module: mrp_workorder_hierarchy
-#: model:ir.model.fields,field_description:mrp_workorder_hierarchy.field_mrp_workorder__complete_name
-msgid "Complete Name"
-msgstr "Nome completo"
+#. module: mrp_workorder_timesheet_cost
+#: model:ir.model.fields,field_description:mrp_workorder_timesheet_cost.field_mrp_workcenter_productivity__currency_id
+msgid "Currency"
+msgstr "Valuta"
 
-#. module: mrp_workorder_hierarchy
-#: model:ir.model.fields,field_description:mrp_workorder_hierarchy.field_mrp_workorder__parent_path
-msgid "Parent Path"
-msgstr "Percorso padre"
-
-#. module: mrp_workorder_hierarchy
-#: model:ir.model.fields,field_description:mrp_workorder_hierarchy.field_mrp_workorder__parent_id
-msgid "Parent Workorder"
-msgstr "Ordine di lavoro padre"
-
-#. module: mrp_workorder_hierarchy
-#: code:addons/mrp_workorder_hierarchy/models/mrp_workorder.py:39
-#, python-format
-msgid "Parent workorder has not been processed!"
-msgstr "L'ordine di lavoro padre non è stato processato!"
-
-#. module: mrp_workorder_hierarchy
-#: model:ir.model,name:mrp_workorder_hierarchy.model_mrp_workorder
-msgid "Work Order"
-msgstr "Ordine di Lavoro"
+#. module: mrp_workorder_timesheet_cost
+#: model:ir.model,name:mrp_workorder_timesheet_cost.model_mrp_workcenter_productivity
+msgid "Workcenter Productivity Log"
+msgstr "Registro operazioni del centro di lavoro"
 
