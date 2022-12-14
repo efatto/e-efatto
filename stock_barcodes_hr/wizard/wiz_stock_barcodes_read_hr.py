@@ -128,25 +128,24 @@ class WizStockBarcodesReadHr(models.TransientModel):
             else:
                 rec.datetime_start = False
 
-    def _prepare_productivity_values(self, amount, loss_id):
+    def _prepare_productivity_values(self, duration, loss_id):
         return {
             'description': self.workorder_id.sudo().name,
             'date_start': self.datetime_start,
             'workorder_id': self.workorder_id.id,
             'employee_id': self.employee_id.id,
             'loss_id': loss_id.id,
-            'duration': amount,
+            'duration': duration,
         }
 
-    def _prepare_timesheet_values(self, unit_amount):
+    def _prepare_timesheet_values(self, duration):
         return {
             'name': self.task_id.name,
             'date_time': self.datetime_start,
             'project_id': self.task_id.project_id.id,
             'task_id': self.task_id.id,
             'employee_id': self.employee_id.id,
-            'amount': - unit_amount * self.employee_id.timesheet_cost,
-            'unit_amount': unit_amount,
+            'unit_amount': duration / 60.0,
         }
 
     def reset_all(self):
@@ -208,11 +207,11 @@ class WizStockBarcodesReadHr(models.TransientModel):
         productivity_obj = self.env['mrp.workcenter.productivity'].sudo()
         hour_amount = self.hour_amount
         minute_amount = self.minute_amount
-        amount = hour_amount * 60 + minute_amount
+        duration = hour_amount * 60 + minute_amount
         loss_id = self.env['mrp.workcenter.productivity.loss'].sudo().search(
             [('loss_type', '=', 'productive')], limit=1)
         log_lines_dict = {}
-        vals = self._prepare_productivity_values(amount, loss_id)
+        vals = self._prepare_productivity_values(duration, loss_id)
 
         if not vals:
             self._set_messagge_info(
@@ -227,23 +226,23 @@ class WizStockBarcodesReadHr(models.TransientModel):
         _execute_onchanges(line, 'date_start')
         productivity_data = line._convert_to_write(line._cache)
         productivity = productivity_obj.create(productivity_data)
-        log_lines_dict[productivity.id] = unit_amount
+        log_lines_dict[productivity.id] = duration / 60.0
         return log_lines_dict
 
     def _process_timesheet(self):
         account_analytic_line_obj = self.env['account.analytic.line']
         hour_amount = self.hour_amount
         minute_amount = self.minute_amount
-        unit_amount = hour_amount + (minute_amount / 60.0)
+        duration = hour_amount * 60 + minute_amount
         log_lines_dict = {}
-        vals = self._prepare_timesheet_values(unit_amount)
+        vals = self._prepare_timesheet_values(duration)
 
         if not vals:
             self._set_messagge_info(
                 'not_found', _('Task not found'))
             return
         line = account_analytic_line_obj.create(vals)
-        log_lines_dict[line.id] = unit_amount
+        log_lines_dict[line.id] = duration / 60.0
         return log_lines_dict
 
     def check_done_conditions(self):
