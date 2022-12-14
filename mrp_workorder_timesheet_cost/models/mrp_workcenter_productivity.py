@@ -49,7 +49,8 @@ class MrpWorkcenterProductivity(models.Model):
         sudo_self = self.sudo()
         # (re)compute the amount (depending on duration and employee_id for the cost)
         # currency_id is related to employee_id so should never be here - to check
-        if any([field_name in values for field_name in ['duration', 'employee_id']]):
+        if any([field_name in values for field_name in ['duration', 'employee_id',
+                                                        'date_start', 'date_end']]):
             for productivity in sudo_self:
                 cost = productivity.employee_id.timesheet_cost or 0.0
                 amount = -productivity.duration / 60.0 * cost
