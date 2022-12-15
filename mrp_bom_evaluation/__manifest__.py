@@ -17,6 +17,7 @@
         'hr_timesheet',
         'mrp_bom_operation_estimate',
         'mrp_production_demo',
+        'mrp_sale_info',
         'product_finishing',
         'product_logistics_uom',
         'product_template_replenishment_cost',
