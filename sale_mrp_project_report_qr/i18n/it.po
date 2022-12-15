@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-15 14:18+0000\n"
-"PO-Revision-Date: 2022-12-15 14:18+0000\n"
+"POT-Creation-Date: 2022-12-15 15:59+0000\n"
+"PO-Revision-Date: 2022-12-15 15:59+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,23 +17,8 @@ msgstr ""
 
 #. module: sale_mrp_project_report_qr
 #: model_terms:ir.ui.view,arch_db:sale_mrp_project_report_qr.sale_mrp_project_report_doc
-msgid "<strong>Customer</strong>"
-msgstr "<strong>Cliente</strong>"
-
-#. module: sale_mrp_project_report_qr
-#: model_terms:ir.ui.view,arch_db:sale_mrp_project_report_qr.sale_mrp_project_report_doc
-msgid "<strong>No. Of Minutes</strong>"
-msgstr "<strong>No. di minuti</strong>"
-
-#. module: sale_mrp_project_report_qr
-#: model_terms:ir.ui.view,arch_db:sale_mrp_project_report_qr.sale_mrp_project_report_doc
-msgid "<strong>Operation</strong>"
-msgstr "<strong>Operazione</strong>"
-
-#. module: sale_mrp_project_report_qr
-#: model_terms:ir.ui.view,arch_db:sale_mrp_project_report_qr.sale_mrp_project_report_doc
-msgid "<strong>Project</strong>"
-msgstr "<strong>Progetto</strong>"
+msgid "<strong>Description</strong>"
+msgstr "<strong>Descrizione</strong>"
 
 #. module: sale_mrp_project_report_qr
 #: model_terms:ir.ui.view,arch_db:sale_mrp_project_report_qr.sale_mrp_project_report_doc
@@ -42,8 +27,8 @@ msgstr "<strong>Codice Qr</strong>"
 
 #. module: sale_mrp_project_report_qr
 #: model_terms:ir.ui.view,arch_db:sale_mrp_project_report_qr.sale_mrp_project_report_doc
-msgid "<strong>Task</strong>"
-msgstr "<strong>Lavorazione</strong>"
+msgid "<strong>Tasks</strong>"
+msgstr "<strong>Lavori</strong>"
 
 #. module: sale_mrp_project_report_qr
 #: model_terms:ir.ui.view,arch_db:sale_mrp_project_report_qr.sale_mrp_project_report_doc
@@ -54,14 +39,4 @@ msgstr "<strong>Centro di Lavorazione</strong>"
 #: model:ir.actions.report,name:sale_mrp_project_report_qr.report_sale_mrp_project
 msgid "Mrp Project Report"
 msgstr "Stampa Progetto e Produzione"
-
-#. module: sale_mrp_project_report_qr
-#: model_terms:ir.ui.view,arch_db:sale_mrp_project_report_qr.sale_mrp_project_report_doc
-msgid "Operations Done"
-msgstr "Operazioni completate"
-
-#. module: sale_mrp_project_report_qr
-#: model_terms:ir.ui.view,arch_db:sale_mrp_project_report_qr.sale_mrp_project_report_doc
-msgid "Operations Planned"
-msgstr "Operazioni pianificate"
 
