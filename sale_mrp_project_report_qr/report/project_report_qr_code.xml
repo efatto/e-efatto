@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<template id="sale_mrp_project_report_doc">
+    <t t-call="web.html_container">
+        <t t-call="web.internal_layout">
+            <div class="page">
+                <center>
+                    <h4><strong><span t-field="doc.name"/></strong></h4>
+                    <h5><span t-field="doc.partner_id"/></h5>
+                </center>
+                <table class="table table-bordered">
+                    <tr>
+                        <th><strong>Qr Code</strong></th>
+                        <th><strong>Description</strong></th>
+                        <th><strong>WorkCenter</strong></th>
+                        <th><strong>Qr Code</strong></th>
+                    </tr>
+                    <t t-foreach="doc.production_ids" t-as="production">
+                        <div t-if="production.workorder_ids">
+                            <tr>
+                                <td colspan="99"><strong><span t-field="production.product_id"/></strong></td>
+                            </tr>
+                            <t t-set="row" t-value="0"/>
+                            <tr t-foreach="production.workorder_ids" t-as="line2">
+                                <td>
+                                    <t t-set="row" t-value="row + 1"/>
+                                    <span t-if="row % 2 != 0">
+                                        <img class="border border-dark rounded"
+                                             t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', '%s_%s' %(line2._name, line2.id), 128, 128)"/>
+                                    </span>
+                                </td>
+                                <td><span t-field="line2.name"/></td>
+                                <td><span t-field="line2.workcenter_id.name"/></td>
+                                <td>
+                                    <span t-if="row % 2 == 0">
+                                        <img class="border border-dark rounded"
+                                             t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', '%s_%s' %(line2._name, line2.id), 128, 128)"/>
+                                    </span>
+                                </td>
+                            </tr>
+                        </div>
+                    </t>
+                    <t t-foreach="doc.project_ids" t-as="project">
+                        <div t-if="project.task_ids">
+                            <tr>
+                                <td colspan="99"><strong>Tasks</strong></td>
+                            </tr>
+                            <t t-set="row" t-value="0"/>
+                            <tr t-foreach="project.task_ids.filtered(lambda x: not x.exclude_from_sale_order)" t-as="line">
+                                <td>
+                                    <t t-set="row" t-value="row + 1"/>
+                                    <span t-if="row % 2 != 0">
+                                        <img class="border border-dark rounded"
+                                             t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', '%s_%s' %(line._name, line.id), 128, 128)"/>
+                                    </span>
+                                </td>
+                                <td colspan="2">
+                                    <span t-field="line.name"/>
+                                </td>
+                                <td>
+                                    <span t-if="row % 2 == 0">
+                                        <img class="border border-dark rounded"
+                                             t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', '%s_%s' %(line._name, line.id), 128, 128)"/>
+                                    </span>
+                                </td>
+                            </tr>
+                        </div>
+                    </t>
+                </table>
+            </div>
+        </t>
+    </t>
+</template>
+
+<template id="sale_mrp_project_report">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="doc">
+            <div class="page">
+                <t t-call="sale_mrp_project_report_qr.sale_mrp_project_report_doc"/>
+            </div>
+            <p style="page-break-before:always;"> </p>
+        </t>
+    </t>
+</template>
+<record id="paperformat_portrait_qr" model="report.paperformat">
+    <field name="name">European A4 QR Portrait</field>
+    <field name="default" eval="True"/>
+    <field name="format">A4</field>
+    <field name="page_height">0</field>
+    <field name="page_width">0</field>
+    <field name="orientation">Portrait</field>
+    <field name="margin_top">20</field>
+    <field name="margin_bottom">7</field>
+    <field name="margin_left">7</field>
+    <field name="margin_right">7</field>
+    <field name="header_line" eval="False"/>
+    <field name="header_spacing">15</field>
+    <field name="dpi">90</field>
+</record>
+<report
+    string="Mrp Project Report"
+    id="report_sale_mrp_project"
+    model="sale.order"
+    report_type="qweb-pdf"
+    name="sale_mrp_project_report_qr.sale_mrp_project_report"
+    file="sale_mrp_project_report_qr.sale_mrp_project_report"
+    print_report_name="'Mrp &amp; Project Report'"
+/>
+<record id="report_sale_mrp_project" model="ir.actions.report">
+    <field name="paperformat_id" ref="paperformat_portrait_qr"/>
+</record>
+
+</odoo>
