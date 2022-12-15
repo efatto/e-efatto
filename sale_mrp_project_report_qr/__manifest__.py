@@ -12,7 +12,7 @@
     'author': 'Sergio Corato',
     'website': 'https://efatto.it',
     'depends': [
-        'mrp',
+        'mrp_bom_evaluation',
         'project',
         'sale_timesheet_task_exclude',
     ],

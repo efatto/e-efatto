@@ -4,19 +4,19 @@
 <template id="sale_mrp_project_report_doc">
     <t t-call="web.html_container">
         <t t-call="web.internal_layout">
-            <div class="page">
-                <center>
-                    <h4><strong><span t-field="doc.name"/></strong></h4>
-                    <h5><span t-field="doc.partner_id"/></h5>
-                </center>
-                <table class="table table-bordered">
-                    <tr>
-                        <th><strong>Qr Code</strong></th>
-                        <th><strong>Description</strong></th>
-                        <th><strong>WorkCenter</strong></th>
-                        <th><strong>Qr Code</strong></th>
-                    </tr>
-                    <t t-foreach="doc.production_ids" t-as="production">
+            <t t-foreach="doc.production_ids" t-as="production">
+                <div class="page" style="page-break-after: always">
+                    <center>
+                        <h4><strong><span t-field="doc.name"/></strong></h4>
+                        <h5><span t-field="doc.partner_id"/></h5>
+                    </center>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th><strong>Qr Code</strong></th>
+                            <th><strong>Description</strong></th>
+                            <th><strong>WorkCenter</strong></th>
+                            <th><strong>Qr Code</strong></th>
+                        </tr>
                         <div t-if="production.workorder_ids">
                             <tr>
                                 <td colspan="99"><strong><span t-field="production.product_id"/></strong></td>
@@ -40,35 +40,31 @@
                                 </td>
                             </tr>
                         </div>
-                    </t>
-                    <t t-foreach="doc.project_ids" t-as="project">
-                        <div t-if="project.task_ids">
-                            <tr>
-                                <td colspan="99"><strong>Tasks</strong></td>
-                            </tr>
-                            <t t-set="row" t-value="0"/>
-                            <tr t-foreach="project.task_ids.filtered(lambda x: not x.exclude_from_sale_order)" t-as="line">
-                                <td>
-                                    <t t-set="row" t-value="row + 1"/>
-                                    <span t-if="row % 2 != 0">
-                                        <img class="border border-dark rounded"
-                                             t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', '%s_%s' %(line._name, line.id), 128, 128)"/>
-                                    </span>
-                                </td>
-                                <td colspan="2">
-                                    <span t-field="line.name"/>
-                                </td>
-                                <td>
-                                    <span t-if="row % 2 == 0">
-                                        <img class="border border-dark rounded"
-                                             t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', '%s_%s' %(line._name, line.id), 128, 128)"/>
-                                    </span>
-                                </td>
-                            </tr>
-                        </div>
-                    </t>
-                </table>
-            </div>
+                        <tr>
+                            <td colspan="99"><strong>Tasks</strong></td>
+                        </tr>
+                        <t t-set="row" t-value="0"/>
+                        <tr t-foreach="doc.tasks_ids.filtered(lambda x: x.sale_line_id.bom_line_id in production.bom_id.bom_line_ids and not x.exclude_from_sale_order)" t-as="task">
+                            <td>
+                                <t t-set="row" t-value="row + 1"/>
+                                <span t-if="row % 2 != 0">
+                                    <img class="border border-dark rounded"
+                                         t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', '%s_%s' %(task._name, task.id), 128, 128)"/>
+                                </span>
+                            </td>
+                            <td colspan="2">
+                                <span t-field="task.name"/>
+                            </td>
+                            <td>
+                                <span t-if="row % 2 == 0">
+                                    <img class="border border-dark rounded"
+                                         t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', '%s_%s' %(task._name, task.id), 128, 128)"/>
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </t>
         </t>
     </t>
 </template>
