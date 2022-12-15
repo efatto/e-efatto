@@ -24,6 +24,7 @@ class MrpProduction(models.Model):
                 'price_unit': 0,
                 'order_id': self.sale_id.id,
                 'created_from_bom': True,
+                'bom_line_id': bom_line.id,
             })
             return
         return super()._get_raw_move_data(bom_line, line_data)

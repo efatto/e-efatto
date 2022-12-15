@@ -8,6 +8,10 @@ class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
     created_from_bom = fields.Boolean()
+    # bom_line_id was added later, it could replace created_from_bom completely
+    bom_line_id = fields.Many2one(
+        comodel_name='mrp.bom.line'
+    )
 
 
 class SaleOrder(models.Model):
