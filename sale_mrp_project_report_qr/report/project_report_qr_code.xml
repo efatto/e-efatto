@@ -11,12 +11,6 @@
                         <h5><span t-field="doc.partner_id"/></h5>
                     </center>
                     <table class="table table-bordered">
-                        <tr>
-                            <th><strong>Qr Code</strong></th>
-                            <th><strong>Description</strong></th>
-                            <th><strong>WorkCenter</strong></th>
-                            <th><strong>Qr Code</strong></th>
-                        </tr>
                         <div t-if="production.workorder_ids">
                             <tr>
                                 <td colspan="99"><strong><span t-field="production.product_id"/></strong></td>
@@ -31,7 +25,6 @@
                                     </span>
                                 </td>
                                 <td><span t-field="line2.name"/></td>
-                                <td><span t-field="line2.workcenter_id.name"/></td>
                                 <td>
                                     <span t-if="row % 2 == 0">
                                         <img class="border border-dark rounded"
@@ -41,7 +34,7 @@
                             </tr>
                         </div>
                         <tr>
-                            <td colspan="99"><strong>Tasks</strong></td>
+                            <td colspan="99"></td>
                         </tr>
                         <t t-set="row" t-value="0"/>
                         <tr t-foreach="doc.tasks_ids.filtered(lambda x: x.sale_line_id.bom_line_id in production.bom_id.bom_line_ids and not x.exclude_from_sale_order)" t-as="task">
@@ -52,7 +45,7 @@
                                          t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', '%s_%s' %(task._name, task.id), 128, 128)"/>
                                 </span>
                             </td>
-                            <td colspan="2">
+                            <td>
                                 <span t-field="task.name"/>
                             </td>
                             <td>
