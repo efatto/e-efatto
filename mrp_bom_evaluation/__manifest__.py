@@ -31,6 +31,7 @@
     'data': [
         'wizard/mrp_bom_purchase_link.xml',
         'views/mrp_bom.xml',
+        'views/mrp.xml',
         'views/product_template.xml',
         'report/report_view.xml',
         'report/mrp_report_bom.xml',
