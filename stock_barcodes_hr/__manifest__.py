@@ -12,10 +12,9 @@
         "hr_attendance",
         "mrp_employee_productivity",
         "mrp_production_demo",
-        "mrp_production_report_qr",
         "mrp_workorder_time",
         "project_hr",
-        "project_report_qr",
+        "sale_mrp_project_report_qr",
         "stock_barcodes",
     ],
     "data": [
