@@ -1,5 +1,5 @@
 ===============================
-MRP Production Component Change
+MRP Production Component Delete
 ===============================
 
 .. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -14,12 +14,12 @@ MRP Production Component Change
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-sergiocorato%2Fe--efatto-lightgray.png?logo=github
-    :target: https://github.com/sergiocorato/e-efatto/tree/12.0/mrp_production_component_change
+    :target: https://github.com/sergiocorato/e-efatto/tree/12.0/mrp_production_component_delete
     :alt: sergiocorato/e-efatto
 
 |badge1| |badge2| |badge3| 
 
-This module add an action to change product and quantity of components on production.
+This module add a button to delete components (not already trasferred on stock) on production.
 
 **Table of contents**
 
@@ -29,16 +29,12 @@ This module add an action to change product and quantity of components on produc
 Configuration
 =============
 
-
 Questo modulo aggiunge un bottone nelle righe dell'ordine di produzione:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_production_component_change/static/description/bottone.png
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_production_component_delete/static/description/bottone.png
     :alt: Bottone
 
-che apre una procedura per modificare la quantità o il componente della riga selezionata:
-
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_production_component_change/static/description/procedura.png
-    :alt: Procedura
+che elimina la riga, se non ancora trasferita nel magazzino.
 
 Bug Tracker
 ===========
@@ -46,7 +42,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/sergiocorato/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us smashing it by providing a detailed and welcomed
-`feedback <https://github.com/sergiocorato/e-efatto/issues/new?body=module:%20mrp_production_component_change%0Aversion:%2012.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/sergiocorato/e-efatto/issues/new?body=module:%20mrp_production_component_delete%0Aversion:%2012.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -66,6 +62,6 @@ Contributors
 Maintainers
 ~~~~~~~~~~~
 
-This module is part of the `sergiocorato/e-efatto <https://github.com/sergiocorato/e-efatto/tree/12.0/mrp_production_component_change>`_ project on GitHub.
+This module is part of the `sergiocorato/e-efatto <https://github.com/sergiocorato/e-efatto/tree/12.0/mrp_production_component_delete>`_ project on GitHub.
 
 You are welcome to contribute.
