@@ -8,6 +8,7 @@
             <field name="discount" position="after">
                 <field name="adjustment_cost"/>
                 <field name="depreciation_cost"/>
+                <field name="depreciation_cost_note"/>
             </field>
         </field>
     </record>
@@ -19,6 +20,7 @@
             <field name="discount" position="after">
                 <field name="adjustment_cost"/>
                 <field name="depreciation_cost"/>
+                <field name="depreciation_cost_note"/>
             </field>
         </field>
     </record>
