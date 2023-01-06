@@ -12,6 +12,7 @@ class ProductSupplierinfo(models.Model):
         string='Depreciation Cost (€/pz)',
         digits=dp.get_precision('Product Price'),
     )
+    depreciation_cost_note = fields.Char()
     adjustment_cost = fields.Float(
         string='Adjustment Cost (€/pz)',
         digits=dp.get_precision('Product Price'),
