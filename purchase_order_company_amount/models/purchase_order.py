@@ -5,7 +5,8 @@ class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
     company_currency_id = fields.Many2one(
-        related='company_id.currency_id'
+        related='company_id.currency_id',
+        string="Company Currency",
     )
     amount_untaxed_company_currency = fields.Monetary(
         compute="_compute_amount_untaxed_company_currency",
