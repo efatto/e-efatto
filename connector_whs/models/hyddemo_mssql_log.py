@@ -547,6 +547,8 @@ class HyddemoMssqlLogLine(models.Model):
     name = fields.Text()
     qty_wrong = fields.Float()
     qty = fields.Float()
+    weight = fields.Float()
+    weight_wrong = fields.Float()
     product_id = fields.Many2one(
         'product.product')
     type = fields.Selection([

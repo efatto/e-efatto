@@ -28,6 +28,8 @@
                         <field name="type"/>
                         <field name="qty_wrong"/>
                         <field name="qty"/>
+                        <field name="weight_wrong"/>
+                        <field name="weight"/>
                     </tree>
                 </field>
             </form>

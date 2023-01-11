@@ -3,6 +3,7 @@
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
+from odoo.tools import float_compare
 
 
 class WizardSyncStockWhsMssql(models.TransientModel):
@@ -39,7 +40,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 giacenze_query = \
                     "SELECT * FROM (SELECT row_number() OVER (ORDER BY Articolo) " \
                     "AS rownum, Articolo, Lotto, Lotto2, Lotto3, Lotto4, Lotto5, " \
-                    "dataora, Qta FROM HOST_GIACENZE) as A " \
+                    "dataora, Qta, Peso FROM HOST_GIACENZE) as A " \
                     "WHERE A.rownum BETWEEN %s AND %s" % (i, i + 2000)
                 i += 2000
                 esiti_liste = dbsource.execute_mssql(
@@ -58,14 +59,25 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     except TypeError:
                         qty = False
                         pass
+                    try:
+                        weight = float(esito_lista[9]) / 1000.0
+                    except ValueError:
+                        weight = False
+                        pass
+                    except TypeError:
+                        weight = False
+                        pass
                     lot_unique_ref = ' '.join(
                         [esito_lista[k + 2].strip() if esito_lista[k + 2] else ''
                          for k, x in enumerate(esito_lista) if k < 5])[:20]
                     if articolo not in stock_product_dict:
                         stock_product_dict.update({
-                            articolo: {lot_unique_ref: qty}
+                            articolo: {lot_unique_ref: qty, "weight": weight}
                         })
                     else:
+                        stock_product_dict[articolo].update({
+                            "weight": weight
+                        })
                         if lot_unique_ref not in stock_product_dict[articolo].keys():
                             stock_product_dict[articolo].update({
                                 lot_unique_ref: qty
@@ -75,6 +87,9 @@ class WizardSyncStockWhsMssql(models.TransientModel):
 
             # compare data with db and re-align values
             for stock_product in stock_product_dict:
+                whs_log_line = {
+                    'name': stock_product,
+                }
                 product = product_obj.search([
                     ('default_code', '=', stock_product),
                     ('type', 'in', ['product', 'consu']),
@@ -86,16 +101,14 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         ('type', '=', 'service'),
                         ('exclude_from_whs', '!=', True)])
                     if not product:
-                        whs_log_lines.append({
-                            'name': stock_product,
+                        whs_log_line.update({
                             'type': 'not_found',
                             'lot': ' '.join(
                                 [x for x in stock_product_dict[stock_product]]),
                         })
                         continue
                     else:
-                        whs_log_lines.append({
-                            'name': stock_product,
+                        whs_log_line.update({
                             'type': 'service',
                             'lot': ' '.join(
                                 [x for x in stock_product_dict[stock_product]]),
@@ -108,8 +121,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         stock_product_dict[stock_product][x] for x
                         in stock_product_dict[stock_product]])
                     if product_qty != product.qty_available:
-                        whs_log_lines.append({
-                            'name': stock_product,
+                        whs_log_line.update({
                             'product_id': product.id,
                             'qty_wrong': product.qty_available,
                             'qty': product_qty,
@@ -128,14 +140,46 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                                 }
                             inventory_line_obj.create(line_data)
                     else:
-                        whs_log_lines.append({
-                            'name': stock_product,
+                        whs_log_line.update({
                             'product_id': product.id,
                             'qty': product_qty,
                             'type': 'ok',
                             'lot': ' '.join(
                                 [x for x in stock_product_dict[stock_product]])
                         })
+                    if weight:
+                        weight = stock_product_dict[stock_product]['weight']
+                        uom_kgm = self.env.ref('uom.product_uom_kgm')
+                        if product.weight_uom_id != uom_kgm:
+                            if product.weight_uom_id.category_id == self.env.ref(
+                                'uom.product_uom_categ_kgm'
+                            ):
+                                weight = uom_kgm._compute_quantity(
+                                    weight, product.weight_uom_id
+                                )
+                            else:
+                                whs_log_line.update({
+                                    'product_id': product.id,
+                                    'weight': weight,
+                                    'weight_wrong': product.weight,
+                                    'type': 'mismatch',
+                                })
+                        precision_digits = self.env['decimal.precision'].search([
+                            ('name', '=', 'Product Price')
+                        ], limit=1).digits
+                        if float_compare(product.weight, weight, precision_digits or 3):
+                            whs_log_line.update({
+                                'product_id': product.id,
+                                'weight': weight,
+                                'weight_wrong': product.weight,
+                                'type': 'mismatch',
+                            })
+                            if wizard.do_sync:
+                                product.write({
+                                    'weight': weight,
+                                })
+                if whs_log_line.get('type'):
+                    whs_log_lines.append(whs_log_line)
 
             if wizard.do_sync:
                 inventory.action_validate()
