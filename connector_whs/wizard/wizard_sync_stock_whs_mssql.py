@@ -121,7 +121,8 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 else:
                     product_qty = sum([
                         stock_product_dict[stock_product][x] for x
-                        in stock_product_dict[stock_product]])
+                        in stock_product_dict[stock_product]
+                        if x != 'weight'])
                     if float_compare(
                         product_qty,
                         product.qty_available,
