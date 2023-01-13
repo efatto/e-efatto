@@ -10,12 +10,12 @@ class MrpProduction(models.Model):
     def _get_raw_move_data(self, bom_line, line_data):
         if bom_line.product_id.exclude_from_mo:
             return
-        if bom_line.product_id.type == 'service' and self.sale_id and \
-                not any(x.created_from_bom and x.product_id == bom_line.product_id
-                        and x.product_uom_qty == line_data['qty']
-                        for x in self.sale_id.order_line):
+        if bom_line.product_id.type == 'service' and self.sale_id and not any(
+            x.bom_line_id == bom_line
+            for x in self.sale_id.order_line
+        ):
             # add SO order line to create task and/or project, excluding lines already
-            # created (case of change quantity) with same product and quantity
+            # created with bom_line_id
             self.env['sale.order.line'].create({
                 'name': bom_line.product_id.name,
                 'product_id': bom_line.product_id.id,
