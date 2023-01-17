@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="ir_cron_input_data_cleanup" model="ir.cron">
+        <field name="name">IoT Data input cleanup</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="numbercall">-1</field>
+        <field name="active" eval="True"/>
+        <field name="model_id" ref="model_iot_input_data"/>
+        <field name="code">model._cron_data_cleanup(30)</field>
+        <field name="doall" eval="False"/>
+    </record>
+</odoo>
