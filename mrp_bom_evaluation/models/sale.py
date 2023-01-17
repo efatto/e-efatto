@@ -7,10 +7,10 @@ from odoo import fields, models
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
-    created_from_bom = fields.Boolean()
-    # bom_line_id was added later, it could replace created_from_bom completely
+    created_from_bom = fields.Boolean()  # da rimuovere!
     bom_line_id = fields.Many2one(
-        comodel_name='mrp.bom.line'
+        comodel_name='mrp.bom.line',
+        copy=False
     )
 
 
@@ -19,6 +19,6 @@ class SaleOrder(models.Model):
 
     def action_cancel(self):
         res = super().action_cancel()
-        sol = self.order_line.sudo().filtered(lambda x: x.created_from_bom)
+        sol = self.order_line.sudo().filtered(lambda x: x.bom_line_id)
         sol.unlink()
         return res

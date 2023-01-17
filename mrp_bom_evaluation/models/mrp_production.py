@@ -23,7 +23,6 @@ class MrpProduction(models.Model):
                 'product_uom': bom_line.product_id.uom_id.id,
                 'price_unit': 0,
                 'order_id': self.sale_id.id,
-                'created_from_bom': True,
                 'bom_line_id': bom_line.id,
             })
             return

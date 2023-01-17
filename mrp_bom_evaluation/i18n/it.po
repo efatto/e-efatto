@@ -81,11 +81,6 @@ msgid "Confirm"
 msgstr "Conferma"
 
 #. module: mrp_bom_evaluation
-#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_order_line__created_from_bom
-msgid "Created From Bom"
-msgstr "Creato da DiBa"
-
-#. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_purchase_link__create_uid
 msgid "Created by"
 msgstr "Creato da"

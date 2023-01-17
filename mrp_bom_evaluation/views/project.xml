@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="project_task_view_task_form_date">
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <field name="project_id" position="after">
+                <field name="bom_product_id"/>
+            </field>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="view_task_kanban">
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_kanban"/>
+        <field name="arch" type="xml">
+            <field name="project_id" position="after">
+                <field name="bom_product_id"/>
+            </field>
+        </field>
+    </record>
+</odoo>

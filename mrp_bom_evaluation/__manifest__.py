@@ -33,6 +33,7 @@
         'views/mrp_bom.xml',
         'views/mrp.xml',
         'views/product_template.xml',
+        'views/project.xml',
         'report/report_view.xml',
         'report/mrp_report_bom.xml',
     ],
