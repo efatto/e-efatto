@@ -7,7 +7,6 @@ from odoo import fields, models
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
-    created_from_bom = fields.Boolean()  # da rimuovere!
     bom_line_id = fields.Many2one(
         comodel_name='mrp.bom.line',
         copy=False
