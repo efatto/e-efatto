@@ -1,1 +1,0 @@
-Il modulo gestisce la produzione da remoto prelevando i dati da `iot.input.data`.
