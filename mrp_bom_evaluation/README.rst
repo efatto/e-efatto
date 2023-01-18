@@ -35,12 +35,12 @@ Questi possono essere sovrascritti dall'utente, per adattarli in base alla propr
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_evaluation/static/description/bom_evaluate.gif
     :alt: Valutazione bom
 
-È inoltre disponibile un bottone che collega le righe ad un ordine a fornitore:
+È disponibile un bottone che collega le righe ad un ordine a fornitore, quando sono presenti dei prodotti corrispondenti:
 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_evaluation/static/description/collega_offerte_fornitori.png
     :alt: Collega offerte fornitori
 
-È inoltre possibile aggiornare il costo del prodotto finale con i costi dei materiali e delle operazioni previste:
+È possibile aggiornare il costo di sostituzione gestito del prodotto finale con i costi dei materiali e delle operazioni previste:
 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_evaluation/static/description/materiali.png
     :alt: Costi materiali
@@ -57,6 +57,8 @@ tramite il bottone:
 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_evaluation/static/description/aggiorna_costo.png
     :alt: Aggiorna costo
+
+A fine distinta sono visibili i totali di peso del grezzo e totale (se presenti finiture), del prezzo medio per kg e del prezzo totale.
 
 I prodotti di tipo servizio presenti nella distinta base verranno inseriti nell'ordine di vendita quando confermato (e rimossi se annullato). Gli stessi genereranno quindi dei task e/o il progetto se mancante, in base alla loro configurazione.
 

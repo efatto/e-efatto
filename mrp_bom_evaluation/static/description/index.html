@@ -3,18 +3,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 <title>Mrp bom evaluation</title>
 <style type="text/css">
 
 /*
 :Author: David Goodger (goodger@python.org)
-:Id: $Id: html4css1.css 7952 2016-07-26 18:15:59Z milde $
+:Id: $Id: html4css1.css 8954 2022-01-20 10:10:25Z milde $
 :Copyright: This stylesheet has been placed in the public domain.
 
 Default cascading style sheet for the HTML output of Docutils.
 
-See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+See https://docutils.sourceforge.io/docs/howto/html-stylesheets.html for how to
 customize this style sheet.
 */
 
@@ -387,15 +387,16 @@ ul.auto-toc {
 <p>Quanto si inseriscono le righe delle distinte base, vengono automaticamente inseriti i costi dei prodotti con la data dell’ordine fornitore da cui sono rilevati.
 Questi possono essere sovrascritti dall’utente, per adattarli in base alla propria convenienza.</p>
 <img alt="Valutazione bom" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_evaluation/static/description/bom_evaluate.gif" />
-<p>È inoltre disponibile un bottone che collega le righe ad un ordine a fornitore:</p>
+<p>È disponibile un bottone che collega le righe ad un ordine a fornitore, quando sono presenti dei prodotti corrispondenti:</p>
 <img alt="Collega offerte fornitori" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_evaluation/static/description/collega_offerte_fornitori.png" />
-<p>È inoltre possibile aggiornare il costo del prodotto finale con i costi dei materiali e delle operazioni previste:</p>
+<p>È possibile aggiornare il costo di sostituzione gestito del prodotto finale con i costi dei materiali e delle operazioni previste:</p>
 <img alt="Costi materiali" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_evaluation/static/description/materiali.png" />
 <img alt="Costi operazioni" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_evaluation/static/description/operazioni.png" />
 <p>Nel prodotto sarà quindi visibile, dopo il costo normale - aggiornato eventualmente sulla distinta base standard - il costo di sostituzione (denominato ‘gestito’ per distinguerlo dal costo di sostituzione di un modulo OCA):</p>
 <img alt="Costo prodotto finale" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_evaluation/static/description/prodotto.png" />
 <p>tramite il bottone:</p>
 <img alt="Aggiorna costo" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_evaluation/static/description/aggiorna_costo.png" />
+<p>A fine distinta sono visibili i totali di peso del grezzo e totale (se presenti finiture), del prezzo medio per kg e del prezzo totale.</p>
 <p>I prodotti di tipo servizio presenti nella distinta base verranno inseriti nell’ordine di vendita quando confermato (e rimossi se annullato). Gli stessi genereranno quindi dei task e/o il progetto se mancante, in base alla loro configurazione.</p>
 <p>Nei prodotti è stato aggiunto un flag ‘Escludi Dalla Produzione’ che, se selezionato, comporta che il prodotto, anche se presente nella distinta base, non sarà riportato nell’ordine di produzione. Questo caso è stato previsto per i materiali consumabili da utilizzare nel cantiere, che non verranno quindi utilizzati nella produzione, ma indicati nei prodotti consumati nei task del progetto.</p>
 </div>
