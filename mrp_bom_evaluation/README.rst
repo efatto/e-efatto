@@ -64,6 +64,17 @@ I prodotti di tipo servizio presenti nella distinta base verranno inseriti nell'
 
 Nei prodotti è stato aggiunto un flag 'Escludi Dalla Produzione' che, se selezionato, comporta che il prodotto, anche se presente nella distinta base, non sarà riportato nell'ordine di produzione. Questo caso è stato previsto per i materiali consumabili da utilizzare nel cantiere, che non verranno quindi utilizzati nella produzione, ma indicati nei prodotti consumati nei task del progetto.
 
+Si può stampare il preventivo di costo della bom:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_evaluation/static/description/stampa_report.png
+    :alt: Stampa report
+
+Report:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_evaluation/static/description/report.png
+    :alt: Report
+
+
 Bug Tracker
 ===========
 

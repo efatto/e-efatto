@@ -32,3 +32,14 @@ A fine distinta sono visibili i totali di peso del grezzo e totale (se presenti 
 I prodotti di tipo servizio presenti nella distinta base verranno inseriti nell'ordine di vendita quando confermato (e rimossi se annullato). Gli stessi genereranno quindi dei task e/o il progetto se mancante, in base alla loro configurazione.
 
 Nei prodotti è stato aggiunto un flag 'Escludi Dalla Produzione' che, se selezionato, comporta che il prodotto, anche se presente nella distinta base, non sarà riportato nell'ordine di produzione. Questo caso è stato previsto per i materiali consumabili da utilizzare nel cantiere, che non verranno quindi utilizzati nella produzione, ma indicati nei prodotti consumati nei task del progetto.
+
+Si può stampare il preventivo di costo della bom:
+
+.. image:: ../static/description/stampa_report.png
+    :alt: Stampa report
+
+Report:
+
+.. image:: ../static/description/report.png
+    :alt: Report
+
