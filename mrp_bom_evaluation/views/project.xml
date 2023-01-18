@@ -18,4 +18,19 @@
             </field>
         </field>
     </record>
+    <record id="project_task_timeline" model="ir.ui.view">
+        <field name="model">project.task</field>
+        <field name="type">timeline</field>
+        <field name="inherit_id" ref="project_timeline.project_task_timeline"/>
+        <field name="arch" type="xml">
+            <field name="planned_hours" position="after">
+                <field name="bom_product_id"/>
+            </field>
+            <span name="display_name" position="before">
+                <div class="fa" name="bom_product_id" t-if="record.bom_product_id">
+                    <t t-esc="record.bom_product_id[1]"/>
+                </div>
+            </span>
+        </field>
+    </record>
 </odoo>

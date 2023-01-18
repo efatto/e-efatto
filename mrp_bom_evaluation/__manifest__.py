@@ -21,6 +21,7 @@
         'product_finishing',
         'product_logistics_uom',
         'product_template_replenishment_cost',
+        'project_timeline',
         'purchase_discount',
         'purchase_seller_evaluation',
         'sale_management',
