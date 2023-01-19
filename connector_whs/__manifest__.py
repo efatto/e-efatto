@@ -13,6 +13,7 @@
         'repair',
         'sale_order_priority',
         'stock_move_line_auto_fill',
+        'stock_picking_back2draft',
     ],
     'description': "Connect WHS",
     'license': 'AGPL-3',
