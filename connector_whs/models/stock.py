@@ -96,8 +96,11 @@ class Picking(models.Model):
     @api.multi
     def action_assign(self):
         res = super(Picking, self).action_assign()
+        # get moves without active whs list by stato
         moves = self.mapped('move_lines').filtered(
-            lambda move: not move.whs_list_ids)
+            lambda x: not any(
+                y.stato != '3' for y in x.whs_list_ids
+            ))
         moves.create_whs_list()
         for pick in self.filtered(lambda picking: not picking.is_assigned):
             pick.state = 'waiting'
@@ -122,6 +125,9 @@ class Picking(models.Model):
     @api.multi
     def action_cancel(self):
         self.cancel_whs_list()
+        self.write({
+            'is_assigned': False,
+        })
         return super(Picking, self).action_cancel()
 
     @api.multi
