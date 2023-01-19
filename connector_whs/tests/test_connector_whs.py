@@ -119,7 +119,32 @@ class TestConnectorWhs(TransactionCase):
                 self.assertFalse(self.product1.customer_ids[0].product_code in
                                  whs_record.values())
 
-        whs_list = picking1.move_lines.whs_list_ids[0]
+        whs_lists = picking1.move_lines.whs_list_ids
+        self.assertEqual(len(whs_lists), 1)
+        whs_list = whs_lists[0]
+        self.assertEqual(whs_list.stato, '2')
+        picking1.button_assign()
+        self.assertEqual(picking1.state, 'assigned')
+        picking1.action_cancel()
+        self.assertEqual(picking1.state, 'cancel')
+        self.assertFalse(picking1.is_assigned)
+        # check whs lists are in stato '3' -> 'Da NON elaborare'
+        self.assertEqual(picking1.move_lines.mapped('whs_list_ids.stato'), ['3'])
+        # restore picking to assigned state
+        picking1.action_back_to_draft()
+        picking1.action_confirm()
+        picking1.action_assign()
+        whs_lists = picking1.move_lines.whs_list_ids.filtered(
+            lambda x: x.stato != '3'
+        )
+        self.assertEqual(len(whs_lists), 1)
+        whs_list = whs_lists[0]
+        self.assertTrue(whs_list)
+        # check whs list is added
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        whs_records = self.dbsource.execute_mssql(
+            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0]
+        self.assertEqual(len(whs_records), whs_len_records + 2)
         # simulate whs work
         lotto = '55A1'
         lotto2 = '55A2'
@@ -644,7 +669,8 @@ class TestConnectorWhs(TransactionCase):
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(len(self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0]),
+            sqlquery="SELECT * FROM HOST_LISTE WHERE Elaborato != 5",
+            sqlparams=None, metadata=None)[0]),
             whs_len_records + 2)
 
         # simulate whs work: partial processing of product #2
