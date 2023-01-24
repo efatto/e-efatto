@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-06 15:11+0000\n"
-"PO-Revision-Date: 2023-01-06 15:11+0000\n"
+"POT-Creation-Date: 2023-01-24 16:01+0000\n"
+"PO-Revision-Date: 2023-01-24 16:01+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -138,6 +138,11 @@ msgstr "Listino prezzi fornitore"
 
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
+msgid "Update BOM Products List Price and Weight"
+msgstr "Aggiorna Il Prezzo e il Peso dei Prodotti con Di.Ba."
+
+#. module: product_managed_replenishment_cost
+#: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
 msgid "Update Products Replenishment Cost"
 msgstr "Aggiorna il Costo di sostituzione dei Prodotti"
 
@@ -152,7 +157,7 @@ msgid "Update Products Standard Price and Replenishment Cost"
 msgstr "Aggiorna il Costo Standard e il Costo di sostituzione dei Prodotti"
 
 #. module: product_managed_replenishment_cost
-#: code:addons/product_managed_replenishment_cost/models/replenishment_cost.py:71
+#: code:addons/product_managed_replenishment_cost/models/replenishment_cost.py:81
 #, python-format
 msgid "Update of %s"
 msgstr "Aggiornamento di %s"
