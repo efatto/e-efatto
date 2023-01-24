@@ -3,7 +3,7 @@
 {
     "name": "Sale Order Approved",
     "summary": "Add new state 'Customer Approved' to sale orders.",
-    "version": "12.0.1.0.0",
+    "version": "12.0.1.0.1",
     "category": "Sale Management",
     "website": "https://efatto.it",
     "author": "Sergio Corato",

@@ -14,6 +14,15 @@ class SaleOrder(models.Model):
         ('done', 'Locked'),
         ('cancel', 'Cancelled'),
         ])
+    partner_id = fields.Many2one(
+        states={'draft': [('readonly', False)], 'sent': [('readonly', False)],
+                'approved': [('readonly', False)]})
+    partner_invoice_id = fields.Many2one(
+        states={'draft': [('readonly', False)], 'sent': [('readonly', False)],
+                'sale': [('readonly', False)], 'approved': [('readonly', False)]})
+    partner_shipping_id = fields.Many2one(
+        states={'draft': [('readonly', False)], 'sent': [('readonly', False)],
+                'sale': [('readonly', False)], 'approved': [('readonly', False)]})
 
     @api.multi
     def action_confirm(self):
