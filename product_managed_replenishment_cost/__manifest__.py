@@ -1,8 +1,8 @@
-# Copyright 2021-2022 Sergio Corato <https://github.com/sergiocorato>
+# Copyright 2021-2023 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     'name': 'Product Managed Replenishment Cost',
-    'version': '12.0.1.0.4',
+    'version': '12.0.1.0.5',
     'author': 'Sergio Corato',
     'category': 'Products',
     'license': 'AGPL-3',
