@@ -40,6 +40,10 @@
                         </group>
                         <group/>
                         <group>
+                            <button name="update_bom_products_list_price_weight" string="Update BOM Products List Price and Weight" type="object"/>
+                        </group>
+                        <group/>
+                        <group>
                             <field name="log"/>
                         </group>
                     </group>

@@ -50,6 +50,12 @@ class ProductProduct(models.Model):
         update_standard_price = self.env.context.get('update_standard_price', False)
         update_managed_replenishment_cost = self.env.context.get(
             'update_managed_replenishment_cost', False)
+        update_bom_products_list_price_weight = self.env.context.get(
+            "update_bom_products_list_price_weight", False)
+        products_with_bom = self.filtered(
+            lambda x: x.bom_count
+        ) if update_bom_products_list_price_weight else \
+            self.env['product.product']
         # update cost for products to be purchased first, then them to be manufactured
         products_tobe_purchased = self.filtered(
             lambda x: x.seller_ids and not x.bom_count)
@@ -115,7 +121,33 @@ class ProductProduct(models.Model):
             if update_standard_price:
                 product.standard_price = produce_price
 
+        for product in products_with_bom:
+            product.list_price, product.weight = product.\
+                get_bom_price_weight_from_first_child_components()
+
         return products_nottobe_purchased, products_without_seller_price
+
+    def get_bom_price_weight_from_first_child_components(self):
+        bom_id = self.bom_ids[0]
+        component_list_price = self.uom_id._compute_quantity(
+            sum(
+                (
+                    x.product_id.list_price * x.product_qty
+                    for x in bom_id.bom_line_ids
+                ) or [0]
+            ) / (bom_id.product_qty or 1),
+            bom_id.product_uom_id)
+        component_weight = self.uom_id._compute_quantity(
+            sum(
+                (
+                    x.product_id.weight_uom_id._compute_quantity(
+                    x.product_id.weight * x.product_qty,
+                    self.weight_uom_id)
+                    for x in bom_id.bom_line_ids
+                ) or [0]
+            ) / (bom_id.product_qty or 1),
+            bom_id.product_uom_id)
+        return component_list_price, component_weight
 
     def sort_products_by_parent(self, products):
         product_ids = self.env['product.product']

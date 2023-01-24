@@ -56,9 +56,19 @@ class ReplenishmentCost(models.Model):
         return res
 
     @api.multi
+    def update_bom_products_list_price_weight(self):
+        # Update product from first bom component list price and weight
+        res = self.with_context(
+            update_bom_products_list_price_weight=True,
+        ).update_products_replenishment_cost()
+        return res
+
+    @api.multi
     def update_products_replenishment_cost(self):
         for repl in self:
             domain = [('type', 'in', ['product', 'consu', 'service'])]
+            if self._context.get("update_bom_products_list_price_weight"):
+                domain = [('type', '=', 'product'), ('bom_ids', '!=', False)]
             if repl.product_ctg_ids:
                 domain.append(('categ_id', 'in', repl.product_ctg_ids.ids))
             products = self.env['product.product'].search(domain)
@@ -71,12 +81,15 @@ class ReplenishmentCost(models.Model):
                 repl.name = _('Update of %s' % last_update)
             repl.write(dict(
                 last_update=last_update,
-                log='Updated %s %s for %s products in %.2f minutes.' % (
+                log='Updated %s %s %s for %s products in %.2f minutes.' % (
                     '"standard price"'
                     if self.env.context.get('update_standard_price')
                     else '',
                     '"replenishment cost"'
                     if self.env.context.get('update_managed_replenishment_cost')
+                    else '',
+                    '"list price and weight"'
+                    if self.env.context.get('update_bom_products_list_price_weight')
                     else '',
                     len(products),
                     duration / 60,
