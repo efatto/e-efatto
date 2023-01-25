@@ -1,7 +1,9 @@
-# Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
+# Copyright 2021-2023 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo.tests.common import SavepointCase
+
+import time
 
 
 class TestProductManagedReplenishmentCost(SavepointCase):
@@ -22,6 +24,8 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         cls.product = cls.env['product.product'].create({
             'name': 'Product Test',
             'standard_price': 50.0,
+            'list_price': 123.0,
+            'weight': 13.14,
             'seller_ids': [(6, 0, [supplierinfo.id])],
             'route_ids': [(6, 0, [buy.id, mto.id])],
             'intrastat_code_id': cls.intrastat.id,
@@ -31,6 +35,8 @@ class TestProductManagedReplenishmentCost(SavepointCase):
             'name': 'Component 1',
             'route_ids': [(6, 0, [buy.id, mto.id])],
             'default_code': 'COMP1',
+            'list_price': 17.55,
+            'weight': 3.44,
             'seller_ids': [(0, 0, {
                 'name': cls.vendor.id,
                 'price': 2,
@@ -40,6 +46,8 @@ class TestProductManagedReplenishmentCost(SavepointCase):
             'name': 'Component 2',
             'route_ids': [(6, 0, [buy.id, mto.id])],
             'default_code': 'COMP2',
+            'list_price': 11.0,
+            'weight': 18.4,
             'seller_ids': [(0, 0, {
                 'name': cls.vendor.id,
                 'price': 3,
@@ -49,6 +57,8 @@ class TestProductManagedReplenishmentCost(SavepointCase):
             'name': 'Component 3',
             'route_ids': [(6, 0, [buy.id, mto.id])],
             'default_code': 'COMP3',
+            'list_price': 13.5,
+            'weight': 4.4,
             'seller_ids': [(0, 0, {
                 'name': cls.vendor.id,
                 'price': 7,
@@ -58,6 +68,8 @@ class TestProductManagedReplenishmentCost(SavepointCase):
             'name': 'Product with bom',
             'route_ids': [(4, cls.env.ref('mrp.route_warehouse0_manufacture').id),
                           (4, cls.env.ref('stock.route_warehouse0_mto').id)],
+            'list_price': 1283.0,
+            'weight': 11.14,
             'default_code': 'PRODUCED1',
             'type': 'product',
             'sale_ok': True,
@@ -68,6 +80,8 @@ class TestProductManagedReplenishmentCost(SavepointCase):
             'default_code': 'COMP4',
             'type': 'product',
             'purchase_ok': True,
+            'list_price': 3.33,
+            'weight': 7.79,
             'seller_ids': [(0, 0, {
                 'name': cls.vendor.id,
                 'price': 4,
@@ -191,6 +205,17 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         })
         repl.update_products_standard_price_only()
         self.assertEqual(self.product_bom.standard_price, 3 + 4 + 7)
+        self.assertEqual(len(self.product_bom.bom_ids), 1)
+        repl.update_bom_products_list_price_weight()
+        self.assertAlmostEqual(
+            self.product_bom.list_price,
+            sum(x.product_id.list_price for x in
+                self.product_bom.bom_ids[0].bom_line_ids)
+        )
+        self.assertAlmostEqual(
+            self.product_bom.weight,
+            sum(x.product_id.weight for x in self.product_bom.bom_ids[0].bom_line_ids)
+        )
 
     def test_03_bom_with_parent(self):
         self.assertEqual(self.product_bom_parent.managed_replenishment_cost, 0.0)
@@ -200,6 +225,18 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         })
         repl.update_products_standard_price_only()
         self.assertEqual(self.product_bom_parent.standard_price, 2 + 3 + 4 + 7)
+        self.assertEqual(len(self.product_bom_parent.bom_ids), 1)
+        repl.update_bom_products_list_price_weight()
+        self.assertAlmostEqual(
+            self.product_bom_parent.list_price,
+            sum(x.product_id.list_price for x in
+                self.product_bom_parent.bom_ids[0].bom_line_ids)
+        )
+        self.assertAlmostEqual(
+            self.product_bom_parent.weight,
+            sum(x.product_id.weight for x in
+                self.product_bom_parent.bom_ids[0].bom_line_ids)
+        )
 
     def test_04_bom_with_nested_parent(self):
         self.assertEqual(self.product_bom_parent_parent.managed_replenishment_cost, 0.0)
@@ -210,3 +247,5 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         repl.update_products_standard_price_only()
         self.assertEqual(
             self.product_bom_parent_parent.standard_price, 7 + 2 + 3 + 4 + 7)
+        # Do not test update_bom_products_list_price_weight() as this functionality is
+        # not requested for nested BOM
