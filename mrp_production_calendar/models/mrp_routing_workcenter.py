@@ -12,7 +12,8 @@ class MrpRoutingWorkcenter(models.Model):
     estimated_duration = fields.Float(
         compute='_compute_estimated_duration',
         store=True,
-        help="Estimated duration in hours splitted on days"
+        help="Estimated duration in hours splitted on days. This is a technical field "
+             "to be used in calendar to 'cover' 24 hours every 8 hours (of work)."
     )
 
     @api.multi
