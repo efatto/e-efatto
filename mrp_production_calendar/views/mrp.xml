@@ -67,7 +67,6 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='name']" position="after">
                 <field name="estimated_days_duration"/>
-                <field name="estimated_duration" widget="float_time"/>
             </xpath>
         </field>
     </record>
