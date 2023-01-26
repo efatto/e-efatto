@@ -15,6 +15,7 @@ class CrmLead(models.Model):
     @api.depends("order_ids.message_ids", "create_date")
     def _compute_first_sale_days(self):
         sent_subtype = self.env.ref("sale.mt_order_sent")
+        confirmed_subtype = self.env.ref("sale.mt_order_confirmed")
         for lead in self:
             first_sale_days = 0
             if lead.order_ids:
@@ -25,9 +26,13 @@ class CrmLead(models.Model):
                     messages = lead.order_ids.mapped("message_ids").filtered(
                         lambda x: x.subject and "Preventivo" in x.subject
                     )
+                if not messages:
+                    messages = lead.order_ids.mapped("message_ids").filtered(
+                        lambda x: x.subtype_id == confirmed_subtype
+                    )
                 if messages:
                     first_sale_days = (
                         min(messages.mapped('date'))
                         - lead.create_date
-                    ).days
+                    ).days or 1
             lead.first_sale_days = first_sale_days
