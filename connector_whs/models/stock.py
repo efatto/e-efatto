@@ -111,6 +111,12 @@ class Picking(models.Model):
         # add extra button to manually change state from waiting to assign,
         # as it is controlled by user intervention
         for pick in self:
+            # get moves without active whs list by stato
+            moves = self.mapped('move_lines').filtered(
+                lambda x: not any(
+                    y.stato != '3' for y in x.whs_list_ids
+                ))
+            moves.create_whs_list()
             if pick.state == 'waiting':
                 pick.write({
                     'is_assigned': True,
