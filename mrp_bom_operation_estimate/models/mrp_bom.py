@@ -12,7 +12,8 @@ class MrpBom(models.Model):
         'mrp_bom_operation_rel',
         'bom_id',
         'operation_id',
-        'Estimated Operations'
+        'Estimated Operations',
+        copy=False
     )
 
     @api.onchange('routing_id')
