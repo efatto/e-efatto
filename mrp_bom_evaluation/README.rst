@@ -29,7 +29,7 @@ This module add ability to evaluate a bom with product prices or vendor prices a
 Configuration
 =============
 
-Quanto si inseriscono le righe delle distinte base, vengono automaticamente inseriti i costi dei prodotti con la data dell'ordine fornitore da cui sono rilevati.
+Quanto si inseriscono le righe delle distinte base, vengono automaticamente inseriti i costi dei prodotti con la data dell'ordine fornitore da cui sono rilevati. Viene preso l'ordine non in stato annullato più recente con prezzo diverso da zero.
 Questi possono essere sovrascritti dall'utente, per adattarli in base alla propria convenienza.
 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_bom_evaluation/static/description/bom_evaluate.gif

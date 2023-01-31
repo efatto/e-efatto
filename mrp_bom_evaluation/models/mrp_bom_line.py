@@ -67,6 +67,7 @@ class MrpBomLine(models.Model):
         purchase_order_line_ids = self.env['purchase.order.line'].search([
             ('product_id', '=', self.product_id.id),
             ('state', '!=', 'cancel'),
+            ('price_unit', '!=', 0),
         ])
         price_unit = self.product_id.standard_price
         purchase_order_line_id_found = False
