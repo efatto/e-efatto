@@ -56,12 +56,12 @@ class TestSaleStockPartnerDeposit(SavepointCase):
         'odoo.models', 'odoo.models.unlink', 'odoo.addons.base.ir.ir_model'
     )
     def test_00_sale_order_without_procurement_group(self):
-        self.sale_order = self.env['sale.order'].sudo(self.stock_user).create({
+        sale_order = self.env['sale.order'].sudo(self.stock_user).create({
             'partner_id': self.partner.id,
         })
-        self._create_sale_order_line(self.sale_order, self.service, 2.0)
-        self.sale_order.action_confirm()
-        self.assertFalse(self.sale_order.procurement_group_id)
+        self._create_sale_order_line(sale_order, self.service, 2.0)
+        sale_order.action_confirm()
+        self.assertFalse(sale_order.procurement_group_id)
 
     @mute_logger(
         'odoo.models', 'odoo.models.unlink', 'odoo.addons.base.ir.ir_model'
@@ -70,10 +70,10 @@ class TestSaleStockPartnerDeposit(SavepointCase):
         self.service.write({
             "service_create_procurement_group": True,
         })
-        self.assertTrue(self.sale_order.service_create_procurement_group)
-        self.sale_order = self.env['sale.order'].sudo(self.stock_user).create({
+        self.assertTrue(self.service.service_create_procurement_group)
+        sale_order = self.env['sale.order'].sudo(self.stock_user).create({
             'partner_id': self.partner.id,
         })
-        self._create_sale_order_line(self.sale_order, self.service, 2.0)
-        self.sale_order.action_confirm()
-        self.assertTrue(self.sale_order.procurement_group_id)
+        self._create_sale_order_line(sale_order, self.service, 2.0)
+        sale_order.action_confirm()
+        self.assertTrue(sale_order.procurement_group_id)
