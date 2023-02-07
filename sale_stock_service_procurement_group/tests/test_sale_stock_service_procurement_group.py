@@ -70,6 +70,7 @@ class TestSaleStockPartnerDeposit(SavepointCase):
         self.service.write({
             "service_create_procurement_group": True,
         })
+        self.assertTrue(self.sale_order.service_create_procurement_group)
         self.sale_order = self.env['sale.order'].sudo(self.stock_user).create({
             'partner_id': self.partner.id,
         })
