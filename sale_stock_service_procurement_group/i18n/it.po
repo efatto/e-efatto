@@ -1,0 +1,44 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* sale_stock_service_procurement_group
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-02-07 14:11+0000\n"
+"PO-Revision-Date: 2023-02-07 14:11+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: sale_stock_service_procurement_group
+#: model:ir.model.fields,help:sale_stock_service_procurement_group.field_product_product__service_create_procurement_group
+#: model:ir.model.fields,help:sale_stock_service_procurement_group.field_product_template__service_create_procurement_group
+msgid "Create procurement group from sale even if this product is a service"
+msgstr "Crea il gruppo di approvvigionamento dall'ordine di vendita anche se il prodotto è un servizio"
+
+#. module: sale_stock_service_procurement_group
+#: model:ir.model,name:sale_stock_service_procurement_group.model_product_template
+msgid "Product Template"
+msgstr "Modello prodotto"
+
+#. module: sale_stock_service_procurement_group
+#: model:ir.model,name:sale_stock_service_procurement_group.model_sale_order
+msgid "Sale Order"
+msgstr "Ordine di vendita"
+
+#. module: sale_stock_service_procurement_group
+#: model:ir.model,name:sale_stock_service_procurement_group.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Linea d'ordine di vendita"
+
+#. module: sale_stock_service_procurement_group
+#: model:ir.model.fields,field_description:sale_stock_service_procurement_group.field_product_product__service_create_procurement_group
+#: model:ir.model.fields,field_description:sale_stock_service_procurement_group.field_product_template__service_create_procurement_group
+msgid "Service Create Procurement Group"
+msgstr "Crea gruppo di approvvigionamento"
+
