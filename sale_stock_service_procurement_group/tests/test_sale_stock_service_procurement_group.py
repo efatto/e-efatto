@@ -61,6 +61,9 @@ class TestSaleStockPartnerDeposit(SavepointCase):
         })
         self._create_sale_order_line(sale_order, self.service, 2.0)
         sale_order.action_confirm()
+        if sale_order.state != 'sale':
+            # do the second confirmation to comply extra state 'approved'
+            sale_order.action_confirm()
         self.assertFalse(sale_order.procurement_group_id)
 
     @mute_logger(
@@ -76,4 +79,7 @@ class TestSaleStockPartnerDeposit(SavepointCase):
         })
         self._create_sale_order_line(sale_order, self.service, 2.0)
         sale_order.action_confirm()
+        if sale_order.state != 'sale':
+            # do the second confirmation to comply extra state 'approved'
+            sale_order.action_confirm()
         self.assertTrue(sale_order.procurement_group_id)
