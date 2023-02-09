@@ -181,11 +181,11 @@ class WizStockBarcodesReadHr(models.TransientModel):
             self.reset_all()
             return
         if res_model == 'mrp.workorder':
-            self.action_workorder_scaned_post(record)
+            self.workorder_id = record
             self.task_id = False
             return
         if res_model == 'project.task':
-            self.action_task_scaned_post(record)
+            self.task_id = record
             self.workorder_id = False
             return
         self._set_messagge_info('not_found', _('Barcode not found'))
@@ -197,12 +197,6 @@ class WizStockBarcodesReadHr(models.TransientModel):
             self.hour_amount = 0
             self.minute_amount = 0
 
-    def action_workorder_scaned_post(self, workorder):
-        self.workorder_id = workorder
-
-    def action_task_scaned_post(self, task):
-        self.task_id = task
-
     def _process_productivity(self):
         productivity_obj = self.env['mrp.workcenter.productivity'].sudo()
         hour_amount = self.hour_amount
@@ -210,7 +204,6 @@ class WizStockBarcodesReadHr(models.TransientModel):
         duration = hour_amount * 60 + minute_amount
         loss_id = self.env['mrp.workcenter.productivity.loss'].sudo().search(
             [('loss_type', '=', 'productive')], limit=1)
-        log_lines_dict = {}
         vals = self._prepare_productivity_values(duration, loss_id)
 
         if not vals:
@@ -226,7 +219,13 @@ class WizStockBarcodesReadHr(models.TransientModel):
         _execute_onchanges(line, 'date_start')
         productivity_data = line._convert_to_write(line._cache)
         productivity = productivity_obj.create(productivity_data)
-        log_lines_dict[productivity.id] = duration / 60.0
+        log_lines_dict = {
+            "res_model_id": self.env["ir.model"].search([
+                ("model", "=", productivity_obj._name),
+            ]).id,
+            "res_id": productivity.id,
+            "duration": duration / 60.0,
+        }
         return log_lines_dict
 
     def _process_timesheet(self):
@@ -234,7 +233,6 @@ class WizStockBarcodesReadHr(models.TransientModel):
         hour_amount = self.hour_amount
         minute_amount = self.minute_amount
         duration = hour_amount * 60 + minute_amount
-        log_lines_dict = {}
         vals = self._prepare_timesheet_values(duration)
 
         if not vals:
@@ -242,7 +240,13 @@ class WizStockBarcodesReadHr(models.TransientModel):
                 'not_found', _('Task not found'))
             return
         line = account_analytic_line_obj.create(vals)
-        log_lines_dict[line.id] = duration / 60.0
+        log_lines_dict = {
+            "res_model_id": self.env["ir.model"].search([
+                ("model", "=", account_analytic_line_obj._name),
+            ]).id,
+            "res_id": line.id,
+            "duration": duration / 60.0,
+        }
         return log_lines_dict
 
     def check_done_conditions(self):
@@ -268,6 +272,8 @@ class WizStockBarcodesReadHr(models.TransientModel):
             res_id=self.res_id,
             datetime_start=self.datetime_start,
         )
+        if log_detail:
+            vals.update(log_detail)
         return vals
 
     def _add_read_log(self, log_detail=False):
@@ -280,17 +286,21 @@ class WizStockBarcodesReadHr(models.TransientModel):
         for log in scanning_log:
             log.unlink()
 
+    @api.multi
+    def remove_linked_hr_time(self, scanning_log):
+        for log in scanning_log:
+            self.env[log.res_model_id.model].browse(
+                log.res_id).unlink()
+
     @api.depends('employee_id')
     def _compute_scan_log_ids(self):
         logs = self.env['stock.barcodes.read.log'].search([
-            ('res_model_id', '=', self.res_model_id.id),
-            ('res_id', '=', self.res_id),
             ('employee_id', '=', self.employee_id.id),
         ], limit=10)
         self.scan_log_ids = logs
 
     def action_undo_last_scan(self):
         log_scan = first(self.scan_log_ids.filtered(
-            lambda x: x.create_uid == self.env.user))
-        # TODO self.remove_linked_hr_time()
+            lambda x: x.employee_id == self.employee_id))
+        self.remove_linked_hr_time(log_scan)
         self.remove_scanning_log(log_scan)
