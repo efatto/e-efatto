@@ -135,7 +135,7 @@ class WizStockBarcodesReadHr(models.TransientModel):
             'workorder_id': self.workorder_id.id,
             'employee_id': self.employee_id.id,
             'loss_id': loss_id.id,
-            'duration': duration,
+            'date_end': self.datetime_start + relativedelta(minutes=duration),
         }
 
     def _prepare_timesheet_values(self, duration):
@@ -292,4 +292,5 @@ class WizStockBarcodesReadHr(models.TransientModel):
     def action_undo_last_scan(self):
         log_scan = first(self.scan_log_ids.filtered(
             lambda x: x.create_uid == self.env.user))
+        # TODO self.remove_linked_hr_time()
         self.remove_scanning_log(log_scan)

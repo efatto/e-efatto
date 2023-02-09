@@ -21,6 +21,7 @@
         "wizard/wiz_stock_barcodes_read_hr_views.xml",
         "views/assets.xml",
         "views/hr_attendance.xml",
+        "views/stock_barcodes_read_log.xml",
     ],
     "installable": True
 }
