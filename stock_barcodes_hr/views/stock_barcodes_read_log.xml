@@ -13,6 +13,8 @@
                 <field name="hour_amount"/>
                 <field name="minute_amount"/>
                 <field name="datetime_start"/>
+                <field name="res_model_id"/>
+                <field name="res_id"/>
             </tree>
         </field>
     </record>
@@ -30,6 +32,8 @@
                     <field name="hour_amount"/>
                     <field name="minute_amount"/>
                     <field name="datetime_start"/>
+                    <field name="res_model_id"/>
+                    <field name="res_id"/>
                 </group>
             </form>
         </field>
