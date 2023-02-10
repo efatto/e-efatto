@@ -134,6 +134,7 @@ class WizStockBarcodesReadHr(models.TransientModel):
             'date_start': self.datetime_start,
             'workorder_id': self.workorder_id.id,
             'employee_id': self.employee_id.id,
+            'user_id': self.employee_id.user_id.id or self.env.user.id,
             'loss_id': loss_id.id,
             'date_end': self.datetime_start + relativedelta(minutes=duration),
         }
@@ -145,6 +146,7 @@ class WizStockBarcodesReadHr(models.TransientModel):
             'project_id': self.task_id.project_id.id,
             'task_id': self.task_id.id,
             'employee_id': self.employee_id.id,
+            'user_id': self.employee_id.user_id.id or self.env.user.id,
             'unit_amount': duration / 60.0,
         }
 
@@ -217,6 +219,7 @@ class WizStockBarcodesReadHr(models.TransientModel):
         _execute_onchanges(line, 'unit_amount')
         line.update({'date_start': self.datetime_start})
         _execute_onchanges(line, 'date_start')
+        line.update({'user_id': vals['user_id']})
         productivity_data = line._convert_to_write(line._cache)
         productivity = productivity_obj.create(productivity_data)
         log_lines_dict = {
