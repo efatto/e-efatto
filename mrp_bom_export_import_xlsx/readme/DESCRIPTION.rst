@@ -1,0 +1,1 @@
+This module add ability to export and import Bom lines directly from Bom.
