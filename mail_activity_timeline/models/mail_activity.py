@@ -9,11 +9,11 @@ class MailActivity(models.Model):
         store=True,
     )
     date_start = fields.Datetime(
-        compute='_compute_dates',
+        compute='_compute_planner',
         store=True,
     )
     date_end = fields.Datetime(
-        compute='_compute_dates',
+        compute='_compute_planner',
         store=True,
     )
     parent_id = fields.Many2one(
@@ -30,10 +30,38 @@ class MailActivity(models.Model):
             "Another planner activity exists for the linked object by model and id.",
         ),
     ]
-    # def write(self, values):
-    #     res = super().write(values)
-    #     self.with_context(bypass_resource_planner=True).aggiornare il res_model id
-    #     return res
+
+    def write(self, values):
+        res = super().write(values)
+
+        for activity in self:
+            if activity.is_resource_planner:
+                if any(x in values for x in [
+                    'date_start',
+                    'date_end',
+                    'user_id',
+                    'parent_id'
+                ]):
+                    res_object = self.env[activity.res_model].browse(
+                        activity.res_id)
+                    vals = {}
+                    if activity.res_model == 'mrp.workorder':
+                        if 'date_start' in values:
+                            vals.update({
+                                'date_planned_start': values['date_start']
+                            })
+                        if 'date_end' in values:
+                            vals.update({
+                                'date_planned_finished': values['date_end']
+                            })
+                        if 'user_id' in values:
+                            vals.update({'user_id': values['user_id']})
+                        if 'parent_id' in values:
+                            vals.update({'parent_id': values['parent_id']})
+                    res_object.with_context(
+                        bypass_resource_planner=True
+                    ).write(vals)
+        return res
 
     @api.model
     def create_planner_activity(self, object, user_id):
@@ -56,11 +84,11 @@ class MailActivity(models.Model):
             'is_resource_planner': True,
         }
         res = self.create(vals)
-        res._compute_dates()
+        res._compute_planner()
         return res
 
     @api.multi
-    def _compute_dates(self):
+    def _compute_planner(self):
         for activity in self:
             if activity.res_model and activity.res_id:
                 res_object = self.env[activity.res_model].browse(activity.res_id)
