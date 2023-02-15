@@ -1,13 +1,13 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* mrp_workorder_time
+#	* mail_activity_timeline
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-03 09:05+0000\n"
-"PO-Revision-Date: 2021-06-03 09:05+0000\n"
+"POT-Creation-Date: 2023-02-15 09:03+0000\n"
+"PO-Revision-Date: 2023-02-15 09:03+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -15,18 +15,64 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
-#. module: mrp_workorder_time
-#: model:ir.model.fields,help:mrp_workorder_time.field_mrp_workcenter_productivity__unit_amount
-msgid "This time will added to date start to compute date end and automatically compute duration in seconds. When filled, date start will be reset to minutes."
-msgstr "Questo tempo verrà aggiunto alla data di inizio per calcolare la data finale e automaticamente calcolare la durata in secondi. Quando compilato, la data iniziale verrà resettata ai minuti."
+#. module: mail_activity_timeline
+#: model:ir.model,name:mail_activity_timeline.model_mail_activity
+msgid "Activity"
+msgstr "Attività"
 
-#. module: mrp_workorder_time
-#: model:ir.model,name:mrp_workorder_time.model_mrp_workcenter_productivity
-msgid "Workcenter Productivity Log"
-msgstr "Registro produttività del centro di lavoro"
+#. module: mail_activity_timeline
+#: model:ir.model,name:mail_activity_timeline.model_mail_activity_type
+msgid "Activity Type"
+msgstr "Tipo di attività"
 
-#. module: mrp_workorder_time
-#: model:ir.model.fields,field_description:mrp_workorder_time.field_mrp_workcenter_productivity__unit_amount
-msgid "Worked hours"
-msgstr "Ore lavorate"
+#. module: mail_activity_timeline
+#: sql_constraint:mail.activity:0
+msgid "Another planner activity exists for the linked object by model and id."
+msgstr "Esiste già un'altra attività di pianificazione risorse per l'oggetto e l'id collegato."
+
+#. module: mail_activity_timeline
+#: sql_constraint:mail.activity.type:0
+msgid "Another planner activity type exists for the linked res model."
+msgstr "Esiste già un tipo di attività di pianificazione risorse per l'oggetto collegato."
+
+#. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mrp_workorder__user_id
+msgid "Assigned user"
+msgstr "Utente assegnato"
+
+#. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__date_end
+msgid "Date End"
+msgstr "Data fine"
+
+#. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity_type__date_end_field
+msgid "Date End Field"
+msgstr ""
+
+#. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__date_start
+msgid "Date Start"
+msgstr "Data iniziale"
+
+#. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity_type__date_start_field
+msgid "Date Start Field"
+msgstr ""
+
+#. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__is_resource_planner
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity_type__is_resource_planner
+msgid "Is Resource Planner"
+msgstr "Abilitato alla Pianificazione Risorse"
+
+#. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__parent_id
+msgid "Parent Activity"
+msgstr "Attività Padre"
+
+#. module: mail_activity_timeline
+#: model:ir.model,name:mail_activity_timeline.model_mrp_workorder
+msgid "Work Order"
+msgstr "Ordine di Lavoro"
 
