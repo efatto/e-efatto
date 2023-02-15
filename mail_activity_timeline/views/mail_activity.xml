@@ -53,8 +53,30 @@
         </field>
     </record>
 
-    <record model="ir.actions.act_window" id="mail_activity_board.open_boards_activities">
-        <field name="view_mode">kanban,form,timeline</field>
+    <record model="ir.actions.act_window" id="resource_planner_activities">
+        <field name="name">Resource Planner Activities</field>
+        <field name="res_model">mail.activity</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">timeline,kanban,form</field>
+        <field name="domain">[('is_resource_planner', '=', True)]</field>
+        <field name="context">{}</field>
+        <field name="view_ids"
+                   eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('mail_activity_board.mail_activity_view_kanban')}),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('mail_activity_board.mail_activity_view_tree')}),
+                          (0, 0, {'view_mode': 'form', 'view_id': ref('mail_activity_view_form_board')}),
+                          (0, 0, {'view_mode': 'calendar'}),
+                          (0, 0, {'view_mode': 'pivot'}),
+                          (0, 0, {'view_mode': 'graph'})]"/>
+        <field name="search_view_id" ref="mail_activity_board.mail_activity_view_search"/>
     </record>
+
+    <menuitem
+        id="mail_menu_planner"
+        name="Resource Planner"
+        sequence="3"
+        action="resource_planner_activities"
+        web_icon="mail_activity_timeline,static/description/icon.png"
+        groups="base.group_user"/>
 
 </odoo>
