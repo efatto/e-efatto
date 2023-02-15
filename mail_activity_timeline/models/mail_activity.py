@@ -1,4 +1,4 @@
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 
 
 class MailActivity(models.Model):
@@ -58,6 +58,19 @@ class MailActivity(models.Model):
                             vals.update({'user_id': values['user_id']})
                         if 'parent_id' in values:
                             vals.update({'parent_id': values['parent_id']})
+                    elif activity.res_model == 'project.task':
+                        if 'date_start' in values:
+                            vals.update({
+                                'date_start': values['date_start']
+                            })
+                        if 'date_end' in values:
+                            vals.update({
+                                'date_end': values['date_end']
+                            })
+                        if 'user_id' in values:
+                            vals.update({'user_id': values['user_id']})
+                        if 'parent_id' in values:
+                            vals.update({'parent_id': values['parent_id']})
                     res_object.with_context(
                         bypass_resource_planner=True
                     ).write(vals)
@@ -96,7 +109,8 @@ class MailActivity(models.Model):
                     activity.date_start = res_object.date_planned_start
                     activity.date_end = res_object.date_planned_finished
                 elif activity.res_model == 'project.task':
-                    pass
+                    activity.date_start = res_object.date_start
+                    activity.date_end = res_object.date_end
                 if activity.date_end:
                     activity.date_deadline = fields.Date.to_date(activity.date_end)
                 if res_object.parent_id:
@@ -108,3 +122,16 @@ class MailActivity(models.Model):
             else:
                 activity.date_start = False
                 activity.date_end = False
+
+    @api.multi
+    def open_res_object(self):
+        self.ensure_one()
+        res_object = self.env[self.res_model].browse(self.res_id)
+        domain = [('id', 'in', res_object.ids)]
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Linked %s' % self.res_model),
+            'domain': domain,
+            'views': [(False, 'tree'), (False, 'kanban'), (False, 'form')],
+            'res_model': self.res_model,
+        }

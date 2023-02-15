@@ -21,6 +21,7 @@
                 <field name="date_start"/>
                 <field name="date_end"/>
                 <field name="parent_id"/>
+                <button name="open_res_object" type="object" string="Open linked object"/>
             </field>
         </field>
     </record>
