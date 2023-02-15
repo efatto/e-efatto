@@ -18,7 +18,9 @@ class MrpWorkorder(models.Model):
             lambda x: x.is_resource_planner
         )
         if not activitity_ids:
-            self.env['mail.activity'].create_planner_activity(workorder)
+            self.env['mail.activity'].create_planner_activity(
+                workorder,
+                workorder.user_id or workorder.production_id.user_id)
         return workorder
 
     @api.multi

@@ -1,32 +1,6 @@
 from odoo import api, fields, models
 
 
-class MailActivityType(models.Model):
-    _inherit = 'mail.activity.type'
-
-
-    # TODO: Creare in automatico un oggetto 'resource.assignment' da n oggetti
-    #  creati/modificati/eliminati, mostrando quindi una vista timeline in cui le
-    #  modifiche di data inizio, data fine/durata siano riportate sull'oggetto origine.
-    #  Usare un campo res_model_id -> project.task o mrp.workorder o event ecc.
-    #  e res_id -> id della risorsa collegata, per gestire la risorsa collegata.
-    #  Per comodità creare un mixin da riutilizzare sugli oggetti da tracciare.
-    is_resource_planner = fields.Boolean()
-    date_start_field = fields.Many2one(
-        comodel_name='ir.model.fields'
-    )
-    date_end_field = fields.Many2one(
-        comodel_name='ir.model.fields'
-    )
-    #todo aggiungere campo di default_group_by -> forse l'utente assegnato sull'oggetto?
-    _sql_constraints = [
-        (
-            "activity_planner_type_unique",
-            "UNIQUE (res_model_id, is_resource_planner)",
-            "Another planner activity type exists for the linked res model.",
-        ),
-    ]
-
 class MailActivity(models.Model):
     _inherit = 'mail.activity'
 
@@ -58,11 +32,11 @@ class MailActivity(models.Model):
     ]
     # def write(self, values):
     #     res = super().write(values)
-    #     self.with_context(bypass_resource_planner=True)
+    #     self.with_context(bypass_resource_planner=True).aggiornare il res_model id
     #     return res
 
     @api.model
-    def create_planner_activity(self, object):
+    def create_planner_activity(self, object, user_id):
         res_model = self.env['ir.model'].search([
             ('model', '=', object._name)
         ])
@@ -74,11 +48,11 @@ class MailActivity(models.Model):
             'activity_type_id': activity_type.id,
             'res_model_id': res_model.id,
             'res_id': object.id,
-            'name': object.name,
+            'summary': object.name,
             'partner_id': object.partner_id.id,
             'commercial_partner_id': object.partner_id.commercial_partner_id.id,
             'parent_id': object.parent_id.id,
-            'user_id': object.user_id.id,
+            'user_id': user_id.id,
             'is_resource_planner': True,
         }
         res = self.create(vals)
@@ -87,17 +61,16 @@ class MailActivity(models.Model):
 
     @api.multi
     def _compute_dates(self):
-        # todo force recompute as depends is not possible
         for activity in self:
-            if activity.res_model and activity.res_id \
-                    and activity.activity_type_id.date_start_field \
-                    and activity.activity_type_id.date_end_field:
+            if activity.res_model and activity.res_id:
                 res_object = self.env[activity.res_model].browse(activity.res_id)
-                activity.date_start = getattr(
-                    res_object, activity.activity_type_id.date_start_field.name)
-                activity.date_end = getattr(
-                    res_object, activity.activity_type_id.date_end_field.name)
-                activity.date_deadline = fields.Date.to_date(activity.date_end)
+                if activity.res_model == 'mrp.workorder':
+                    activity.date_start = res_object.date_planned_start
+                    activity.date_end = res_object.date_planned_finished
+                elif activity.res_model == 'project.task':
+                    pass
+                if activity.date_end:
+                    activity.date_deadline = fields.Date.to_date(activity.date_end)
                 if res_object.parent_id:
                     activity.parent_id = res_object.parent_id.activity_ids.filtered(
                         lambda x: x.is_resource_planner
