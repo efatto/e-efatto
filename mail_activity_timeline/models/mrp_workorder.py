@@ -38,5 +38,5 @@ class MrpWorkorder(models.Model):
                         'user_id',
                         'parent_id'
                     ]):
-                        activitity_ids._compute_dates()
+                        activitity_ids._compute_planner()
         return res
