@@ -46,19 +46,9 @@ msgid "Date End"
 msgstr "Data fine"
 
 #. module: mail_activity_timeline
-#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity_type__date_end_field
-msgid "Date End Field"
-msgstr ""
-
-#. module: mail_activity_timeline
 #: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__date_start
 msgid "Date Start"
 msgstr "Data iniziale"
-
-#. module: mail_activity_timeline
-#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity_type__date_start_field
-msgid "Date Start Field"
-msgstr ""
 
 #. module: mail_activity_timeline
 #: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__is_resource_planner

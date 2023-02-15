@@ -9,23 +9,6 @@
             <field name="force_next" position="before">
                 <field name="is_resource_planner"/>
             </field>
-            <field name="res_model_id" position="after">
-                <field name="date_start_field" domain="[('model_id', '=', res_model_id)]"
-                    attrs="{'required': [('is_resource_planner', '=', True)]}"/>
-                <field name="date_end_field" domain="[('model_id', '=', res_model_id)]"/>
-            </field>
-        </field>
-    </record>
-
-    <record model="ir.ui.view" id="mail_activity_type_view_tree">
-        <field name="name">mail.activity.type.tree</field>
-        <field name="model">mail.activity.type</field>
-        <field name="inherit_id" ref="mail.mail_activity_type_view_tree"/>
-        <field name="arch" type="xml">
-            <field name="res_model_id" position="after">
-                <field name="date_start_field"/>
-                <field name="date_end_field"/>
-            </field>
         </field>
     </record>
 

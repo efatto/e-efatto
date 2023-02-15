@@ -17,6 +17,7 @@
         'web_timeline',
     ],
     'data': [
+        'data/mail_activity_type.xml',
         'views/mail_activity.xml',
         'views/mrp_workorder.xml',
     ],
