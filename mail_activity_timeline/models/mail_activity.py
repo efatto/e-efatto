@@ -86,10 +86,6 @@ class MailActivity(models.Model):
         return res
 
     @api.multi
-    def update_dates(self):
-        self._compute_dates()
-
-    @api.multi
     def _compute_dates(self):
         # todo force recompute as depends is not possible
         for activity in self:
