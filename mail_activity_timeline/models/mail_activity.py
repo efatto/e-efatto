@@ -132,6 +132,6 @@ class MailActivity(models.Model):
             'type': 'ir.actions.act_window',
             'name': _('Linked %s' % self.res_model),
             'domain': domain,
-            'views': [(False, 'tree'), (False, 'kanban'), (False, 'form')],
+            'views': [(False, 'form'), (False, 'tree'), (False, 'kanban')],
             'res_model': self.res_model,
         }
