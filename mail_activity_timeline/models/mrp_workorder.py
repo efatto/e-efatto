@@ -36,7 +36,8 @@ class MrpWorkorder(models.Model):
                         'date_planned_start',
                         'date_planned_finished',
                         'user_id',
-                        'parent_id'
+                        'parent_id',
+                        'name'
                     ]):
                         activity_ids._compute_planner()
         return res

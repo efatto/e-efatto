@@ -21,7 +21,6 @@
                 <field name="date_start"/>
                 <field name="date_end"/>
                 <field name="parent_id"/>
-                <button name="open_res_object" type="object" string="Open linked object"/>
             </field>
         </field>
     </record>
@@ -38,14 +37,15 @@
                       dependency_arrow="parent_id">
                 <field name="user_id"/>
                 <field name="is_resource_planner"/>
+                <field name="res_name"/>
                 <templates>
                     <t t-name="timeline-item">
                         <div>
                             <img t-if="record.user_id"
                                  t-attf-src="/web/image/res.users/#{record.user_id[0]}/image/24x24"
                                  t-att-title="record.user_id[1]" width="24" height="24" class="mr8"/>
-                            <span name="display_name">
-                                <t t-esc="record.display_name"/>
+                            <span name="res_name">
+                                <t t-esc="record.res_name"/>
                             </span>
                         </div>
                     </t>

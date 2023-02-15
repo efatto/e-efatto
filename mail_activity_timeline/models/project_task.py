@@ -29,7 +29,8 @@ class ProjectTask(models.Model):
                         'date_start',
                         'date_end',
                         'user_id',
-                        'parent_id'
+                        'parent_id',
+                        'name'
                     ]):
                         activity_ids._compute_planner()
         return res

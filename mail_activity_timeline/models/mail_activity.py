@@ -40,12 +40,17 @@ class MailActivity(models.Model):
                     'date_start',
                     'date_end',
                     'user_id',
-                    'parent_id'
+                    'parent_id',
+                    'summary'
                 ]):
                     res_object = self.env[activity.res_model].browse(
                         activity.res_id)
                     vals = {}
                     if activity.res_model == 'mrp.workorder':
+                        if 'summary' in values:
+                            vals.update({
+                                'name': values['summary']
+                            })
                         if 'date_start' in values:
                             vals.update({
                                 'date_planned_start': values['date_start']
@@ -59,6 +64,10 @@ class MailActivity(models.Model):
                         if 'parent_id' in values:
                             vals.update({'parent_id': values['parent_id']})
                     elif activity.res_model == 'project.task':
+                        if 'summary' in values:
+                            vals.update({
+                                'name': values['summary']
+                            })
                         if 'date_start' in values:
                             vals.update({
                                 'date_start': values['date_start']
@@ -122,16 +131,3 @@ class MailActivity(models.Model):
             else:
                 activity.date_start = False
                 activity.date_end = False
-
-    @api.multi
-    def open_res_object(self):
-        self.ensure_one()
-        res_object = self.env[self.res_model].browse(self.res_id)
-        domain = [('id', 'in', res_object.ids)]
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('Linked %s' % self.res_model),
-            'domain': domain,
-            'views': [(False, 'form'), (False, 'tree'), (False, 'kanban')],
-            'res_model': self.res_model,
-        }
