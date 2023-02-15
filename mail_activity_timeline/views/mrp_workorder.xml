@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record model="ir.ui.view" id="mrp_production_workorder_form_view_inherit">
+        <field name="name">mrp.production.work.order.form</field>
+        <field name="model">mrp.workorder</field>
+        <field name="inherit_id" ref="mrp.mrp_production_workorder_form_view_inherit"/>
+        <field name="arch" type="xml">
+            <field name="message_follower_ids" position="after">
+                <field name="activity_ids" widget="mail_activity"/>
+            </field>
+            <field name="complete_name" position="after">
+                <field name="user_id"/>
+            </field>
+        </field>
+    </record>
+</odoo>
