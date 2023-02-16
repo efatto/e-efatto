@@ -13,3 +13,7 @@ class MailActivityType(models.Model):
             "Another planner activity type exists for the linked res model.",
         ),
     ]
+
+    # aggiungere un blocco all'eliminazione del tipo attività per il modello? essendo
+    # le attività create in automatico da dopo l'installazione, pare abbastanza
+    # difficile che succeda
