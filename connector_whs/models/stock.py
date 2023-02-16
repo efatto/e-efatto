@@ -165,6 +165,12 @@ class Picking(models.Model):
 class StockMove(models.Model):
     _inherit = 'stock.move'
 
+    def _action_assign(self):
+        # Excludes moves wich picking is not 'is_assigned'
+        moves = self.filtered(lambda x: x.picking_id.is_assigned)
+        res = super(StockMove, moves)._action_assign()
+        return res
+
     @api.multi
     def create_whs_list(self):
         whsliste_obj = self.env['hyddemo.whs.liste']
