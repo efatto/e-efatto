@@ -110,9 +110,14 @@ class MailActivity(models.Model):
         return res
 
     @api.multi
+    @api.depends('res_model', 'res_id')
     def _compute_planner(self):
+        # for this compute @api.depends is only partial possible, as dependants fields
+        # (like dates) are not linkable directly, only res_model and res_id
         for activity in self:
-            if activity.res_model and activity.res_id:
+            if activity.res_model and activity.res_id and activity.res_model in [
+                'mrp.workorder', 'project.task'
+            ]:
                 res_object = self.env[activity.res_model].browse(activity.res_id)
                 if activity.res_model == 'mrp.workorder':
                     activity.date_start = res_object.date_planned_start
