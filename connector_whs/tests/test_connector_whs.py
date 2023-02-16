@@ -91,7 +91,7 @@ class TestConnectorWhs(TransactionCase):
     def run_stock_procurement_scheduler(self):
         with mute_logger('odoo.addons.stock.models.procurement'):
             self.procurement_model.run_scheduler(True)
-            time.sleep(45)
+            time.sleep(60)
 
     def simulate_whs_cron(self, whs_lists, elaborato):
         for whs_list in whs_lists:
@@ -159,8 +159,8 @@ class TestConnectorWhs(TransactionCase):
             ),
             sqlparams=None, metadata=None)[0]
         self.assertEqual(len(whs_records2), len(whs_records) + list_len)
-        for stato in set([x[0] for x in whs_records2]):
-            self.assertIn(stato, {5, 1})
+        for Elaborato in set([x[0] for x in whs_records2]):
+            self.assertIn(Elaborato, {5, 1})
         return whs_list
 
     def test_00_complete_picking_from_sale(self):

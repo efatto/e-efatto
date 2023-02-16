@@ -10,15 +10,6 @@ from odoo.exceptions import UserError
 _logger = logging.getLogger(__name__)
 
 
-class StockMove(models.Model):
-    _inherit = "stock.move"
-
-    whs_list_ids = fields.One2many(
-        comodel_name='hyddemo.whs.liste',
-        inverse_name='move_id',
-        string='Whs Lists')
-
-
 class HyddemoWhsListe(models.Model):
     _name = "hyddemo.whs.liste"
     _description = "Lists to synchronize with WHS"
