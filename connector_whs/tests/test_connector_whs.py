@@ -101,6 +101,60 @@ class TestConnectorWhs(TransactionCase):
             self.dbsource.with_context(no_return=True).execute_mssql(
                 sqlquery=set_liste_elaborated_query, sqlparams=None, metadata=None)
 
+    def check_cancel_workflow(self, picking, list_len):
+        whs_records = self.dbsource.execute_mssql(
+            sqlquery="SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE "
+                     "WHERE Riferimento = '%s'" % (
+                picking.sale_id.name if picking.sale_id
+                else picking.purchase_id.name
+            ),
+            sqlparams=None, metadata=None)[0]
+        whs_lists = picking.mapped('move_lines.whs_list_ids')
+        self.assertEqual(len(whs_lists), list_len)
+        whs_list = whs_lists[0]
+        self.assertEqual(whs_list.stato, '2')
+        picking.button_assign()
+        self.assertEqual(picking.state, 'assigned')
+        picking.action_cancel()
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        self.assertEqual(picking.state, 'cancel')
+        self.assertFalse(picking.is_assigned)
+        # check whs lists are in stato '3' -> 'Da NON elaborare'
+        self.assertEqual(set(picking.move_lines.mapped('whs_list_ids.stato')), {'3'})
+        self.simulate_whs_cron(picking.move_lines.mapped('whs_list_ids'), 5)
+        whs_records1 = self.dbsource.execute_mssql(
+            sqlquery="SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE "
+                     "WHERE Riferimento = '%s'" % (
+                picking.sale_id.name if picking.sale_id
+                else picking.purchase_id.name
+            ),
+            sqlparams=None, metadata=None)[0]
+        self.assertEqual(len(whs_records1), len(whs_records))
+        self.assertEqual(set([x[0] for x in whs_records1]), {5})
+        # restore picking to assigned state
+        picking.action_back_to_draft()
+        picking.action_confirm()
+        picking.action_assign()
+        whs_lists = picking.mapped('move_lines.whs_list_ids').filtered(
+            lambda x: x.stato != '3'
+        )
+        self.assertEqual(len(whs_lists), list_len)
+        whs_list = whs_lists[0]
+        self.assertTrue(whs_list)
+        # check whs list is added
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        whs_records2 = self.dbsource.execute_mssql(
+            sqlquery="SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE "
+                     "WHERE Riferimento = '%s'" % (
+                picking.sale_id.name if picking.sale_id
+                else picking.purchase_id.name
+            ),
+            sqlparams=None, metadata=None)[0]
+        self.assertEqual(len(whs_records2), len(whs_records) + list_len)
+        for stato in set([x[0] for x in whs_records2]):
+            self.assertIn(stato, {5, 1})
+        return whs_list
+
     def test_00_complete_picking_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
@@ -241,37 +295,8 @@ class TestConnectorWhs(TransactionCase):
                 self.assertFalse(self.product1.customer_ids[0].product_code in
                                  whs_record.values())
 
-        # check cancel workflow
-        whs_lists = picking.mapped('move_lines.whs_list_ids')
-        self.assertEqual(len(whs_lists), 2)
-        whs_list = whs_lists[0]
-        self.assertEqual(whs_list.stato, '2')
-        picking.button_assign()
-        self.assertEqual(picking.state, 'assigned')
-        picking.action_cancel()
-        self.dbsource.whs_insert_read_and_synchronize_list()
-        self.assertEqual(picking.state, 'cancel')
-        self.assertFalse(picking.is_assigned)
-        # check whs lists are in stato '3' -> 'Da NON elaborare'
-        self.assertEqual(set(picking.move_lines.mapped('whs_list_ids.stato')), {'3'})
-        self.simulate_whs_cron(picking.move_lines.mapped('whs_list_ids'), 5)
-        whs_records = self.dbsource.execute_mssql(
-            sqlquery="SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE",
-            sqlparams=None, metadata=None)[0]
-        self.assertEqual(len(whs_records), whs_len_records + 2)
-        self.assertEqual(set([x[0] for x in whs_records]), {5})
-        # restore picking to assigned state
-        picking.action_back_to_draft()
-        picking.action_confirm()
-        picking.action_assign()
-        whs_lists = picking.mapped('move_lines.whs_list_ids').filtered(
-            lambda x: x.stato != '3'
-        )
-        self.assertEqual(len(whs_lists), 2)
-        whs_list = whs_lists[0]
-        self.assertTrue(whs_list)
-        # check whs list is added
-        self.dbsource.whs_insert_read_and_synchronize_list()
+        whs_list = self.check_cancel_workflow(picking, 2)
+
         whs_records = self.dbsource.execute_mssql(
             sqlquery="SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE",
             sqlparams=None, metadata=None)[0]
@@ -878,6 +903,8 @@ class TestConnectorWhs(TransactionCase):
             sqlquery=whs_select_query, sqlparams=None, metadata=None)
         self.assertEqual(str(result_liste[0]), "[(Decimal('18.000'), None)]")
 
+        self.check_cancel_workflow(backorder_picking, 1)
+
         # simulate whs work set done to rest of backorder
         set_liste_elaborated_query = \
             "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=%s WHERE " \
@@ -889,4 +916,4 @@ class TestConnectorWhs(TransactionCase):
 
         self.dbsource.whs_insert_read_and_synchronize_list()
         backorder_picking.button_validate()
-        self.assertEqual(backorder_picking.state, 'done')
+        self.assertEqual(backorder_picking.state, 'waiting')
