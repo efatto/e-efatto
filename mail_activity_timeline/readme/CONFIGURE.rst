@@ -18,4 +18,7 @@ Nel caso in cui l'attività venga modificata per quanto riguarda nome, utente as
 .. image:: ../static/description/menu.png
     :alt: Menu
 
-È possibile modificare l'utente assegnato e le date di attività trascinando l'oggetto a video.
+È possibile modificare l'utente assegnato e le date di attività trascinando l'oggetto a video nella timeline:
+
+.. image:: ../static/description/timeline.png
+    :alt: Timeline
