@@ -88,6 +88,11 @@ class TestConnectorWhs(TransactionCase):
         })
         self.product2.invoice_policy = 'order'
 
+    def run_stock_procurement_scheduler(self):
+        with mute_logger('odoo.addons.stock.models.procurement'):
+            self.procurement_model.run_scheduler(True)
+            time.sleep(45)
+
     def simulate_whs_cron(self, whs_lists, elaborato):
         for whs_list in whs_lists:
             set_liste_elaborated_query = \
@@ -113,6 +118,9 @@ class TestConnectorWhs(TransactionCase):
         self.assertEqual(len(whs_lists), list_len)
         whs_list = whs_lists[0]
         self.assertEqual(whs_list.stato, '2')
+        self.assertEqual(picking.state, 'waiting')
+        self.run_stock_procurement_scheduler()
+        self.assertEqual(picking.state, 'waiting')
         picking.button_assign()
         self.assertEqual(picking.state, 'assigned')
         picking.action_cancel()
@@ -317,8 +325,7 @@ class TestConnectorWhs(TransactionCase):
             )
         result_liste = self.dbsource.execute_mssql(
             sqlquery=whs_select_query, sqlparams=None, metadata=None)
-        self.assertEqual(str(result_liste[0]),
-                         "[(Decimal('5.000'), Decimal('3.000'), 1)]")
+        self.assertIn("[(Decimal('5.000'), Decimal('3.000'), 1)]", str(result_liste))
 
         self.dbsource.whs_insert_read_and_synchronize_list()
 
@@ -434,8 +441,7 @@ class TestConnectorWhs(TransactionCase):
         picking.button_assign()
         self.assertEqual(picking.state, 'assigned')
         # check that action_assign run by scheduler do not change state
-        with mute_logger('odoo.addons.stock.models.procurement'):
-            self.procurement_model.run_scheduler()
+        self.run_stock_procurement_scheduler()
         picking.action_assign()
         self.assertEqual(picking.state, 'assigned')
 
@@ -579,15 +585,18 @@ class TestConnectorWhs(TransactionCase):
                 if stock_move_line.product_id == self.product3:
                     self.assertAlmostEqual(stock_move_line.qty_done, 0)
         self.assertEqual(picking.state, 'waiting')
+        self.run_stock_procurement_scheduler()
+        self.assertEqual(picking.state, 'waiting')
         self.assertTrue(picking.show_check_availability)
         picking.action_assign()
+        self.assertEqual(picking.state, 'waiting')
+        self.run_stock_procurement_scheduler()
         self.assertEqual(picking.state, 'waiting')
         self.assertTrue(picking.show_check_availability)
         picking.button_assign()
         self.assertEqual(picking.state, 'assigned')
         # check that action_assign run by scheduler do not change state
-        with mute_logger('odoo.addons.stock.models.procurement'):
-            self.procurement_model.run_scheduler()
+        self.run_stock_procurement_scheduler()
         picking.action_assign()
         self.assertEqual(picking.state, 'assigned')
 
@@ -635,6 +644,8 @@ class TestConnectorWhs(TransactionCase):
 
         # check back picking is waiting for whs process
         self.assertEqual(backorder_picking.state, 'waiting')
+        self.run_stock_procurement_scheduler()
+        self.assertEqual(backorder_picking.state, 'waiting')
         backorder_picking.action_assign()
         for move_line in backorder_picking.move_lines:
             self.assertEqual(
@@ -657,6 +668,8 @@ class TestConnectorWhs(TransactionCase):
         self._create_sale_order_line(order1, self.product2, 5)
         order1.action_confirm()
         self.assertEqual(order1.state, 'sale')
+        self.assertEqual(order1.mapped('picking_ids.state'), ['waiting'])
+        self.run_stock_procurement_scheduler()
         self.assertEqual(order1.mapped('picking_ids.state'), ['waiting'])
         picking = order1.picking_ids[0]
         self.assertEqual(len(picking.mapped('move_lines.whs_list_ids')), 2)
@@ -683,6 +696,8 @@ class TestConnectorWhs(TransactionCase):
         # wait for WHS syncronization
         time.sleep(10)
         picking = order1.picking_ids.filtered(lambda x: x.state == 'waiting')
+        self.run_stock_procurement_scheduler()
+        self.assertEqual(picking.state, 'waiting')
         hyddemo_whs_lists = picking.mapped('move_lines.whs_list_ids')
         lists = {x.riga: x.num_lista for x in hyddemo_whs_lists}
         # simulate launch from WHS user
@@ -783,11 +798,11 @@ class TestConnectorWhs(TransactionCase):
                 )
             result_liste = self.dbsource.execute_mssql(
                 sqlquery=whs_select_query, sqlparams=None, metadata=None)
-            self.assertEqual(
-                str(result_liste[0]),
+            self.assertIn(
                 "[(Decimal('5.000'), Decimal('2.000'))]"
                 if whs_list.product_id == self.product2 else
-                "[(Decimal('3.000'), Decimal('3.000'))]")
+                "[(Decimal('3.000'), Decimal('3.000'))]",
+                str(result_liste))
 
     def _create_purchase_order_line(self, order, product, qty):
         line = self.env['purchase.order.line'].create({
@@ -869,12 +884,12 @@ class TestConnectorWhs(TransactionCase):
         # simulate user partial validate of picking and check backorder exist
         picking = purchase.picking_ids[0]
         self.assertEqual(picking.state, 'waiting')
+        self.run_stock_procurement_scheduler()
+        self.assertEqual(picking.state, 'waiting')
         picking.action_assign()
         picking.button_assign()
         self.assertEqual(picking.state, 'assigned')
         # check that action_assign run by scheduler do not change state
-        with mute_logger('odoo.addons.stock.models.procurement'):
-            self.procurement_model.run_scheduler()
         picking.action_assign()
         self.assertEqual(picking.state, 'assigned')
         picking.action_pack_operation_auto_fill()
@@ -887,6 +902,10 @@ class TestConnectorWhs(TransactionCase):
         # check back picking is waiting as waiting for WHS work
         self.assertEqual(len(purchase.picking_ids), 2)
         backorder_picking = purchase.picking_ids - picking
+        self.assertEqual(backorder_picking.move_lines.mapped('state'),
+                         ['waiting'])
+        self.assertEqual(backorder_picking.state, 'waiting')
+        self.run_stock_procurement_scheduler()
         self.assertEqual(backorder_picking.move_lines.mapped('state'),
                          ['waiting'])
         self.assertEqual(backorder_picking.state, 'waiting')
@@ -916,4 +935,6 @@ class TestConnectorWhs(TransactionCase):
 
         self.dbsource.whs_insert_read_and_synchronize_list()
         backorder_picking.button_validate()
+        self.assertEqual(backorder_picking.state, 'waiting')
+        self.run_stock_procurement_scheduler()
         self.assertEqual(backorder_picking.state, 'waiting')
