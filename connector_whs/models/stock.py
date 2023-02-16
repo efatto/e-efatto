@@ -24,6 +24,15 @@ class Picking(models.Model):
 
     is_assigned = fields.Boolean()
 
+    @api.depends('move_type', 'move_lines.state', 'move_lines.picking_id',
+                 'is_assigned')
+    @api.one
+    def _compute_state(self):
+        if self.state == 'waiting' and not self.is_assigned:
+            pass
+        else:
+            super()._compute_state()
+
     @api.multi
     def action_pack_operation_auto_fill(self):
         super(Picking, self).action_pack_operation_auto_fill()
@@ -118,8 +127,11 @@ class Picking(models.Model):
                 ))
             moves.create_whs_list()
             if pick.state == 'waiting':
+                # split write as state is only writeable if is_assigned is already True
                 pick.write({
                     'is_assigned': True,
+                })
+                pick.write({
                     'state': 'assigned',
                 })
 
@@ -165,11 +177,10 @@ class Picking(models.Model):
 class StockMove(models.Model):
     _inherit = 'stock.move'
 
-    def _action_assign(self):
-        # Excludes moves wich picking is not 'is_assigned'
-        moves = self.filtered(lambda x: x.picking_id.is_assigned)
-        res = super(StockMove, moves)._action_assign()
-        return res
+    whs_list_ids = fields.One2many(
+        comodel_name='hyddemo.whs.liste',
+        inverse_name='move_id',
+        string='Whs Lists')
 
     @api.multi
     def create_whs_list(self):
