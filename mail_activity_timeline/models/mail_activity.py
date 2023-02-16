@@ -83,6 +83,9 @@ class MailActivity(models.Model):
                     res_object.with_context(
                         bypass_resource_planner=True
                     ).write(vals)
+                    if 'name' in vals:
+                        # force recompute of res_name as it is not present in depends
+                        activity._compute_res_name()
         return res
 
     @api.model

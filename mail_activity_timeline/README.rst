@@ -49,7 +49,10 @@ Nel caso in cui l'attività venga modificata per quanto riguarda nome, utente as
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mail_activity_timeline/static/description/menu.png
     :alt: Menu
 
-È possibile modificare l'utente assegnato e le date di attività trascinando l'oggetto a video.
+È possibile modificare l'utente assegnato e le date di attività trascinando l'oggetto a video nella timeline:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mail_activity_timeline/static/description/timeline.png
+    :alt: Timeline
 
 Bug Tracker
 ===========
