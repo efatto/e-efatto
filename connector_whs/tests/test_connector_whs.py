@@ -160,7 +160,8 @@ class TestConnectorWhs(TransactionCase):
             sqlparams=None, metadata=None)[0]
         self.assertEqual(len(whs_records2), len(whs_records) + list_len)
         for Elaborato in set([x[0] for x in whs_records2]):
-            self.assertIn(Elaborato, {5, 1})
+            # WHS cron change Elaborato to 2 in an un-controllable time
+            self.assertIn(Elaborato, {5, 1, 2})
         return whs_list
 
     def test_00_complete_picking_from_sale(self):
