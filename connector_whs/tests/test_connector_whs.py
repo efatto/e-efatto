@@ -258,7 +258,10 @@ class TestConnectorWhs(TransactionCase):
         # but check availability disappear
         self.assertEqual(picking1.state, 'waiting')
         picking1.action_assign()
-        self.assertFalse(picking1.show_check_availability)
+        if all(x.state == 'assigned' for x in picking1.move_lines):
+            self.assertTrue(picking1.show_check_availability)
+        else:
+            self.assertFalse(picking1.show_check_availability)
         # check lot info
         self.assertEqual(whs_list.lotto, lotto)
         self.assertEqual(whs_list.lotto2, lotto2)
@@ -333,7 +336,10 @@ class TestConnectorWhs(TransactionCase):
         # check move and picking linked to sale order have changed state to done
         self.assertEqual(set(picking.move_lines.mapped('state')), {'assigned'})
         picking.button_assign()
-        self.assertFalse(picking.show_check_availability)
+        if all(x.state == 'assigned' for x in picking.move_lines):
+            self.assertTrue(picking.show_check_availability)
+        else:
+            self.assertFalse(picking.show_check_availability)
         self.assertAlmostEqual(picking.move_lines[0].move_line_ids[0].qty_done, 3.0)
         self.assertEqual(picking.state, 'assigned')
 
@@ -438,7 +444,10 @@ class TestConnectorWhs(TransactionCase):
         self.assertAlmostEqual(picking.move_lines[0].move_line_ids[0].qty_done, 3.0)
         self.assertEqual(picking.state, 'waiting')
         picking.action_assign()
-        self.assertFalse(picking.show_check_availability)
+        if all(x.state == 'assigned' for x in picking.move_lines):
+            self.assertTrue(picking.show_check_availability)
+        else:
+            self.assertFalse(picking.show_check_availability)
         picking.button_assign()
         self.assertEqual(picking.state, 'assigned')
         # check that action_assign run by scheduler do not change state

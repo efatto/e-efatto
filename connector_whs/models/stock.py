@@ -103,6 +103,12 @@ class Picking(models.Model):
         return res
 
     @api.multi
+    def do_unreserve(self):
+        res = super().do_unreserve()
+        self.write({'is_assigned': False})
+        return res
+
+    @api.multi
     def action_assign(self):
         res = super(Picking, self).action_assign()
         # get moves without active whs list by stato
