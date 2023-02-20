@@ -22,16 +22,7 @@ class StockBackorderConfirmation(models.TransientModel):
 class Picking(models.Model):
     _inherit = "stock.picking"
 
-    is_assigned = fields.Boolean()
-
-    @api.depends('move_type', 'move_lines.state', 'move_lines.picking_id',
-                 'is_assigned')
-    @api.one
-    def _compute_state(self):
-        if self.state == 'waiting' and not self.is_assigned:
-            pass
-        else:
-            super()._compute_state()
+    is_assigned = fields.Boolean(string="Printed for logistic")
 
     @api.multi
     def action_pack_operation_auto_fill(self):
@@ -117,29 +108,15 @@ class Picking(models.Model):
                 y.stato != '3' for y in x.whs_list_ids
             ))
         moves.create_whs_list()
-        for pick in self.filtered(lambda picking: not picking.is_assigned):
-            pick.state = 'waiting'
         return res
 
     @api.multi
-    def button_assign(self):
-        # add extra button to manually change state from waiting to assign,
-        # as it is controlled by user intervention
-        for pick in self:
-            # get moves without active whs list by stato
-            moves = self.mapped('move_lines').filtered(
-                lambda x: not any(
-                    y.stato != '3' for y in x.whs_list_ids
-                ))
-            moves.create_whs_list()
-            if pick.state == 'waiting':
-                # split write as state is only writeable if is_assigned is already True
-                pick.write({
-                    'is_assigned': True,
-                })
-                pick.write({
-                    'state': 'assigned',
-                })
+    def mark_printed_for_logistic(self):
+        self.write({'is_assigned': True})
+
+    @api.multi
+    def unmark_printed_for_logistic(self):
+        self.write({'is_assigned': False})
 
     @api.multi
     def unlink(self):

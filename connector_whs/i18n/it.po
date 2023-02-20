@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-05 10:10+0000\n"
-"PO-Revision-Date: 2022-10-05 10:10+0000\n"
+"POT-Creation-Date: 2023-02-20 17:47+0000\n"
+"PO-Revision-Date: 2023-02-20 17:47+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,6 +21,12 @@ msgid "<span>Synchronize stock inventory. </span>\n"
 "                        <span>If 'do_sync' is not set, it create and show only a log saved in Whslog.</span>"
 msgstr "<span>Sincronizza inventario. </span>\n"
 "                        <span>Se 'do_sync' non è impostato, crea e mostra solo un log salvato in Whslog.</span>"
+
+#. module: connector_whs
+#: code:addons/connector_whs/models/mrp.py:23
+#, python-format
+msgid "Almost a WHS list is not in state \"Ricevuto Esito\"!"
+msgstr ""
 
 #. module: connector_whs
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_wizard_sync_stock_whs_mssql
@@ -161,10 +167,10 @@ msgstr "Sorgenti Database Esterne"
 #: code:addons/connector_whs/models/hyddemo_mssql_log.py:246
 #: code:addons/connector_whs/models/hyddemo_mssql_log.py:285
 #: code:addons/connector_whs/models/hyddemo_mssql_log.py:414
-#: code:addons/connector_whs/models/hyddemo_whs_liste.py:103
-#: code:addons/connector_whs/models/hyddemo_whs_liste.py:130
-#: code:addons/connector_whs/models/hyddemo_whs_liste.py:195
-#: code:addons/connector_whs/wizard/wizard_sync_stock_whs_mssql.py:23
+#: code:addons/connector_whs/models/hyddemo_whs_liste.py:94
+#: code:addons/connector_whs/models/hyddemo_whs_liste.py:121
+#: code:addons/connector_whs/models/hyddemo_whs_liste.py:186
+#: code:addons/connector_whs/wizard/wizard_sync_stock_whs_mssql.py:24
 #, python-format
 msgid "Failed to open connection!"
 msgstr "Apertura connessione al DB fallita!"
@@ -296,11 +302,6 @@ msgid "Lotto5"
 msgstr ""
 
 #. module: connector_whs
-#: model_terms:ir.ui.view,arch_db:connector_whs.view_picking_form
-msgid "Mark as Ready"
-msgstr "Segna DA FARE"
-
-#. module: connector_whs
 #: selection:hyddemo.mssql.log.line,type:0
 msgid "Mismatch"
 msgstr "Squadrato"
@@ -343,6 +344,12 @@ msgstr ""
 #. module: connector_whs
 #: selection:hyddemo.whs.liste,tipo:0
 msgid "Prelievo"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_stock_picking__is_assigned
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_picking_form
+msgid "Printed for logistic"
 msgstr ""
 
 #. module: connector_whs
@@ -421,6 +428,11 @@ msgid "Record Production"
 msgstr "Registrare la Produzione"
 
 #. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_picking_form
+msgid "Remove printed for logistic"
+msgstr ""
+
+#. module: connector_whs
 #: model:ir.model,name:connector_whs.model_repair_order
 msgid "Repair Order"
 msgstr "Ordine di riparazione"
@@ -446,7 +458,7 @@ msgid "Service"
 msgstr "Servizio"
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/stock.py:131
+#: code:addons/connector_whs/models/stock.py:140
 #, python-format
 msgid "Some moves already elaborated from WHS!"
 msgstr "Alcuni movimenti già elaborati da WHS!"
@@ -498,31 +510,31 @@ msgid "Transfer"
 msgstr "Trasferimento"
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/hyddemo_whs_liste.py:160
+#: code:addons/connector_whs/models/hyddemo_whs_liste.py:151
 #, python-format
 msgid "Trying to cancel lists elaborated from WHS, please wait for cron synchronization or force it."
 msgstr "Tentativo di annullare liste elaborate da WHS, si prega di attendere o forzare la sincronizzazione."
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/hyddemo_whs_liste.py:172
+#: code:addons/connector_whs/models/hyddemo_whs_liste.py:163
 #, python-format
 msgid "Trying to cancel lists launched in processing from user in WHS, please wait for order end processing."
 msgstr "Tentativo di annullare liste lanciate in elaborazione dall'utente in WHS, si prega di attendere il completamento dell'operazione."
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/stock.py:44
+#: code:addons/connector_whs/models/stock.py:46
 #, python-format
 msgid "Trying to validate picking %s which is already elaborated on Whs with different qty."
 msgstr "Tentativo di validare il picking %s che è già stato elaborato in Whs con una quantità diversa."
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/stock.py:56
+#: code:addons/connector_whs/models/stock.py:58
 #, python-format
 msgid "Trying to validate picking %s which is not elaborated on Whs."
 msgstr "Tentativo di validare picking %s che non è stato elaborato in Whs."
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/stock.py:51
+#: code:addons/connector_whs/models/stock.py:53
 #, python-format
 msgid "Trying to validate picking %s which is not processable in Odoo but elaborated on Whs."
 msgstr "Tentativo di validare il trasferimento %s che non è processabile in Odoo ma elaborato in WHS."
@@ -556,6 +568,16 @@ msgstr "Liste Whs"
 #: model:ir.model.fields,field_description:connector_whs.field_base_external_dbsource__warehouse_id
 msgid "Warehouse linked to WHS"
 msgstr "Magazzino collegato a WHS"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__weight
+msgid "Weight"
+msgstr "Peso"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__weight_wrong
+msgid "Weight Wrong"
+msgstr ""
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__whs_list_absent
