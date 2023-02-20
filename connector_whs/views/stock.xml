@@ -27,8 +27,8 @@
         <field name="arch" type="xml">
             <button name="button_validate" position="after">
                 <field name="is_assigned" invisible="1"/>
-                <button name="mark_printed_for_logistic" attrs="{'invisible': [('is_assigned', '=', True)]}" string="Printed for logistic" type="object" class="oe_highlight" groups="stock.group_stock_user"/>
-                <button name="unmark_printed_for_logistic" attrs="{'invisible': [('is_assigned', '=', False)]}" string="Remove printed for logistic" type="object" groups="stock.group_stock_user"/>
+                <button name="mark_printed_for_logistic" attrs="{'invisible': [('is_assigned', '=', True)]}" string="Mark printed for logistic" type="object" class="oe_highlight" groups="stock.group_stock_user"/>
+                <button name="unmark_printed_for_logistic" attrs="{'invisible': [('is_assigned', '=', False)]}" string="Unmark printed for logistic" type="object" groups="stock.group_stock_user"/>
             </button>
         </field>
     </record>

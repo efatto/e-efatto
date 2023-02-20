@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-20 17:47+0000\n"
-"PO-Revision-Date: 2023-02-20 17:47+0000\n"
+"POT-Creation-Date: 2023-02-20 17:56+0000\n"
+"PO-Revision-Date: 2023-02-20 17:56+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -302,6 +302,11 @@ msgid "Lotto5"
 msgstr ""
 
 #. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_picking_form
+msgid "Mark printed for logistic"
+msgstr "Marca stampato logistica"
+
+#. module: connector_whs
 #: selection:hyddemo.mssql.log.line,type:0
 msgid "Mismatch"
 msgstr "Squadrato"
@@ -348,9 +353,8 @@ msgstr ""
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_stock_picking__is_assigned
-#: model_terms:ir.ui.view,arch_db:connector_whs.view_picking_form
 msgid "Printed for logistic"
-msgstr ""
+msgstr "Stampato Logistica"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__priorita
@@ -426,11 +430,6 @@ msgstr ""
 #: model:ir.model,name:connector_whs.model_mrp_product_produce
 msgid "Record Production"
 msgstr "Registrare la Produzione"
-
-#. module: connector_whs
-#: model_terms:ir.ui.view,arch_db:connector_whs.view_picking_form
-msgid "Remove printed for logistic"
-msgstr ""
 
 #. module: connector_whs
 #: model:ir.model,name:connector_whs.model_repair_order
@@ -543,6 +542,11 @@ msgstr "Tentativo di validare il trasferimento %s che non è processabile in Odo
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__type
 msgid "Type"
 msgstr "Tipo"
+
+#. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_picking_form
+msgid "Unmark printed for logistic"
+msgstr "Rimuovi stampato logistica"
 
 #. module: connector_whs
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_dbsource_form
