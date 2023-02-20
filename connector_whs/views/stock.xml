@@ -26,7 +26,9 @@
         <field name="inherit_id" ref="stock.view_picking_form"/>
         <field name="arch" type="xml">
             <button name="button_validate" position="after">
-                <button name="button_assign" attrs="{'invisible': ['|', ('state', '!=', 'waiting'), ('show_check_availability', '=', True)]}" string="Mark as Ready" type="object" class="oe_highlight" groups="stock.group_stock_user"/>
+                <field name="is_assigned" invisible="1"/>
+                <button name="mark_printed_for_logistic" attrs="{'invisible': [('is_assigned', '=', True)]}" string="Printed for logistic" type="object" class="oe_highlight" groups="stock.group_stock_user"/>
+                <button name="unmark_printed_for_logistic" attrs="{'invisible': [('is_assigned', '=', False)]}" string="Remove printed for logistic" type="object" groups="stock.group_stock_user"/>
             </button>
         </field>
     </record>
