@@ -5,7 +5,7 @@ from odoo import fields
 from odoo.tests.common import TransactionCase
 from odoo.addons.base_external_dbsource.exceptions import ConnectionSuccessError
 from odoo.tests import tagged
-from odoo.tools import mute_logger
+from odoo.tools import mute_logger, relativedelta
 from odoo.exceptions import UserError
 import os
 import time
@@ -76,6 +76,7 @@ class TestConnectorWhs(TransactionCase):
         self.product3 = self.env.ref('product.product_product_6')
         # Drawer Black, 0 on hand
         self.product4 = self.env.ref('product.product_product_16')
+        self.product5 = self.env.ref('product.product_product_20')
         self.product1.invoice_policy = 'order'
         self.product1.write({
             'customer_ids': [
@@ -146,7 +147,8 @@ class TestConnectorWhs(TransactionCase):
         # restore picking to assigned state
         picking.action_back_to_draft()
         picking.action_confirm()
-        picking.action_assign()
+        if picking.sale_id:
+            picking.action_assign()
         whs_lists = picking.mapped('move_lines.whs_list_ids').filtered(
             lambda x: x.stato != '3'
         )
@@ -814,7 +816,7 @@ class TestConnectorWhs(TransactionCase):
                 "[(Decimal('3.000'), Decimal('3.000'))]",
                 str(result_liste))
 
-    def _create_purchase_order_line(self, order, product, qty):
+    def _create_purchase_order_line(self, order, product, qty, date_planned):
         line = self.env['purchase.order.line'].create({
             'order_id': order.id,
             'product_id': product.id,
@@ -822,8 +824,9 @@ class TestConnectorWhs(TransactionCase):
             'name': product.name,
             'product_qty': qty,
             'price_unit': 100,
-            'date_planned': fields.Datetime.today(),
+            'date_planned': date_planned,
             })
+        line.order_id.onchange_partner_id()
         return line
 
     def test_06_purchase(self):
@@ -836,8 +839,12 @@ class TestConnectorWhs(TransactionCase):
         purchase = self.env['purchase.order'].create({
             'partner_id': self.partner.id,
             })
-        self._create_purchase_order_line(purchase, self.product2, 20)
-        self._create_purchase_order_line(purchase, self.product3, 3)
+        self._create_purchase_order_line(
+            purchase, self.product2, 20,
+            fields.Datetime.today() + relativedelta(month=1))
+        self._create_purchase_order_line(
+            purchase, self.product3, 3,
+            fields.Datetime.today() + relativedelta(month=1))
         purchase.button_approve()
         self.assertEqual(
             purchase.state, 'purchase', 'Purchase state should be "Purchase"')
@@ -913,12 +920,10 @@ class TestConnectorWhs(TransactionCase):
         # check back picking is waiting as waiting for WHS work
         self.assertEqual(len(purchase.picking_ids), 2)
         backorder_picking = purchase.picking_ids - picking
-        self.assertEqual(backorder_picking.move_lines.mapped('state'),
-                         ['waiting'])
+        self.assertEqual(backorder_picking.move_lines.mapped('state'), ['waiting'])
         self.assertEqual(backorder_picking.state, 'waiting')
         self.run_stock_procurement_scheduler()
-        self.assertEqual(backorder_picking.move_lines.mapped('state'),
-                         ['waiting'])
+        self.assertEqual(backorder_picking.move_lines.mapped('state'), ['waiting'])
         self.assertEqual(backorder_picking.state, 'waiting')
 
         # check whs_list for backorder is created
@@ -932,9 +937,9 @@ class TestConnectorWhs(TransactionCase):
         result_liste = self.dbsource.execute_mssql(
             sqlquery=whs_select_query, sqlparams=None, metadata=None)
         self.assertEqual(str(result_liste[0]), "[(Decimal('18.000'), None)]")
-
+        # TODO check cancel workflow without action_assign that create whs list anyway
         self.check_cancel_workflow(backorder_picking, 1)
-
+        backorder_picking.action_assign()
         # simulate whs work set done to rest of backorder
         set_liste_elaborated_query = \
             "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=%s WHERE " \
@@ -946,6 +951,37 @@ class TestConnectorWhs(TransactionCase):
 
         self.dbsource.whs_insert_read_and_synchronize_list()
         backorder_picking.button_validate()
-        self.assertEqual(backorder_picking.state, 'waiting')
+        self.assertEqual(backorder_picking.state, 'assigned')
         self.run_stock_procurement_scheduler()
-        self.assertEqual(backorder_picking.state, 'waiting')
+        self.assertEqual(backorder_picking.state, 'assigned')
+        self.assertFalse(all(whs_list.stato == '3' for whs_list in
+                             backorder_picking.move_lines.whs_list_ids))
+        # Check product added to purchase order after confirm create whs list with
+        # different date_planned which create a new picking (as this module depends on
+        # purchase_delivery_split_date)
+        whs_len_records = len(self.dbsource.execute_mssql(
+            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0])
+        self._create_purchase_order_line(
+            purchase, self.product4, 20,
+            fields.Datetime.today() + relativedelta(month=2))
+        new_picking = purchase.picking_ids - (picking | backorder_picking)
+        new_picking.action_assign()
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        self.assertEqual(len(self.dbsource.execute_mssql(
+            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0]),
+            whs_len_records + 1)
+        # Check product added to purchase order after confirm create whs list with
+        # same date_planned which add product to an existing open picking
+        self._create_purchase_order_line(
+            purchase, self.product5, 20,
+            fields.Datetime.today() + relativedelta(month=2))
+        self._create_purchase_order_line(
+            purchase, self.product5, 20,
+            fields.Datetime.today() + relativedelta(month=2))
+        move_new_product = purchase.picking_ids.mapped('move_lines').filtered(
+            lambda x: x.product_id == self.product5
+        )
+        move_new_product.mapped("picking_id").action_assign() # fixme automate it!
+        self.assertEqual(len(self.dbsource.execute_mssql(
+            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0]),
+            whs_len_records + 2)
