@@ -90,6 +90,9 @@ class Picking(models.Model):
     @api.multi
     def action_confirm(self):
         res = super(Picking, self).action_confirm()
+        for picking in self:
+            if all(move.state == 'assigned' for move in picking.move_lines):
+                self.mapped('move_lines').create_whs_list()
         self.write({'state': 'waiting'})
         return res
 
