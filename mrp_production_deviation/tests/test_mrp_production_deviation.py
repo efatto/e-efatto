@@ -241,7 +241,6 @@ class TestMrpProductionDeviation(TestProductionData):
         production_qty = 5
         self.main_bom.routing_id = self.routing1
         self.top_product.tracking = "serial"
-        # self.subproduct_2_1.tracking = "serial"
         man_order = self.env['mrp.production'].create({
             'name': 'MO-Test',
             'product_id': self.top_product.id,
@@ -260,7 +259,7 @@ class TestMrpProductionDeviation(TestProductionData):
                     'name': 'Final lot %s' % (finished_move_line.id),
                     'product_id': self.top_product.id,
                 })
-            finished_move_line.lot_id = lot
+            finished_move_line.write({"lot_id": lot.id})
 
         deviation_data = self.get_deviation_data(man_order)
         self.assertTrue(deviation_data)
@@ -346,7 +345,6 @@ class TestMrpProductionDeviation(TestProductionData):
         self.assertAlmostEqual(workorders_data_1[0].get('cost_expected_rw'),
                                duration_expected_rw / 60 * self.workcenter1.costs_hour)
 
-        # todo aggiungere delle righe extra-bom
         man_order.action_toggle_is_locked()
         man_order.write({
             'move_raw_ids': [
@@ -383,6 +381,13 @@ class TestMrpProductionDeviation(TestProductionData):
             # produce residual 3 products
             for n in range(0, 3):
                 workorder.sudo(self.mrp_user).record_production()
+        # force quantity_done for product_2 and assign lot produced
+        move_raw.write({'quantity_done': 3})
+        move_raw._action_confirm()
+        move_raw.active_move_line_ids[0].write({
+            "lot_produced_id": man_order.finished_move_line_ids[0].lot_id.id,
+        })
+        self.assertEqual(move_raw.quantity_done, 3)
         move_raw_sub_2_1 = man_order.move_raw_ids.filtered(
             lambda x: x.product_id == self.subproduct_2_1
         )
@@ -436,11 +441,11 @@ class TestMrpProductionDeviation(TestProductionData):
             sum(x['cost_expected'] for x in product_2_deviation_datas_4), 0)
         self.assertAlmostEqual(
             sum(x['quantity_expected'] for x in product_2_deviation_datas_4), 0)
-        # self.assertAlmostEqual(
-        #     sum(x['product_qty'] for x in product_2_deviation_datas_4), 3)
-        # self.assertAlmostEqual(
-        #     sum(x['cost_current'] for x in product_2_deviation_datas_4),
-        #     3 * self.product_2.standard_price)
+        self.assertAlmostEqual(
+            sum(x['product_qty'] for x in product_2_deviation_datas_4), 3)
+        self.assertAlmostEqual(
+            sum(x['cost_current'] for x in product_2_deviation_datas_4),
+            3 * self.product_2.standard_price)
 
         # check subproduct_2_1 has correct report values
         subproduct_2_1_deviation_datas_4 = [
