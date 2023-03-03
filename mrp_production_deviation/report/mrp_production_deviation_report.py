@@ -56,7 +56,7 @@ class MrpProductionDeviationReport(models.Model):
                 coalesce(SUM(sub.cost_expected_rw), 0) AS cost_expected_rw,
                 coalesce(SUM(sub.cost), 0) AS cost,
                 coalesce(SUM(sub.cost_current), 0) AS cost_current,
-                coalesce(SUM(sub.unit_cost), 0) AS unit_cost,
+                coalesce(MAX(sub.unit_cost), 0) AS unit_cost,
                 coalesce(sum(sub.cost), 0) - 
                     coalesce(sum(sub.cost_expected), 0) AS cost_deviation,
                 coalesce(sum(sub.cost), 0) - 
@@ -94,28 +94,51 @@ class MrpProductionDeviationReport(models.Model):
                 s.product_id,
                 coalesce(SUM(s.expected_product_uom_qty), 0) 
                  AS quantity_expected,
-                coalesce(SUM(sml.qty_done), 0) AS product_qty,
+                coalesce(
+                    (
+                        SELECT SUM(sml.qty_done) FROM stock_move_line sml
+                        LEFT JOIN stock_move sm ON sm.id = sml.move_id
+                        WHERE sm.id = s.id
+                        GROUP BY sm
+                    )
+                    , 0) AS product_qty,
                 0 AS duration_expected,
                 0 AS duration_expected_rw,
                 0 AS duration,
                 coalesce(SUM(s.expected_product_uom_qty * ABS(s.price_unit)), 0)
                  AS cost_expected,
                 0 AS cost_expected_rw,
-                coalesce(SUM(sml.qty_done * ABS(s.price_unit)), 0) AS cost,
-                coalesce(SUM(sml.qty_done * (
-                      SELECT ip.value_float FROM ir_property ip
-                         WHERE ip.res_id = CONCAT('product.product,', pp.id)
-                         AND ip.name = 'standard_price'
-                         ORDER BY id DESC LIMIT 1
-                    )), 0) AS cost_current,
+                coalesce(SUM(
+                    (
+                        SELECT SUM(sml.qty_done) * ABS(s.price_unit)
+                        FROM stock_move_line sml
+                        LEFT JOIN stock_move sm ON sm.id = sml.move_id
+                        WHERE sm.id = s.id
+                        GROUP BY sm
+                    )
+                    ), 0) AS cost,
+                coalesce(SUM(
+                    (
+                        SELECT SUM(sml.qty_done) FROM stock_move_line sml
+                        LEFT JOIN stock_move sm ON sm.id = sml.move_id
+                        WHERE sm.id = s.id
+                        GROUP BY sm
+                    )
+                    * 
+                    (
+                        SELECT ip.value_float FROM ir_property ip
+                        WHERE ip.res_id = CONCAT('product.product,', pp.id)
+                        AND ip.name = 'standard_price'
+                        ORDER BY id DESC LIMIT 1
+                    )
+                    ), 0) AS cost_current,
                 MAX(ABS(s.price_unit)) AS unit_cost
             FROM stock_move s
                 LEFT JOIN product_product pp ON pp.id = s.product_id
                 LEFT JOIN mrp_bom_line bl ON bl.id = s.bom_line_id
                 LEFT JOIN mrp_production p ON s.raw_material_production_id = p.id
-                LEFT JOIN stock_move_line sml ON sml.move_id = s.id
             WHERE s.bom_line_id is not null
-            GROUP BY p.date_planned_start, p.id, s.product_id, bl.product_id
+            GROUP BY p.date_planned_start, p.id, s.product_id, bl.product_id, s.id
             UNION
             SELECT
                 -MIN(s.id) AS id,
