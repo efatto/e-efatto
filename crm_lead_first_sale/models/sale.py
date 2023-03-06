@@ -37,6 +37,6 @@ class SaleOrder(models.Model):
                     lambda x: x.subtype_id == confirmed_subtype
                 )
             if messages:
-                order.date_sent_calculated = min(messages.mapped('date'))[0]
+                order.date_sent_calculated = min(messages.mapped('date'))
             else:
                 order.date_sent_calculated = False
