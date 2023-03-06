@@ -17,7 +17,7 @@ class CrmLead(models.Model):
         for lead in self:
             first_sale_days = 0
             if lead.order_ids:
-                dates_sent = lead.order_ids.mapped('date_sent')[0]
+                dates_sent = lead.order_ids.mapped('date_sent')
                 if not dates_sent:
                     dates_sent = lead.order_ids.mapped('date_sent_calculated')
                 if dates_sent:
