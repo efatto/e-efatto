@@ -9,16 +9,6 @@ from odoo.exceptions import UserError
 _logger = logging.getLogger(__name__)
 
 
-class StockBackorderConfirmation(models.TransientModel):
-    _inherit = 'stock.backorder.confirmation'
-
-    @api.one
-    def _process(self, cancel_backorder=False):
-        super(StockBackorderConfirmation, self)._process(
-            cancel_backorder=cancel_backorder)
-        self.mapped('pick_ids.backorder_ids').write(dict(state='waiting'))
-
-
 class Picking(models.Model):
     _inherit = "stock.picking"
 
@@ -88,16 +78,17 @@ class Picking(models.Model):
         return True
 
     @api.multi
+    def create_whs_list(self):
+        for picking in self:
+            picking.mapped('move_lines').filtered(
+                lambda x: not any(
+                    y.stato != '3' for y in x.whs_list_ids
+            )).create_whs_list()
+
+    @api.multi
     def action_confirm(self):
         res = super(Picking, self).action_confirm()
-        for picking in self:
-            # case of adding line in purchase order confirmed which create new picking
-            if all(move.state == 'assigned' for move in picking.move_lines):
-                picking.mapped('move_lines').filtered(
-                    lambda x: not any(
-                        y.stato != '3' for y in x.whs_list_ids
-                )).create_whs_list()
-        self.write({'state': 'waiting'})
+        self.create_whs_list()
         return res
 
     @api.multi
@@ -109,12 +100,7 @@ class Picking(models.Model):
     @api.multi
     def action_assign(self):
         res = super(Picking, self).action_assign()
-        # get moves without active whs list by stato
-        moves = self.mapped('move_lines').filtered(
-            lambda x: not any(
-                y.stato != '3' for y in x.whs_list_ids
-            ))
-        moves.create_whs_list()
+        self.create_whs_list()
         return res
 
     @api.multi
@@ -171,6 +157,24 @@ class StockMove(models.Model):
         comodel_name='hyddemo.whs.liste',
         inverse_name='move_id',
         string='Whs Lists')
+
+    @api.multi
+    def _check_valid_whs_list(self):
+        for move in self:
+            valid_whs_list = move.whs_list_ids.filtered(lambda x: x.stato != '3')
+            if valid_whs_list and not move.state == 'done':
+                if move.product_uom_qty != valid_whs_list.qta:
+                    raise UserError(_("Whs valid list exists and qty cannot be "
+                                      "modified!"))
+
+    def write(self, vals):
+        res = super().write(vals=vals)
+        if not self._context.get("do_not_propagate", False) and \
+            not self._context.get("do_not_unreserve", False) and (
+            vals.get('product_uom_qty')
+        ):
+            self._check_valid_whs_list()
+        return res
 
     @api.multi
     def create_whs_list(self):
@@ -297,5 +301,4 @@ class StockMove(models.Model):
                     _logger.info('WHS LOG: create list with data:\n %s' % (
                         str(whsliste_data)
                     ))
-                    move.state = 'waiting'
         return True

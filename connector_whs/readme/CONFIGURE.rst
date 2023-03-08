@@ -22,5 +22,3 @@ Quest'ultima l'inventario dei prodotti:
 
 .. image:: ../static/description/sincronizza_magazzino.png
     :alt: Sincronizza magazzino
-
-N.B.: con questo modulo lo stato del picking confermato non passa a 'Pronto' se non tramite intervento utente. Il sistema riserva comunque i prodotti, mantenendo lo stato del picking a 'In attesa di altra operazione'.
