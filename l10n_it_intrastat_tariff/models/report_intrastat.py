@@ -1,6 +1,6 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, fields, models
+from odoo import fields, models
 
 
 class ReportIntrastatCode(models.Model):
@@ -18,4 +18,3 @@ class ReportIntrastatTariff(models.Model):
     name = fields.Char()
     active = fields.Boolean(default=True)
     tariff_percentage = fields.Float()
-
