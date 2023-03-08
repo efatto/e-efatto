@@ -24,12 +24,12 @@ class MrpWorkcenterProductivity(models.Model):
 
     @api.multi
     def _productivity_postprocess(self, values):
-        """ 
-        Hook to update record one by one according to the values of a `write` 
-        or a `create`. 
+        """
+        Hook to update record one by one according to the values of a `write`
+        or a `create`.
         """
         sudo_self = self.sudo()
-        # this creates only one env for all operation that required sudo() 
+        # this creates only one env for all operation that required sudo()
         # in `_productivity_postprocess_values`override
         values_to_write = self._productivity_postprocess_values(values)
         for productivity in sudo_self:
