@@ -9,7 +9,7 @@
     Add confirm button to mrp.
     """,
     'author': "Sergio Corato",
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'depends': [
         'mrp',
     ],
