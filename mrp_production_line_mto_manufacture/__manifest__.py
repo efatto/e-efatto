@@ -6,7 +6,7 @@
     'version': '12.0.1.0.0',
     'category': 'MRP',
     'author': 'Sergio Corato Efatto.it',
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'license': 'AGPL-3',
     'maintainers': ['sergiocorato'],
     'depends': ['mrp'],
