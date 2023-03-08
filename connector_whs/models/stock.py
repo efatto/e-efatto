@@ -12,8 +12,6 @@ _logger = logging.getLogger(__name__)
 class Picking(models.Model):
     _inherit = "stock.picking"
 
-    is_assigned = fields.Boolean(string="Printed for logistic")
-
     @api.multi
     def action_pack_operation_auto_fill(self):
         super(Picking, self).action_pack_operation_auto_fill()
@@ -92,24 +90,10 @@ class Picking(models.Model):
         return res
 
     @api.multi
-    def do_unreserve(self):
-        res = super().do_unreserve()
-        self.write({'is_assigned': False})
-        return res
-
-    @api.multi
     def action_assign(self):
         res = super(Picking, self).action_assign()
         self.create_whs_list()
         return res
-
-    @api.multi
-    def mark_printed_for_logistic(self):
-        self.write({'is_assigned': True})
-
-    @api.multi
-    def unmark_printed_for_logistic(self):
-        self.write({'is_assigned': False})
 
     @api.multi
     def unlink(self):
@@ -119,9 +103,6 @@ class Picking(models.Model):
     @api.multi
     def action_cancel(self):
         self.cancel_whs_list()
-        self.write({
-            'is_assigned': False,
-        })
         return super(Picking, self).action_cancel()
 
     @api.multi
