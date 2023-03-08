@@ -352,11 +352,6 @@ msgid "Prelievo"
 msgstr ""
 
 #. module: connector_whs
-#: model:ir.model.fields,field_description:connector_whs.field_stock_picking__is_assigned
-msgid "Printed for logistic"
-msgstr "Stampato Logistica"
-
-#. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__priorita
 msgid "Priorita"
 msgstr "Priorità"
