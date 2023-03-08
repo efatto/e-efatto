@@ -126,9 +126,9 @@ class ProductSupplierinfoCheck(models.Model):
                 products_price_purchase_recent_zero, \
                 products_price_supplier_invoice_recent_zero = \
                 products.do_update_managed_replenishment_cost(
-                    date_obsolete_supplierinfo_price=
+                    date_obsolete_supplierinfo_price=  # noqa
                     supplierinfo_check.date_obsolete_supplierinfo_price,
-                    date_validity_supplierinfo=
+                    date_validity_supplierinfo=  # noqa
                     supplierinfo_check.date_validity_supplierinfo,
                     listprice_id=supplierinfo_check.listprice_id
                 )

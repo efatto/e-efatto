@@ -181,13 +181,13 @@ class TestProductManagedReplenishmentCost(SavepointCase):
     def test_00_check_pricelist(self):
         with self.assertRaises(ValidationError):
             vals = {
-                    'pricelist_id': self.pricelist.id,
-                    'applied_on': '1_product',
-                    'product_tmpl_id': self.product2.product_tmpl_id.id,
-                    'compute_price': 'fixed',
-                    'fixed_price': 150,
-                    'min_quantity': 1,
-                }
+                'pricelist_id': self.pricelist.id,
+                'applied_on': '1_product',
+                'product_tmpl_id': self.product2.product_tmpl_id.id,
+                'compute_price': 'fixed',
+                'fixed_price': 150,
+                'min_quantity': 1,
+            }
             self._create_pricelist_item(self.pricelist_item, vals=vals)
 
     def test_01_today(self):
@@ -195,13 +195,13 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         day_check_validity = today
         with self.assertRaises(ValidationError):
             vals = {
-                    'pricelist_id': self.pricelist.id,
-                    'applied_on': '1_product',
-                    'product_tmpl_id': self.product2.product_tmpl_id.id,
-                    'compute_price': 'fixed',
-                    'fixed_price': 150,
-                    'min_quantity': 1,
-                }
+                'pricelist_id': self.pricelist.id,
+                'applied_on': '1_product',
+                'product_tmpl_id': self.product2.product_tmpl_id.id,
+                'compute_price': 'fixed',
+                'fixed_price': 150,
+                'min_quantity': 1,
+            }
             self._create_pricelist_item(self.pricelist_item, vals=vals)
         self.execute_test(today, day_check_validity)
 
@@ -262,7 +262,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                     days=-59)) <= check.date_validity_supplierinfo
                 else 1.15 if (today + relativedelta(days=-60))
                 >= check.date_validity_supplierinfo >= (
-                     today + relativedelta(days=-90))
+                    today + relativedelta(days=-90))
                 else 1.2 if check.date_validity_supplierinfo
                 <= (today + relativedelta(days=-91))
                 else 1
