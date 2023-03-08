@@ -7,7 +7,7 @@
     'license': 'AGPL-3',
     'author': 'Sergio Corato',
     'summary': 'Show recalculation in sale state too.',
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'depends': [
         'sale_order_price_recalculation',
     ],
