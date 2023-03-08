@@ -17,7 +17,7 @@ Bom Group Lines By Product
     :target: https://github.com/sergiocorato/e-efatto/tree/12.0/mrp_bom_line_group
     :alt: sergiocorato/e-efatto
 
-|badge1| |badge2| |badge3| 
+|badge1| |badge2| |badge3|
 
 This module add a button to group lines with same product and uom in Bom.
 
@@ -50,7 +50,7 @@ Credits
 Authors
 ~~~~~~~
 
-* Sergio Corato Efatto.it
+* Sergio Corato
 
 Contributors
 ~~~~~~~~~~~~
@@ -66,7 +66,7 @@ Maintainers
 
 Current maintainer:
 
-|maintainer-sergiocorato| 
+|maintainer-sergiocorato|
 
 This module is part of the `sergiocorato/e-efatto <https://github.com/sergiocorato/e-efatto/tree/12.0/mrp_bom_line_group>`_ project on GitHub.
 
