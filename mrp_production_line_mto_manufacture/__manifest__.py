@@ -5,7 +5,7 @@
     'summary': 'Highlight line to produce MTO on MO components',
     'version': '12.0.1.0.0',
     'category': 'MRP',
-    'author': 'Sergio Corato Efatto.it',
+    'author': 'Sergio Corato',
     'website': 'https://github.com/sergiocorato/e-efatto',
     'license': 'AGPL-3',
     'maintainers': ['sergiocorato'],
