@@ -141,8 +141,9 @@ class ProductProduct(models.Model):
             sum(
                 (
                     x.product_id.weight_uom_id._compute_quantity(
-                    x.product_id.weight * x.product_qty,
-                    self.weight_uom_id)
+                        x.product_id.weight * x.product_qty,
+                        self.weight_uom_id
+                    )
                     for x in bom_id.bom_line_ids
                 ) or [0]
             ) / (bom_id.product_qty or 1),
