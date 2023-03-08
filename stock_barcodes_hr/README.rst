@@ -17,7 +17,7 @@ Timesheet & Productivity Barcode Recording
     :target: https://github.com/sergiocorato/e-efatto/tree/12.0/stock_barcodes_hr
     :alt: sergiocorato/e-efatto
 
-|badge1| |badge2| |badge3| 
+|badge1| |badge2| |badge3|
 
 This module add a wizard to facilitate time recording by scan of barcodes.
 
@@ -65,7 +65,7 @@ Credits
 Authors
 ~~~~~~~
 
-* Sergio Corato - Efatto.it
+* Sergio Corato
 
 Contributors
 ~~~~~~~~~~~~

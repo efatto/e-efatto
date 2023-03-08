@@ -17,7 +17,7 @@ MRP Production Manual Consume
     :target: https://github.com/sergiocorato/e-efatto/tree/12.0/mrp_production_manual_consume
     :alt: sergiocorato/e-efatto
 
-|badge1| |badge2| |badge3| 
+|badge1| |badge2| |badge3|
 
 Module to stop auto consume of raw materials.
 
@@ -52,7 +52,7 @@ Credits
 Authors
 ~~~~~~~
 
-* Sergio Corato Efatto.it
+* Sergio Corato
 
 Contributors
 ~~~~~~~~~~~~

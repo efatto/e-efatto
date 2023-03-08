@@ -17,7 +17,7 @@ Archive project linked to sale order cancelled
     :target: https://github.com/sergiocorato/e-efatto/tree/12.0/sale_order_archive_project
     :alt: sergiocorato/e-efatto
 
-|badge1| |badge2| |badge3| 
+|badge1| |badge2| |badge3|
 
 By default only sale_line_id is deleted on project when order is cancelled, so it is no more accessible on sale order, but it remains active and accessible on project view.
 
@@ -49,7 +49,7 @@ Credits
 Authors
 ~~~~~~~
 
-* Sergio Corato - Efatto.it
+* Sergio Corato
 
 Contributors
 ~~~~~~~~~~~~

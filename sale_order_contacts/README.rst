@@ -14,7 +14,7 @@ Contacts on sale order
     :target: https://github.com/sergiocorato/e-efatto/tree/12.0/sale_order_contacts
     :alt: sergiocorato/e-efatto
 
-|badge1| |badge2| 
+|badge1| |badge2|
 
 This module adds a field with customer contacts in sale order.
 
@@ -47,7 +47,7 @@ Credits
 Authors
 ~~~~~~~
 
-* Sergio Corato - Efatto.it
+* Sergio Corato
 
 Contributors
 ~~~~~~~~~~~~

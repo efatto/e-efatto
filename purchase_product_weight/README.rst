@@ -17,7 +17,7 @@ Purchase product on weight
     :target: https://github.com/sergiocorato/e-efatto/tree/12.0/purchase_product_weight
     :alt: sergiocorato/e-efatto
 
-|badge1| |badge2| |badge3| 
+|badge1| |badge2| |badge3|
 
 This module add the ability to compute purchase product price on weight of
 product, without tempering with u.m., adding a simple solution to company
@@ -71,7 +71,7 @@ Credits
 Authors
 ~~~~~~~
 
-* Sergio Corato Efatto.it
+* Sergio Corato
 
 Contributors
 ~~~~~~~~~~~~
@@ -87,7 +87,7 @@ Maintainers
 
 Current maintainer:
 
-|maintainer-sergiocorato| 
+|maintainer-sergiocorato|
 
 This module is part of the `sergiocorato/e-efatto <https://github.com/sergiocorato/e-efatto/tree/12.0/purchase_product_weight>`_ project on GitHub.
 

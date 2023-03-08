@@ -17,7 +17,7 @@ Production Group Lines By Product
     :target: https://github.com/efatto/efatto/tree/12.0/mrp_production_line_group
     :alt: efatto/efatto
 
-|badge1| |badge2| |badge3| 
+|badge1| |badge2| |badge3|
 
 When you have a BOM with many sub-BOM it is possible that a product is present in many of this.
 When a MO is created, each sub-BOM of type phantom is exploded adding all products in the MO sequentially.
@@ -56,7 +56,7 @@ Credits
 Authors
 ~~~~~~~
 
-* Sergio Corato Efatto.it
+* Sergio Corato
 
 Contributors
 ~~~~~~~~~~~~
@@ -72,7 +72,7 @@ Maintainers
 
 Current maintainer:
 
-|maintainer-sergiocorato| 
+|maintainer-sergiocorato|
 
 This module is part of the `efatto/efatto <https://github.com/efatto/efatto/tree/12.0/mrp_production_line_group>`_ project on GitHub.
 

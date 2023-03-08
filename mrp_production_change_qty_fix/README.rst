@@ -17,7 +17,7 @@ MRP Production Change Qty Fix
     :target: https://github.com/efatto/efatto/tree/12.0/mrp_production_change_qty_fix
     :alt: efatto/efatto
 
-|badge1| |badge2| |badge3| 
+|badge1| |badge2| |badge3|
 
 This module fix change production qty wizard when lines are removed in
 sub-bom of type phantom
@@ -43,7 +43,7 @@ Credits
 Authors
 ~~~~~~~
 
-* Sergio Corato Efatto.it
+* Sergio Corato
 
 Contributors
 ~~~~~~~~~~~~

@@ -17,7 +17,7 @@ Sale line lot expiry alert
     :target: https://github.com/sergiocorato/e-efatto/tree/12.0/sale_line_lot_expiry_alert
     :alt: sergiocorato/e-efatto
 
-|badge1| |badge2| |badge3| 
+|badge1| |badge2| |badge3|
 
 This module adds an advice for lot expiry date in sale order line.
 
@@ -53,7 +53,7 @@ Credits
 Authors
 ~~~~~~~
 
-* Sergio Corato - Efatto.it
+* Sergio Corato
 
 Contributors
 ~~~~~~~~~~~~

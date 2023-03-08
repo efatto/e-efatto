@@ -17,7 +17,7 @@ MRP Preserve route for kit components
     :target: https://github.com/efatto/efatto/tree/12.0/mrp_production_preserve_kit_route
     :alt: efatto/efatto
 
-|badge1| |badge2| |badge3| 
+|badge1| |badge2| |badge3|
 
 By default Odoo, when a product with bom is ordered having a sub-bom of type phantom, put in all move of components the same route of product, like MTO.
 With this module, the route of components is preserved, so if they do not have MTO it remains nothing, so MTS.
@@ -43,7 +43,7 @@ Credits
 Authors
 ~~~~~~~
 
-* Sergio Corato Efatto.it
+* Sergio Corato
 
 Contributors
 ~~~~~~~~~~~~

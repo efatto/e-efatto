@@ -17,7 +17,7 @@ MRP Production BoM Change
     :target: https://github.com/sergiocorato/e-efatto/tree/12.0/mrp_production_bom_change
     :alt: sergiocorato/e-efatto
 
-|badge1| |badge2| |badge3| 
+|badge1| |badge2| |badge3|
 
 This module add an action to change bom on production.
 
@@ -56,7 +56,7 @@ Credits
 Authors
 ~~~~~~~
 
-* Sergio Corato Efatto.it
+* Sergio Corato
 
 Contributors
 ~~~~~~~~~~~~

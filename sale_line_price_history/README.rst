@@ -14,7 +14,7 @@ Sale line price history
     :target: https://github.com/sergiocorato/e-efatto/tree/12.0/sale_line_price_history
     :alt: sergiocorato/e-efatto
 
-|badge1| |badge2| 
+|badge1| |badge2|
 
 This module adds a list of sale order line of same product and partner in sale order line, to use as price history.
 
@@ -47,7 +47,7 @@ Credits
 Authors
 ~~~~~~~
 
-* Sergio Corato - Efatto.it
+* Sergio Corato
 
 Contributors
 ~~~~~~~~~~~~

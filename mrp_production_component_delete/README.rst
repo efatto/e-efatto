@@ -17,7 +17,7 @@ MRP Production Component Delete
     :target: https://github.com/sergiocorato/e-efatto/tree/12.0/mrp_production_component_delete
     :alt: sergiocorato/e-efatto
 
-|badge1| |badge2| |badge3| 
+|badge1| |badge2| |badge3|
 
 This module add a button to delete components (not already trasferred on stock) on production.
 
@@ -52,7 +52,7 @@ Credits
 Authors
 ~~~~~~~
 
-* Sergio Corato Efatto.it
+* Sergio Corato
 
 Contributors
 ~~~~~~~~~~~~
