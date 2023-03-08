@@ -5,7 +5,7 @@
     "summary": "Add company currency untaxed amount to purchase order.",
     "version": "12.0.1.0.0",
     "category": "Purchases",
-    "website": "https://efatto.it",
+    "website": "https://github.com/sergiocorato/e-efatto",
     "author": "Sergio Corato",
     "license": "AGPL-3",
     "application": False,
