@@ -15,7 +15,7 @@ Usability issue resolved on web view:
     * enlarge drop-down button,
     * block and trasparency of column headers.
     """,
-    'website': 'https//efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'license': 'AGPL-3',
     'depends': [
         'web',
