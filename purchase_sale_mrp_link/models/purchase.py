@@ -41,7 +41,7 @@ class PurchaseOrder(models.Model):
             action['view_mode'] = 'form'
             form_view = [(self.env.ref('sale.view_order_form').id, 'form')]
             if 'views' in action:
-                action['views'] = form_view + [(state,view) for state, view in
+                action['views'] = form_view + [(state, view) for state, view in
                                                action['views'] if view != 'form']
             else:
                 action['views'] = form_view

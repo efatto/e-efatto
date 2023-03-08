@@ -4,8 +4,6 @@
 from odoo.addons.stock_barcodes.tests.test_stock_barcodes import\
     TestStockBarcodes
 
-from lxml import etree
-
 
 class TestStockBarcodesMrp(TestStockBarcodes):
     def setUp(self):

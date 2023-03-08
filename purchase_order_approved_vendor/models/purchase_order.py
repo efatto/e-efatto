@@ -53,7 +53,8 @@ class PurchaseOrder(models.Model):
             self.filtered(lambda o: o.state == 'draft').write({'state': 'rfq sent'})
         if self.env.context.get('mark_rfq_as_sent'):
             self.filtered(lambda o: o.state == 'approved').write({'state': 'sent'})
-        return super(PurchaseOrder, self.with_context(mail_post_autofollow=True)).message_post(**kwargs)
+        return super(PurchaseOrder, self.with_context(mail_post_autofollow=True)
+                     ).message_post(**kwargs)
 
     @api.multi
     def button_confirm_rfq(self):

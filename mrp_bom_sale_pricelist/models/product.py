@@ -19,7 +19,8 @@ class ProductProduct(models.Model):
     def _get_listprice_categ_id(self, categ_id):
         product_listprice_categ_id = categ_id.listprice_categ_id
         if not product_listprice_categ_id and categ_id.parent_id:
-            product_listprice_categ_id = self._get_listprice_categ_id(categ_id.parent_id)
+            product_listprice_categ_id = self._get_listprice_categ_id(
+                categ_id.parent_id)
         return product_listprice_categ_id
 
     def get_bom_operation_price(self, pricelist, bom, quantity, partner, date=False,
@@ -162,7 +163,8 @@ class ProductProduct(models.Model):
                     # category FIXME questo non va più visto che usiamo le ctg padri
                     if any([x.listprice_categ_id != listprice_categ_id for x in
                             line.child_bom_id.mapped(
-                                'bom_line_ids.product_id.categ_id.listprice_categ_id')]):
+                                'bom_line_ids.product_id.categ_id.listprice_categ_id')]
+                           ):
                         raise ValidationError(_(
                             'Some product of child bom for product %s have a different '
                             'listiprice category!') % line.product_id.name)
@@ -189,13 +191,13 @@ class ProductProduct(models.Model):
                 if bom_lines_cost < rule.min_value:
                     continue
                 if rule.min_value <= bom_lines_cost and (
-                        rule.max_value and (bom_lines_cost < rule.max_value)
-                        or True):
+                    rule.max_value and (bom_lines_cost < rule.max_value) or True
+                ):
                     value = min(
-                            bom_lines_cost - rule.min_value,
-                            rule.max_value and (rule.max_value - rule.min_value) or
-                            bom_lines_cost - rule.min_value
-                        )
+                        bom_lines_cost - rule.min_value,
+                        rule.max_value and (rule.max_value - rule.min_value) or
+                        bom_lines_cost - rule.min_value
+                    )
                     if value > 0:
                         price += rule._compute_price(
                             value, self.uom_id, self)
@@ -232,4 +234,4 @@ class ProductProduct(models.Model):
             )
             total += total_to_exclude_from_global_rule
         return bom.product_uom_id._compute_price(
-                total / (bom.product_qty or 1), self.uom_id)
+            total / (bom.product_qty or 1), self.uom_id)

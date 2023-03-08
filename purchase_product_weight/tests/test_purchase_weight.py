@@ -97,9 +97,9 @@ class PurchaseProductWeight(TransactionCase):
         purchase_line.weight_price_unit = 7.77
         purchase_line._onchange_weight_price_unit()
         line_price = float_round(
-                7.77 * 0.15,
-                self.env['decimal.precision'].precision_get('Product Price')
-            )
+            7.77 * 0.15,
+            self.env['decimal.precision'].precision_get('Product Price')
+        )
         self.assertAlmostEqual(purchase_line.price_unit, line_price)
         self.assertAlmostEqual(purchase_line.weight_total, 25 * 0.15, 2)
         self.assertAlmostEqual(purchase_line.weight_price_unit, 7.77, 2)
@@ -140,9 +140,9 @@ class PurchaseProductWeight(TransactionCase):
         purchase_line.weight_price_unit = 0.03
         purchase_line._onchange_weight_price_unit()
         line_price = float_round(
-                0.03 * 3.15 * 6,
-                self.env['decimal.precision'].precision_get('Product Price')
-            )
+            0.03 * 3.15 * 6,
+            self.env['decimal.precision'].precision_get('Product Price')
+        )
         self.assertAlmostEqual(purchase_line.price_unit, line_price)
         self.assertAlmostEqual(purchase_line.weight_total, 25 * 3.15 * 6, 2)
         self.assertAlmostEqual(purchase_line.weight_price_unit, 0.03, 2)

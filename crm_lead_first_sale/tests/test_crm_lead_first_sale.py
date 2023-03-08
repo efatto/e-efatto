@@ -1,5 +1,4 @@
 from odoo.tests.common import SavepointCase
-from odoo.tools import mute_logger
 from odoo import fields
 from datetime import timedelta
 
@@ -34,4 +33,3 @@ class PurchaseSellerEvaluation(SavepointCase):
         sale_order.action_confirm()
         self.assertEqual(
             len(sale_order.order_line), 1, msg="Order line was not created")
-

@@ -9,7 +9,7 @@ _logger = logging.getLogger(__name__)
 
 try:
     import xlrd
-    from xlrd.xldate import xldate_as_datetime
+    from xlrd.xldate import xldate_as_datetime  # noqa
 except (ImportError, IOError) as err:  # pragma: no cover
     _logger.error(err)
 
@@ -53,7 +53,7 @@ class WizardMrpBomImportXlsx(models.TransientModel):
         default_code_column = header.index('default_code')
         quantity_column = header.index('quantity')
         uom_column = header.index('uom')
-            
+
         if isinstance(xlsx, tuple):
             rows = range(1, xlsx[1].nrows)
         else:
@@ -62,11 +62,11 @@ class WizardMrpBomImportXlsx(models.TransientModel):
         lines = []
         for row in rows:
             if isinstance(xlsx, tuple):
-                book = xlsx[0]
+                # book = xlsx[0]
                 sheet = xlsx[1]
                 values = []
                 for col_index in range(sheet.row_len(row)):
-                    cell_type = sheet.cell_type(row, col_index)
+                    # cell_type = sheet.cell_type(row, col_index)
                     cell_value = sheet.cell_value(row, col_index)
                     values.append(cell_value)
             else:

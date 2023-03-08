@@ -22,4 +22,3 @@ class StockBarcodesReadLogLine(models.Model):
         string='Stock move',
         readonly=True,
     )
-

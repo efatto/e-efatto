@@ -6,7 +6,8 @@ from odoo import models
 class ProductPricelist(models.Model):
     _inherit = 'product.pricelist'
 
-    def get_product_price_rule(self, product, quantity, partner, date=False, uom_id=False):
+    def get_product_price_rule(
+            self, product, quantity, partner, date=False, uom_id=False):
         """ For a given pricelist, return price and rule for a given product """
         self.ensure_one()
         if self.env.context.get('bom_cost', False):

@@ -41,8 +41,8 @@ class ProductArchiver(SavepointCase):
         })
         wizard_obj = self.env['product.archiver']
         wizard_vals = wizard_obj.default_get(
-                ['model']
-            )
+            ['model']
+        )
         wizard_vals.update({'from_date': from_date})
         wizard = wizard_obj.create(wizard_vals)
         res = wizard.archive()

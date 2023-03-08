@@ -1,6 +1,7 @@
 from odoo.tests.common import SavepointCase
 from odoo.tools import mute_logger
 
+
 class TestSaleStockPartnerDeposit(SavepointCase):
 
     @classmethod

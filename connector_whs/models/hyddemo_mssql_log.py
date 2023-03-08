@@ -80,7 +80,7 @@ AuxTesto1,
 AuxTestoRiga1,
 AuxTestoRiga2,
 AuxTestoRiga3
-) 
+)
 VALUES (
 %(NumLista)s,
 %(NumRiga)s,
@@ -192,14 +192,6 @@ class HyddemoMssqlLog(models.Model):
     @api.multi
     def _prepare_host_articoli_values(
             self, product, warehouse_id, location_id, last_id):
-        ops = self.env['stock.warehouse.orderpoint'].search([
-            ('warehouse_id', '=', warehouse_id),
-            ('location_id', '=', location_id),
-            ('product_id', '=', product.id),
-        ])
-        if len(ops) > 1:
-            pass
-        product_min_qty = ops[0].product_min_qty if ops else 0
         """
         Elaborato:
             ('0', 'In elaborazione da host'),
@@ -209,6 +201,14 @@ class HyddemoMssqlLog(models.Model):
             ('A', 'aggiungi se non esiste, modifica se già inserito'),
             ('C', 'rimuovi il codice dal database WHS solo se non utilizzato'),
         """
+        ops = self.env['stock.warehouse.orderpoint'].search([
+            ('warehouse_id', '=', warehouse_id),
+            ('location_id', '=', location_id),
+            ('product_id', '=', product.id),
+        ])
+        if len(ops) > 1:
+            pass
+        product_min_qty = ops[0].product_min_qty if ops else 0
         execute_params = {
             'Elaborato': 0,
             'TipoOperazione': 'A',
@@ -217,7 +217,8 @@ class HyddemoMssqlLog(models.Model):
             'Descrizione': product.name[:70],
             'Peso': product.weight * 1000 if product.weight else 0.0,  # digits=(18, 5)
             'Barcode': product.barcode[:30] if product.barcode else ' ',
-            'UM': 'PZ' if product.uom_id.name == 'Unit(s)' else product.uom_id.name[:10],
+            'UM': 'PZ' if product.uom_id.name == 'Unit(s)'
+            else product.uom_id.name[:10],
             'TipoConfezione': 0,
             'CategoriaMerc': ' ',  # size=10
             'MantieniDinamici': 1,

@@ -20,7 +20,7 @@ class StockRule(models.Model):
             product_id, product_qty, product_uom, location_id, name, origin, values)
 
     def _make_po_select_supplier(self, values, suppliers):
-        """ Method intended to be overridden by customized modules to implement any 
+        """ Method intended to be overridden by customized modules to implement any
             logic in the selection of supplier.
         """
         quantity = values.get('product_qty')

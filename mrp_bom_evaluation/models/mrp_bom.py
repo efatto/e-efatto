@@ -51,12 +51,12 @@ class MrpBom(models.Model):
     def update_product_managed_replenishment_cost(self):
         self.ensure_one()
         managed_replenishment_cost = sum(
-                self.bom_line_ids and self.bom_line_ids.mapped('price_subtotal')
-                or [0.0]
-            ) + sum(
-                self.bom_operation_ids and
-                self.bom_operation_ids.mapped('price_subtotal') or [0.0]
-            )
+            self.bom_line_ids and self.bom_line_ids.mapped('price_subtotal')
+            or [0.0]
+        ) + sum(
+            self.bom_operation_ids and
+            self.bom_operation_ids.mapped('price_subtotal') or [0.0]
+        )
         if self.product_id:
             self.product_id.managed_replenishment_cost = managed_replenishment_cost
         elif self.product_tmpl_id:

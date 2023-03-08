@@ -1,117 +1,117 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
-	<record id="product_normal_form_view" model="ir.ui.view">
-		<field name="name">product.product.last.supplier.invoice.form</field>
-		<field name="model">product.product</field>
-		<field name="inherit_id" ref="product.product_normal_form_view" />
-		<field name="arch" type="xml">
-			<group name="vendors" position="before">
-				<group>
-					<group string="Purchase Info" name="purchase_info"
-						   attrs="{'invisible': [('product_variant_count', '&lt;=', 1)]}">
-						<group col="2" colspan="2">
-							<field name="last_supplier_id"/>
-							<field name="last_purchase_date" widget="date"/>
-						</group>
-						<group col="8">
-							<field name="last_purchase_price"/>
-							<field name="last_purchase_discount"/>
-							<field name="last_purchase_discount2"/>
-							<field name="last_purchase_discount3"/>
-						</group>
-						<group col="2" colspan="8">
-							<field name="last_purchase_id"/>
-							<field name="last_purchase_line_id"/>
-						</group>
-					</group>
-					<group string="Supplier Invoice" name="last_supplier_invoice"
-						   attrs="{'invisible': [('product_variant_count', '&lt;=', 1)]}">
-						<group col="2" colspan="2">
-							<field name="last_supplier_invoice_partner_id"/>
-							<field name="last_supplier_invoice_date"/>
-						</group>
-						<group col="8">
-							<field name="last_supplier_invoice_price"/>
-							<field name="last_supplier_invoice_discount"/>
-							<field name="last_supplier_invoice_discount2"/>
-							<field name="last_supplier_invoice_discount3"/>
-						</group>
-						<group col="2" colspan="8">
-							<field name="last_supplier_invoice_id"/>
-							<field name="last_supplier_invoice_line_id"/>
-						</group>
-					</group>
-				</group>
-			</group>
-		</field>
-	</record>
+    <record id="product_normal_form_view" model="ir.ui.view">
+        <field name="name">product.product.last.supplier.invoice.form</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view" />
+        <field name="arch" type="xml">
+            <group name="vendors" position="before">
+                <group>
+                    <group string="Purchase Info" name="purchase_info"
+                           attrs="{'invisible': [('product_variant_count', '&lt;=', 1)]}">
+                        <group col="2" colspan="2">
+                            <field name="last_supplier_id"/>
+                            <field name="last_purchase_date" widget="date"/>
+                        </group>
+                        <group col="8">
+                            <field name="last_purchase_price"/>
+                            <field name="last_purchase_discount"/>
+                            <field name="last_purchase_discount2"/>
+                            <field name="last_purchase_discount3"/>
+                        </group>
+                        <group col="2" colspan="8">
+                            <field name="last_purchase_id"/>
+                            <field name="last_purchase_line_id"/>
+                        </group>
+                    </group>
+                    <group string="Supplier Invoice" name="last_supplier_invoice"
+                           attrs="{'invisible': [('product_variant_count', '&lt;=', 1)]}">
+                        <group col="2" colspan="2">
+                            <field name="last_supplier_invoice_partner_id"/>
+                            <field name="last_supplier_invoice_date"/>
+                        </group>
+                        <group col="8">
+                            <field name="last_supplier_invoice_price"/>
+                            <field name="last_supplier_invoice_discount"/>
+                            <field name="last_supplier_invoice_discount2"/>
+                            <field name="last_supplier_invoice_discount3"/>
+                        </group>
+                        <group col="2" colspan="8">
+                            <field name="last_supplier_invoice_id"/>
+                            <field name="last_supplier_invoice_line_id"/>
+                        </group>
+                    </group>
+                </group>
+            </group>
+        </field>
+    </record>
 
-	<record id="view_product_supplier_inherit" model="ir.ui.view">
-		<field name="name">product.template.form.last.supplier.invoice</field>
-		<field name="model">product.template</field>
-		<field name="inherit_id" ref="purchase.view_product_supplier_inherit" />
-		<field name="arch" type="xml">
-			<group name="vendors" position="before">
-				<group>
-					<group string="Purchase Info" name="purchase_info"
-						   attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}">
-						<group col="2" colspan="2">
-							<field name="last_supplier_id"/>
-							<field name="last_purchase_date" widget="date"/>
-						</group>
-						<group col="8">
-							<field name="last_purchase_price"/>
-							<field name="last_purchase_discount"/>
-							<field name="last_purchase_discount2"/>
-							<field name="last_purchase_discount3"/>
-						</group>
-						<group col="2" colspan="8">
-							<field name="last_purchase_id"/>
-							<field name="last_purchase_line_id"/>
-						</group>
-					</group>
-					<group string="Supplier Invoice" name="last_supplier_invoice"
-						   attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}">
-						<group col="2" colspan="2">
-							<field name="last_supplier_invoice_partner_id"/>
-							<field name="last_supplier_invoice_date"/>
-						</group>
-						<group col="8">
-							<field name="last_supplier_invoice_price"/>
-							<field name="last_supplier_invoice_discount"/>
-							<field name="last_supplier_invoice_discount2"/>
-							<field name="last_supplier_invoice_discount3"/>
-						</group>
-						<group col="2" colspan="8">
-							<field name="last_supplier_invoice_id"/>
-							<field name="last_supplier_invoice_line_id"/>
-						</group>
-					</group>
-				</group>
-			</group>
-		</field>
-	</record>
+    <record id="view_product_supplier_inherit" model="ir.ui.view">
+        <field name="name">product.template.form.last.supplier.invoice</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="purchase.view_product_supplier_inherit" />
+        <field name="arch" type="xml">
+            <group name="vendors" position="before">
+                <group>
+                    <group string="Purchase Info" name="purchase_info"
+                           attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}">
+                        <group col="2" colspan="2">
+                            <field name="last_supplier_id"/>
+                            <field name="last_purchase_date" widget="date"/>
+                        </group>
+                        <group col="8">
+                            <field name="last_purchase_price"/>
+                            <field name="last_purchase_discount"/>
+                            <field name="last_purchase_discount2"/>
+                            <field name="last_purchase_discount3"/>
+                        </group>
+                        <group col="2" colspan="8">
+                            <field name="last_purchase_id"/>
+                            <field name="last_purchase_line_id"/>
+                        </group>
+                    </group>
+                    <group string="Supplier Invoice" name="last_supplier_invoice"
+                           attrs="{'invisible': [('product_variant_count', '&gt;', 1)]}">
+                        <group col="2" colspan="2">
+                            <field name="last_supplier_invoice_partner_id"/>
+                            <field name="last_supplier_invoice_date"/>
+                        </group>
+                        <group col="8">
+                            <field name="last_supplier_invoice_price"/>
+                            <field name="last_supplier_invoice_discount"/>
+                            <field name="last_supplier_invoice_discount2"/>
+                            <field name="last_supplier_invoice_discount3"/>
+                        </group>
+                        <group col="2" colspan="8">
+                            <field name="last_supplier_invoice_id"/>
+                            <field name="last_supplier_invoice_line_id"/>
+                        </group>
+                    </group>
+                </group>
+            </group>
+        </field>
+    </record>
 
-	<record id="product_product_tree_view" model="ir.ui.view">
-		<field name="name">product.product.tree</field>
-		<field name="model">product.product</field>
-		<field name="inherit_id" ref="product.product_product_tree_view" />
-		<field name="arch" type="xml">
-			<field name="price" position="after">
-				<field name="last_supplier_invoice_price"/>
-			</field>
-		</field>
-	</record>
+    <record id="product_product_tree_view" model="ir.ui.view">
+        <field name="name">product.product.tree</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_product_tree_view" />
+        <field name="arch" type="xml">
+            <field name="price" position="after">
+                <field name="last_supplier_invoice_price"/>
+            </field>
+        </field>
+    </record>
 
-	<record id="product_template_tree_view" model="ir.ui.view">
+    <record id="product_template_tree_view" model="ir.ui.view">
         <field name="name">product.template.product.tree</field>
         <field name="model">product.template</field>
-		<field name="inherit_id" ref="product.product_template_tree_view"/>
+        <field name="inherit_id" ref="product.product_template_tree_view"/>
         <field name="arch" type="xml">
-			<field name="standard_price" position="after">
-				<field name="last_supplier_invoice_price"/>
-			</field>
+            <field name="standard_price" position="after">
+                <field name="last_supplier_invoice_price"/>
+            </field>
         </field>
     </record>
 

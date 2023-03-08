@@ -81,7 +81,8 @@ class Picking(models.Model):
             picking.mapped('move_lines').filtered(
                 lambda x: not any(
                     y.stato != '3' for y in x.whs_list_ids
-            )).create_whs_list()
+                )
+            ).create_whs_list()
 
     @api.multi
     def action_confirm(self):
@@ -173,11 +174,15 @@ class StockMove(models.Model):
                 tipo = '1'
             # ROADMAP check this part as it is duplicated in mrp.py and an MO creates
             # whs_list with that function
-            if all([x in [
-                          self.env.ref('mrp.route_warehouse0_manufacture'),
-                          self.env.ref('stock.route_warehouse0_mto')
-                          ]
-                    for x in move.product_id.route_ids]):
+            if all(
+                [
+                    x in [
+                        self.env.ref('mrp.route_warehouse0_manufacture'),
+                        self.env.ref('stock.route_warehouse0_mto')
+                    ]
+                    for x in move.product_id.route_ids
+                ]
+            ):
                 # Never create whs list for OUT or IN related to manufactured products,
                 # only create MO.
                 # The IN will be without whs_list_ids so freely validatable
@@ -235,8 +240,8 @@ class StockMove(models.Model):
                         riga = 0
                     riga += 1
                     customer = move.product_id.customer_ids.filtered(
-                            lambda x: x.name == pick.partner_id.commercial_partner_id
-                        )
+                        lambda x: x.name == pick.partner_id.commercial_partner_id
+                    )
                     whsliste_data = {
                         'stato': '1',
                         'tipo': tipo,

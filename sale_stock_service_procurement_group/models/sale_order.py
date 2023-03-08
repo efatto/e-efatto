@@ -10,7 +10,7 @@ class SaleOrderLine(models.Model):
         res = super()._action_launch_stock_rule()
         todo_lines = self.filtered(
             lambda x: x.product_id.type == 'service'
-                and x.product_id.service_create_procurement_group
+            and x.product_id.service_create_procurement_group
         )
         for line in todo_lines:
             if line.state != 'sale':
