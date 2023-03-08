@@ -6,7 +6,7 @@
     'license': 'AGPL-3',
     'category': 'Manufacturing',
     'author': 'Sergio Corato',
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'description': 'Add ability to create planned maintenance by step.',
     'depends': [
         'maintenance_plan',
