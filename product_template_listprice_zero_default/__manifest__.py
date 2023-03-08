@@ -6,7 +6,7 @@
     'category': 'other',
     'author': 'Sergio Corato',
     'description': 'Product template set default list price to zero',
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'license': 'AGPL-3',
     'depends': [
         'product',
