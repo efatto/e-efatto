@@ -6,8 +6,7 @@
     'license': 'AGPL-3',
     'category': 'Manufacturing',
     'author': 'Sergio Corato',
-    'website': 'https://efatto.it',
-    'description': 'Add deviation info to production pivot.',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'depends': [
         'mrp_production_component_change',
         'mrp_production_expected_qty',
