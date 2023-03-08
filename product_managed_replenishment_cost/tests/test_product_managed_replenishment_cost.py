@@ -3,8 +3,6 @@
 
 from odoo.tests.common import SavepointCase
 
-import time
-
 
 class TestProductManagedReplenishmentCost(SavepointCase):
 
