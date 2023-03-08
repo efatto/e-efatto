@@ -6,6 +6,7 @@
                'price on supplierinfo values.',
     'version': '12.0.1.0.0',
     'author': 'Sergio Corato',
+    "website": "https://github.com/sergiocorato/e-efatto",
     'category': 'Products',
     'license': 'AGPL-3',
     'depends': [
