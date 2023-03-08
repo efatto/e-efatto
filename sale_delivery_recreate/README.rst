@@ -17,7 +17,7 @@ Sale Recreate Delivery
     :target: https://github.com/efatto/efatto/tree/12.0/sale_delivery_recreate
     :alt: efatto/efatto
 
-|badge1| |badge2| |badge3| 
+|badge1| |badge2| |badge3|
 
 This module add ability to recreate delivery of sale order, which could have
 been deleted by the user, specifically when sale order cannot be reset to draft
@@ -44,7 +44,7 @@ Credits
 Authors
 ~~~~~~~
 
-* Sergio Corato Efatto.it
+* Sergio Corato
 
 Contributors
 ~~~~~~~~~~~~
@@ -60,7 +60,7 @@ Maintainers
 
 Current maintainer:
 
-|maintainer-sergiocorato| 
+|maintainer-sergiocorato|
 
 This module is part of the `efatto/efatto <https://github.com/efatto/efatto/tree/12.0/sale_delivery_recreate>`_ project on GitHub.
 
