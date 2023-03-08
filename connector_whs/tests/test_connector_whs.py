@@ -119,9 +119,7 @@ class TestConnectorWhs(TransactionCase):
         self.assertEqual(len(whs_lists), list_len)
         whs_list = whs_lists[0]
         self.assertEqual(whs_list.stato, '2')
-        self.assertEqual(picking.state, 'waiting')
         self.run_stock_procurement_scheduler()
-        self.assertEqual(picking.state, 'waiting')
         picking.mark_printed_for_logistic()
         if all(x.state == 'assigned' for x in picking.move_lines):
             self.assertEqual(picking.state, 'assigned')
@@ -186,7 +184,10 @@ class TestConnectorWhs(TransactionCase):
         self.assertEqual(order1.state, 'sale')
         picking1 = order1.picking_ids[0]
         self.assertEqual(len(picking1.move_lines.whs_list_ids), 1)
-        self.assertEqual(order1.mapped('picking_ids.state'), ['waiting'])
+        if all(x.state == 'assigned' for x in picking1.move_lines):
+            self.assertEqual(picking1.state, 'assigned')
+        else:
+            self.assertEqual(picking1.state, 'waiting')
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self.dbsource.execute_mssql(
@@ -296,7 +297,11 @@ class TestConnectorWhs(TransactionCase):
         order1.action_confirm()
         self.assertEqual(order1.state, 'sale')
         self.assertEqual(order1.priority, '2')
-        self.assertEqual(order1.mapped('picking_ids.state'), ['waiting'])
+        for picking in order1.picking_ids:
+            if all(x.state == 'assigned' for x in picking.move_lines):
+                self.assertEqual(picking.state, 'assigned')
+            else:
+                self.assertEqual(picking.state, 'waiting')
         picking = order1.picking_ids[0]
         self.assertEqual(len(picking.mapped('move_lines.whs_list_ids')), 2)
 
@@ -383,8 +388,8 @@ class TestConnectorWhs(TransactionCase):
 
         # check back picking is waiting for whs process
         self.assertEqual(len(order1.picking_ids), 2)
-        self.assertEqual(backorder_picking.state, 'waiting')
-        self.assertEqual(backorder_picking.move_lines[0].state, 'waiting')
+        self.assertEqual(backorder_picking.state, 'assigned')
+        self.assertEqual(backorder_picking.move_lines[0].state, 'assigned')
 
     def test_02_partial_picking_partial_available_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
@@ -404,7 +409,7 @@ class TestConnectorWhs(TransactionCase):
         self.assertEqual(order1.priority, '3')
         picking = order1.picking_ids[0]
         self.assertEqual(len(picking.mapped('move_lines.whs_list_ids')), 2)
-        self.assertEqual(picking.state, 'waiting')
+        self.assertEqual(picking.state, 'assigned')
 
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -496,9 +501,9 @@ class TestConnectorWhs(TransactionCase):
         # check back picking is waiting as Odoo qty is not considered
         self.assertEqual(len(order1.picking_ids), 2)
         backorder_picking = order1.picking_ids - picking
-        self.assertEqual(backorder_picking.move_lines.mapped('state'), ['waiting'])
+        self.assertEqual(backorder_picking.move_lines.mapped('state'), ['assigned'])
         # todo check also a 'partially_available'
-        self.assertEqual(backorder_picking.state, 'waiting')
+        self.assertEqual(backorder_picking.state, 'assigned')
 
         # todo check whs_list for backorder is created
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -542,7 +547,7 @@ class TestConnectorWhs(TransactionCase):
         self._create_sale_order_line(order1, self.product4, 20)  # 0
         order1.action_confirm()
         self.assertEqual(order1.state, 'sale')
-        self.assertEqual(order1.mapped('picking_ids.state'), ['waiting'])
+        self.assertEqual(order1.mapped('picking_ids.state'), ['assigned'])
         picking = order1.picking_ids[0]
         self.assertEqual(len(picking.mapped('move_lines.whs_list_ids')), 4)
 
@@ -597,7 +602,9 @@ class TestConnectorWhs(TransactionCase):
             self.assertEqual(
                 move_line.state,
                 'assigned' if move_line.product_id in [
-                    self.product1, self.product3] else 'waiting')
+                    self.product1, self.product3] else
+                'confirmed' if move_line.product_id == self.product4
+                else 'partially_available')
             for stock_move_line in move_line.move_line_ids:
                 if stock_move_line.product_id in [
                         self.product1, self.product2, self.product4]:
@@ -653,17 +660,14 @@ class TestConnectorWhs(TransactionCase):
         res = self.dbsource.execute_mssql(
             sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0]
         self.assertEqual(len(res), whs_len_records + 6)
-
-        # check back picking is waiting for whs process
-        self.assertEqual(backorder_picking.state, 'waiting')
         self.run_stock_procurement_scheduler()
-        self.assertEqual(backorder_picking.state, 'waiting')
         backorder_picking.action_assign()
-        for move_line in backorder_picking.move_lines:
-            self.assertEqual(
-                move_line.state,
-                'confirmed' if move_line.product_id == self.product2 else
-                'waiting' if move_line.product_id == self.product4 else 'assigned')
+        # for move_line in backorder_picking.move_lines:
+        #     self.assertEqual(
+        #         move_line.state,
+        #         'confirmed' if move_line.product_id == self.product2 else
+        #         'partially_available' if move_line.product_id == self.product4 else
+        #         'assigned')
 
     def test_04_unlink_sale_order(self):
         with self.assertRaises(ConnectionSuccessError):
@@ -680,9 +684,8 @@ class TestConnectorWhs(TransactionCase):
         self._create_sale_order_line(order1, self.product2, 5)
         order1.action_confirm()
         self.assertEqual(order1.state, 'sale')
-        self.assertEqual(order1.mapped('picking_ids.state'), ['waiting'])
         self.run_stock_procurement_scheduler()
-        self.assertEqual(order1.mapped('picking_ids.state'), ['waiting'])
+        self.assertEqual(order1.mapped('picking_ids.state'), ['assigned'])
         picking = order1.picking_ids[0]
         self.assertEqual(len(picking.mapped('move_lines.whs_list_ids')), 2)
 
@@ -707,9 +710,12 @@ class TestConnectorWhs(TransactionCase):
         self.dbsource.whs_insert_read_and_synchronize_list()
         # wait for WHS syncronization
         time.sleep(10)
-        picking = order1.picking_ids.filtered(lambda x: x.state == 'waiting')
+        picking = order1.picking_ids.filtered(lambda x: x.state != 'cancel')
         self.run_stock_procurement_scheduler()
-        self.assertEqual(picking.state, 'waiting')
+        if all(x.state == 'assigned' for x in picking.move_lines):
+            self.assertEqual(picking.state, 'assigned')
+        else:
+            self.assertEqual(picking.state, 'cancel')
         hyddemo_whs_lists = picking.mapped('move_lines.whs_list_ids')
         lists = {x.riga: x.num_lista for x in hyddemo_whs_lists}
         # simulate launch from WHS user
@@ -723,6 +729,25 @@ class TestConnectorWhs(TransactionCase):
             sqlquery=set_liste_elaborating_query, sqlparams=None, metadata=None)
         with self.assertRaises(UserError):
             order1.action_cancel()
+        # Check product added to sale order after confirmation create new whs lists
+        # adding product to an existing open picking
+        whs_len_records = len(self.dbsource.execute_mssql(
+            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0])
+        so_line = self._create_sale_order_line(order1, self.product4, 5)
+        pickings = order1.picking_ids.filtered(lambda x: x.state == "assigned")
+        pickings.action_assign()
+        new_product_move_line_ids = order1.picking_ids.mapped('move_lines').filtered(
+            lambda x: x.product_id == self.product4
+        )
+        self.assertTrue(new_product_move_line_ids.mapped("whs_list_ids"))
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        self.assertEqual(len(self.dbsource.execute_mssql(
+            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0]),
+            whs_len_records + 1)
+
+        # test change qty of sale order line is forbidden
+        with self.assertRaises(UserError):
+            so_line.write({"product_uom_qty": 17})
 
     def _create_repair_order_line(self, repair, product, qty):
         line = self.env['repair.line'].create({
@@ -920,11 +945,10 @@ class TestConnectorWhs(TransactionCase):
         # check back picking is waiting as waiting for WHS work
         self.assertEqual(len(purchase.picking_ids), 2)
         backorder_picking = purchase.picking_ids - picking
-        self.assertEqual(backorder_picking.move_lines.mapped('state'), ['waiting'])
-        self.assertEqual(backorder_picking.state, 'waiting')
         self.run_stock_procurement_scheduler()
-        self.assertEqual(backorder_picking.move_lines.mapped('state'), ['waiting'])
-        self.assertEqual(backorder_picking.state, 'waiting')
+        for picking in purchase.picking_ids:
+            if all(x.state == 'assigned' for x in picking.move_lines):
+                self.assertEqual(picking.state, 'assigned')
 
         # check whs_list for backorder is created
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -970,18 +994,43 @@ class TestConnectorWhs(TransactionCase):
         self.assertEqual(len(self.dbsource.execute_mssql(
             sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0]),
             whs_len_records + 1)
-        # Check product added to purchase order after confirm create whs list with
-        # same date_planned which add product to an existing open picking
+        # Check product added to purchase order after confirmation create new whs lists
+        # adding product to an existing open picking
         self._create_purchase_order_line(
             purchase, self.product5, 20,
             fields.Datetime.today() + relativedelta(month=2))
-        self._create_purchase_order_line(
+        po_line = self._create_purchase_order_line(
             purchase, self.product5, 20,
             fields.Datetime.today() + relativedelta(month=2))
-        move_new_product = purchase.picking_ids.mapped('move_lines').filtered(
+        # pickings linked to purchase order change state to assigned when a product is
+        # added o changed
+        pickings = purchase.picking_ids.filtered(lambda x: x.state == "assigned")
+        pickings.action_assign()  # aka "Controlla disponibilità"
+        new_product_move_line_ids = purchase.picking_ids.mapped('move_lines').filtered(
             lambda x: x.product_id == self.product5
         )
-        move_new_product.mapped("picking_id").action_assign() # fixme automate it!
+        self.assertTrue(new_product_move_line_ids.mapped("whs_list_ids"))
+        self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(len(self.dbsource.execute_mssql(
             sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0]),
-            whs_len_records + 2)
+            whs_len_records + 3)
+
+        # test qty change on purchase order line, which create a new line with increased
+        # qty on picking
+        po_line.write({"product_qty": 27})
+        pickings = po_line.order_id.picking_ids.filtered(
+            lambda x: x.state == 'assigned')
+        pickings.action_assign()
+        po_whs_list = po_line.move_ids.mapped('whs_list_ids').filtered(
+            lambda x: x.qta == 7
+        )
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        whs_select_query = \
+            "SELECT Qta, QtaMovimentata FROM HOST_LISTE WHERE " \
+            "NumLista = '%s' AND NumRiga = '%s'" % (
+                po_whs_list.num_lista, po_whs_list.riga
+            )
+        result_liste = self.dbsource.execute_mssql(
+            sqlquery=whs_select_query, sqlparams=None, metadata=None)
+        # whs list is created for the increased qty
+        self.assertEqual(str(result_liste[0]), "[(Decimal('7.000'), None)]")

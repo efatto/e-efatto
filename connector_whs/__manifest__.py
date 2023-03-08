@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     'name': 'Connector WHS MSSQL',
-    'version': '12.0.1.0.25',
+    'version': '12.0.1.1.0',
     'author': 'Sergio Corato',
     'category': 'other',
     'depends': [
@@ -10,6 +10,7 @@
         'mrp',
         'product_supplierinfo_for_customer',
         'purchase_delivery_split_date',
+        'purchase_stock',
         'repair',
         'sale_delivery_split_date',
         'sale_order_priority',
