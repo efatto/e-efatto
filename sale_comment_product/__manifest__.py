@@ -4,8 +4,8 @@
     "name": "Sale comment on product",
     "version": "12.0.1.0.0",
     "category": "Sales",
-    "author": "Sergio Corato - Efatto.it",
-    "website": "https://efatto.it",
+    "author": "Sergio Corato",
+    "website": "https://github.com/sergiocorato/e-efatto",
     "license": "AGPL-3",
     "depends": [
         "sale_comment_template",
