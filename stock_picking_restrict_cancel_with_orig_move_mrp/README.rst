@@ -17,7 +17,7 @@ Stock Picking Restrict Cancel with Original Moves
     :target: https://github.com/efatto/efatto/tree/12.0/stock_picking_restrict_cancel_with_orig_move_mrp
     :alt: efatto/efatto
 
-|badge1| |badge2| |badge3| 
+|badge1| |badge2| |badge3|
 
 This module avoid recursion where original moves are generated from mrp by
 cancelling production order if in 'confirmed' state only.
@@ -48,7 +48,7 @@ Credits
 Authors
 ~~~~~~~
 
-* Sergio Corato Efatto.it
+* Sergio Corato
 
 Contributors
 ~~~~~~~~~~~~
