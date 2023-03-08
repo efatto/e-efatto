@@ -236,7 +236,6 @@ class TestMrpProductionDeviation(TestProductionData):
         self.assertAlmostEqual(
             sum(x['cost'] for x in subproduct_2_1_deviation_datas_4), 0)
 
-
     def test_02_mo_deviation_data_serial(self):
         production_qty = 5
         self.main_bom.routing_id = self.routing1
@@ -256,9 +255,9 @@ class TestMrpProductionDeviation(TestProductionData):
             }).change_prod_qty()
         for finished_move_line in man_order.finished_move_line_ids:
             lot = self.env['stock.production.lot'].create({
-                    'name': 'Final lot %s' % (finished_move_line.id),
-                    'product_id': self.top_product.id,
-                })
+                'name': 'Final lot %s' % (finished_move_line.id),
+                'product_id': self.top_product.id,
+            })
             finished_move_line.write({"lot_id": lot.id})
 
         deviation_data = self.get_deviation_data(man_order)
