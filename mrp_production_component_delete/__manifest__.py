@@ -7,7 +7,7 @@
     'license': 'AGPL-3',
     'category': 'Manufacturing',
     'author': 'Sergio Corato Efatto.it',
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'description': 'Delete production component not already transferred.',
     'depends': [
         'mrp',
