@@ -111,9 +111,9 @@ class TestConnectorWhs(TransactionCase):
         whs_records = self.dbsource.execute_mssql(
             sqlquery="SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE "
                      "WHERE Riferimento = '%s'" % (
-                picking.sale_id.name if picking.sale_id
-                else picking.purchase_id.name
-            ),
+                         picking.sale_id.name if picking.sale_id
+                         else picking.purchase_id.name
+                     ),
             sqlparams=None, metadata=None)[0]
         whs_lists = picking.mapped('move_lines.whs_list_ids')
         self.assertEqual(len(whs_lists), list_len)
@@ -133,9 +133,9 @@ class TestConnectorWhs(TransactionCase):
         whs_records1 = self.dbsource.execute_mssql(
             sqlquery="SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE "
                      "WHERE Riferimento = '%s'" % (
-                picking.sale_id.name if picking.sale_id
-                else picking.purchase_id.name
-            ),
+                         picking.sale_id.name if picking.sale_id
+                         else picking.purchase_id.name
+                     ),
             sqlparams=None, metadata=None)[0]
         self.assertEqual(len(whs_records1), len(whs_records))
         self.assertEqual(set([x[0] for x in whs_records1]), {5})
@@ -155,9 +155,9 @@ class TestConnectorWhs(TransactionCase):
         whs_records2 = self.dbsource.execute_mssql(
             sqlquery="SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE "
                      "WHERE Riferimento = '%s'" % (
-                picking.sale_id.name if picking.sale_id
-                else picking.purchase_id.name
-            ),
+                         picking.sale_id.name if picking.sale_id
+                         else picking.purchase_id.name
+                     ),
             sqlparams=None, metadata=None)[0]
         self.assertEqual(len(whs_records2), len(whs_records) + list_len)
         for Elaborato in set([x[0] for x in whs_records2]):

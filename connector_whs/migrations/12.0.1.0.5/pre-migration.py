@@ -5,7 +5,7 @@ _column_renames = {
     'hyddemo_whs_liste': [
         ('picking', None),
     ],
- }
+}
 
 
 @openupgrade.migrate()

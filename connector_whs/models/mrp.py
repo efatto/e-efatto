@@ -74,7 +74,8 @@ class MrpProduction(models.Model):
                 # Location of finished material is linked to WHS
                 num_lista = False
                 for move in production.move_finished_ids:
-                    if move.scrapped or (move.product_id.id != production.product_id.id):
+                    if move.scrapped or (
+                            move.product_id.id != production.product_id.id):
                         continue
                     if move.state in ('done', 'cancel') and move.whs_list_ids:
                         continue
