@@ -1,7 +1,7 @@
 # Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
 
 
 class RepairOrder(models.Model):
@@ -25,8 +25,8 @@ class RepairOrder(models.Model):
                 and x.move_id.location_id == location_id)
             remove_operations = repair.operations.filtered(
                 lambda x: x.move_id and x.move_id.state == 'done'
-                          and x.move_id.product_id.type == 'product'
-                          and x.move_id.location_dest_id == location_id)
+                and x.move_id.product_id.type == 'product'
+                and x.move_id.location_dest_id == location_id)
             if add_operations:
                 num_lista = self.env['ir.sequence'].next_by_code('hyddemo.whs.liste')
                 for riga, op in enumerate(add_operations, start=1):

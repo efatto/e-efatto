@@ -27,7 +27,8 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 inventory_obj = self.env['stock.inventory']
                 inventory_line_obj = self.env['stock.inventory.line']
                 inventory = inventory_obj.create({
-                    'name': 'WHS sync inventory ' + new_last_update.strftime("%Y-%m-%d"),
+                    'name': 'WHS sync inventory ' + new_last_update.strftime(
+                        "%Y-%m-%d"),
                     'location_id': dbsource.location_id.id,
                     'filter': 'products',
                 })
@@ -50,7 +51,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     break
                 for esito_lista in esiti_liste[0]:
                     articolo = esito_lista[1]
-                    dataora = esito_lista[7]
+                    # dataora = esito_lista[7]
                     try:
                         qty = float(esito_lista[8])
                     except ValueError:
@@ -195,7 +196,8 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 inventory.action_validate()
 
             hyddemo_mssql_log = hyddemo_mssql_log_obj.create({
-                'errori': 'Stock inventory %s' % ('sync' if wizard.do_sync else 'check'),
+                'errori': 'Stock inventory %s' % (
+                    'sync' if wizard.do_sync else 'check'),
                 'ultimo_invio': new_last_update,
                 'dbsource_id': dbsource.id,
                 'inventory_id': inventory.id if wizard.do_sync else False,
