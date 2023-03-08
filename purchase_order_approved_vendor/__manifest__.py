@@ -5,7 +5,7 @@
     "summary": "Add new states 'RFQ Confirmed' and 'RFQ Sent' in purchase orders.",
     "version": "12.0.1.0.6",
     "category": "Purchases",
-    "website": "https://efatto.it",
+    "website": "https://github.com/sergiocorato/e-efatto",
     "author": "Sergio Corato",
     "license": "AGPL-3",
     "application": False,

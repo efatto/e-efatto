@@ -4,6 +4,7 @@
     'name': 'Connector WHS MSSQL',
     'version': '12.0.1.1.0',
     'author': 'Sergio Corato',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'category': 'other',
     'depends': [
         'base_external_dbsource_mssql',

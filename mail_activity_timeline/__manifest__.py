@@ -6,7 +6,7 @@
     'license': 'AGPL-3',
     'category': 'Mail',
     'author': 'Sergio Corato',
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'description': 'Use mail activity to plan resources.',
     'depends': [
         'mail_activity_board',

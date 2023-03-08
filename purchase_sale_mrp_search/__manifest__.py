@@ -6,7 +6,7 @@
     'category': 'Purchase',
     'license': 'AGPL-3',
     'author': 'Sergio Corato',
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'maintainers': ['sergiocorato'],
     'depends': [
         'mrp_production_demo',

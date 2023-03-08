@@ -9,7 +9,7 @@
     Create a new bom from a production order.
     """,
     'author': 'Sergio Corato',
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'depends': [
         'mrp',
     ],

@@ -7,7 +7,7 @@
     'license': 'AGPL-3',
     'category': 'Manufacturing',
     'author': 'Sergio Corato',
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'summary': 'Fix a bug if the user click on active move line before selecting a '
                'product.',
     'depends': [

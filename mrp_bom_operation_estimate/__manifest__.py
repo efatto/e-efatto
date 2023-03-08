@@ -9,7 +9,7 @@
     Add list of bom operation to estimate time.
     """,
     'author': "Sergio Corato",
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'depends': [
         'account',
         'product_bom_revision',

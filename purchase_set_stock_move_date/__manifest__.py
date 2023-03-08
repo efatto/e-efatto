@@ -4,8 +4,8 @@
     "name": "Purchase set stock move date",
     "version": "12.0.1.0.1",
     "category": "other",
-    "author": "Sergio Corato - Efatto.it",
-    "website": "https://efatto.it",
+    "author": "Sergio Corato",
+    "website": "https://github.com/sergiocorato/e-efatto",
     "license": "AGPL-3",
     "depends": [
         "purchase_stock",

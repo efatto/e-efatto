@@ -6,9 +6,8 @@
     'development_status': 'Beta',
     'license': 'AGPL-3',
     'category': 'Manufacturing',
-    'author': 'Sergio Corato Efatto.it',
+    'author': 'Sergio Corato',
     'website': 'https://github.com/sergiocorato/e-efatto',
-    'description': 'Change BoM in production.',
     'depends': [
         'mrp_production_demo',
         'mrp_production_lot_custom_assign',  # added for tests

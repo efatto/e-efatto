@@ -11,7 +11,7 @@
     Add function to update product replenishment cost from current bom evaluation.
     """,
     'author': "Sergio Corato",
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'depends': [
         'account',
         'hr_timesheet',

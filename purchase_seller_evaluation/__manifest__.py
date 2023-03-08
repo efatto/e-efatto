@@ -4,6 +4,7 @@
     'name': 'Evaluate better seller',
     'version': '12.0.1.0.2',
     'author': 'Sergio Corato',
+    "website": "https://github.com/sergiocorato/e-efatto",
     'category': 'Products',
     'license': 'AGPL-3',
     'depends': [

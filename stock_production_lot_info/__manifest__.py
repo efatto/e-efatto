@@ -5,7 +5,7 @@
     "summary": "Show product lot qty in name",
     "version": "12.0.1.0.0",
     "category": "Warehouse",
-    "website": "https://efatto.it",
+    "website": "https://github.com/sergiocorato/e-efatto",
     "author": "Sergio Corato, Efatto.it",
     "license": "AGPL-3",
     "application": False,

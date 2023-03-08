@@ -4,8 +4,9 @@
     "name": "Contacts on sale order",
     "version": "12.0.1.0.0",
     "category": "Sales",
-    "author": "Sergio Corato - Efatto.it",
-    "website": "https://efatto.it",
+    "author": "Sergio Corato",
+    'license': 'AGPL-3',
+    "website": "https://github.com/sergiocorato/e-efatto",
     "depends": [
         "sale",
     ],

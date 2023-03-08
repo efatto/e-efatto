@@ -9,7 +9,7 @@
     Set defaults for products created from crm lead lines.
     """,
     'author': "Sergio Corato",
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'depends': [
         'crm_lead_code',
         'crm_lead_product',

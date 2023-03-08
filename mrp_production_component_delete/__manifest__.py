@@ -6,7 +6,7 @@
     'development_status': 'Beta',
     'license': 'AGPL-3',
     'category': 'Manufacturing',
-    'author': 'Sergio Corato Efatto.it',
+    'author': 'Sergio Corato',
     'website': 'https://github.com/sergiocorato/e-efatto',
     'description': 'Delete production component not already transferred.',
     'depends': [

@@ -7,7 +7,7 @@
     'license': 'AGPL-3',
     'category': 'Manufacturing',
     'author': 'Sergio Corato',
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'description': 'Add timesheet cost at the time of creation. '
                    'Visible on form and tree view to the hr timesheet manager.',
     'depends': [

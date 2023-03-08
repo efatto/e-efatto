@@ -6,7 +6,7 @@
     'category': 'other',
     'author': 'Sergio Corato',
     'summary': 'Add option to sale stock from partner deposit.',
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'license': 'AGPL-3',
     'depends': [
         'sale_stock',

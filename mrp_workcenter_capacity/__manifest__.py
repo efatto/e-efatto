@@ -9,7 +9,7 @@
     Add constrains to start more production than workcenter capacity.
     """,
     "author": "Sergio Corato",
-    "website": "https://efatto.it",
+    "website": "https://github.com/sergiocorato/e-efatto",
     "depends": [
         "mrp",
     ],

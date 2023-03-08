@@ -6,8 +6,8 @@
     'development_status': 'Beta',
     'license': 'AGPL-3',
     'category': 'Manufacturing',
-    'author': 'Sergio Corato Efatto.it',
-    'website': 'https://efatto.it',
+    'author': 'Sergio Corato',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'description': 'Add product component in production by barcode scan.',
     'depends': [
         'mrp_sale_info_link',

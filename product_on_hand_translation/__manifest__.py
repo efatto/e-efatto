@@ -7,7 +7,7 @@
     "license": "AGPL-3",
     "author": "Sergio Corato",
     "category": "Product",
-    "website": "https://efatto.it",
+    "website": "https://github.com/sergiocorato/e-efatto",
     "depends": ["stock"],
     "data": [
         "views/product.xml",

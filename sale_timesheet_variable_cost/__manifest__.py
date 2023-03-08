@@ -7,7 +7,7 @@
     'description': 'Add ability to set multi costs for hr employeee with date '
                    'validity.',
     'author': 'Sergio Corato',
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'license': 'AGPL-3',
     'depends': [
         'account',

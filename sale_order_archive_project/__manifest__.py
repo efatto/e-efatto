@@ -5,8 +5,8 @@
     "version": "12.0.1.0.0",
     "license": "AGPL-3",
     "category": "Sales",
-    "author": "Sergio Corato - Efatto.it",
-    "website": "https://efatto.it",
+    "author": "Sergio Corato",
+    "website": "https://github.com/sergiocorato/e-efatto",
     "depends": [
         "sale_timesheet",
     ],

@@ -6,7 +6,7 @@
     'version': '12.0.1.0.0',
     'category': 'Localisation',
     'author': 'Sergio Corato',
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'description': 'Change invoice report to member',
     'license': 'AGPL-3',
     'depends': [

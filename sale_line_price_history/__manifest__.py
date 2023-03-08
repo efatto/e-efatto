@@ -4,8 +4,8 @@
     "name": "Sale line price history ## TROPPO LENTO!!!",
     "version": "12.0.1.0.0",
     "category": "Sales",
-    "author": "Sergio Corato - Efatto.it",
-    "website": "https://efatto.it",
+    "author": "Sergio Corato",
+    "website": "https://github.com/sergiocorato/e-efatto",
     "depends": [
         "sale",
     ],

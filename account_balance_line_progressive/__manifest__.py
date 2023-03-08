@@ -9,7 +9,7 @@
     ' single line, it compute progressive balance for the account selected.',
     'author': "Sergio Corato, "
               "Odoo Community Association (OCA)",
-    'website': 'https://github.com/OCA/account-financial-tools',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'license': 'LGPL-3',
     'depends': [
         'account',

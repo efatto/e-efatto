@@ -6,8 +6,8 @@
     'development_status': 'Beta',
     'license': 'AGPL-3',
     'category': 'Manufacturing',
-    'author': 'Sergio Corato Efatto.it',
-    'website': 'https://efatto.it',
+    'author': 'Sergio Corato',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'description': 'Currently consumed product are added automatically when production '
                    'is done. This module add an option to remove this behavior.',
     'depends': [

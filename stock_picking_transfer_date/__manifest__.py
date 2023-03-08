@@ -5,9 +5,10 @@
     'version': '12.0.1.0.0',
     'category': 'Stock Management',
     'author': 'Sergio Corato',
+    'license': 'AGPL-3',
     'summary': 'Add field to put transfer date on picking, instead of default current '
                'date.',
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'depends': [
         'stock',
     ],

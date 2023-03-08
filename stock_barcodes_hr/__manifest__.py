@@ -4,8 +4,8 @@
     "name": "Timesheet & Productivity Barcode Recording",
     "version": "12.0.1.0.1",
     "category": "Timesheet",
-    "author": "Sergio Corato - Efatto.it",
-    "website": "https://efatto.it",
+    "author": "Sergio Corato",
+    "website": "https://github.com/sergiocorato/e-efatto",
     "description": "Record worked time on tasks and workorder by barcode scan",
     "license": "AGPL-3",
     "depends": [

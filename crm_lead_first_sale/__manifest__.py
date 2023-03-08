@@ -6,11 +6,11 @@
     'category': 'Sales Management',
     'license': 'AGPL-3',
     'summary': """
-    Add a field with days to first sale of crm lead, computed on date_sent added on 
+    Add a field with days to first sale of crm lead, computed on date_sent added on
     sale order.
     """,
     'author': "Sergio Corato",
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'depends': [
         'sale_crm',
     ],

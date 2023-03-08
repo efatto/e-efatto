@@ -7,7 +7,7 @@
     'license': 'AGPL-3',
     'description': "Show workorder note in production",
     'author': "Sergio Corato",
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'depends': [
         'mrp',
     ],

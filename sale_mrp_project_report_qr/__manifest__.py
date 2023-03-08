@@ -6,7 +6,8 @@
     'category': 'Project',
     'license': 'AGPL-3',
     'description': """
-    Report with qr code with project task and mrp workorder in form <res_model>_<res_id>.
+    Report with qr code with project task and mrp workorder in form:
+    <res_model>_<res_id>.
     Only task linked to sale line will be printed.
     """,
     'author': 'Sergio Corato',

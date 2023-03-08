@@ -9,7 +9,7 @@
     Download or upload xlsx of Bom lines.
     """,
     'author': 'Sergio Corato',
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'depends': [
         'mrp_flattened_bom_xlsx',
     ],

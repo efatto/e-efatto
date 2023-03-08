@@ -7,8 +7,8 @@
     'category': 'Product',
     'license': 'AGPL-3',
     'summary': 'Add a button to show product cost history',
-    'author': 'Akretion, Sergio Corato - Efatto.it',
-    'website': 'https://efatto.it',
+    'author': 'Akretion, Sergio Corato',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'depends': ['product'],
     'data': [
         'security/product_security.xml',
