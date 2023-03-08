@@ -6,7 +6,9 @@ from odoo import api, fields, models, _
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    date_sent = fields.Datetime()
+    date_sent = fields.Datetime(
+        string="Date Sent"
+    )
     date_sent_calculated = fields.Datetime(
         compute="_compute_date_sent_calculated",
         store=True,
