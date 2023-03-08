@@ -14,7 +14,7 @@ Sale comment on product
     :target: https://github.com/sergiocorato/e-efatto/tree/12.0/sale_comment_product
     :alt: sergiocorato/e-efatto
 
-|badge1| |badge2| 
+|badge1| |badge2|
 
 This module adds a formatted note in product view, that will be copied in sale order line.
 
@@ -54,7 +54,7 @@ Credits
 Authors
 ~~~~~~~
 
-* Sergio Corato - Efatto.it
+* Sergio Corato
 
 Contributors
 ~~~~~~~~~~~~
