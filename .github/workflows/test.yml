@@ -1,4 +1,4 @@
-name: test Odoo addons
+name: tests
 
 on:
   pull_request:
@@ -6,11 +6,29 @@ on:
       - "12.0*"
   push:
     branches:
-      - "12.0*"
+      - "12.0"
+      - "12.0-ocabot-*"
 
 jobs:
-  test:
+  unreleased-deps:
     runs-on: ubuntu-latest
+    name: Detect unreleased dependencies
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          for reqfile in requirements.txt test-requirements.txt ; do
+              if [ -f ${reqfile} ] ; then
+                  result=0
+                  # reject non-comment lines that contain a / (i.e. URLs, relative paths)
+                  grep "^[^#].*/" ${reqfile} || result=$?
+                  if [ $result -eq 0 ] ; then
+                      echo "Unreleased dependencies found in ${reqfile}."
+                      exit 1
+                  fi
+              fi
+          done
+  test:
+    runs-on: ubuntu-20.04
     container: ${{ matrix.container }}
     name: ${{ matrix.name }}
     strategy:
@@ -18,7 +36,7 @@ jobs:
       matrix:
         include:
           - container: ghcr.io/oca/oca-ci/py3.6-odoo12.0:latest
-            makepot: "true"
+            makepot: "false"
             name: test with Odoo
           - container: ghcr.io/oca/oca-ci/py3.6-ocb12.0:latest
             name: test with OCB
@@ -43,6 +61,10 @@ jobs:
         run: pip3 install -e "git+https://github.com/sergiocorato/efatto@12.0#egg=odoo12-addon-mrp_sale_info_link&subdirectory=setup/mrp_sale_info_link"
       - name: Install addons and dependencies
         run: oca_install_addons
+      - name: Check licenses
+        run: manifestoo -d . check-licenses
+      - name: Check development status
+        run: manifestoo -d . check-dev-status --default-dev-status=Beta
       - name: Initialize test db
         run: oca_init_test_database
       - name: Run tests

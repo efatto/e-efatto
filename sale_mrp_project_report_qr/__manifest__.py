@@ -10,7 +10,7 @@
     Only task linked to sale line will be printed.
     """,
     'author': 'Sergio Corato',
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'depends': [
         'mrp_bom_evaluation',
         'project',
