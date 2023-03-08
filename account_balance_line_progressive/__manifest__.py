@@ -1,5 +1,5 @@
 # Copyright 2016-2019 Sergio Corato <https://github.com/sergiocorato>
-# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
 {
     'name': 'Account balance line progressive',
     'version': '12.0.1.0.0',
@@ -10,7 +10,7 @@
     'author': "Sergio Corato, "
               "Odoo Community Association (OCA)",
     'website': 'https://github.com/sergiocorato/e-efatto',
-    'license': 'LGPL-3',
+    'license': 'AGPL-3',
     'depends': [
         'account',
     ],
