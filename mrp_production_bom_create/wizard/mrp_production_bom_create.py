@@ -44,9 +44,8 @@ class MrpProductionBomCreate(models.TransientModel):
         component_values = []
         for line in production.move_raw_ids.filtered(lambda x: x.quantity_done):
             component_values.append({
-                    'product_id': line.product_id.id,
-                    'product_qty': line.quantity_done / (production.product_qty or 1),
-                    'product_uom_id': line.product_id.uom_id.id,
-                }
-            )
+                'product_id': line.product_id.id,
+                'product_qty': line.quantity_done / (production.product_qty or 1),
+                'product_uom_id': line.product_id.uom_id.id,
+            })
         return component_values
