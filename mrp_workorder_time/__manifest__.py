@@ -6,8 +6,7 @@
     'license': 'AGPL-3',
     'category': 'Manufacturing',
     'author': 'Sergio Corato',
-    'website': 'https://efatto.it',
-    'description': 'Add facility to set worked time on workorder.',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'depends': [
         'mrp_production_demo',
     ],
