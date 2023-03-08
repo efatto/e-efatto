@@ -10,9 +10,9 @@ class ChangeProductionQty(models.TransientModel):
             production = wizard.mo_id
             if wizard.product_qty != production.product_qty:
                 rate = wizard.product_qty / production.product_qty
-                factor = production.product_uom_id._compute_quantity(
-                    wizard.product_qty, production.bom_id.product_uom_id
-                ) / production.bom_id.product_qty
+                # factor = production.product_uom_id._compute_quantity(
+                #     wizard.product_qty, production.bom_id.product_uom_id
+                # ) / production.bom_id.product_qty
                 for move in production.move_raw_ids.filtered(
                     'expected_product_uom_qty'
                 ):
