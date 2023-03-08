@@ -17,7 +17,7 @@ MRP Production Lot Custom Assign
     :target: https://github.com/sergiocorato/e-efatto/tree/12.0/mrp_production_lot_custom_assign
     :alt: sergiocorato/e-efatto
 
-|badge1| |badge2| |badge3| 
+|badge1| |badge2| |badge3|
 
 This module automate user selected lot assignment to workorders from production.
 
@@ -52,7 +52,7 @@ Credits
 Authors
 ~~~~~~~
 
-* Sergio Corato Efatto.it
+* Sergio Corato
 
 Contributors
 ~~~~~~~~~~~~
