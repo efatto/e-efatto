@@ -5,7 +5,7 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <field name="commitment_date" position="after">
+            <field name="confirmation_date" position="after">
                 <field name="date_sent" groups="sale.group_sale_order_dates"/>
                 <field name="date_sent_calculated" groups="sale.group_sale_order_dates"/>
             </field>
