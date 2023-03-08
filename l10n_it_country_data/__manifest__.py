@@ -9,7 +9,7 @@
     With this module Italian country data will be displayed as usual in Italy.
     """,
     "author": "Sergio Corato",
-    "website": "https://efatto.it",
+    "website": "https://github.com/sergiocorato/e-efatto",
     "license": "LGPL-3",
     "depends": [
         "sale",
