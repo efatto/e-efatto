@@ -21,16 +21,4 @@
         </field>
     </record>
 
-    <record id="view_picking_form" model="ir.ui.view">
-        <field name="model">stock.picking</field>
-        <field name="inherit_id" ref="stock.view_picking_form"/>
-        <field name="arch" type="xml">
-            <button name="button_validate" position="after">
-                <field name="is_assigned" invisible="1"/>
-                <button name="mark_printed_for_logistic" attrs="{'invisible': ['|', '|', ('picking_type_code', '!=', 'outgoing'), ('is_assigned', '=', True), ('state', 'in', ['draft', 'cancel'])]}" string="Mark printed for logistic" type="object" class="oe_highlight" groups="stock.group_stock_user"/>
-                <button name="unmark_printed_for_logistic" attrs="{'invisible': ['|', '|', ('picking_type_code', '!=', 'outgoing'), ('is_assigned', '=', False), ('state', 'in', ['draft', 'cancel'])]}" string="Unmark printed for logistic" type="object" groups="stock.group_stock_user"/>
-            </button>
-        </field>
-    </record>
-
 </odoo>

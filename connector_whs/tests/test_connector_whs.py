@@ -120,16 +120,13 @@ class TestConnectorWhs(TransactionCase):
         whs_list = whs_lists[0]
         self.assertEqual(whs_list.stato, '2')
         self.run_stock_procurement_scheduler()
-        picking.mark_printed_for_logistic()
         if all(x.state == 'assigned' for x in picking.move_lines):
             self.assertEqual(picking.state, 'assigned')
         else:
             self.assertEqual(picking.state, 'waiting')
-        self.assertTrue(picking.is_assigned)
         picking.action_cancel()
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(picking.state, 'cancel')
-        self.assertFalse(picking.is_assigned)
         # check whs lists are in stato '3' -> 'Da NON elaborare'
         self.assertEqual(set(picking.move_lines.mapped('whs_list_ids.stato')), {'3'})
         self.simulate_whs_cron(picking.move_lines.mapped('whs_list_ids'), 5)
@@ -206,15 +203,12 @@ class TestConnectorWhs(TransactionCase):
         self.assertEqual(len(whs_lists), 1)
         whs_list = whs_lists[0]
         self.assertEqual(whs_list.stato, '2')
-        picking1.mark_printed_for_logistic()
         if all(x.state == 'assigned' for x in picking1.move_lines):
             self.assertEqual(picking1.state, 'assigned')
         else:
             self.assertEqual(picking1.state, 'waiting')
-        self.assertTrue(picking1.is_assigned)
         picking1.action_cancel()
         self.assertEqual(picking1.state, 'cancel')
-        self.assertFalse(picking1.is_assigned)
         # check whs lists are in stato '3' -> 'Da NON elaborare'
         self.assertEqual(picking1.move_lines.mapped('whs_list_ids.stato'), ['3'])
         # restore picking to assigned state
@@ -351,7 +345,6 @@ class TestConnectorWhs(TransactionCase):
 
         # check move and picking linked to sale order have changed state to done
         self.assertEqual(set(picking.move_lines.mapped('state')), {'assigned'})
-        picking.mark_printed_for_logistic()
         if all(x.state == 'assigned' for x in picking.move_lines):
             self.assertEqual(picking.state, 'assigned')
         else:
@@ -463,8 +456,6 @@ class TestConnectorWhs(TransactionCase):
             self.assertEqual(picking.state, 'assigned')
         else:
             self.assertEqual(picking.state, 'waiting')
-        picking.mark_printed_for_logistic()
-        self.assertTrue(picking.is_assigned)
         # check that action_assign run by scheduler do not change state
         self.run_stock_procurement_scheduler()
         picking.action_assign()
@@ -612,8 +603,6 @@ class TestConnectorWhs(TransactionCase):
                 if stock_move_line.product_id == self.product3:
                     self.assertAlmostEqual(stock_move_line.qty_done, 0)
         self.run_stock_procurement_scheduler()
-        picking.mark_printed_for_logistic()
-        self.assertTrue(picking.is_assigned)
         # check that action_assign run by scheduler do not change state
         self.run_stock_procurement_scheduler()
         picking.action_assign()
@@ -930,8 +919,6 @@ class TestConnectorWhs(TransactionCase):
             self.assertEqual(picking.state, 'assigned')
         else:
             self.assertEqual(picking.state, 'waiting')
-        picking.mark_printed_for_logistic()
-        self.assertTrue(picking.is_assigned)
         # check that action_assign run by scheduler do not change state
         picking.action_assign()
         self.assertEqual(picking.state, 'assigned')
