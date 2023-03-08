@@ -5,8 +5,8 @@
     "summary": "Set date in EU format",
     "version": "12.0.1.0.0",
     "category": "Stock",
-    "website": "https://efatto.it",
-    "author": "Sergio Corato Efatto.it",
+    "website": "https://github.com/sergiocorato/e-efatto",
+    "author": "Sergio Corato",
     "license": "AGPL-3",
     "depends": [
         "stock",
