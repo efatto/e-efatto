@@ -63,7 +63,7 @@ Maintainers
 
 Current maintainer:
 
-|maintainer-sergiocorato| 
+|maintainer-sergiocorato|
 
 This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/14.0/sale_delivery_recreate>`_ project on GitHub.
 
