@@ -17,7 +17,7 @@ Production Group Line to Produce MTO
     :target: https://github.com/sergiocorato/e-efatto/tree/12.0/mrp_production_line_mto_manufacture
     :alt: sergiocorato/e-efatto
 
-|badge1| |badge2| |badge3| 
+|badge1| |badge2| |badge3|
 
 This module highlight production component when they are to produce and make to order.
 
@@ -47,7 +47,7 @@ Credits
 Authors
 ~~~~~~~
 
-* Sergio Corato Efatto.it
+* Sergio Corato
 
 Contributors
 ~~~~~~~~~~~~
@@ -63,7 +63,7 @@ Maintainers
 
 Current maintainer:
 
-|maintainer-sergiocorato| 
+|maintainer-sergiocorato|
 
 This module is part of the `sergiocorato/e-efatto <https://github.com/sergiocorato/e-efatto/tree/12.0/mrp_production_line_mto_manufacture>`_ project on GitHub.
 
