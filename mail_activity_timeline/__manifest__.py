@@ -10,6 +10,7 @@
     'description': 'Use mail activity to plan resources.',
     'depends': [
         'mail_activity_board',
+        'mail_activity_partner',
         'mrp_production_calendar',
         'mrp_production_demo',
         'mrp_sale_info',
