@@ -281,6 +281,8 @@ class WizStockBarcodesReadHr(models.TransientModel):
 
     def _add_read_log(self, log_detail=False):
         if self.hour_amount or self.minute_amount:
+            if "duration" in log_detail:
+                log_detail.pop("duration")
             vals = self._prepare_scan_log_values(log_detail)
             self.env['stock.barcodes.read.log'].create(vals)
 
