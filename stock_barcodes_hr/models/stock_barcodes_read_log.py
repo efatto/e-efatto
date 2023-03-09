@@ -44,3 +44,7 @@ class StockBarcodesReadLog(models.Model):
         string="Date/time Start Work",
         readonly=True,
     )
+    duration = fields.Float(
+        string="Duration in hours",
+        readonly=True,
+    )

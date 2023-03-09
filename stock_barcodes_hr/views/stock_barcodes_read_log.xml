@@ -13,6 +13,7 @@
                 <field name="hour_amount"/>
                 <field name="minute_amount"/>
                 <field name="datetime_start"/>
+                <field name="duration"/>
                 <field name="res_model_id"/>
                 <field name="res_id"/>
             </tree>
@@ -32,6 +33,7 @@
                     <field name="hour_amount"/>
                     <field name="minute_amount"/>
                     <field name="datetime_start"/>
+                    <field name="duration"/>
                     <field name="res_model_id"/>
                     <field name="res_id"/>
                 </group>
@@ -47,7 +49,7 @@
     </record>
     <menuitem
         action="action_hr_attendance_log"
-        id="menu_hr_attendance_log" 
+        id="menu_hr_attendance_log"
         parent="hr_attendance.menu_hr_attendance_settings"
         sequence="120"
         groups="hr_attendance.group_hr_attendance_manager"/>
