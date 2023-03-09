@@ -14,6 +14,7 @@
         "mrp_production_demo",
         "mrp_workorder_time",
         "project_hr",
+        "project_timesheet_time_control",
         "sale_mrp_project_report_qr",
         "stock_barcodes",
     ],
