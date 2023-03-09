@@ -65,7 +65,7 @@ class HideMenuUser(models.Model):
         relation='res_user_menu_hide',
         column1='res_user_id',
         column2='menu_id',
-        string="Menu",
+        string="Menu to hide",
         help='Select menu items that needs to be hidden to this user.\n'
              'If a selection in Show menu items list is present, these selection will '
              'be ignored.')
@@ -74,7 +74,7 @@ class HideMenuUser(models.Model):
         relation='res_user_menu_show',
         column1='res_user_id',
         column2='menu_id',
-        string="Menu",
+        string="Menu to show",
         help='Select menu items that needs to be shown to this user. These selection '
              'prevails on Hide menu items.')
     is_admin = fields.Boolean(compute=_get_is_admin)
