@@ -24,7 +24,7 @@
         'project_timeline',
         'purchase_discount',
         'purchase_seller_evaluation',
-        'sale_management',
+        'sale_timesheet',
     ],
     'excludes': [
         'mrp_production_grouped_by_product',

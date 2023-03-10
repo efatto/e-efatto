@@ -1,93 +1,63 @@
 from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
+from odoo.tools import mute_logger
 
 
-class TestProductionGroupLine(TestProductionData):
+class TestMrpBomEvaluation(TestProductionData):
 
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.uom_kgm = cls.env.ref('uom.product_uom_kgm')
-        cls.uom_ton = cls.env.ref('uom.product_uom_ton')
-        cls.uom_gr = cls.env.ref('uom.product_uom_gram')
-        cls.uom_m = cls.env.ref('uom.product_uom_meter')
-        cls.product_weight = cls.env['product.product'].create([{
-            'name': 'Component',
-            'uom_id': cls.uom_kgm.id,
-            'uom_po_id': cls.uom_kgm.id}])
-        cls.product_weight1 = cls.env['product.product'].create([{
-            'name': 'Component 1',
-            'uom_id': cls.uom_kgm.id,
-            'uom_po_id': cls.uom_kgm.id}])
-        cls.product_weight2 = cls.env['product.product'].create([{
-            'name': 'Component 2',
-            'uom_id': cls.uom_kgm.id,
-            'uom_po_id': cls.uom_kgm.id}])
-        cls.product_weight3 = cls.env['product.product'].create([{
-            'name': 'Component 3 not weight uom',
-            'uom_id': cls.uom_m.id,
-            'uom_po_id': cls.uom_m.id,
-            'weight': 13.55}])
-        cls.bom_weight = cls.env['mrp.bom'].create([{
-            'product_id': cls.top_product.id,
-            'product_tmpl_id': cls.top_product.product_tmpl_id.id,
-            'product_uom_id': cls.uom_unit.id,
-            'product_qty': 1.0,
-            'type': 'normal',
-            'bom_line_ids': [
-                (0, 0, {'product_id': cls.product_weight.id, 'product_qty': 2.55}),
-                (0, 0, {'product_id': cls.product_weight1.id, 'product_qty': 8.13}),
-                (0, 0, {'product_id': cls.product_weight2.id, 'product_qty': 12.01})
-            ]}])
-
-    def test_01_weight(self):
-        self.assertEqual(len(self.bom_weight.bom_line_ids), 3)
-        self.assertAlmostEqual(self.bom_weight.weight_total, 2.55 + 8.13 + 12.01)
-
-        # Add a product with not-weight uom, to compute weight directly
-        self.bom_weight.write({
-            'bom_line_ids': [
-                (0, 0, {'product_id': self.product_weight3.id, 'product_qty': 5.5})
+        cls.service_product = cls.env["product.product"].create({
+            "name": "Service product",
+            "type": "service",
+            "uom_id": cls.env.ref("uom.product_uom_hour").id,
+            "uom_po_id": cls.env.ref("uom.product_uom_hour").id,
+            "service_tracking": "task_new_project",
+        })
+        cls.partner = cls.env.ref('base.res_partner_2')
+        cls.partner.customer = True
+        cls.main_bom.write({
+            "bom_line_ids": [
+                (0, 0, {
+                    "product_id": cls.service_product.id,
+                    "product_qty": 5,
+                    "product_uom_id": cls.service_product.uom_id.id,
+                })
             ]
         })
-        self.assertAlmostEqual(self.bom_weight.weight_total,
-                               2.55 + 8.13 + 12.01 + (13.55 * 5.5), 2)
 
-        # Add a product with not-weight uom and different uom on weight (ton)
-        product_weight4 = self.env['product.product'].create([{
-            'name': 'Component 4 ton weight uom',
-            'uom_id': self.uom_m.id,
-            'uom_po_id': self.uom_m.id,
-            'weight_uom_id': self.uom_ton.id,
-            'weight': 3.73}])
-        self.bom_weight.write({
-            'bom_line_ids': [
-                (0, 0, {'product_id': product_weight4.id, 'product_qty': 1.76})
-            ]
-        })
-        self.assertEqual(len(self.bom_weight.bom_line_ids), 5)
-        self.assertAlmostEqual(self.bom_weight.bom_line_ids.filtered(
-            lambda x: x.product_id == product_weight4
-        ).weight_total, 3.73 * 1.76 * 1000, places=2)
-        self.assertAlmostEqual(self.bom_weight.weight_total,
-                               (2.55 + 8.13 + 12.01 + (13.55 * 5.5)
-                                + (3.73 * 1.76 * 1000)), places=1)
+    def _create_sale_order_line(self, order, product, qty):
+        vals = {
+            'order_id': order.id,
+            'product_id': product.id,
+            'product_uom_qty': qty,
+            'price_unit': 100,
+            }
+        line = self.env['sale.order.line'].create(vals)
+        line.product_id_change()
+        line._convert_to_write(line._cache)
+        return line
 
-        # Add a product with not-weight uom and different uom on weight (ton)
-        product_weight5 = self.env['product.product'].create([{
-            'name': 'Component 5 gram weight uom',
-            'uom_id': self.uom_m.id,
-            'uom_po_id': self.uom_m.id,
-            'weight_uom_id': self.uom_gr.id,
-            'weight': 1550}])
-        self.bom_weight.write({
-            'bom_line_ids': [
-                (0, 0, {'product_id': product_weight5.id, 'product_qty': 1.18})
-            ]
+    def test_01_create_task_from_mo(self):
+        order1 = self.env['sale.order'].create({
+            'partner_id': self.partner.id,
         })
-        self.assertAlmostEqual(self.bom_weight.bom_line_ids.filtered(
-            lambda x: x.product_id == product_weight5
-        ).weight_total, 1550 * 1.18 / 1000, places=2)
-        self.assertAlmostEqual(self.bom_weight.weight_total,
-                               (2.55 + 8.13 + 12.01 + (13.55 * 5.5)
-                                + (3.73 * 1.76 * 1000)
-                                + (1550 * 1.18 / 1000)), places=1)
+        self._create_sale_order_line(order1, self.top_product, 1)
+        order1.action_confirm()
+        self.assertEqual(order1.state, 'sale')
+        with mute_logger('odoo.addons.stock.models.procurement'):
+            self.procurement_model.run_scheduler()
+        self.production = self.env['mrp.production'].search(
+            [('origin', '=', order1.name)])
+        self.assertTrue(self.production)
+        self.production.action_assign()
+        service_lines = order1.order_line.filtered(
+            lambda x: x.product_id == self.service_product
+        )
+        self.assertEqual(len(service_lines), 1)
+        self.assertTrue(order1.tasks_ids)
+        self.assertEqual(len(order1.tasks_ids), 1)
+        task = order1.tasks_ids[0]
+        self.assertEqual(task.planned_hours, service_lines.bom_line_id.product_qty)
+        self.assertEqual(service_lines.product_uom_qty,
+                         service_lines.bom_line_id.product_qty)
