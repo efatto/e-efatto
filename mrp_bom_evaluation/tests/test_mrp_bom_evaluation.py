@@ -44,6 +44,10 @@ class TestMrpBomEvaluation(TestProductionData):
         })
         self._create_sale_order_line(order1, self.top_product, 1)
         order1.action_confirm()
+        if self.env["ir.module.module"].search([
+                ("name", "=", "sale_order_approved_customer"),
+                ("state", "=", "installed")]):
+            order1.action_confirm()
         self.assertEqual(order1.state, 'sale')
         with mute_logger('odoo.addons.stock.models.procurement'):
             self.procurement_model.run_scheduler()
