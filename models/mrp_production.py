@@ -1,7 +1,6 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import models, api, _
-from odoo.exceptions import UserError
+from odoo import models, api
 
 
 class MrpProduction(models.Model):
