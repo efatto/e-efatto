@@ -24,6 +24,7 @@
         'project_timeline',
         'purchase_discount',
         'purchase_seller_evaluation',
+        'sale_order_analytic_all',
         'sale_timesheet',
     ],
     'excludes': [

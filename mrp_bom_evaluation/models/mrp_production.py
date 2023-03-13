@@ -15,7 +15,8 @@ class MrpProduction(models.Model):
             for x in self.sale_id.order_line
         ):
             # add SO order line to create task and/or project, excluding lines already
-            # created with bom_line_id
+            # created with bom_line_id, with order project_id created from
+            # sale_order_analytic_all
             self.env['sale.order.line'].create({
                 'name': bom_line.product_id.name,
                 'product_id': bom_line.product_id.id,
@@ -24,6 +25,7 @@ class MrpProduction(models.Model):
                 'price_unit': 0,
                 'order_id': self.sale_id.id,
                 'bom_line_id': bom_line.id,
+                'project_id': self.sale_id.project_id.id,
             })
             return
         return super()._get_raw_move_data(bom_line, line_data)
