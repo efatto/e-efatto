@@ -28,7 +28,7 @@ class SaleOrder(models.Model):
     def action_confirm(self):
         # First confirm only approve order, second one confirm it
         not_approved_orders = self.filtered(
-            lambda x: x.state != 'approved'
+            lambda x: x.state in ['draft', 'sent']
         )
         for order in not_approved_orders:
             order.write({'state': 'approved'})
