@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="view_resource_calendar_attendance_tree" model="ir.ui.view">
+        <field name="model">resource.calendar.attendance</field>
+        <field name="inherit_id" ref="resource.view_resource_calendar_attendance_tree"/>
+        <field name="arch" type="xml">
+            <field name="hour_from" position="before">
+                <field name="hour_from_step" widget="float_time"/>
+            </field>
+            <field name="hour_to" position="after">
+                <field name="hour_to_step" widget="float_time"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="hr_attendance_view_form" model="ir.ui.view">
+        <field name="model">hr.attendance</field>
+        <field name="inherit_id" ref="hr_attendance.hr_attendance_view_form"/>
+        <field name="arch" type="xml">
+            <field name="check_out" position="after">
+                <field name="ordinary_worked_hours" widget="float_time"/>
+                <field name="extraordinary_worked_hours" widget="float_time"/>
+                <field name="total_worked_hours" widget="float_time"/>
+            </field>
+        </field>
+    </record>
+
+
+</odoo>
