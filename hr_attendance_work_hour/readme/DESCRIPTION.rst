@@ -1,1 +1,1 @@
-This module add some field with computed worked ordinary and extraordinary hours to hr attendance.
+This module add some field with computed worked hours splitted by ordinary and extraordinary to hr attendance.

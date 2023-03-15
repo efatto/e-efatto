@@ -61,3 +61,20 @@ class TestHrAttendanceWorkHour(SavepointCase):
         # 7-11.55 > + 4:55 ore
         # 7.54 > - 4:30 ore (margine -> usare quello in ingresso per l'ordinario)
         # totale - 0:05 -> riportato 0 in quanto valori negativi non ammessi
+
+    def test_03_hr_attendance(self):
+        self.assertEqual(self.employee_1.tz, self.tz)
+        attendance = self.env["hr.attendance"].create({
+            "employee_id": self.employee_1.id,
+            "check_in": "2023-03-15 05:30:00",
+        })
+        self.assertEqual(attendance.check_in,
+                         fields.Datetime.from_string("2023-03-15 05:30:00"))
+        self.assertEqual(attendance.ordinary_worked_hours, 0)
+        self.assertEqual(attendance.extraordinary_worked_hours, 0)
+        attendance.write({"check_out": "2023-03-15 10:55:00"})
+        self.assertAlmostEqual(attendance.extraordinary_worked_hours, (30/60))
+        self.assertAlmostEqual(attendance.ordinary_worked_hours, (4.0 + 55/60))
+        attendance.write({"check_out": "2023-03-15 10:54:00"})
+        self.assertAlmostEqual(attendance.extraordinary_worked_hours, (30/60))
+        self.assertAlmostEqual(attendance.ordinary_worked_hours, (4.0 + 25/60))

@@ -112,8 +112,9 @@ class HrAttendance(models.Model):
                                     extraordinary_worked_hours += hours
                         break
 
-                attendance.total_worked_hours = total_worked_hours
                 attendance.ordinary_worked_hours = max(
                     ordinary_worked_hours, 0)
                 attendance.extraordinary_worked_hours = max(
                     extraordinary_worked_hours, 0)
+                attendance.total_worked_hours = attendance.ordinary_worked_hours + \
+                    attendance.extraordinary_worked_hours
