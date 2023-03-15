@@ -20,6 +20,8 @@ class HrAttendance(models.Model):
     """
 
     attendance_in_multiple_dates = fields.Boolean()
+    check_in_date = fields.Date(
+        compute="_compute_check_in_date", store=True)
     total_worked_hours = fields.Float(
         compute="_compute_worked_hours", store=True)
     ordinary_worked_hours = fields.Float(
@@ -36,12 +38,18 @@ class HrAttendance(models.Model):
         return timezone(tz).localize(datetime.combine(day, float_to_time(hour)))
 
     @api.multi
+    @api.depends("check_in")
+    def _compute_check_in_date(self):
+        # put date in UTC format from datetime
+        for rec in self:
+            rec.check_in_date = rec.check_in.date()
+
+    @api.multi
     @api.depends('check_in', 'check_out',
                  'employee_id.resource_calendar_id.attendance_ids.hour_to_step',
                  'employee_id.resource_calendar_id.attendance_ids.hour_from_step')
     def _compute_worked_hours(self):
         for attendance in self:
-            total_worked_hours = 0
             ordinary_worked_hours = 0
             extraordinary_worked_hours = 0
             tz = (attendance.employee_id or self.env.user).tz
