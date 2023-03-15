@@ -53,8 +53,24 @@
                     <field name="minute_amount" widget="FieldFloatNumericModeOnReturn"
                         attrs="{'readonly': ['|', ('employee_id', '=', False), ('workorder_id', '=', False), ('task_id', '=', False)]}"/>
                 </group>
-                <group>
-                    <button name="action_done" id="action_done_button" class="btn btn-info" style="font-weight: bold; font-size: 24px; padding: 20px;" string="Done" type="object"/>
+                <group colspan="1" col="3">
+                    <group>
+                        <span>
+                            <button name="action_done" id="action_done_button" class="btn btn-info" style="font-weight: bold; font-size: 24px; padding: 20px;" string="Done" type="object"/>
+                        </span>
+                    </group>
+                    <group>
+                        <span>
+                            <div style="font-weight: bold; font-size: 12px;">WORKED HOURS TODAY</div>
+                            <field name="worked_hours" nolabel="1" class="btn btn-info" style="font-weight: bold; font-size: 24px; padding: 20px;" widget="float_time"/>
+                        </span>
+                    </group>
+                    <group>
+                        <span>
+                            <div style="font-weight: bold; font-size: 12px;">TO BE RECORDED</div>
+                            <field name="residual_hours" nolabel="1" class="btn btn-info" style="font-weight: bold; font-size: 24px; padding: 20px;" widget="float_time"/>
+                        </span>
+                    </group>
                 </group>
             </xpath>
             <field name="product_id" position="attributes">

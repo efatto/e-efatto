@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-22 14:29+0000\n"
-"PO-Revision-Date: 2022-12-22 14:29+0000\n"
+"POT-Creation-Date: 2023-03-15 20:24+0000\n"
+"PO-Revision-Date: 2023-03-15 20:24+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -26,14 +26,14 @@ msgid "Barcode Scanned"
 msgstr "Codice a barre acquisito"
 
 #. module: stock_barcodes_hr
-#: code:addons/stock_barcodes_hr/wizard/wiz_stock_barcodes_read_hr.py:177
-#: code:addons/stock_barcodes_hr/wizard/wiz_stock_barcodes_read_hr.py:191
+#: code:addons/stock_barcodes_hr/wizard/wiz_stock_barcodes_read_hr.py:204
+#: code:addons/stock_barcodes_hr/wizard/wiz_stock_barcodes_read_hr.py:218
 #, python-format
 msgid "Barcode not found"
 msgstr "Codice a barre non trovato"
 
 #. module: stock_barcodes_hr
-#: code:addons/stock_barcodes_hr/wizard/wiz_stock_barcodes_read_hr.py:166
+#: code:addons/stock_barcodes_hr/wizard/wiz_stock_barcodes_read_hr.py:193
 #: selection:wiz.stock.barcodes.read.hr,message_type:0
 #, python-format
 msgid "Barcode read correctly"
@@ -45,7 +45,7 @@ msgid "Barcode read with additional info"
 msgstr "Codice a barre letto con note aggiuntive"
 
 #. module: stock_barcodes_hr
-#: code:addons/stock_barcodes_hr/wizard/wiz_stock_barcodes_read_hr.py:82
+#: code:addons/stock_barcodes_hr/wizard/wiz_stock_barcodes_read_hr.py:88
 #, python-format
 msgid "Barcode reader"
 msgstr "Lettore codice a barre"
@@ -59,6 +59,11 @@ msgstr "Creato da"
 #: model:ir.model.fields,field_description:stock_barcodes_hr.field_wiz_stock_barcodes_read_hr__create_date
 msgid "Created on"
 msgstr "Creato il"
+
+#. module: stock_barcodes_hr
+#: model:ir.model.fields,field_description:stock_barcodes_hr.field_stock_barcodes_read_log__date_start
+msgid "Date Start"
+msgstr "Data inizio"
 
 #. module: stock_barcodes_hr
 #: model:ir.model.fields,field_description:stock_barcodes_hr.field_wiz_stock_barcodes_read_hr__date_start
@@ -80,6 +85,11 @@ msgstr "Nome visualizzato"
 #: model_terms:ir.ui.view,arch_db:stock_barcodes_hr.view_stock_barcodes_read_hr_form
 msgid "Done"
 msgstr "Salva"
+
+#. module: stock_barcodes_hr
+#: model:ir.model.fields,field_description:stock_barcodes_hr.field_stock_barcodes_read_log__duration
+msgid "Duration in hours"
+msgstr "Durata in ore"
 
 #. module: stock_barcodes_hr
 #: model:ir.model.fields,field_description:stock_barcodes_hr.field_stock_barcodes_read_log__employee_id
@@ -106,6 +116,12 @@ msgstr "Preleva lotti automaticamente"
 #: model:ir.model.fields,field_description:stock_barcodes_hr.field_wiz_stock_barcodes_read_hr__hour_start
 msgid "Hour Start Work"
 msgstr "Orario avvio"
+
+#. module: stock_barcodes_hr
+#: model:ir.actions.act_window,name:stock_barcodes_hr.action_hr_attendance_log
+#: model:ir.ui.menu,name:stock_barcodes_hr.menu_hr_attendance_log
+msgid "Hr attendance log"
+msgstr "Log presenze"
 
 #. module: stock_barcodes_hr
 #: model:ir.model.fields,field_description:stock_barcodes_hr.field_wiz_stock_barcodes_read_hr__id
@@ -136,6 +152,12 @@ msgstr "Ultimo aggiornamento il"
 #: model:ir.model.fields,field_description:stock_barcodes_hr.field_wiz_stock_barcodes_read_hr__location_id
 msgid "Location"
 msgstr "Posizione"
+
+#. module: stock_barcodes_hr
+#: model_terms:ir.ui.view,arch_db:stock_barcodes_hr.hr_attendance_log_form
+#: model_terms:ir.ui.view,arch_db:stock_barcodes_hr.hr_attendance_log_tree
+msgid "Log Processing"
+msgstr "Log in corso"
 
 #. module: stock_barcodes_hr
 #: model:ir.model,name:stock_barcodes_hr.model_stock_barcodes_read_log
@@ -214,6 +236,11 @@ msgid "Res Model"
 msgstr "Modello risultato"
 
 #. module: stock_barcodes_hr
+#: model:ir.model.fields,field_description:stock_barcodes_hr.field_wiz_stock_barcodes_read_hr__residual_hours
+msgid "Residual Hours"
+msgstr "Ore Residue"
+
+#. module: stock_barcodes_hr
 #: model:ir.model.fields,field_description:stock_barcodes_hr.field_stock_barcodes_read_log__sale_id
 #: model:ir.model.fields,field_description:stock_barcodes_hr.field_wiz_stock_barcodes_read_hr__sale_id
 msgid "Sale Order"
@@ -225,13 +252,18 @@ msgid "Scan Log"
 msgstr "Log scansione"
 
 #. module: stock_barcodes_hr
+#: model_terms:ir.ui.view,arch_db:stock_barcodes_hr.view_stock_barcodes_read_hr_form
+msgid "TO BE RECORDED"
+msgstr "DA REGISTRARE"
+
+#. module: stock_barcodes_hr
 #: model:ir.model.fields,field_description:stock_barcodes_hr.field_stock_barcodes_read_log__task_id
 #: model:ir.model.fields,field_description:stock_barcodes_hr.field_wiz_stock_barcodes_read_hr__task_id
 msgid "Task"
 msgstr "Lavoro"
 
 #. module: stock_barcodes_hr
-#: code:addons/stock_barcodes_hr/wizard/wiz_stock_barcodes_read_hr.py:242
+#: code:addons/stock_barcodes_hr/wizard/wiz_stock_barcodes_read_hr.py:268
 #, python-format
 msgid "Task not found"
 msgstr "Lavorazione non trovata"
@@ -257,6 +289,11 @@ msgid "Value of the last barcode scanned."
 msgstr "Valore ultimo codice a barre acquisito."
 
 #. module: stock_barcodes_hr
+#: model_terms:ir.ui.view,arch_db:stock_barcodes_hr.view_stock_barcodes_read_hr_form
+msgid "WORKED HOURS TODAY"
+msgstr "ORE LAVORATE OGGI"
+
+#. module: stock_barcodes_hr
 #: model:ir.model,name:stock_barcodes_hr.model_wiz_stock_barcodes_read_hr
 msgid "Wizard to create timesheet and workcenter productivity by barcode"
 msgstr "Procedura guidata per registrare tempi di lavoro tramite codice a barre"
@@ -264,6 +301,7 @@ msgstr "Procedura guidata per registrare tempi di lavoro tramite codice a barre"
 #. module: stock_barcodes_hr
 #: model:ir.model.fields,field_description:stock_barcodes_hr.field_stock_barcodes_read_log__hour_amount
 #: model:ir.model.fields,field_description:stock_barcodes_hr.field_wiz_stock_barcodes_read_hr__hour_amount
+#: model:ir.model.fields,field_description:stock_barcodes_hr.field_wiz_stock_barcodes_read_hr__worked_hours
 msgid "Worked Hours"
 msgstr "Ore lavorate"
 
@@ -280,7 +318,7 @@ msgid "Workorder"
 msgstr "Operazione"
 
 #. module: stock_barcodes_hr
-#: code:addons/stock_barcodes_hr/wizard/wiz_stock_barcodes_read_hr.py:218
+#: code:addons/stock_barcodes_hr/wizard/wiz_stock_barcodes_read_hr.py:238
 #, python-format
 msgid "Workorder not found"
 msgstr "Operazione non trovata"

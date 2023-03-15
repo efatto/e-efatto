@@ -64,6 +64,12 @@ class WizStockBarcodesReadHr(models.TransientModel):
         string="Date/time Start Work",
         store=True,
     )
+    worked_hours = fields.Float(
+        compute="_compute_worked_hours"
+    )
+    residual_hours = fields.Float(
+        compute="_compute_worked_hours"
+    )
 
     @api.onchange('date_start', 'employee_id')
     def onchange_hour_start(self):
@@ -112,6 +118,25 @@ class WizStockBarcodesReadHr(models.TransientModel):
         # todo howto call this function after x seconds of inactivity?
         self.reset_all()
         self.employee_id = False
+
+    @api.multi
+    def _compute_worked_hours(self):
+        for rec in self:
+            if rec.employee_id and rec.date_start:
+                attendances = self.env["hr.attendance"].search([
+                    ("employee_id", "=", rec.employee_id.id),
+                    ("check_in_date", "=", rec.date_start),
+                ])
+                worked_hours = sum(attendances.mapped("total_worked_hours"))
+                logged_hours = self.env['stock.barcodes.read.log'].search([
+                    ("employee_id", "=", rec.employee_id.id),
+                    ("date_start", "=", rec.date_start),
+                ])
+                residual_hours = worked_hours - sum(
+                    logged_hours.mapped("duration")
+                )
+                rec.worked_hours = worked_hours
+                rec.residual_hours = residual_hours
 
     @api.multi
     @api.depends('date_start', 'hour_start', 'employee_id')

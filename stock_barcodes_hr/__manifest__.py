@@ -2,14 +2,14 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     "name": "Timesheet & Productivity Barcode Recording",
-    "version": "12.0.1.0.1",
+    "version": "12.0.1.0.2",
     "category": "Timesheet",
     "author": "Sergio Corato",
     "website": "https://github.com/sergiocorato/e-efatto",
     "description": "Record worked time on tasks and workorder by barcode scan",
     "license": "AGPL-3",
     "depends": [
-        "hr_attendance",
+        "hr_attendance_work_hour",
         "mrp_employee_productivity",
         "mrp_production_demo",
         "mrp_workorder_time",

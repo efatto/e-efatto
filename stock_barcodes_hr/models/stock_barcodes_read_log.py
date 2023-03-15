@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class StockBarcodesReadLog(models.Model):
@@ -48,3 +48,15 @@ class StockBarcodesReadLog(models.Model):
         string="Duration in hours",
         readonly=True,
     )
+    date_start = fields.Date(
+        compute="_compute_date_start",
+        store=True,
+        readonly=True,
+    )
+
+    @api.multi
+    @api.depends("datetime_start")
+    def _compute_date_start(self):
+        # put date in UTC format from datetime
+        for rec in self:
+            rec.date_start = rec.datetime_start.date()
