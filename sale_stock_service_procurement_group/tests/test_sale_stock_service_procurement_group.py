@@ -13,7 +13,7 @@ class TestSaleStockPartnerDeposit(SavepointCase):
         supplierinfo = cls.env['product.supplierinfo'].create({
             'name': cls.vendor.id,
         })
-        cls.service = cls.env['product.product'].create({
+        cls.service_product = cls.env['product.product'].create({
             'name': 'Service',
             'type': 'service',
             'standard_price': 100,
@@ -60,7 +60,7 @@ class TestSaleStockPartnerDeposit(SavepointCase):
         sale_order = self.env['sale.order'].sudo(self.stock_user).create({
             'partner_id': self.partner.id,
         })
-        self._create_sale_order_line(sale_order, self.service, 2.0)
+        self._create_sale_order_line(sale_order, self.service_product, 2.0)
         sale_order.action_confirm()
         if sale_order.state != 'sale':
             # do the second confirmation to comply extra state 'approved'
@@ -71,14 +71,14 @@ class TestSaleStockPartnerDeposit(SavepointCase):
         'odoo.models', 'odoo.models.unlink', 'odoo.addons.base.ir.ir_model'
     )
     def test_01_sale_order_with_procurement_group(self):
-        self.service.write({
+        self.service_product.write({
             "service_create_procurement_group": True,
         })
-        self.assertTrue(self.service.service_create_procurement_group)
+        self.assertTrue(self.service_product.service_create_procurement_group)
         sale_order = self.env['sale.order'].sudo(self.stock_user).create({
             'partner_id': self.partner.id,
         })
-        self._create_sale_order_line(sale_order, self.service, 2.0)
+        self._create_sale_order_line(sale_order, self.service_product, 2.0)
         sale_order.action_confirm()
         if sale_order.state != 'sale':
             # do the second confirmation to comply extra state 'approved'
