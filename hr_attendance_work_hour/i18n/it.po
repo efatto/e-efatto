@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-14 18:56+0000\n"
-"PO-Revision-Date: 2023-03-14 18:56+0000\n"
+"POT-Creation-Date: 2023-03-15 13:58+0000\n"
+"PO-Revision-Date: 2023-03-15 13:58+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -28,7 +28,7 @@ msgstr "Presenza in date multiple"
 #. module: hr_attendance_work_hour
 #: model:ir.model.fields,field_description:hr_attendance_work_hour.field_hr_attendance__extraordinary_worked_hours
 msgid "Extraordinary Worked Hours"
-msgstr "Ore lavorate straordinarie"
+msgstr "Ore straordinarie"
 
 #. module: hr_attendance_work_hour
 #: model:ir.model.fields,field_description:hr_attendance_work_hour.field_resource_calendar_attendance__hour_from_step
@@ -42,23 +42,23 @@ msgstr "Margine Uscita"
 
 #. module: hr_attendance_work_hour
 #: model:ir.model.fields,help:hr_attendance_work_hour.field_resource_calendar_attendance__hour_to_step
-msgid "Increase the extraordinary worked hours if work ends after this step or decrease the ordinary worked hours if work ends before this step."
-msgstr "Aumenta le ore di lavoro straordinario se l'uscita è dopo questo margine o aumenta le ore lavorate ordinario se l'uscita è dopo questo margine."
+msgid "Increase the extraordinary worked hours if work ends after this step."
+msgstr "Aumenta le ore straordinarie se l'uscita è dopo questo margine."
 
 #. module: hr_attendance_work_hour
 #: model:ir.model.fields,help:hr_attendance_work_hour.field_resource_calendar_attendance__hour_from_step
-msgid "Increase the extraordinary worked hours if work starts before this step or decrease the ordinary worked hours if work starts after this step."
-msgstr "Aumenta le ore di lavoro straordinario se l'inizio è prima di questo margine o diminuisce le ore lavorate ordinarie se l'inizio è dopo questo margine."
+msgid "Increase the extraordinary worked hours if work starts before this step or increase/decrease the ordinary worked hours if work starts after this step."
+msgstr "Aumenta le ore straordinarie se l'inizio è prima di questo margine o aumenta/diminuisce le ore ordinarie se l'inizio è dopo questo margine."
 
 #. module: hr_attendance_work_hour
 #: model:ir.model.fields,field_description:hr_attendance_work_hour.field_hr_attendance__ordinary_worked_hours
 msgid "Ordinary Worked Hours"
-msgstr "Ore lavorate ordinarie"
+msgstr "Ore ordinarie"
 
 #. module: hr_attendance_work_hour
 #: model:ir.model.fields,field_description:hr_attendance_work_hour.field_hr_attendance__total_worked_hours
 msgid "Total Worked Hours"
-msgstr "Totale ore lavorate"
+msgstr "Totale ore"
 
 #. module: hr_attendance_work_hour
 #: model:ir.model,name:hr_attendance_work_hour.model_resource_calendar_attendance
