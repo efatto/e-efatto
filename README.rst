@@ -32,6 +32,7 @@ Questo modulo permette di raggruppare i bandi di gara sul fornitore di default d
     :alt: Fornitore di default
 
 Il modulo aggiunge inoltre i seguenti campi aggiuntivi, compilati automaticamente dal sistema, alla riga del bando di gara:
+
  #. gruppo di approvvigionamento
  #. origine (non visibile a video)
 
