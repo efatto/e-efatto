@@ -45,9 +45,7 @@ class HrAttendance(models.Model):
             rec.check_in_date = rec.check_in.date()
 
     @api.multi
-    @api.depends('check_in', 'check_out',
-                 'employee_id.resource_calendar_id.attendance_ids.hour_to_step',
-                 'employee_id.resource_calendar_id.attendance_ids.hour_from_step')
+    @api.depends('check_in', 'check_out', 'employee_id')
     def _compute_worked_hours(self):
         for attendance in self:
             ordinary_worked_hours = 0
