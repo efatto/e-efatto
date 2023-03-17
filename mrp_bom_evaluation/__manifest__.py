@@ -5,11 +5,6 @@
     'version': '12.0.1.0.6',
     'category': 'Manufacture',
     'license': 'AGPL-3',
-    'description': """
-    Add product prices to bom lines to evaluate and store them.
-    Add function to link bom lines and update prices from vendor RPD/PO.
-    Add function to update product replenishment cost from current bom evaluation.
-    """,
     'author': "Sergio Corato",
     'website': 'https://github.com/sergiocorato/e-efatto',
     'depends': [

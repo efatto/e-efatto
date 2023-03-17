@@ -18,7 +18,6 @@
         'stock_move_line_auto_fill',
         'stock_picking_back2draft',
     ],
-    'description': "Connect WHS",
     'license': 'AGPL-3',
     'data': [
         'security/ir.model.access.csv',
