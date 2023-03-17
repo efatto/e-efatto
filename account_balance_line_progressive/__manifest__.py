@@ -4,11 +4,7 @@
     'name': 'Account balance line progressive',
     'version': '12.0.1.0.0',
     'category': 'Accounting',
-    'description': 'View balance in account line tree. '
-    'Instead of module account_balance_line, wich show the balance only of the'
-    ' single line, it compute progressive balance for the account selected.',
-    'author': "Sergio Corato, "
-              "Odoo Community Association (OCA)",
+    'author': "Sergio Corato",
     'website': 'https://github.com/sergiocorato/e-efatto',
     'license': 'AGPL-3',
     'depends': [
