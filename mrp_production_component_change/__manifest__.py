@@ -8,7 +8,6 @@
     'category': 'Manufacturing',
     'author': 'Sergio Corato',
     'website': 'https://github.com/sergiocorato/e-efatto',
-    'description': 'Change component in production.',
     'depends': [
         'mrp_production_demo',
     ],
