@@ -47,4 +47,6 @@ class TestMrpProductionChangeQty(TestProductionData):
             'mo_id': man_order.id,
             'product_qty': man_order.product_qty,
         }).change_prod_qty()
-        self.assertEqual(len(man_order.move_raw_ids), 4)
+        self.assertEqual(len(man_order.move_raw_ids.filtered(
+            lambda x: x.state != "cancel"
+        )), 4)
