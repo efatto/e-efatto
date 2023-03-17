@@ -6,7 +6,6 @@
     "category": "Timesheet",
     "author": "Sergio Corato",
     "website": "https://github.com/sergiocorato/e-efatto",
-    "description": "Record worked time on tasks and workorder by barcode scan",
     "license": "AGPL-3",
     "depends": [
         "hr_attendance_work_hour",
