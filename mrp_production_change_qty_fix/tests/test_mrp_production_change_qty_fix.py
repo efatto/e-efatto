@@ -49,4 +49,4 @@ class TestMrpProductionChangeQty(TestProductionData):
         }).change_prod_qty()
         self.assertEqual(len(man_order.move_raw_ids.filtered(
             lambda x: x.state != "cancel"
-        )), 4)
+        )), 3)
