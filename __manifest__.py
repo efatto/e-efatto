@@ -6,7 +6,7 @@
     'category': 'other',
     'author': 'Sergio Corato',
     'description': 'Create grouped purchase requisition.',
-    'website': 'https://efatto.it',
+    'website': 'https://github.com/sergiocorato/efatto',
     'depends': [
         'mrp_production_demo',
         'purchase_line_procurement_group',
