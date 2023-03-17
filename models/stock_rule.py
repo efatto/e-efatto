@@ -39,7 +39,7 @@ class StockRule(models.Model):
             if not suppliers:
                 msg = _('There is no vendor associated to the product %s. '
                         'Please define a vendor for this product.') % \
-                      product_id.display_name
+                    product_id.display_name
                 raise UserError(msg)
             else:
                 supplier_partner_id = suppliers[0].name
