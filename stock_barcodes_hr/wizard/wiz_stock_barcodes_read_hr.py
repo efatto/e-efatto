@@ -65,7 +65,8 @@ class WizStockBarcodesReadHr(models.TransientModel):
         store=True,
     )
     worked_hours = fields.Float(
-        compute="_compute_worked_hours"
+        compute="_compute_worked_hours",
+        string="Work Hours",
     )
     residual_hours = fields.Float(
         compute="_compute_worked_hours"
