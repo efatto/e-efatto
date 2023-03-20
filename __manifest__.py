@@ -7,6 +7,7 @@
     'author': 'Sergio Corato',
     'description': 'Create grouped purchase requisition.',
     'website': 'https://github.com/sergiocorato/efatto',
+    'license': 'AGPL-3',
     'depends': [
         'mrp_production_demo',
         'purchase_line_procurement_group',
