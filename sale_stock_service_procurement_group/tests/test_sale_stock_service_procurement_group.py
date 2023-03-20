@@ -65,6 +65,7 @@ class TestSaleStockPartnerDeposit(SavepointCase):
         if sale_order.state != 'sale':
             # do the second confirmation to comply extra state 'approved'
             sale_order.action_confirm()
+        print(sale_order.procurement_group_id.name)
         # self.assertFalse(sale_order.procurement_group_id)
 
     @mute_logger(
