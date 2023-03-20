@@ -114,7 +114,7 @@ class WizardMrpBomImportXlsx(models.TransientModel):
                     0, 0, {
                         'product_id': product_id.id,
                         'uom_id': uom_id.id,
-                        'quantity': line['quantity']
+                        'product_qty': line['quantity']
                     }
                 ])
         bom_id = self.env.context['active_id']
