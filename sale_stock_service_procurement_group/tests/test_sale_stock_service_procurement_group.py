@@ -1,5 +1,9 @@
+import logging
+
 from odoo.tests.common import SavepointCase
 from odoo.tools import mute_logger
+
+_logger = logging.getLogger(__name__)
 
 
 class TestSaleStockPartnerDeposit(SavepointCase):
@@ -65,7 +69,7 @@ class TestSaleStockPartnerDeposit(SavepointCase):
         if sale_order.state != 'sale':
             # do the second confirmation to comply extra state 'approved'
             sale_order.action_confirm()
-        print(sale_order.procurement_group_id.name)
+        _logger.info(sale_order.procurement_group_id.name)
         # self.assertFalse(sale_order.procurement_group_id)
 
     @mute_logger(
