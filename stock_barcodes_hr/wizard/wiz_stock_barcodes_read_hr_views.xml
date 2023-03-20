@@ -62,7 +62,7 @@
                     <group>
                         <span>
                             <field name="worked_hours" nolabel="1" style="color: #fff; background-color: #17a2b8; border-color: #17a2b8; font-weight: bold; font-size: 24px; padding: 20px;" widget="float_time"/>
-                            <div style="font-weight: bold; font-size: 12px;">WORKED HOURS TODAY</div>
+                            <div style="font-weight: bold; font-size: 12px;">WORKED TODAY</div>
                         </span>
                     </group>
                     <group>
@@ -89,10 +89,10 @@
                 <attribute name="attrs">{'invisible': True}</attribute>
             </button>
             <xpath expr="//button[@name='action_undo_last_scan']/ancestor::*[2]" position="attributes">
-                <attribute name="string">Entries logged</attribute>
+                <attribute name="string">Entries logged today</attribute>
             </xpath>
             <xpath expr="//field[@name='scan_log_ids']/tree" position="attributes">
-                <attribute name="string">Entries logged</attribute>
+                <attribute name="string">Entries logged today</attribute>
             </xpath>
             <xpath expr="//field[@name='scan_log_ids']/tree/field[@name='name']" position="replace">
                 <field name="employee_id"/>
@@ -103,6 +103,7 @@
                 <field name="workorder_id"/>
                 <field name="hour_amount"/>
                 <field name="minute_amount"/>
+                <field name="duration" widget="float_time"/>
             </xpath>
             <xpath expr="//field[@name='scan_log_ids']/tree/field[@name='create_date']" position="replace"/>
             <xpath expr="//field[@name='scan_log_ids']/tree/field[@name='create_uid']" position="replace"/>

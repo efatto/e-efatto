@@ -121,6 +121,7 @@ class WizStockBarcodesReadHr(models.TransientModel):
         self.employee_id = False
 
     @api.multi
+    @api.depends("employee_id", "date_start")
     def _compute_worked_hours(self):
         for rec in self:
             if rec.employee_id and rec.date_start:
@@ -325,7 +326,8 @@ class WizStockBarcodesReadHr(models.TransientModel):
     def _compute_scan_log_ids(self):
         logs = self.env['stock.barcodes.read.log'].search([
             ('employee_id', '=', self.employee_id.id),
-        ], limit=10)
+            ('datetime_start', '>=', fields.Datetime.today().replace(hour=0, minute=0)),
+        ])
         self.scan_log_ids = logs
 
     def action_undo_last_scan(self):

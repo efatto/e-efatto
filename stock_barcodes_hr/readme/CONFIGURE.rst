@@ -13,7 +13,12 @@ e impostando l'azione pagina iniziale con la procedura creata dal modulo:
 .. image:: ../static/description/menu_default.png
     :alt: Utente
 
-L'utente che vuole registrare i tempi di lavorazione provvederà quindi a scansionare il proprio tesserino, un'attività oppure un ordine di lavoro e indicare quindi le ore ed i minuti da registrare, validando infine con il bottone Completato:
+L'utente che vuole registrare i tempi di lavorazione provvederà quindi a scansionare il proprio tesserino, un'attività oppure un ordine di lavoro e indicare quindi le ore ed i minuti da registrare, validando infine con il bottone Salva:
+
+.. image:: ../static/description/procedura.png
+    :alt: Procedura
+
+In base alle presenze registrate dall'utente in giornata, il sistema mostrerà a video le ore lavorate e le ore di cui non è ancora stata imputata l'attività:
 
 .. image:: ../static/description/procedura.png
     :alt: Procedura

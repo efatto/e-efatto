@@ -17,7 +17,7 @@ Timesheet & Productivity Barcode Recording
     :target: https://github.com/sergiocorato/e-efatto/tree/12.0/stock_barcodes_hr
     :alt: sergiocorato/e-efatto
 
-|badge1| |badge2| |badge3|
+|badge1| |badge2| |badge3| 
 
 This module add a wizard to facilitate time recording by scan of barcodes.
 
@@ -44,7 +44,12 @@ e impostando l'azione pagina iniziale con la procedura creata dal modulo:
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/stock_barcodes_hr/static/description/menu_default.png
     :alt: Utente
 
-L'utente che vuole registrare i tempi di lavorazione provvederà quindi a scansionare il proprio tesserino, un'attività oppure un ordine di lavoro e indicare quindi le ore ed i minuti da registrare, validando infine con il bottone Completato:
+L'utente che vuole registrare i tempi di lavorazione provvederà quindi a scansionare il proprio tesserino, un'attività oppure un ordine di lavoro e indicare quindi le ore ed i minuti da registrare, validando infine con il bottone Salva:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/stock_barcodes_hr/static/description/procedura.png
+    :alt: Procedura
+
+In base alle presenze registrate dall'utente in giornata, il sistema mostrerà a video le ore lavorate e le ore di cui non è ancora stata imputata l'attività:
 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/stock_barcodes_hr/static/description/procedura.png
     :alt: Procedura

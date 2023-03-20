@@ -45,7 +45,7 @@ class StockBarcodesReadLog(models.Model):
         readonly=True,
     )
     duration = fields.Float(
-        string="Duration in hours",
+        string="Duration",
         readonly=True,
     )
     date_start = fields.Date(

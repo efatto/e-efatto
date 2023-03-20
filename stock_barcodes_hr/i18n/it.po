@@ -88,8 +88,8 @@ msgstr "Salva"
 
 #. module: stock_barcodes_hr
 #: model:ir.model.fields,field_description:stock_barcodes_hr.field_stock_barcodes_read_log__duration
-msgid "Duration in hours"
-msgstr "Durata in ore"
+msgid "Duration"
+msgstr "Durata"
 
 #. module: stock_barcodes_hr
 #: model:ir.model.fields,field_description:stock_barcodes_hr.field_stock_barcodes_read_log__employee_id
@@ -104,8 +104,8 @@ msgstr "Garantisci la tracciabilità di un prodotto stoccabile nel tuo magazzino
 
 #. module: stock_barcodes_hr
 #: model_terms:ir.ui.view,arch_db:stock_barcodes_hr.view_stock_barcodes_read_hr_form
-msgid "Entries logged"
-msgstr "Registrazioni inserite"
+msgid "Entries logged today"
+msgstr "Registrazioni inserite oggi"
 
 #. module: stock_barcodes_hr
 #: model:ir.model.fields,field_description:stock_barcodes_hr.field_wiz_stock_barcodes_read_hr__auto_lot
@@ -290,8 +290,8 @@ msgstr "Valore ultimo codice a barre acquisito."
 
 #. module: stock_barcodes_hr
 #: model_terms:ir.ui.view,arch_db:stock_barcodes_hr.view_stock_barcodes_read_hr_form
-msgid "WORKED HOURS TODAY"
-msgstr "ORE LAVORATE OGGI"
+msgid "WORKED TODAY"
+msgstr "LAVORATO OGGI"
 
 #. module: stock_barcodes_hr
 #: model:ir.model,name:stock_barcodes_hr.model_wiz_stock_barcodes_read_hr
