@@ -78,3 +78,6 @@ class TestHrAttendanceWorkHour(SavepointCase):
         attendance.write({"check_out": "2023-03-15 10:54:00"})
         self.assertAlmostEqual(attendance.extraordinary_worked_hours, (30/60))
         self.assertAlmostEqual(attendance.ordinary_worked_hours, (4.0 + 25/60))
+        attendance.write({"check_out": "2023-03-15 10:58:00"})
+        self.assertAlmostEqual(attendance.extraordinary_worked_hours, (30/60))
+        self.assertAlmostEqual(attendance.ordinary_worked_hours, (4.0 + 55/60))
