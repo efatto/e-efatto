@@ -70,6 +70,7 @@ class TestSaleStockPartnerDeposit(SavepointCase):
             # do the second confirmation to comply extra state 'approved'
             sale_order.action_confirm()
         _logger.info(sale_order.procurement_group_id.name)
+        self.assertEqual(sale_order.name, sale_order.procurement_group_id.name)
         # self.assertFalse(sale_order.procurement_group_id)
 
     @mute_logger(
@@ -88,4 +89,6 @@ class TestSaleStockPartnerDeposit(SavepointCase):
         if sale_order.state != 'sale':
             # do the second confirmation to comply extra state 'approved'
             sale_order.action_confirm()
+        _logger.info(sale_order.procurement_group_id.name)
+        self.assertEqual(sale_order.name, sale_order.procurement_group_id.name)
         self.assertTrue(sale_order.procurement_group_id)
