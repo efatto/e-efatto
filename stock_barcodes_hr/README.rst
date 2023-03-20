@@ -44,15 +44,20 @@ e impostando l'azione pagina iniziale con la procedura creata dal modulo:
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/stock_barcodes_hr/static/description/menu_default.png
     :alt: Utente
 
-L'utente che vuole registrare i tempi di lavorazione provvederà quindi a scansionare il proprio tesserino, un'attività oppure un ordine di lavoro e indicare quindi le ore ed i minuti da registrare, validando infine con il bottone Salva:
+L'utente che vuole registrare i tempi di lavorazione provvederà quindi a scansionare il proprio tesserino, un'attività oppure un ordine di lavoro e indicare quindi le ore ed i minuti da registrare:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/stock_barcodes_hr/static/description/procedura.png
-    :alt: Procedura
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/stock_barcodes_hr/static/description/registrazione.png
+    :alt: Registrazione
 
-In base alle presenze registrate dall'utente in giornata, il sistema mostrerà a video le ore lavorate e le ore di cui non è ancora stata imputata l'attività:
+validando infine con il bottone Salva. Inoltre, in base alle presenze registrate dall'utente in giornata, il sistema mostrerà a video le ore lavorate e le ore di cui non è ancora stata imputata l'attività:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/stock_barcodes_hr/static/description/procedura.png
-    :alt: Procedura
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/stock_barcodes_hr/static/description/ore_lavorate.png
+    :alt: Ore lavorate
+
+In fondo alla schermata sono visibili le registrazioni effettuate nella data odierna dall'operatore:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/stock_barcodes_hr/static/description/log.png
+    :alt: Log
 
 Bug Tracker
 ===========
