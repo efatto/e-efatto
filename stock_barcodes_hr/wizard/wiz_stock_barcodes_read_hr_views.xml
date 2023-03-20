@@ -61,14 +61,14 @@
                     </group>
                     <group>
                         <span>
-                            <div style="font-weight: bold; font-size: 12px;">WORKED HOURS TODAY</div>
                             <field name="worked_hours" nolabel="1" style="color: #fff; background-color: #17a2b8; border-color: #17a2b8; font-weight: bold; font-size: 24px; padding: 20px;" widget="float_time"/>
+                            <div style="font-weight: bold; font-size: 12px;">WORKED HOURS TODAY</div>
                         </span>
                     </group>
                     <group>
                         <span>
-                            <div style="font-weight: bold; font-size: 12px;">TO BE RECORDED</div>
                             <field name="residual_hours" nolabel="1" style="color: #fff; background-color: #17a2b8; border-color: #17a2b8; font-weight: bold; font-size: 24px; padding: 20px;" widget="float_time"/>
+                            <div style="font-weight: bold; font-size: 12px;">TO BE RECORDED</div>
                         </span>
                     </group>
                 </group>
