@@ -70,6 +70,9 @@ class TestSaleStockPartnerDeposit(SavepointCase):
             # do the second confirmation to comply extra state 'approved'
             sale_order.action_confirm()
         _logger.info(sale_order.procurement_group_id.name)
+        _logger.info(sale_order.mapped('order_line.product_id.name'))
+        _logger.info(sale_order.mapped('order_line.product_id.type'))
+        _logger.info(sale_order.mapped('order_line.product_id.service_type'))
         self.assertEqual(sale_order.name, sale_order.procurement_group_id.name)
         # self.assertFalse(sale_order.procurement_group_id)
 
@@ -90,5 +93,8 @@ class TestSaleStockPartnerDeposit(SavepointCase):
             # do the second confirmation to comply extra state 'approved'
             sale_order.action_confirm()
         _logger.info(sale_order.procurement_group_id.name)
+        _logger.info(sale_order.mapped('order_line.product_id.name'))
+        _logger.info(sale_order.mapped('order_line.product_id.type'))
+        _logger.info(sale_order.mapped('order_line.product_id.service_type'))
         self.assertEqual(sale_order.name, sale_order.procurement_group_id.name)
         self.assertTrue(sale_order.procurement_group_id)
