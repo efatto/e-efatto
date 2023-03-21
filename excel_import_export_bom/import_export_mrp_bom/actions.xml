@@ -15,6 +15,17 @@
                               ('fname', '=', 'mrp_bom.xlsx'),
                               ('gname', '=', False)],
         }"/>
+    <act_window id="action_mrp_production_bom_export_xlsx"
+        name="Export Bom Excel"
+        res_model="export.xlsx.wizard"
+        src_model="mrp.production"
+        view_mode="form"
+        target="new"
+        context="{
+          'template_domain': [('res_model', '=', 'mrp.production'),
+                              ('fname', '=', 'mrp_production_bom.xlsx'),
+                              ('gname', '=', False)],
+        }"/>
     <act_window id="action_mrp_bom_import_xlsx"
         name="Import Excel"
         res_model="import.xlsx.wizard"

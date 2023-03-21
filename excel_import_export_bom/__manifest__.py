@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html)
 
 {
-    'name': 'Excel Import/Export/Report Bom',
+    'name': 'Excel Import/Export Bom',
     'version': '12.0.1.0.1',
     'author': 'Sergio Corato',
     'license': 'AGPL-3',
@@ -19,5 +19,4 @@
         'import_mrp_boms/templates.xml',
     ],
     'installable': True,
-    'development_status': 'Alpha',
 }
