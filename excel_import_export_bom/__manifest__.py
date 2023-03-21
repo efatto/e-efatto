@@ -20,4 +20,4 @@
     ],
     'installable': True,
     'development_status': 'Alpha',
- }
+}
