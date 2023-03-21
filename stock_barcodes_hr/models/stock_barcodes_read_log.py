@@ -59,4 +59,7 @@ class StockBarcodesReadLog(models.Model):
     def _compute_date_start(self):
         # put date in UTC format from datetime
         for rec in self:
-            rec.date_start = rec.datetime_start.date()
+            if rec.datetime_start:
+                rec.date_start = rec.datetime_start.date()
+            else:
+                rec.date_start = False
