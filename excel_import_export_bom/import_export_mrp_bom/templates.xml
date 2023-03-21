@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2019 Ecosoft Co., Ltd.
+  License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).-->
+<odoo>
+
+    <record id="mrp_bom_xlsx_template" model="xlsx.template">
+        <field name="res_model">mrp.bom</field>
+        <field name="fname">mrp_bom.xlsx</field>
+        <field name="name">MRP Bom</field>
+        <field name="description">MRP Bom Template</field>
+        <field name="input_instruction">
+            {
+                '__EXPORT__': {
+                    'mrp_bom': {
+                        '_HEAD_': {
+                            'A2': 'product_tmpl_id${value and value.barcode or value.default_code or value.name or ""}#{style=text}',
+                            'B2': 'product_qty${value or 0}#{style=number}',
+                            'C2': 'product_uom_id.name${value or ""}#{style=text}',
+                            'D2': 'routing_id.name${value or ""}#{style=text}',
+                        },
+                        'bom_line_ids': {
+                            'E2': 'product_id.barcode${value or ""}#{style=text}',
+                            'F2': 'product_qty${value or 0}#{style=number}',
+                            'G2': 'product_uom_id.name${value or ""}#{style=text}',
+                        }
+                    }
+                },
+                '__IMPORT__': {
+                    'mrp_bom': {
+                        '_NODEL_bom_line_ids': {
+                            'E2': 'product_id',
+                            'F2': 'product_qty',
+                            'G2': 'product_uom_id',
+                        }
+                    }
+                },
+                # '__POST_IMPORT__': '${object.post_import_do_something()}',
+            }
+        </field>
+    </record>
+
+    <function model="xlsx.template" name="load_xlsx_template">
+        <value eval="[ref('mrp_bom_xlsx_template')]"/>
+    </function>
+
+</odoo>
