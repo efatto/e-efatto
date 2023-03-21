@@ -20,7 +20,7 @@ class TestXLSXTemplate(TestExcelImportExport):
                 '__EXPORT__': {
                     'mrp_bom': {
                         '_HEAD_': {
-                            'A2': 'product_tmpl_id${value and value.barcode or value.default_code or value.name or ""}#{style=text}#??',
+                            'A2': 'product_tmpl_id${value and value.barcode or value.default_code or value.name or ""}#{style=text}#??',  # noqa
                             'B2': 'product_qty${value or 0}#{style=number}#??',
                             'C2': 'product_uom_id.name${value or ""}#{style=text}#??',
                             'D2': 'routing_id.name${value or ""}#{style=text}#??',
