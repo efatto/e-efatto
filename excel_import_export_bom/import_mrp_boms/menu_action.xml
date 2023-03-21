@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2019 Ecosoft Co., Ltd.
+  License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).-->
+<odoo>
+
+    <record id="action_import_mrp_bom" model="ir.actions.act_window">
+        <field name="name">Import Mrp Bom</field>
+        <field name="res_model">import.xlsx.wizard</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{
+            'template_domain': [('res_model', '=', 'mrp.bom'),
+                                ('fname', '=', 'import_mrp_bom.xlsx'),
+                                ('gname', '=', False)], }
+        </field>
+    </record>
+
+    <menuitem id="menu_import_mrp_bom"
+        parent="mrp.menu_mrp_bom"
+        action="action_import_mrp_bom"
+        sequence="14"/>
+
+</odoo>
