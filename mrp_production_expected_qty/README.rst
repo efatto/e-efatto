@@ -19,7 +19,7 @@ MRP Production Expected Qty
 
 |badge1| |badge2| |badge3|
 
-Module to save copy of product_uom_qty as expected_procudt_uom_qty to ensure its coherence.
+Module to save copy of product_uom_qty as expected_product_uom_qty to ensure its coherence.
 
 **Table of contents**
 
