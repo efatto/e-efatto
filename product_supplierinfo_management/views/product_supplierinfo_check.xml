@@ -136,5 +136,6 @@
     <menuitem name="Product Supplierinfo Check"
               id="menu_product_supplierinfo_check"
               parent="stock.menu_warehouse_config"
+              groups="base.group_erp_manager"
               action="action_product_supplierinfo_check"/>
 </odoo>
