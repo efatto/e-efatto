@@ -15,7 +15,11 @@ odoo_test_flavor: OCB
 odoo_version: 12.0
 org_name: Sergio Corato
 org_slug: sergiocorato
-rebel_module_groups: []
+rebel_module_groups:
+- sale_stock_service_procurement_group,stock_rule_partner
+- mrp_bom_evaluation,mrp_production_grouped_by_product
+- sale_stock_partner_deposit,stock_rule_partner
+- product_supplierinfo_management,purchase_last_price_info
 repo_description: Tools for Italian companies
 repo_name: Extra Efatto tools
 repo_slug: e-efatto
