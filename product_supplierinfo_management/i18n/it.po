@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-06 09:12+0000\n"
-"PO-Revision-Date: 2022-09-06 09:12+0000\n"
+"POT-Creation-Date: 2023-03-29 07:21+0000\n"
+"PO-Revision-Date: 2023-03-29 07:21+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -33,6 +33,11 @@ msgstr " * Lo stato «Bozza» viene usato in presenza di una nuova fattura non a
 #, python-format
 msgid "%s %s products in %.2f minutes."
 msgstr "%s %s prodotti in %.2f minuti."
+
+#. module: product_supplierinfo_management
+#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplierinfo_check_form
+msgid "Are you sure?"
+msgstr "Sei sicuro?"
 
 #. module: product_supplierinfo_management
 #: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplierinfo_check_form
@@ -322,16 +327,20 @@ msgid "Product price zero with purchase"
 msgstr "Prodotti a costo calcolato zero con acquisto"
 
 #. module: product_supplierinfo_management
+#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__no_purchase_invoice_recent_zero_product_ids
+msgid "Product price zero with purchase or invoice older"
+msgstr "Prodotti a costo calcolato zero con acquisto o fattura più vecchi"
+
+#. module: product_supplierinfo_management
 #: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__no_purchase_invoice_zero_product_ids
 #: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplierinfo_check_form
 msgid "Product price zero without purchase or invoice"
 msgstr "Prodotti a costo calcolato zero senza acquisto né fattura"
 
 #. module: product_supplierinfo_management
-#: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__no_purchase_invoice_recent_zero_product_ids
 #: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplierinfo_check_form
-msgid "Product price zero with purchase or invoice older"
-msgstr "Prodotti a costo calcolato zero con acquisto o fattura più vecchi"
+msgid "Product price zero without purchase or invoice recent"
+msgstr "Prodotti a costo calcolato zero senza acquisto o fattura recente"
 
 #. module: product_supplierinfo_management
 #: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplierinfo_check_form
@@ -379,6 +388,16 @@ msgstr "Stato"
 #: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplier_inherit
 msgid "Supplier Invoice"
 msgstr "Fatture Fornitori"
+
+#. module: product_supplierinfo_management
+#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplierinfo_check_form
+msgid "This action will override the product's replenishment cost and is not restorable. Are you sure?"
+msgstr "Questa azione sovrascriverà il costo di sostituzione del prodotto e non è ripristinabile. Sei sicuro?"
+
+#. module: product_supplierinfo_management
+#: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplierinfo_check_form
+msgid "This action will override the product's standard price and is not restorable. Are you sure?"
+msgstr "Questa azione sovrascriverà il costo del prodotto e non è ripristinabile. Sei sicuro?"
 
 #. module: product_supplierinfo_management
 #: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_product__last_purchase_price

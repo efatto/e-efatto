@@ -44,19 +44,35 @@
                                    options="{'no_create': True}"/>
                         </group>
                         <group>
-                            <button name="check_products_supplierinfo" string="Check Supplierinfo Values" type="object"/>
+                            <button name="check_products_supplierinfo"
+                                    string="Check Supplierinfo Values"
+                                    type="object"
+                                    confirm="Are you sure?"
+                            />
                         </group>
                         <group/>
                         <group>
-                            <button name="update_products_replenishment_cost" string="Update Products Replenishment Cost" type="object"/>
+                            <button name="update_products_replenishment_cost"
+                                    string="Update Products Replenishment Cost"
+                                    type="object"
+                                    confirm="This action will override the product's replenishment cost and is not restorable. Are you sure?"
+                            />
                         </group>
                         <group/>
 <!--                        <group>-->
-<!--                            <button name="update_products_standard_price" string="Update Products Standard Price" type="object"/>-->
+<!--                            <button name="update_products_standard_price"-->
+<!--                                    string="Update Products Standard Price"-->
+<!--                                    type="object"-->
+<!--                                    confirm="This action will override the product's standard price and is not restorable. Are you sure?"-->
+<!--                            />-->
 <!--                        </group>-->
 <!--                        <group/>-->
 <!--                        <group>-->
-<!--                            <button name="copy_products_replenishment_cost_to_standard_price" string="Copy Products Replenishment Cost to Standard Price" type="object"/>-->
+<!--                            <button name="copy_products_replenishment_cost_to_standard_price"-->
+<!--                                    string="Copy Products Replenishment Cost to Standard Price"-->
+<!--                                    type="object"-->
+<!--                                    confirm="This action will override the product's standard price and is not restorable. Are you sure?"-->
+<!--                            />-->
 <!--                        </group>-->
 <!--                        <group/>-->
                         <group>
