@@ -99,6 +99,8 @@ class MailActivity(models.Model):
             'parent_id': object.parent_id.id,
             'user_id': user_id.id,
             'is_resource_planner': True,
+            'team_id': False,  # to excludes problem of users not part of the team
+            # if needed, add a check to ensure that user is part of the team
         }
         res = self.create(vals)
         res._compute_planner()
