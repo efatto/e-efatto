@@ -3,6 +3,7 @@
 from odoo import models, api
 from odoo.tools.date_utils import relativedelta
 
+
 class MrpProduction(models.Model):
     _inherit = 'mrp.production'
 
