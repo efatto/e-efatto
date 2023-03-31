@@ -23,14 +23,6 @@ class MailActivity(models.Model):
         index=True,
     )
 
-    _sql_constraints = [
-        (
-            "activity_planner_unique",
-            "UNIQUE (res_model, res_id, is_resource_planner)",
-            "Another planner activity exists for the linked object by model and id.",
-        ),
-    ]
-
     def write(self, values):
         res = super().write(values)
 
