@@ -10,7 +10,8 @@ class ProjectTask(models.Model):
         activity_ids = task.activity_ids.filtered(
             lambda x: x.is_resource_planner
         )
-        if not activity_ids:
+        if not activity_ids and vals_list.get("user_id", False):
+            # create only when a user directly create task
             self.env['mail.activity'].create_planner_activity(
                 task,
                 task.user_id or task.project_id.user_id)
