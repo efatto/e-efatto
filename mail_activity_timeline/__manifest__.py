@@ -16,6 +16,7 @@
         'mrp_sale_info',
         'project',
         'web_timeline',
+        'web_view_calendar_list',
     ],
     'data': [
         'data/mail_activity_type.xml',

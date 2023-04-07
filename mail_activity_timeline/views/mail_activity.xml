@@ -12,6 +12,19 @@
         </field>
     </record>
 
+    <record id="mail_activity_view_calendar_list" model="ir.ui.view">
+        <field name="name">mail.activity.view.calendar</field>
+        <field name="model">mail.activity</field>
+        <field name="priority" eval="2"/>
+        <field name="arch" type="xml">
+            <calendar_list string="Activity" date_start="date_deadline" color="activity_type_id">
+                <field name="res_name"/>
+                <field name="user_id"/>
+                <field name="summary"/>
+            </calendar_list>
+        </field>
+    </record>
+
     <record model="ir.ui.view" id="mail_activity_view_form_board">
         <field name="name">mail.activity.boards.view.form</field>
         <field name="model">mail.activity</field>
@@ -67,6 +80,7 @@
                           (0, 0, {'view_mode': 'tree', 'view_id': ref('mail_activity_board.mail_activity_view_tree')}),
                           (0, 0, {'view_mode': 'form', 'view_id': ref('mail_activity_view_form_board')}),
                           (0, 0, {'view_mode': 'calendar'}),
+                          (0, 0, {'view_mode': 'calendar_list', 'view_id': ref('mail_activity_view_calendar_list')}),
                           (0, 0, {'view_mode': 'pivot'}),
                           (0, 0, {'view_mode': 'graph'})]"/>
         <field name="search_view_id" ref="mail_activity_board.mail_activity_view_search"/>
