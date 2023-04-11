@@ -11,6 +11,17 @@
             <field name="complete_name" position="after">
                 <field name="user_id"/>
             </field>
+            <xpath expr="//field[@name='date_start']/ancestor::*[1]" position="after">
+                <label for="activity_date_start" string="Activities Date"/>
+                <div class="o_row">
+                    <field name="activity_date_start" class="mr8"/>
+                    <div attrs="{'invisible': [('activity_date_start', '=', False)]}" class="o_row">
+                        <strong attrs="{'invisible': [('activity_date_end', '=', False)]}" class="mr8">to</strong>
+                        <strong class="oe_edit_only mr8" attrs="{'invisible': [('activity_date_end', '!=', False)]}">to</strong>
+                        <field name="activity_date_end"/>
+                    </div>
+                </div>
+            </xpath>
         </field>
     </record>
 </odoo>
