@@ -12,7 +12,7 @@
                 <field name="user_id"/>
             </field>
             <xpath expr="//field[@name='date_start']/ancestor::*[1]" position="after">
-                <label for="activity_date_start" string="Activities Date"/>
+                <label for="activity_date_start" string="Activity Date"/>
                 <div class="o_row">
                     <field name="activity_date_start" class="mr8"/>
                     <div attrs="{'invisible': [('activity_date_start', '=', False)]}" class="o_row">
