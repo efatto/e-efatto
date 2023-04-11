@@ -12,6 +12,7 @@
         'mail_activity_board',
         'mail_activity_partner',
         'mrp_production_calendar',
+        'mrp_production_date_planned',
         'mrp_production_demo',
         'mrp_sale_info',
         'project',
