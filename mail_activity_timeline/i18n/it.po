@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-15 09:03+0000\n"
-"PO-Revision-Date: 2023-02-15 09:03+0000\n"
+"POT-Creation-Date: 2023-04-11 10:45+0000\n"
+"PO-Revision-Date: 2023-04-11 10:45+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,9 +16,32 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: mail_activity_timeline
+#: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mrp_production_workorder_form_view_inherit
+msgid "<strong attrs=\"{'invisible': [('activity_date_end', '=', False)]}\" class=\"mr8\">to</strong>\n"
+"                        <strong class=\"oe_edit_only mr8\" attrs=\"{'invisible': [('activity_date_end', '!=', False)]}\">to</strong>"
+msgstr "<strong attrs=\"{'invisible': [('activity_date_end', '=', False)]}\" class=\"mr8\">to</strong>\n"
+"                        <strong class=\"oe_edit_only mr8\" attrs=\"{'invisible': [('activity_date_end', '!=', False)]}\">a</strong>"
+
+#. module: mail_activity_timeline
+#: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mrp_production_workorder_form_view_inherit
+msgid "Activities Date"
+msgstr "Date Attività"
+
+#. module: mail_activity_timeline
 #: model:ir.model,name:mail_activity_timeline.model_mail_activity
+#: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mail_activity_view_calendar_list
 msgid "Activity"
 msgstr "Attività"
+
+#. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mrp_workorder__activity_date_end
+msgid "Activity Date End"
+msgstr "Data Finale Attività"
+
+#. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mrp_workorder__activity_date_start
+msgid "Activity Date Start"
+msgstr "Data Iniziale Attività"
 
 #. module: mail_activity_timeline
 #: model:ir.model,name:mail_activity_timeline.model_mail_activity_type
@@ -26,9 +49,14 @@ msgid "Activity Type"
 msgstr "Tipo di attività"
 
 #. module: mail_activity_timeline
-#: sql_constraint:mail.activity:0
-msgid "Another planner activity exists for the linked object by model and id."
-msgstr "Esiste già un'altra attività di pianificazione risorse per l'oggetto e l'id collegato."
+#: model:mail.activity.type,name:mail_activity_timeline.mail_activity_type_task
+msgid "Activity type for task"
+msgstr "Tipo di attività per lavori"
+
+#. module: mail_activity_timeline
+#: model:mail.activity.type,name:mail_activity_timeline.mail_activity_type_workorder
+msgid "Activity type for workorder"
+msgstr "Tipo attività per operazioni"
 
 #. module: mail_activity_timeline
 #: sql_constraint:mail.activity.type:0
@@ -60,6 +88,21 @@ msgstr "Abilitato alla Pianificazione Risorse"
 #: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__parent_id
 msgid "Parent Activity"
 msgstr "Attività Padre"
+
+#. module: mail_activity_timeline
+#: model:ir.ui.menu,name:mail_activity_timeline.mail_menu_planner
+msgid "Resource Planner"
+msgstr "Pianificatore"
+
+#. module: mail_activity_timeline
+#: model:ir.actions.act_window,name:mail_activity_timeline.resource_planner_activities
+msgid "Resource Planner Activities"
+msgstr "Pianificatore Attività"
+
+#. module: mail_activity_timeline
+#: model:ir.model,name:mail_activity_timeline.model_project_task
+msgid "Task"
+msgstr "Lavoro"
 
 #. module: mail_activity_timeline
 #: model:ir.model,name:mail_activity_timeline.model_mrp_workorder
