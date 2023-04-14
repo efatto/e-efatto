@@ -80,13 +80,26 @@
         </field>
     </record>
 
+    <record id="mail_activity_view_search" model="ir.ui.view">
+        <field name="name">mail.activity.boards.view.search</field>
+        <field name="model">mail.activity</field>
+        <field name="inherit_id" ref="mail.mail_activity_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr='//filter[@name="activities_my"]' position='after'>
+                <filter string="All" name="activities_all"
+                        domain="['|', ('active', '!=', True), ('active', '=', True)]"
+                        help="Show all activities."/>
+            </xpath>
+        </field>
+    </record>
+
     <record model="ir.actions.act_window" id="resource_planner_activities">
         <field name="name">Resource Planner Activities</field>
         <field name="res_model">mail.activity</field>
         <field name="view_type">form</field>
         <field name="view_mode">timeline,kanban,form</field>
         <field name="domain">[('is_resource_planner', '=', True)]</field>
-        <field name="context">{}</field>
+        <field name="context">{'search_default_activities_all': 1}</field>
         <field name="view_ids"
                    eval="[(5, 0, 0),
                           (0, 0, {'view_mode': 'kanban', 'view_id': ref('mail_activity_board.mail_activity_view_kanban')}),
