@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="mrp_production_form_view" model="ir.ui.view">
+        <field name="name">mrp.production.form</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="%(mail_activity_timeline.resource_planner_activities)d"
+                    icon="fa-clock"
+                    class="oe_stat_button"
+                    string="Open Planner"
+                    type="action"
+                    attrs="{'invisible': [('workorder_count', '=', 0)]}"
+                />
+            </div>
+        </field>
+    </record>
+
+</odoo>
