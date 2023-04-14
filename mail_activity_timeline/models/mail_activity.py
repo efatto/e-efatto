@@ -4,6 +4,7 @@ from odoo import api, fields, models
 class MailActivity(models.Model):
     _inherit = 'mail.activity'
 
+    active = fields.Boolean(default=True)
     is_resource_planner = fields.Boolean(
         related='activity_type_id.is_resource_planner',
         store=True,
