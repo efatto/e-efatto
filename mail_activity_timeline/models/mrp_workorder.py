@@ -60,3 +60,11 @@ class MrpWorkorder(models.Model):
                     ]):
                         activity_ids._compute_planner()
         return res
+
+    @api.multi
+    def record_production(self):
+        res = super().record_production()
+        if self.state == 'done':
+            activity_ids = self.activity_ids.filtered(lambda x: x.is_resource_planner)
+            activity_ids.action_done()
+        return res
