@@ -116,18 +116,10 @@
         <field name="name">Resource Planner Activities</field>
         <field name="res_model">mail.activity</field>
         <field name="view_type">form</field>
-        <field name="view_mode">timeline,kanban,form</field>
+        <field name="view_mode">timeline,kanban,tree,form</field>
         <field name="domain">[('is_resource_planner', '=', True)]</field>
         <field name="context">{'search_default_activities_all': 1}</field>
-        <field name="view_ids"
-                   eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'kanban', 'view_id': ref('mail_activity_board.mail_activity_view_kanban')}),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('mail_activity_board.mail_activity_view_tree')}),
-                          (0, 0, {'view_mode': 'form', 'view_id': ref('mail_activity_view_form_board')}),
-                          (0, 0, {'view_mode': 'calendar'}),
-                          (0, 0, {'view_mode': 'calendar_list', 'view_id': ref('mail_activity_view_calendar_list')}),
-                          (0, 0, {'view_mode': 'pivot'}),
-                          (0, 0, {'view_mode': 'graph'})]"/>
+        <field name="view_ids" eval="[(5, 0, 0)]"/>
         <field name="search_view_id" ref="mail_activity_board.mail_activity_view_search"/>
     </record>
 
