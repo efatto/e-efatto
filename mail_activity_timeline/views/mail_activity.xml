@@ -60,6 +60,7 @@
                       default_group_by="user_id"
                       event_open_popup="true"
                       mode="week"
+                      colors="#adb5bd:active != true;"
                       dependency_arrow="parent_id">
                 <field name="user_id"/>
                 <field name="is_resource_planner"/>
