@@ -1,13 +1,13 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* crm_lead_product_default
+#	* crm_lead_first_sale
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-29 16:03+0000\n"
-"PO-Revision-Date: 2021-07-29 16:03+0000\n"
+"POT-Creation-Date: 2023-04-14 09:06+0000\n"
+"PO-Revision-Date: 2023-04-14 09:06+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -15,29 +15,34 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
-#. module: crm_lead_product_default
-#: model:ir.model,name:crm_lead_product_default.model_crm_lead
+#. module: crm_lead_first_sale
+#: model:ir.model.fields,field_description:crm_lead_first_sale.field_sale_order__date_sent
+msgid "Date Sent"
+msgstr "Data invio"
+
+#. module: crm_lead_first_sale
+#: model:ir.model.fields,field_description:crm_lead_first_sale.field_sale_order__date_sent_calculated
+msgid "Date Sent Calculated"
+msgstr "Data invio calcolata"
+
+#. module: crm_lead_first_sale
+#: model:ir.model.fields,field_description:crm_lead_first_sale.field_crm_lead__first_sale_days
+msgid "First Sale Days"
+msgstr "Giorni al primo preventivo"
+
+#. module: crm_lead_first_sale
+#: model:ir.model,name:crm_lead_first_sale.model_crm_lead
 msgid "Lead/Opportunity"
 msgstr "Contatto/Opportunità"
 
-#. module: crm_lead_product_default
-#: model:ir.model,name:crm_lead_product_default.model_crm_lead_line
-msgid "Line in CRM Lead"
-msgstr "Riga contatto CRM"
+#. module: crm_lead_first_sale
+#: code:addons/crm_lead_first_sale/models/sale.py:35
+#, python-format
+msgid "Quotation"
+msgstr "Preventivo"
 
-#. module: crm_lead_product_default
-#: model:ir.model.fields,field_description:crm_lead_product_default.field_crm_lead__product_categ_id
-#: model:ir.model.fields,field_description:crm_lead_product_default.field_crm_lead_line__product_categ_id
-msgid "Product Categ"
-msgstr "Categoria Prodotto"
-
-#. module: crm_lead_product_default
-#: model:ir.model.fields,field_description:crm_lead_product_default.field_crm_lead_line__product_default_code
-msgid "Product Default Code"
-msgstr "Riferimento Prodotto"
-
-#. module: crm_lead_product_default
-#: model:ir.model.fields,field_description:crm_lead_product_default.field_crm_lead_line__sequence
-msgid "Sequence"
-msgstr "Sequenza"
+#. module: crm_lead_first_sale
+#: model:ir.model,name:crm_lead_first_sale.model_sale_order
+msgid "Sale Order"
+msgstr "Ordine di vendita"
 
