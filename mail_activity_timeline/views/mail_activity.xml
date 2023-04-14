@@ -11,6 +11,9 @@
                 <field name="date_end"/>
                 <field name="parent_id"/>
             </field>
+            <field name="summary" position="before">
+                <field name="res_name"/>
+            </field>
         </field>
     </record>
 
