@@ -94,6 +94,9 @@
                         domain="['|', ('active', '!=', True), ('active', '=', True)]"
                         help="Show all activities."/>
             </xpath>
+            <field name="summary" position="before">
+                <field name="res_name"/>
+            </field>
         </field>
     </record>
 
