@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-11 10:45+0000\n"
-"PO-Revision-Date: 2023-04-11 10:45+0000\n"
+"POT-Creation-Date: 2023-04-14 13:49+0000\n"
+"PO-Revision-Date: 2023-04-14 13:49+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -23,15 +23,20 @@ msgstr "<strong attrs=\"{'invisible': [('activity_date_end', '=', False)]}\" cla
 "                        <strong class=\"oe_edit_only mr8\" attrs=\"{'invisible': [('activity_date_end', '!=', False)]}\">a</strong>"
 
 #. module: mail_activity_timeline
-#: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mrp_production_workorder_form_view_inherit
-msgid "Activity Date"
-msgstr "Data attività"
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__active
+msgid "Active"
+msgstr "Attivo"
 
 #. module: mail_activity_timeline
 #: model:ir.model,name:mail_activity_timeline.model_mail_activity
 #: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mail_activity_view_calendar_list
 msgid "Activity"
 msgstr "Attività"
+
+#. module: mail_activity_timeline
+#: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mrp_production_workorder_form_view_inherit
+msgid "Activity Date"
+msgstr "Data attività"
 
 #. module: mail_activity_timeline
 #: model:ir.model.fields,field_description:mail_activity_timeline.field_mrp_workorder__activity_date_end
@@ -57,6 +62,11 @@ msgstr "Tipo di attività per lavori"
 #: model:mail.activity.type,name:mail_activity_timeline.mail_activity_type_workorder
 msgid "Activity type for workorder"
 msgstr "Tipo attività per operazioni"
+
+#. module: mail_activity_timeline
+#: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mail_activity_view_search
+msgid "All"
+msgstr "Tutto"
 
 #. module: mail_activity_timeline
 #: sql_constraint:mail.activity.type:0
@@ -85,6 +95,11 @@ msgid "Is Resource Planner"
 msgstr "Abilitato alla Pianificazione Risorse"
 
 #. module: mail_activity_timeline
+#: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mrp_production_form_view
+msgid "Open Planner"
+msgstr "Apri pianificatore"
+
+#. module: mail_activity_timeline
 #: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__parent_id
 msgid "Parent Activity"
 msgstr "Attività Padre"
@@ -98,6 +113,11 @@ msgstr "Pianificatore"
 #: model:ir.actions.act_window,name:mail_activity_timeline.resource_planner_activities
 msgid "Resource Planner Activities"
 msgstr "Pianificatore Attività"
+
+#. module: mail_activity_timeline
+#: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mail_activity_view_search
+msgid "Show all activities."
+msgstr "Mostra tutte le attività."
 
 #. module: mail_activity_timeline
 #: model:ir.model,name:mail_activity_timeline.model_project_task
