@@ -9,7 +9,7 @@
     Set date planned start in workorders if present in production.
     """,
     'author': "Sergio Corato",
-    'website': 'https://github.com/sergiocorato/e-report',
+    'website': 'https://github.com/sergiocorato/e-efatto',
     'depends': [
         'mrp',
     ],
