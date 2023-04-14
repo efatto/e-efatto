@@ -11,8 +11,12 @@
                 <field name="date_end"/>
                 <field name="parent_id"/>
             </field>
-            <field name="summary" position="before">
-                <field name="res_name"/>
+            <field name="note" position="before">
+                <group colspan="4" col="1">
+                    <button name="open_origin" type="object" class="oe_highlight">
+                        <field name="res_name"/>
+                    </button>
+                </group>
             </field>
         </field>
     </record>
