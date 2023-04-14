@@ -25,7 +25,7 @@ msgstr "<strong attrs=\"{'invisible': [('activity_date_end', '=', False)]}\" cla
 #. module: mail_activity_timeline
 #: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mrp_production_workorder_form_view_inherit
 msgid "Activity Date"
-msgstr "Data Attività"
+msgstr "Data attività"
 
 #. module: mail_activity_timeline
 #: model:ir.model,name:mail_activity_timeline.model_mail_activity
