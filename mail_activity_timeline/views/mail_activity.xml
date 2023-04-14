@@ -93,6 +93,24 @@
         </field>
     </record>
 
+    <record id="mail_activity_view_tree" model="ir.ui.view">
+        <field name="name">mail.activity.boards.view.tree</field>
+        <field name="model">mail.activity</field>
+        <field name="inherit_id" ref="mail.mail_activity_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="res_name" position="after">
+                <field name="active" invisible="1"/>
+            </field>
+            <xpath expr="//tree" position="attributes">
+                <attribute name="default_order"/>
+                <attribute name="decoration-muted">(not active)</attribute>
+                <attribute name="decoration-danger">(active and date_deadline &lt; current_date)</attribute>
+                <attribute name="decoration-warning">(active and date_deadline == current_date)</attribute>
+                <attribute name="decoration-success">(active and date_deadline &gt; current_date)</attribute>
+            </xpath>
+        </field>
+    </record>
+
     <record model="ir.actions.act_window" id="resource_planner_activities">
         <field name="name">Resource Planner Activities</field>
         <field name="res_model">mail.activity</field>
