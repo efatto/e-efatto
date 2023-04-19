@@ -31,6 +31,7 @@ class TestProductionGroupLine(TestProductionData):
 
     def test_mo_by_product(self):
         self._update_product_qty(self.subproduct_1_1, self.stock_location_stock, 16*3)
+        self._update_product_qty(self.subproduct_2_1, self.stock_location_stock, 8*3)
         self.production = self.production_model.create(self._get_production_vals())
         self.production.action_assign()
 
@@ -51,7 +52,6 @@ class TestProductionGroupLine(TestProductionData):
         self.assertEqual(self.production.move_raw_ids.filtered(
             lambda x: x.product_id == self.subproduct_1_1
         ).product_uom_qty, 16)
-        self._update_product_qty(self.subproduct_2_1, self.stock_location_stock, 8*3)
 
         # check change.production.qty is callable, but it split lines again
         change_qty_wizard = self.env['change.production.qty'].create({
@@ -69,9 +69,9 @@ class TestProductionGroupLine(TestProductionData):
         wizard.action_done()
 
         self.production.action_assign()
-        self.assertEquals(self.subproduct_1_1.virtual_available, 0)
-        self.assertEquals(self.subproduct_2_1.virtual_available, 0)
-        self.assertEqual(self.production.availability, 'assigned')
+        self.assertEqual(self.subproduct_1_1.virtual_available, 0)
+        self.assertEqual(self.subproduct_2_1.virtual_available, 0)
+        self.assertEqual(self.production.availability, 'partially_available')
         produce_form = Form(self.env['mrp.product.produce'].with_context(
             active_id=self.production.id,
             active_ids=[self.production.id],
