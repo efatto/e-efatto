@@ -2,6 +2,8 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl)
 from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
 from odoo.tests import Form
+from odoo import fields
+from odoo.tools.date_utils import relativedelta
 
 
 class TestMrpProductionDeviation(TestProductionData):
@@ -14,6 +16,18 @@ class TestMrpProductionDeviation(TestProductionData):
             'type': 'product',
             'default_code': 'ADDCOMP',
             'standard_price': 7.0,
+            'route_ids': [
+                (4, cls.env.ref('purchase_stock.route_warehouse0_buy').id)],
+            'seller_ids': [
+                (0, 0, {
+                    'name': cls.env.ref('base.res_partner_3').id,
+                    'price': 5.0,
+                    'min_qty': 0.0,
+                    'sequence': 1,
+                    'date_start': fields.Date.today() - relativedelta(days=100),
+                    'delay': 28,
+                }),
+            ]
         }])
 
     def get_deviation_data(self, production):
@@ -313,6 +327,8 @@ class TestMrpProductionDeviation(TestProductionData):
             workorder.sudo(self.mrp_user).button_start()
             # start all workorders and produce 2 products each
             for n in range(0, produced_qty):
+                if not workorder.next_work_order_id:
+                    workorder.final_lot_id = man_order.finished_move_line_ids[n].lot_id
                 workorder.sudo(self.mrp_user).record_production()
         deviation_data_2 = self.get_deviation_data(man_order)
         self.assertTrue(deviation_data_2)
@@ -379,6 +395,9 @@ class TestMrpProductionDeviation(TestProductionData):
             workorder.sudo(self.mrp_user).button_start()
             # produce residual 3 products
             for n in range(0, 3):
+                if not workorder.next_work_order_id:
+                    workorder.final_lot_id = man_order.finished_move_line_ids[
+                        n+2].lot_id
                 workorder.sudo(self.mrp_user).record_production()
         # force quantity_done for product_2 and assign lot produced
         move_raw.write({'quantity_done': 3})
