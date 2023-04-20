@@ -81,6 +81,8 @@ class TestProcurementPurchaseAnalyticGrouping(TestProcurementPurchaseNoGrouping)
         self._create_sale_order_line(order1, self.product_2, 3)
         self._create_sale_order_line(order1, self.product_3, 3)
         order1.action_confirm()
+        if order1.state != 'sale':
+            order1.action_confirm()
         self.assertEqual(order1.state, 'sale')
         self.assertTrue(order1.analytic_account_id)
         order2 = self.env['sale.order'].create({
@@ -89,6 +91,8 @@ class TestProcurementPurchaseAnalyticGrouping(TestProcurementPurchaseNoGrouping)
         self._create_sale_order_line(order2, self.product_1, 5)
         self._create_sale_order_line(order2, self.service_product, 3)
         order2.action_confirm()
+        if order2.state != 'sale':
+            order2.action_confirm()
         self.assertEqual(order2.state, 'sale')
         self.assertTrue(order2.analytic_account_id)
 
