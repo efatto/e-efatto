@@ -13,3 +13,13 @@ class SaleOrder(models.Model):
                 project.active = False
         res = super().action_cancel()
         return res
+
+    @api.multi
+    def action_confirm(self):
+        for sale in self:
+            for project in sale.project_ids:
+                project.active = True
+            if sale.project_id:
+                sale.project_id.active = True
+        res = super().action_confirm()
+        return res

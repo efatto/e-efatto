@@ -8,7 +8,7 @@
     "author": "Sergio Corato",
     "website": "https://github.com/sergiocorato/e-efatto",
     "depends": [
-        "sale_timesheet",
+        "sale_timesheet_existing_project",
     ],
     "data": [
     ],
