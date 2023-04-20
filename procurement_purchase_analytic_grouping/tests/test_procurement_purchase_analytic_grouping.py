@@ -1,14 +1,27 @@
 
 from odoo.tools import mute_logger
-from odoo.addons.procurement_purchase_no_grouping.tests.\
-    test_procurement_purchase_no_grouping import \
-    TestProcurementPurchaseNoGrouping
+from odoo.tests.common import SavepointCase
 
 
-class TestProcurementPurchaseAnalyticGrouping(TestProcurementPurchaseNoGrouping):
+class TestProcurementPurchaseAnalyticGrouping(SavepointCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.category = cls.env['product.category'].create({
+            'name': 'Test category',
+        })
+        cls.partner = cls.env['res.partner'].create({
+            'name': 'Test partner',
+        })
+        cls.stock_buy_route = cls.env.ref(
+            'purchase_stock.route_warehouse0_buy')
+        cls.stock_mto_route = cls.env.ref('stock.route_warehouse0_mto')
+        cls.product_1 = cls._create_product(
+            cls, 'Test product 1', cls.category, cls.partner
+        )
+        cls.product_2 = cls._create_product(
+            cls, 'Test product 2', cls.category, cls.partner
+        )
         cls.service_product = cls.env['product.product'].create([{
             'name': 'Service',
             'type': 'service',
@@ -20,10 +33,7 @@ class TestProcurementPurchaseAnalyticGrouping(TestProcurementPurchaseNoGrouping)
         cls.category.write({
             'procured_purchase_grouping': 'analytic',
         })
-        cls.product_1.write({
-            'route_ids': [(4, cls.env.ref('stock.route_warehouse0_mto').id)],
-        })
-        # MIXED MTO AND ORDERPOINT IS NOT SUPPORTED!!!
+        # MIXED MTO AND ORDERPOINT IS TO CHECK!
         # cls.op_model = cls.env['stock.warehouse.orderpoint']
         # cls.warehouse = cls.env.ref('stock.warehouse0')
         # cls.op1 = cls.op_model.create([{
@@ -56,6 +66,21 @@ class TestProcurementPurchaseAnalyticGrouping(TestProcurementPurchaseNoGrouping)
         #     'qty_multiple': 1.0,
         #     'product_uom': cls.product_3.uom_id.id,
         # }])
+
+    def _create_product(self, name, category, partner):
+        product = self.env['product.product'].create({
+            'name': name,
+            'categ_id': category.id,
+            'seller_ids': [
+                (0, 0, {
+                    'name': partner.id,
+                    'min_qty': 1.0,
+                }),
+            ],
+            'route_ids': [(4, self.stock_buy_route.id),
+                          (4, self.stock_mto_route.id)],
+        })
+        return product
 
     def _create_sale_order_line(self, order, product, qty):
         vals = {
