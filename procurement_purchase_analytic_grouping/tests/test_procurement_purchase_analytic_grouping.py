@@ -122,4 +122,4 @@ class TestProcurementPurchaseAnalyticGrouping(TestProcurementPurchaseNoGrouping)
                                                     self.product_3])
                     self.assertEqual(line.account_analytic_id,
                                      order1.analytic_account_id)
-        #todo test with purchase requisition
+        # todo test with purchase requisition
