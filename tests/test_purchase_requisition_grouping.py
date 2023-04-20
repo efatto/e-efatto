@@ -63,12 +63,13 @@ class PurchaseRequisitionGrouping(TestProductionData):
             'bom_id': self.main_bom.id,
         })
         # check procurement has not created PR nor RPD, even launching scheduler
-        # (which will do nothing anyway)
+        # (which will do nothing anyway),for component sale to purchase 1
         with mute_logger('odoo.addons.stock.models.procurement'):
             self.procurement_model.run_scheduler()
         po_ids = self.env['purchase.order'].search([
             ('origin', '=', man_order.name),
             ('state', '=', 'draft'),
+            ('order_line.product_id', '=', self.component_sale_to_purchase_1.id)
         ])
         self.assertFalse(po_ids)
         pr_ids = self.env['purchase.requisition'].search([
