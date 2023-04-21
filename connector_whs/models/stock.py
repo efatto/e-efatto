@@ -152,7 +152,8 @@ class StockMove(models.Model):
     def write(self, vals):
         res = super().write(vals=vals)
         if not self._context.get("do_not_propagate", False) and \
-            not self._context.get("do_not_unreserve", False) and (
+            not self._context.get("do_not_unreserve", False) and \
+            not self._context.get("skip_overprocessed_check", False) and (
             vals.get('product_uom_qty')
         ):
             self._check_valid_whs_list()
