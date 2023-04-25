@@ -66,7 +66,8 @@ class ProductProduct(models.Model):
                 if rule.base == 'pricelist' and rule.base_pricelist_id:
                     price += self.get_bom_operation_price(
                         rule.base_pricelist_id, bom, quantity, partner, date, uom_id,
-                        boms_to_recompute, total_to_exclude_from_global_rule)
+                        boms_to_recompute, total_to_exclude_from_global_rule) * \
+                        bom.product_qty
                     continue
                 if rule.listprice_categ_id != listprice_categ_id:
                     continue
@@ -114,7 +115,8 @@ class ProductProduct(models.Model):
                         price = self.get_bom_operation_price(
                             rule.base_pricelist_id, bom, quantity, partner, date,
                             uom_id,
-                            boms_to_recompute, total_to_exclude_from_global_rule)
+                            boms_to_recompute, total_to_exclude_from_global_rule) * \
+                            bom.product_qty
                         continue
                     price = operation_prices[operation_price][operation] \
                         * rule._compute_price(
@@ -184,7 +186,8 @@ class ProductProduct(models.Model):
                 if rule.base == 'pricelist' and rule.base_pricelist_id:
                     price += self.get_bom_price(
                         rule.base_pricelist_id, bom, quantity, partner, date, uom_id,
-                        boms_to_recompute, total_to_exclude_from_global_rule)
+                        boms_to_recompute, total_to_exclude_from_global_rule) * \
+                        bom.product_qty
                     continue
                 if rule.listprice_categ_id != listprice_categ_id:
                     continue
@@ -220,7 +223,8 @@ class ProductProduct(models.Model):
                 if rule.base == 'pricelist' and rule.base_pricelist_id:
                     price = self.get_bom_price(
                         rule.base_pricelist_id, bom, line.product_qty, partner,
-                        boms_to_recompute, total_to_exclude_from_global_rule)
+                        boms_to_recompute, total_to_exclude_from_global_rule) * \
+                        bom.product_qty
                     continue
                 price = rule._compute_price(
                     line.price_unit, line.product_id.uom_id,

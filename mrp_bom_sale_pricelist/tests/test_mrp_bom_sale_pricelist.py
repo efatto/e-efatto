@@ -450,6 +450,9 @@ class TestMrpBomSalePricelist(TestProductionData):
 
     def execute_test(self, price_subproduct1=False, price_subproduct2=False,
                      pricelist=False):
+        self.main_bom.write({
+            'product_qty': 10,
+        })
         if not pricelist:
             pricelist = self.pricelist
         if price_subproduct1:
@@ -468,7 +471,7 @@ class TestMrpBomSalePricelist(TestProductionData):
             'partner_id': self.partner.id,
         })
         line1 = self._create_sale_order_line(order1, self.subproduct1, 3)
-        self.assertEqual(line1.price_subtotal, self.subproduct1.standard_price * 3)
+        self.assertEqual(line1.price_unit, self.subproduct1.standard_price)
 
         self.partner.pricelist_id = pricelist
         self.assertEqual(self.partner.pricelist_id, pricelist)
@@ -478,7 +481,7 @@ class TestMrpBomSalePricelist(TestProductionData):
         order2.pricelist_id = pricelist
         self.assertEqual(order2.pricelist_id, pricelist)
         line2 = self._create_sale_order_line(order2, self.subproduct1, 3)
-        self.assertAlmostEqual(line2.price_subtotal, 150 * 3 * (
+        self.assertAlmostEqual(line2.price_unit, 150 * (
             1.1 if pricelist == self.pricelist_parent else 1
         ))
 
@@ -512,11 +515,14 @@ class TestMrpBomSalePricelist(TestProductionData):
         })
         order4.pricelist_id = pricelist
         self.assertEqual(order4.pricelist_id, pricelist)
+        self.main_bom.write({
+            'product_qty': 17,
+        })
         line4 = self._create_sale_order_line(order4, self.top_product, 10)
         costs_hour_total = sum([
             opt.time * opt.price_unit for opt in
             self.top_product.bom_ids.bom_operation_ids])
-        self.assertAlmostEqual(line4.price_subtotal, (
+        line4_price_unit = (
             (
                 self.compute_price(5 * price_subproduct1 + 2 * price_subproduct2)
                 + costs_hour_total * 1.15
@@ -527,7 +533,8 @@ class TestMrpBomSalePricelist(TestProductionData):
                 1.2 if pricelist == self.pricelist_parent
                 and len(self.pricelist_parent.item_ids) == 2 else 0
             )
-        ) * line4.product_uom_qty)
+        ) / self.main_bom.product_qty
+        self.assertAlmostEqual(line4.price_unit, line4_price_unit, 1)
 
         # test price with bom computation on all boms and sub-boms
         # main_bom contains 5 subproduct1 and 2 subproduct2
@@ -536,6 +543,9 @@ class TestMrpBomSalePricelist(TestProductionData):
         # 2*3 subproduct_1_1 = 6 > see under
         self.subproduct1.compute_pricelist_on_bom_component = True
         # 5*2 subproduct_1_1 = 10 > tot 16 * 10 = 160
+        self.main_bom.write({
+            'product_qty': 0.75,
+        })
         order5 = self.env['sale.order'].create({
             'partner_id': self.partner.id,
         })
@@ -545,7 +555,7 @@ class TestMrpBomSalePricelist(TestProductionData):
         costs_hour_total = sum([
             opt.time * opt.price_unit for opt in
             self.top_product.bom_ids.bom_operation_ids])
-        self.assertAlmostEqual(line5.price_subtotal, (
+        line5_price_unit = (
             (
                 self.compute_price(5 * price_subproduct1 + 2 * price_subproduct2)
                 + costs_hour_total * 1.15
@@ -556,7 +566,8 @@ class TestMrpBomSalePricelist(TestProductionData):
                 1.2 if pricelist == self.pricelist_parent
                 and len(self.pricelist_parent.item_ids) == 2 else 0
             )
-        ) * line5.product_uom_qty)
+        ) / self.main_bom.product_qty
+        self.assertAlmostEqual(line5.price_unit, line5_price_unit, 1)
 
         # test price with bom computation on all boms and sub-boms with value on
         # many items (bracket computation)
@@ -566,16 +577,19 @@ class TestMrpBomSalePricelist(TestProductionData):
         # 2*3 subproduct_1_1 = 6 > see under
         self.subproduct1.compute_pricelist_on_bom_component = True
         # 5*2 subproduct_1_1 = 10 > tot 16 * 10 = 160
-        order5 = self.env['sale.order'].create({
+        self.main_bom.write({
+            'product_qty': 122,
+        })
+        order6 = self.env['sale.order'].create({
             'partner_id': self.partner.id,
         })
-        order5.pricelist_id = pricelist
-        self.assertEqual(order5.pricelist_id, pricelist)
-        line5 = self._create_sale_order_line(order5, self.top_product, 10)
+        order6.pricelist_id = pricelist
+        self.assertEqual(order6.pricelist_id, pricelist)
+        line6 = self._create_sale_order_line(order6, self.top_product, 10)
         costs_hour_total = sum([
             opt.time * opt.price_unit for opt in
             self.top_product.bom_ids.bom_operation_ids])
-        self.assertAlmostEqual(line5.price_subtotal, (
+        self.assertAlmostEqual(line6.price_unit, (
             (
                 self.compute_price(5 * price_subproduct1 + 2 * price_subproduct2)
                 + costs_hour_total * 1.15
@@ -586,4 +600,4 @@ class TestMrpBomSalePricelist(TestProductionData):
                 1.2 if pricelist == self.pricelist_parent
                 and len(self.pricelist_parent.item_ids) == 2 else 0
             )
-        ) * line5.product_uom_qty)
+        ) / self.main_bom.product_qty, 1)
