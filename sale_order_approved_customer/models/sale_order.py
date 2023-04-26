@@ -1,6 +1,7 @@
 # Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, fields, models
+from odoo.tools import config
 
 
 class SaleOrder(models.Model):
@@ -26,10 +27,13 @@ class SaleOrder(models.Model):
 
     @api.multi
     def action_confirm(self):
-        # First confirm only approve order, second one confirm it
-        not_approved_orders = self.filtered(
-            lambda x: x.state in ['draft', 'sent']
-        )
-        for order in not_approved_orders:
-            order.write({'state': 'approved'})
-        return super(SaleOrder, self - not_approved_orders).action_confirm()
+        if not config['test_enable'] or \
+                self.env.context.get('test_sale_order_approved_customer'):
+            # First confirm only approve order, second one confirm it
+            not_approved_orders = self.filtered(
+                lambda x: x.state in ['draft', 'sent']
+            )
+            for order in not_approved_orders:
+                order.write({'state': 'approved'})
+            return super(SaleOrder, self - not_approved_orders).action_confirm()
+        return super().action_confirm()

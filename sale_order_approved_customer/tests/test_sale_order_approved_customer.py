@@ -28,9 +28,9 @@ class TestSaleDeliveryRecreate(SavepointCase):
             'partner_id': self.partner.id,
         })
         self._create_sale_order_line(order, self.product1, 5)
-        order.action_confirm()
+        order.with_context(test_sale_order_approved_customer=True).action_confirm()
         self.assertEqual(order.state, 'approved')
-        order.action_confirm()
+        order.with_context(test_sale_order_approved_customer=True).action_confirm()
         self.assertEqual(order.state, 'sale')
         order.action_cancel()
         self.assertEqual(order.state, 'cancel')
