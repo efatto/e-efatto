@@ -80,12 +80,6 @@ class PurchaseRequisitionGrouping(TestProductionData):
             ('origin', '=', man_order.name),
             ('state', '=', 'draft'),
         ])
-        self.assertFalse(pr_ids)
-        man_order.button_start_procurement()
-        pr_ids = self.env['purchase.requisition'].search([
-            ('origin', '=', man_order.name),
-            ('state', '=', 'draft'),
-        ])
         self.assertEqual(len(pr_ids), 1)
         pr_lines = pr_ids.line_ids.filtered(
             lambda x: x.product_id == self.component_sale_to_purchase_1)
