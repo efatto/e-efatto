@@ -44,8 +44,6 @@ class PurchaseSellerEvaluation(SavepointCase):
         self.assertEqual(crm_lead.first_sale_days, 9)
 
         sale_order.action_confirm()
-        if sale_order.state != 'sale':
-            sale_order.action_confirm()
         self.assertEqual(crm_lead.first_sale_days, 9)
 
     def test_01_sale_order_confirm(self):
@@ -74,8 +72,6 @@ class PurchaseSellerEvaluation(SavepointCase):
         self.assertEqual(crm_lead.first_sale_days, 0)
 
         sale_order.action_confirm()
-        if sale_order.state != 'sale':
-            sale_order.action_confirm()
         self.assertEqual(crm_lead.first_sale_days, 7)
 
         sale_order.force_quotation_send()
