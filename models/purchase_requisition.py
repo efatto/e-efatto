@@ -40,5 +40,7 @@ class PurchaseRequisition(models.Model):
                 'origin': origin,
                 'group_id': values.get('group_id') and values['group_id'][0].id
                 or False,
+                'account_analytic_id': values.get('account_analytic_id') and
+                values['account_analytic_id'] or False,
             })],
         }
