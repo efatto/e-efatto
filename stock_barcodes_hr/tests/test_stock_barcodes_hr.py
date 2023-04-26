@@ -90,9 +90,6 @@ class TestStockBarcodesHr(TestProductionData):
         })
         self._create_sale_order_line(order1, self.project_product, 3)
         order1.action_confirm()
-        if order1.state != 'sale':
-            # do the second confirmation to comply extra state 'approved'
-            order1.action_confirm()
         task = order1.tasks_ids[0]
         self.scan(self.wiz_scan_hr, '%s_%s' % (task._name, task.id))
         self.assertEqual(self.wiz_scan_hr.task_id, task)
