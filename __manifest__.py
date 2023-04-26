@@ -9,7 +9,8 @@
     'website': 'https://github.com/sergiocorato/efatto',
     'license': 'AGPL-3',
     'depends': [
-        'mrp_production_demo',
+        'mrp_production_manual_procurement',
+        'procurement_purchase_analytic_grouping',
         'purchase_line_procurement_group',
         'purchase_requisition_auto_rfq',
         'sale_stock',

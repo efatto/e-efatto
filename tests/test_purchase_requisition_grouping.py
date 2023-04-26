@@ -51,6 +51,9 @@ class PurchaseRequisitionGrouping(TestProductionData):
                 })
             ]
         })
+        cls.analytic_account = cls.env['account.analytic.account'].create({
+            'name': 'Analytic account 1',
+        })
 
     def test_01_mo_manual_procurement(self):
         product_qty = 5
@@ -61,6 +64,7 @@ class PurchaseRequisitionGrouping(TestProductionData):
             'product_uom_id': self.top_product.uom_id.id,
             'product_qty': product_qty,
             'bom_id': self.main_bom.id,
+            'analytic_account_id': self.analytic_account.id,
         })
         # check procurement has not created PR nor RPD, even launching scheduler
         # (which will do nothing anyway),for component sale to purchase 1
@@ -72,6 +76,12 @@ class PurchaseRequisitionGrouping(TestProductionData):
             ('order_line.product_id', '=', self.component_sale_to_purchase_1.id)
         ])
         self.assertFalse(po_ids)
+        pr_ids = self.env['purchase.requisition'].search([
+            ('origin', '=', man_order.name),
+            ('state', '=', 'draft'),
+        ])
+        self.assertFalse(pr_ids)
+        man_order.button_start_procurement()
         pr_ids = self.env['purchase.requisition'].search([
             ('origin', '=', man_order.name),
             ('state', '=', 'draft'),
@@ -120,6 +130,8 @@ class PurchaseRequisitionGrouping(TestProductionData):
         self.assertTrue(pr_ids.mapped('purchase_ids.order_line.procurement_group_id'))
         for origin in set(pr_ids.mapped('line_ids.origin')):
             self.assertIn(origin, pr_ids.mapped('purchase_ids.origin')[0].split(', '))
+        for line in pr_ids.mapped('line_ids'):
+            self.assertEqual(line.account_analytic_id, self.analytic_account)
 
     def test_02_sale_order(self):
         sale_order = self.env['sale.order'].create({
@@ -127,6 +139,7 @@ class PurchaseRequisitionGrouping(TestProductionData):
             'date_order': fields.Date.today(),
             'picking_policy': 'direct',
             'expected_date': fields.Date.today() + timedelta(days=20),
+            'analytic_account_id': self.analytic_account.id,
             'order_line': [
                 (0, 0, {
                     'product_id': self.component_sale_to_purchase_1.id,
@@ -147,18 +160,23 @@ class PurchaseRequisitionGrouping(TestProductionData):
             ('order_line.product_id', 'in', [self.component_sale_to_purchase_1.id]),
         ])
         self.assertFalse(purchase_orders)
-        pr_ids = self.env['purchase.requisition'].search([
+        purchase_requisitions = self.env['purchase.requisition'].search([
             ('origin', '=', sale_order.name),
             ('state', '=', 'draft'),
         ])
-        self.assertEqual(len(pr_ids), 1)
-        pr_lines = pr_ids.line_ids.filtered(
+        self.assertEqual(len(purchase_requisitions), 1)
+        purchase_requisition = purchase_requisitions[0]
+        pr_lines = purchase_requisition.line_ids.filtered(
             lambda x: x.product_id == self.component_sale_to_purchase_1)
         self.assertEqual(sum(pr_line.product_qty for pr_line in pr_lines), 20)
         # creare i PO e verificare che ci sia il procurement group
         self.assertTrue(pr_lines.mapped('group_id'))
-        pr_ids.auto_rfq_from_suppliers()
-        self.assertTrue(pr_ids.purchase_ids)
-        self.assertTrue(pr_ids.mapped('purchase_ids.order_line.procurement_group_id'))
-        for origin in set(pr_ids.mapped('line_ids.origin')):
-            self.assertIn(origin, pr_ids.mapped('purchase_ids.origin')[0].split(', '))
+        purchase_requisition.auto_rfq_from_suppliers()
+        self.assertTrue(purchase_requisition.purchase_ids)
+        self.assertTrue(purchase_requisition.mapped(
+            'purchase_ids.order_line.procurement_group_id'))
+        for origin in set(purchase_requisition.mapped('line_ids.origin')):
+            self.assertIn(origin, purchase_requisition.mapped(
+                'purchase_ids.origin')[0].split(', '))
+        for line in purchase_requisition.line_ids:
+            self.assertEqual(line.account_analytic_id, self.analytic_account)
