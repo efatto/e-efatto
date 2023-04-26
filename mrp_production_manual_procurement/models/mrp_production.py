@@ -23,24 +23,26 @@ class MrpProduction(models.Model):
     def _generate_moves(self):
         # Overloaded to pass the context to block procurement run
         for prod in self:
-            if (
-                config['test_enable']
-                and self.env.context.get('test_mrp_production_manual_procurement')
-            ) or not config['test_enable']:
+            if not config['test_enable'] \
+                    or self.env.context.get('test_mrp_production_manual_procurement'):
                 prod = prod.with_context(
                     is_procurement_stopped=prod.is_procurement_stopped)
             super(MrpProduction, prod)._generate_moves()
-            # recreate recordset of original moves with original function to restore
-            # initial 'draft' state
-            move_create_proc = self.env['stock.move']
-            move_waiting = self.env['stock.move']
-            for move in prod.move_raw_ids:
-                if move.move_orig_ids:
-                    move_waiting |= move
-                else:
-                    if move.procure_method == 'make_to_order':
-                        move_create_proc |= move
-            (move_waiting | move_create_proc).write({'state': 'draft'})
+            if not config['test_enable'] \
+                    or self.env.context.get('test_mrp_production_manual_procurement'):
+                prod = prod.with_context(
+                    is_procurement_stopped=prod.is_procurement_stopped)
+                # recreate recordset of original moves with original function to restore
+                # initial 'draft' state
+                move_create_proc = self.env['stock.move']
+                move_waiting = self.env['stock.move']
+                for move in prod.move_raw_ids:
+                    if move.move_orig_ids:
+                        move_waiting |= move
+                    else:
+                        if move.procure_method == 'make_to_order':
+                            move_create_proc |= move
+                (move_waiting | move_create_proc).write({'state': 'draft'})
         return True
 
     @api.multi

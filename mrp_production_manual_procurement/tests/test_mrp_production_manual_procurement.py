@@ -63,13 +63,16 @@ class TestMrpProductionManualProcurement(TestProductionData):
         # check procurement has not created RDP, even launching scheduler (which will
         # do nothing anyway)
         with mute_logger('odoo.addons.stock.models.procurement'):
-            self.procurement_model.run_scheduler()
+            self.procurement_model.with_context(
+                test_mrp_production_manual_procurement=True
+            ).run_scheduler()
         po_ids = self.env['purchase.order'].search([
             ('origin', '=', man_order.name),
             ('state', '=', 'draft'),
         ])
         self.assertFalse(po_ids)
-        man_order.button_start_procurement()
+        man_order.with_context(test_mrp_production_manual_procurement=True
+                               ).button_start_procurement()
         po_ids = self.env['purchase.order'].search([
             ('origin', '=', man_order.name),
         ])
@@ -115,7 +118,8 @@ class TestMrpProductionManualProcurement(TestProductionData):
             lambda x: x.product_id == self.product_to_purchase_3
         )
         # re-start procurement must create new orders
-        man_order.button_start_procurement()
+        man_order.with_context(test_mrp_production_manual_procurement=True
+                               ).button_start_procurement()
         new_po_ids = self.env['purchase.order'].search([
             ('origin', '=', man_order.name),
         ])
