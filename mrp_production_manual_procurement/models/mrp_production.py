@@ -23,10 +23,8 @@ class MrpProduction(models.Model):
     def _generate_moves(self):
         # Overloaded to pass the context to block procurement run
         for prod in self:
-            if (
-                config['test_enable']
-                and self.env.context.get('test_mrp_production_manual_procurement')
-            ) or not config['test_enable']:
+            if not config['test_enable'] \
+                    or self.env.context.get('test_mrp_production_manual_procurement'):
                 prod = prod.with_context(
                     is_procurement_stopped=prod.is_procurement_stopped)
             super(MrpProduction, prod)._generate_moves()
