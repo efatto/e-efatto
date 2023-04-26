@@ -1,6 +1,7 @@
 
 from odoo.tools import mute_logger
 from odoo.tests.common import SavepointCase
+from odoo import fields
 
 
 class TestProcurementPurchaseAnalyticGrouping(SavepointCase):
@@ -53,9 +54,9 @@ class TestProcurementPurchaseAnalyticGrouping(SavepointCase):
         cls.product_3 = cls._create_product(
             cls, 'Test product 3', cls.category_1, cls.partner
         )
-        cls.product_3.write({
-            'route_ids': [(4, cls.env.ref('stock.route_warehouse0_mto').id)],
-        })
+        # cls.product_3.write({
+        #     'purchase_requisition': 'tenders',
+        # })
         # cls.op2 = cls.op_model.create([{
         #     'name': 'Orderpoint_2',
         #     'warehouse_id': cls.warehouse.id,
@@ -66,8 +67,19 @@ class TestProcurementPurchaseAnalyticGrouping(SavepointCase):
         #     'qty_multiple': 1.0,
         #     'product_uom': cls.product_3.uom_id.id,
         # }])
+        cls.product_4 = cls._create_product(
+            cls, 'Test product with purchase requisition', cls.category, cls.partner
+        )
+        # cls.product_4.write({
+        #     'purchase_requisition': 'tenders',
+        # })
+        cls.analytic_account = cls.env['account.analytic.account'].create({
+            'name': 'Existing analytic account',
+        })
 
-    def _create_product(self, name, category, partner):
+    def _create_product(self, name, category, partner, route_ids=False):
+        if not route_ids:
+            route_ids = [(4, self.stock_buy_route.id), (4, self.stock_mto_route.id)]
         product = self.env['product.product'].create({
             'name': name,
             'categ_id': category.id,
@@ -77,8 +89,7 @@ class TestProcurementPurchaseAnalyticGrouping(SavepointCase):
                     'min_qty': 1.0,
                 }),
             ],
-            'route_ids': [(4, self.stock_buy_route.id),
-                          (4, self.stock_mto_route.id)],
+            'route_ids': route_ids,
         })
         return product
 
@@ -96,8 +107,30 @@ class TestProcurementPurchaseAnalyticGrouping(SavepointCase):
         line._convert_to_write(line._cache)
         return line
 
+    def _create_purchase_order_line(self, order, product, qty, analytic_account):
+        vals = {
+            'order_id': order.id,
+            'product_id': product.id,
+            'product_qty': qty,
+            'product_uom': product.uom_po_id.id,
+            'price_unit': product.list_price,
+            'name': product.name,
+            'date_planned': fields.Date.today(),
+            'account_analytic_id': analytic_account.id,
+        }
+        line = self.env['purchase.order.line'].create(vals)
+        line.onchange_product_id()
+        line._convert_to_write(line._cache)
+        return line
+
     def test_procurement_grouped_purchase(self):
         self.category.procured_purchase_grouping = 'analytic'
+        # create a RDP with analytic account
+        purchase_order = self.env['purchase.order'].create({
+            'partner_id': self.partner.id
+        })
+        self._create_purchase_order_line(
+            purchase_order, self.product_4, 3.0, self.analytic_account)
         order1 = self.env['sale.order'].create({
             'partner_id': self.partner.id,
         })
@@ -112,6 +145,7 @@ class TestProcurementPurchaseAnalyticGrouping(SavepointCase):
         self.assertTrue(order1.analytic_account_id)
         order2 = self.env['sale.order'].create({
             'partner_id': self.partner.id,
+            'analytic_account_id': self.analytic_account.id,
         })
         self._create_sale_order_line(order2, self.product_1, 5)
         self._create_sale_order_line(order2, self.service_product, 3)
@@ -119,36 +153,64 @@ class TestProcurementPurchaseAnalyticGrouping(SavepointCase):
         if order2.state != 'sale':
             order2.action_confirm()
         self.assertEqual(order2.state, 'sale')
-        self.assertTrue(order2.analytic_account_id)
+        self.assertEqual(self.analytic_account, order2.analytic_account_id)
 
         with mute_logger('odoo.addons.stock.models.procurement'):
             self.env['procurement.group'].run_scheduler()
-        orders = self.env['purchase.order'].search([
+        purchase_orders = self.env['purchase.order'].search([
             ('order_line.product_id', 'in', [self.product_1.id, self.product_2.id,
                                              self.product_3.id])
         ])
         self.assertEqual(
-            len(orders), 2,
+            len(purchase_orders), 2,
             'Procured purchase orders are not splitted by analytic account',
         )
-        analytic_accounts = orders.mapped('order_line.account_analytic_id')
+        self.assertIn(purchase_order, purchase_orders,
+                      "Product with same analytic account are not grouped!")
+        new_purchase_order = purchase_orders - purchase_order
+        for po in purchase_orders:
+            self.assertEqual(
+                len(po.mapped('order_line.account_analytic_id')), 1,
+                "Purchase orders have various analytic account!")
+        analytic_accounts = purchase_orders.mapped('order_line.account_analytic_id')
+
         # order1
         # product1 and product2 should create 1 PO
         # product3 is added to the same PO as standard grouping add to an open RDP
         # order2
-        # product1 should create 1 PO
+        # product1 should reuse existing PO
         for analytic_account in analytic_accounts:
-            order = orders.filtered(
+            purchase_order = purchase_orders.filtered(
                 lambda x: x.order_line.mapped(
                     'account_analytic_id') == analytic_account)
-            if order.origin == order2.name:
-                self.assertEqual(order.order_line.product_id, self.product_1)
-                self.assertEqual(order.order_line.account_analytic_id,
-                                 order2.analytic_account_id)
-            if order.origin == order1.name:
-                for line in order.order_line:
+            if purchase_order.origin == order2.name:
+                for line in purchase_order.order_line:
+                    self.assertIn(line.product_id, [self.product_1, self.product_4])
+                    self.assertEqual(line.account_analytic_id,
+                                     self.analytic_account)
+            if purchase_order.origin == order1.name:
+                for line in purchase_order.order_line:
                     self.assertIn(line.product_id, [self.product_1, self.product_2,
                                                     self.product_3])
                     self.assertEqual(line.account_analytic_id,
                                      order1.analytic_account_id)
-        # todo test with purchase requisition
+        # test with purchase requisition ?? non mi è chiara la logica, nelle RDP create
+        # dalla gara ci dovrebbero essere quelle con lo stesso conto analitico già pre-
+        # parate in precedenza? con le righe aggiunte? o crea una RDP manualmente con il
+        # bottone Crea preventivo?
+        # purchase_requisitions = self.env['purchase.requisition'].search([
+        #     ('origin', '=', order1.name),
+        #     ('state', '=', 'draft'),
+        # ])
+        # self.assertEqual(len(purchase_requisitions), 1)
+        # self.assertEqual(purchase_requisitions.line_ids.product_id, self.product_3)
+        # # create RDP from purchase requisition and test it is merged with existing one
+        # purchase_requisitions.action_in_progress()
+        # purchase_requisitions.auto_rfq_from_suppliers()
+
+    # - se in un'ordine di vendita sono compresi più prodotti gli ordini di acquisto
+    # vengono comunque separati anche per gruppo di approvvigionamento (il che è
+    # probabilmente un bene, nel tipico caso d'uso)
+    # - gli ordini generati da produzione vengono comunque separati per gruppo di
+    # approvvigionamento, ignorando eventuali altre RdP con il medesimo conto analitico
+    # (preparate da Cristina?)
