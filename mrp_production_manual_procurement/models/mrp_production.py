@@ -1,4 +1,5 @@
 from odoo import api, fields, models
+from odoo.tools import config
 
 
 class MrpProduction(models.Model):
@@ -22,8 +23,12 @@ class MrpProduction(models.Model):
     def _generate_moves(self):
         # Overloaded to pass the context to block procurement run
         for prod in self:
-            if prod.is_procurement_stopped:
-                prod = prod.with_context(is_procurement_stopped=True)
+            if (
+                config['test_enable']
+                and self.env.context.get('test_mrp_production_manual_procurement')
+            ) or not config['test_enable']:
+                prod = prod.with_context(
+                    is_procurement_stopped=prod.is_procurement_stopped)
             super(MrpProduction, prod)._generate_moves()
             # recreate recordset of original moves with original function to restore
             # initial 'draft' state
