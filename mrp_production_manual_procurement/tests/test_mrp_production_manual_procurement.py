@@ -52,7 +52,8 @@ class TestMrpProductionManualProcurement(TestProductionData):
         product_qty = 5
         self.main_bom.routing_id = self.routing1
         man_order = self.env['mrp.production'].with_context(
-                test_mrp_production_manual_procurement=True).create({
+            test_mrp_production_manual_procurement=True
+        ).create({
             'name': 'MO-Test',
             'product_id': self.top_product.id,
             'product_uom_id': self.top_product.uom_id.id,
