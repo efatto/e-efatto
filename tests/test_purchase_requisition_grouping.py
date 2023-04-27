@@ -58,7 +58,8 @@ class PurchaseRequisitionGrouping(TestProductionData):
     def test_01_mo_purchase_requisition_grouping(self):
         product_qty = 5
         self.main_bom.routing_id = self.routing1
-        man_order = self.env['mrp.production'].create({
+        man_order = self.env['mrp.production'].with_context(
+                test_mrp_production_procurement_analytic=True).create({
             'name': 'MO-Test',
             'product_id': self.top_product.id,
             'product_uom_id': self.top_product.uom_id.id,
@@ -87,36 +88,7 @@ class PurchaseRequisitionGrouping(TestProductionData):
                          7 * product_qty)
         # create workorders
         man_order.action_assign()
-        man_order.button_plan()
-        # produce partially
-        produce_form = Form(
-            self.env['mrp.product.produce'].with_context(
-                active_id=man_order.id,
-                active_ids=[man_order.id],
-            )
-        )
-        produced_qty = 2.0
-        produce_form.product_qty = produced_qty
-        wizard = produce_form.save()
-        wizard.do_produce()
 
-        # aggiungere delle righe extra-bom, in stato confermato come da ui
-        man_order.action_toggle_is_locked()
-        man_order.write({
-            'move_raw_ids': [
-                (0, 0, {
-                    'name': self.component_sale_to_purchase_1.name,
-                    'product_id': self.component_sale_to_purchase_1.id,
-                    'product_uom': self.component_sale_to_purchase_1.uom_id.id,
-                    'product_uom_qty': 10,
-                    'location_id': man_order.location_src_id.id,
-                    'location_dest_id': man_order.location_dest_id.id,
-                    'state': 'confirmed',
-                    'raw_material_production_id': man_order.id,
-                    'picking_type_id': man_order.picking_type_id.id,
-                }),
-            ]
-        })
         # creare i PO e verificare che ci sia il procurement group
         self.assertTrue(pr_lines.mapped('group_id'))
         pr_ids.auto_rfq_from_suppliers()
@@ -146,7 +118,8 @@ class PurchaseRequisitionGrouping(TestProductionData):
         })
         sale_order.action_confirm()
         with mute_logger('odoo.addons.stock.models.procurement'):
-            self.env['procurement.group'].run_scheduler()
+            self.procurement_model.with_context(
+                test_mrp_production_procurement_analytic=True).run_scheduler()
         self.assertEqual(
             len(sale_order.order_line), 1, msg="Order line was not created")
         purchase_orders = self.env['purchase.order'].search([
