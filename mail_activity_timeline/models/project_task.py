@@ -8,6 +8,7 @@ class ProjectTask(models.Model):
         comodel_name='mrp.workcenter',
         index=True,
     )
+    color = fields.Integer(related='project_id.color')
 
     @api.model
     def create(self, vals_list):

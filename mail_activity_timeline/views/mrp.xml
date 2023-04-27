@@ -15,6 +15,9 @@
                     attrs="{'invisible': [('workorder_count', '=', 0)]}"
                 />
             </div>
+            <field name="user_id" position="after">
+                <field name="color" widget="color"/>
+            </field>
         </field>
     </record>
 

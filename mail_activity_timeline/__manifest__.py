@@ -15,9 +15,10 @@
         'mrp_production_date_planned',
         'mrp_production_demo',
         'mrp_sale_info',
-        'project',
+        'project_stage_state',
         'web_timeline',
         'web_view_calendar_list',
+        'web_widget_color',
     ],
     'data': [
         'data/mail_activity_type.xml',
