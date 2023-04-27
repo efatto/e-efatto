@@ -10,6 +10,7 @@
                 <field name="date_start"/>
                 <field name="date_end"/>
                 <field name="parent_id"/>
+                <field name="workcenter_id"/>
             </field>
             <field name="note" position="before">
                 <group colspan="4" col="1">
@@ -72,7 +73,7 @@
         <field name="arch" type="xml">
             <timeline date_start="date_start"
                       date_stop="date_end"
-                      default_group_by="user_id"
+                      default_group_by="workcenter_id"
                       event_open_popup="true"
                       mode="week"
                       colors="#adb5bd:active != true;"
@@ -80,6 +81,7 @@
                 <field name="user_id"/>
                 <field name="is_resource_planner"/>
                 <field name="res_name"/>
+                <field name="workcenter_id"/>
                 <templates>
                     <t t-name="timeline-item">
                         <div>

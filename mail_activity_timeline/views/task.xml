@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record model="ir.ui.view" id="view_task_form2">
+        <field name="name">mrp.production.work.order.form</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <field name="user_id" position="after">
+                <field name="workcenter_id"/>
+            </field>
+        </field>
+    </record>
+</odoo>

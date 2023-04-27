@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="mail_activity_project_mrp_workcenter" model="mrp.workcenter">
+        <field name="name">Timeline Project</field>
+<!--        <field name="product_id" eval="True"/>-->
+        <field name="resource_calendar_id" eval="ref('resource.resource_calendar_std')"/>
+    </record>
+
+</odoo>
