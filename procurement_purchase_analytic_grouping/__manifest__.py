@@ -7,10 +7,7 @@
     'website': 'https://github.com/sergiocorato/e-efatto',
     'category': 'Procurements',
     'depends': [
-        'mrp_analytic',
-        'mrp_production_demo',
         'mrp_production_procurement_analytic',
-        'procurement_mto_analytic',
         'procurement_purchase_no_grouping',
         'purchase_analytic',
         'sale_order_analytic_all',
