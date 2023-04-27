@@ -1,4 +1,4 @@
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 
 
 class MailActivity(models.Model):
@@ -23,6 +23,21 @@ class MailActivity(models.Model):
         ondelete="cascade",
         index=True,
     )
+
+    def action_activity_duplicate(self):
+        self.ensure_one()
+        new_activity = self.copy()
+        return {
+            'name': _('Schedule duplicated Activity'),
+            'context': {},
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'mail.activity',
+            'res_id': new_activity.id,
+            'views': [(False, 'form')],
+            'type': 'ir.actions.act_window',
+            'target': 'new',
+        }
 
     def write(self, values):
         res = super().write(values)

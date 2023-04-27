@@ -48,3 +48,18 @@ class TestMrpWorkorderTime(TestProductionData):
                 minutes=duration_expected
             )
         )
+
+    def test_01_mail_activity_duplicate(self):
+        partner = self.env["res.partner"].create({
+            'name': "Customer",
+        })
+        activity = self.env['mail.activity'].create({
+            'summary': 'Test activity on partner',
+            'res_model_id': self.env["ir.model"].search([
+                ("model", "=", partner._name),
+            ]).id,
+            'res_id': partner.id,
+        })
+        self.assertTrue(activity)
+        new_activity = activity.action_activity_duplicate()
+        self.assertTrue(new_activity)
