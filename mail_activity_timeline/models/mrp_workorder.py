@@ -37,7 +37,9 @@ class MrpWorkorder(models.Model):
         if not activity_ids:
             self.env['mail.activity'].create_planner_activity(
                 workorder,
-                workorder.user_id or workorder.production_id.user_id)
+                workorder.workcenter_id.user_id or
+                workorder.user_id or
+                workorder.production_id.user_id)
         return workorder
 
     @api.multi
@@ -56,7 +58,8 @@ class MrpWorkorder(models.Model):
                         'date_planned_finished',
                         'user_id',
                         'parent_id',
-                        'name'
+                        'name',
+                        'workcenter_id'
                     ]):
                         activity_ids._compute_planner()
         return res

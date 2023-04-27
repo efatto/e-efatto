@@ -19,7 +19,9 @@ class ProjectTask(models.Model):
             # create only when a user directly create task
             self.env['mail.activity'].create_planner_activity(
                 task,
-                task.user_id or task.project_id.user_id)
+                task.workcenter_id.user_id or
+                task.user_id or
+                task.project_id.user_id)
         return task
 
     @api.multi
@@ -36,7 +38,8 @@ class ProjectTask(models.Model):
                         'date_end',
                         'user_id',
                         'parent_id',
-                        'name'
+                        'name',
+                        'workcenter_id'
                     ]):
                         activity_ids._compute_planner()
         return res
