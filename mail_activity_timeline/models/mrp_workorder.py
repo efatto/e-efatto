@@ -18,6 +18,7 @@ class MrpWorkorder(models.Model):
         compute="_compute_dates",
         store=True,
     )
+    color = fields.Char(related='production_id.color', readonly=True)
 
     @api.multi
     @api.depends('activity_ids.date_start', 'activity_ids.date_end')
@@ -59,7 +60,8 @@ class MrpWorkorder(models.Model):
                         'user_id',
                         'parent_id',
                         'name',
-                        'workcenter_id'
+                        'workcenter_id',
+                        'color'
                     ]):
                         activity_ids._compute_planner()
         return res

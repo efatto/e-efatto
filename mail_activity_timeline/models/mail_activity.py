@@ -1,3 +1,4 @@
+from . import colorscale
 from odoo import api, fields, models, _
 
 
@@ -26,6 +27,10 @@ class MailActivity(models.Model):
     workcenter_id = fields.Many2one(
         comodel_name='mrp.workcenter',
         index=True,
+    )
+    color_active = fields.Char(
+        compute='_compute_planner',
+        store=True,
     )
 
     def action_activity_duplicate(self):
@@ -114,6 +119,7 @@ class MailActivity(models.Model):
             'parent_id': object.parent_id.id,
             'user_id': user_id.id,
             'is_resource_planner': True,
+            'color': object.color_active,
             'workcenter_id': object.workcenter_id.id if object._name == 'mrp.workorder'
             else self.env.ref(
                 'mail_activity_timeline.mail_activity_project_mrp_workcenter').id,
@@ -123,6 +129,17 @@ class MailActivity(models.Model):
         res = self.create(vals)
         res._compute_planner()
         return res
+
+    @staticmethod
+    def get_color(res_object, color):
+        if res_object._name == 'mrp.workorder':
+            if res_object.state in ['done', 'cancel']:
+                color = colorscale.colorscale(color, .5)
+        elif res_object._name == 'project.task':
+            color = hex(color)
+            if res_object.stage_id.state in ['done', 'cancelled']:
+                color = colorscale.colorscale(color, .5)
+        return color
 
     @api.multi
     @api.depends('res_model', 'res_id')
@@ -150,6 +167,9 @@ class MailActivity(models.Model):
                     activity.user_id = res_object.user_id
                 if res_object.workcenter_id:
                     activity.workcenter_id = res_object.workcenter_id
+                if res_object.color:
+                    activity.color_active = self.get_color(res_object, res_object.color)
             else:
                 activity.date_start = False
                 activity.date_end = False
+                activity.color_active = False
