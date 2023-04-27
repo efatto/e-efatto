@@ -137,7 +137,8 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
         self._create_sale_order_line(order1, self.product_1, 3)
         self._create_sale_order_line(order1, self.product_2, 3)
         self._create_sale_order_line(order1, self.product_3, 3)
-        order1.action_confirm()
+        order1.with_context(test_procurement_purchase_analytic_grouping=True
+                            ).action_confirm()
         self.assertEqual(order1.state, 'sale')
         self.assertTrue(order1.analytic_account_id)
         order2 = self.env['sale.order'].create({
@@ -146,7 +147,8 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
         })
         self._create_sale_order_line(order2, self.product_1, 5)
         self._create_sale_order_line(order2, self.service_product, 3)
-        order2.action_confirm()
+        order2.with_context(test_procurement_purchase_analytic_grouping=True
+                            ).action_confirm()
         self.assertEqual(order2.state, 'sale')
         self.assertEqual(self.analytic_account, order2.analytic_account_id)
 
@@ -224,7 +226,8 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
         self._create_sale_order_line(order1, self.product_1, 3)
         self._create_sale_order_line(order1, self.product_2, 3)
         self._create_sale_order_line(order1, self.product_3, 3)
-        order1.action_confirm()
+        order1.with_context(test_procurement_purchase_analytic_grouping=True
+                            ).action_confirm()
         self.assertEqual(order1.state, 'sale')
         self.assertTrue(order1.analytic_account_id)
 
@@ -240,12 +243,11 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
         self._create_sale_order_line(order2, self.top_product, 3)
         self._create_sale_order_line(order2, self.product_1, 5)
         self._create_sale_order_line(order2, self.service_product, 3)
-        order2.action_confirm()
+        order2.with_context(test_procurement_purchase_analytic_grouping=True
+                            ).action_confirm()
         self.assertEqual(order2.state, 'sale')
         self.assertEqual(self.analytic_account, order2.analytic_account_id)
 
-        with mute_logger('odoo.addons.stock.models.procurement'):
-            self.env['procurement.group'].run_scheduler()
         purchase_orders = self.env['purchase.order'].search([
             ('order_line.product_id', 'in', [self.product_1.id, self.product_2.id,
                                              self.product_3.id, self.product_4.id])
@@ -288,10 +290,7 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
                     self.assertEqual(line.account_analytic_id,
                                      order1.analytic_account_id)
         # check production
-
         self.production.action_assign()
-        with mute_logger('odoo.addons.stock.models.procurement'):
-            self.procurement_model.run_scheduler()
         self.assertEqual(self.production.analytic_account_id, self.analytic_account)
         # check po created from production are grouped by vendor and analytic account
         purchase_lines = manual_purchase_order.order_line.filtered(
