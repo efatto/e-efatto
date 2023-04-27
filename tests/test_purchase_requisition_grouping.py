@@ -55,7 +55,7 @@ class PurchaseRequisitionGrouping(TestProductionData):
             'name': 'Analytic account 1',
         })
 
-    def test_01_mo_manual_procurement(self):
+    def test_01_mo_purchase_requisition_grouping(self):
         product_qty = 5
         self.main_bom.routing_id = self.routing1
         man_order = self.env['mrp.production'].create({
