@@ -10,6 +10,7 @@
     'license': 'AGPL-3',
     'depends': [
         'mrp_production_manual_procurement',
+        'mrp_production_procurement_analytic',
         'procurement_purchase_analytic_grouping',
         'purchase_line_procurement_group',
         'purchase_requisition_auto_rfq',
