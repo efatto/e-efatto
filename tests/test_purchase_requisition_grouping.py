@@ -1,5 +1,4 @@
 from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
-from odoo.tests import Form
 from odoo.tools import mute_logger
 from odoo import fields
 from datetime import timedelta
@@ -59,7 +58,8 @@ class PurchaseRequisitionGrouping(TestProductionData):
         product_qty = 5
         self.main_bom.routing_id = self.routing1
         man_order = self.env['mrp.production'].with_context(
-                test_mrp_production_procurement_analytic=True).create({
+            test_mrp_production_procurement_analytic=True
+        ).create({
             'name': 'MO-Test',
             'product_id': self.top_product.id,
             'product_uom_id': self.top_product.uom_id.id,
