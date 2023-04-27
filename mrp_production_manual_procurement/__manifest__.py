@@ -13,6 +13,7 @@
     'depends': [
         'mrp_analytic',
         'mrp_production_demo',
+        'mrp_production_procurement_analytic',
         'purchase_line_procurement_group',
         'purchase_stock',
     ],
