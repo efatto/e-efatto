@@ -4,15 +4,6 @@
 from odoo import api, fields, models
 
 
-class MrpRoutingWorkcenter(models.Model):
-    _inherit = 'mrp.workcenter'
-
-    product_id = fields.Many2one(
-        'product.product',
-        domain=[('type', '=', 'service')],
-    )
-
-
 class MrpBomOperation(models.Model):
     _name = 'mrp.bom.operation'
     _description = 'Mrp Bom Estimated Operation'
