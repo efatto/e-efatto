@@ -4,7 +4,7 @@ from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
 from odoo.tools import mute_logger
 
 
-class TestPurchaseSaleMrpLink(TestProductionData):
+class TestPurchaseSaleMrpSearch(TestProductionData):
 
     @classmethod
     def setUpClass(cls):

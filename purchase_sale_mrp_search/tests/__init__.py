@@ -1,2 +1,2 @@
 
-from . import test_purchase_sale_mrp_link
+from . import test_purchase_sale_mrp_search
