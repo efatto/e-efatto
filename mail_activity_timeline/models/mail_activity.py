@@ -23,6 +23,10 @@ class MailActivity(models.Model):
         ondelete="cascade",
         index=True,
     )
+    workcenter_id = fields.Many2one(
+        comodel_name='mrp.workcenter',
+        index=True,
+    )
 
     def action_activity_duplicate(self):
         self.ensure_one()
@@ -49,16 +53,23 @@ class MailActivity(models.Model):
                     'date_end',
                     'user_id',
                     'parent_id',
-                    'summary'
+                    'summary',
+                    'workcenter_id'
                 ]):
                     res_object = self.env[activity.res_model].browse(
                         activity.res_id)
                     vals = {}
+                    if 'user_id' in values:
+                        vals.update({'user_id': values['user_id']})
+                    if 'parent_id' in values:
+                        vals.update({'parent_id': values['parent_id']})
+                    if 'summary' in values:
+                        vals.update({
+                            'name': values['summary']
+                        })
+                    if 'workcenter_id' in values:
+                        vals.update({'workcenter_id': values['workcenter_id']})
                     if activity.res_model == 'mrp.workorder':
-                        if 'summary' in values:
-                            vals.update({
-                                'name': values['summary']
-                            })
                         if 'date_start' in values:
                             vals.update({
                                 'date_planned_start': values['date_start']
@@ -67,15 +78,7 @@ class MailActivity(models.Model):
                             vals.update({
                                 'date_planned_finished': values['date_end']
                             })
-                        if 'user_id' in values:
-                            vals.update({'user_id': values['user_id']})
-                        if 'parent_id' in values:
-                            vals.update({'parent_id': values['parent_id']})
                     elif activity.res_model == 'project.task':
-                        if 'summary' in values:
-                            vals.update({
-                                'name': values['summary']
-                            })
                         if 'date_start' in values:
                             vals.update({
                                 'date_start': values['date_start']
@@ -84,10 +87,6 @@ class MailActivity(models.Model):
                             vals.update({
                                 'date_end': values['date_end']
                             })
-                        if 'user_id' in values:
-                            vals.update({'user_id': values['user_id']})
-                        if 'parent_id' in values:
-                            vals.update({'parent_id': values['parent_id']})
                     res_object.with_context(
                         bypass_resource_planner=True
                     ).write(vals)
@@ -115,6 +114,9 @@ class MailActivity(models.Model):
             'parent_id': object.parent_id.id,
             'user_id': user_id.id,
             'is_resource_planner': True,
+            'workcenter_id': object.workcenter_id.id if object._name == 'mrp.workorder'
+            else self.env.ref(
+                'mail_activity_timeline.mail_activity_project_mrp_workcenter').id,
             'team_id': False,  # to excludes problem of users not part of the team
             # if needed, add a check to ensure that user is part of the team
         }
@@ -146,6 +148,8 @@ class MailActivity(models.Model):
                     )
                 if res_object.user_id:
                     activity.user_id = res_object.user_id
+                if res_object.workcenter_id:
+                    activity.workcenter_id = res_object.workcenter_id
             else:
                 activity.date_start = False
                 activity.date_end = False

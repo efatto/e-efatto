@@ -1,8 +1,13 @@
-from odoo import api, models
+from odoo import api, fields, models
 
 
 class ProjectTask(models.Model):
     _inherit = 'project.task'
+
+    workcenter_id = fields.Many2one(
+        comodel_name='mrp.workcenter',
+        index=True,
+    )
 
     @api.model
     def create(self, vals_list):

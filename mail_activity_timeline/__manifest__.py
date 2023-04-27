@@ -21,9 +21,11 @@
     ],
     'data': [
         'data/mail_activity_type.xml',
+        'data/mrp_workcenter.xml',
         'views/mail_activity.xml',
         'views/mrp_workorder.xml',
         'views/mrp.xml',
+        'views/task.xml',
     ],
     'installable': True,
 }
