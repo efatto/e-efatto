@@ -119,7 +119,7 @@ class MailActivity(models.Model):
             'parent_id': object.parent_id.id,
             'user_id': user_id.id,
             'is_resource_planner': True,
-            'color': object.color_active,
+            'color_active': object.color,
             'workcenter_id': object.workcenter_id.id if object._name == 'mrp.workorder'
             else self.env.ref(
                 'mail_activity_timeline.mail_activity_project_mrp_workcenter').id,
