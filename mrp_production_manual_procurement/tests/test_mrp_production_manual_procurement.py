@@ -52,7 +52,8 @@ class TestMrpProductionManualProcurement(TestProductionData):
         product_qty = 5
         self.main_bom.routing_id = self.routing1
         man_order = self.env['mrp.production'].with_context(
-            test_mrp_production_manual_procurement=True
+            test_mrp_production_manual_procurement=True,
+            test_mrp_production_procurement_analytic=True
         ).create({
             'name': 'MO-Test',
             'product_id': self.top_product.id,
@@ -64,14 +65,16 @@ class TestMrpProductionManualProcurement(TestProductionData):
         # do nothing anyway)
         with mute_logger('odoo.addons.stock.models.procurement'):
             self.procurement_model.with_context(
-                test_mrp_production_manual_procurement=True
+                test_mrp_production_manual_procurement=True,
+                test_mrp_production_procurement_analytic=True
             ).run_scheduler()
         po_ids = self.env['purchase.order'].search([
             ('origin', '=', man_order.name),
             ('state', '=', 'draft'),
         ])
         self.assertFalse(po_ids)
-        man_order.with_context(test_mrp_production_manual_procurement=True
+        man_order.with_context(test_mrp_production_manual_procurement=True,
+                               test_mrp_production_procurement_analytic=True
                                ).button_start_procurement()
         po_ids = self.env['purchase.order'].search([
             ('origin', '=', man_order.name),
@@ -118,7 +121,8 @@ class TestMrpProductionManualProcurement(TestProductionData):
             lambda x: x.product_id == self.product_to_purchase_3
         )
         # re-start procurement must create new orders
-        man_order.with_context(test_mrp_production_manual_procurement=True
+        man_order.with_context(test_mrp_production_manual_procurement=True,
+                               test_mrp_production_procurement_analytic=True
                                ).button_start_procurement()
         new_po_ids = self.env['purchase.order'].search([
             ('origin', '=', man_order.name),
