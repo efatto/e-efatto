@@ -11,10 +11,9 @@
     'description': 'Add ability to create procurement after production order '
                    'creation.',
     'depends': [
-        'mrp_production_demo',
         'mrp_production_procurement_analytic',
         'purchase_line_procurement_group',
-        'purchase_stock',
+        'sale_timesheet',
     ],
     'data': [
         'views/mrp.xml',
