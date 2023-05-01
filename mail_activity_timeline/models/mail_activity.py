@@ -123,8 +123,6 @@ class MailActivity(models.Model):
             'workcenter_id': object.workcenter_id.id if object._name == 'mrp.workorder'
             else self.env.ref(
                 'mail_activity_timeline.mail_activity_project_mrp_workcenter').id,
-            'team_id': False,  # to excludes problem of users not part of the team
-            # if needed, add a check to ensure that user is part of the team
         }
         res = self.create(vals)
         res._compute_planner()
