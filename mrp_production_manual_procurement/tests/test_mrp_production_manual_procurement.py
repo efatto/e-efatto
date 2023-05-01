@@ -153,7 +153,7 @@ class TestMrpProductionManualProcurement(TestProductionData):
         new_po_ids = self.env['purchase.order'].search([
             '|',
             ('origin', '=', self.production.name),
-            ('origin', '=', sale_order.name),
+            ('origin', 'ilike', sale_order.name),
         ])
         self.assertEqual(len(new_po_ids), 2)
         to_confirm_po_ids = new_po_ids - po_ids
