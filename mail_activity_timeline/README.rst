@@ -54,6 +54,11 @@ Nel caso in cui l'attività venga modificata per quanto riguarda nome, utente as
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mail_activity_timeline/static/description/timeline.png
     :alt: Timeline
 
+Il colore del testo nella timeline cambia in base allo sfondo, come da indicazioni html:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mail_activity_timeline/static/description/colore_testo.png
+    :alt: Colore testo
+
 Bug Tracker
 ===========
 
