@@ -22,3 +22,8 @@ Nel caso in cui l'attività venga modificata per quanto riguarda nome, utente as
 
 .. image:: ../static/description/timeline.png
     :alt: Timeline
+
+Il colore del testo nella timeline cambia in base allo sfondo, come da indicazioni html:
+
+.. image:: ../static/description/colore_testo.png
+    :alt: Colore testo

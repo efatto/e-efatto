@@ -23,8 +23,10 @@ class MrpWorkorder(models.Model):
     @api.multi
     def name_get(self):
         return [
-            (wo.id, "%s - %s - %s" % (
-                wo.production_id.sudo().name, wo.name, wo.product_id.sudo().name)
+            (
+                wo.id, "%s - %s - %s" % (
+                    wo.production_id.sudo().name, wo.name, wo.product_id.sudo().name
+                )
             ) for wo in self]
 
     @api.multi
