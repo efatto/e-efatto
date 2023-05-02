@@ -35,7 +35,9 @@ class MailActivity(models.Model):
 
     def action_activity_duplicate(self):
         self.ensure_one()
-        new_activity = self.copy()
+        new_activity = self.copy(default={
+            'parent_id': self.id,
+        })
         return {
             'name': _('Schedule duplicated Activity'),
             'context': {},
