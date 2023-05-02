@@ -21,6 +21,13 @@ class MrpWorkorder(models.Model):
     color = fields.Char(related='production_id.color', readonly=True)
 
     @api.multi
+    def name_get(self):
+        return [
+            (wo.id, "%s - %s - %s" % (
+                wo.production_id.sudo().name, wo.name, wo.product_id.sudo().name)
+            ) for wo in self]
+
+    @api.multi
     @api.depends('activity_ids.date_start', 'activity_ids.date_end')
     def _compute_dates(self):
         for workorder in self:
