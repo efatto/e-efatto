@@ -124,12 +124,13 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
 
     def test_01_procurement_grouped_purchase(self):
         self.category.procured_purchase_grouping = 'analytic'
-        # create a RDP with analytic account
+        # create a RDP with existing analytic account
         purchase_order = self.env['purchase.order'].create({
             'partner_id': self.partner_1.id
         })
         self._create_purchase_order_line(
             purchase_order, self.product_4, 3.0, self.analytic_account)
+        # create a sale order with automatically created analytic account
         order1 = self.env['sale.order'].create({
             'partner_id': self.partner_1.id,
         })
@@ -137,17 +138,20 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
         self._create_sale_order_line(order1, self.product_1, 3)
         self._create_sale_order_line(order1, self.product_2, 3)
         self._create_sale_order_line(order1, self.product_3, 3)
-        order1.with_context(test_procurement_purchase_analytic_grouping=True
+        order1.with_context(test_procurement_purchase_analytic_grouping=True,
+                            test_mrp_production_procurement_analytic=True
                             ).action_confirm()
         self.assertEqual(order1.state, 'sale')
         self.assertTrue(order1.analytic_account_id)
+        # create another sale order with existing analytic account
         order2 = self.env['sale.order'].create({
             'partner_id': self.partner_1.id,
             'analytic_account_id': self.analytic_account.id,
         })
         self._create_sale_order_line(order2, self.product_1, 5)
         self._create_sale_order_line(order2, self.service_product, 3)
-        order2.with_context(test_procurement_purchase_analytic_grouping=True
+        order2.with_context(test_procurement_purchase_analytic_grouping=True,
+                            test_mrp_production_procurement_analytic=True
                             ).action_confirm()
         self.assertEqual(order2.state, 'sale')
         self.assertEqual(self.analytic_account, order2.analytic_account_id)
@@ -156,7 +160,7 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
             self.env['procurement.group'].run_scheduler()
         purchase_orders = self.env['purchase.order'].search([
             ('order_line.product_id', 'in', [self.product_1.id, self.product_2.id,
-                                             self.product_3.id])
+                                             self.product_4.id])
         ])
         self.assertEqual(
             len(purchase_orders), 2,
@@ -172,7 +176,7 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
 
         # order1
         # product1 and product2 should create 1 PO
-        # product3 is added to the same PO as standard grouping add to an open RDP
+        # product3 is added to a new purchase requisition
         # order2
         # product1 should reuse existing PO
         for analytic_account in analytic_accounts:
@@ -186,12 +190,11 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
                                      self.analytic_account)
             if purchase_order.origin == order1.name:
                 for line in purchase_order.order_line:
-                    self.assertIn(line.product_id, [self.product_1, self.product_2,
-                                                    self.product_3])
+                    self.assertIn(line.product_id, [self.product_1, self.product_2])
                     self.assertEqual(line.account_analytic_id,
                                      order1.analytic_account_id)
 
-        # test with purchase requisition: if there are RDP with same analytic account
+        # test with purchase requisition: if there are RDPs with same analytic account
         # already existing, they will be re-used adding new lines (put in pre-existing
         # lines a flag to ensure user do not send them) ONLY using button
         # auto_rfq_from_suppliers (create new RDP directly is not supported)
@@ -227,7 +230,8 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
         self._create_sale_order_line(order1, self.product_1, 3)
         self._create_sale_order_line(order1, self.product_2, 3)
         self._create_sale_order_line(order1, self.product_3, 3)
-        order1.with_context(test_procurement_purchase_analytic_grouping=True
+        order1.with_context(test_procurement_purchase_analytic_grouping=True,
+                            test_mrp_production_procurement_analytic=True
                             ).action_confirm()
         self.assertEqual(order1.state, 'sale')
         self.assertTrue(order1.analytic_account_id)
@@ -244,7 +248,8 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
         self._create_sale_order_line(order2, self.top_product, 3)
         self._create_sale_order_line(order2, self.product_1, 5)
         self._create_sale_order_line(order2, self.service_product, 3)
-        order2.with_context(test_procurement_purchase_analytic_grouping=True
+        order2.with_context(test_procurement_purchase_analytic_grouping=True,
+                            test_mrp_production_procurement_analytic=True
                             ).action_confirm()
         self.assertEqual(order2.state, 'sale')
         self.assertEqual(self.analytic_account, order2.analytic_account_id)
