@@ -55,9 +55,9 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
         cls.product_3 = cls._create_product(
             cls, 'Test product 3', cls.category_1, cls.partner_1
         )
-        # cls.product_3.write({
-        #     'purchase_requisition': 'tenders',
-        # })
+        cls.product_3.write({
+            'purchase_requisition': 'tenders',
+        })
         # cls.op2 = cls.op_model.create([{
         #     'name': 'Orderpoint_2',
         #     'warehouse_id': cls.warehouse.id,
@@ -190,19 +190,20 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
                                                     self.product_3])
                     self.assertEqual(line.account_analytic_id,
                                      order1.analytic_account_id)
-        # test with purchase requisition ?? non mi è chiara la logica, nelle RDP create
-        # dalla gara ci dovrebbero essere quelle con lo stesso conto analitico già pre-
-        # parate in precedenza? con le righe aggiunte? o crea una RDP manualmente con il
-        # bottone Crea preventivo?
-        # purchase_requisitions = self.env['purchase.requisition'].search([
-        #     ('origin', '=', order1.name),
-        #     ('state', '=', 'draft'),
-        # ])
-        # self.assertEqual(len(purchase_requisitions), 1)
-        # self.assertEqual(purchase_requisitions.line_ids.product_id, self.product_3)
-        # # create RDP from purchase requisition and test it is merged with existing one
-        # purchase_requisitions.action_in_progress()
-        # purchase_requisitions.auto_rfq_from_suppliers()
+
+        # test with purchase requisition: if there are RDP with same analytic account
+        # already existing, they will be re-used adding new lines (put in pre-existing
+        # lines a flag to ensure user do not send them) ONLY using button
+        # auto_rfq_from_suppliers (create new RDP directly is not supported)
+        purchase_requisitions = self.env['purchase.requisition'].search([
+            ('line_ids.account_analytic_id', '=', order1.analytic_account_id.id),
+            ('state', '=', 'draft'),
+        ])
+        self.assertEqual(len(purchase_requisitions), 1)
+        self.assertEqual(purchase_requisitions.line_ids.product_id, self.product_3)
+        # create RDP from purchase requisition and test it is merged with existing one
+        purchase_requisitions.action_in_progress()
+        purchase_requisitions.auto_rfq_from_suppliers()
 
     # - se in un'ordine di vendita sono compresi più prodotti gli ordini di acquisto
     # vengono comunque separati anche per gruppo di approvvigionamento (il che è

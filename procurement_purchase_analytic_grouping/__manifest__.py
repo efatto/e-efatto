@@ -10,6 +10,7 @@
         'mrp_production_procurement_analytic',
         'procurement_purchase_no_grouping',
         'purchase_analytic',
+        'purchase_requisition',
         'sale_order_analytic_all',
         'sale_timesheet',
     ],
