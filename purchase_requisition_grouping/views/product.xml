@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_template_form_view_inherit" model="ir.ui.view">
+        <field name="name">product.template.form.inherit.grouping</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="purchase_requisition.product_template_form_view_inherit"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='purchase_requisition']" position="before">
+                <field name="default_supplier_partner_id"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
