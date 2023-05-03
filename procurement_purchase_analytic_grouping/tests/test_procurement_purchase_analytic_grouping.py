@@ -318,9 +318,10 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
                                      order1.analytic_account_id)
         # check production
         self.production.action_assign()
+        self.production.button_start_procurement()
         self.assertEqual(self.production.analytic_account_id, self.analytic_account)
         # check po created from production are grouped by vendor and analytic account
-        purchase_lines = manual_purchase_order.order_line.filtered(
-            lambda x: x.product_id == self.product_3
-        )
-        # TODO self.assertEqual(len(purchase_lines), 2)
+        # purchase_lines = manual_purchase_order.order_line.filtered(
+        #     lambda x: x.product_id == self.product_3
+        # )
+        # self.assertEqual(len(purchase_lines), 2)
