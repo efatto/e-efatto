@@ -125,11 +125,14 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
     def test_01_procurement_grouped_purchase(self):
         self.category.procured_purchase_grouping = 'analytic'
         # create a RDP with existing analytic account
-        purchase_order = self.env['purchase.order'].create({
+        existing_purchase_order = self.env['purchase.order'].create({
             'partner_id': self.partner_1.id
         })
         self._create_purchase_order_line(
-            purchase_order, self.product_4, 3.0, self.analytic_account)
+            existing_purchase_order, self.product_3, 3.0, self.analytic_account)
+
+        # create 2 sale orders with product_3, which should create 1 requisitions with
+        # 2 lines with distinct analytic account
         # create a sale order with automatically created analytic account
         order1 = self.env['sale.order'].create({
             'partner_id': self.partner_1.id,
@@ -149,6 +152,7 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
             'analytic_account_id': self.analytic_account.id,
         })
         self._create_sale_order_line(order2, self.product_1, 5)
+        self._create_sale_order_line(order2, self.product_3, 7)
         self._create_sale_order_line(order2, self.service_product, 3)
         order2.with_context(test_procurement_purchase_analytic_grouping=True,
                             test_mrp_production_procurement_analytic=True
@@ -166,7 +170,7 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
             len(purchase_orders), 2,
             'Procured purchase orders are not splitted by analytic account',
         )
-        self.assertIn(purchase_order, purchase_orders,
+        self.assertIn(existing_purchase_order, purchase_orders,
                       "Product with same analytic account are not grouped!")
         for po in purchase_orders:
             self.assertEqual(
@@ -185,12 +189,14 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
                     'account_analytic_id') == analytic_account)
             if purchase_order.origin == order2.name:
                 for line in purchase_order.order_line:
-                    self.assertIn(line.product_id, [self.product_1, self.product_4])
+                    self.assertIn(line.product_id, [self.product_1, self.product_4,
+                                                    self.product_3])
                     self.assertEqual(line.account_analytic_id,
                                      self.analytic_account)
             if purchase_order.origin == order1.name:
                 for line in purchase_order.order_line:
-                    self.assertIn(line.product_id, [self.product_1, self.product_2])
+                    self.assertIn(line.product_id, [self.product_1, self.product_2,
+                                                    self.product_3])
                     self.assertEqual(line.account_analytic_id,
                                      order1.analytic_account_id)
 
@@ -199,14 +205,20 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
         # lines a flag to ensure user do not send them) ONLY using button
         # auto_rfq_from_suppliers (create new RDP directly is not supported)
         purchase_requisitions = self.env['purchase.requisition'].search([
-            ('line_ids.account_analytic_id', '=', order1.analytic_account_id.id),
+            ('line_ids.product_id', '=', self.product_3.id),
             ('state', '=', 'draft'),
         ])
-        self.assertEqual(len(purchase_requisitions), 1)
-        self.assertEqual(purchase_requisitions.line_ids.product_id, self.product_3)
+        self.assertEqual(len(purchase_requisitions), 2)
+        purchase_requisition_with_existing_rdp = purchase_requisitions.filtered(
+            lambda x: x.line_ids.account_analytic_id == self.analytic_account
+        )
+        self.assertEqual(len(purchase_requisition_with_existing_rdp.line_ids), 1)
         # create RDP from purchase requisition and test it is merged with existing one
-        purchase_requisitions.action_in_progress()
-        purchase_requisitions.auto_rfq_from_suppliers()
+        purchase_requisition_with_existing_rdp.action_in_progress()
+        purchase_requisition_with_existing_rdp.auto_rfq_from_suppliers()
+        self.assertEqual(len(purchase_requisition_with_existing_rdp.purchase_ids), 1)
+        self.assertEqual(purchase_requisition_with_existing_rdp.purchase_ids,
+                         existing_purchase_order)
 
     # - se in un'ordine di vendita sono compresi più prodotti gli ordini di acquisto
     # vengono comunque separati anche per gruppo di approvvigionamento (il che è
