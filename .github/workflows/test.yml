@@ -59,8 +59,6 @@ jobs:
         run: pip3 install -e "git+https://github.com/sergiocorato/efatto@12.0#egg=odoo12-addon-mrp_sale_info_link&subdirectory=setup/mrp_sale_info_link"
       - name: Install sale_order_analytic_all module from other repo
         run: pip3 install -e "git+https://github.com/sergiocorato/e-account@12.0#egg=odoo12-addon-sale_order_analytic_all&subdirectory=setup/sale_order_analytic_all"
-      - name: Install mrp_production_manual_procurement module from other repo
-        run: pip3 install -e "git+https://github.com/sergiocorato/efatto@12.0#egg=odoo12-addon-mrp_production_manual_procurement&subdirectory=setup/mrp_production_manual_procurement"
       - name: Install purchase_requisition_grouping module from other repo
         run: pip3 install -e "git+https://github.com/sergiocorato/efatto@12.0#egg=odoo12-addon-purchase_requisition_grouping&subdirectory=setup/purchase_requisition_grouping"
       - name: Install addons and dependencies
