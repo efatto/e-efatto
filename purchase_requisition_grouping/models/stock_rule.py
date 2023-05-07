@@ -51,8 +51,6 @@ class StockRule(models.Model):
             ('line_ids.product_id.seller_ids.name', 'in', supplier_partner_id.ids),
             ('origin', '=', origin),
         )
-        # fixme: aggiungere conto analitico alla riga creata (chi lo fa adesso? att.ne
-        #  che non risulti in un doppione, di default non dovrebbe metterlo no?)
         pr = self.env['purchase.requisition'].sudo().search(domain)
         pr = pr[0] if pr else False
         if not pr:
