@@ -234,7 +234,7 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
     # (preparate da Cristina?)
 
     def test_02_mo_procurement_grouped_purchase(self):
-        self.category.procured_purchase_grouping = 'analytic'
+        self.category_1.procured_purchase_grouping = 'analytic'
         # create with product 3: an RDP with existing analytic account, a sale order
         # with automatically created analytic account, a sale order with existing
         # analytic account which create an MO with product 3
