@@ -27,7 +27,7 @@ class StockRule(models.Model):
             if values.get("account_analytic_id"):
                 domain_analytic = (
                     "order_line.account_analytic_id", "=",
-                     values["account_analytic_id"]
+                    values["account_analytic_id"]
                 )
                 if domain_analytic not in domain:
                     domain += domain_analytic
