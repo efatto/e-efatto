@@ -100,7 +100,7 @@ class StockRule(models.Model):
 
         # check if it is installed purchase_product_weight module and adapt price
         if hasattr(seller.product_tmpl_id, 'compute_price_on_weight'):
-            if seller.product_id.compute_price_on_weight:
+            if seller.product_id.compute_price_on_weight:  # TODO why check product_id?
                 price_unit = price_unit * seller.product_id.weight
             elif seller.product_tmpl_id.compute_price_on_weight:
                 price_unit = price_unit * seller.product_tmpl_id.weight
