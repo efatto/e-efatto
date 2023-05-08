@@ -1,18 +1,42 @@
 # Copyright 2023 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
+from odoo.tests import SavepointCase
 from odoo.tools import mute_logger
 from odoo import fields
 
 
-class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
+class TestProcurementPurchaseAnalyticGrouping(SavepointCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.category = cls.env['product.category'].create({
-            'name': 'Test category',
+        cls.ctg_group_analytic = cls.env['product.category'].create({
+            'name': 'Test category with analytic grouping',
             'procured_purchase_grouping': 'analytic',
         })
+        cls.Product = cls.env['product.product']
+        cls.subproduct_1_1 = cls.Product.create([{
+            'name': 'Subproduct 1.1',
+            'type': 'product',
+        }])
+        cls.subproduct_1_2 = cls.Product.create([{
+            'name': 'Subproduct 1.2',
+            'type': 'product',
+        }])
+        cls.top_product = cls.Product.create([{
+            'name': 'Top Product',
+            'type': 'product',
+            'route_ids': [
+                (6, 0, [cls.env.ref('stock.route_warehouse0_mto').id,
+                        cls.env.ref('mrp.route_warehouse0_manufacture').id]),
+            ],
+        }])
+        cls.main_bom = cls.env['mrp.bom'].create([{
+            'product_tmpl_id': cls.top_product.product_tmpl_id.id,
+            'bom_line_ids': [
+                (0, 0, {'product_id': cls.subproduct_1_1.id, 'product_qty': 5}),
+                (0, 0, {'product_id': cls.subproduct_1_2.id, 'product_qty': 3}),
+            ]
+        }])
         cls.partner_1 = cls.env['res.partner'].create({
             'name': 'Test partner',
         })
@@ -20,14 +44,18 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
             'name': 'Test vendor',
             'supplier': True,
         })
+        # todo write in all subproduct categ_id with analytic grouping
+        for product in cls.main_bom.bom_line_ids:
+            product.categ_id = cls.ctg_group_analytic
         cls.stock_buy_route = cls.env.ref(
             'purchase_stock.route_warehouse0_buy')
+        cls.stock_buy_route.rule_ids.write({'group_propagation_option': 'propagate'})
         cls.stock_mto_route = cls.env.ref('stock.route_warehouse0_mto')
         cls.product_1_analytic = cls._create_product(
-            cls, 'Test product 1', cls.category, cls.vendor
+            cls, 'Test product 1', cls.ctg_group_analytic, cls.vendor
         )
         cls.product_2_analytic = cls._create_product(
-            cls, 'Test product 2', cls.category, cls.vendor
+            cls, 'Test product 2', cls.ctg_group_analytic, cls.vendor
         )
         cls.service_product = cls.env['product.product'].create([{
             'name': 'Service',
@@ -45,37 +73,11 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
             cls, 'Test product 3', cls.category_1, cls.vendor
         )
         cls.product_4 = cls._create_product(
-            cls, 'Test product 4', cls.category, cls.vendor
+            cls, 'Test product 4', cls.ctg_group_analytic, cls.vendor
         )
-        # cls.product_4.write({
-        #     'purchase_requisition': 'tenders',
-        # })
         cls.analytic_account = cls.env['account.analytic.account'].create({
             'name': 'Existing analytic account',
         })
-        # MIXED MTO AND ORDERPOINT IS TO CHECK!
-        # cls.op_model = cls.env['stock.warehouse.orderpoint']
-        # cls.warehouse = cls.env.ref('stock.warehouse0')
-        # cls.op1 = cls.op_model.create([{
-        #     'name': 'Orderpoint_1',
-        #     'warehouse_id': cls.warehouse.id,
-        #     'location_id': cls.warehouse.lot_stock_id.id,
-        #     'product_id': cls.product_2_analytic.id,
-        #     'product_min_qty': 10.0,
-        #     'product_max_qty': 30.0,
-        #     'qty_multiple': 1.0,
-        #     'product_uom': cls.product_2_analytic.uom_id.id,
-        # }])
-        # cls.op2 = cls.op_model.create([{
-        #     'name': 'Orderpoint_2',
-        #     'warehouse_id': cls.warehouse.id,
-        #     'location_id': cls.warehouse.lot_stock_id.id,
-        #     'product_id': cls.product_3_standard.id,
-        #     'product_min_qty': 10.0,
-        #     'product_max_qty': 30.0,
-        #     'qty_multiple': 1.0,
-        #     'product_uom': cls.product_3_standard.uom_id.id,
-        # }])
 
     def _create_product(self, name, category, partner, route_ids=False):
         if not route_ids:
@@ -280,21 +282,21 @@ class TestProcurementPurchaseAnalyticGrouping(TestProductionData):
         self.assertEqual(self.analytic_account, order2.analytic_account_id)
 
         product_3_purchase_orders = self.env['purchase.order'].search([
-            ('order_line.product_id', 'in', [self.product_3_standard.id])
+            ('order_line.product_id', 'in', [self.product_2_analytic.id])
         ])
-        created_product_3_purchase_orders = product_3_purchase_orders \
+        created_purchase_orders = product_3_purchase_orders \
             - manual_purchase_order_product_3 - manual_purchase_order_product_2
-        # check manual_purchase_order_product_3 is the same
+        # check that manual_purchase_order_product_3 is unchanged
         self.assertEqual(len(manual_purchase_order_product_3.order_line), 1)
         self.assertEqual(manual_purchase_order_product_3.order_line.product_qty, 3)
         # check new RDP is created for order1 with ¹
         self.assertEqual(
-            len(created_product_3_purchase_orders), 1,
+            len(created_purchase_orders), 1,
             'Procured purchase orders are not splitted by analytic account',
         )
-        created_product_3_purchase_order = created_product_3_purchase_orders[0]
-        self.assertEqual(created_product_3_purchase_order.origin, order1.name)
-        for line in created_product_3_purchase_order.order_line:
+        created_purchase_order = created_purchase_orders[0]
+        self.assertEqual(created_purchase_order.origin, order1.name)
+        for line in created_purchase_order.order_line:
             if line.product_id == self.product_1_analytic:
                 self.assertEqual(line.product_qty, 3)
                 self.assertEqual(line.account_analytic_id, order1.analytic_account_id)
