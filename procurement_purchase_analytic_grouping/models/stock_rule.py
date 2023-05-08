@@ -31,4 +31,10 @@ class StockRule(models.Model):
                 )
                 if domain_analytic not in domain:
                     domain += domain_analytic
+            # remove group_id from domain to put analytic grouped line in the same order
+            # NOT changed the group_id of the line if not set, to give the user the
+            # ability to differentiate manually created lines from procured ones
+            for condition in domain:
+                if 'group_id' in condition:
+                    domain = tuple(y for y in domain if y != condition)
         return domain
