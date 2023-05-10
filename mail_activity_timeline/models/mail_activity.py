@@ -33,6 +33,12 @@ class MailActivity(models.Model):
         store=True,
     )
 
+    def toggle_active(self):
+        res = super().toggle_active()
+        for activity in self:
+            activity.done = not bool(activity.active)
+        return res
+
     def action_activity_duplicate(self):
         self.ensure_one()
         new_activity = self.copy(default={
