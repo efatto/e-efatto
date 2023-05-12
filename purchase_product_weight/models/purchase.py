@@ -34,7 +34,8 @@ class PurchaseOrderLine(models.Model):
 
     @api.onchange('weight_price_unit')
     def _onchange_weight_price_unit(self):
-        if self.weight_price_unit:
+        if self.weight_price_unit and \
+                not self.env.context.get('skip_update_weight_price_unit'):
             price_unit = self.weight_price_unit * self.product_id.weight
             if self.product_uom and self.product_id.uom_id != self.product_uom:
                 price_unit = self.product_id.uom_id._compute_price(
