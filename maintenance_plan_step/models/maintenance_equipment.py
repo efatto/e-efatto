@@ -22,3 +22,11 @@ class MaintenanceEquipment(models.Model):
         string='Planning Horizon step',
         default='month',
         help="Interval used to automatically repeat the event")
+
+    def _create_new_request(self, maintenance_plan):
+        requests = super()._create_new_request(maintenance_plan=maintenance_plan)
+        for request in requests:
+            request.name = "%s - %s" % (
+                request.equipment_id.name,
+                request.maintenance_kind_id.name)
+        return requests
