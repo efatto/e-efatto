@@ -111,7 +111,7 @@ class TestMaintenancePlan(test_common.TransactionCase):
         )
         self.assertEqual(
             generated_request.name,
-            _('Preventive Maintenance (%s) - %s') % (
-                self.weekly_kind.name,
-                self.maintenance_plan_4.name)
+            '%s - %s' % (
+                generated_request.equipment_id.name,
+                generated_request.maintenance_kind_id.name)
         )
