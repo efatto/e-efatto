@@ -137,10 +137,14 @@ class ProductProduct(models.Model):
             # prendo i prezzi con una data di validità corretta, poi però si dovrebbe
             #  valutare quale è stato aggiornato per ultimo? o che ha l'ultima fattura?
             seller_ids = product.seller_ids.filtered(
-                lambda y:
-                (y.date_end and y.date_end >= date_validity_supplierinfo or True)
-                and
-                (y.date_start and y.date_start <= date_validity_supplierinfo or True)
+                lambda y: (
+                    y.date_end and y.date_end >= date_validity_supplierinfo
+                    or not y.date_end
+                )
+                and (
+                    y.date_start and y.date_start <= date_validity_supplierinfo
+                    or not y.date_start
+                )
                 and y.price != 0.0
             )
             if not seller_ids:
