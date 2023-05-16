@@ -25,6 +25,41 @@
                             class="oe_stat_button" icon="fa-database">
                             <field string="Products" name="products_count" widget="statinfo"/>
                         </button>
+                        <button type="object" name="action_view_product_ids"
+                            class="oe_stat_button" icon="fa-database"
+                            context="{'missing_seller_products': True}">
+                            <field string="Missing seller" name="missing_seller_products_count" widget="statinfo"/>
+                        </button>
+                        <button type="object" name="action_view_product_ids"
+                            class="oe_stat_button" icon="fa-database"
+                            context="{'obsolete_seller_price_products': True}">
+                            <field string="Obsolete price" name="obsolete_seller_price_products_count" widget="statinfo"/>
+                        </button>
+                        <button type="object" name="action_view_product_ids"
+                            class="oe_stat_button" icon="fa-database"
+                            context="{'mismatch_seller_products': True}">
+                            <field string="Mismatch seller" name="mismatch_seller_products_count" widget="statinfo"/>
+                        </button>
+                        <button type="object" name="action_view_product_ids"
+                            class="oe_stat_button" icon="fa-database"
+                            context="{'no_purchase_invoice_recent_zero_products': True}">
+                            <field string="No invoice" name="no_purchase_invoice_recent_zero_products_count" widget="statinfo"/>
+                        </button>
+                        <button type="object" name="action_view_product_ids"
+                            class="oe_stat_button" icon="fa-database"
+                            context="{'no_purchase_invoice_zero_products': True}">
+                            <field string="No purch/inv." name="no_purchase_invoice_zero_products_count" widget="statinfo"/>
+                        </button>
+                        <button type="object" name="action_view_product_ids"
+                            class="oe_stat_button" icon="fa-database"
+                            context="{'purchase_recent_zero_products': True}">
+                            <field string="Zero purchase" name="purchase_recent_zero_products_count" widget="statinfo"/>
+                        </button>
+                        <button type="object" name="action_view_product_ids"
+                            class="oe_stat_button" icon="fa-database"
+                            context="{'invoice_recent_zero_products': True}">
+                            <field string="Zero invoice" name="invoice_recent_zero_products_count" widget="statinfo"/>
+                        </button>
                     </div>
                     <div class="oe_title">
                         <h1>
