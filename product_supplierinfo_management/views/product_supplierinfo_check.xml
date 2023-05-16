@@ -68,13 +68,13 @@
                     </div>
                     <group>
                         <group>
-                            <field name="date_obsolete_supplierinfo_price"/>
                             <field name="date_validity_supplierinfo"/>
                             <field name="product_ctg_ids" widget="many2many_tags"/>
                             <field name="listprice_id" context="{'default_enable_supplierinfo_management': True}"/>
                         </group>
                         <group>
                             <field name="last_update" readonly="True"/>
+                            <field name="date_obsolete_supplierinfo_price"/>
                             <field name="company_id" groups="base.group_multi_company"
                                    options="{'no_create': True}"/>
                         </group>
