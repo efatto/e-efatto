@@ -88,7 +88,7 @@ Processo di creazione del nuovo costo
 #. se viene trovato almeno un fornitore valido con prezzo diverso da zero:
 
   #. viene selezionato solo il primo fornitore valido
-  #. se è indicata la Data Obsolescenza Prezzi Fornitori, i prodotti con la data di ultima modifica del prezzo di questo fornitore precedente alla data indicata vengono mostrati nei 'Prodotti con prezzo fornitore obsoleto';
+  #. se è indicata la Data Obsolescenza Prezzi Fornitori, i prodotti con la data di ultima modifica del prezzo di questo fornitore precedente alla data indicata vengono mostrati nei 'Prodotti con prezzo fornitore obsoleto'
   #. se il prodotto ha un ultimo acquisto ed è più recente dell'ultimo prezzo fornitore:
 
     #. se l'ultimo fornitore è diverso dal fornitore valido, viene mostrato in 'Prodotti con fornitore non coincidente';
