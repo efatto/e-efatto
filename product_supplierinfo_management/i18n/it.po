@@ -261,7 +261,7 @@ msgstr "Numero prodotti con fornitore incongruo"
 #. module: product_supplierinfo_management
 #: model_terms:ir.ui.view,arch_db:product_supplierinfo_management.view_product_supplierinfo_check_form
 msgid "Missing seller"
-msgstr "Forn. mancante"
+msgstr "No fornitore"
 
 #. module: product_supplierinfo_management
 #: model:ir.model.fields,field_description:product_supplierinfo_management.field_product_supplierinfo_check__name
