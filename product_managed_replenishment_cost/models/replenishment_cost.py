@@ -20,6 +20,10 @@ class ReplenishmentCost(models.Model):
         string='Product Categories'
     )
     log = fields.Text()
+    product_ids = fields.Many2many(
+        comodel_name='product.product')
+    products_count = fields.Integer(
+        compute='_compute_products_count', store=True)
     missing_seller_ids = fields.Many2many(
         comodel_name='product.product',
         relation='repl_missing_seller_rel',
@@ -32,6 +36,12 @@ class ReplenishmentCost(models.Model):
         column1='repl_id',
         column2='prod_id',
         string="Product missing price")
+
+    @api.multi
+    @api.depends('product_ids')
+    def _compute_products_count(self):
+        for check in self:
+            check.products_count = len(check.product_ids)
 
     @api.multi
     def update_products_standard_price_and_replenishment_cost(self):
@@ -98,4 +108,13 @@ class ReplenishmentCost(models.Model):
             )
             repl.missing_seller_ids = products_without_seller
             repl.missing_seller_price_ids = products_without_seller_price
+            repl.product_ids = products
         return True
+
+    def action_view_product_ids(self):
+        self.ensure_one()
+        action = self.env.ref('stock.stock_product_normal_action').read()[0]
+        action.update({
+            'domain': [('id', 'in', self.product_ids.ids)],
+        })
+        return action
