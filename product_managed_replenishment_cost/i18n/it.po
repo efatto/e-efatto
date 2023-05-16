@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-24 16:01+0000\n"
-"PO-Revision-Date: 2023-01-24 16:01+0000\n"
+"POT-Creation-Date: 2023-05-16 12:54+0000\n"
+"PO-Revision-Date: 2023-05-16 12:54+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -25,6 +25,16 @@ msgstr "Costo Adeguamento (€/pz)"
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__company_id
 msgid "Company"
 msgstr "Azienda"
+
+#. module: product_managed_replenishment_cost
+#: model:ir.model.fields,help:product_managed_replenishment_cost.field_product_template__standard_price
+msgid "Cost used for stock valuation in standard price and as a first price to set in average/FIFO."
+msgstr "Costo utilizzato per la valutazione degli stock al prezzo standard e come primo prezzo per la determinazione della media/fifo. "
+
+#. module: product_managed_replenishment_cost
+#: model:ir.model.fields,help:product_managed_replenishment_cost.field_product_product__standard_price
+msgid "Cost used for stock valuation in standard price and as a first price to set in average/fifo. Also used as a base price for pricelists. Expressed in the default unit of measure of the product."
+msgstr "Costo utilizzato per la valutazione degli stock al prezzo standard e come primo prezzo per la determinazione della media/fifo. Anche utilizzato come prezzo di base per i listini prezzi. Espresso nell'unità di misura predefinita del prodotto. "
 
 #. module: product_managed_replenishment_cost
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__create_uid
@@ -59,6 +69,18 @@ msgid "ID"
 msgstr ""
 
 #. module: product_managed_replenishment_cost
+#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_product__landed_cost
+#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_template__landed_cost
+msgid "Landed cost"
+msgstr "Costo landed"
+
+#. module: product_managed_replenishment_cost
+#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_product__standard_price
+#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_template__standard_price
+msgid "Landed cost with adjustment/depreciation"
+msgstr "Costo landed con adeguamenti/ammortamenti"
+
+#. module: product_managed_replenishment_cost
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost____last_update
 msgid "Last Modified on"
 msgstr "Ultima modifica il"
@@ -90,6 +112,7 @@ msgstr "Nome"
 
 #. module: product_managed_replenishment_cost
 #: model:ir.model,name:product_managed_replenishment_cost.model_product_product
+#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__product_ids
 msgid "Product"
 msgstr "Prodotto"
 
@@ -105,6 +128,11 @@ msgid "Product Replenishment Cost"
 msgstr "Costo Sostituzione Prodotto"
 
 #. module: product_managed_replenishment_cost
+#: model:ir.model,name:product_managed_replenishment_cost.model_product_template
+msgid "Product Template (Multi-Company)"
+msgstr "Modello prodotto (Multi-azienda)"
+
+#. module: product_managed_replenishment_cost
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__missing_seller_price_ids
 msgid "Product missing price"
 msgstr "Prodotti senza prezzo"
@@ -113,6 +141,16 @@ msgstr "Prodotti senza prezzo"
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__missing_seller_ids
 msgid "Product missing seller"
 msgstr "Prodotti senza fornitore"
+
+#. module: product_managed_replenishment_cost
+#: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
+msgid "Products"
+msgstr "Prodotti"
+
+#. module: product_managed_replenishment_cost
+#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__products_count
+msgid "Products Count"
+msgstr "Numero prodotti"
 
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
@@ -137,27 +175,33 @@ msgid "Supplier Pricelist"
 msgstr "Listino prezzi fornitore"
 
 #. module: product_managed_replenishment_cost
+#: model:ir.model.fields,help:product_managed_replenishment_cost.field_product_product__landed_cost
+#: model:ir.model.fields,help:product_managed_replenishment_cost.field_product_template__landed_cost
+msgid "The cost that you have to support in order to produce or acquire the goods without adjustment/depreciation."
+msgstr "Il costo che si deve sostenere per produrre o acquisire le merci senza adeguamenti/ammortamenti."
+
+#. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
 msgid "Update BOM Products List Price and Weight"
-msgstr "Aggiorna Il Prezzo e il Peso dei Prodotti con Di.Ba."
+msgstr "Aggiorna prezzo e peso prodotti con Di.Ba."
 
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
-msgid "Update Products Replenishment Cost"
-msgstr "Aggiorna il Costo di sostituzione dei Prodotti"
+msgid "Update Replenishment and Landed Cost"
+msgstr "Aggiorna costo di sostituzione e landed"
 
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
-msgid "Update Products Standard Price"
-msgstr "Aggiorna il Costo Standard dei Prodotti"
+msgid "Update Standard Price"
+msgstr "Aggiorna Costo Standard"
 
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
-msgid "Update Products Standard Price and Replenishment Cost"
-msgstr "Aggiorna il Costo Standard e il Costo di sostituzione dei Prodotti"
+msgid "Update Standard Price, Replenishment and Landed Cost"
+msgstr "Aggiorna Costo Standard, di sostituzione e landed"
 
 #. module: product_managed_replenishment_cost
-#: code:addons/product_managed_replenishment_cost/models/replenishment_cost.py:81
+#: code:addons/product_managed_replenishment_cost/models/replenishment_cost.py:91
 #, python-format
 msgid "Update of %s"
 msgstr "Aggiornamento di %s"
