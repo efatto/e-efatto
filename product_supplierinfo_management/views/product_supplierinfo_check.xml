@@ -114,64 +114,66 @@
                             <field name="log"/>
                         </group>
                     </group>
-                    <group string="Product price zero without purchase or invoice recent">
-                        <field name="no_purchase_invoice_recent_zero_product_ids" nolabel="1">
-                            <tree>
-                                <field name="default_code"/>
-                                <field name="name"/>
-                            </tree>
-                        </field>
-                    </group>
-                    <group string="Product price zero without purchase or invoice">
-                        <field name="no_purchase_invoice_zero_product_ids" nolabel="1">
-                            <tree>
-                                <field name="default_code"/>
-                                <field name="name"/>
-                            </tree>
-                        </field>
-                    </group>
-                    <group string="Product price zero with purchase">
-                        <field name="purchase_recent_zero_product_ids" nolabel="1">
-                            <tree>
-                                <field name="default_code"/>
-                                <field name="name"/>
-                            </tree>
-                        </field>
-                    </group>
-                    <group string="Product price zero with invoice">
-                        <field name="invoice_recent_zero_product_ids" nolabel="1">
-                            <tree>
-                                <field name="default_code"/>
-                                <field name="name"/>
-                            </tree>
-                        </field>
-                    </group>
-                    <group string="Products without seller">
-                        <field name="missing_seller_product_ids" nolabel="1">
-                            <tree>
-                                <field name="default_code"/>
-                                <field name="name"/>
-                            </tree>
-                        </field>
-                    </group>
-                    <group string="Products with obsolete price">
-                        <field name="obsolete_seller_price_product_ids" nolabel="1">
-                            <tree>
-                                <field name="default_code"/>
-                                <field name="name"/>
-                                <field name="last_supplier_invoice_id"/>
-                            </tree>
-                        </field>
-                    </group>
-                    <group string="Products with mismatch seller">
-                        <field name="mismatch_seller_product_ids" nolabel="1">
-                            <tree>
-                                <field name="default_code"/>
-                                <field name="name"/>
-                                <field name="last_supplier_invoice_id"/>
-                            </tree>
-                        </field>
-                    </group>
+                    <notebook>
+                        <page string="Product price zero without purchase or invoice recent">
+                            <field name="no_purchase_invoice_recent_zero_product_ids">
+                                <tree>
+                                    <field name="default_code"/>
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Product price zero without purchase or invoice">
+                            <field name="no_purchase_invoice_zero_product_ids">
+                                <tree>
+                                    <field name="default_code"/>
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Product price zero with purchase">
+                            <field name="purchase_recent_zero_product_ids">
+                                <tree>
+                                    <field name="default_code"/>
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Product price zero with invoice">
+                            <field name="invoice_recent_zero_product_ids">
+                                <tree>
+                                    <field name="default_code"/>
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Products without seller">
+                            <field name="missing_seller_product_ids">
+                                <tree>
+                                    <field name="default_code"/>
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Products with obsolete price">
+                            <field name="obsolete_seller_price_product_ids">
+                                <tree>
+                                    <field name="default_code"/>
+                                    <field name="name"/>
+                                    <field name="last_supplier_invoice_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Products with mismatch seller">
+                            <field name="mismatch_seller_product_ids">
+                                <tree>
+                                    <field name="default_code"/>
+                                    <field name="name"/>
+                                    <field name="last_supplier_invoice_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
