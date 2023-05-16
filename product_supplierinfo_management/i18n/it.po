@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-16 08:04+0000\n"
-"PO-Revision-Date: 2023-05-16 08:04+0000\n"
+"POT-Creation-Date: 2023-05-16 09:09+0000\n"
+"PO-Revision-Date: 2023-05-16 09:09+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -29,7 +29,7 @@ msgstr " * Lo stato «Bozza» viene usato in presenza di una nuova fattura non a
 " * Lo stato «Annullata» viene usato quando l'utente annulla una fattura."
 
 #. module: product_supplierinfo_management
-#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:168
+#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:172
 #, python-format
 msgid "%s %s products in %.2f minutes."
 msgstr "%s %s prodotti in %.2f minuti."
@@ -45,7 +45,7 @@ msgid "Check Supplierinfo Values"
 msgstr "Verifica Valori Listini Fornitori"
 
 #. module: product_supplierinfo_management
-#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:178
+#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:182
 #, python-format
 msgid "Checked"
 msgstr "Verificati"
@@ -56,7 +56,7 @@ msgid "Company"
 msgstr "Azienda"
 
 #. module: product_supplierinfo_management
-#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:175
+#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:179
 #, python-format
 msgid "Copied replenishment cost to standard price of"
 msgstr "Copiato il costo di sostituzione sul costo di"
@@ -82,9 +82,14 @@ msgid "Date Validity Supplierinfo"
 msgstr "Data Validità Prezzi Fornitori"
 
 #. module: product_supplierinfo_management
+#: model:ir.model.fields,help:product_supplierinfo_management.field_product_supplierinfo_check__date_obsolete_supplierinfo_price
+msgid "Date to filter products in 'Products with obsolete price', where there are products which first valid seller has a previous last write date."
+msgstr "Data per filtrare i prodotti in 'Prodotti con prezzi obsoleti', dove ci sono i prodotti il cui primo fornitore valido ha una ultima data di modifica precedente."
+
+#. module: product_supplierinfo_management
 #: model:ir.model.fields,help:product_supplierinfo_management.field_product_supplierinfo_check__date_validity_supplierinfo
-msgid "Date to filter date validity of supplierinfo prices"
-msgstr "Data per filtro validità prezzi fornitori"
+msgid "Date to filter supplierinfo validity and to compute price with chosen listprice."
+msgstr "Data per filtrare la validità dei listini fornitori e per calcolare il prezzo con il listino prezzi scelto."
 
 #. module: product_supplierinfo_management
 #: model:ir.model.fields,help:product_supplierinfo_management.field_product_product__last_purchase_date
@@ -461,19 +466,19 @@ msgid "Update Products Replenishment Cost"
 msgstr "Aggiorna Costo Sostituzione Prodotti"
 
 #. module: product_supplierinfo_management
-#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:165
+#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:169
 #, python-format
 msgid "Update of %s"
 msgstr "Aggiornamento di %s"
 
 #. module: product_supplierinfo_management
-#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:172
+#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:176
 #, python-format
 msgid "Updated replenishment cost of"
 msgstr "Aggiornato costo di sostituzione di"
 
 #. module: product_supplierinfo_management
-#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:169
+#: code:addons/product_supplierinfo_management/models/product_supplierinfo_check.py:173
 #, python-format
 msgid "Updated standard price of"
 msgstr "Aggiornato costo di"
