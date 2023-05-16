@@ -9,10 +9,14 @@ class ProductSupplierinfoCheck(models.Model):
     _description = 'Product Supplierinfo Check'
 
     name = fields.Char()
-    date_obsolete_supplierinfo_price = fields.Date()
+    date_obsolete_supplierinfo_price = fields.Date(
+        help="Date to filter products in 'Products with obsolete price', where there "
+             "are products which first valid seller has a previous last write date."
+    )
     date_validity_supplierinfo = fields.Date(
         default=fields.Date.context_today,
-        help="Date to filter date validity of supplierinfo prices"
+        help="Date to filter supplierinfo validity and to compute price with chosen "
+             "listprice."
     )
     last_update = fields.Datetime()
     company_id = fields.Many2one(
