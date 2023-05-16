@@ -57,12 +57,6 @@
                         <button attrs="{'invisible': [('force_next', '=', True)]}" string="Mark as Done" name="action_done"
                             type="object" class="btn-secondary"
                             context="{'mail_activity_quick_update': True}"/>
-                        <button attrs="{'invisible': [('force_next', '=', True)]}" string="Done &amp; Schedule Next" name="action_done_schedule_next"
-                            type="object" class="btn-secondary"
-                            context="{'mail_activity_quick_update': True}"/>
-                        <button attrs="{'invisible': [('force_next', '=', False)]}" string="Done &amp; Launch Next" name="action_done_schedule_next"
-                            type="object" class="btn-secondary"
-                            context="{'mail_activity_quick_update': True}"/>
                         <button string="Discard" class="btn-secondary" special="cancel" />
                     </footer>
                 </sheet>
