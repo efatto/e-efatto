@@ -28,6 +28,20 @@ class ProductSupplierinfoCheck(models.Model):
         comodel_name='product.product')
     products_count = fields.Integer(
         compute='_compute_products_count', store=True)
+    missing_seller_products_count = fields.Integer(
+        compute='_compute_products_count', store=True)
+    obsolete_seller_price_products_count = fields.Integer(
+        compute='_compute_products_count', store=True)
+    mismatch_seller_products_count = fields.Integer(
+        compute='_compute_products_count', store=True)
+    no_purchase_invoice_recent_zero_products_count = fields.Integer(
+        compute='_compute_products_count', store=True)
+    no_purchase_invoice_zero_products_count = fields.Integer(
+        compute='_compute_products_count', store=True)
+    purchase_recent_zero_products_count = fields.Integer(
+        compute='_compute_products_count', store=True)
+    invoice_recent_zero_products_count = fields.Integer(
+        compute='_compute_products_count', store=True)
     log = fields.Text()
     missing_seller_product_ids = fields.Many2many(
         comodel_name='product.product',
@@ -83,6 +97,19 @@ class ProductSupplierinfoCheck(models.Model):
     def _compute_products_count(self):
         for check in self:
             check.products_count = len(check.product_ids)
+            check.missing_seller_products_count = len(check.missing_seller_product_ids)
+            check.obsolete_seller_price_products_count = len(
+                check.obsolete_seller_price_product_ids)
+            check.mismatch_seller_products_count = len(
+                check.mismatch_seller_product_ids)
+            check.no_purchase_invoice_recent_zero_products_count = len(
+                check.no_purchase_invoice_recent_zero_product_ids)
+            check.no_purchase_invoice_zero_products_count = len(
+                check.no_purchase_invoice_zero_product_ids)
+            check.purchase_recent_zero_products_count = len(
+                check.purchase_recent_zero_product_ids)
+            check.invoice_recent_zero_products_count = len(
+                check.invoice_recent_zero_product_ids)
 
     @api.multi
     def copy_products_replenishment_cost_to_standard_price(self):
@@ -172,7 +199,37 @@ class ProductSupplierinfoCheck(models.Model):
     def action_view_product_ids(self):
         self.ensure_one()
         action = self.env.ref('stock.stock_product_normal_action').read()[0]
-        action.update({
-            'domain': [('id', 'in', self.product_ids.ids)],
-        })
+        if self.env.context.get('missing_seller_products'):
+            action.update({
+                'domain': [('id', 'in', self.missing_seller_product_ids.ids)],
+            })
+        elif self.env.context.get('obsolete_seller_price_products'):
+            action.update({
+                'domain': [('id', 'in', self.obsolete_seller_price_product_ids.ids)],
+            })
+        elif self.env.context.get('mismatch_seller_products'):
+            action.update({
+                'domain': [('id', 'in', self.mismatch_seller_product_ids.ids)],
+            })
+        elif self.env.context.get('no_purchase_invoice_recent_zero_products'):
+            action.update({
+                'domain': [
+                    ('id', 'in', self.no_purchase_invoice_recent_zero_product_ids.ids)],
+            })
+        elif self.env.context.get('no_purchase_invoice_zero_products'):
+            action.update({
+                'domain': [('id', 'in', self.no_purchase_invoice_zero_product_ids.ids)],
+            })
+        elif self.env.context.get('purchase_recent_zero_products'):
+            action.update({
+                'domain': [('id', 'in', self.purchase_recent_zero_product_ids.ids)],
+            })
+        elif self.env.context.get('invoice_recent_zero_products'):
+            action.update({
+                'domain': [('id', 'in', self.invoice_recent_zero_product_ids.ids)],
+            })
+        else:
+            action.update({
+                'domain': [('id', 'in', self.product_ids.ids)],
+            })
         return action
