@@ -36,6 +36,10 @@ class MailActivity(models.Model):
         compute='_compute_planner',
         store=True,
     )
+    origin_res_id = fields.Integer(
+        compute='_compute_planner',
+        store=True,
+    )
 
     def toggle_active(self):
         res = super().toggle_active()
@@ -172,6 +176,7 @@ class MailActivity(models.Model):
                         res_object.production_id.name,
                         res_object.name,
                         res_object.origin or '')
+                    activity.origin_res_id = res_object.production_id.id
                 elif activity.res_model == 'project.task':
                     activity.date_start = res_object.date_start
                     activity.date_end = res_object.date_end
@@ -180,6 +185,7 @@ class MailActivity(models.Model):
                         res_object.project_id.name,
                         res_object.name,
                         res_object.sale_line_id.order_id.origin or '')
+                    activity.origin_res_id = res_object.project_id.id
                 if activity.date_end:
                     activity.date_deadline = fields.Date.to_date(activity.date_end)
                 if res_object.parent_id:
