@@ -8,7 +8,7 @@
             <form string="Log an Activity" create="false">
                 <sheet string="Activity">
                     <div class="oe_button_box" name="button_box">
-                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive" attrs="{'invisible': [('active', '=', True)]}">
                             <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
                         </button>
                         <button name="action_activity_duplicate" type="object" class="oe_stat_button" icon="fa-copy" string="Duplicate"></button>
