@@ -109,13 +109,14 @@
                 <field name="color_active"/>
                 <field name="is_resource_planner"/>
                 <field name="res_name"/>
+                <field name="info"/>
                 <field name="workcenter_id"/>
                 <templates>
                     <t t-name="timeline-item">
                         <div>
                             <img t-if="record.user_id"
                                  t-attf-src="/web/image/res.users/#{record.user_id[0]}/image/24x24"
-                                 t-att-title="record.user_id[1]" width="24" height="24" class="mr8"/>
+                                 t-att-title="record.info" width="24" height="24" class="mr8"/>
                             <span name="res_name">
                                 <t t-esc="record.res_name"/>
                             </span>
