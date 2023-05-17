@@ -32,6 +32,10 @@ class MailActivity(models.Model):
         compute='_compute_planner',
         store=True,
     )
+    info = fields.Char(
+        compute='_compute_planner',
+        store=True,
+    )
 
     def toggle_active(self):
         res = super().toggle_active()
@@ -163,9 +167,19 @@ class MailActivity(models.Model):
                 if activity.res_model == 'mrp.workorder':
                     activity.date_start = res_object.date_planned_start
                     activity.date_end = res_object.date_planned_finished
+                    activity.info = "%s - %s - %s - %s" % (
+                        activity.workcenter_id.name,
+                        res_object.production_id.name,
+                        res_object.name,
+                        res_object.origin)
                 elif activity.res_model == 'project.task':
                     activity.date_start = res_object.date_start
                     activity.date_end = res_object.date_end
+                    activity.info = "%s - %s - %s - %s" % (
+                        activity.workcenter_id.name,
+                        res_object.project_id.name,
+                        res_object.name,
+                        res_object.sale_line_id.order_id.origin)
                 if activity.date_end:
                     activity.date_deadline = fields.Date.to_date(activity.date_end)
                 if res_object.parent_id:
@@ -182,3 +196,4 @@ class MailActivity(models.Model):
                 activity.date_start = False
                 activity.date_end = False
                 activity.color_active = False
+                activity.info = False
