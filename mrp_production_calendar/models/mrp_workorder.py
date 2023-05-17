@@ -14,6 +14,9 @@ class MrpWorkorder(models.Model):
         store=True,
         help="Estimated duration in hours splitted on days"
     )
+    origin = fields.Char(
+        related='production_id.origin'
+    )
 
     @api.multi
     @api.depends('duration_expected',

@@ -21,6 +21,10 @@
                 <attribute name="date_stop"></attribute>
                 <attribute name="date_delay">estimated_duration</attribute>
             </xpath>
+            <field name="workcenter_id" position="after">
+                <field name="name"/>
+                <field name="origin"/>
+            </field>
         </field>
     </record>
 
