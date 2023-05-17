@@ -59,6 +59,11 @@ Il colore del testo nella timeline cambia in base allo sfondo, come da indicazio
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mail_activity_timeline/static/description/colore_testo.png
     :alt: Colore testo
 
+Dopo aver selezionato un'attività, è disponibile un tasto info su cui è sufficiente passare con il mouse per vedere informazioni dettagliate dell'attività:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mail_activity_timeline/static/description/info_attivita.png
+    :alt: Info attività
+
 Bug Tracker
 ===========
 

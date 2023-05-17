@@ -27,3 +27,8 @@ Il colore del testo nella timeline cambia in base allo sfondo, come da indicazio
 
 .. image:: ../static/description/colore_testo.png
     :alt: Colore testo
+
+Dopo aver selezionato un'attività, è disponibile un tasto info su cui è sufficiente passare con il mouse per vedere informazioni dettagliate dell'attività:
+
+.. image:: ../static/description/info_attivita.png
+    :alt: Info attività
