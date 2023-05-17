@@ -171,7 +171,7 @@ class MailActivity(models.Model):
                         activity.workcenter_id.name,
                         res_object.production_id.name,
                         res_object.name,
-                        res_object.origin)
+                        res_object.origin or '')
                 elif activity.res_model == 'project.task':
                     activity.date_start = res_object.date_start
                     activity.date_end = res_object.date_end
@@ -179,7 +179,7 @@ class MailActivity(models.Model):
                         activity.workcenter_id.name,
                         res_object.project_id.name,
                         res_object.name,
-                        res_object.sale_line_id.order_id.origin)
+                        res_object.sale_line_id.order_id.origin or '')
                 if activity.date_end:
                     activity.date_deadline = fields.Date.to_date(activity.date_end)
                 if res_object.parent_id:
