@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+  <div t-name="TimelineView.Info"
+       t-attf-data-id="#{id}"
+       t-attf-title="#{info}"
+       class="oe_timeline_info">
+      <i class="fa fa-info-circle" />
+  </div>
+</templates>

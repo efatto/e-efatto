@@ -2,8 +2,9 @@
 <odoo>
     <template id="assets_backend" name="mail_activity_timeline assets" inherit_id="web.assets_backend">
         <xpath expr="." position="inside">
-            <script src="/mail_activity_timeline/static/src/js/brightness.js"
-                    type="text/javascript"></script>
+            <link rel="stylesheet" href="/mail_activity_timeline/static/src/css/web_timeline.css"/>
+            <script src="/mail_activity_timeline/static/src/js/brightness.js" type="text/javascript"></script>
+            <script src="/mail_activity_timeline/static/src/js/info.js" type="text/javascript"></script>
         </xpath>
     </template>
 </odoo>
