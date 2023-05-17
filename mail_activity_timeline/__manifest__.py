@@ -21,6 +21,9 @@
         'web_view_calendar_list',
         'web_widget_color',
     ],
+    'qweb': [
+        'static/src/xml/web_timeline.xml',
+    ],
     'data': [
         'data/mail_activity_type.xml',
         'data/mrp_workcenter.xml',
