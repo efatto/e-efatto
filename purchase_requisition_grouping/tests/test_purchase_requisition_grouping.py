@@ -1,5 +1,4 @@
 from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
-from odoo.tests import Form
 from odoo.tools import mute_logger
 from odoo import fields
 from datetime import timedelta
@@ -62,12 +61,14 @@ class PurchaseRequisitionGrouping(TestProductionData):
                 (0, 0, {
                     'product_id': cls.component_sale_to_purchase_tenders_1.id,
                     'product_qty': 7,
-                    'product_uom_id': cls.component_sale_to_purchase_tenders_1.uom_id.id,
+                    'product_uom_id':
+                        cls.component_sale_to_purchase_tenders_1.uom_id.id,
                 }),
                 (0, 0, {
                     'product_id': cls.component_sale_to_purchase_tenders_2.id,
                     'product_qty': 9,
-                    'product_uom_id': cls.component_sale_to_purchase_tenders_2.uom_id.id,
+                    'product_uom_id':
+                        cls.component_sale_to_purchase_tenders_2.uom_id.id,
                 }),
             ]
         })
@@ -153,7 +154,8 @@ class PurchaseRequisitionGrouping(TestProductionData):
                 (0, 0, {
                     'product_id': self.component_sale_to_purchase_tenders_1.id,
                     'product_uom_qty': 20,
-                    'product_uom': self.component_sale_to_purchase_tenders_1.uom_po_id.id,
+                    'product_uom':
+                        self.component_sale_to_purchase_tenders_1.uom_po_id.id,
                     'price_unit': self.component_sale_to_purchase_tenders_1.list_price,
                     'name': self.component_sale_to_purchase_tenders_1.name,
                 }),
@@ -167,7 +169,8 @@ class PurchaseRequisitionGrouping(TestProductionData):
             len(sale_order.order_line), 1, msg="Order line was not created")
         purchase_orders = self.env['purchase.order'].search([
             ('origin', '=', sale_order.name),
-            ('order_line.product_id', 'in', [self.component_sale_to_purchase_tenders_1.id]),
+            ('order_line.product_id', 'in', [
+                self.component_sale_to_purchase_tenders_1.id]),
         ])
         self.assertFalse(purchase_orders)
         purchase_requisitions = self.env['purchase.requisition'].search([
@@ -225,7 +228,8 @@ class PurchaseRequisitionGrouping(TestProductionData):
         ).button_start_procurement()
         po_ids = self.env['purchase.order'].search([
             ('origin', '=', self.production.name),
-            ('order_line.product_id', '=', self.component_sale_to_purchase_tenders_1.id),
+            ('order_line.product_id', '=',
+             self.component_sale_to_purchase_tenders_1.id),
         ])
         self.assertFalse(po_ids)
         pr_ids = self.env['purchase.requisition'].search([
