@@ -19,6 +19,7 @@ class StockRule(models.Model):
             and values['move_dest_ids'][0].id or False,
             'origin': origin,
             'group_id': values.get('group_id') and values['group_id'][0].id or False,
+            'account_analytic_id': values.get('account_analytic_id', False),
         }
 
     @api.multi

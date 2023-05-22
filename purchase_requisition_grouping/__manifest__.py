@@ -13,6 +13,7 @@
         'mrp_production_procurement_analytic',
         'purchase_line_procurement_group',
         'purchase_requisition_auto_rfq',
+        'sale_order_analytic_all',
         'sale_stock',
     ],
     'data': [
