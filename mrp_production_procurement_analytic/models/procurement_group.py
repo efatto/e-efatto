@@ -13,17 +13,29 @@ class ProcurementGroup(models.Model):
         if not config['test_enable'] or self.env.context.get(
             'test_mrp_production_procurement_analytic'
         ):
-            if values.get('group_id', False) \
-                    and not values.get('account_analytic_id', False):
-                group_id = values['group_id']
-                mrp_id = self.env['mrp.production'].search([
-                    ('name', '=', group_id.name),
-                ])
-                if mrp_id.analytic_account_id:
+            if not values.get('account_analytic_id', False):
+                analytic_account_id = False
+                if values.get('group_id', False):
+                    group_id = values['group_id']
+                    mrp_id = self.env['mrp.production'].search([
+                        ('name', '=', group_id.name),
+                    ])
+                    if mrp_id.analytic_account_id:
+                        analytic_account_id = mrp_id.analytic_account_id
+                    elif group_id.sale_id.analytic_account_id:
+                        analytic_account_id = group_id.sale_id.analytic_account_id
+                if not analytic_account_id and values.get('sale_line_id', False):
+                    order_id = self.env['sale.order.line'].browse(
+                        values['sale_line_id']
+                    ).order_id
+                    if order_id.analytic_account_id:
+                        analytic_account_id = order_id.analytic_account_id
+                if analytic_account_id:
                     values.update({
-                        'account_analytic_id': mrp_id.analytic_account_id.id,
+                        'account_analytic_id': analytic_account_id.id,
                     })
 
-        return super(ProcurementGroup, self).run(product_id, product_qty,
-                                                 product_uom, location_id,
-                                                 name, origin, values)
+        res = super(ProcurementGroup, self).run(product_id, product_qty,
+                                                product_uom, location_id,
+                                                name, origin, values)
+        return res
