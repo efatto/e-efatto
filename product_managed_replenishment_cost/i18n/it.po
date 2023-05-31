@@ -187,18 +187,18 @@ msgstr "Aggiorna prezzo e peso prodotti con Di.Ba."
 
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
-msgid "Update Replenishment and Landed Cost"
-msgstr "Aggiorna costo di sostituzione e landed"
+msgid "Update Replenishment Cost"
+msgstr "Aggiorna costo di sostituzione"
 
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
-msgid "Update Standard Price"
-msgstr "Aggiorna Costo Standard"
+msgid "Update Standard Price and Landed Cost"
+msgstr "Aggiorna costo standard e landed"
 
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
 msgid "Update Standard Price, Replenishment and Landed Cost"
-msgstr "Aggiorna Costo Standard, di sostituzione e landed"
+msgstr "Aggiorna costo standard, di sostituzione e landed"
 
 #. module: product_managed_replenishment_cost
 #: code:addons/product_managed_replenishment_cost/models/replenishment_cost.py:91

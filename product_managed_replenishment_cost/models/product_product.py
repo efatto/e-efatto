@@ -96,8 +96,9 @@ class ProductProduct(models.Model):
             else:
                 cost = line.product_id.standard_price if update_standard_price else \
                     line.product_id.managed_replenishment_cost
-                cost_landed = line.product_id.standard_price if update_standard_price \
-                    else line.product_id.landed_cost
+                # landed cost is updated in the same time of standard price, so use
+                # always this
+                cost_landed = line.product_id.landed_cost
                 total += line.product_id.uom_id._compute_price(
                     cost, line.product_uom_id
                 ) * line.product_qty
@@ -172,13 +173,14 @@ class ProductProduct(models.Model):
             )
             if update_managed_replenishment_cost:
                 product.managed_replenishment_cost = price_unit
-                product.landed_cost = landed_cost
             if update_standard_price:
                 product.standard_price = price_unit
+                product.landed_cost = landed_cost
         # compute replenishment cost for product without suppliers
         for product in products_nottobe_purchased:
             if update_managed_replenishment_cost:
                 product.managed_replenishment_cost = product.standard_price
+            if update_standard_price:
                 product.landed_cost = product.standard_price
             # these products are without seller nor bom
         # compute replenishment cost for product to be manufactured, with or without
@@ -190,9 +192,9 @@ class ProductProduct(models.Model):
                 produce_price += (seller.adjustment_cost + seller.depreciation_cost)
             if update_managed_replenishment_cost:
                 product.managed_replenishment_cost = produce_price
-                product.landed_cost = landed_price
             if update_standard_price:
                 product.standard_price = produce_price
+                product.landed_cost = landed_price
 
         for product in products_with_bom:
             product.list_price, product.weight = product.\
