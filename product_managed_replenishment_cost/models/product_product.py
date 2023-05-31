@@ -9,7 +9,7 @@ class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
     standard_price = fields.Float(
-        string="Landed cost with adjustment/depreciation"
+        string="Landed with adjustment/depreciation"
     )
     landed_cost = fields.Float(
         string="Landed cost",
@@ -48,7 +48,7 @@ class ProductProduct(models.Model):
     _inherit = 'product.product'
 
     standard_price = fields.Float(
-        string="Landed cost with adjustment/depreciation"
+        string="Landed with adjustment/depreciation"
     )
     landed_cost = fields.Float(
         string="Landed cost",
