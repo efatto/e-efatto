@@ -158,14 +158,16 @@ class ProductProduct(models.Model):
                 seller.name.country_id.mapped(
                     'country_group_ids.logistic_charge_percentage')
             )
+            if margin_percentage:
+                price_unit *= (1 + margin_percentage / 100.0)
             tariff_id = product.intrastat_code_id.tariff_id
             if tariff_id:
-                price_unit = price_unit * (1 + tariff_id.tariff_percentage / 100.0)
+                price_unit *= (1 + tariff_id.tariff_percentage / 100.0)
             landed_cost = price_unit
             # add adjustment and depreciation costs
             adjustment_cost = seller.adjustment_cost
             depreciation_cost = seller.depreciation_cost
-            price_unit = price_unit * (1 + margin_percentage / 100.0) + (
+            price_unit += (
                 adjustment_cost + depreciation_cost
             )
             if update_managed_replenishment_cost:
