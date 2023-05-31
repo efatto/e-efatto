@@ -5,7 +5,7 @@
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_only_form_view" />
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='standard_price']/ancestor::*[1]" position="after">
+            <xpath expr="//field[@name='standard_price']/ancestor::*[1]" position="before">
                 <field name="landed_cost" widget="monetary"
                     options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
                     attrs="{'invisible': [('product_variant_count', '>', 1)]}"/>
