@@ -34,11 +34,11 @@
                             <field name="product_ctg_ids" widget="many2many_tags"/>
                         </group>
                         <group>
-                            <button name="update_products_replenishment_cost_only" string="Update Replenishment and Landed Cost" type="object"/>
+                            <button name="update_products_replenishment_cost_only" string="Update Replenishment Cost" type="object"/>
                         </group>
                         <group/>
                         <group>
-                            <button name="update_products_standard_price_only" string="Update Standard Price" type="object"/>
+                            <button name="update_products_standard_price_only" string="Update Standard Price and Landed Cost" type="object"/>
                         </group>
                         <group/>
                         <group>
