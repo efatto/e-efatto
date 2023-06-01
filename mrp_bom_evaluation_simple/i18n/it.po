@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-01 08:48+0000\n"
-"PO-Revision-Date: 2023-06-01 08:48+0000\n"
+"POT-Creation-Date: 2023-06-01 14:55+0000\n"
+"PO-Revision-Date: 2023-06-01 14:55+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,45 +16,69 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: mrp_bom_evaluation_simple
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluate
+#: selection:mrp.bom.evaluation,ready_to_produce:0
+msgid " When all components are available"
+msgstr ""
+
+#. module: mrp_bom_evaluation_simple
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluation
 msgid "<i>Operations Total</i>"
 msgstr "<i>Totale Operazioni</i>"
 
 #. module: mrp_bom_evaluation_simple
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluate
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluation
 msgid "<span>(Total Cost for)</span>"
 msgstr "<span>(Costo Totale per)</span>"
 
 #. module: mrp_bom_evaluation_simple
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluate
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluation
 msgid "<span><i>Components Total</i></span>"
 msgstr "<span><i>Total Componenti</i></span>"
 
 #. module: mrp_bom_evaluation_simple
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluate
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluation
 msgid "<span><strong>Total Unit Cost</strong></span>"
 msgstr "<span><strong>Costo Unitario Totale</strong></span>"
 
 #. module: mrp_bom_evaluation_simple
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluate
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluation
 msgid "<span>Hours</span>"
 msgstr "<span>Ore</span>"
 
 #. module: mrp_bom_evaluation_simple
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.mrp_bom_form_view_evaluation
-msgid "Attachments"
-msgstr "Allegati"
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_needaction
+msgid "Action Needed"
+msgstr "Azione richiesta"
 
 #. module: mrp_bom_evaluation_simple
-#: model:ir.model,name:mrp_bom_evaluation_simple.model_mrp_bom
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__active
+msgid "Active"
+msgstr "Attivo"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__attribute_value_ids
+msgid "Apply on Variants"
+msgstr "Applica sulle varianti"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_attachment_count
+msgid "Attachment Count"
+msgstr "Numero allegati"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__attribute_value_ids
+msgid "BOM Product Variants needed form apply this line."
+msgstr ""
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__child_line_ids
+msgid "BOM lines of the referred bom"
+msgstr "Righe della Distinta base di riferimento"
+
+#. module: mrp_bom_evaluation_simple
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.mrp_bom_form_view_evaluation
 msgid "Bill of Material"
 msgstr "Distinta base"
-
-#. module: mrp_bom_evaluation_simple
-#: model:ir.model,name:mrp_bom_evaluation_simple.model_mrp_bom_line
-msgid "Bill of Material Line"
-msgstr "Riga distinta base"
 
 #. module: mrp_bom_evaluation_simple
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.mrp_bom_tree_view_evaluation
@@ -68,14 +92,39 @@ msgid "Bills of Materials for Evaluation"
 msgstr "Di.Ba. per preventivazione"
 
 #. module: mrp_bom_evaluation_simple
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluate
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluation
 msgid "BoM Cost"
 msgstr "Costo DiBa"
 
 #. module: mrp_bom_evaluation_simple
-#: model:ir.actions.report,name:mrp_bom_evaluation_simple.action_report_bom_evaluate
-msgid "BoM Evaluate"
-msgstr "Preventivo Di.Ba."
+#: model:ir.actions.report,name:mrp_bom_evaluation_simple.action_report_bom_evaluation
+msgid "BoM Evaluation"
+msgstr "Preventivazione Di.Ba."
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__bom_line_ids
+msgid "BoM Lines"
+msgstr "Righe Distinta Base"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__type
+msgid "BoM Type"
+msgstr "Tipo di Distinta base"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__bom_evaluation_line_ids
+msgid "Bom line evaluation"
+msgstr "Riga preventivazione Di.Ba."
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__company_id
+msgid "Company"
+msgstr "Azienda"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__product_id
+msgid "Component"
+msgstr "Componenti"
 
 #. module: mrp_bom_evaluation_simple
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.mrp_bom_form_view_evaluation
@@ -83,101 +132,377 @@ msgid "Components"
 msgstr "Componenti"
 
 #. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__operation_id
+msgid "Consumed in Operation"
+msgstr "Consumato nell'Operazione"
+
+#. module: mrp_bom_evaluation_simple
 #: model_terms:ir.actions.act_window,help:mrp_bom_evaluation_simple.mrp_bom_form_evaluation_action
 msgid "Create a bill of materials for evaluation"
 msgstr "Crea una distinta base per preventivazione"
 
 #. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__create_uid
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__create_date
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__ready_to_produce
+msgid "Defines when a Manufacturing Order is considered as ready to be started"
+msgstr "Definisci quando un ordine di produzione è considerato pronto per iniziare"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__display_name
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__display_name
+msgid "Display Name"
+msgstr "Nome da visualizzare"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__bom_operation_ids
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.mrp_bom_form_view_evaluation
 msgid "Estimated Operations"
 msgstr "Operazioni Previste"
 
 #. module: mrp_bom_evaluation_simple
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.mrp_bom_form_view_evaluation
-msgid "If the product is a finished product: When processing a sales\n"
-"                                order for this product, the delivery order will contain the raw\n"
-"                                materials, instead of the finished product."
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__failed_message_ids
+msgid "Failed Messages"
+msgstr "Messaggi falliti"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_follower_ids
+msgid "Followers"
 msgstr ""
 
 #. module: mrp_bom_evaluation_simple
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.mrp_bom_form_view_evaluation
-msgid "If the product is a semi-finished product: When processing a\n"
-"                                manufacturing order that contains that product as component,\n"
-"                                the raw materials of that product will be added to the\n"
-"                                manufacturing order of the final product."
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_channel_ids
+msgid "Followers (Channels)"
+msgstr "Chi sta seguendo (canali)"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Chi sta seguendo (partner)"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__sequence
+msgid "Gives the sequence order when displaying a list of bills of material."
+msgstr "Specifica l'ordine di visualizzazione per una lista di distente base."
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__sequence
+msgid "Gives the sequence order when displaying."
+msgstr "Fornisce l'ordine di sequenza quando visualizzato."
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__has_attachments
+msgid "Has Attachments"
+msgstr "Allegati presenti"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__id
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__id
+msgid "ID"
 msgstr ""
 
 #. module: mrp_bom_evaluation_simple
-#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line__price_write_date
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__product_id
+msgid "If a product variant is defined the BOM is available only for this product."
+msgstr "Se viene definita una variante, la DiBa è disponibile solo per il relativo prodotto."
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_unread
+msgid "If checked new messages require your attention."
+msgstr "Se selezionato, nuovi messaggi richiedono attenzione."
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Se selezionato, i nuovi messaggi richiedono la tua attenzione."
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Se selezionato, alcuni messaggi presentano un errore di consegna."
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__active
+msgid "If the active field is set to False, it will allow you to hide the bills of material without removing it."
+msgstr "Se il campo attivo è importato a False, consentirà di nascondere le distinte base senza doverle necessariamente rimuovere."
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_is_follower
+msgid "Is Follower"
+msgstr "E' un follower"
+
+#. module: mrp_bom_evaluation_simple
+#: selection:mrp.bom.evaluation,type:0
+msgid "Kit"
+msgstr ""
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation____last_update
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation____last_update
+msgid "Last Modified on"
+msgstr "Data di ultima modifica"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__write_uid
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__write_uid
+msgid "Last Updated by"
+msgstr "Ultima modifica di"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__write_date
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__price_write_date
 msgid "Last price update"
 msgstr "Data aggiornamento prezzo"
 
 #. module: mrp_bom_evaluation_simple
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluate
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluation
 msgid "Last write:"
 msgstr "Ultima modifica:"
 
 #. module: mrp_bom_evaluation_simple
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.mrp_bom_form_view_evaluation
-msgid "No attachment"
-msgstr "Non ci sono allegati "
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__location_id
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__location_id
+msgid "Location"
+msgstr "Ubicazione"
 
 #. module: mrp_bom_evaluation_simple
-#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line__note
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluate
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_main_attachment_id
+msgid "Main Attachment"
+msgstr "Allegato principale"
+
+#. module: mrp_bom_evaluation_simple
+#: selection:mrp.bom.evaluation,type:0
+msgid "Manufacture this product"
+msgstr ""
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__ready_to_produce
+msgid "Manufacturing Readiness"
+msgstr "Prontezza di Produzione"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__max_line_sequence
+msgid "Max sequence in lines"
+msgstr "Massimo sequenza nelle righe"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_content
+msgid "Message Content"
+msgstr ""
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_has_error
+msgid "Message Delivery error"
+msgstr "Errore di consegna messaggio"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_content
+msgid "Message content, to be used only in searches"
+msgstr ""
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_ids
+msgid "Messages"
+msgstr "Messaggi"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__note
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluation
 msgid "Note"
 msgstr "Nota"
 
 #. module: mrp_bom_evaluation_simple
-#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line__price_subtotal
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__notes
+msgid "Notes"
+msgstr "Note"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Numero di azioni"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_has_error_counter
+msgid "Number of error"
+msgstr "Numero di errori"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_needaction_counter
+msgid "Number of messages which requires an action"
+msgstr "Numero di messaggi che richiedono un'azione"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Numero di messaggi con errore di consegna"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_unread_counter
+msgid "Number of unread messages"
+msgstr "Numero di messaggi non letti"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__picking_type_id
+msgid "Operation Type"
+msgstr "Tipo operazione"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__bom_id
+msgid "Parent BoM"
+msgstr "Distinta base Padre"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__parent_product_tmpl_id
+msgid "Parent Product Template"
+msgstr "Modello prodotto padre"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__price_subtotal
 msgid "Price Subtotal"
 msgstr "Subtotale Prezzo"
 
 #. module: mrp_bom_evaluation_simple
-#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line__price_unit
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__price_unit
 msgid "Price Unit"
 msgstr "Unità di prezzo"
 
 #. module: mrp_bom_evaluation_simple
-#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line__price_validated
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__price_validated
 msgid "Price Validated"
 msgstr "Prezzo Validato"
 
 #. module: mrp_bom_evaluation_simple
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluate
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__product_tmpl_id
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluation
 msgid "Product"
 msgstr "Prodotto"
 
 #. module: mrp_bom_evaluation_simple
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluate
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__product_tmpl_id
+msgid "Product Template"
+msgstr "Modello Prodotto"
+
+#. module: mrp_bom_evaluation_simple
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluation
 msgid "Product Total Cost"
 msgstr "Costo Totale Prodotto"
 
 #. module: mrp_bom_evaluation_simple
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluate
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluation
 msgid "Product Unit Cost"
 msgstr "Costo Unitario Prodotto"
 
 #. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__product_uom_id
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__product_uom_id
+msgid "Product Unit of Measure"
+msgstr "Unità di Misura Prodotto"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__product_id
+msgid "Product Variant"
+msgstr "Variante prodotto"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__product_qty
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__product_qty
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.mrp_bom_form_view_evaluation
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluate
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluation
 msgid "Quantity"
 msgstr "Quantità"
 
 #. module: mrp_bom_evaluation_simple
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluate
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__code
+msgid "Reference"
+msgstr "Riferimento"
+
+#. module: mrp_bom_evaluation_simple
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluation
 msgid "Reference:"
 msgstr "Riferimento:"
 
 #. module: mrp_bom_evaluation_simple
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluate
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__bom_revision
+msgid "Revision"
+msgstr "Revisione"
+
+#. module: mrp_bom_evaluation_simple
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluation
 msgid "Revision:"
 msgstr "Revisione:"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__routing_id
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__routing_id
+msgid "Routing"
+msgstr ""
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__sequence
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__sequence2
+msgid "Sequence"
+msgstr "Sequenza"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__sequence2
+msgid "Shows the sequence in the BOM line."
+msgstr "Visualizza la sequenza nella riga della DiBa."
 
 #. module: mrp_bom_evaluation_simple
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.mrp_bom_form_view_evaluation
 msgid "Structure & Cost"
 msgstr "Struttura e costo"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__child_bom_id
+msgid "Sub BoM"
+msgstr ""
+
+#. module: mrp_bom_evaluation_simple
+#: selection:mrp.bom.evaluation,type:0
+msgid "Subcontracting"
+msgstr ""
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__subcontractor_ids
+msgid "Subcontractors"
+msgstr "Subappaltatori"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__valid_product_attribute_value_ids
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__valid_product_attribute_value_wnva_ids
+msgid "Technical compute"
+msgstr "Calcolo tecnico"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__routing_id
+msgid "The list of operations to produce the finished product. The routing is mainly used to compute work center costs during operations and to plan future loads on work centers based on production planning."
+msgstr "L'elenco delle operazioni per la produzione dei prodotti finiti. Questo elenco è prevalentemente utilizzato per calcolare i costi dei posti di lavoro durante le operazioni e per pianificare il carico basato sulla pianificazione della produzione."
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__operation_id
+msgid "The operation where the components are consumed, or the finished products created."
+msgstr "L'operazione in cui vengono consumati i componenti o viene creato il prodotto finito.  "
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__routing_id
+msgid "The operations for producing this BoM.  When a routing is specified, the production orders will  be executed through work orders, otherwise everything is processed in the production order itself. "
+msgstr "Le operazioni per produrre questa distinta dei materiali. Quando viene specificato un routing, gli ordini di produzione verranno eseguiti tramite ordini di lavoro, altrimenti tutto verrà elaborato nell'ordine di produzione stesso."
 
 #. module: mrp_bom_evaluation_simple
 #: model_terms:ir.actions.act_window,help:mrp_bom_evaluation_simple.mrp_bom_form_evaluation_action
@@ -192,12 +517,73 @@ msgid "Total"
 msgstr "Totale"
 
 #. module: mrp_bom_evaluation_simple
-#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom__total_amount
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__total_amount
 msgid "Total Amount"
 msgstr "Importo Totale"
 
 #. module: mrp_bom_evaluation_simple
-#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluate
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation_simple.report_mrp_bom_evaluation
 msgid "Unit of Measure"
 msgstr "Unità di misura"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__product_uom_id
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__product_uom_id
+msgid "Unit of Measure (Unit of Measure) is the unit of measurement for the inventory control"
+msgstr "UdM (Unità di Misura) è l'unità di misura dell'inventario"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_unread
+msgid "Unread Messages"
+msgstr "Messaggi non letti"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__message_unread_counter
+msgid "Unread Messages Counter"
+msgstr "Contatore Messaggi non letti"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__valid_product_attribute_value_ids
+msgid "Valid Product Attribute Values"
+msgstr "Valori attributo prodotto validi"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__valid_product_attribute_value_wnva_ids
+msgid "Valid Product Attribute Values Without No Variant Attributes"
+msgstr "Valori attributo prodotto validi senza attributi variante"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__website_message_ids
+msgid "Website Messages"
+msgstr "Messaggio sito"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__website_message_ids
+msgid "Website communication history"
+msgstr "Cronologia comunicazioni sito web"
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,help:mrp_bom_evaluation_simple.field_mrp_bom_evaluation__picking_type_id
+msgid "When a procurement has a ‘produce’ route with a operation type set, it will try to create a Manufacturing Order for that product using a BoM of the same operation type. That allows to define stock rules which trigger different manufacturing orders with different BoMs."
+msgstr "Quando un approvvigionamento ha una rotta di \"produzione\" con un tipo di operazione definito, il sistema cercherà di creare un ordine di produzione per questo prodotto utilizzando una distinta base che ha lo stesso tipo di operazione. In questo modo è possibile definire regole di magazzino che generano ordini di produzione con distinte base diverse."
+
+#. module: mrp_bom_evaluation_simple
+#: selection:mrp.bom.evaluation,ready_to_produce:0
+msgid "When components for 1st operation are available"
+msgstr ""
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model,name:mrp_bom_evaluation_simple.model_mrp_bom_evaluation
+msgid "mrp.bom.evaluation"
+msgstr ""
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model,name:mrp_bom_evaluation_simple.model_mrp_bom_line_evaluation
+msgid "mrp.bom.line.evaluation"
+msgstr ""
+
+#. module: mrp_bom_evaluation_simple
+#: model:ir.model.fields,field_description:mrp_bom_evaluation_simple.field_mrp_bom_line_evaluation__sequence
+msgid "original sequence"
+msgstr ""
 
