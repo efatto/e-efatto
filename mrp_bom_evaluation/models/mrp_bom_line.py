@@ -64,6 +64,8 @@ class MrpBomLine(models.Model):
     def onchange_product_id(self):
         # this onchange work only when an account user change the product
         res = super().onchange_product_id()
+        if not self.product_id:
+            return res
         purchase_order_line_ids = self.env['purchase.order.line'].search([
             ('product_id', '=', self.product_id.id),
             ('state', '!=', 'cancel'),
