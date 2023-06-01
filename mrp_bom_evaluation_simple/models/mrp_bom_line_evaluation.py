@@ -4,7 +4,7 @@ from odoo import api, fields, models
 from odoo.addons import decimal_precision as dp
 
 
-class MrpBomLine(models.Model):
+class MrpBomLineEvaluation(models.Model):
     _inherit = 'mrp.bom.line'
     _name = 'mrp.bom.line.evaluation'
 

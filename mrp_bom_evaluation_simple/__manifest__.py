@@ -9,7 +9,6 @@
     'website': 'https://github.com/sergiocorato/e-efatto',
     'depends': [
         'mrp_bom_operation_estimate',
-        'mrp_production_demo',
     ],
     'excludes': [
         'mrp_bom_evaluation',
