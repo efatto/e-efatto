@@ -16,7 +16,6 @@
     ],
     'data': [
         'security/ir.model.access.csv',
-        'views/mrp_bom.xml',
         'views/mrp_view.xml',
     ],
     'installable': True,

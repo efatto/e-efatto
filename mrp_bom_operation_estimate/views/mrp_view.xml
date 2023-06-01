@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="mrp.mrp_workcenter_view"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='costs_hour']" position="after">
-                <field name="product_id" required="True"/>
+                <field name="product_id"/>
             </xpath>
         </field>
     </record>
