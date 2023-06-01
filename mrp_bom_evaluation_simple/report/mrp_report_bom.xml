@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="report_mrp_bom_evaluation">
+        <t t-call="web.internal_layout">
+            <div class="page o_mrp_layout">
+                <div class="oe_structure"/>
+                <div class="row">
+                    <div class="col-12">
+                        <h3>BoM Cost <span><t t-esc="doc.product_tmpl_id.name"/></span></h3>
+                        <h6><span>
+                            <t t-if="doc.product_tmpl_id.default_code">Reference: <t t-esc="doc.product_tmpl_id.default_code"/></t>
+                            <t t-if="doc.bom_revision">Revision: <t t-esc="doc.bom_revision"/></t>
+                            Last write: <t t-esc="context_timestamp(doc.write_date).strftime('%d/%m/%Y %H:%M')"/>
+                        </span></h6>
+                    </div>
+                </div>
+                <t t-set="currency" t-value="user.company_id.currency_id"/>
+                <t t-set="component_total" t-value="0"/>
+                <t t-set="operation_total" t-value="0"/>
+                <t t-set="weight_total" t-value="0"/>
+                <t t-set="finishing_weight_total" t-value="0"/>
+                <table width="100%" class="table table-sm o_main_table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th class="text-right">Quantity</th>
+                            <th class="text-left">Unit of Measure</th>
+                            <th class="text-left">Note</th>
+                            <th class="text-right">Product Unit Cost</th>
+                            <th class="text-right">Product Total Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-if="doc.bom_evaluation_line_ids">
+                            <t t-foreach="doc.bom_evaluation_line_ids" t-as="bom_line">
+                                <t t-set="component_total" t-value="component_total + bom_line.price_subtotal"/>
+                                <tr>
+                                    <td><span><t t-esc="bom_line.product_id.name"/></span></td>
+                                    <td class="text-right">
+                                        <span>
+                                            <t t-if="bom_line.product_uom_id.category_id.measure_type == 'time'" t-esc="bom_line.product_qty" t-options='{"widget": "float_time"}'/>
+                                            <t t-if="bom_line.product_uom_id.category_id.measure_type != 'time'" t-esc="bom_line.product_qty" t-options='{"widget": "float", "decimal_precision": "Product Unit of Measure"}'/>
+                                        </span>
+                                    </td>
+                                    <td><span><t t-esc="bom_line.product_uom_id.name"/></span></td>
+                                    <td><span><t t-esc="bom_line.note"/></span></td>
+                                    <td class="text-right">
+                                        <span t-esc="bom_line.price_unit" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="bom_line.price_subtotal" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <tr class="o_mrp_total">
+                                <td colspan="5"><span><i>Components Total</i></span></td>
+                                <td class="text-right">
+                                    <i><span t-esc="component_total" t-options='{"widget": "monetary", "display_currency": currency}'/></i>
+                                </td>
+                            </tr>
+                        </t>
+                        <t t-if="doc.bom_operation_ids">
+                            <t t-foreach="doc.bom_operation_ids" t-as="bom_operation">
+                                <t t-set="operation_total" t-value="operation_total + bom_operation.price_subtotal"/>
+                                <tr>
+                                    <td><span><t t-esc="bom_operation.name"/></span></td>
+                                    <td class="text-right">
+                                        <span>
+                                            <t t-esc="bom_operation.time" t-options='{"widget": "float_time"}'/>
+                                        </span>
+                                    </td>
+                                    <td><span>Hours</span></td>
+                                    <td/>
+                                    <td class="text-right">
+                                        <span t-esc="bom_operation.price_unit" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="bom_operation.price_subtotal" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <tr class="o_mrp_total">
+                                <td colspan="5"><i>Operations Total</i></td>
+                                <td class="text-right">
+                                    <i><span t-esc="operation_total" t-options='{"widget": "monetary", "display_currency": currency}'/></i>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                    <tfoot>
+                        <tr class="o_mrp_total">
+                            <td class="text-left"><span><strong>Total Unit Cost</strong></span></td>
+                            <td colspan="4"/>
+                            <td class="text-right">
+                                <span><strong><t t-esc="doc.total_amount" t-options='{"widget": "monetary", "display_currency": currency}'/></strong></span>
+                            </td>
+                        </tr>
+                        <t t-if="doc.product_qty != 1">
+                            <tr class="o_mrp_total">
+                                <td></td>
+                                <td></td>
+                                <td class="text-right"><span>(Total Cost for)</span></td>
+                                <td class="text-right"><span>(<t t-esc="doc.product_qty"/> <t t-esc="doc.product_uom_id.name"/>)</span></td>
+                                <td colspan="3"/>
+                                <td class="text-right">
+                                    <span>(<t t-esc="doc.total_amount * doc.product_qty" t-options='{"widget": "monetary", "display_currency": currency}'/>)</span>
+                                </td>
+                            </tr>
+                        </t>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="footer">
+                <div class="row">
+                    <div class="col-6 custom_footer">
+                        <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/>
+                    </div>
+                    <div class="col-6 text-right custom_footer">
+                        <ul class="list-inline">
+                            <li class="list-inline-item"><span class="page"/></li>
+                            <li class="list-inline-item">/</li>
+                            <li class="list-inline-item"><span class="topage"/></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <template id="report_bom_evaluation">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <div class="page">
+                    <t t-call="mrp_bom_evaluation_simple.report_mrp_bom_evaluation"/>
+                </div>
+                <p style="page-break-before:always;"> </p>
+            </t>
+        </t>
+    </template>
+    <record id="paperformat_portrait_mrp" model="report.paperformat">
+        <field name="name">European A4 Mrp Portrait</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">20</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">7</field>
+        <field name="margin_right">7</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">15</field>
+        <field name="dpi">90</field>
+    </record>
+    <record id="action_report_bom_evaluation" model="ir.actions.report">
+        <field name="name">BoM Evaluation</field>
+        <field name="type">ir.actions.report</field>
+        <field name="model">mrp.bom.evaluation</field>
+        <field name="report_name">mrp_bom_evaluation_simple.report_bom_evaluation</field>
+        <field name="report_file">mrp_bom_evaluation_simple.report_bom_evaluation</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="paperformat_id" ref="mrp_bom_evaluation_simple.paperformat_portrait_mrp" />
+        <field name="binding_model_id" ref="mrp_bom_evaluation_simple.model_mrp_bom_evaluation" />
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Bom Evaluation - %s' % object.display_name</field>
+    </record>
+</odoo>

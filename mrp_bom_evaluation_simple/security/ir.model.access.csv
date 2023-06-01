@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mrp_bom_evaluation,mrp.bom.evaluation,model_mrp_bom_evaluation,mrp.group_mrp_user,1,0,0,0
+access_mrp_bom_line_evaluation,mrp.bom.line.evaluation,model_mrp_bom_line_evaluation,mrp.group_mrp_user,1,0,0,0
+access_mrp_bom_manager_evaluation,mrp.bom.manager.evaluation,model_mrp_bom_evaluation,mrp.group_mrp_manager,1,1,1,1
+access_mrp_bom_line_manager_evaluation,mrp.bom.line.manager.evaluation,model_mrp_bom_line_evaluation,mrp.group_mrp_manager,1,1,1,1
