@@ -1,4 +1,6 @@
 from odoo.tests.common import SavepointCase
+from odoo.tools import relativedelta
+from odoo import fields
 
 
 class TestMrpBomEvaluation(SavepointCase):
@@ -72,16 +74,46 @@ class TestMrpBomEvaluation(SavepointCase):
         return line
 
     def test_01_get_price_from_product_and_total(self):
-        # check price and standard price for subproducts in bom are the first ones
+        # check price and standard price for subproducts in bom are the original ones
+        cost_histories = self.env["product.price.history"].search([
+            ('product_id', '=', self.subproduct_1.id),
+            ('cost', '!=', 0.0),
+        ], order='datetime desc')
+        price_write_dt = fields.Datetime.now() + relativedelta(days=-1)
+        if cost_histories:
+            cost_histories.write({
+                "datetime": price_write_dt,
+            })
         self.create_bom_line(self.subproduct_1, 5)
         self.create_bom_line(self.subproduct_2, 7)
-        bom_evaluation_line_1_1 = self.main_bom.bom_evaluation_line_ids.filtered(
+        bom_evaluation_line_1 = self.main_bom.bom_evaluation_line_ids.filtered(
             lambda x: x.product_id == self.subproduct_1
         )
-        self.assertEqual(bom_evaluation_line_1_1.price_unit,
+        original_price = self.subproduct_1.standard_price
+        self.assertEqual(bom_evaluation_line_1.price_unit,
                          self.subproduct_1.standard_price)
-        # change standard price for subproducts
-
+        self.assertEqual(bom_evaluation_line_1.price_write_date, price_write_dt)
+        # change standard price for subproducts and check bom line price is unchanged
+        self.subproduct_1.write({
+            "standard_price": original_price + 19.0,
+        })
+        self.assertEqual(bom_evaluation_line_1.price_unit, original_price)
+        # change date of cost history
+        cost_histories1 = self.env["product.price.history"].search([
+            ('product_id', '=', self.subproduct_1.id),
+            ('cost', '=', original_price + 19.0),
+        ], order='datetime desc')
+        price_write_dt1 = fields.Datetime.now()
+        if cost_histories1:
+            cost_histories1.write({
+                "datetime": price_write_dt1,
+            })
         # put subproducts in main bom
+        self.create_bom_line(self.subproduct_1, 20)
         # check price and price write date are the last ones
-        pass
+        bom_evaluation_line_2 = self.main_bom.bom_evaluation_line_ids.filtered(
+            lambda x: x.product_id == self.subproduct_1 and x.product_qty == 20
+        )
+        self.assertEqual(bom_evaluation_line_2.price_unit,
+                         self.subproduct_1.standard_price)
+        self.assertEqual(bom_evaluation_line_2.price_write_date, price_write_dt1)
