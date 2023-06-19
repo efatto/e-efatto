@@ -1,11 +1,11 @@
-# Copyright 2015-2020 Sergio Corato.
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
+# Copyright 2015-2023 Sergio Corato.
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
     "name": "Italy - Country data",
-    "version": "12.0.1.0.0",
+    "version": "14.0.1.0.0",
     "category": "other",
-    "description": """
+    "summary": """
     With this module Italian country data will be displayed as usual in Italy.
     """,
     "author": "Sergio Corato",
