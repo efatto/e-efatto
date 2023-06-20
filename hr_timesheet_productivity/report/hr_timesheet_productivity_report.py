@@ -69,7 +69,7 @@ class TimesheetProductivity(models.Model):
                 FROM account_analytic_line AS ts
                 WHERE ts.project_id IS NOT NULL
             ) AS t
-            GROUP BY t.employee_id, t.date, t.name
+            GROUP BY t.employee_id, t.date, t.name, t.id
             ORDER BY t.date
         )
         """ % self._table)
