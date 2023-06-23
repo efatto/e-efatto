@@ -33,8 +33,9 @@ class MrpProduction(models.Model):
         for prod in self:
             prod = prod.with_context(is_procurement_stopped=prod.is_procurement_stopped)
             super(MrpProduction, prod)._generate_moves()
-            if not config['test_enable'] \
-                    or self.env.context.get('test_mrp_subcontracting_manual_procurement'):
+            if not config['test_enable'] or self.env.context.get(
+                'test_mrp_subcontracting_manual_procurement'
+            ):
                 # restore initial 'draft' state
                 move_subcontractor = self.env['stock.move']
                 for move in prod.move_raw_ids:

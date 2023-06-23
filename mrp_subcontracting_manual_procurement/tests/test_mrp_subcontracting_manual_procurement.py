@@ -77,8 +77,8 @@ class TestMrpProductionManualProcurement(TestProductionData):
         })
         resupply_rule = resupply_sub_on_order_route.rule_ids.filtered(
             lambda l: (
-                l.location_id == cls.product_to_subcontract.property_stock_production and
-                l.location_src_id ==
+                l.location_id == cls.product_to_subcontract.property_stock_production
+                and l.location_src_id ==
                 cls.env.user.company_id.subcontracting_location_id))
         resupply_rule.copy({
             'location_src_id': partner_subcontract_location.id})

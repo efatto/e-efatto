@@ -3,7 +3,6 @@
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-import odoo.addons.decimal_precision as dp
 
 
 class MrpProductionSelectSubcontractor(models.TransientModel):

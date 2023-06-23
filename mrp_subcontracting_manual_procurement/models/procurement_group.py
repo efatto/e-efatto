@@ -24,8 +24,8 @@ class StockRule(models.Model):
     _inherit = 'stock.rule'
 
     def _make_po_select_supplier(self, values, suppliers):
-        """ Method intended to be overridden by customized modules to implement any logic in the
-            selection of supplier.
+        """ Method intended to be overridden by customized modules to implement any
+            logic in the selection of supplier.
         """
         supplier = super()._make_po_select_supplier(values=values, suppliers=suppliers)
         orderpoint_id = values.get('orderpoint_id')
@@ -40,7 +40,8 @@ class StockRule(models.Model):
                 ])
                 subcontractors = stock_move_ids.mapped('subcontractor_id')
                 if subcontractors:
-                    # select the first of subcontractors in stock moves found in productions
+                    # select the first of subcontractors in stock moves found in
+                    # productions
                     subcontractor = subcontractors[0]
                     supplier = suppliers.filtered(lambda x: x.name == subcontractor)
         return supplier
