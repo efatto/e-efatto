@@ -13,11 +13,12 @@ class MrpProduction(models.Model):
     def _compute_is_procurement_stopped(self):
         for production in self:
             if production.move_raw_ids:
-                production.is_procurement_stopped = bool(
+                is_procurement_stopped = bool(
                     any(move.state == 'draft' for move in production.move_raw_ids)
                 )
             else:
-                production.is_procurement_stopped = True
+                is_procurement_stopped = True
+            production.is_procurement_stopped = is_procurement_stopped
 
     @api.multi
     def _generate_moves(self):
@@ -30,8 +31,6 @@ class MrpProduction(models.Model):
             super(MrpProduction, prod)._generate_moves()
             if not config['test_enable'] \
                     or self.env.context.get('test_mrp_production_manual_procurement'):
-                prod = prod.with_context(
-                    is_procurement_stopped=prod.is_procurement_stopped)
                 # recreate recordset of original moves with original function to restore
                 # initial 'draft' state
                 move_create_proc = self.env['stock.move']
