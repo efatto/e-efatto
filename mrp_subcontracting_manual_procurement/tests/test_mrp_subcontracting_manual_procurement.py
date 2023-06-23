@@ -145,7 +145,8 @@ class TestMrpProductionManualProcurement(TestProductionData):
         # run scheduler to start orderpoint rule
         with mute_logger('odoo.addons.stock.models.procurement'):
             self.procurement_model.run_scheduler()
-        to_confirm_po_ids = self.env['purchase.order'].search([
+        # to_confirm_po_ids =
+        self.env['purchase.order'].search([
             ('order_line.product_id', 'in', self.product_to_subcontract.ids),
         ])
         # self.assertEqual(len(to_confirm_po_ids), 1)  # FIXME
