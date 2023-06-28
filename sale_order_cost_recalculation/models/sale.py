@@ -8,9 +8,10 @@ import time
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    purchase_date = fields.Datetime(
-        compute="_compute_purchase_date",
-        store=True)
+    purchase_date = fields.Datetime()
+    # todo add a cron to update
+    # compute="_compute_purchase_date",
+    # store=True)
     purchase_price = fields.Float(digits=(20, 8))
 
     @api.depends('product_id', 'purchase_price')
