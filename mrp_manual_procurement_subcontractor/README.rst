@@ -35,12 +35,45 @@ Alla creazione della produzione di un prodotto che ha queste caratteristiche non
 
 Vengono quindi resi visibili due bottoni, che permettono, in alternativa, di proseguire con la produzione o di fermare la produzione e avviare l'acquisto presso un subappaltatore a scelta.
 
-Viene invece reso visibile un bottone per avviarli manualmente:
+Il primo bottone permette di avviare normalmente gli approvvigionamenti della produzione:
 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/avvia_approvvigionamenti.png
     :alt: Avvia approvvigionamenti
 
 Questo bottone ritorna visibile nel caso vengano aggiunti dei componenti, che vengono considerati da approvvigionare invece che aggiunti alla produzione in corso.
+
+Il secondo bottone permette di scegliere un subappaltatore a cui ordinare il prodotto, chiudendo contemporaneamente questa produzione:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/acquista_da_subappaltatore.png
+    :alt: Acquista da subappaltatore
+
+Si apre quindi una procedura che permette di scegliere tra i possibili subappaltatori. Alla conferma, la presente produzione sarà chiusa e sarà generato un preventivo d'acquisto verso il subappaltatore selezionato.
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/scelta_subappaltatore.png
+    :alt: Scelta subappaltatore
+
+La tipica procedura da seguire per modificare un prodotto da produrre internamente ad un prodotto che può avere entrambe le opzioni è:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/1_duplicare_bom.png
+    :alt: 1_duplicare_bom
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/2_inserire_percorsi_acquisto.png
+    :alt: 2_inserire_percorsi_acquisto
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/3_aggiungere_acquistabile.png
+    :alt: 3_aggiungere_acquistabile
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/4_forzare_ricalcolo.png
+    :alt: 4_forzare_ricalcolo
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/5_bottone_subappalto.png
+    :alt: 5_bottone_subappalto
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/6_acquisto_subappalto.png
+    :alt: 6_acquisto_subappalto
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/7_produzione_subappalto.png
+    :alt: 7_produzione_subappalto
 
 Bug Tracker
 ===========
