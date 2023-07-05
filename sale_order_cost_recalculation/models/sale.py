@@ -8,18 +8,21 @@ import time
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    purchase_date = fields.Datetime()
-    # todo add a cron to update
-    # compute="_compute_purchase_date",
-    # store=True)
+    purchase_date = fields.Datetime(
+        compute="_compute_purchase_date",
+        store=True)
     purchase_price = fields.Float(digits=(20, 8))
 
-    @api.depends('product_id', 'purchase_price')
+    @api.depends('purchase_price')
     def _compute_purchase_date(self):
-        # Removed depends on product_id.standard_price as lead to eternal recompute
+        # Removed depends on product_id.standard_price as lead to eternal
+        # recompute.
         # Added function to show estimated time for old databases with big datas
         started_at = time.time()
-        lines = self.filtered('product_id')
+        lines = self.filtered(lambda x: x.product_id and x.purchase_price)
+        residual_lines = self - lines
+        for residual_line in residual_lines:
+            residual_line.purchase_date = False
         imax = len(lines)
         i = 0
         for line in lines:
@@ -39,7 +42,8 @@ class SaleOrderLine(models.Model):
                     'Updated purchase date in sale order line %s/%s. '
                     'Elapsed time %.2f (minutes)'
                     'Estimated residual time %.0f (minutes)' % (
-                        i, imax, total_time / 60, (total_time / i) * (imax - i) / 60,
+                        i, imax, total_time / 60,
+                        (total_time / i) * (imax - i) / 60,
                     )
                 )
 
