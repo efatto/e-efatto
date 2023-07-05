@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="mrp_production_form_view" model="ir.ui.view">
+        <field name="name">mrp.production.form</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <field name="is_locked" position="after">
+                <field name="is_stopped" invisible="1"/>
+            </field>
+            <xpath expr="//button[@name='button_mark_done']" position="before">
+                <button name="button_start_procurement" type="object"
+                    string="Start Procurement" attrs="{'invisible': [('is_stopped', '!=', True)]}"/>
+                <button name="%(action_procure_subcontractor)d"
+                    type="action"
+                    string="Procure by subcontractor"
+                    attrs="{'invisible': [('is_stopped', '!=', True)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
