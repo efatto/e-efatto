@@ -5,8 +5,8 @@ from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
 
-class MrpProductionSelectSubcontractor(models.TransientModel):
-    _name = 'mrp.production.select.subcontractor'
+class MrpRawMoveSelectSubcontractor(models.TransientModel):
+    _name = 'mrp.raw.move.select.subcontractor'
     _description = 'Select component subcontractor'
 
     subcontractor_ids = fields.Many2many(comodel_name='res.partner')

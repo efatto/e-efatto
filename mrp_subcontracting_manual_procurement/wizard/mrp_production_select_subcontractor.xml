@@ -2,8 +2,8 @@
 <odoo>
 
     <record id="select_subcontractor" model="ir.ui.view">
-        <field name="name">mrp.production.select.subcontractor</field>
-        <field name="model">mrp.production.select.subcontractor</field>
+        <field name="name">mrp.raw.move.select.subcontractor</field>
+        <field name="model">mrp.raw.move.select.subcontractor</field>
         <field name="arch" type="xml">
             <form string="Select subcontractor">
                 <div>
@@ -24,8 +24,8 @@
         </field>
     </record>
     <act_window id="action_select_subcontractor"
-        name="Change production component"
-        res_model="mrp.production.select.subcontractor"
+        name="Change production raw move subcontractor"
+        res_model="mrp.raw.move.select.subcontractor"
         src_model="mrp.production"
         view_mode="form"
         target="new"
