@@ -388,9 +388,21 @@ ul.auto-toc {
 Il prodotto richiesto deve avere sia il percorso di produzione che quello di acquisto, con una distinta base di produzione e una di subappalto.
 Alla creazione della produzione di un prodotto che ha queste caratteristiche non vengono più avviati gli approvvigionamenti dei componenti.</p>
 <p>Vengono quindi resi visibili due bottoni, che permettono, in alternativa, di proseguire con la produzione o di fermare la produzione e avviare l’acquisto presso un subappaltatore a scelta.</p>
-<p>Viene invece reso visibile un bottone per avviarli manualmente:</p>
+<p>Il primo bottone permette di avviare normalmente gli approvvigionamenti della produzione:</p>
 <img alt="Avvia approvvigionamenti" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/avvia_approvvigionamenti.png" />
 <p>Questo bottone ritorna visibile nel caso vengano aggiunti dei componenti, che vengono considerati da approvvigionare invece che aggiunti alla produzione in corso.</p>
+<p>Il secondo bottone permette di scegliere un subappaltatore a cui ordinare il prodotto, chiudendo contemporaneamente questa produzione:</p>
+<img alt="Acquista da subappaltatore" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/acquista_da_subappaltatore.png" />
+<p>Si apre quindi una procedura che permette di scegliere tra i possibili subappaltatori. Alla conferma, la presente produzione sarà chiusa e sarà generato un preventivo d’acquisto verso il subappaltatore selezionato.</p>
+<img alt="Scelta subappaltatore" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/scelta_subappaltatore.png" />
+<p>La tipica procedura da seguire per modificare un prodotto da produrre internamente ad un prodotto che può avere entrambe le opzioni è:</p>
+<img alt="1_duplicare_bom" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/1_duplicare_bom.png" />
+<img alt="2_inserire_percorsi_acquisto" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/2_inserire_percorsi_acquisto.png" />
+<img alt="3_aggiungere_acquistabile" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/3_aggiungere_acquistabile.png" />
+<img alt="4_forzare_ricalcolo" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/4_forzare_ricalcolo.png" />
+<img alt="5_bottone_subappalto" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/5_bottone_subappalto.png" />
+<img alt="6_acquisto_subappalto" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/6_acquisto_subappalto.png" />
+<img alt="7_produzione_subappalto" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/7_produzione_subappalto.png" />
 </div>
 <div class="section" id="bug-tracker">
 <h1><a class="toc-backref" href="#toc-entry-2">Bug Tracker</a></h1>
