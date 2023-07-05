@@ -1,4 +1,4 @@
-from odoo import api, fields, models
+from odoo import api, models
 
 
 class StockMove(models.Model):
@@ -13,6 +13,7 @@ class StockMove(models.Model):
                     'origin': move.raw_material_production_id.origin or
                     move.raw_material_production_id.name,
                     'state': 'draft',
-                    'procure_method': 'make_to_order',  # possibile prenderlo da rule?
+                    'procure_method': 'make_to_order',
+                    # possibile prenderlo da rule?
                 })
         return res
