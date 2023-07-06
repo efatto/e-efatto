@@ -14,6 +14,7 @@
         'mrp_production_demo',
         'mrp_subcontracting_purchase_link',
         'purchase_line_procurement_group',
+        'sale',  # for test purposes
     ],
     'data': [
         'wizard/mrp_production_procure_subcontractor.xml',
