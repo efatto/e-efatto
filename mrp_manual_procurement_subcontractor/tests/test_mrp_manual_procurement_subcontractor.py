@@ -19,6 +19,40 @@ class TestMrpProductionManualProcurement(TestProductionData):
             'usage': 'internal',
             'company_id': cls.env.user.company_id.id,
         })
+        cls.partner_1 = cls.env['res.partner'].create({
+            'name': 'Test partner',
+        })
+        cls.subcontractor_partner1 = cls.env.ref('base.res_partner_4')
+        cls.subcontractor_partner1.property_stock_subcontractor = (
+            partner_subcontract_location.id)
+        supplierinfo_1 = cls.env['product.supplierinfo'].create({
+            'name': cls.subcontractor_partner1.id,
+        })
+        cls.subcontractor_partner2 = cls.env.ref('base.res_partner_2')
+        cls.subcontractor_partner2.property_stock_subcontractor = (
+            partner_subcontract_location.id)
+        supplierinfo_2 = cls.env['product.supplierinfo'].create({
+            'name': cls.subcontractor_partner2.id,
+        })
+        # ADD to top_product buy and (resupply route is necessary?)
+        cls.top_product.write({
+            'purchase_ok': True,
+            'route_ids': [
+                (4, cls.env.ref('purchase_stock.route_warehouse0_buy').id),
+                (4, resupply_sub_on_order_route.id)],
+            'seller_ids': [(6, 0, [supplierinfo_1.id, supplierinfo_2.id])],
+        })
+        cls.main_bom_subcontracted = cls.main_bom.copy(
+            default={
+                'type': 'subcontract',
+                'subcontractor_ids': [
+                    (6, 0, [
+                        cls.subcontractor_partner1.id,
+                        cls.subcontractor_partner2.id,
+                    ])
+                ],
+            }
+        )
         cls.vendor = cls.env.ref('base.res_partner_3')
         supplierinfo = cls.env['product.supplierinfo'].create({
             'name': cls.vendor.id,
@@ -34,15 +68,6 @@ class TestMrpProductionManualProcurement(TestProductionData):
                 (4, resupply_sub_on_order_route.id)],
             'seller_ids': [(6, 0, [supplierinfo.id])],
         }])
-        cls.partner_1 = cls.env['res.partner'].create({
-            'name': 'Test partner',
-        })
-        cls.subcontractor_partner1 = cls.env.ref('base.res_partner_4')
-        cls.subcontractor_partner1.property_stock_subcontractor = (
-            partner_subcontract_location.id)
-        supplierinfo_1 = cls.env['product.supplierinfo'].create({
-            'name': cls.subcontractor_partner1.id,
-        })
         cls.product_to_subcontract = cls.env['product.product'].create([{
             'name': 'Subcontracted product',
             'type': 'product',
