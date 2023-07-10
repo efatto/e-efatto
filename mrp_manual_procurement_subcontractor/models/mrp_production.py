@@ -25,9 +25,6 @@ class MrpProduction(models.Model):
                     production.mapped("product_id.seller_ids")
                 )
                 and buy_route in production.product_id.route_ids
-                and any(
-                    y.state == 'draft' for y in production.move_raw_ids
-                )
                 and not production.purchase_order_id
             )
             production.is_stopped = is_stopped
