@@ -9,7 +9,7 @@ class ProcurementGroup(models.Model):
     def run(self, product_id, product_qty, product_uom, location_id, name,
             origin, values):
         if not config['test_enable'] or self.env.context.get(
-            'test_mrp_production_change_procurement'
+            'test_mrp_manual_procurement_subcontractor'
         ):
             if self.env.context.get('is_stopped'):
                 # do nothing
