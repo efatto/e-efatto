@@ -158,7 +158,8 @@ class TestMrpProductionManualProcurement(TestProductionData):
         self.production.with_context(
             test_mrp_manual_procurement_subcontractor=True
         ).button_start_procurement()
-        # run scheduler to start orderpoint rule
+        # run scheduler to start orderpoint rule to check RDP are not created
+        # for top product
         with mute_logger('odoo.addons.stock.models.procurement'):
             self.procurement_model.run_scheduler()
         to_confirm_po_ids = self.env['purchase.order'].search([
@@ -166,7 +167,7 @@ class TestMrpProductionManualProcurement(TestProductionData):
         ])
         self.assertFalse(to_confirm_po_ids)
 
-    def test_00_mo_from_sale_with_subcontracting_and_orderpoint(self):
+    def test_03_mo_from_sale_with_subcontracting_and_orderpoint(self):
         # remove mto route from top product and create an orderpoint
         self.top_product.write({
             'route_ids': [
@@ -178,8 +179,6 @@ class TestMrpProductionManualProcurement(TestProductionData):
             'product_id': self.top_product.id,
             'product_min_qty': 0,
             'product_max_qty': 0,
-            # 'location_id': (
-            #     self.env.user.company_id.subcontracting_location_id.id),
         })
         # do test
         sale_order = self.env['sale.order'].create({
@@ -189,8 +188,8 @@ class TestMrpProductionManualProcurement(TestProductionData):
         sale_order.with_context(
             test_mrp_manual_procurement_subcontractor=True
         ).action_confirm()
-        # check procurement has not created RDP, even launching scheduler (which will
-        # do nothing anyway)
+        # check procurement has not created RDP, even launching scheduler
+        # (which will do nothing anyway)
         with mute_logger('odoo.addons.stock.models.procurement'):
             self.procurement_model.run_scheduler()
         self.production = self.env['mrp.production'].search(
@@ -217,35 +216,53 @@ class TestMrpProductionManualProcurement(TestProductionData):
         ])
         self.assertEqual(len(to_confirm_po_ids), 1)
         # check vendor is equal to selected subcontractor
-        self.assertEqual(to_confirm_po_ids.partner_id, self.subcontractor_partner2)
+        self.assertEqual(to_confirm_po_ids.partner_id,
+                         self.subcontractor_partner2)
         self.assertEqual(len(to_confirm_po_ids.mapped('order_line')), 1)
         to_confirm_po_ids.button_confirm()
         self.assertEqual(to_confirm_po_ids.state, 'purchase')
 
-    # def test_02_mo_from_sale_without_subcontracting(self):
-    #     product_qty = 3
-    #     sale_order = self.env['sale.order'].create({
-    #         'partner_id': self.partner_1.id,
-    #     })
-    #     self._create_sale_order_line(sale_order, self.top_product, product_qty)
-    #     sale_order.with_context(
-    #         test_mrp_manual_procurement_subcontractor=True
-    #     ).action_confirm()
-    #     # check procurement has not created RDP, even launching scheduler (which will
-    #     # do nothing anyway)
-    #     with mute_logger('odoo.addons.stock.models.procurement'):
-    #         self.procurement_model.run_scheduler()
-    #     self.production = self.env['mrp.production'].search(
-    #         [('origin', '=', sale_order.name)])
-    #     self.assertTrue(self.production)
-    #     po_ids = self.env['purchase.order'].search([
-    #         ('origin', '=', self.production.name),
-    #         ('state', '=', 'draft'),
-    #         ('order_line.product_id', 'not in', self.top_product.ids),
-    #     ])
-    #     self.assertTrue(po_ids)
-    #     self.assertEqual(len(po_ids), 1)
-    #     self.assertEqual(len(po_ids.mapped('order_line')), 3)
-    #     po_lines = po_ids.order_line.filtered(
-    #         lambda x: x.product_id == self.top_product)
-    #     self.assertFalse(po_lines)
+    def test_04_normal_mo_from_sale_with_orderpoint(self):
+        # remove mto route from top product and create an orderpoint
+        self.top_product.write({
+            'route_ids': [
+                (3, self.env.ref('stock.route_warehouse0_mto').id),
+            ],
+        })
+        self.env['stock.warehouse.orderpoint'].create({
+            'name': 'OPx',
+            'product_id': self.top_product.id,
+            'product_min_qty': 0,
+            'product_max_qty': 0,
+        })
+        sale_order = self.env['sale.order'].create({
+            'partner_id': self.partner_1.id,
+        })
+        self._create_sale_order_line(sale_order, self.top_product, 3)
+        sale_order.with_context(
+            test_mrp_manual_procurement_subcontractor=True
+        ).action_confirm()
+        # check procurement has not created RDP, even launching scheduler
+        # (which will do nothing anyway)
+        with mute_logger('odoo.addons.stock.models.procurement'):
+            self.procurement_model.run_scheduler()
+        self.production = self.env['mrp.production'].search(
+            [('product_id', '=', self.top_product.id)])
+        self.assertTrue(self.production.is_stopped)
+        po_ids = self.env['purchase.order'].search([
+            ('state', '=', 'draft'),
+            ('order_line.product_id', 'in', self.top_product.ids),
+        ])
+        self.assertFalse(po_ids)
+        # continue with normal production
+        self.production.with_context(
+            test_mrp_manual_procurement_subcontractor=True
+        ).button_start_procurement()
+        # run scheduler to start orderpoint rule to check RDP are not created
+        # for top product
+        with mute_logger('odoo.addons.stock.models.procurement'):
+            self.procurement_model.run_scheduler()
+        to_confirm_po_ids = self.env['purchase.order'].search([
+            ('order_line.product_id', 'in', self.top_product.ids),
+        ])
+        self.assertFalse(to_confirm_po_ids)
