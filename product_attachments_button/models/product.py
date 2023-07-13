@@ -38,6 +38,8 @@ class ProductTemplate(models.Model):
             'domain': domain,
             'views': [(False, 'tree'), (False, 'kanban'), (False, 'form')],
             'res_model': 'ir.attachment',
+            'context': {'default_res_model': 'product.template',
+                        'default_res_id': self.id},
         }
 
 
@@ -52,4 +54,6 @@ class ProductProduct(models.Model):
             'domain': domain,
             'views': [(False, 'tree'), (False, 'kanban'), (False, 'form')],
             'res_model': 'ir.attachment',
+            'context': {'default_res_model': 'product.product',
+                        'default_res_id': self.id},
         }
