@@ -13,8 +13,7 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
     _name = "wizard.mrp.bom.attachment.export"
     _description = 'Wizard MRP BOM attachment export ZIP'
 
-    @api.model
-    def _default_product_ids(self):
+    def _compute_product_ids(self):
         product_ids = self.env['product.product']
         if self.env.context['active_model'] == 'mrp.production':
             product_ids = self.env['mrp.production'].browse(
@@ -33,7 +32,7 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
 
     product_ids = fields.Many2many(
         comodel_name='product.product',
-        default=_default_product_ids,
+        compute=_compute_product_ids,
         required=True,
     )
     data = fields.Binary("File", readonly=True)
