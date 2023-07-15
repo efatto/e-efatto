@@ -13,7 +13,7 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
     _name = "wizard.mrp.bom.attachment.export"
     _description = 'Wizard MRP BOM attachment export ZIP'
 
-    def _compute_product_ids(self):
+    def _get_product_ids(self):
         product_ids = self.env['product.product']
         if self.env.context['active_model'] == 'mrp.production':
             product_ids = self.env['mrp.production'].browse(
@@ -25,16 +25,15 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
 
     @api.model
     def _default_name(self):
+        obj_ids = self.env[self.env.context['active_model']].browse(
+            self.env.context['active_ids'])
         return "%s_%s_%s" % (
             _("BOM"),
-            '-'.join(x.default_code for x in self.product_ids),
+            '-'.join(
+                hasattr(x, 'product_id') and x.product_id.default_code
+                or x.product_tmpl_id.default_code for x in obj_ids),
             datetime.now().strftime('%Y%m%d%H%M'))
 
-    product_ids = fields.Many2many(
-        comodel_name='product.product',
-        compute=_compute_product_ids,
-        required=True,
-    )
     data = fields.Binary("File", readonly=True)
     name = fields.Char('Filename', default=_default_name, required=True)
     attachment_ctg_ids = fields.Many2many(
@@ -45,7 +44,8 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
     @api.multi
     def export_zip(self):
         self.ensure_one()
-        attachments = self.product_ids.mapped('product_tmpl_id.all_attachment_ids')
+        product_ids = self._get_product_ids()
+        attachments = product_ids.mapped('product_tmpl_id.all_attachment_ids')
         if self.attachment_ctg_ids:
             attachments = attachments.filtered(
                 lambda x: any(y in self.attachment_ctg_ids for y in x.category_ids))
