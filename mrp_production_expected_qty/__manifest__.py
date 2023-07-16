@@ -8,7 +8,7 @@
     'category': 'Manufacturing',
     'author': 'Sergio Corato',
     'website': 'https://github.com/sergiocorato/e-efatto',
-    'description': 'Save qty expected in extra field.',
+    'summary': 'Save qty expected in extra field.',
     'depends': [
         'mrp_production_demo',
     ],
