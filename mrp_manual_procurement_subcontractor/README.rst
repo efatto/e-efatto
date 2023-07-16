@@ -35,19 +35,17 @@ Alla creazione della produzione di un prodotto che ha queste caratteristiche non
 
 Vengono quindi resi visibili due bottoni, che permettono, in alternativa, di proseguire con la produzione o di fermare la produzione e avviare l'acquisto presso un subappaltatore a scelta.
 
-Il primo bottone permette di avviare normalmente gli approvvigionamenti della produzione:
+Il primo bottone permette di proseguire normalmente la produzione:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/avvia_approvvigionamenti.png
-    :alt: Avvia approvvigionamenti
-
-Questo bottone ritorna visibile nel caso vengano aggiunti dei componenti, che vengono considerati da approvvigionare invece che aggiunti alla produzione in corso.
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/prosegui_la_produzione.png
+    :alt: Prosegui la produzione
 
 Il secondo bottone permette di scegliere un subappaltatore a cui ordinare il prodotto, chiudendo contemporaneamente questa produzione:
 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/acquista_da_subappaltatore.png
     :alt: Acquista da subappaltatore
 
-Si apre quindi una procedura che permette di scegliere tra i possibili subappaltatori. Alla conferma, la presente produzione sarà chiusa e sarà generato un preventivo d'acquisto verso il subappaltatore selezionato.
+Si apre quindi una procedura che permette di scegliere tra i possibili subappaltatori. Alla conferma, la presente produzione sarà chiusa e sarà generato un ordine d'acquisto e una produzione verso il subappaltatore selezionato.
 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mrp_manual_procurement_subcontractor/static/description/scelta_subappaltatore.png
     :alt: Scelta subappaltatore
