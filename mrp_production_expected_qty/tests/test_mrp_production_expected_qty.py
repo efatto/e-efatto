@@ -32,7 +32,8 @@ class TestMrpProductionLotCustomAssign(TestProductionData):
             'product_qty': man_order.product_qty + 100,
         }).change_prod_qty()
         for move in man_order.move_raw_ids:
-            self.assertEqual(move.product_uom_qty, move.expected_product_uom_qty)
+            self.assertEqual(move.product_uom_qty,
+                             move.expected_product_uom_qty)
         man_order.action_assign()
         man_order.button_plan()
         # produce partially
