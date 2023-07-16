@@ -19,7 +19,7 @@ class MrpProductionProcureSubcontractor(models.TransientModel):
         active_id = self.env.context.get("active_id", False)
         mo = self.env["mrp.production"].browse(active_id)
         if mo.state == "done":
-            raise UserError(_("Stock move in state 'done' cannot be changed!"))
+            raise UserError(_("Production in state 'done' cannot be changed!"))
         if mo.product_id.bom_ids.filtered(lambda x: x.type == 'subcontract'):
             bom_id = mo.product_id.bom_ids.filtered(
                 lambda x: x.type == 'subcontract')[0]
@@ -37,7 +37,8 @@ class MrpProductionProcureSubcontractor(models.TransientModel):
         buy_route = self.env.ref("purchase_stock.route_warehouse0_buy")
         mo = self.env['mrp.production'].browse(self.env.context['active_id'])
         replenish_wizard = self.env['product.replenish'].with_context(
-            subcontractor_id=self.subcontractor_id
+            subcontractor_id=self.subcontractor_id,
+            origin=mo.name,
         ).create({
             'product_id': mo.product_id.id,
             'product_tmpl_id': mo.product_id.product_tmpl_id.id,
@@ -48,3 +49,36 @@ class MrpProductionProcureSubcontractor(models.TransientModel):
         })
         replenish_wizard.launch_replenishment()
         mo.action_cancel()
+        purchase_orders = self.env['purchase.order'].search([
+            ('order_line.product_id', '=', mo.product_id.id),
+            ('state', '=', 'draft'),
+        ])
+        if purchase_orders:
+            purchase_orders = purchase_orders.filtered(lambda x: mo.name in x.origin)
+            if len(purchase_orders) == 1:
+                purchase_order = purchase_orders[0]
+                purchase_order.button_confirm()
+                mo_ids = purchase_order.subcontract_production_ids
+                if len(mo_ids) == 1:
+                    return {
+                        'type': 'ir.actions.act_window',
+                        'name': 'Mrp production',
+                        'view_mode': 'form',
+                        'view_type': 'form',
+                        'res_id': mo_ids[0].id,
+                        'views': [(False, 'form')],
+                        'res_model': 'mrp.production',
+                    }
+                else:
+                    return {
+                        'type': 'ir.actions.act_window',
+                        'name': 'Mrp production',
+                        'domain': [('id', 'in', mo_ids.ids)],
+                        'view_mode': 'form',
+                        'view_type': 'tree',
+                        'views': [(False, 'tree')],
+                        'res_model': 'mrp.production',
+                    }
+            else:
+                raise UserError(_("Multiple purchase order found: %s")
+                                % ', '.join(purchase_orders.mapped('name')))

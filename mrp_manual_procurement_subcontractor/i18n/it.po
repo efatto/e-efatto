@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-05 13:08+0000\n"
-"PO-Revision-Date: 2023-07-05 13:08+0000\n"
+"POT-Creation-Date: 2023-07-16 15:04+0000\n"
+"PO-Revision-Date: 2023-07-16 15:04+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -51,9 +51,9 @@ msgid "ID"
 msgstr ""
 
 #. module: mrp_manual_procurement_subcontractor
-#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production__is_stopped
-msgid "Is Stopped"
-msgstr "È sospesa"
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production__is_subcontractable
+msgid "Is Subcontractable"
+msgstr "È subappaltabile"
 
 #. module: mrp_manual_procurement_subcontractor
 #: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production_procure_subcontractor____last_update
@@ -69,6 +69,18 @@ msgstr "Ultima modifica di"
 #: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production_procure_subcontractor__write_date
 msgid "Last Updated on"
 msgstr "Ultima modifica il"
+
+#. module: mrp_manual_procurement_subcontractor
+#: code:addons/mrp_manual_procurement_subcontractor/wizard/mrp_production_procure_subcontractor.py:83
+#, python-format
+msgid "Multiple purchase order found: %s"
+msgstr "Trovati più ordini di acquisto: %s"
+
+#. module: mrp_manual_procurement_subcontractor
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production__proceed_to_production
+#: model_terms:ir.ui.view,arch_db:mrp_manual_procurement_subcontractor.mrp_production_form_view
+msgid "Proceed To Production"
+msgstr "Prosegui con la produzione"
 
 #. module: mrp_manual_procurement_subcontractor
 #: model_terms:ir.ui.view,arch_db:mrp_manual_procurement_subcontractor.mrp_production_form_view
@@ -88,6 +100,11 @@ msgid "Procurement Group"
 msgstr "Gruppo di Approvvigionamento"
 
 #. module: mrp_manual_procurement_subcontractor
+#: model:ir.model,name:mrp_manual_procurement_subcontractor.model_product_replenish
+msgid "Product Replenish"
+msgstr "Rifornimento del prodotto"
+
+#. module: mrp_manual_procurement_subcontractor
 #: model:ir.model,name:mrp_manual_procurement_subcontractor.model_mrp_production
 msgid "Production Order"
 msgstr "Ordine di Produzione"
@@ -105,14 +122,15 @@ msgid "Production cannot be set without subcontractors!"
 msgstr "La produzione non può essere impostata senza subappaltatori!"
 
 #. module: mrp_manual_procurement_subcontractor
+#: code:addons/mrp_manual_procurement_subcontractor/wizard/mrp_production_procure_subcontractor.py:22
+#, python-format
+msgid "Production in state 'done' cannot be changed!"
+msgstr "La produzione in stato 'completato' non può essere cambiata!"
+
+#. module: mrp_manual_procurement_subcontractor
 #: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production_procure_subcontractor__route_id
 msgid "Route"
 msgstr "Rotta"
-
-#. module: mrp_manual_procurement_subcontractor
-#: model_terms:ir.ui.view,arch_db:mrp_manual_procurement_subcontractor.mrp_production_form_view
-msgid "Start Procurement"
-msgstr "Avvia approvvigionamenti"
 
 #. module: mrp_manual_procurement_subcontractor
 #: model:ir.model,name:mrp_manual_procurement_subcontractor.model_stock_move
@@ -123,12 +141,6 @@ msgstr "Movimento di magazzino"
 #: model:ir.model,name:mrp_manual_procurement_subcontractor.model_stock_rule
 msgid "Stock Rule"
 msgstr "Regola di Magazzino"
-
-#. module: mrp_manual_procurement_subcontractor
-#: code:addons/mrp_manual_procurement_subcontractor/wizard/mrp_production_procure_subcontractor.py:22
-#, python-format
-msgid "Stock move in state 'done' cannot be changed!"
-msgstr "Movimenti di magazzino in stato 'completato' non possono essere modificati!"
 
 #. module: mrp_manual_procurement_subcontractor
 #: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production_procure_subcontractor__subcontractor_id
