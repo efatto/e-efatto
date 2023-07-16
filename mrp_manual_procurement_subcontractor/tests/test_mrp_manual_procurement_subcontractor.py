@@ -121,15 +121,15 @@ class TestMrpProductionManualProcurement(TestProductionData):
         procure_form.subcontractor_id = self.subcontractor_partner2
         wizard = procure_form.save()
         wizard.action_done()
-        to_confirm_po_ids = self.env['purchase.order'].search([
+        new_po_ids = self.env['purchase.order'].search([
             ('order_line.product_id', 'in', self.top_product.ids),
         ])
-        self.assertEqual(len(to_confirm_po_ids), 1)
+        self.assertEqual(len(new_po_ids), 1)
         # check vendor is equal to selected subcontractor
-        self.assertEqual(to_confirm_po_ids.partner_id, self.subcontractor_partner2)
-        self.assertEqual(len(to_confirm_po_ids.mapped('order_line')), 1)
-        to_confirm_po_ids.button_confirm()
-        self.assertEqual(to_confirm_po_ids.state, 'purchase')
+        self.assertEqual(new_po_ids.partner_id, self.subcontractor_partner2)
+        self.assertEqual(len(new_po_ids.mapped('order_line')), 1)
+        self.assertEqual(new_po_ids.state, 'purchase')
+        self.assertTrue(new_po_ids.subcontract_production_ids)
 
     def test_02_normal_mo_from_sale_with_mto(self):
         product_qty = 3
@@ -156,10 +156,10 @@ class TestMrpProductionManualProcurement(TestProductionData):
         # for top product
         with mute_logger('odoo.addons.stock.models.procurement'):
             self.procurement_model.run_scheduler()
-        to_confirm_po_ids = self.env['purchase.order'].search([
+        new_po_ids = self.env['purchase.order'].search([
             ('order_line.product_id', 'in', self.top_product.ids),
         ])
-        self.assertFalse(to_confirm_po_ids)
+        self.assertFalse(new_po_ids)
 
     def test_03_mo_from_sale_with_subcontracting_and_orderpoint(self):
         # remove mto route from top product and create an orderpoint
@@ -203,16 +203,16 @@ class TestMrpProductionManualProcurement(TestProductionData):
         procure_form.subcontractor_id = self.subcontractor_partner2
         wizard = procure_form.save()
         wizard.action_done()
-        to_confirm_po_ids = self.env['purchase.order'].search([
+        new_po_ids = self.env['purchase.order'].search([
             ('order_line.product_id', 'in', self.top_product.ids),
         ])
-        self.assertEqual(len(to_confirm_po_ids), 1)
+        self.assertEqual(len(new_po_ids), 1)
         # check vendor is equal to selected subcontractor
-        self.assertEqual(to_confirm_po_ids.partner_id,
+        self.assertEqual(new_po_ids.partner_id,
                          self.subcontractor_partner2)
-        self.assertEqual(len(to_confirm_po_ids.mapped('order_line')), 1)
-        to_confirm_po_ids.button_confirm()
-        self.assertEqual(to_confirm_po_ids.state, 'purchase')
+        self.assertEqual(len(new_po_ids.mapped('order_line')), 1)
+        self.assertEqual(new_po_ids.state, 'purchase')
+        self.assertTrue(new_po_ids.subcontract_production_ids)
 
     def test_04_normal_mo_from_sale_with_orderpoint(self):
         # remove mto route from top product and create an orderpoint
@@ -250,7 +250,7 @@ class TestMrpProductionManualProcurement(TestProductionData):
         # for top product
         with mute_logger('odoo.addons.stock.models.procurement'):
             self.procurement_model.run_scheduler()
-        to_confirm_po_ids = self.env['purchase.order'].search([
+        new_po_ids = self.env['purchase.order'].search([
             ('order_line.product_id', 'in', self.top_product.ids),
         ])
-        self.assertFalse(to_confirm_po_ids)
+        self.assertFalse(new_po_ids)
