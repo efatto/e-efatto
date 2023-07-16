@@ -8,7 +8,8 @@ class MrpProduction(models.Model):
         compute='_compute_is_subcontractable',
         store=True,
         copy=False)
-    proceed_to_production = fields.Boolean()
+    proceed_to_production = fields.Boolean(
+        copy=False)
 
     @api.multi
     @api.depends('move_raw_ids.state', 'product_id.route_ids', 'state',
