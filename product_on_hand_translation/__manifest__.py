@@ -3,7 +3,7 @@
 {
     "name": "Product on hand translation",
     "summary": "Set Product Name on hand translation",
-    "version": "12.0.1.0.0",
+    "version": "14.0.1.0.0",
     "license": "AGPL-3",
     "author": "Sergio Corato",
     "category": "Product",
