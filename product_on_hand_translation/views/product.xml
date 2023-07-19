@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- pylint:disable=dangerous-view-replace-wo-priority -->
+<odoo>
+
+    <record model="ir.ui.view" id="product_form_view_procurement_button">
+        <field name="name">product.product.procurement</field>
+        <field name="model">product.product</field>
+        <field name="groups_id" eval="[(4, ref('stock.group_stock_user'))]" />
+        <field name="inherit_id" ref="stock.product_form_view_procurement_button" />
+        <field name="arch" type="xml">
+            <xpath
+        expr="//button[@name='action_open_quants']/div/span[hasclass('o_stat_text')]"
+        position="replace"
+      >
+                <span class="o_stat_text">Q.ty On Hand</span>
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="product_template_form_view_procurement_button">
+        <field name="name">product.template_procurement</field>
+        <field name="model">product.template</field>
+        <field name="groups_id" eval="[(4, ref('stock.group_stock_user'))]" />
+        <field
+      name="inherit_id"
+      ref="stock.product_template_form_view_procurement_button"
+    />
+        <field name="arch" type="xml">
+            <xpath
+        expr="//button[@name='action_open_quants']/div/span[hasclass('o_stat_text')]"
+        position="replace"
+      >
+                <span class="o_stat_text">Q.ty On Hand</span>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
