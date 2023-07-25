@@ -44,7 +44,8 @@ class MrpWorkorder(models.Model):
         activity_ids = workorder.activity_ids.filtered(
             lambda x: x.is_resource_planner
         )
-        if not activity_ids:
+        if not activity_ids and vals_list.get("user_id", False):
+            # create only when a user directly create workorder
             self.env['mail.activity'].create_planner_activity(
                 workorder,
                 workorder.workcenter_id.user_id or
