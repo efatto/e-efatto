@@ -29,7 +29,7 @@ This module extends mail activity to create an automated planner for resources.
 Configuration
 =============
 
-Questo modulo crea in automatico un'attività per ogni lavoro di progetto e operazione di produzione, distinta dalle altre attività tramite un flag apposito inserito nel tipo di attività:
+Questo modulo crea in automatico un'attività per ogni lavoro di progetto creato direttamente dall'utente (quindi sono esclusi quelli creati manualmente) e operazione di produzione (sempre), distinta dalle altre attività tramite un flag apposito inserito nel tipo di attività:
 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mail_activity_timeline/static/description/abilita.png
     :alt: Abilita
