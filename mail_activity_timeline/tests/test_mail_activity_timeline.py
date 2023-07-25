@@ -30,7 +30,13 @@ class TestMrpWorkorderTime(TestProductionData):
                 'mail_activity_timeline.mail_activity_type_workorder'
             )
         )
-        self.assertTrue(activities)
+        self.assertFalse(activities)
+        workorder = man_order.workorder_ids[0]
+        activities = self.env['mail.activity'].create_planner_activity(
+            workorder,
+            workorder.workcenter_id.user_id or
+            workorder.user_id or
+            workorder.production_id.user_id)
         self.assertEqual(len(activities), 1)
         activity = activities[0]
         self.assertEqual(activity.date_start, date_start)
