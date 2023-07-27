@@ -32,3 +32,13 @@ Dopo aver selezionato un'attività, è disponibile un tasto info su cui è suffi
 
 .. image:: ../static/description/info_attivita.png
     :alt: Info attività
+
+Nella produzione è disponibile una scheda in cui sono visibili le attività collegate agli ordini di lavoro:
+
+.. image:: ../static/description/abilita.png
+    :alt: Abilita
+
+Inoltre è possibile aprire direttamente la vista delle attività (non filtrate per la produzione attiva):
+
+.. image:: ../static/description/apri_pianificatore.png
+    :alt: Apri pianificatore
