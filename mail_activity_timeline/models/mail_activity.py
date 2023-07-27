@@ -25,6 +25,7 @@ class MailActivity(models.Model):
         index=True,
     )
     workcenter_id = fields.Many2one(
+        string="Work Center",
         comodel_name='mrp.workcenter',
         index=True,
     )

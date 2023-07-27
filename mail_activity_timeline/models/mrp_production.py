@@ -8,7 +8,7 @@ class MrpProduction(models.Model):
 
     color = fields.Char()
     workorders_activity_ids = fields.Many2many(
-        string="Work Order Activities",
+        string="Work Orders Activities",
         comodel_name='mail.activity',
         compute="_compute_workorders_activity_ids",
         store=True,

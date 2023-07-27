@@ -5,6 +5,7 @@ class ProjectTask(models.Model):
     _inherit = 'project.task'
 
     workcenter_id = fields.Many2one(
+        string="Work Center",
         comodel_name='mrp.workcenter',
         index=True,
     )
