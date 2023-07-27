@@ -9,9 +9,13 @@ class MrpProduction(models.Model):
     color = fields.Char()
     workorders_activity_ids = fields.Many2many(
         string="Work Orders Activities",
+        relation='mail_activity_mrp_production_rel',
         comodel_name='mail.activity',
+        column1='mrp_production_id',
+        column2='mail_activity_id',
         compute="_compute_workorders_activity_ids",
         store=True,
+        context={'active_test': False}
     )
 
     @api.multi
