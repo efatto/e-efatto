@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-27 09:00+0000\n"
-"PO-Revision-Date: 2023-04-27 09:00+0000\n"
+"POT-Creation-Date: 2023-07-26 07:23+0000\n"
+"PO-Revision-Date: 2023-07-26 07:23+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -23,6 +23,11 @@ msgstr "<strong attrs=\"{'invisible': [('activity_date_end', '=', False)]}\" cla
 "                        <strong class=\"oe_edit_only mr8\" attrs=\"{'invisible': [('activity_date_end', '!=', False)]}\">a</strong>"
 
 #. module: mail_activity_timeline
+#: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mail_activity_view_form_popup_timeline
+msgid "<strong>Recommended Activities</strong>"
+msgstr "<strong>Attività raccomandate</strong>"
+
+#. module: mail_activity_timeline
 #: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__active
 msgid "Active"
 msgstr "Attivo"
@@ -30,6 +35,7 @@ msgstr "Attivo"
 #. module: mail_activity_timeline
 #: model:ir.model,name:mail_activity_timeline.model_mail_activity
 #: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mail_activity_view_calendar_list
+#: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mail_activity_view_form_popup_timeline
 msgid "Activity"
 msgstr "Attività"
 
@@ -74,9 +80,31 @@ msgid "Another planner activity type exists for the linked res model."
 msgstr "Esiste già un tipo di attività di pianificazione risorse per l'oggetto collegato."
 
 #. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mrp_workcenter__user_id
 #: model:ir.model.fields,field_description:mail_activity_timeline.field_mrp_workorder__user_id
 msgid "Assigned user"
 msgstr "Utente assegnato"
+
+#. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mrp_production__color
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mrp_workorder__color
+msgid "Color"
+msgstr "Colore"
+
+#. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__color_active
+msgid "Color Active"
+msgstr "Colore attivo"
+
+#. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_project_task__color
+msgid "Color Index"
+msgstr "Indice Colore"
+
+#. module: mail_activity_timeline
+#: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mrp_production_form_view
+msgid "Create activities in production workorders to view something here."
+msgstr "Crea attività negli ordini di lavoro della produzione per vedere qualcosa qui."
 
 #. module: mail_activity_timeline
 #: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__date_end
@@ -89,9 +117,14 @@ msgid "Date Start"
 msgstr "Data iniziale"
 
 #. module: mail_activity_timeline
-#: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mail_activity_view_form_popup
+#: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mail_activity_view_form_popup_timeline
 msgid "Duplicate"
 msgstr "Duplica"
+
+#. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__info
+msgid "Info"
+msgstr ""
 
 #. module: mail_activity_timeline
 #: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__is_resource_planner
@@ -100,14 +133,39 @@ msgid "Is Resource Planner"
 msgstr "Abilitato alla Pianificazione Risorse"
 
 #. module: mail_activity_timeline
+#: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mail_activity_view_form_popup_timeline
+msgid "Log a note..."
+msgstr "Registra una nota..."
+
+#. module: mail_activity_timeline
+#: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mail_activity_view_form_popup_timeline
+msgid "Log an Activity"
+msgstr "Registra un'attività"
+
+#. module: mail_activity_timeline
+#: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mail_activity_view_form_popup_timeline
+msgid "Mark as done"
+msgstr "Imposta eseguito"
+
+#. module: mail_activity_timeline
 #: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mrp_production_form_view
 msgid "Open Planner"
 msgstr "Apri pianificatore"
 
 #. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__origin_res_id
+msgid "Origin Res"
+msgstr ""
+
+#. module: mail_activity_timeline
 #: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__parent_id
 msgid "Parent Activity"
 msgstr "Attività Padre"
+
+#. module: mail_activity_timeline
+#: model:ir.model,name:mail_activity_timeline.model_mrp_production
+msgid "Production Order"
+msgstr "Ordine di Produzione"
 
 #. module: mail_activity_timeline
 #: model:ir.ui.menu,name:mail_activity_timeline.mail_menu_planner
@@ -120,7 +178,7 @@ msgid "Resource Planner Activities"
 msgstr "Pianificatore Attività"
 
 #. module: mail_activity_timeline
-#: code:addons/mail_activity_timeline/models/mail_activity.py:31
+#: code:addons/mail_activity_timeline/models/mail_activity.py:56
 #, python-format
 msgid "Schedule duplicated Activity"
 msgstr "Pianifica attività duplicata"
@@ -136,7 +194,33 @@ msgid "Task"
 msgstr "Lavoro"
 
 #. module: mail_activity_timeline
+#: model:ir.model,name:mail_activity_timeline.model_mrp_workcenter
+msgid "Work Center"
+msgstr "Centro di Lavoro"
+
+#. module: mail_activity_timeline
 #: model:ir.model,name:mail_activity_timeline.model_mrp_workorder
 msgid "Work Order"
 msgstr "Ordine di Lavoro"
+
+#. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__workcenter_id
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_project_task__workcenter_id
+msgid "Workcenter"
+msgstr "Centro di Lavoro"
+
+#. module: mail_activity_timeline
+#: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mrp_production_form_view
+msgid "Workorders Activities"
+msgstr ""
+
+#. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mrp_production__workorders_activity_ids
+msgid "Workorders Activity"
+msgstr ""
+
+#. module: mail_activity_timeline
+#: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mail_activity_view_form_popup_timeline
+msgid "e.g. Discuss proposal"
+msgstr "es. Discussione proposta"
 
