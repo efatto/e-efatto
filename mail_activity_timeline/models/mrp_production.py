@@ -7,6 +7,24 @@ class MrpProduction(models.Model):
     _inherit = 'mrp.production'
 
     color = fields.Char()
+    workorders_activity_ids = fields.Many2many(
+        string="Work Order Activities",
+        comodel_name='mail.activity',
+        compute="_compute_workorders_activity_ids",
+        store=True,
+    )
+
+    @api.multi
+    @api.depends('workorder_ids.activity_ids')
+    def _compute_workorders_activity_ids(self):
+        for production in self:
+            production.workorders_activity_ids = (
+                self.env['mail.activity']
+                .with_context(active_test=False)
+                .search([
+                    ('res_model', '=', 'mrp.workorder'),
+                    ('res_id', 'in', production.workorder_ids.ids)])
+            )
 
     @api.multi
     def write(self, values):

@@ -18,6 +18,26 @@
             <field name="user_id" position="after">
                 <field name="color" widget="color"/>
             </field>
+            <xpath expr="//notebook" position="inside">
+                <page string="Work Orders Activities">
+                    <field name="workorders_activity_ids" attrs="{'readonly': True, 'invisible': [('workorders_activity_ids', '=', [])]}">
+                         <tree default_order="date_start" create="0" delete="0">
+                            <field name="activity_type_id" />
+                            <field name="summary" />
+                            <field name="parent_id" />
+                            <field name="workcenter_id"/>
+                            <field name="user_id"/>
+                            <field name="date_deadline"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="color_active" widget="color"/>
+                        </tree>
+                    </field>
+                    <p attrs="{'invisible': [('workorders_activity_ids', '!=', [])]}">
+                        Create activities in production work orders to view something here.
+                    </p>
+                </page>
+            </xpath>
         </field>
     </record>
 
