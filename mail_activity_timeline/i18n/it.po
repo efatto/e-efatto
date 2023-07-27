@@ -206,8 +206,6 @@ msgid "Work Order"
 msgstr "Ordine di Lavoro"
 
 #. module: mail_activity_timeline
-
-#. module: mail_activity_timeline
 #: model:ir.model.fields,field_description:mail_activity_timeline.field_mrp_production__workorders_activity_ids
 #: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mrp_production_form_view
 msgid "Work Orders Activities"
