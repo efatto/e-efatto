@@ -66,8 +66,8 @@ Dopo aver selezionato un'attività, è disponibile un tasto info su cui è suffi
 
 Nella produzione è disponibile una scheda in cui sono visibili le attività collegate agli ordini di lavoro:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mail_activity_timeline/static/description/abilita.png
-    :alt: Abilita
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/mail_activity_timeline/static/description/tab_attivita.png
+    :alt: Scheda attività
 
 Inoltre è possibile aprire direttamente la vista delle attività (non filtrate per la produzione attiva):
 
