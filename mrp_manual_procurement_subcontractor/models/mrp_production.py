@@ -17,15 +17,16 @@ class MrpProduction(models.Model):
                  'purchase_order_id')
     def _compute_is_subcontractable(self):
         # stop procurement for all production order which product has a
-        # purchase route and a subcontractor
+        # purchase route and at least 2 subcontractor
         buy_route = self.env.ref("purchase_stock.route_warehouse0_buy")
         for production in self:
             # produce route is obviously already present
             is_subcontractable = bool(
-                any(
-                    x.is_subcontractor for x in
-                    production.mapped("product_id.seller_ids")
-                )
+                len(
+                    production.mapped("product_id.seller_ids").filtered(
+                        lambda x: x.is_subcontractor
+                    )
+                ) >= 2
                 and buy_route in production.product_id.route_ids
                 and not production.purchase_order_id
                 and not production.proceed_to_production
