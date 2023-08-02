@@ -59,7 +59,7 @@ class TestMrpProductionManualProcurement(TestProductionData):
             'purchase_ok': True,
             'route_ids': [
                 (4, cls.env.ref('purchase_stock.route_warehouse0_buy').id),
-                (4, cls.resupply_sub_on_order_route.id),
+                # (4, cls.resupply_sub_on_order_route.id),
                 # (3, cls.env.ref('stock.route_warehouse0_mto').id),
             ],
             'seller_ids': [(6, 0, [supplierinfo_1.id, supplierinfo_2.id])],
@@ -94,6 +94,7 @@ class TestMrpProductionManualProcurement(TestProductionData):
         self.assertTrue(
             self.top_product.mapped('seller_ids.is_subcontractor')
         )
+        self.assertEqual(len(self.top_product.bom_ids), 2)
         sale_order = self.env['sale.order'].create({
             'partner_id': self.partner_1.id,
         })
