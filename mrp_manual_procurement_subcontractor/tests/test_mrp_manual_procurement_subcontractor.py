@@ -54,15 +54,47 @@ class TestMrpProductionManualProcurement(TestProductionData):
         supplierinfo_2 = cls.env['product.supplierinfo'].create({
             'name': cls.subcontractor_partner2.id,
         })
+        cls.subcontractor_partner3 = cls.env['res.partner'].create({
+            'name': 'Subcontractor 3',
+        })
+        cls.subcontractor_partner3.property_stock_subcontractor = (
+            cls.partner_subcontract_location.id)
+        supplierinfo_3 = cls.env['product.supplierinfo'].create({
+            'name': cls.subcontractor_partner3.id,
+        })
         # ADD to top_product buy and (resupply route is necessary?)
         cls.top_product.write({
             'purchase_ok': True,
             'route_ids': [
                 (4, cls.env.ref('purchase_stock.route_warehouse0_buy').id),
-                # (4, cls.resupply_sub_on_order_route.id),
-                # (3, cls.env.ref('stock.route_warehouse0_mto').id),
             ],
             'seller_ids': [(6, 0, [supplierinfo_1.id, supplierinfo_2.id])],
+        })
+        cls.subproduct3 = cls.env['product.product'].create({
+            'name': 'Subcontracted component',
+            'route_ids': [
+                (6, 0, [
+                    cls.env.ref('purchase_stock.route_warehouse0_buy').id,
+                    cls.env.ref('stock.route_warehouse0_mto').id,
+                    cls.resupply_sub_on_order_route.id,
+                ])
+            ],
+            'seller_ids': [(6, 0, [supplierinfo_3.id])],
+        })
+        cls.sub_bom3 = cls.env['mrp.bom'].create({
+            'product_tmpl_id': cls.subproduct3.product_tmpl_id.id,
+            'type': 'subcontract',
+            'subcontractor_ids': [
+                (6, 0, [
+                    cls.subcontractor_partner3.id,
+                ])
+            ],
+            'bom_line_ids': [
+                (0, 0, {
+                    'product_id': cls.subproduct_1_1.id,
+                    'product_qty': 5,
+                })
+            ]
         })
         cls.main_bom_subcontracted = cls.main_bom.copy(
             default={
@@ -75,6 +107,14 @@ class TestMrpProductionManualProcurement(TestProductionData):
                 ],
             }
         )
+        cls.main_bom_subcontracted.write({
+            'bom_line_ids': [
+                (0, 0, {
+                    'product_id': cls.subproduct3.id,
+                    'product_qty': 2,
+                })
+            ]
+        })
 
     def _create_sale_order_line(self, order, product, qty):
         vals = {
@@ -93,6 +133,9 @@ class TestMrpProductionManualProcurement(TestProductionData):
     def test_01_mo_from_sale_with_subcontracting_and_mto(self):
         self.assertTrue(
             self.top_product.mapped('seller_ids.is_subcontractor')
+        )
+        self.assertTrue(
+            self.subproduct3.mapped('seller_ids.is_subcontractor')
         )
         self.assertEqual(len(self.top_product.bom_ids), 2)
         sale_order = self.env['sale.order'].create({
@@ -131,6 +174,12 @@ class TestMrpProductionManualProcurement(TestProductionData):
         self.assertEqual(len(new_po_ids.mapped('order_line')), 1)
         self.assertEqual(new_po_ids.state, 'purchase')
         self.assertTrue(new_po_ids.subcontract_production_ids)
+        subproduct3_po_ids = self.env['purchase.order'].search([
+            ('order_line.product_id', 'in', self.subproduct3.ids),
+        ])
+        self.assertEqual(len(subproduct3_po_ids), 1)
+        self.assertEqual(subproduct3_po_ids.state, 'purchase')
+        self.assertEqual(subproduct3_po_ids.origin, self.production.name)
 
     def test_02_normal_mo_from_sale_with_mto(self):
         product_qty = 3
@@ -161,21 +210,29 @@ class TestMrpProductionManualProcurement(TestProductionData):
             ('order_line.product_id', 'in', self.top_product.ids),
         ])
         self.assertFalse(new_po_ids)
+        subproduct3_po_ids = self.env['purchase.order'].search([
+            ('order_line.product_id', 'in', self.subproduct3.ids),
+        ])
+        self.assertEqual(len(subproduct3_po_ids), 1)
+        self.assertEqual(subproduct3_po_ids.state, 'purchase')
+        self.assertEqual(subproduct3_po_ids.origin, self.production.name)
+
+    def _remove_mto_and_create_orderpoint(self):
+        for product in [self.top_product, self.subproduct3]:
+            product.write({
+                'route_ids': [
+                    (3, self.env.ref('stock.route_warehouse0_mto').id),
+                ],
+            })
+            self.env['stock.warehouse.orderpoint'].create({
+                'name': 'OP%s' % product.name,
+                'product_id': product.id,
+                'product_min_qty': 0,
+                'product_max_qty': 0,
+            })
 
     def test_03_mo_from_sale_with_subcontracting_and_orderpoint(self):
-        # remove mto route from top product and create an orderpoint
-        self.top_product.write({
-            'route_ids': [
-                (3, self.env.ref('stock.route_warehouse0_mto').id),
-            ],
-        })
-        self.env['stock.warehouse.orderpoint'].create({
-            'name': 'OPx',
-            'product_id': self.top_product.id,
-            'product_min_qty': 0,
-            'product_max_qty': 0,
-        })
-        # do test
+        self._remove_mto_and_create_orderpoint()
         sale_order = self.env['sale.order'].create({
             'partner_id': self.partner_1.id,
         })
@@ -186,7 +243,8 @@ class TestMrpProductionManualProcurement(TestProductionData):
         with mute_logger('odoo.addons.stock.models.procurement'):
             self.procurement_model.run_scheduler()
         self.production = self.env['mrp.production'].search(
-            [('product_id', '=', self.top_product.id)])
+            [('product_id', '=', self.top_product.id),
+             ('state', '!=', 'cancel')])
         self.assertTrue(self.production)
         self.assertTrue(self.production.is_subcontractable)
         po_ids = self.env['purchase.order'].search([
@@ -214,20 +272,19 @@ class TestMrpProductionManualProcurement(TestProductionData):
         self.assertEqual(len(new_po_ids.mapped('order_line')), 1)
         self.assertEqual(new_po_ids.state, 'purchase')
         self.assertTrue(new_po_ids.subcontract_production_ids)
+        with mute_logger('odoo.addons.stock.models.procurement'):
+            self.procurement_model.run_scheduler()
+        # check purchase order for manufactured product is in purchase state
+        subproduct3_po_ids = self.env['purchase.order'].search([
+            ('order_line.product_id', 'in', self.subproduct3.ids),
+        ])
+        self.assertEqual(len(subproduct3_po_ids), 1)
+        self.assertEqual(subproduct3_po_ids.state, 'purchase')
+        self.assertEqual(subproduct3_po_ids.origin,
+                         self.subproduct3.orderpoint_ids.name)
 
     def test_04_normal_mo_from_sale_with_orderpoint(self):
-        # remove mto route from top product and create an orderpoint
-        self.top_product.write({
-            'route_ids': [
-                (3, self.env.ref('stock.route_warehouse0_mto').id),
-            ],
-        })
-        self.env['stock.warehouse.orderpoint'].create({
-            'name': 'OPx',
-            'product_id': self.top_product.id,
-            'product_min_qty': 0,
-            'product_max_qty': 0,
-        })
+        self._remove_mto_and_create_orderpoint()
         sale_order = self.env['sale.order'].create({
             'partner_id': self.partner_1.id,
         })
@@ -255,3 +312,13 @@ class TestMrpProductionManualProcurement(TestProductionData):
             ('order_line.product_id', 'in', self.top_product.ids),
         ])
         self.assertFalse(new_po_ids)
+        with mute_logger('odoo.addons.stock.models.procurement'):
+            self.procurement_model.run_scheduler()
+        # check purchase order for manufactured product is in purchase state
+        subproduct3_po_ids = self.env['purchase.order'].search([
+            ('order_line.product_id', 'in', self.subproduct3.ids),
+        ])
+        self.assertEqual(len(subproduct3_po_ids), 1)
+        self.assertEqual(subproduct3_po_ids.state, 'purchase')
+        self.assertEqual(subproduct3_po_ids.origin,
+                         self.subproduct3.orderpoint_ids.name)
