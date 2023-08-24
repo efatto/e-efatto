@@ -48,7 +48,7 @@ class PurchaseOrderLine(models.Model):
             return
         super()._onchange_quantity()
         params = {'order_id': self.order_id}
-        if self.product_id.compute_price_on_weight:
+        if self.product_id.compute_price_on_weight and self.product_id.weight:
             seller = self.product_id._select_seller(
                 partner_id=self.partner_id,
                 quantity=self.product_qty,
