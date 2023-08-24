@@ -2,8 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     'name': 'MRP Manual Procurement Subcontractor',
-    'version': '12.0.1.0.0',
-    'development_status': 'Beta',
+    'version': '12.0.1.0.1',
     'license': 'AGPL-3',
     'category': 'Manufacturing',
     'author': 'Sergio Corato',
