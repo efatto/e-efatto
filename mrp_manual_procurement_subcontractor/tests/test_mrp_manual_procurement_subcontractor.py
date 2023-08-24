@@ -10,6 +10,7 @@ class TestMrpProductionManualProcurement(TestProductionData):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
         cls.warehouse = cls.env['stock.warehouse'].search([], limit=1)
         cls.resupply_sub_on_order_route = cls.env['stock.location.route'].search([
             ('name', '=', 'Resupply Subcontractor on Order')])
@@ -175,7 +176,7 @@ class TestMrpProductionManualProcurement(TestProductionData):
         self.assertEqual(new_po_ids.state, 'purchase')
         self.assertTrue(new_po_ids.subcontract_production_ids)
         subproduct3_po_ids = self.env['purchase.order'].search([
-            ('order_line.product_id', 'in', self.subproduct3.ids),
+            ('order_line.product_id', '=', self.subproduct3.id),
         ])
         self.assertEqual(len(subproduct3_po_ids), 1)
         self.assertEqual(subproduct3_po_ids.state, 'purchase')

@@ -8,7 +8,8 @@ from odoo.tools.misc import clean_context
 class ProductReplenish(models.TransientModel):
     _inherit = 'product.replenish'
 
-    def launch_replenishment(self):
+    def launch_replenishment_with_origin(self):
+        # replace method to set origin from context
         uom_reference = self.product_id.uom_id
         self.quantity = self.product_uom_id._compute_quantity(
             self.quantity, uom_reference)

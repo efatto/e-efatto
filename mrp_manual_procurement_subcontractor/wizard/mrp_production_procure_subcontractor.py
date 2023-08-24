@@ -47,7 +47,7 @@ class MrpProductionProcureSubcontractor(models.TransientModel):
             'warehouse_id': mo.picking_type_id.warehouse_id.id,
             'route_ids': [(6, 0, buy_route.ids)]
         })
-        replenish_wizard.launch_replenishment()
+        replenish_wizard.launch_replenishment_with_origin()
         mo.action_cancel()
         purchase_orders = self.env['purchase.order'].search([
             ('order_line.product_id', '=', mo.product_id.id),
