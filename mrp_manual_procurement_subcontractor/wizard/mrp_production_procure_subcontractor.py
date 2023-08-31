@@ -51,7 +51,7 @@ class MrpProductionProcureSubcontractor(models.TransientModel):
         mo.action_cancel()
         purchase_orders = self.env['purchase.order'].search([
             ('order_line.product_id', '=', mo.product_id.id),
-            ('state', '=', 'draft'),
+            ('state', '=', 'purchase'),
         ])
         if purchase_orders:
             purchase_orders = purchase_orders.filtered(lambda x: mo.name in x.origin)
