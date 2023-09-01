@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-16 15:04+0000\n"
-"PO-Revision-Date: 2023-07-16 15:04+0000\n"
+"POT-Creation-Date: 2023-09-01 07:34+0000\n"
+"PO-Revision-Date: 2023-09-01 07:34+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -34,6 +34,11 @@ msgstr "Creato da"
 #: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production_procure_subcontractor__create_date
 msgid "Created on"
 msgstr "Creato il"
+
+#. module: mrp_manual_procurement_subcontractor
+#: model_terms:ir.ui.view,arch_db:mrp_manual_procurement_subcontractor.purchase_order_form
+msgid "Deliver"
+msgstr "Spedizione"
 
 #. module: mrp_manual_procurement_subcontractor
 #: model_terms:ir.ui.view,arch_db:mrp_manual_procurement_subcontractor.mrp_production_procure_subcontractor
@@ -75,6 +80,11 @@ msgstr "Ultima modifica il"
 #, python-format
 msgid "Multiple purchase order found: %s"
 msgstr "Trovati più ordini di acquisto: %s"
+
+#. module: mrp_manual_procurement_subcontractor
+#: model_terms:ir.ui.view,arch_db:mrp_manual_procurement_subcontractor.purchase_order_form
+msgid "Outgoing Shipments"
+msgstr "Spedizioni"
 
 #. module: mrp_manual_procurement_subcontractor
 #: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production__proceed_to_production
@@ -128,6 +138,11 @@ msgid "Production in state 'done' cannot be changed!"
 msgstr "La produzione in stato 'completato' non può essere cambiata!"
 
 #. module: mrp_manual_procurement_subcontractor
+#: model:ir.model,name:mrp_manual_procurement_subcontractor.model_purchase_order
+msgid "Purchase Order"
+msgstr "Ordine di Acquisto"
+
+#. module: mrp_manual_procurement_subcontractor
 #: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production_procure_subcontractor__route_id
 msgid "Route"
 msgstr "Rotta"
@@ -141,6 +156,16 @@ msgstr "Movimento di magazzino"
 #: model:ir.model,name:mrp_manual_procurement_subcontractor.model_stock_rule
 msgid "Stock Rule"
 msgstr "Regola di Magazzino"
+
+#. module: mrp_manual_procurement_subcontractor
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_purchase_order__subcontract_production_picking_ids
+msgid "Subcontract pickings"
+msgstr "Trasferimenti subappaltore"
+
+#. module: mrp_manual_procurement_subcontractor
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_purchase_order__subcontract_production_picking_count
+msgid "Subcontract pickings count"
+msgstr "Conteggio trasferimenti subappaltatore"
 
 #. module: mrp_manual_procurement_subcontractor
 #: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production_procure_subcontractor__subcontractor_id
