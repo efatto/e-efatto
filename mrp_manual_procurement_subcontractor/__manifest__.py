@@ -32,9 +32,7 @@
         # mrp_production_component_delete
         # mrp_production_deviation
         # mrp_production_expected_qty
-        # mrp_production_line_group
         # mrp_production_lot_custom_assign
-        # mrp_production_manual_procurement
         # mrp_production_procurement_analytic
         # mrp_production_workorder_fix
         # mrp_workcenter_capacity
@@ -43,7 +41,6 @@
         # procurement_purchase_analytic_grouping
         # purchase_order_approved_vendor
         # purchase_product_weight
-        # purchase_requisition_grouping
         # purchase_sale_mrp_link
         # purchase_sale_mrp_search
         # purchase_seller_evaluation
