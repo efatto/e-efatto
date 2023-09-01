@@ -21,6 +21,11 @@ Si apre quindi una procedura che permette di scegliere tra i possibili subappalt
 
 Nel caso ci siano prodotti subappaltati presso un singolo subappaltore, l'ordine di acquisto generato viene automaticamente confermato, sia che sia generato dalla rotta `Procura su Ordine` che da una regola di riordino.
 
+È stato aggiunto un bottone per aprire i trasferimenti da fare verso il subappaltatore direttamente dall'ordine di acquisto:
+
+.. image:: ../static/description/bottone_trasferimenti_subappaltatore.png
+    :alt: Bottone trasferimenti subappaltatore
+
 La tipica procedura da seguire per modificare un prodotto da produrre internamente ad un prodotto che può avere entrambe le opzioni è:
 
 .. image:: ../static/description/1_duplicare_bom.png
