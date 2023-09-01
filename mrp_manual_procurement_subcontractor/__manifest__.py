@@ -30,22 +30,6 @@
         # mrp_production_calendar
         # mrp_production_change_product_fix
         # mrp_production_component_delete
-        # mrp_production_deviation
-        # mrp_production_expected_qty
-        # mrp_production_lot_custom_assign
-        # mrp_production_procurement_analytic
-        # mrp_production_workorder_fix
-        # mrp_workcenter_capacity
-        # mrp_workorder_hierarchy
-        # mrp_workorder_timesheet_cost
-        # procurement_purchase_analytic_grouping
-        # purchase_order_approved_vendor
-        # purchase_product_weight
-        # purchase_sale_mrp_link
-        # purchase_sale_mrp_search
-        # purchase_seller_evaluation
-        # sale_stock_service_procurement_group
-        # stock_picking_restrict_cancel_with_orig_move_mrp
     ],
     'data': [
         'wizard/mrp_production_procure_subcontractor.xml',
