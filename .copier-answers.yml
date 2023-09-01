@@ -18,15 +18,8 @@ org_slug: sergiocorato
 rebel_module_groups:
 - mrp_bom_evaluation
 - mrp_bom_evaluation_simple
-- connector_whs, l10n_it_country_data, l10n_it_intrastat_tariff, maintenance_plan_step,
-    mrp_manual_procurement_subcontractor, mrp_production_bom_change, mrp_production_cancel_confirm,
-    mrp_production_change_qty_fix, mrp_production_child_origin, mrp_production_component_change,
-    mrp_production_date_planned, mrp_production_line_mto_manufacture, mrp_production_preserve_kit_route,
-    mrp_production_workorder_note, product_managed_replenishment_cost, product_on_hand_translation,
-    product_pricelist_replenishment_cost,product_template_listprice_zero_default,
-    product_template_replenishment_cost, purchase_autocomplete_no_invoice, purchase_autocomplete_no_reference,
-    purchase_order_company_amount, purchase_set_stock_move_date, res_country_logistic_charge,
-    sale_report_usability, stock_picking_delivery_report_date, stock_picking_note_visibility
+- mrp_production_line_group
+- mrp_production_manual_procurement, mrp_production_procurement_analytic, purchase_requisition_grouping
 repo_description: Tools for Italian companies
 repo_name: Extra Efatto tools
 repo_slug: e-efatto
