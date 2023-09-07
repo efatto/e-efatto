@@ -18,7 +18,7 @@ Usability issue resolved on web view:
     'website': 'https://github.com/sergiocorato/e-efatto',
     'license': 'AGPL-3',
     'depends': [
-        'web',
+        'base_fontawesome',
     ],
     'data': [
         'views/web.xml',
