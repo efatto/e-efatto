@@ -1,9 +1,9 @@
 /* pop-up windows */
 .modal-lg {
-	width: 80%;
+	max-width: 80%;
 }
 /* change open button icon */
-.fa-external-link::before {
+.fa.fa-external-link::before {
 	content: "\f14c";
 }
 /* arrow button in dropdown button */
