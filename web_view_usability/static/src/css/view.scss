@@ -1,27 +1,17 @@
-/* pop-up windows */
+/* set default width for pop-up windows to 80% */
 .modal-lg {
-	max-width: 80%;
+  max-width: 80%;
 }
-/* change open button icon */
+/* change external button icon */
 .fa.fa-external-link::before {
-	content: "\f14c";
+  content: "\f14d";
 }
 /* arrow button in dropdown button */
 /* arrow button in datepicker button */
 .o_form_view .o_input_dropdown .o_dropdown_button::after,
 .o_datepicker .o_datepicker_button::after {
-	width: 14px;
-	border-left: 8px solid transparent;
-	border-right: 8px solid transparent;
-	border-top: 8px solid;
-}
-/* block columns headers and set transparency in tree views */
-.table-responsive .o_list_view thead tr:nth-child(1) th, .o_list_view thead {
-	background: rgba(238, 238, 238, 0.5) !important;
-	position: sticky;
-	top: 0px !important;
-}
-/* needed for sticky columns*/
-.table-responsive {
-	overflow-x: inherit !important;
+  width: 14px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid;
 }
