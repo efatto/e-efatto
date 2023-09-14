@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-07 08:54+0000\n"
-"PO-Revision-Date: 2021-06-07 08:54+0000\n"
+"POT-Creation-Date: 2023-09-14 08:48+0000\n"
+"PO-Revision-Date: 2023-09-14 08:48+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -31,17 +31,22 @@ msgstr "Intervallo usato per ripetere automaticamente l'evento"
 #: model:ir.model.fields,help:maintenance_plan_step.field_maintenance_plan__planning_step
 #: model:ir.model.fields,help:maintenance_plan_step.field_maintenance_plan__planning_step_max
 msgid "Let the event automatically repeat at that interval"
-msgstr "Consente la ripetizione automatica dell'evento con quell'intervallo"
+msgstr "Consente la ripetizione automatica dell'evento all'intervallo specificato"
 
 #. module: maintenance_plan_step
 #: model:ir.model,name:maintenance_plan_step.model_maintenance_equipment
 msgid "Maintenance Equipment"
-msgstr "Attrezzatura di manutenzione"
+msgstr "Attrezzatura manutenzione"
 
 #. module: maintenance_plan_step
 #: model:ir.model,name:maintenance_plan_step.model_maintenance_plan
 msgid "Maintenance Plan"
 msgstr "Piano di manutenzione"
+
+#. module: maintenance_plan_step
+#: model:ir.model,name:maintenance_plan_step.model_maintenance_request
+msgid "Maintenance Request"
+msgstr "Richiesta manutenzione"
 
 #. module: maintenance_plan_step
 #: model:ir.model.fields,help:maintenance_plan_step.field_maintenance_equipment__maintenance_plan_horizon
@@ -93,10 +98,9 @@ msgid "Planning Horizon step"
 msgstr "Incremento orizzonte pianificazione"
 
 #. module: maintenance_plan_step
-#: code:addons/maintenance_plan_step/tests/test_maintenance_plan_step.py:114
-#, python-format
-msgid "Preventive Maintenance (%s) - %s"
-msgstr "Manutenzione Preventiva (%s) - %s"
+#: model:ir.model.fields,field_description:maintenance_plan_step.field_maintenance_request__user_id
+msgid "Team"
+msgstr "Team"
 
 #. module: maintenance_plan_step
 #: code:addons/maintenance_plan_step/tests/test_maintenance_plan_step.py:63
