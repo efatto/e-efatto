@@ -18,6 +18,7 @@ class MrpProduction(models.Model):
     def _compute_is_subcontractable(self):
         # stop procurement for all production order which product has a
         # purchase route and at least 2 subcontractor
+        # nel caso il prodotto non abbia bom di produzione ma solo una di subappalto?
         buy_route = self.env.ref("purchase_stock.route_warehouse0_buy")
         for production in self:
             # produce route is obviously already present
