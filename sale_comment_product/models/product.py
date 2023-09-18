@@ -6,4 +6,4 @@ from odoo import fields, models
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
-    formatted_note_sale = fields.Html('Formatted Note Sale')
+    formatted_note_sale = fields.Html("Formatted Note Sale")
