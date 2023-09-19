@@ -10,10 +10,11 @@ class DocumentPage(models.Model):
     @api.multi
     def _inverse_content(self):
         for rec in self:
-            if rec.type == 'content' and \
-                    rec.content != rec.history_head.content:
-                rec._create_history({
-                    'name': rec.draft_name or '',
-                    'summary': rec.draft_summary or '',
-                    'content': rec.content,
-                })
+            if rec.type == "content" and rec.content != rec.history_head.content:
+                rec._create_history(
+                    {
+                        "name": rec.draft_name or "",
+                        "summary": rec.draft_summary or "",
+                        "content": rec.content,
+                    }
+                )
