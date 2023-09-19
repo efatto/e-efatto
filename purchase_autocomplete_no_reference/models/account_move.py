@@ -4,14 +4,14 @@
 from odoo import api, models
 
 
-class AccountInvoice(models.Model):
-    _inherit = 'account.invoice'
+class AccountMove(models.Model):
+    _inherit = "account.move"
 
-    @api.onchange('purchase_id')
+    @api.onchange("purchase_id")
     def purchase_order_change(self):
         if not self.purchase_id:
             return {}
-        original_reference = self.reference
+        original_reference = self.ref
         res = super().purchase_order_change()
-        self.reference = original_reference
+        self.ref = original_reference
         return res
