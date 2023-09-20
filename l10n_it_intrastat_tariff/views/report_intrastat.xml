@@ -2,7 +2,10 @@
 <odoo>
     <record id="view_form_report_intrastat_code" model="ir.ui.view">
         <field name="model">report.intrastat.code</field>
-        <field name="inherit_id" ref="l10n_it_intrastat.view_form_report_intrastat_code"/>
+        <field
+      name="inherit_id"
+      ref="l10n_it_intrastat.view_form_report_intrastat_code"
+    />
         <field name="arch" type="xml">
             <field name="active" position="before">
                 <field name="tariff_id" />
@@ -15,9 +18,9 @@
         <field name="model">report.intrastat.tariff</field>
         <field name="arch" type="xml">
             <tree string="Customs Tariff">
-                <field name="active"/>
-                <field name="name"/>
-                <field name="tariff_percentage"/>
+                <field name="active" />
+                <field name="name" />
+                <field name="tariff_percentage" />
             </tree>
         </field>
     </record>
@@ -28,15 +31,15 @@
         <field name="arch" type="xml">
             <form string="Customs Tariff">
                 <group>
-                    <field name="name"/>
+                    <field name="name" />
                 </group>
                 <group>
-                    <label for="tariff_percentage"/>
+                    <label for="tariff_percentage" />
                     <div>
-                        <field name="tariff_percentage" class="oe_inline"/>
+                        <field name="tariff_percentage" class="oe_inline" />
                         <span class="o_form_label oe_inline">%</span>
                     </div>
-                    <field name="active"/>
+                    <field name="active" />
                 </group>
             </form>
         </field>
@@ -45,10 +48,15 @@
     <record id="action_report_intrastat_tariff" model="ir.actions.act_window">
         <field name="name">Customs Tariff</field>
         <field name="res_model">report.intrastat.tariff</field>
-        <field name="view_id" ref="view_tree_report_intrastat_tariff"/>
+        <field name="view_id" ref="view_tree_report_intrastat_tariff" />
     </record>
 
-    <menuitem id="menu_report_intrastat_tariff" name="Customs Tariff"
-        action="action_report_intrastat_tariff" parent="l10n_it_intrastat.menu_account_intrastat_configuration"
-        groups="account.group_account_user" sequence="21"/>
+    <menuitem
+    id="menu_report_intrastat_tariff"
+    name="Customs Tariff"
+    action="action_report_intrastat_tariff"
+    parent="l10n_it_intrastat.menu_account_intrastat_configuration"
+    groups="account.group_account_user"
+    sequence="21"
+  />
 </odoo>

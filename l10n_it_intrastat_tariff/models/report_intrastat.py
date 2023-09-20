@@ -7,8 +7,8 @@ class ReportIntrastatCode(models.Model):
     _inherit = "report.intrastat.code"
 
     tariff_id = fields.Many2one(
-        comodel_name="report.intrastat.tariff",
-        string="Customs Tariff")
+        comodel_name="report.intrastat.tariff", string="Customs Tariff"
+    )
 
 
 class ReportIntrastatTariff(models.Model):
