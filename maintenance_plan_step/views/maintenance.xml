@@ -17,13 +17,15 @@
         <field name="arch" type="xml">
             <xpath
         expr="//field[@name='maintenance_plan_ids']/tree/field[@name='maintenance_plan_horizon']"
-        position="replace"
+        position="attributes"
       >
+                <attribute name="invisible">True</attribute>
             </xpath>
             <xpath
         expr="//field[@name='maintenance_plan_ids']/tree/field[@name='planning_step']"
-        position="replace"
+        position="attributes"
       >
+                <attribute name="invisible">True</attribute>
             </xpath>
             <xpath
         expr="//field[@name='maintenance_plan_ids']/tree/field[@name='next_maintenance_date']"
