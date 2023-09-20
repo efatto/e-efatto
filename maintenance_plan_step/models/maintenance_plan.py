@@ -22,7 +22,7 @@ class MaintenancePlan(models.Model):
 
     maintenance_plan_horizon = fields.Integer(
         string="Planning Horizon real period",
-        compute="_get_maintenance_plan_horizon",
+        compute="_compute_maintenance_plan_horizon",
         readonly=True,
         help="Maintenance planning horizon. Only the maintenance requests "
         "inside the horizon will be created.",
@@ -36,7 +36,7 @@ class MaintenancePlan(models.Model):
         ],
         string="Planning Horizon real step",
         readonly=True,
-        compute="_get_maintenance_plan_horizon",
+        compute="_compute_maintenance_plan_horizon",
         help="Let the event automatically repeat at that interval",
     )
     maintenance_plan_horizon_max = fields.Integer(
@@ -63,7 +63,7 @@ class MaintenancePlan(models.Model):
         "maintenance_plan_horizon_max",
         "planning_step_max",
     )
-    def _get_maintenance_plan_horizon(self):
+    def _compute_maintenance_plan_horizon(self):
         # get minimum horizon plan
         for plan in self:
             equipment = plan.equipment_id
