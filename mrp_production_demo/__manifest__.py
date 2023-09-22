@@ -9,7 +9,7 @@
     "website": "https://github.com/sergiocorato/e-efatto",
     "license": "AGPL-3",
     "maintainers": ["sergiocorato"],
-    "depends": ["mrp_workorder", "purchase_stock"],
+    "depends": ["mrp", "purchase_stock"],
     "installable": True,
     "demo": ["demo/product.xml"],
 }
