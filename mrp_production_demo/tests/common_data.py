@@ -53,16 +53,10 @@ class TestProductionData(SavepointCase):
                 "costs_hour": 23.0,
             }
         )
-        cls.routing1 = cls.env["mrp.routing"].create(
-            {
-                "name": "Simple routing",
-            }
-        )
         cls.operation1 = cls.env["mrp.routing.workcenter"].create(
             {
                 "name": "Operation 1",
                 "workcenter_id": cls.workcenter1.id,
-                "routing_id": cls.routing1.id,
                 "time_mode": "manual",
                 "time_cycle_manual": 90,
                 "sequence": 1,
