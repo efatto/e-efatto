@@ -41,8 +41,9 @@ class TestProductionData(SavepointCase):
             "mrp_production_demo.product_product_manufacture_1_2_1"
         )
         cls.main_bom = cls.env.ref("mrp_production_demo.mrp_bom_manuf_1")
-        cls.sub_bom1 = cls.env.ref("mrp_production_demo.mrp_bom_manuf_1_1")
-        cls.sub_bom2 = cls.env.ref("mrp_production_demo.mrp_bom_manuf_1_2")
+        cls.sub_bom_phantom_1 = cls.env.ref("mrp_production_demo.mrp_bom_manuf_1_1")
+        cls.sub_bom_phantom_2 = cls.env.ref("mrp_production_demo.mrp_bom_manuf_1_2")
+        cls.sub_bom_normal_1 = cls.env.ref("mrp_production_demo.mrp_bom_manuf_1_3")
         cls.workcenter1 = cls.env["mrp.workcenter"].create(
             {
                 "name": "Base Workcenter",
