@@ -1,22 +1,24 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, fields, models
+from odoo import fields, models
 from odoo.tools.date_utils import relativedelta
 
 
 class MrpProduction(models.Model):
-    _inherit = 'mrp.production'
+    _inherit = "mrp.production"
 
-    @api.multi
-    def _generate_workorders(self, exploded_boms):
-        workorders = super()._generate_workorders(exploded_boms)
+    def button_plan(self):
+        res = super().button_plan()
         date_planned_start = self.date_planned_start or fields.Datetime.now()
-        for workorder in workorders.sorted(key="id"):
-            date_planned_finished = date_planned_start + \
-                relativedelta(minutes=max(workorder.duration_expected or 0, 1))
-            workorder.write(dict(
-                date_planned_start=date_planned_start,
-                date_planned_finished=date_planned_finished,
-            ))
+        for workorder in self.workorder_ids.sorted(key="id"):
+            date_planned_finished = date_planned_start + relativedelta(
+                minutes=max(workorder.duration_expected or 0, 1)
+            )
+            workorder.write(
+                dict(
+                    date_planned_start=date_planned_start,
+                    date_planned_finished=date_planned_finished,
+                )
+            )
             date_planned_start = date_planned_finished
-        return workorders
+        return res
