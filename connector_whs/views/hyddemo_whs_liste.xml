@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
 
     <record id="view_whs_liste_search" model="ir.ui.view">
@@ -6,24 +6,24 @@
         <field name="model">hyddemo.whs.liste</field>
         <field name="arch" type="xml">
             <search string="Liste prelievo, deposito e inventario">
-                <field name="num_lista"/>
-                <field name="priorita"/>
-                <field name="stato"/>
-                <field name="data_lista"/>
-                <field name="riferimento"/>
-                <field name="tipo"/>
-                <field name="cliente"/>
-                <field name="product_id"/>
-                <field name="lotto"/>
-                <field name="lotto2"/>
-                <field name="lotto3"/>
-                <field name="lotto4"/>
-                <field name="lotto5"/>
-                <field name="qta"/>
-                <field name="qtamov"/>
-                <field name="move_id"/>
-                <field name="tipo_mov"/>
-                <field name="whs_list_absent"/>
+                <field name="num_lista" />
+                <field name="priorita" />
+                <field name="stato" />
+                <field name="data_lista" />
+                <field name="riferimento" />
+                <field name="tipo" />
+                <field name="cliente" />
+                <field name="product_id" />
+                <field name="lotto" />
+                <field name="lotto2" />
+                <field name="lotto3" />
+                <field name="lotto4" />
+                <field name="lotto5" />
+                <field name="qta" />
+                <field name="qtamov" />
+                <field name="move_id" />
+                <field name="tipo_mov" />
+                <field name="whs_list_absent" />
             </search>
         </field>
     </record>
@@ -33,22 +33,22 @@
         <field name="model">hyddemo.whs.liste</field>
         <field name="arch" type="xml">
             <tree string="Liste prelievo, deposito e inventario">
-                <field name="whs_list_absent"/>
-                <field name="priorita"/>
-                <field name="num_lista"/>
-                <field name="stato"/>
-                <field name="data_lista"/>
-                <field name="riferimento"/>
-                <field name="tipo"/>
-                <field name="cliente"/>
-                <field name="product_id"/>
-                <field name="lotto"/>
-                <field name="lotto2"/>
-                <field name="lotto3"/>
-                <field name="qta"/>
-                <field name="qtamov"/>
-                <field name="move_id"/>
-                <field name="tipo_mov"/>
+                <field name="whs_list_absent" />
+                <field name="priorita" />
+                <field name="num_lista" />
+                <field name="stato" />
+                <field name="data_lista" />
+                <field name="riferimento" />
+                <field name="tipo" />
+                <field name="cliente" />
+                <field name="product_id" />
+                <field name="lotto" />
+                <field name="lotto2" />
+                <field name="lotto3" />
+                <field name="qta" />
+                <field name="qtamov" />
+                <field name="move_id" />
+                <field name="tipo_mov" />
             </tree>
         </field>
     </record>
@@ -59,49 +59,53 @@
         <field name="arch" type="xml">
             <form string="Liste prelievo, deposito e inventario">
                 <header>
-                    <button name="whs_check_list_state" string="Check list state" type="object"/>
+                    <button
+            name="whs_check_list_state"
+            string="Check list state"
+            type="object"
+          />
                 </header>
                 <sheet string="WHS liste">
                     <group>
                         <group>
-                            <field name="product_id"/>
-                            <field name="lotto"/>
-                            <field name="lotto2"/>
-                            <field name="lotto3"/>
-                            <field name="lotto4"/>
-                            <field name="lotto5"/>
+                            <field name="product_id" />
+                            <field name="lotto" />
+                            <field name="lotto2" />
+                            <field name="lotto3" />
+                            <field name="lotto4" />
+                            <field name="lotto5" />
                         </group>
                         <group>
-                            <field name="move_id"/>
-                            <field name="tipo_mov"/>
-                            <field name="qta"/>
-                            <field name="qtamov"/>
-                            <field name="whs_list_absent"/>
-                            <field name="whs_list_log"/>
+                            <field name="move_id" />
+                            <field name="tipo_mov" />
+                            <field name="qta" />
+                            <field name="qtamov" />
+                            <field name="whs_list_absent" />
+                            <field name="whs_list_log" />
                         </group>
                     </group>
                     <group>
                         <group>
-                            <field name="num_lista"/>
-                            <field name="riga"/>
-                            <field name="stato"/>
-                            <field name="data_lista"/>
-                            <field name="riferimento"/>
-                            <field name="client_order_ref"/>
-                            <field name="product_customer_code"/>
-                            <field name="parent_product_id"/>
-                            <field name="tipo"/>
-                            <field name="priorita"/>
+                            <field name="num_lista" />
+                            <field name="riga" />
+                            <field name="stato" />
+                            <field name="data_lista" />
+                            <field name="riferimento" />
+                            <field name="client_order_ref" />
+                            <field name="product_customer_code" />
+                            <field name="parent_product_id" />
+                            <field name="tipo" />
+                            <field name="priorita" />
                         </group>
                         <group>
-                            <field name="vettore"/>
-                            <field name="cliente"/>
-                            <field name="ragsoc"/>
-                            <field name="indirizzo"/>
-                            <field name="cap"/>
-                            <field name="localita"/>
-                            <field name="provincia"/>
-                            <field name="nazione"/>
+                            <field name="vettore" />
+                            <field name="cliente" />
+                            <field name="ragsoc" />
+                            <field name="indirizzo" />
+                            <field name="cap" />
+                            <field name="localita" />
+                            <field name="provincia" />
+                            <field name="nazione" />
                         </group>
                     </group>
                 </sheet>
@@ -113,10 +117,13 @@
         <field name="name">Whs Liste</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">hyddemo.whs.liste</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem action="action_whs_liste" id="menu_whsliste"
-              parent="stock.menu_stock_warehouse_mgmt" sequence="101"/>
+    <menuitem
+    action="action_whs_liste"
+    id="menu_whsliste"
+    parent="stock.menu_stock_warehouse_mgmt"
+    sequence="101"
+  />
 </odoo>
