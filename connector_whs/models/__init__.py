@@ -7,5 +7,5 @@ from . import (
     purchase,
     repair,
     sale,
-    stock
+    stock,
 )

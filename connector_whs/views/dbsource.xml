@@ -1,37 +1,55 @@
-<?xml version="1.0"?>
+<?xml version="1.0" ?>
 <odoo>
     <record model="ir.ui.view" id="view_dbsource_form">
         <field name="name">base.external.dbsource.form</field>
         <field name="model">base.external.dbsource</field>
-        <field name="inherit_id" ref="base_external_dbsource.view_dbsource_form"/>
+        <field name="inherit_id" ref="base_external_dbsource.view_dbsource_form" />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='conn_string']/.." position="attributes">
-                <attribute name="col" eval="2"/>
+                <attribute name="col">2</attribute>
             </xpath>
             <field name="conn_string" position="attributes">
-                <attribute name="nolabel" eval="0"/>
+                <attribute name="nolabel">0</attribute>
             </field>
             <field name="conn_string" position="after">
-                <field name="conn_string_sandbox"/>
+                <field name="conn_string_sandbox" />
             </field>
             <xpath expr="/form/sheet" position="before">
                 <header>
-                    <button name="whs_update_products" string="Update Products in WHS" type="object"/>
-                    <button name="whs_insert_read_and_synchronize_list" string="Synchronize WHS lists" type="object"/>
-                    <button name="whs_sync_stock" string="Synchronize Stock from WHS" type="object"/>
-                    <button name="whs_check_lists" string="Check missing lists" type="object"/>
+                    <button
+            name="whs_update_products"
+            string="Update Products in WHS"
+            type="object"
+          />
+                    <button
+            name="whs_insert_read_and_synchronize_list"
+            string="Synchronize WHS lists"
+            type="object"
+          />
+                    <button
+            name="whs_sync_stock"
+            string="Synchronize Stock from WHS"
+            type="object"
+          />
+                    <button
+            name="whs_check_lists"
+            string="Check missing lists"
+            type="object"
+          />
                 </header>
             </xpath>
             <xpath expr="//group" position="after">
                 <group>
-                    <field name="location_id"/>
-                    <field name="warehouse_id"/>
+                    <field name="location_id" />
+                    <field name="warehouse_id" />
                 </group>
             </xpath>
         </field>
     </record>
-    <menuitem name="Database Sources"
-              id="menu_dbsource_stock"
-              parent="stock.menu_warehouse_config"
-              action="base_external_dbsource.action_dbsource"/>
+    <menuitem
+    name="Database Sources"
+    id="menu_dbsource_stock"
+    parent="stock.menu_warehouse_config"
+    action="base_external_dbsource.action_dbsource"
+  />
 </odoo>

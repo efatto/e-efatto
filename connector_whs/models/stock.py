@@ -1,9 +1,10 @@
 # Copyright 2020-2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+# flake8: noqa: C901
 
 import logging
 
-from odoo import api, fields, models, _
+from odoo import _, fields, models
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
@@ -12,15 +13,13 @@ _logger = logging.getLogger(__name__)
 class Picking(models.Model):
     _inherit = "stock.picking"
 
-    @api.multi
     def action_pack_operation_auto_fill(self):
         super(Picking, self).action_pack_operation_auto_fill()
-        for op in self.mapped('move_line_ids'):
-            if op.product_id.type == 'product' and op.move_id.whs_list_ids:
+        for op in self.mapped("move_line_ids"):
+            if op.product_id.type == "product" and op.move_id.whs_list_ids:
                 op.qty_done = op.move_id.whs_list_ids[0].qtamov
 
-    @api.multi
-    def action_done(self):
+    def _action_done(self):
         # Set whs_list.qta equal to move quantity_done, to stop any possible error
         # from whs user, if not elaborated from whs, else raise an error
         for pick in self:
@@ -29,22 +28,41 @@ class Picking(models.Model):
             # Synchronize whs lists? no as only stato=4 is processed, which is no
             # more workable from WHS
             # stato == '3' the whs list is no more processable, so ignored
-            if any(x.stato == '4' and x.qtamov != x.move_id.quantity_done
-                   for x in pick.mapped('move_lines.whs_list_ids')):
-                raise UserError(_('Trying to validate picking %s which is '
-                                  'already elaborated on Whs with different qty.') %
-                                pick.name)
+            if any(
+                x.stato == "4" and x.qtamov != x.move_id.quantity_done
+                for x in pick.mapped("move_lines.whs_list_ids")
+            ):
+                raise UserError(
+                    _(
+                        "Trying to validate picking %s which is "
+                        "already elaborated on Whs with different qty."
+                    )
+                    % pick.name
+                )
             # stato == '3' is ok when qtamov is 0, as is no more processable (n.b. qty
             # in move is obviously moved as it is the same move linked to correct list)
-            if any(x.stato == '3' and x.qtamov != 0
-                   for x in pick.mapped('move_lines.whs_list_ids')):
-                raise UserError(_('Trying to validate picking %s which is '
-                                  'not processable in Odoo but elaborated on Whs.'
-                                  ) % pick.name)
-            if any(x.stato not in ('3', '4') and x.move_id.quantity_done != 0
-                   for x in pick.mapped('move_lines.whs_list_ids')):
-                raise UserError(_('Trying to validate picking %s which is '
-                                  'not elaborated on Whs.') % pick.name)
+            if any(
+                x.stato == "3" and x.qtamov != 0
+                for x in pick.mapped("move_lines.whs_list_ids")
+            ):
+                raise UserError(
+                    _(
+                        "Trying to validate picking %s which is "
+                        "not processable in Odoo but elaborated on Whs."
+                    )
+                    % pick.name
+                )
+            if any(
+                x.stato not in ("3", "4") and x.move_id.quantity_done != 0
+                for x in pick.mapped("move_lines.whs_list_ids")
+            ):
+                raise UserError(
+                    _(
+                        "Trying to validate picking %s which is "
+                        "not elaborated on Whs."
+                    )
+                    % pick.name
+                )
             for move in pick.move_lines:
                 for whs_list in move.whs_list_ids:
                     if whs_list.qtamov != move.quantity_done != 0:
@@ -61,71 +79,67 @@ class Picking(models.Model):
                         # that equals to Elaborato=4
                         # Lists with stato=3 and quantity_done=0 are deleted here
                         location_id = pick.location_id.id
-                        if pick.picking_type_id.code == 'incoming':
+                        if pick.picking_type_id.code == "incoming":
                             location_id = pick.location_dest_id.id
-                        dbsource = self.env['base.external.dbsource'].search([
-                            ('location_id', '=', location_id)
-                        ])
+                        dbsource = self.env["base.external.dbsource"].search(
+                            [("location_id", "=", location_id)]
+                        )
                         if not dbsource:
                             # This location is not linked to WHS System
                             continue
-                        _logger.info('WHS LOG: unlink whs list in backorder process of '
-                                     'move %s' % move.name)
+                        _logger.info(
+                            "WHS LOG: unlink whs list in backorder process of "
+                            "move %s" % move.name
+                        )
                         whs_list.whs_unlink_lists(dbsource.id)
-        super(Picking, self).action_done()
+        super(Picking, self)._action_done()
         return True
 
-    @api.multi
     def create_whs_list(self):
         for picking in self:
-            picking.mapped('move_lines').filtered(
-                lambda x: not any(
-                    y.stato != '3' for y in x.whs_list_ids
-                )
+            picking.mapped("move_lines").filtered(
+                lambda x: not any(y.stato != "3" for y in x.whs_list_ids)
             ).create_whs_list()
 
-    @api.multi
     def action_confirm(self):
         res = super(Picking, self).action_confirm()
         self.create_whs_list()
         return res
 
-    @api.multi
     def action_assign(self):
         res = super(Picking, self).action_assign()
         self.create_whs_list()
         return res
 
-    @api.multi
     def unlink(self):
         self.cancel_whs_list(unlink=True)
         return super(Picking, self).unlink()
 
-    @api.multi
     def action_cancel(self):
         self.cancel_whs_list()
         return super(Picking, self).action_cancel()
 
-    @api.multi
     def cancel_whs_list(self, unlink=False):
         for pick in self:
-            whs_list_ids = pick.mapped('move_lines.whs_list_ids')
+            whs_list_ids = pick.mapped("move_lines.whs_list_ids")
             if whs_list_ids:
-                if any([x.stato != '1' and x.qtamov != 0 for x in whs_list_ids]):
-                    raise UserError(_('Some moves already elaborated from WHS!'))
+                if any([x.stato != "1" and x.qtamov != 0 for x in whs_list_ids]):
+                    raise UserError(_("Some moves already elaborated from WHS!"))
 
                 location = pick.location_id
-                if pick.picking_type_id.code == 'incoming':
+                if pick.picking_type_id.code == "incoming":
                     location = pick.location_dest_id
-                dbsource = self.env['base.external.dbsource'].search([
-                    ('location_id', '=', location.id)
-                ])
+                dbsource = self.env["base.external.dbsource"].search(
+                    [("location_id", "=", location.id)]
+                )
                 if not dbsource:
-                    _logger.info('WHS LOG: Location %s is not linked to WHS System' %
-                                 location.name)
+                    _logger.info(
+                        "WHS LOG: Location %s is not linked to WHS System"
+                        % location.name
+                    )
                     continue
                 if unlink:
-                    _logger.info('WHS LOG: unlink lists for picking %s' % pick.name)
+                    _logger.info("WHS LOG: unlink lists for picking %s" % pick.name)
                     whs_list_ids.whs_unlink_lists(dbsource.id)
                 else:
                     whs_list_ids.whs_cancel_lists(dbsource.id)
@@ -133,53 +147,53 @@ class Picking(models.Model):
 
 
 class StockMove(models.Model):
-    _inherit = 'stock.move'
+    _inherit = "stock.move"
 
     whs_list_ids = fields.One2many(
-        comodel_name='hyddemo.whs.liste',
-        inverse_name='move_id',
-        string='Whs Lists')
+        comodel_name="hyddemo.whs.liste", inverse_name="move_id", string="Whs Lists"
+    )
 
-    @api.multi
     def _check_valid_whs_list(self):
         for move in self:
-            valid_whs_list = move.whs_list_ids.filtered(lambda x: x.stato != '3')
-            if valid_whs_list and not move.state == 'done':
+            valid_whs_list = move.whs_list_ids.filtered(lambda x: x.stato != "3")
+            if valid_whs_list and not move.state == "done":
                 if move.product_uom_qty != valid_whs_list.qta:
-                    raise UserError(_("Whs valid list exists and qty cannot be "
-                                      "modified!"))
+                    raise UserError(
+                        _("Whs valid list exists and qty cannot be " "modified!")
+                    )
 
     def write(self, vals):
         res = super().write(vals=vals)
-        if not self._context.get("do_not_propagate", False) and \
-            not self._context.get("do_not_unreserve", False) and \
-            not self._context.get("skip_overprocessed_check", False) and (
-            vals.get('product_uom_qty')
+        if (
+            not self._context.get("do_not_propagate", False)
+            and not self._context.get("do_not_unreserve", False)
+            and not self._context.get("skip_overprocessed_check", False)
+            and (vals.get("product_uom_qty"))
         ):
             self._check_valid_whs_list()
         return res
 
-    @api.multi
     def create_whs_list(self):
-        whsliste_obj = self.env['hyddemo.whs.liste']
+        whsliste_obj = self.env["hyddemo.whs.liste"]
         list_number = False
         riga = 0
         for move in self:
             pick = move.picking_id
             tipo = False
             location_id = pick.location_id.id
-            if pick.picking_type_id.code == 'incoming':
-                tipo = '2'
+            if pick.picking_type_id.code == "incoming":
+                tipo = "2"
                 location_id = pick.location_dest_id.id
-            elif pick.picking_type_id.code == 'outgoing':
-                tipo = '1'
+            elif pick.picking_type_id.code == "outgoing":
+                tipo = "1"
             # ROADMAP check this part as it is duplicated in mrp.py and an MO creates
             # whs_list with that function
             if all(
                 [
-                    x in [
-                        self.env.ref('mrp.route_warehouse0_manufacture'),
-                        self.env.ref('stock.route_warehouse0_mto')
+                    x
+                    in [
+                        self.env.ref("mrp.route_warehouse0_manufacture"),
+                        self.env.ref("stock.route_warehouse0_mto"),
                     ]
                     for x in move.product_id.route_ids
                 ]
@@ -190,102 +204,125 @@ class StockMove(models.Model):
                 # as production is done.
                 # Same for the OUT, that one will be based only on Odoo stock current
                 # availability (user has to check this one is correct)
-                if move.procure_method == 'make_to_order':
+                if move.procure_method == "make_to_order":
                     continue
             #
 
-            dbsource = self.env['base.external.dbsource'].search([
-                ('location_id', '=', location_id)
-            ])
+            dbsource = self.env["base.external.dbsource"].search(
+                [("location_id", "=", location_id)]
+            )
             if not dbsource:
                 # This location is not linked to WHS System
                 continue
             if pick.partner_id:
                 ragsoc = pick.partner_id.name
-                cliente = pick.partner_id.ref if pick.partner_id.ref else \
-                    pick.partner_id.parent_id.ref if pick.partner_id.parent_id.ref \
+                cliente = (
+                    pick.partner_id.ref
+                    if pick.partner_id.ref
+                    else pick.partner_id.parent_id.ref
+                    if pick.partner_id.parent_id.ref
                     else False
+                )
                 indirizzo = pick.partner_id.street if pick.partner_id.street else False
                 cap = pick.partner_id.zip if pick.partner_id.zip else False
                 localita = pick.partner_id.city if pick.partner_id.city else False
-                provincia = pick.partner_id.state_id.code if pick.partner_id.state_id \
+                provincia = (
+                    pick.partner_id.state_id.code if pick.partner_id.state_id else False
+                )
+                nazione = (
+                    pick.partner_id.country_id.name
+                    if pick.partner_id.country_id
                     else False
-                nazione = pick.partner_id.country_id.name if pick.partner_id.country_id\
-                    else False
+                )
 
             if tipo:
                 # ROADMAP check phantom products that generates only out moves
-                if move.state != 'cancel' and move.product_id.type == 'product' \
+                if (
+                    move.state != "cancel"
+                    and move.product_id.type == "product"
                     and (
-                        (pick.picking_type_id.code == 'incoming'
-                         and move.location_dest_id.id == location_id)
-                        or
-                        (pick.picking_type_id.code == 'outgoing'
-                         and move.location_id.id == location_id)
-                        ):
+                        (
+                            pick.picking_type_id.code == "incoming"
+                            and move.location_dest_id.id == location_id
+                        )
+                        or (
+                            pick.picking_type_id.code == "outgoing"
+                            and move.location_id.id == location_id
+                        )
+                    )
+                ):
                     if move.whs_list_ids and any(
-                            x.stato != '3' for x in move.whs_list_ids):
+                        x.stato != "3" for x in move.whs_list_ids
+                    ):
                         _logger.info(
-                            'WHS LOG: Ignored creation of WHS list %s as it '
-                            'already exists and is processable!'
+                            "WHS LOG: Ignored creation of WHS list %s as it "
+                            "already exists and is processable!"
                             % str(
-                                ['%s-%s' % (x.riga, x.num_lista)
-                                 for x in move.whs_list_ids
-                                 if x.stato != '3']
+                                [
+                                    "%s-%s" % (x.riga, x.num_lista)
+                                    for x in move.whs_list_ids
+                                    if x.stato != "3"
+                                ]
                             )
                         )
                         continue
                     if not list_number:
-                        list_number = self.env['ir.sequence'].next_by_code(
-                            'hyddemo.whs.liste')
+                        list_number = self.env["ir.sequence"].next_by_code(
+                            "hyddemo.whs.liste"
+                        )
                         riga = 0
                     riga += 1
                     customer = move.product_id.customer_ids.filtered(
                         lambda x: x.name == pick.partner_id.commercial_partner_id
                     )
                     whsliste_data = {
-                        'stato': '1',
-                        'tipo': tipo,
-                        'num_lista': list_number,
-                        'data_lista': fields.Datetime.now(),
-                        'product_id': move.product_id.id,
-                        'qta': move.product_qty,
-                        'move_id': move.id,
-                        'tipo_mov': 'move',
-                        'riga': riga,
-                        'client_order_ref': move.sale_line_id.order_id.client_order_ref,
+                        "stato": "1",
+                        "tipo": tipo,
+                        "num_lista": list_number,
+                        "data_lista": fields.Datetime.now(),
+                        "product_id": move.product_id.id,
+                        "qta": move.product_qty,
+                        "move_id": move.id,
+                        "tipo_mov": "move",
+                        "riga": riga,
+                        "client_order_ref": move.sale_line_id.order_id.client_order_ref,
                     }
                     if move.sale_line_id.product_id != move.product_id:
-                        whsliste_data.update({
-                            'parent_product_id': move.sale_line_id.product_id.id,
-                        })
+                        whsliste_data.update(
+                            {
+                                "parent_product_id": move.sale_line_id.product_id.id,
+                            }
+                        )
                     if customer:
-                        whsliste_data.update({
-                            'product_customer_code': customer[0].product_code,
-                        })
+                        whsliste_data.update(
+                            {
+                                "product_customer_code": customer[0].product_code,
+                            }
+                        )
                     if pick.origin:
-                        whsliste_data['riferimento'] = pick.origin[:50]
+                        whsliste_data["riferimento"] = pick.origin[:50]
 
                     if move.picking_id.priority:
-                        whsliste_data['priorita'] = max(
-                            [int(move.picking_id.priority), 1]) - 1
+                        whsliste_data["priorita"] = (
+                            max([int(move.picking_id.priority), 1]) - 1
+                        )
 
                     if ragsoc:
-                        whsliste_data['ragsoc'] = ragsoc[0:100]
+                        whsliste_data["ragsoc"] = ragsoc[0:100]
                     if indirizzo:
-                        whsliste_data['indirizzo'] = indirizzo[0:50]
+                        whsliste_data["indirizzo"] = indirizzo[0:50]
                     if cliente:
-                        whsliste_data['cliente'] = cliente.strip()[0:30]
+                        whsliste_data["cliente"] = cliente.strip()[0:30]
                     if cap:
-                        whsliste_data['cap'] = cap[0:5]
+                        whsliste_data["cap"] = cap[0:5]
                     if localita:
-                        whsliste_data['localita'] = localita[0:50]
+                        whsliste_data["localita"] = localita[0:50]
                     if provincia:
-                        whsliste_data['provincia'] = provincia[0:2]
+                        whsliste_data["provincia"] = provincia[0:2]
                     if nazione:
-                        whsliste_data['nazione'] = nazione[0:50]
+                        whsliste_data["nazione"] = nazione[0:50]
                     whsliste_obj.create(whsliste_data)
-                    _logger.info('WHS LOG: create list with data:\n %s' % (
-                        str(whsliste_data)
-                    ))
+                    _logger.info(
+                        "WHS LOG: create list with data:\n %s" % (str(whsliste_data))
+                    )
         return True
