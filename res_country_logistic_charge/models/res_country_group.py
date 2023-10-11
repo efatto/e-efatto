@@ -4,9 +4,9 @@ from odoo import fields, models
 
 
 class CountryGroup(models.Model):
-    _inherit = 'res.country.group'
+    _inherit = "res.country.group"
 
     logistic_charge_percentage = fields.Float(
         help="Logistic percentage charge for countries in this group.\n"
-             "If a country is in more country groups, charge will be the sum."
+        "If a country is in more country groups, charge will be the sum."
     )
