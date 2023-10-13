@@ -34,6 +34,7 @@ class MrpProduction(models.Model):
             )
             if raw_dbsource:
                 num_lista = False
+                riga = 0
                 # Location of raw material is linked to WHS
                 for move in production.move_raw_ids:
                     if move.scrapped:
@@ -74,6 +75,7 @@ class MrpProduction(models.Model):
             if finished_dbsource:
                 # Location of finished material is linked to WHS
                 num_lista = False
+                riga = 0
                 for move in production.move_finished_ids:
                     if move.scrapped or (
                         move.product_id.id != production.product_id.id
@@ -121,15 +123,4 @@ class MrpProduction(models.Model):
                             tipo_mov="mrpin",
                             riga=riga,
                         )
-                        whsliste_obj.create(whsliste_data)
-
-
-class MrpProductProduce(models.TransientModel):
-    _inherit = "mrp.product.produce"
-
-    def do_produce(self):
-        res = super().do_produce()
-        production_id = self._context.get("active_id", False)
-        production = self.env["mrp.production"].browse([production_id])
-        production._generate_whs()
-        return res
+                        whsliste_obj.create([whsliste_data])
