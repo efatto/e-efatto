@@ -15,12 +15,12 @@ class MrpProduction(models.Model):
         self._generate_whs()
         return res
 
-    def post_inventory(self):
+    def _post_inventory(self, cancel_backorder):
         if any(
             x.stato != "4" and x.qta for x in self.move_raw_ids.mapped("whs_list_ids")
         ):
             raise UserError(_('Almost a WHS list is not in state "Ricevuto Esito"!'))
-        res = super().post_inventory()
+        res = super()._post_inventory(cancel_backorder=cancel_backorder)
         return res
 
     def _generate_whs(self):
