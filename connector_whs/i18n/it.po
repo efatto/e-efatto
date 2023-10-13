@@ -1,0 +1,618 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* connector_whs
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-03-08 15:46+0000\n"
+"PO-Revision-Date: 2023-03-08 15:46+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_wizard_sync_stock_whs_mssql
+msgid "<span>Synchronize stock inventory. </span>\n"
+"                        <span>If 'do_sync' is not set, it create and show only a log saved in Whslog.</span>"
+msgstr "<span>Sincronizza inventario. </span>\n"
+"                        <span>Se 'do_sync' non è impostato, crea e mostra solo un log salvato in Whslog.</span>"
+
+#. module: connector_whs
+#: code:addons/connector_whs/models/mrp.py:23
+#, python-format
+msgid "Almost a WHS list is not in state \"Ricevuto Esito\"!"
+msgstr ""
+
+#. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_wizard_sync_stock_whs_mssql
+msgid "Apply"
+msgstr "Salva"
+
+#. module: connector_whs
+#: model:ir.model,name:connector_whs.model_stock_backorder_confirmation
+msgid "Backorder Confirmation"
+msgstr "Conferma ordine residuo"
+
+#. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_wizard_sync_stock_whs_mssql
+msgid "Cancel"
+msgstr "Annulla"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__cap
+msgid "Cap"
+msgstr "CAP"
+
+#. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_whs_liste_form
+msgid "Check list state"
+msgstr "Controlla lo stato della lista WHS"
+
+#. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_dbsource_form
+msgid "Check missing lists"
+msgstr "Controlla liste mancanti"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__client_order_ref
+msgid "Client Order Ref"
+msgstr "Rif. Ordine Cliente"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__cliente
+msgid "Codice cliente"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_base_external_dbsource__conn_string_sandbox
+msgid "Connection string sandbox"
+msgstr "Stringa di connessione test"
+
+#. module: connector_whs
+#: model:ir.actions.server,name:connector_whs.ir_cron_connector_whs_insert_list_ir_actions_server
+#: model:ir.cron,cron_name:connector_whs.ir_cron_connector_whs_insert_list
+#: model:ir.cron,name:connector_whs.ir_cron_connector_whs_insert_list
+msgid "Connector WHS - synchronize"
+msgstr "Connettore WHS - Sincronizza"
+
+#. module: connector_whs
+#: model:ir.actions.server,name:connector_whs.ir_cron_connector_whs_sync_stock_ir_actions_server
+#: model:ir.cron,cron_name:connector_whs.ir_cron_connector_whs_sync_stock
+#: model:ir.cron,name:connector_whs.ir_cron_connector_whs_sync_stock
+msgid "Connector WHS - synchronize stock (pass True to do inventory sync, else it will create only whs log)"
+msgstr "Connettore WHS - sincronizza il magazzino (passare la variabile True per sincronizzare il magazzino, altrimenti verrà solo creato il log WHS)"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__create_uid
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__create_uid
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__create_uid
+#: model:ir.model.fields,field_description:connector_whs.field_wizard_sync_stock_whs_mssql__create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__inventory_id
+msgid "Created inventory"
+msgstr "Inventario Creato"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__create_date
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__create_date
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__create_date
+#: model:ir.model.fields,field_description:connector_whs.field_wizard_sync_stock_whs_mssql__create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: connector_whs
+#: selection:hyddemo.whs.liste,stato:0
+msgid "Da NON elaborare"
+msgstr ""
+
+#. module: connector_whs
+#: selection:hyddemo.whs.liste,stato:0
+msgid "Da elaborare"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__data_lista
+msgid "Data lista"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.ui.menu,name:connector_whs.menu_dbsource_stock
+msgid "Database Sources"
+msgstr "Sorgenti Database"
+
+#. module: connector_whs
+#: selection:hyddemo.whs.liste,tipo:0
+msgid "Deposito"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__display_name
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__display_name
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__display_name
+#: model:ir.model.fields,field_description:connector_whs.field_wizard_sync_stock_whs_mssql__display_name
+msgid "Display Name"
+msgstr "Nome Visualizzato"
+
+#. module: connector_whs
+#: selection:hyddemo.whs.liste,stato:0
+msgid "Elaborata"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_product_product__exclude_from_whs
+#: model:ir.model.fields,field_description:connector_whs.field_product_template__exclude_from_whs
+msgid "Exclude From Whs"
+msgstr "Escluso da WHS"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__dbsource_id
+msgid "External DB Source Origin"
+msgstr "Sorgente Database Esterna"
+
+#. module: connector_whs
+#: model:ir.model,name:connector_whs.model_base_external_dbsource
+msgid "External Database Sources"
+msgstr "Sorgenti Database Esterne"
+
+#. module: connector_whs
+#: code:addons/connector_whs/models/hyddemo_mssql_log.py:150
+#: code:addons/connector_whs/models/hyddemo_mssql_log.py:246
+#: code:addons/connector_whs/models/hyddemo_mssql_log.py:285
+#: code:addons/connector_whs/models/hyddemo_mssql_log.py:414
+#: code:addons/connector_whs/models/hyddemo_whs_liste.py:94
+#: code:addons/connector_whs/models/hyddemo_whs_liste.py:121
+#: code:addons/connector_whs/models/hyddemo_whs_liste.py:186
+#: code:addons/connector_whs/wizard/wizard_sync_stock_whs_mssql.py:24
+#, python-format
+msgid "Failed to open connection!"
+msgstr "Apertura connessione al DB fallita!"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__hyddemo_mssql_log_id
+msgid "Hyddemo Mssql Log"
+msgstr "Log Connessioni Mssql"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__id
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__id
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__id
+#: model:ir.model.fields,field_description:connector_whs.field_wizard_sync_stock_whs_mssql__id
+msgid "ID"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__indirizzo
+msgid "Indirizzo"
+msgstr ""
+
+#. module: connector_whs
+#: selection:hyddemo.whs.liste,tipo:0
+msgid "Inventario"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model,name:connector_whs.model_stock_location
+msgid "Inventory Locations"
+msgstr "Ubicazioni di magazzino"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__ultimo_id
+msgid "Last ID in WHS"
+msgstr "Ultimo ID in WHS"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log____last_update
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line____last_update
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste____last_update
+#: model:ir.model.fields,field_description:connector_whs.field_wizard_sync_stock_whs_mssql____last_update
+msgid "Last Modified on"
+msgstr "Ultima modifica il"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__ultimo_invio
+msgid "Last Processing"
+msgstr "Ultima Elaborazione"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__write_uid
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__write_uid
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__write_uid
+#: model:ir.model.fields,field_description:connector_whs.field_wizard_sync_stock_whs_mssql__write_uid
+msgid "Last Updated by"
+msgstr "Ultima modifica di"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__write_date
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__write_date
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__write_date
+#: model:ir.model.fields,field_description:connector_whs.field_wizard_sync_stock_whs_mssql__write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_whs_liste_form
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_whs_liste_search
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_whs_liste_tree
+msgid "Liste prelievo, deposito e inventario"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model,name:connector_whs.model_hyddemo_whs_liste
+msgid "Lists to synchronize with WHS"
+msgstr "Liste da sincronizzare con WHS"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__localita
+msgid "Località"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_base_external_dbsource__location_id
+msgid "Location linked to WHS"
+msgstr "Punto di Stoccaggio collegato a WHS"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__errori
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_whslog_form
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_whslog_tree
+msgid "Log Processing"
+msgstr "Log Elaborazione"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__hyddemo_mssql_log_line_ids
+msgid "Log lines"
+msgstr "Righe log"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__lot
+msgid "Lot"
+msgstr "Lotto"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__lotto
+msgid "Lotto"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__lotto2
+msgid "Lotto2"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__lotto3
+msgid "Lotto3"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__lotto4
+msgid "Lotto4"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__lotto5
+msgid "Lotto5"
+msgstr ""
+
+#. module: connector_whs
+#: selection:hyddemo.mssql.log.line,type:0
+msgid "Mismatch"
+msgstr "Squadrato"
+
+#. module: connector_whs
+#: model:ir.model,name:connector_whs.model_hyddemo_mssql_log_line
+msgid "Mssql Log Line"
+msgstr "Linea Log Mssql"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__name
+msgid "Name"
+msgstr "Nome"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__nazione
+msgid "Nazione"
+msgstr ""
+
+#. module: connector_whs
+#: selection:hyddemo.mssql.log.line,type:0
+msgid "Not found"
+msgstr "Non trovato"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__num_lista
+msgid "Numero Lista"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__riga
+msgid "Numero riga"
+msgstr ""
+
+#. module: connector_whs
+#: selection:hyddemo.mssql.log.line,type:0
+msgid "Ok"
+msgstr ""
+
+#. module: connector_whs
+#: selection:hyddemo.whs.liste,tipo:0
+msgid "Prelievo"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__priorita
+msgid "Priorita"
+msgstr "Priorità"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__product_id
+msgid "Prodotto"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__parent_product_id
+msgid "Prodotto Padre"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__product_id
+msgid "Product"
+msgstr "Prodotto"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__product_customer_code
+msgid "Product Customer Code"
+msgstr "Codice Prodotto Cliente"
+
+#. module: connector_whs
+#: model:ir.model,name:connector_whs.model_product_template
+msgid "Product Template (Multi-Company)"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model,name:connector_whs.model_mrp_production
+msgid "Production Order"
+msgstr "Ordine di Produzione"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__provincia
+msgid "Provincia"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model,name:connector_whs.model_purchase_order
+msgid "Purchase Order"
+msgstr "Ordine di Acquisto"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__qty
+msgid "Qty"
+msgstr "Qtà"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__qty_wrong
+msgid "Qty Wrong"
+msgstr "Qtà Errata"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__qta
+msgid "Quantità"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__qtamov
+msgid "Quantità movimentata"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__ragsoc
+msgid "Ragione sociale"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model,name:connector_whs.model_mrp_product_produce
+msgid "Record Production"
+msgstr "Registrare la Produzione"
+
+#. module: connector_whs
+#: model:ir.model,name:connector_whs.model_repair_order
+msgid "Repair Order"
+msgstr "Ordine di riparazione"
+
+#. module: connector_whs
+#: selection:hyddemo.whs.liste,stato:0
+msgid "Ricevuto esito"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__riferimento
+msgid "Riferimento"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model,name:connector_whs.model_sale_order
+msgid "Sale Order"
+msgstr "Ordine di vendita"
+
+#. module: connector_whs
+#: selection:hyddemo.mssql.log.line,type:0
+msgid "Service"
+msgstr "Servizio"
+
+#. module: connector_whs
+#: code:addons/connector_whs/models/stock.py:114
+#, python-format
+msgid "Some moves already elaborated from WHS!"
+msgstr "Alcuni movimenti già elaborati da WHS!"
+
+#. module: connector_whs
+#: model:ir.model,name:connector_whs.model_stock_move
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__move_id
+msgid "Stock Move"
+msgstr "Movimento di magazzino"
+
+#. module: connector_whs
+#: model:ir.model,name:connector_whs.model_hyddemo_mssql_log
+msgid "Synchronization with Remote Mssql DB"
+msgstr "Sincronizzazione con DB Mssql Remoto"
+
+#. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_dbsource_form
+msgid "Synchronize Stock from WHS"
+msgstr "Sincronizza Magazzino da WHS"
+
+#. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_dbsource_form
+msgid "Synchronize WHS lists"
+msgstr "Sincronizza liste WHS"
+
+#. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_wizard_sync_stock_whs_mssql
+msgid "Synchronize stock"
+msgstr "Sincronizza magazzino"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_wizard_sync_stock_whs_mssql__do_sync
+msgid "Synchronize stock inventory"
+msgstr "Sincronizza inventario"
+
+#. module: connector_whs
+#: model:ir.model,name:connector_whs.model_wizard_sync_stock_whs_mssql
+msgid "Synchronize stock inventory with Remote Mssql DB"
+msgstr "Sincronizza inventario con Database remoto Mssql"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__tipo
+msgid "Tipo lista"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model,name:connector_whs.model_stock_picking
+msgid "Transfer"
+msgstr "Trasferimento"
+
+#. module: connector_whs
+#: code:addons/connector_whs/models/hyddemo_whs_liste.py:151
+#, python-format
+msgid "Trying to cancel lists elaborated from WHS, please wait for cron synchronization or force it."
+msgstr "Tentativo di annullare liste elaborate da WHS, si prega di attendere o forzare la sincronizzazione."
+
+#. module: connector_whs
+#: code:addons/connector_whs/models/hyddemo_whs_liste.py:163
+#, python-format
+msgid "Trying to cancel lists launched in processing from user in WHS, please wait for order end processing."
+msgstr "Tentativo di annullare liste lanciate in elaborazione dall'utente in WHS, si prega di attendere il completamento dell'operazione."
+
+#. module: connector_whs
+#: code:addons/connector_whs/models/stock.py:34
+#, python-format
+msgid "Trying to validate picking %s which is already elaborated on Whs with different qty."
+msgstr "Tentativo di validare il picking %s che è già stato elaborato in Whs con una quantità diversa."
+
+#. module: connector_whs
+#: code:addons/connector_whs/models/stock.py:46
+#, python-format
+msgid "Trying to validate picking %s which is not elaborated on Whs."
+msgstr "Tentativo di validare picking %s che non è stato elaborato in Whs."
+
+#. module: connector_whs
+#: code:addons/connector_whs/models/stock.py:41
+#, python-format
+msgid "Trying to validate picking %s which is not processable in Odoo but elaborated on Whs."
+msgstr "Tentativo di validare il trasferimento %s che non è processabile in Odoo ma elaborato in WHS."
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__type
+msgid "Type"
+msgstr "Tipo"
+
+#. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_dbsource_form
+msgid "Update Products in WHS"
+msgstr "Aggiorna Prodotti in WHS"
+
+#. module: connector_whs
+#: model:ir.model.fields,help:connector_whs.field_hyddemo_whs_liste__cliente
+msgid "Used as unique code in outher db, so spaces are not admitted."
+msgstr "Usato come codice unico in database esterno, perciò gli spazi non sono ammessi."
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__vettore
+msgid "Vettore"
+msgstr ""
+
+#. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_whs_liste_form
+msgid "WHS liste"
+msgstr "Liste Whs"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_base_external_dbsource__warehouse_id
+msgid "Warehouse linked to WHS"
+msgstr "Magazzino collegato a WHS"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__weight
+msgid "Weight"
+msgstr "Peso"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__weight_wrong
+msgid "Weight Wrong"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__whs_list_absent
+msgid "Whs List Absent"
+msgstr "Lista Whs Mancante"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__whs_list_log
+msgid "Whs List Log"
+msgstr "Log Lista WHS"
+
+#. module: connector_whs
+#: model:ir.actions.act_window,name:connector_whs.action_whs_liste
+#: model:ir.ui.menu,name:connector_whs.menu_whsliste
+msgid "Whs Liste"
+msgstr "Liste Whs"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_stock_move__whs_list_ids
+msgid "Whs Lists"
+msgstr "Liste Whs"
+
+#. module: connector_whs
+#: code:addons/connector_whs/models/stock.py:148
+#, python-format
+msgid "Whs valid list exists and qty cannot be modified!"
+msgstr "Esiste una lista WHS valida e la quantità non può essere modificata!"
+
+#. module: connector_whs
+#: model:ir.actions.act_window,name:connector_whs.action_whslog
+#: model:ir.ui.menu,name:connector_whs.menu_whslog
+msgid "Whslog"
+msgstr "Log WHS"
+
+#. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_wizard_sync_stock_whs_mssql
+msgid "or"
+msgstr "oppure"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__stato
+msgid "stato"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__tipo_mov
+msgid "tipo movimento"
+msgstr ""
+

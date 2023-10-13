@@ -51,6 +51,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           persist-credentials: false
+      - name: Install base_external_dbsource_sqlite module not yet merged
+        run: pip3 install -e "git+https://github.com/sergiocorato/server-backend@14.0-mig-base_external_dbsource_sqlite#egg=odoo14-addon-base_external_dbsource_sqlite&subdirectory=setup/base_external_dbsource_sqlite"
+      - name: Install base_external_dbsource_mssql module not yet merged
+        run: pip3 install -e "git+https://github.com/sergiocorato/server-backend@14.0-mig-base_external_dbsource_mssql#egg=odoo14-addon-base_external_dbsource_mssql&subdirectory=setup/base_external_dbsource_mssql"
       - name: Install addons and dependencies
         run: oca_install_addons
       - name: Check licenses
