@@ -15,10 +15,6 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
         <field name="uom_po_id" ref="uom.product_uom_unit" />
         <field name="description">TODO</field>
         <field name="default_code">MANUF</field>
-        <field
-      name="route_ids"
-      eval="[(6, 0, [ref('stock.route_warehouse0_mto'), ref('mrp.route_warehouse0_manufacture')])]"
-    />
     </record>
 
     <record id="product_product_manufacture_1_1" model="product.product">
@@ -79,10 +75,6 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
         <field name="uom_po_id" ref="uom.product_uom_unit" />
         <field name="description">TODO</field>
         <field name="default_code">MANUF 1-1-1</field>
-        <field
-      name="route_ids"
-      eval="[(6, 0, [ref('stock.route_warehouse0_mto'), ref('purchase_stock.route_warehouse0_buy')])]"
-    />
         <field
       name="seller_ids"
       eval="
