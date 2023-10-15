@@ -15,7 +15,7 @@ class HyddemoWhsListe(models.Model):
     _description = "Lists to synchronize with WHS"
     _order = "id desc"
 
-    num_lista = fields.Text("Numero Lista", size=50)
+    num_lista = fields.Text("Numero Lista")  # , size=50)
     riga = fields.Integer("Numero riga")
     stato = fields.Selection(
         [
@@ -42,7 +42,7 @@ class HyddemoWhsListe(models.Model):
     #                                                  annulla un trasferimento
     # 4        5 = Elaborato da host                   Il cron di Odoo importa gli esiti
     data_lista = fields.Datetime("Data lista")
-    riferimento = fields.Text("Riferimento", size=50)
+    riferimento = fields.Text("Riferimento")  # , size=50)
     tipo = fields.Selection(
         [
             ("1", "Prelievo"),
@@ -52,25 +52,24 @@ class HyddemoWhsListe(models.Model):
         string="Tipo lista",
     )
     priorita = fields.Integer("Priorita", default=0)  # 0=Bassa; 1=Media; 2=Urgente
-    vettore = fields.Text("Vettore", size=30)
+    vettore = fields.Text("Vettore")  # , size=30)
     cliente = fields.Text(
         "Codice cliente",
-        size=30,
         help="Used as unique code in outher db, so spaces are " "not admitted.",
-    )
-    ragsoc = fields.Text("Ragione sociale", size=100)
-    indirizzo = fields.Text("Indirizzo", size=50)
-    cap = fields.Text("Cap", size=10)
-    localita = fields.Text("Località", size=50)
-    provincia = fields.Text("Provincia", size=2)
-    nazione = fields.Text("Nazione", size=50)
+    )  # size=30,
+    ragsoc = fields.Text("Ragione sociale")  # , size=100)
+    indirizzo = fields.Text("Indirizzo")  # , size=50)
+    cap = fields.Text("Cap")  # , size=10)
+    localita = fields.Text("Località")  # , size=50)
+    provincia = fields.Text("Provincia")  # , size=2)
+    nazione = fields.Text("Nazione")  # , size=50)
     product_id = fields.Many2one(
         "product.product", string="Prodotto", domain=[("type", "=", "product")]
     )
     parent_product_id = fields.Many2one(
         "product.product", string="Prodotto Padre", domain=[("type", "=", "product")]
     )
-    lotto = fields.Text("Lotto", size=20)
+    lotto = fields.Text("Lotto")  # , size=20)
     lotto2 = fields.Char(size=20)
     lotto3 = fields.Char(size=20)
     lotto4 = fields.Char(size=20)
@@ -78,9 +77,9 @@ class HyddemoWhsListe(models.Model):
     qta = fields.Float("Quantità")
     qtamov = fields.Float("Quantità movimentata")
     move_id = fields.Many2one("stock.move", string="Stock Move", oldname="picking")
-    tipo_mov = fields.Text("tipo movimento", size=16)
+    tipo_mov = fields.Text("tipo movimento")  # , size=16)
     # mrpin mrpout move noback ripin ripout
-    client_order_ref = fields.Text(size=50)
+    client_order_ref = fields.Text()  # size=50)
     product_customer_code = fields.Char(size=250)
     whs_list_absent = fields.Boolean()
     whs_list_log = fields.Text()
