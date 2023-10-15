@@ -24,10 +24,18 @@ class TestProductionData(SavepointCase):
         cls.stock_location_stock = cls.env.ref("stock.stock_location_stock")
         cls.manufacture_route = cls.env.ref("mrp.route_warehouse0_manufacture")
         cls.uom_unit = cls.env.ref("uom.product_uom_unit")
-        cls.warehouse = cls.env.ref("stock.warehouse0")
+        cls.warehouse = cls.env['stock.warehouse'].search(
+            [('company_id', '=', cls.env.user.company_id.id)],
+            limit=1,
+        )
         cls.top_product = cls.env.ref(
             "mrp_production_demo.product_product_manufacture_1"
         )
+        cls.warehouse.mto_pull_id.route_id.active = True
+        cls.top_product.write(dict(route_ids=[
+            (6, 0, [cls.warehouse.mto_pull_id.route_id.id,
+                    cls.warehouse.manufacture_pull_id.route_id.id]),
+        ]))
         cls.subproduct1 = cls.env.ref(
             "mrp_production_demo.product_product_manufacture_1_1"
         )
@@ -37,6 +45,10 @@ class TestProductionData(SavepointCase):
         cls.subproduct_1_1 = cls.env.ref(
             "mrp_production_demo.product_product_manufacture_1_1_1"
         )
+        cls.subproduct_1_1.write(dict(route_ids=[
+            (6, 0, [cls.warehouse.mto_pull_id.route_id.id,
+                    cls.env.ref("purchase_stock.route_warehouse0_buy").id]),
+        ]))
         cls.subproduct_2_1 = cls.env.ref(
             "mrp_production_demo.product_product_manufacture_1_2_1"
         )
