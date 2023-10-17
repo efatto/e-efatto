@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="view_product_product_form" model="ir.ui.view">
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view" />
+        <field name="arch" type="xml">
+            <xpath
+        expr="//field[@name='standard_price']/ancestor::*[1]"
+        position="after"
+      >
+                <field
+          name="managed_replenishment_cost"
+          widget="monetary"
+          options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
+          attrs="{'invisible': [('product_variant_count', '>', 1), ('is_product_variant', '=', False)]}"
+        />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_product_product_form_easy" model="ir.ui.view">
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_variant_easy_edit_view" />
+        <field name="arch" type="xml">
+            <field name="standard_price" position="before">
+                <field
+          name="managed_replenishment_cost"
+          widget="monetary"
+          options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
+        />
+            </field>
+        </field>
+    </record>
+
+</odoo>
