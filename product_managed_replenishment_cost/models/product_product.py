@@ -164,11 +164,11 @@ class ProductProduct(models.Model):
                 if hasattr(seller, "discount2") and hasattr(seller, "discount3"):
                     price_unit = price_unit * (1 - seller.discount2 / 100.0)
                     price_unit = price_unit * (1 - seller.discount3 / 100.0)
-                if seller.currency_id != self.env.user.company_id.currency_id:
+                if seller.currency_id != self.env.company.currency_id:
                     price_unit = seller.currency_id._convert(
                         seller.price,
-                        self.env.user.company_id.currency_id,
-                        self.env.user.company_id,
+                        self.env.company.currency_id,
+                        self.env.company,
                         fields.Date.today(),
                         round=False,
                     )
