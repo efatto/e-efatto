@@ -104,7 +104,6 @@
     <record model="ir.actions.act_window" id="action_replenishment_cost">
         <field name="name">Product Replenishment Cost</field>
         <field name="res_model">replenishment.cost</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="view_replenishment_cost_tree" />
     </record>

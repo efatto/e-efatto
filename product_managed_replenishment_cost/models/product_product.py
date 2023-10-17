@@ -1,9 +1,8 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+# flake8: noqa: C901
 
 from odoo import api, fields, models
-
-import odoo.addons.decimal_precision as dp
 
 
 class ProductTemplate(models.Model):
@@ -12,9 +11,9 @@ class ProductTemplate(models.Model):
     standard_price = fields.Float(string="Landed with adjustment/depreciation")
     landed_cost = fields.Float(
         string="Landed cost",
-        digits=dp.get_precision("Product Price"),
+        digits="Product Price",
         compute="_compute_landed_cost",
-        inverse="_set_landed_cost",
+        inverse="_inverse_landed_cost",
         search="_search_landed_cost",
         groups="base.group_user",
         help="The cost that you have to support in order to produce or "
@@ -24,21 +23,21 @@ class ProductTemplate(models.Model):
     @api.depends("product_variant_ids", "product_variant_ids.landed_cost")
     def _compute_landed_cost(self):
         unique_variants = self.filtered(
-            lambda template: len(template.product_variant_ids) == 1
+            lambda templ: len(templ.product_variant_ids) == 1
         )
         for template in unique_variants:
             template.landed_cost = template.product_variant_ids.landed_cost
         for template in self - unique_variants:
             template.landed_cost = 0.0
 
-    @api.one
-    def _set_landed_cost(self):
+    def _inverse_landed_cost(self):
+        self.ensure_one()
         if len(self.product_variant_ids) == 1:
             self.product_variant_ids.landed_cost = self.landed_cost
 
     def _search_landed_cost(self, operator, value):
         products = self.env["product.product"].search(
-            [("landed_cost", operator, value)], limit=None
+            [("landed_cost", operator, value)]
         )
         return [("id", "in", products.mapped("product_tmpl_id").ids)]
 
@@ -51,7 +50,7 @@ class ProductProduct(models.Model):
         string="Landed cost",
         company_dependent=True,
         groups="base.group_user",
-        digits=dp.get_precision("Product Price"),
+        digits="Product Price",
         help="The cost that you have to support in order to produce or "
         "acquire the goods without adjustment/depreciation.",
     )
@@ -70,7 +69,7 @@ class ProductProduct(models.Model):
             boms_to_recompute = []
         total = 0
         total_landed = 0
-        for opt in bom.routing_id.operation_ids:
+        for opt in bom.operation_ids:
             duration_expected = (
                 opt.workcenter_id.time_start
                 + opt.workcenter_id.time_stop
@@ -130,7 +129,6 @@ class ProductProduct(models.Model):
         )
         return product_price, landed_price
 
-    @api.multi
     def update_managed_replenishment_cost(self):
         update_standard_price = self.env.context.get("update_standard_price", False)
         update_managed_replenishment_cost = self.env.context.get(
@@ -163,7 +161,7 @@ class ProductProduct(models.Model):
                 price_unit = seller.price
                 if hasattr(seller, "discount"):
                     price_unit = price_unit * (1 - seller.discount / 100.0)
-                if hasattr(seller, "discount2"):
+                if hasattr(seller, "discount2") and hasattr(seller, "discount3"):
                     price_unit = price_unit * (1 - seller.discount2 / 100.0)
                     price_unit = price_unit * (1 - seller.discount3 / 100.0)
                 if seller.currency_id != self.env.user.company_id.currency_id:

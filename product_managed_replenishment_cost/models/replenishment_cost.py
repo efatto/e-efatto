@@ -37,13 +37,11 @@ class ReplenishmentCost(models.Model):
         string="Product missing price",
     )
 
-    @api.multi
     @api.depends("product_ids")
     def _compute_products_count(self):
         for check in self:
             check.products_count = len(check.product_ids)
 
-    @api.multi
     def update_products_standard_price_and_replenishment_cost(self):
         res = self.with_context(
             update_standard_price=True,
@@ -51,21 +49,18 @@ class ReplenishmentCost(models.Model):
         ).update_products_replenishment_cost()
         return res
 
-    @api.multi
     def update_products_standard_price_only(self):
         res = self.with_context(
             update_standard_price=True,
         ).update_products_replenishment_cost()
         return res
 
-    @api.multi
     def update_products_replenishment_cost_only(self):
         res = self.with_context(
             update_managed_replenishment_cost=True,
         ).update_products_replenishment_cost()
         return res
 
-    @api.multi
     def update_bom_products_list_price_weight(self):
         # Update product from first bom component list price and weight
         res = self.with_context(
@@ -73,7 +68,6 @@ class ReplenishmentCost(models.Model):
         ).update_products_replenishment_cost()
         return res
 
-    @api.multi
     def update_products_replenishment_cost(self):
         for repl in self:
             domain = [("type", "in", ["product", "consu", "service"])]
