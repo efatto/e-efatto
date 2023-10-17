@@ -2,18 +2,19 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
 
 from odoo import fields, models
+
 from odoo.addons import decimal_precision as dp
 
 
 class ProductSupplierinfo(models.Model):
-    _inherit = 'product.supplierinfo'
+    _inherit = "product.supplierinfo"
 
     depreciation_cost = fields.Float(
-        string='Depreciation Cost (€/pz)',
-        digits=dp.get_precision('Product Price'),
+        string="Depreciation Cost (€/pz)",
+        digits=dp.get_precision("Product Price"),
     )
     depreciation_cost_note = fields.Char()
     adjustment_cost = fields.Float(
-        string='Adjustment Cost (€/pz)',
-        digits=dp.get_precision('Product Price'),
+        string="Adjustment Cost (€/pz)",
+        digits=dp.get_precision("Product Price"),
     )
