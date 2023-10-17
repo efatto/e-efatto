@@ -76,7 +76,7 @@ class HyddemoWhsListe(models.Model):
     lotto5 = fields.Char(size=20)
     qta = fields.Float("Quantità")
     qtamov = fields.Float("Quantità movimentata")
-    move_id = fields.Many2one("stock.move", string="Stock Move", oldname="picking")
+    move_id = fields.Many2one("stock.move", string="Stock Move")
     tipo_mov = fields.Text("tipo movimento")  # , size=16)
     # mrpin mrpout move noback ripin ripout
     client_order_ref = fields.Text()  # size=50)
