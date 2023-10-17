@@ -4,7 +4,7 @@
 from datetime import timedelta
 
 from odoo import fields
-from odoo.tests.common import SavepointCase
+from odoo.tests.common import Form, SavepointCase
 
 
 class PurchaseInvoiceNoReference(SavepointCase):
@@ -34,61 +34,45 @@ class PurchaseInvoiceNoReference(SavepointCase):
         )
 
     def test_purchase_order(self):
-        purchase_order = self.env["purchase.order"].create(
-            {
-                "partner_id": self.vendor.id,
-                "date_order": fields.Date.today(),
-                "partner_ref": "Vendor Reference",
-                "order_line": [
-                    (
-                        0,
-                        0,
-                        {
-                            "product_id": self.product.id,
-                            "product_qty": 20,
-                            "product_uom": self.product.uom_po_id.id,
-                            "price_unit": self.product.list_price,
-                            "name": self.product.name,
-                            "date_planned": fields.Date.today() + timedelta(days=20),
-                        },
-                    ),
-                ],
-            }
-        )
+        purchase_form = Form(self.env["purchase.order"])
+        purchase_form.date_order = fields.Date.today()
+        purchase_form.partner_id = self.vendor
+        purchase_form.partner_ref = "Vendor Reference"
+        with purchase_form.order_line.new() as purchase_line_form:
+            purchase_line_form.product_id = self.product
+            purchase_line_form.product_qty = 20
+            purchase_line_form.product_uom = self.product.uom_po_id
+            purchase_line_form.price_unit = self.product.list_price
+            purchase_line_form.name = self.product.name
+            purchase_line_form.date_planned = fields.Date.today() + timedelta(days=20)
+        purchase_order = purchase_form.save()
         purchase_order.button_confirm()
         self.assertEqual(
             len(purchase_order.order_line), 1, msg="Order line was not created"
         )
-        account_invoice = self.env["account.move"].create(
-            {
-                "move_type": "in_invoice",
-                "invoice_date": fields.Date.today(),
-                "currency_id": self.env.ref("base.EUR").id,
-                "journal_id": self.purchase_journal.id,
-                "company_id": self.env.user.company_id.id,
-                "partner_id": self.vendor.id,
-                "date": fields.Date.today(),
-                "ref": "Invoice Reference",
-                "invoice_line_ids": [
-                    (
-                        0,
-                        0,
-                        {
-                            "product_id": self.env.ref("product.product_product_5").id,
-                            "quantity": 5,
-                            "account_id": self.expense_account.id,
-                            "name": "product test 5",
-                            "price_unit": 6,
-                            "currency_id": self.env.ref("base.EUR").id,
-                        },
-                    ),
-                ],
-            }
+        invoice_form = Form(
+            self.env["account.move"].with_context(
+                check_move_validity=False,
+                company_id=self.env.user.company_id.id,
+                default_move_type="in_invoice",
+            )
         )
-        account_invoice.action_post()
+        invoice_form.date = fields.Date.today()
+        invoice_form.invoice_date = fields.Date.today()
+        invoice_form.partner_id = self.vendor
+        invoice_form.ref = "Invoice Reference"
+        with invoice_form.invoice_line_ids.new() as invoice_line_form:
+            invoice_line_form.product_id = self.env.ref("product.product_product_5")
+            invoice_line_form.quantity = 5
+            invoice_line_form.account_id = self.expense_account
+            invoice_line_form.name = "product test 5"
+            invoice_line_form.price_unit = 6
+            invoice_line_form.currency_id = self.env.ref("base.EUR")
+        invoice = invoice_form.save()
+        invoice.action_post()
         vendor_bill_purchase_id = self.env["purchase.bill.union"].search(
             [("reference", "=", "Vendor Reference")]
         )
         self.assertTrue(vendor_bill_purchase_id)
-        account_invoice.vendor_bill_purchase_id = vendor_bill_purchase_id
-        self.assertEqual(account_invoice.ref, "Invoice Reference")
+        invoice.purchase_vendor_bill_id = vendor_bill_purchase_id
+        self.assertEqual(invoice.ref, "Invoice Reference")
