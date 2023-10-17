@@ -7,11 +7,11 @@ from odoo import api, models
 class AccountMove(models.Model):
     _inherit = "account.move"
 
-    @api.onchange("purchase_id")
-    def purchase_order_change(self):
+    @api.onchange("purchase_vendor_bill_id", "purchase_id")
+    def _onchange_purchase_auto_complete(self):
         if not self.purchase_id:
             return {}
         original_reference = self.ref
-        res = super().purchase_order_change()
+        res = super()._onchange_purchase_auto_complete()
         self.ref = original_reference
         return res
