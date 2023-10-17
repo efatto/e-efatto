@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" ?>
 <odoo>
     <record model="ir.ui.view" id="view_replenishment_cost_tree">
         <field name="name">replenishment.cost.tree</field>
@@ -6,8 +6,8 @@
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="Replenishment Cost">
-                <field name="name"/>
-                <field name="last_update"/>
+                <field name="name" />
+                <field name="last_update" />
             </tree>
         </field>
     </record>
@@ -18,54 +18,81 @@
             <form string="Replenishment Cost">
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button type="object" name="action_view_product_ids"
-                            class="oe_stat_button" icon="fa-database">
-                            <field string="Products" name="products_count" widget="statinfo"/>
+                        <button
+              type="object"
+              name="action_view_product_ids"
+              class="oe_stat_button"
+              icon="fa-database"
+            >
+                            <field
+                string="Products"
+                name="products_count"
+                widget="statinfo"
+              />
                         </button>
                     </div>
                     <group>
                         <group>
-                            <field name="name"/>
-                            <field name="company_id" groups="base.group_multi_company"
-                                   options="{'no_create': True}"/>
+                            <field name="name" />
+                            <field
+                name="company_id"
+                groups="base.group_multi_company"
+                options="{'no_create': True}"
+              />
                         </group>
                         <group>
-                            <field name="last_update"/>
-                            <field name="product_ctg_ids" widget="many2many_tags"/>
+                            <field name="last_update" />
+                            <field name="product_ctg_ids" widget="many2many_tags" />
                         </group>
                         <group>
-                            <button name="update_products_replenishment_cost_only" string="Update Replenishment Cost" type="object"/>
+                            <button
+                name="update_products_replenishment_cost_only"
+                string="Update Replenishment Cost"
+                type="object"
+              />
                         </group>
-                        <group/>
+                        <group />
                         <group>
-                            <button name="update_products_standard_price_only" string="Update Standard Price and Landed Cost" type="object"/>
+                            <button
+                name="update_products_standard_price_only"
+                string="Update Standard Price and Landed Cost"
+                type="object"
+              />
                         </group>
-                        <group/>
+                        <group />
                         <group>
-                            <button name="update_products_standard_price_and_replenishment_cost" string="Update Standard Price, Replenishment and Landed Cost" type="object"/>
+                            <button
+                name="update_products_standard_price_and_replenishment_cost"
+                string="Update Standard Price, Replenishment and Landed Cost"
+                type="object"
+              />
                         </group>
-                        <group/>
+                        <group />
                         <group>
-                            <button name="update_bom_products_list_price_weight" string="Update BOM Products List Price and Weight" type="object"/>
+                            <button
+                name="update_bom_products_list_price_weight"
+                string="Update BOM Products List Price and Weight"
+                type="object"
+              />
                         </group>
-                        <group/>
+                        <group />
                         <group>
-                            <field name="log"/>
+                            <field name="log" />
                         </group>
                     </group>
                     <group string="Products without seller price">
                         <field name="missing_seller_price_ids" nolabel="1">
                             <tree>
-                                <field name="default_code"/>
-                                <field name="name"/>
+                                <field name="default_code" />
+                                <field name="name" />
                             </tree>
                         </field>
                     </group>
                     <group string="Products without seller">
                         <field name="missing_seller_ids" nolabel="1">
                             <tree>
-                                <field name="default_code"/>
-                                <field name="name"/>
+                                <field name="default_code" />
+                                <field name="name" />
                             </tree>
                         </field>
                     </group>
@@ -79,10 +106,12 @@
         <field name="res_model">replenishment.cost</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="view_id" ref="view_replenishment_cost_tree"/>
+        <field name="view_id" ref="view_replenishment_cost_tree" />
     </record>
-    <menuitem name="Replenishment Cost"
-              id="menu_replenishment_stock"
-              parent="stock.menu_warehouse_config"
-              action="action_replenishment_cost"/>
+    <menuitem
+    name="Replenishment Cost"
+    id="menu_replenishment_stock"
+    parent="stock.menu_warehouse_config"
+    action="action_replenishment_cost"
+  />
 </odoo>
