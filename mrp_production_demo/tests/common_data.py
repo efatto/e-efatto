@@ -106,7 +106,6 @@ class TestProductionData(SavepointCase):
         """Update Product quantity."""
         product_qty = self.env["stock.change.product.qty"].create(
             {
-                "location_id": location.id,
                 "product_id": product.id,
                 "new_quantity": quantity,
             }
