@@ -102,7 +102,7 @@ class TestProductionData(SavepointCase):
             }
         )
 
-    def _update_product_qty(self, product, location, quantity):
+    def _update_product_qty(self, product, quantity):
         """Update Product quantity."""
         product_qty = self.env["stock.change.product.qty"].create(
             {
