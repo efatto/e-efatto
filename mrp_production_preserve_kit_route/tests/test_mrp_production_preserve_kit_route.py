@@ -1,6 +1,8 @@
 # Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from odoo.tests.common import Form
+
 from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
 
 
@@ -97,15 +99,13 @@ class TestMrpProductionPreserveKitRoute(TestProductionData):
         )
 
     def test_so_bom_kit(self):
-        man_order = self.env["mrp.production"].create(
-            {
-                "name": "MO-Test",
-                "product_id": self.product_bom.id,
-                "product_uom_id": self.product_bom.uom_id.id,
-                "product_qty": 1,
-                "bom_id": self.bom.id,
-            }
-        )
+        man_order_form = Form(self.env["mrp.production"])
+        man_order_form.product_id = self.product_bom
+        man_order_form.product_uom_id = self.product_bom.uom_id
+        man_order_form.bom_id = self.bom
+        man_order_form.product_qty = 1
+        man_order = man_order_form.save()
+        man_order.action_confirm()
         self.assertEqual(len(man_order.move_raw_ids), 4)
         self.assertEqual(
             set(
