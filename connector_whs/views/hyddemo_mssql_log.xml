@@ -4,7 +4,7 @@
         <field name="name">view.whslog.tree</field>
         <field name="model">hyddemo.mssql.log</field>
         <field name="arch" type="xml">
-            <tree string="Log Processing">
+            <tree>
                 <field name="ultimo_invio" />
                 <field name="errori" />
                 <field name="dbsource_id" />
