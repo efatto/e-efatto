@@ -3,7 +3,7 @@
 {
     "name": "Purchase Order Company Amount",
     "summary": "Add company currency untaxed amount to purchase order.",
-    "version": "12.0.1.0.0",
+    "version": "14.0.1.0.0",
     "category": "Purchases",
     "website": "https://github.com/sergiocorato/e-efatto",
     "author": "Sergio Corato",
