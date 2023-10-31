@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!-- pylint:disable=dangerous-view-replace-wo-priority -->
+<!-- oca-hooks:disable=xml-view-dangerous-replace-low-priority -->
 <odoo>
 
     <record model="ir.ui.view" id="product_form_view_procurement_button">
