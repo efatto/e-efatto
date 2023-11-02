@@ -38,11 +38,11 @@
                         </group>
                         <group/>
                         <group>
-                            <button name="update_products_standard_price_only" string="Update Standard Price and Landed Cost" type="object"/>
+                            <button name="update_products_standard_price_only" string="Update Landed Costs" type="object"/>
                         </group>
                         <group/>
                         <group>
-                            <button name="update_products_standard_price_and_replenishment_cost" string="Update Standard Price, Replenishment and Landed Cost" type="object"/>
+                            <button name="update_products_standard_price_and_replenishment_cost" string="Update Landed and Replenishment Costs" type="object"/>
                         </group>
                         <group/>
                         <group>
