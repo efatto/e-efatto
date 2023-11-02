@@ -3,7 +3,6 @@
 
 from odoo.tests.common import SavepointCase
 from odoo import fields
-from odoo.tools import float_round
 
 
 class TestPurchaseUpdateLastSupplierinfo(SavepointCase):
