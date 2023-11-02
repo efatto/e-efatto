@@ -181,6 +181,13 @@ class StockMove(models.Model):
             pick = move.picking_id
             tipo = False
             location_id = pick.location_id.id
+            ragsoc = False
+            indirizzo = False
+            cliente = False
+            cap = False
+            localita = False
+            provincia = False
+            nazione = False
             if pick.picking_type_id.code == "incoming":
                 tipo = "2"
                 location_id = pick.location_dest_id.id
