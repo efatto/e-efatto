@@ -24,15 +24,27 @@ Questo calcolo è possibile farlo in maniera indipendente dal menu:
 .. image:: ../static/description/menu.png
     :alt: Menu in impostazioni Magazzino
 
-tramite due azioni: la prima esegue l'aggiornamento del costo di sostituzione solamente:
+tramite quattro azioni: la prima esegue l'aggiornamento del costo di sostituzione solamente:
 
 .. image:: ../static/description/aggiorna_sostituzione.png
     :alt: Aggiorna il costo di sostituzione
 
-La seconda azione esegue l'aggiornamento del punto 1. e poi riporta lo stesso valore nel campo costo del prodotto. Non è possibile ripristinare questa operazione, per cui il campo costo da ora in poi sarà questo. Tenere conto in ogni caso che questo campo potrebbe essere modificato in maniera automatica dal sistema in base alla configurazione.
+la seconda esegue l'aggiornamento dei soli costi landed (con o senza costi di adeguamento/ammortamento):
 
-.. image:: ../static/description/aggiorna_costo.png
-    :alt: Aggiorna il costo
+.. image:: ../static/description/aggiorna_costi_landed.png
+    :alt: Aggiorna costi landed
+
+la terza esegue l'aggiornamento dei costi landed (con o senza costi di adeguamento/ammortamento) e del costo di sostituzione:
+
+.. image:: ../static/description/aggiorna_costi_landed_e_sostituzione.png
+    :alt: Aggiorna costi landed e di sostituzione
+
+La quarta esegue l'aggiornamento del prezzo di vendita dei prodotti con distinta base.
+
+.. image:: ../static/description/aggiorna_prezzi_da_diba.png
+    :alt: Aggiorna il prezzo e il peso di prodotto con distinta base
+
+Nota bene: non è possibile ripristinare nessuna di queste operazioni, in quanto vanno a sovrascrivere i campi citati. Tenere conto inoltre che i campi del prezzo di vendita e del costo landed senza adeguamento/ammortamento (costo standard rinominato) potrebbero essere modificati in maniera automatica dal sistema in base alla configurazione.
 
 In seguito è utile creare un listino a partire dal costo per generare un'esportazione (reimportabile) per effettuare un cambio di listino di vendita programmato:
 
