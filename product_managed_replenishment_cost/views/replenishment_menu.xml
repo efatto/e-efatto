@@ -5,7 +5,7 @@
         <field name="model">replenishment.cost</field>
         <field name="type">tree</field>
         <field name="arch" type="xml">
-            <tree string="Replenishment Cost">
+            <tree>
                 <field name="name" />
                 <field name="last_update" />
             </tree>

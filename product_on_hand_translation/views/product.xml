@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!-- pylint:disable=dangerous-view-replace-wo-priority -->
 <odoo>
 
     <record model="ir.ui.view" id="product_form_view_procurement_button">
@@ -10,7 +9,13 @@
         <field name="arch" type="xml">
             <xpath
         expr="//button[@name='action_open_quants']/div/span[hasclass('o_stat_text')]"
-        position="replace"
+        position="attributes"
+      >
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath
+        expr="//button[@name='action_open_quants']/div/span[hasclass('o_stat_text')]"
+        position="after"
       >
                 <span class="o_stat_text">Q.ty On Hand</span>
             </xpath>
@@ -28,7 +33,13 @@
         <field name="arch" type="xml">
             <xpath
         expr="//button[@name='action_open_quants']/div/span[hasclass('o_stat_text')]"
-        position="replace"
+        position="attributes"
+      >
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath
+        expr="//button[@name='action_open_quants']/div/span[hasclass('o_stat_text')]"
+        position="after"
       >
                 <span class="o_stat_text">Q.ty On Hand</span>
             </xpath>
