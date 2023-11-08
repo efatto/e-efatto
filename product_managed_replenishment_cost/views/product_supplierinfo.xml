@@ -6,7 +6,6 @@
         <field name="inherit_id" ref="product.product_supplierinfo_form_view"/>
         <field name="arch" type="xml">
             <field name="discount" position="after">
-                <field name="adjustment_cost"/>
                 <field name="depreciation_cost"/>
                 <field name="depreciation_cost_note"/>
             </field>
@@ -18,7 +17,6 @@
         <field name="inherit_id" ref="product.product_supplierinfo_tree_view"/>
         <field name="arch" type="xml">
             <field name="discount" position="after">
-                <field name="adjustment_cost"/>
                 <field name="depreciation_cost"/>
                 <field name="depreciation_cost_note"/>
             </field>

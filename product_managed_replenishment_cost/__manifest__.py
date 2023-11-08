@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     'name': 'Product Managed Replenishment Cost',
-    'version': '12.0.1.0.6',
+    'version': '12.0.1.0.7',
     'author': 'Sergio Corato',
     "website": "https://github.com/sergiocorato/e-efatto",
     'category': 'Products',

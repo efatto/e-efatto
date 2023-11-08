@@ -11,6 +11,10 @@ class ProductTemplate(models.Model):
     standard_price = fields.Float(
         string="Landed with adjustment/depreciation"
     )
+    adjustment_cost = fields.Float(
+        string='Adjustment Cost (€/pz)',
+        digits=dp.get_precision('Product Price'),
+    )
     landed_cost = fields.Float(
         string="Landed cost",
         digits=dp.get_precision('Product Price'),
@@ -166,7 +170,7 @@ class ProductProduct(models.Model):
                 price_unit *= (1 + tariff_id.tariff_percentage / 100.0)
             landed_cost = price_unit
             # add adjustment and depreciation costs
-            adjustment_cost = seller.adjustment_cost
+            adjustment_cost = product.adjustment_cost
             depreciation_cost = seller.depreciation_cost
             price_unit += (
                 adjustment_cost + depreciation_cost
@@ -187,9 +191,10 @@ class ProductProduct(models.Model):
         # suppliers
         for product in self.sort_products_by_parent(products_tobe_manufactured):
             produce_price, landed_price = product._get_managed_price_from_bom()
+            produce_price += product.adjustment_cost
             if product.seller_ids:
                 seller = product.seller_ids[0]
-                produce_price += (seller.adjustment_cost + seller.depreciation_cost)
+                produce_price += seller.depreciation_cost
             if update_managed_replenishment_cost:
                 product.managed_replenishment_cost = produce_price
             if update_standard_price:
