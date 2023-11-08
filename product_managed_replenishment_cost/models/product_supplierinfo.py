@@ -12,7 +12,3 @@ class ProductSupplierinfo(models.Model):
         digits="Product Price",
     )
     depreciation_cost_note = fields.Char()
-    adjustment_cost = fields.Float(
-        string="Adjustment Cost (€/pz)",
-        digits="Product Price",
-    )
