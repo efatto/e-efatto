@@ -10,6 +10,8 @@ from odoo.exceptions import UserError
 import os
 import time
 
+from sqlalchemy import text as sql_text
+
 
 @tagged("-standard", "test_whs")
 class TestConnectorWhs(TransactionCase):
@@ -105,17 +107,26 @@ class TestConnectorWhs(TransactionCase):
                     whs_list.riga
                 )
             self.dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=set_liste_elaborated_query, sqlparams=None, metadata=None)
+                sqlquery=sql_text(set_liste_elaborated_query),
+                sqlparams=None,
+                metadata=None,
+            )
 
     def check_cancel_workflow(self, picking, list_len):
         whs_records = self.dbsource.execute_mssql(
-            sqlquery="SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE "
-                     "WHERE Riferimento = '%s'" % (
-                         picking.sale_id.name if picking.sale_id
-                         else picking.purchase_id.name
-                     ),
-            sqlparams=None, metadata=None)[0]
-        whs_lists = picking.mapped('move_lines.whs_list_ids')
+            sqlquery=sql_text(
+                "SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE "
+                "WHERE Riferimento = '%s'"
+                % (
+                    picking.sale_id.name
+                    if picking.sale_id
+                    else picking.purchase_id.name
+                )
+            ),
+            sqlparams=None,
+            metadata=None,
+        )[0]
+        whs_lists = picking.mapped("move_lines.whs_list_ids")
         self.assertEqual(len(whs_lists), list_len)
         whs_list = whs_lists[0]
         self.assertEqual(whs_list.stato, '2')
@@ -131,12 +142,18 @@ class TestConnectorWhs(TransactionCase):
         self.assertEqual(set(picking.move_lines.mapped('whs_list_ids.stato')), {'3'})
         self.simulate_whs_cron(picking.move_lines.mapped('whs_list_ids'), 5)
         whs_records1 = self.dbsource.execute_mssql(
-            sqlquery="SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE "
-                     "WHERE Riferimento = '%s'" % (
-                         picking.sale_id.name if picking.sale_id
-                         else picking.purchase_id.name
-                     ),
-            sqlparams=None, metadata=None)[0]
+            sqlquery=sql_text(
+                "SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE "
+                "WHERE Riferimento = '%s'"
+                % (
+                    picking.sale_id.name
+                    if picking.sale_id
+                    else picking.purchase_id.name
+                )
+            ),
+            sqlparams=None,
+            metadata=None,
+        )[0]
         self.assertEqual(len(whs_records1), len(whs_records))
         self.assertEqual(set([x[0] for x in whs_records1]), {5})
         # restore picking to assigned state
@@ -153,12 +170,18 @@ class TestConnectorWhs(TransactionCase):
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records2 = self.dbsource.execute_mssql(
-            sqlquery="SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE "
-                     "WHERE Riferimento = '%s'" % (
-                         picking.sale_id.name if picking.sale_id
-                         else picking.purchase_id.name
-                     ),
-            sqlparams=None, metadata=None)[0]
+            sqlquery=sql_text(
+                "SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE "
+                "WHERE Riferimento = '%s'"
+                % (
+                    picking.sale_id.name
+                    if picking.sale_id
+                    else picking.purchase_id.name
+                )
+            ),
+            sqlparams=None,
+            metadata=None,
+        )[0]
         self.assertEqual(len(whs_records2), len(whs_records) + list_len)
         for Elaborato in set([x[0] for x in whs_records2]):
             # WHS cron change Elaborato to 2 in an un-controllable time
@@ -166,16 +189,24 @@ class TestConnectorWhs(TransactionCase):
         return whs_list
 
     def test_00_complete_picking_from_sale(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery='DELETE FROM HOST_LISTE', sqlparams=None, metadata=None)
-        whs_len_records = len(self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0])
-        order1 = self.env['sale.order'].create({
-            'partner_id': self.partner.id,
-            'client_order_ref': 'Rif. SO customer',
-            })
+            sqlquery=sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
+        )
+        whs_len_records = len(
+            self.dbsource.execute_mssql(
+                sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
+                sqlparams=None,
+                metadata=None,
+            )[0]
+        )
+        order1 = self.env["sale.order"].create(
+            {
+                "partner_id": self.partner.id,
+                "client_order_ref": "Rif. SO customer",
+            }
+        )
         self._create_sale_order_line(order1, self.product1, 5)
         order1.action_confirm()
         self.assertEqual(order1.state, 'sale')
@@ -188,7 +219,8 @@ class TestConnectorWhs(TransactionCase):
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0]
+            sqlquery=sql_text("SELECT * FROM HOST_LISTE"), sqlparams=None, metadata=None
+        )[0]
         self.assertEqual(len(whs_records), whs_len_records + 1)
         for whs_record in whs_records:
             self.assertTrue(order1.client_order_ref in whs_record.values())
@@ -224,7 +256,8 @@ class TestConnectorWhs(TransactionCase):
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0]
+            sqlquery=sql_text("SELECT * FROM HOST_LISTE"), sqlparams=None, metadata=None
+        )[0]
         self.assertEqual(len(whs_records), whs_len_records + 2)
         # simulate whs work
         lotto = '55A1'
@@ -240,7 +273,8 @@ class TestConnectorWhs(TransactionCase):
                 whs_list.riga
             )
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=set_liste_elaborated_query, sqlparams=None, metadata=None)
+            sqlquery=sql_text(set_liste_elaborated_query), sqlparams=None, metadata=None
+        )
 
         whs_select_query = \
             "SELECT Qta, QtaMovimentata, Lotto, Lotto3, Lotto3, Lotto4, Lotto5 " \
@@ -249,7 +283,8 @@ class TestConnectorWhs(TransactionCase):
                 whs_list.num_lista, whs_list.riga
             )
         result_liste = self.dbsource.execute_mssql(
-            sqlquery=whs_select_query, sqlparams=None, metadata=None)
+            sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+        )
         self.assertEqual(
             str(result_liste[0]),
             "[(Decimal('5.000'), Decimal('5.000'), '55A1', '55A3', '55A3', '55A4', "
@@ -276,16 +311,24 @@ class TestConnectorWhs(TransactionCase):
         self.assertEqual(whs_list.lotto5, lotto5)
 
     def test_01_partial_picking_from_sale(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery='DELETE FROM HOST_LISTE', sqlparams=None, metadata=None)
-        whs_len_records = len(self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0])
-        order1 = self.env['sale.order'].create({
-            'partner_id': self.partner.id,
-            'client_order_ref': 'Rif. SO customer',
-            })
+            sqlquery=sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
+        )
+        whs_len_records = len(
+            self.dbsource.execute_mssql(
+                sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
+                sqlparams=None,
+                metadata=None,
+            )[0]
+        )
+        order1 = self.env["sale.order"].create(
+            {
+                "partner_id": self.partner.id,
+                "client_order_ref": "Rif. SO customer",
+            }
+        )
         self._create_sale_order_line(order1, self.product1, 5, "2")
         self._create_sale_order_line(order1, self.product1, 5)
         order1.action_confirm()
@@ -302,8 +345,10 @@ class TestConnectorWhs(TransactionCase):
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self.dbsource.execute_mssql(
-            sqlquery="SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE",
-            sqlparams=None, metadata=None)[0]
+            sqlquery=sql_text("SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE"),
+            sqlparams=None,
+            metadata=None,
+        )[0]
         self.assertEqual(len(whs_records), whs_len_records + 2)
         self.assertEqual(set([x[0] for x in whs_records]), {1})
         self.assertEqual(set(
@@ -320,8 +365,10 @@ class TestConnectorWhs(TransactionCase):
         whs_list = self.check_cancel_workflow(picking, 2)
 
         whs_records = self.dbsource.execute_mssql(
-            sqlquery="SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE",
-            sqlparams=None, metadata=None)[0]
+            sqlquery=sql_text("SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE"),
+            sqlparams=None,
+            metadata=None,
+        )[0]
         self.assertEqual(len(whs_records), whs_len_records + 4)
         # simulate whs work: validate first move partially (3 over 5)
         set_liste_elaborated_query = \
@@ -330,7 +377,8 @@ class TestConnectorWhs(TransactionCase):
                 3, whs_list.num_lista, whs_list.riga
             )
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=set_liste_elaborated_query, sqlparams=None, metadata=None)
+            sqlquery=sql_text(set_liste_elaborated_query), sqlparams=None, metadata=None
+        )
 
         whs_select_query = \
             "SELECT Qta, QtaMovimentata, Priorita FROM HOST_LISTE WHERE Elaborato = 4 "\
@@ -338,7 +386,8 @@ class TestConnectorWhs(TransactionCase):
                 whs_list.num_lista, whs_list.riga
             )
         result_liste = self.dbsource.execute_mssql(
-            sqlquery=whs_select_query, sqlparams=None, metadata=None)
+            sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+        )
         self.assertIn("[(Decimal('5.000'), Decimal('3.000'), 1)]", str(result_liste))
 
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -372,12 +421,22 @@ class TestConnectorWhs(TransactionCase):
                     whs_list.num_lista, whs_list.riga
                 )
             self.dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=set_liste_elaborated_query, sqlparams=None, metadata=None)
+                sqlquery=sql_text(set_liste_elaborated_query),
+                sqlparams=None,
+                metadata=None,
+            )
 
         self.dbsource.whs_insert_read_and_synchronize_list()
-        self.assertEqual(len(self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0]),
-            whs_len_records + 4)
+        self.assertEqual(
+            len(
+                self.dbsource.execute_mssql(
+                    sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
+                    sqlparams=None,
+                    metadata=None,
+                )[0]
+            ),
+            whs_len_records + 4,
+        )
 
         # check back picking is waiting for whs process
         self.assertEqual(len(order1.picking_ids), 2)
@@ -385,16 +444,24 @@ class TestConnectorWhs(TransactionCase):
         self.assertEqual(backorder_picking.move_lines[0].state, 'assigned')
 
     def test_02_partial_picking_partial_available_from_sale(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery='DELETE FROM HOST_LISTE', sqlparams=None, metadata=None)
-        whs_len_records = len(self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0])
-        order1 = self.env['sale.order'].create({
-            'partner_id': self.partner.id,
-            'client_order_ref': 'Rif. SO customer',
-            })
+            sqlquery=sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
+        )
+        whs_len_records = len(
+            self.dbsource.execute_mssql(
+                sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
+                sqlparams=None,
+                metadata=None,
+            )[0]
+        )
+        order1 = self.env["sale.order"].create(
+            {
+                "partner_id": self.partner.id,
+                "client_order_ref": "Rif. SO customer",
+            }
+        )
         self._create_sale_order_line(order1, self.product1, 5, "3")
         self._create_sale_order_line(order1, self.product2, 20)
         order1.action_confirm()
@@ -407,8 +474,10 @@ class TestConnectorWhs(TransactionCase):
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE WHERE Elaborato != 5",
-            sqlparams=None, metadata=None)[0]
+            sqlquery=sql_text("SELECT * FROM HOST_LISTE WHERE Elaborato != 5"),
+            sqlparams=None,
+            metadata=None,
+        )[0]
         self.assertEqual(len(whs_records), whs_len_records + 2)
         for whs_record in whs_records:
             self.assertTrue(order1.client_order_ref in whs_record.values())
@@ -430,7 +499,10 @@ class TestConnectorWhs(TransactionCase):
                     whs_list.num_lista, whs_list.riga
                 )
             self.dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=set_liste_elaborated_query, sqlparams=None, metadata=None)
+                sqlquery=sql_text(set_liste_elaborated_query),
+                sqlparams=None,
+                metadata=None,
+            )
 
         for whs_list in whs_lists:
             whs_select_query = \
@@ -439,7 +511,8 @@ class TestConnectorWhs(TransactionCase):
                     whs_list.num_lista, whs_list.riga
                 )
             result_liste = self.dbsource.execute_mssql(
-                sqlquery=whs_select_query, sqlparams=None, metadata=None)
+                sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+            )
             self.assertEqual(
                 str(result_liste[0]),
                 "[(Decimal('5.000'), Decimal('3.000'), 2)]"
@@ -481,7 +554,10 @@ class TestConnectorWhs(TransactionCase):
                     whs_list.num_lista, whs_list.riga
                 )
             self.dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=set_liste_elaborated_query, sqlparams=None, metadata=None)
+                sqlquery=sql_text(set_liste_elaborated_query),
+                sqlparams=None,
+                metadata=None,
+            )
 
         # this function do the action_assign() too
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -505,7 +581,8 @@ class TestConnectorWhs(TransactionCase):
                 back_whs_list.num_lista, back_whs_list.riga
             )
         result_liste = self.dbsource.execute_mssql(
-            sqlquery=whs_select_query, sqlparams=None, metadata=None)
+            sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+        )
         self.assertEqual(str(result_liste[0]), "[(Decimal('2.000'), None)]")
 
         # simulate whs work set done to rest of backorder
@@ -515,23 +592,32 @@ class TestConnectorWhs(TransactionCase):
                 2, back_whs_list.num_lista, back_whs_list.riga
             )
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=set_liste_elaborated_query, sqlparams=None, metadata=None)
+            sqlquery=sql_text(set_liste_elaborated_query), sqlparams=None, metadata=None
+        )
 
         self.dbsource.whs_insert_read_and_synchronize_list()
         backorder_picking.button_validate()
         self.assertEqual(backorder_picking.state, 'done')
 
     def test_03_partial_picking_from_sale(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery='DELETE FROM HOST_LISTE', sqlparams=None, metadata=None)
-        whs_len_records = len(self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0])
-        order1 = self.env['sale.order'].create({
-            'partner_id': self.partner.id,
-            'client_order_ref': 'Rif. SO customer',
-            })
+            sqlquery=sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
+        )
+        whs_len_records = len(
+            self.dbsource.execute_mssql(
+                sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
+                sqlparams=None,
+                metadata=None,
+            )[0]
+        )
+        order1 = self.env["sale.order"].create(
+            {
+                "partner_id": self.partner.id,
+                "client_order_ref": "Rif. SO customer",
+            }
+        )
         self._create_sale_order_line(order1, self.product1, 5)  # 16
         self._create_sale_order_line(order1, self.product2, 10)  # 8
         self._create_sale_order_line(order1, self.product3, 20, "1")  # 250
@@ -545,7 +631,8 @@ class TestConnectorWhs(TransactionCase):
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0]
+            sqlquery=sql_text("SELECT * FROM HOST_LISTE"), sqlparams=None, metadata=None
+        )[0]
         self.assertEqual(len(whs_records), whs_len_records + 4)
         for whs_record in whs_records:
             self.assertTrue(order1.client_order_ref in whs_record.values())
@@ -566,7 +653,10 @@ class TestConnectorWhs(TransactionCase):
                     whs_list.num_lista, whs_list.riga
                 )
             self.dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=set_liste_elaborated_query, sqlparams=None, metadata=None)
+                sqlquery=sql_text(set_liste_elaborated_query),
+                sqlparams=None,
+                metadata=None,
+            )
 
         for whs_l in whs_lists:
             whs_select_query = \
@@ -575,7 +665,8 @@ class TestConnectorWhs(TransactionCase):
                     whs_l.num_lista, whs_l.riga
                 )
             result_liste = self.dbsource.execute_mssql(
-                sqlquery=whs_select_query, sqlparams=None, metadata=None)
+                sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+            )
             self.assertEqual(
                 str(result_liste[0]),
                 "[(Decimal('5.000'), Decimal('5.000'), 0)]"
@@ -639,7 +730,10 @@ class TestConnectorWhs(TransactionCase):
                     whs_list.num_lista, whs_list.riga
                 )
             self.dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=set_liste_elaborated_query, sqlparams=None, metadata=None)
+                sqlquery=sql_text(set_liste_elaborated_query),
+                sqlparams=None,
+                metadata=None,
+            )
 
         self.dbsource.whs_insert_read_and_synchronize_list()
         # picking.action_pack_operation_auto_fill()
@@ -647,7 +741,8 @@ class TestConnectorWhs(TransactionCase):
         # check whs list for backorder is not created as the first is completed entirely
         self.dbsource.whs_insert_read_and_synchronize_list()
         res = self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0]
+            sqlquery=sql_text("SELECT * FROM HOST_LISTE"), sqlparams=None, metadata=None
+        )[0]
         self.assertEqual(len(res), whs_len_records + 6)
         self.run_stock_procurement_scheduler()
         backorder_picking.action_assign()
@@ -659,16 +754,24 @@ class TestConnectorWhs(TransactionCase):
         #         'assigned')
 
     def test_04_unlink_sale_order(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery='DELETE FROM HOST_LISTE', sqlparams=None, metadata=None)
-        whs_len_records = len(self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0])
-        order1 = self.env['sale.order'].create({
-            'partner_id': self.partner.id,
-            'client_order_ref': 'Rif. SO customer',
-            })
+            sqlquery=sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
+        )
+        whs_len_records = len(
+            self.dbsource.execute_mssql(
+                sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
+                sqlparams=None,
+                metadata=None,
+            )[0]
+        )
+        order1 = self.env["sale.order"].create(
+            {
+                "partner_id": self.partner.id,
+                "client_order_ref": "Rif. SO customer",
+            }
+        )
         self._create_sale_order_line(order1, self.product1, 5)
         self._create_sale_order_line(order1, self.product2, 5)
         order1.action_confirm()
@@ -680,21 +783,46 @@ class TestConnectorWhs(TransactionCase):
 
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
-        self.assertEqual(len(self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0]),
-            whs_len_records + 2)
+        self.assertEqual(
+            len(
+                self.dbsource.execute_mssql(
+                    sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
+                    sqlparams=None,
+                    metadata=None,
+                )[0]
+            ),
+            whs_len_records + 2,
+        )
         # check whs non ci siano i relativi record
         order1.action_cancel()
         self.assertEqual(len(self.dbsource.execute_mssql(
             sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0]),
             whs_len_records + 2)
         self.assertEqual(
-            set(order1.mapped('picking_ids.move_lines.whs_list_ids.stato')), {'3'})
+            len(
+                self.dbsource.execute_mssql(
+                    sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
+                    sqlparams=None,
+                    metadata=None,
+                )[0]
+            ),
+            whs_len_records + 2,
+        )
+        self.assertEqual(
+            set(order1.mapped("picking_ids.move_lines.whs_list_ids.stato")), {"3"}
+        )
         order1.action_draft()
         order1.action_confirm()
-        self.assertEqual(len(self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0]),
-            whs_len_records + 2)
+        self.assertEqual(
+            len(
+                self.dbsource.execute_mssql(
+                    sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
+                    sqlparams=None,
+                    metadata=None,
+                )[0]
+            ),
+            whs_len_records + 2,
+        )
         # insert lists in WHS
         self.dbsource.whs_insert_read_and_synchronize_list()
         # wait for WHS syncronization
@@ -715,13 +843,21 @@ class TestConnectorWhs(TransactionCase):
                     "(NumLista = '%s' AND NumRiga = '%s')" % (
                         lists[y], y) for y in lists))
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=set_liste_elaborating_query, sqlparams=None, metadata=None)
+            sqlquery=sql_text(set_liste_elaborating_query),
+            sqlparams=None,
+            metadata=None,
+        )
         with self.assertRaises(UserError):
             order1.action_cancel()
         # Check product added to sale order after confirmation create new whs lists
         # adding product to an existing open picking
-        whs_len_records = len(self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0])
+        whs_len_records = len(
+            self.dbsource.execute_mssql(
+                sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
+                sqlparams=None,
+                metadata=None,
+            )[0]
+        )
         so_line = self._create_sale_order_line(order1, self.product4, 5)
         pickings = order1.picking_ids.filtered(lambda x: x.state == "assigned")
         pickings.action_assign()
@@ -730,9 +866,16 @@ class TestConnectorWhs(TransactionCase):
         )
         self.assertTrue(new_product_move_line_ids.mapped("whs_list_ids"))
         self.dbsource.whs_insert_read_and_synchronize_list()
-        self.assertEqual(len(self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0]),
-            whs_len_records + 1)
+        self.assertEqual(
+            len(
+                self.dbsource.execute_mssql(
+                    sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
+                    sqlparams=None,
+                    metadata=None,
+                )[0]
+            ),
+            whs_len_records + 1,
+        )
 
         # test change qty of sale order line is forbidden
         with self.assertRaises(UserError):
@@ -755,19 +898,27 @@ class TestConnectorWhs(TransactionCase):
         return line
 
     def test_05_repair(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery='DELETE FROM HOST_LISTE', sqlparams=None, metadata=None)
-        whs_len_records = len(self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0])
-        repair = self.env['repair.order'].create({
-            'product_id': self.product1.id,
-            'product_uom': self.product1.uom_id.id,
-            'partner_id': self.partner.id,
-            'product_qty': 1,
-            'location_id': self.env.ref('stock.stock_location_stock').id,
-            })
+            sqlquery=sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
+        )
+        whs_len_records = len(
+            self.dbsource.execute_mssql(
+                sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
+                sqlparams=None,
+                metadata=None,
+            )[0]
+        )
+        repair = self.env["repair.order"].create(
+            {
+                "product_id": self.product1.id,
+                "product_uom": self.product1.uom_id.id,
+                "partner_id": self.partner.id,
+                "product_qty": 1,
+                "location_id": self.env.ref("stock.stock_location_stock").id,
+            }
+        )
         self._create_repair_order_line(repair, self.product2, 5)
         self._create_repair_order_line(repair, self.product3, 3)
         repair.action_repair_confirm()
@@ -781,10 +932,16 @@ class TestConnectorWhs(TransactionCase):
                          'Repair order should be in "Done" state.')
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
-        self.assertEqual(len(self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE WHERE Elaborato != 5",
-            sqlparams=None, metadata=None)[0]),
-            whs_len_records + 2)
+        self.assertEqual(
+            len(
+                self.dbsource.execute_mssql(
+                    sqlquery=sql_text("SELECT * FROM HOST_LISTE WHERE Elaborato != 5"),
+                    sqlparams=None,
+                    metadata=None,
+                )[0]
+            ),
+            whs_len_records + 2,
+        )
 
         # simulate whs work: partial processing of product #2
         # and total of product #3
@@ -797,7 +954,10 @@ class TestConnectorWhs(TransactionCase):
                     whs_list.num_lista, whs_list.riga
                 )
             self.dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=set_liste_elaborated_query, sqlparams=None, metadata=None)
+                sqlquery=sql_text(set_liste_elaborated_query),
+                sqlparams=None,
+                metadata=None,
+            )
 
         for whs_list in whs_lists:
             whs_select_query = \
@@ -806,7 +966,8 @@ class TestConnectorWhs(TransactionCase):
                     whs_list.num_lista, whs_list.riga
                 )
             result_liste = self.dbsource.execute_mssql(
-                sqlquery=whs_select_query, sqlparams=None, metadata=None)
+                sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+            )
             self.assertEqual(
                 str(result_liste[0]),
                 "[(Decimal('5.000'), Decimal('2.000'))]"
@@ -823,7 +984,8 @@ class TestConnectorWhs(TransactionCase):
                     whs_list.num_lista, whs_list.riga
                 )
             result_liste = self.dbsource.execute_mssql(
-                sqlquery=whs_select_query, sqlparams=None, metadata=None)
+                sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+            )
             self.assertIn(
                 "[(Decimal('5.000'), Decimal('2.000'))]"
                 if whs_list.product_id == self.product2 else
@@ -844,15 +1006,23 @@ class TestConnectorWhs(TransactionCase):
         return line
 
     def test_06_purchase(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery='DELETE FROM HOST_LISTE', sqlparams=None, metadata=None)
-        whs_len_records = len(self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0])
-        purchase = self.env['purchase.order'].create({
-            'partner_id': self.partner.id,
-            })
+            sqlquery=sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
+        )
+        whs_len_records = len(
+            self.dbsource.execute_mssql(
+                sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
+                sqlparams=None,
+                metadata=None,
+            )[0]
+        )
+        purchase = self.env["purchase.order"].create(
+            {
+                "partner_id": self.partner.id,
+            }
+        )
         self._create_purchase_order_line(
             purchase, self.product2, 20,
             fields.Datetime.today() + relativedelta(month=1))
@@ -864,9 +1034,16 @@ class TestConnectorWhs(TransactionCase):
             purchase.state, 'purchase', 'Purchase state should be "Purchase"')
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
-        self.assertEqual(len(self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0]),
-            whs_len_records + 2)
+        self.assertEqual(
+            len(
+                self.dbsource.execute_mssql(
+                    sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
+                    sqlparams=None,
+                    metadata=None,
+                )[0]
+            ),
+            whs_len_records + 2,
+        )
 
         # simulate whs work: partial processing of product #2
         # and total of product #3
@@ -879,7 +1056,10 @@ class TestConnectorWhs(TransactionCase):
                     whs_list.num_lista, whs_list.riga
                 )
             self.dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=set_liste_elaborated_query, sqlparams=None, metadata=None)
+                sqlquery=sql_text(set_liste_elaborated_query),
+                sqlparams=None,
+                metadata=None,
+            )
 
         for whs_list in whs_lists:
             whs_select_query = \
@@ -888,7 +1068,8 @@ class TestConnectorWhs(TransactionCase):
                     whs_list.num_lista, whs_list.riga
                 )
             result_liste = self.dbsource.execute_mssql(
-                sqlquery=whs_select_query, sqlparams=None, metadata=None)
+                sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+            )
             self.assertEqual(
                 str(result_liste[0]),
                 "[(Decimal('20.000'), Decimal('2.000'))]"
@@ -905,7 +1086,8 @@ class TestConnectorWhs(TransactionCase):
                     whs_list.num_lista, whs_list.riga
                 )
             result_liste = self.dbsource.execute_mssql(
-                sqlquery=whs_select_query, sqlparams=None, metadata=None)
+                sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+            )
             self.assertEqual(
                 str(result_liste[0]),
                 "[(Decimal('20.000'), Decimal('2.000'))]"
@@ -946,7 +1128,8 @@ class TestConnectorWhs(TransactionCase):
                 back_whs_list.num_lista, back_whs_list.riga
             )
         result_liste = self.dbsource.execute_mssql(
-            sqlquery=whs_select_query, sqlparams=None, metadata=None)
+            sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+        )
         self.assertEqual(str(result_liste[0]), "[(Decimal('18.000'), None)]")
         # TODO check cancel workflow without action_assign that create whs list anyway
         self.check_cancel_workflow(backorder_picking, 1)
@@ -958,7 +1141,8 @@ class TestConnectorWhs(TransactionCase):
                 18, back_whs_list.num_lista, back_whs_list.riga
             )
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=set_liste_elaborated_query, sqlparams=None, metadata=None)
+            sqlquery=sql_text(set_liste_elaborated_query), sqlparams=None, metadata=None
+        )
 
         self.dbsource.whs_insert_read_and_synchronize_list()
         backorder_picking.button_validate()
@@ -970,17 +1154,29 @@ class TestConnectorWhs(TransactionCase):
         # Check product added to purchase order after confirm create whs list with
         # different date_planned which create a new picking (as this module depends on
         # purchase_delivery_split_date)
-        whs_len_records = len(self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0])
+        whs_len_records = len(
+            self.dbsource.execute_mssql(
+                sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
+                sqlparams=None,
+                metadata=None,
+            )[0]
+        )
         self._create_purchase_order_line(
             purchase, self.product4, 20,
             fields.Datetime.today() + relativedelta(month=2))
         new_picking = purchase.picking_ids - (picking | backorder_picking)
         new_picking.action_assign()
         self.dbsource.whs_insert_read_and_synchronize_list()
-        self.assertEqual(len(self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0]),
-            whs_len_records + 1)
+        self.assertEqual(
+            len(
+                self.dbsource.execute_mssql(
+                    sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
+                    sqlparams=None,
+                    metadata=None,
+                )[0]
+            ),
+            whs_len_records + 1,
+        )
         # Check product added to purchase order after confirmation create new whs lists
         # adding product to an existing open picking
         self._create_purchase_order_line(
@@ -998,9 +1194,16 @@ class TestConnectorWhs(TransactionCase):
         )
         self.assertTrue(new_product_move_line_ids.mapped("whs_list_ids"))
         self.dbsource.whs_insert_read_and_synchronize_list()
-        self.assertEqual(len(self.dbsource.execute_mssql(
-            sqlquery="SELECT * FROM HOST_LISTE", sqlparams=None, metadata=None)[0]),
-            whs_len_records + 3)
+        self.assertEqual(
+            len(
+                self.dbsource.execute_mssql(
+                    sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
+                    sqlparams=None,
+                    metadata=None,
+                )[0]
+            ),
+            whs_len_records + 3,
+        )
 
         # test qty change on purchase order line, which create a new line with increased
         # qty on picking
@@ -1018,6 +1221,7 @@ class TestConnectorWhs(TransactionCase):
                 po_whs_list.num_lista, po_whs_list.riga
             )
         result_liste = self.dbsource.execute_mssql(
-            sqlquery=whs_select_query, sqlparams=None, metadata=None)
+            sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+        )
         # whs list is created for the increased qty
         self.assertEqual(str(result_liste[0]), "[(Decimal('7.000'), None)]")
