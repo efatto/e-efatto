@@ -14,6 +14,10 @@ class ProductTemplate(models.Model):
     adjustment_cost = fields.Float(
         string='Adjustment Cost (€/pz)',
         digits=dp.get_precision('Product Price'),
+        compute='_compute_adjustment_cost',
+        inverse='_set_adjustment_cost',
+        search='_search_adjustment_cost',
+        groups="base.group_user",
     )
     landed_cost = fields.Float(
         string="Landed cost",
@@ -26,7 +30,30 @@ class ProductTemplate(models.Model):
         "acquire the goods without adjustment/depreciation.",
     )
 
-    @api.depends("product_variant_ids", "product_variant_ids.landed_cost")
+    @api.depends(
+        'product_variant_ids', 'product_variant_ids.adjustment_cost')
+    def _compute_adjustment_cost(self):
+        unique_variants = self.filtered(
+            lambda tmpl: len(tmpl.product_variant_ids) == 1)
+        for template in unique_variants:
+            template.adjustment_cost = template.product_variant_ids.\
+                adjustment_cost
+        for template in (self - unique_variants):
+            template.adjustment_cost = 0.0
+
+    @api.one
+    def _set_adjustment_cost(self):
+        if len(self.product_variant_ids) == 1:
+            self.product_variant_ids.adjustment_cost = \
+                self.adjustment_cost
+
+    def _search_adjustment_cost(self, operator, value):
+        products = self.env['product.product'].search([
+            ('adjustment_cost', operator, value)], limit=None)
+        return [('id', 'in', products.mapped('product_tmpl_id').ids)]
+
+    @api.depends(
+        'product_variant_ids', 'product_variant_ids.landed_cost')
     def _compute_landed_cost(self):
         unique_variants = self.filtered(
             lambda templ: len(templ.product_variant_ids) == 1
@@ -51,7 +78,15 @@ class ProductTemplate(models.Model):
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
-    standard_price = fields.Float(string="Landed with adjustment/depreciation")
+    standard_price = fields.Float(
+        string="Landed with adjustment/depreciation"
+    )
+    adjustment_cost = fields.Float(
+        string='Adjustment Cost (€/pz)',
+        company_dependent=True,
+        groups="base.group_user",
+        digits=dp.get_precision('Product Price'),
+    )
     landed_cost = fields.Float(
         string="Landed cost",
         company_dependent=True,
