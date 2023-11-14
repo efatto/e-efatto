@@ -7,11 +7,21 @@ import logging
 from odoo import _, fields, models
 from odoo.exceptions import UserError
 
+EXTRA_PROCUREMENT_PRIORITIES = [('2', 'Very Urgent')]
+# odoo14: [('0', 'Normal'), ('1', 'Urgent')]
+# odoo12: [('0', 'Not urgent'), ('1', 'Normal'), ('2', 'Urgent'), ('3', 'Very Urgent')]
+# lo script di migrazione attuale traduce '1' a '0' (giusto), '2' a '1' (giusto) e
+# '3' a '1' (sbagliato): todo correggere che '3' diventi '2', magari su un banale sql
+# whs: # 0=Bassa; 1=Media; 2=Urgente
+
 _logger = logging.getLogger(__name__)
 
 
 class Picking(models.Model):
     _inherit = "stock.picking"
+
+    priority = fields.Selection(
+        selection_add=EXTRA_PROCUREMENT_PRIORITIES)
 
     def action_pack_operation_auto_fill(self):
         super(Picking, self).action_pack_operation_auto_fill()
@@ -149,6 +159,8 @@ class Picking(models.Model):
 class StockMove(models.Model):
     _inherit = "stock.move"
 
+    priority = fields.Selection(
+        selection_add=EXTRA_PROCUREMENT_PRIORITIES)
     whs_list_ids = fields.One2many(
         comodel_name="hyddemo.whs.liste", inverse_name="move_id", string="Whs Lists"
     )
