@@ -8,6 +8,8 @@ import time
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
+from sqlalchemy import text as sql_text
+
 _logger = logging.getLogger(__name__)
 
 insert_product_query = """
@@ -31,23 +33,23 @@ ScortaMin,
 Id
 )
 VALUES (
-%(Elaborato)s,
-%(TipoOperazione)s,
-%(Codice)s,
-%(Descrizione)s,
-%(Peso)s,
-%(Barcode)s,
-%(UM)s,
-%(TipoConfezione)s,
-%(CategoriaMerc)s,
-%(MantieniDinamici)s,
-%(Ubicazione)s,
-%(Altezza)s,
-%(Larghezza)s,
-%(Profondita)s,
-%(DescrizioneBreve)s,
-%(ScortaMin)s,
-%(Id)s
+:Elaborato,
+:TipoOperazione,
+:Codice,
+:Descrizione,
+:Peso,
+:Barcode,
+:UM,
+:TipoConfezione,
+:CategoriaMerc,
+:MantieniDinamici,
+:Ubicazione,
+:Altezza,
+:Larghezza,
+:Profondita,
+:DescrizioneBreve,
+:ScortaMin,
+:Id
 )
 """
 
@@ -84,35 +86,35 @@ AuxTestoRiga2,
 AuxTestoRiga3
 )
 VALUES (
-%(NumLista)s,
-%(NumRiga)s,
-%(DataLista)s,
-%(Riferimento)s,
-%(TipoOrdine)s,
-%(Causale)s,
-%(Priorita)s,
-%(RichiestoEsito)s,
-%(Stato)s,
-%(ControlloEvadibilita)s,
-%(Vettore)s,
+:NumLista,
+:NumRiga,
+:DataLista,
+:Riferimento,
+:TipoOrdine,
+:Causale,
+:Priorita,
+:RichiestoEsito,
+:Stato,
+:ControlloEvadibilita,
+:Vettore,
 {idClientes}
 {RagioneSociales}
-%(Indirizzo)s,
-%(Cap)s,
-%(Localita)s,
-%(Provincia)s,
-%(Nazione)s,
-%(Articolo)s,
-%(DescrizioneArticolo)s,
-%(Qta)s,
-%(PesoArticolo)s,
-%(UMArticolo)s,
-%(IdTipoArticolo)s,
-%(Elaborato)s,
-%(AuxTesto1)s,
-%(AuxTestoRiga1)s,
-%(AuxTestoRiga2)s,
-%(AuxTestoRiga3)s
+:Indirizzo,
+:Cap,
+:Localita,
+:Provincia,
+:Nazione,
+:Articolo,
+:DescrizioneArticolo,
+:Qta,
+:PesoArticolo,
+:UMArticolo,
+:IdTipoArticolo,
+:Elaborato,
+:AuxTesto1,
+:AuxTestoRiga1,
+:AuxTestoRiga2,
+:AuxTestoRiga3
 )
 """
 
@@ -152,7 +154,7 @@ class HyddemoMssqlLog(models.Model):
             "DELETE FROM HOST_ARTICOLI WHERE Elaborato = 2 OR Elaborato = 0"
         )
         dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=clean_product_query, sqlparams=None, metadata=None
+            sqlquery=sql_text(clean_product_query), sqlparams=None, metadata=None
         )
         log_data = self.search_read(
             [], ["ultimo_invio", "ultimo_id"], order="ultimo_id desc", limit=1
@@ -176,7 +178,7 @@ class HyddemoMssqlLog(models.Model):
                 product, dbsource.warehouse_id.id, dbsource.location_id.id, last_id
             )
             dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=insert_product_query.replace("\n", " "),
+                sqlquery=sql_text(insert_product_query.replace("\n", " ")),
                 sqlparams=insert_product_params,
                 metadata=None,
             )
@@ -186,7 +188,7 @@ class HyddemoMssqlLog(models.Model):
             "UPDATE HOST_ARTICOLI SET Elaborato = 1 WHERE Elaborato = 0"
         )
         dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=update_product_query, sqlparams=None, metadata=None
+            sqlquery=sql_text(update_product_query), sqlparams=None, metadata=None
         )
         res = self.env["hyddemo.mssql.log"].create(
             [
@@ -278,7 +280,7 @@ class HyddemoMssqlLog(models.Model):
                 % (whs_list.num_lista, whs_list.riga)
             )
             esiti_liste = dbsource.execute_mssql(
-                sqlquery=whs_liste_query, sqlparams=None, metadata=None
+                sqlquery=sql_text(whs_liste_query), sqlparams=None, metadata=None
             )
             # esiti_liste[0] contains result
             if not esiti_liste[0]:
@@ -312,12 +314,13 @@ class HyddemoMssqlLog(models.Model):
             esiti_liste_query = (
                 "SELECT * FROM (SELECT row_number() OVER (ORDER BY NumLista, NumRiga) "
                 "AS rownum, NumLista, NumRiga, Qta, QtaMovimentata, Lotto, Lotto2, "
-                "Lotto3, Lotto4, Lotto5 FROM HOST_LISTE WHERE Elaborato=4) AS A "
+                "Lotto3, Lotto4, Lotto5, Articolo, DescrizioneArticolo FROM HOST_LISTE "
+                "WHERE Elaborato=4) AS A "
                 "WHERE A.rownum BETWEEN %s AND %s" % (i, i + 1000)
             )
             i += 1000
             esiti_liste = dbsource.execute_mssql(
-                sqlquery=esiti_liste_query, sqlparams=None, metadata=None
+                sqlquery=sql_text(esiti_liste_query), sqlparams=None, metadata=None
             )
             # esiti_liste[0] contain result
             if not esiti_liste[0]:
@@ -326,7 +329,7 @@ class HyddemoMssqlLog(models.Model):
                 num_lista = esito_lista[1]
                 num_riga = int(esito_lista[2])
                 if not num_riga or not num_lista:
-                    _logger.debug(
+                    _logger.info(
                         "WHS LOG: list %s in db without NumLista or NumRiga"
                         % esito_lista
                     )
@@ -337,7 +340,7 @@ class HyddemoMssqlLog(models.Model):
                 if not hyddemo_whs_lists:
                     # ROADMAP: if the user want to create the list directly in WHS, do
                     # the reverse synchronization (not requested so far)
-                    _logger.debug(
+                    _logger.info(
                         "WHS LOG: list num_riga %s num_lista %s not found in "
                         "lists (found list %s but not row)"
                         % (
@@ -372,6 +375,9 @@ class HyddemoMssqlLog(models.Model):
                     qty_moved = False
                 except TypeError:
                     qty_moved = False
+                if not qty_moved or qty_moved == 0.0:
+                    # nothing to-do as not moved
+                    continue
 
                 lotto = esito_lista[5].strip() if esito_lista[5] else False
                 lotto2 = esito_lista[6].strip() if esito_lista[6] else False
@@ -379,10 +385,7 @@ class HyddemoMssqlLog(models.Model):
                 lotto4 = esito_lista[8].strip() if esito_lista[8] else False
                 lotto5 = esito_lista[9].strip() if esito_lista[9] else False
 
-                if not qty_moved or qty_moved == 0.0:
-                    # nothing to-do as not moved
-                    continue
-                elif qty_moved != hyddemo_whs_list.qta:
+                if qty_moved != hyddemo_whs_list.qta:
                     # in or out differs from total qty
                     if qty_moved > hyddemo_whs_list.qta:
                         _logger.info(
@@ -437,7 +440,6 @@ class HyddemoMssqlLog(models.Model):
         :param datasource_id:
         :return:
         """
-        self.ensure_one()
         dbsource_obj = self.env["base.external.dbsource"]
         dbsource = dbsource_obj.browse(datasource_id)
         connection = dbsource.connection_open_mssql()
@@ -516,8 +518,8 @@ class HyddemoMssqlLog(models.Model):
             self.execute_query(dbsource, insert_query, insert_esiti_liste_params)
         return res
 
-    def _prepare_host_liste_values(self, hyddemo_whs_list):
-        self.ensure_one()
+    @staticmethod
+    def _prepare_host_liste_values(hyddemo_whs_list):
         product = hyddemo_whs_list.product_id
         parent_product_id = (
             hyddemo_whs_list.parent_product_id
