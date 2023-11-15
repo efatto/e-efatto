@@ -557,8 +557,6 @@ class TestConnectorWhs(SingleTransactionCase):
             )
 
         self.dbsource.whs_insert_read_and_synchronize_list()
-
-        # check move and picking linked to sale order have changed state to FIXME ? done
         self.assertEqual(set(picking.move_lines.mapped("state")), {"assigned"})
         self.assertEqual(
             picking.move_lines.filtered(
