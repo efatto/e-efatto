@@ -21,5 +21,5 @@ class PurchaseOrder(models.Model):
                 order.amount_untaxed,
                 order.company_id.currency_id,
                 company=order.company_id,
-                date=order.date_planned or order.date_planned or fields.Date.today(),
+                date=order.date_planned or order.date_order or fields.Date.today(),
             )
