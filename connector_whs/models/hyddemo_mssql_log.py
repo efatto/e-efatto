@@ -464,9 +464,9 @@ class HyddemoMssqlLog(models.Model):
                         "(NumLista='%s' AND NumRiga='%s')" % (
                             y.num_lista, y.riga) for y in hyddemo_whs_lists))
             dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=set_liste_to_elaborate_query, sqlparams=None,
-                metadata=None)
-            hyddemo_whs_lists.write({'stato': '2'})
+                sqlquery=sql_text(set_liste_to_elaborate_query), sqlparams=None, metadata=None
+            )
+            hyddemo_whs_lists.write({"stato": "2"})
         # commit to exclude rollback as mssql wouldn't be rollbacked too
         self._cr.commit()  # pylint: disable=E8102
         self.whs_read_and_synchronize_list(datasource_id)
@@ -502,11 +502,12 @@ class HyddemoMssqlLog(models.Model):
                 idCliente='',
                 idClientes=''
             )
+        insert_query = insert_query.replace("\n", " ")
         return insert_query
 
     def execute_query(self, dbsource, insert_query, insert_esiti_liste_params):
         res = dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=insert_query.replace('\n', ' '),
+            sqlquery=insert_query,
             sqlparams=insert_esiti_liste_params,
             metadata=None)
         if not res:
