@@ -866,7 +866,7 @@ class TestConnectorWhs(SingleTransactionCase):
         if all(x.state == "assigned" for x in picking.move_lines):
             self.assertEqual(picking.state, "assigned")
         else:
-            self.assertEqual(picking.state, "cancel")  # FIXME era cancel
+            self.assertEqual(picking.state, "cancel")
         hyddemo_whs_lists = picking.mapped("move_lines.whs_list_ids")
         lists = {x.riga: x.num_lista for x in hyddemo_whs_lists}
         # simulate launch from WHS user
