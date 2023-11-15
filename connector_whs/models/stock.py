@@ -182,10 +182,18 @@ class StockMove(models.Model):
             not self._context.get("do_not_propagate", False)
             and not self._context.get("do_not_unreserve", False)
             and not self._context.get("skip_overprocessed_check", False)
-            and (vals.get("product_uom_qty"))
+            and (vals.get("product_uom_qty") or vals.get("product_qty"))
         ):
             self._check_valid_whs_list()
         return res
+
+    def _action_confirm(self, merge=True, merge_into=False):
+        self.create_whs_list()
+        return super()._action_confirm(merge, merge_into)
+
+    def _action_assign(self):
+        self.create_whs_list()
+        return super()._action_assign()
 
     def create_whs_list(self):
         whsliste_obj = self.env["hyddemo.whs.liste"]

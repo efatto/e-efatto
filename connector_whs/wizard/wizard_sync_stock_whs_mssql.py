@@ -6,6 +6,8 @@ from odoo import _, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import float_compare
 
+from sqlalchemy import text as sql_text
+
 
 class WizardSyncStockWhsMssql(models.TransientModel):
     _name = "wizard.sync.stock.whs.mssql"
@@ -31,7 +33,6 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                             "name": "WHS sync inventory "
                             + new_last_update.strftime("%Y-%m-%d"),
                             "location_ids": [(0, 0, dbsource.location_id.ids)],
-                            "filter": "products",
                         }
                     ]
                 )
@@ -49,7 +50,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 )
                 i += 2000
                 esiti_liste = dbsource.execute_mssql(
-                    sqlquery=giacenze_query, sqlparams=None, metadata=None
+                    sqlquery=sql_text(giacenze_query), sqlparams=None, metadata=None
                 )
                 # esiti_liste[0] contain result
                 if not esiti_liste[0]:

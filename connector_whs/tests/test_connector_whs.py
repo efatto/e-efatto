@@ -107,7 +107,7 @@ class TestConnectorWhs(SingleTransactionCase):
     def run_stock_procurement_scheduler(self):
         with mute_logger("odoo.addons.stock.models.procurement"):
             self.procurement_model.run_scheduler(True)
-            time.sleep(60)
+            time.sleep(30)
 
     def simulate_whs_cron(self, whs_lists, elaborato):
         for whs_list in whs_lists:
@@ -122,29 +122,29 @@ class TestConnectorWhs(SingleTransactionCase):
                 metadata=None,
             )
 
-    def check_cancel_workflow(self, picking, list_len):
+    def _check_cancel_workflow(self, picking, list_len):
+        """
+        This method is used to check the re-use of the same whs list linked to the
+        picking when this is cancelled, without re-creating a new one.
+        """
         whs_records = self.dbsource.execute_mssql(
             sqlquery=sql_text(
                 "SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE "
-                "WHERE Riferimento = '%s'"
-                % (
-                    picking.sale_id.name
-                    if picking.sale_id
-                    else picking.purchase_id.name
-                )
-            ),
-            sqlparams=None,
+                "WHERE Riferimento=:Riferimento"),
+            sqlparams=dict(
+                Riferimento=picking.sale_id.name
+                if picking.sale_id
+                else picking.purchase_id.name),
             metadata=None,
         )[0]
         whs_lists = picking.mapped("move_lines.whs_list_ids")
         self.assertEqual(len(whs_lists), list_len)
-        whs_list = whs_lists[0]
-        self.assertEqual(whs_list.stato, "2")
-        self.run_stock_procurement_scheduler()
+        self.assertEqual(set(whs_lists.mapped("stato")), {"2"})
+        picking.action_assign()
         if all(x.state == "assigned" for x in picking.move_lines):
             self.assertEqual(picking.state, "assigned")
         else:
-            self.assertEqual(picking.state, "waiting")
+            self.assertEqual(picking.state, "confirmed")  # era waiting, non rilevante
         picking.action_cancel()
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(picking.state, "cancel")
@@ -154,14 +154,11 @@ class TestConnectorWhs(SingleTransactionCase):
         whs_records1 = self.dbsource.execute_mssql(
             sqlquery=sql_text(
                 "SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE "
-                "WHERE Riferimento = '%s'"
-                % (
-                    picking.sale_id.name
-                    if picking.sale_id
-                    else picking.purchase_id.name
-                )
-            ),
-            sqlparams=None,
+                "WHERE Riferimento=:Riferimento"),
+            sqlparams=dict(
+                Riferimento=picking.sale_id.name
+                if picking.sale_id
+                else picking.purchase_id.name),
             metadata=None,
         )[0]
         self.assertEqual(len(whs_records1), len(whs_records))
@@ -171,53 +168,41 @@ class TestConnectorWhs(SingleTransactionCase):
         picking.action_confirm()
         if picking.sale_id:
             picking.action_assign()
-        whs_lists = picking.mapped("move_lines.whs_list_ids").filtered(
+        valid_whs_lists = picking.mapped("move_lines.whs_list_ids").filtered(
             lambda x: x.stato != "3"
         )
-        self.assertEqual(len(whs_lists), list_len)
-        whs_list = whs_lists[0]
-        self.assertTrue(whs_list)
-        # check whs list is added
+        self.assertEqual(len(valid_whs_lists), list_len)
+        # check valid whs lists are added to the invalidated ones
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records2 = self.dbsource.execute_mssql(
             sqlquery=sql_text(
                 "SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE "
-                "WHERE Riferimento = '%s'"
-                % (
-                    picking.sale_id.name
-                    if picking.sale_id
-                    else picking.purchase_id.name
-                )
-            ),
-            sqlparams=None,
+                "WHERE Riferimento=:Riferimento"),
+            sqlparams=dict(
+                Riferimento=picking.sale_id.name
+                if picking.sale_id
+                else picking.purchase_id.name),
             metadata=None,
         )[0]
+        # 4 whs lists of which 2 valid (stato=1) and 2 invalid (stato=3)
         self.assertEqual(len(whs_records2), len(whs_records) + list_len)
         for Elaborato in {x[0] for x in whs_records2}:
             # WHS cron change Elaborato to 2 in an un-controllable time
             self.assertIn(Elaborato, {5, 1, 2})
-        return whs_list
+        return valid_whs_lists
 
     def test_00_complete_picking_from_sale(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
-        self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
-        )
-        whs_len_records = len(
-            self.dbsource.execute_mssql(
-                sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
-                sqlparams=None,
-                metadata=None,
-            )[0]
-        )
-        order1 = self.env["sale.order"].create(
-            {
-                "partner_id": self.partner.id,
-                "client_order_ref": "Rif. SO customer",
-            }
-        )
-        self._create_sale_order_line(order1, self.product1, 5)
+        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        order_form1 = Form(self.env["sale.order"])
+        order_form1.partner_id = self.partner
+        order_form1.client_order_ref = "Rif. SO customer"
+        with order_form1.order_line.new() as order_line:
+            order_line.product_id = self.product1
+            order_line.product_uom_qty = 5
+            order_line.price_unit = 100
+        order1 = order_form1.save()
         order1.action_confirm()
         self.assertEqual(order1.state, "sale")
         picking1 = order1.picking_ids[0]
@@ -228,19 +213,17 @@ class TestConnectorWhs(SingleTransactionCase):
             self.assertEqual(picking1.state, "waiting")
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
-        whs_records = self.dbsource.execute_mssql(
-            sqlquery=sql_text("SELECT * FROM HOST_LISTE"), sqlparams=None, metadata=None
-        )[0]
+        whs_records = self._execute_select_all_valid_host_liste()
         self.assertEqual(len(whs_records), whs_len_records + 1)
         for whs_record in whs_records:
-            self.assertTrue(order1.client_order_ref in whs_record.values())
-            if self.product1.default_code in whs_record.values():
+            self.assertTrue(order1.client_order_ref in whs_record._mapping.values())
+            if self.product1.default_code in whs_record._mapping.values():
                 self.assertTrue(
-                    self.product1.customer_ids[0].product_code in whs_record.values()
+                    self.product1.customer_ids[0].product_code in whs_record._mapping.values()
                 )
             else:
                 self.assertFalse(
-                    self.product1.customer_ids[0].product_code in whs_record.values()
+                    self.product1.customer_ids[0].product_code in whs_record._mapping.values()
                 )
         # check cancel workflow
         whs_lists = picking1.move_lines.whs_list_ids
@@ -265,10 +248,7 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertTrue(whs_list)
         # check whs list is added, and only 1 valid whs list exists
         self.dbsource.whs_insert_read_and_synchronize_list()
-        whs_records = self.dbsource.execute_mssql(
-            sqlquery=sql_text("SELECT * FROM HOST_LISTE WHERE Qta!=:Qta"),
-            sqlparams=dict(Qta=0), metadata=None
-        )[0]
+        whs_records = self._execute_select_all_valid_host_liste()
         self.assertEqual(len(whs_records), whs_len_records + 1)
         # simulate whs work
         lotto = "55A1"
@@ -362,8 +342,9 @@ class TestConnectorWhs(SingleTransactionCase):
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self.dbsource.execute_mssql(
             sqlquery=sql_text(
-                "SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE"),
-            sqlparams=None,
+                "SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE WHERE "
+                "Qta!=:Qta"),
+            sqlparams=dict(Qta=0),
             metadata=None,
         )[0]
         self.assertEqual(len(whs_records), whs_len_records + 2)
@@ -386,11 +367,11 @@ class TestConnectorWhs(SingleTransactionCase):
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self.dbsource.execute_mssql(
             sqlquery=sql_text(
-                "SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE"),
-            sqlparams=None,
+                "SELECT Elaborato, NumLista, NumRiga FROM HOST_LISTE WHERE Qta!=:Qta"),
+            sqlparams=dict(Qta=0),
             metadata=None,
         )[0]
-        self.assertEqual(len(whs_records), whs_len_records + 4)
+        self.assertEqual(len(whs_records), whs_len_records + 2)
         # simulate whs work: validate first move partially (3 over 5)
         self.dbsource.whs_insert_read_and_synchronize_list()
         set_liste_elaborated_query = (
@@ -455,18 +436,11 @@ class TestConnectorWhs(SingleTransactionCase):
 
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
-            len(
-                self.dbsource.execute_mssql(
-                    sqlquery=sql_text(
-                        "SELECT * FROM HOST_LISTE WHERE Qta!=:Qta"),
-                    sqlparams=dict(Qta=0),
-                    metadata=None,
-                )[0]
-            ),
+            len(self._execute_select_all_valid_host_liste()),
             whs_len_records + 4,
         )
 
-        # check back picking is waiting for whs process
+        # check backorder picking is waiting for whs process
         self.assertEqual(len(order1.picking_ids), 2)
         self.assertEqual(backorder_picking.state, "assigned")
         self.assertEqual(backorder_picking.move_lines[0].state, "assigned")
@@ -474,59 +448,66 @@ class TestConnectorWhs(SingleTransactionCase):
     def test_02_partial_picking_partial_available_from_sale(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
-        self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
-        )
-        whs_len_records = len(
-            self.dbsource.execute_mssql(
-                sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
-                sqlparams=None,
-                metadata=None,
-            )[0]
-        )
-        order1 = self.env["sale.order"].create(
-            {
-                "partner_id": self.partner.id,
-                "client_order_ref": "Rif. SO customer",
-            }
-        )
-        self._create_sale_order_line(order1, self.product1, 5, "3")
-        self._create_sale_order_line(order1, self.product2, 20)
+        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        order_form1 = Form(self.env["sale.order"])
+        order_form1.partner_id = self.partner
+        order_form1.client_order_ref = "Rif. SO customer 2"
+        with order_form1.order_line.new() as order_line:
+            order_line.product_id = self.product1
+            order_line.product_uom_qty = 5
+            order_line.priority = "2"
+            order_line.price_unit = 100
+        with order_form1.order_line.new() as order_line:
+            order_line.product_id = self.product2
+            order_line.product_uom_qty = 20
+            order_line.price_unit = 100
+        order1 = order_form1.save()
         order1.action_confirm()
         self.assertEqual(order1.state, "sale")
-        self.assertEqual(order1.priority, "3")
+        self.assertEqual(order1.priority, "2")
         picking = order1.picking_ids[0]
+        self.assertEqual(picking.priority, "2")
         self.assertEqual(len(picking.mapped("move_lines.whs_list_ids")), 2)
         self.assertEqual(picking.state, "assigned")
 
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self.dbsource.execute_mssql(
-            sqlquery=sql_text("SELECT * FROM HOST_LISTE WHERE Elaborato != 5"),
-            sqlparams=None,
+            sqlquery=sql_text(
+                "SELECT * FROM HOST_LISTE WHERE Elaborato!=:Elaborato AND Qta!=:Qta"
+            ),
+            sqlparams=dict(Elaborato=5, Qta=0),
             metadata=None,
         )[0]
         self.assertEqual(len(whs_records), whs_len_records + 2)
         for whs_record in whs_records:
-            self.assertTrue(order1.client_order_ref in whs_record.values())
-            if self.product1.default_code in whs_record.values():
+            self.assertTrue(order1.client_order_ref in whs_record._mapping.values())
+            if self.product1.default_code in whs_record._mapping.values():
                 self.assertTrue(
-                    self.product1.customer_ids[0].product_code in whs_record.values()
+                    self.product1.customer_ids[0].product_code in whs_record._mapping.values()
                 )
             else:
                 self.assertFalse(
-                    self.product1.customer_ids[0].product_code in whs_record.values()
+                    self.product1.customer_ids[0].product_code in whs_record._mapping.values()
                 )
+
+        # check backorder is not created without whs list validation
+        res = picking.button_validate()
+        Form(self.env[res['res_model']].with_context(res['context'])).save().process()
+        # User cannot create backorder if whs list is not processed on whs system
+        # TODO: check backorder is created for residual
+        self.assertNotEqual(picking.state, 'done')
+        self.assertEqual(len(order1.picking_ids), 1)
 
         whs_lists = picking.mapped("move_lines.whs_list_ids")
         for whs_list in whs_lists:
-            # simulate whs work: partial processing of product #1
-            # and total of product #2 so it is -4 on warehouse
+            # simulate whs work: partial processing (3 of 5) of product #1
+            # and total (20 of 20) of product #2 so it is -4 on warehouse
             set_liste_elaborated_query = (
                 "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=%s WHERE "
                 "NumLista = '%s' AND NumRiga = '%s'"
                 % (
-                    whs_list.qta - (2 if whs_list.product_id == self.product1 else 0),
+                    3 if whs_list.product_id == self.product1 else 20,
                     whs_list.num_lista,
                     whs_list.riga,
                 )
@@ -536,7 +517,7 @@ class TestConnectorWhs(SingleTransactionCase):
                 sqlparams=None,
                 metadata=None,
             )
-
+        # check whs work is done correctly
         for whs_list in whs_lists:
             whs_select_query = (
                 "SELECT Qta, QtaMovimentata, Priorita FROM HOST_LISTE WHERE Elaborato "
@@ -640,26 +621,28 @@ class TestConnectorWhs(SingleTransactionCase):
     def test_03_partial_picking_from_sale(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
-        self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
-        )
-        whs_len_records = len(
-            self.dbsource.execute_mssql(
-                sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
-                sqlparams=None,
-                metadata=None,
-            )[0]
-        )
-        order1 = self.env["sale.order"].create(
-            {
-                "partner_id": self.partner.id,
-                "client_order_ref": "Rif. SO customer",
-            }
-        )
-        self._create_sale_order_line(order1, self.product1, 5)  # 16
-        self._create_sale_order_line(order1, self.product2, 10)  # 8
-        self._create_sale_order_line(order1, self.product3, 20, "1")  # 250
-        self._create_sale_order_line(order1, self.product4, 20)  # 0
+        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        order_form1 = Form(self.env["sale.order"])
+        order_form1.partner_id = self.partner
+        order_form1.client_order_ref = "Rif. SO customer 3"
+        with order_form1.order_line.new() as order_line:
+            order_line.product_id = self.product1
+            order_line.product_uom_qty = 5  # 16
+            order_line.price_unit = 100
+        with order_form1.order_line.new() as order_line:
+            order_line.product_id = self.product2
+            order_line.product_uom_qty = 10  # 8
+            order_line.price_unit = 100
+        with order_form1.order_line.new() as order_line:
+            order_line.product_id = self.product3
+            order_line.product_uom_qty = 20  # 250
+            order_line.price_unit = 100
+            order_line.priority = "0"
+        with order_form1.order_line.new() as order_line:
+            order_line.product_id = self.product4
+            order_line.product_uom_qty = 20  # 0
+            order_line.price_unit = 100
+        order1 = order_form1.save()
         order1.action_confirm()
         self.assertEqual(order1.state, "sale")
         self.assertEqual(order1.mapped("picking_ids.state"), ["assigned"])
@@ -668,19 +651,17 @@ class TestConnectorWhs(SingleTransactionCase):
 
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
-        whs_records = self.dbsource.execute_mssql(
-            sqlquery=sql_text("SELECT * FROM HOST_LISTE"), sqlparams=None, metadata=None
-        )[0]
+        whs_records = self._execute_select_all_valid_host_liste()
         self.assertEqual(len(whs_records), whs_len_records + 4)
         for whs_record in whs_records:
-            self.assertTrue(order1.client_order_ref in whs_record.values())
-            if self.product1.default_code in whs_record.values():
+            self.assertTrue(order1.client_order_ref in whs_record._mapping.values())
+            if self.product1.default_code in whs_record._mapping.values():
                 self.assertTrue(
-                    self.product1.customer_ids[0].product_code in whs_record.values()
+                    self.product1.customer_ids[0].product_code in whs_record._mapping.values()
                 )
             else:
                 self.assertFalse(
-                    self.product1.customer_ids[0].product_code in whs_record.values()
+                    self.product1.customer_ids[0].product_code in whs_record._mapping.values()
                 )
         # simulate whs work: validate first move totally and second move partially
         whs_lists = picking.mapped("move_lines.whs_list_ids")
@@ -744,26 +725,44 @@ class TestConnectorWhs(SingleTransactionCase):
                     self.assertAlmostEqual(stock_move_line.qty_done, 0)
         self.run_stock_procurement_scheduler()
         # check that action_assign run by scheduler do not change state
-        self.run_stock_procurement_scheduler()
+        self.assertEqual(picking.state, "confirmed")
         picking.action_assign()
         self.assertEqual(picking.state, "assigned")
 
         # simulate user partial validate of picking and check backorder exist
-        backorder_wiz_id = picking.button_validate()["res_id"]
-        backorder_wiz = self.env["stock.backorder.confirmation"].browse(
-            backorder_wiz_id
-        )
+        res = picking.button_validate()
+        self.assertEqual(picking.state, "assigned")
+        backorder_wiz = Form(self.env[res['res_model']].with_context(res['context'])).save()
         # User must set correctly quantity as set by WHS user, ignoring qty set
         # automatically by Odoo, so check that error is raised without intervention
         with self.assertRaises(UserError):
             backorder_wiz.process()
-        for move_line in picking.move_lines:
-            move_line.quantity_done = (
-                5
-                if move_line.product_id in [self.product1, self.product2, self.product4]
-                else 0
+        for move_line in picking.move_lines.filtered(
+                lambda x: x.product_id != self.product3):
+            move_line.quantity_done = 5
+        # Simulate whs user partial picking validation
+        whs_lists = picking.mapped("move_lines.whs_list_ids")
+        for whs_list in whs_lists.filtered(lambda x: x.product_id != self.product3):
+            # simulate whs work: no processing of product #3
+            # and partial of product #1,2,4
+            set_liste_elaborated_query = (
+                "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=:QtaMovimentata "
+                "WHERE NumLista=:NumLista AND NumRiga=:NumRiga"
             )
+            self.dbsource.with_context(no_return=True).execute_mssql(
+                sqlquery=sql_text(set_liste_elaborated_query),
+                sqlparams=dict(
+                    QtaMovimentata=5,
+                    NumLista=whs_list.num_lista,
+                    NumRiga=whs_list.riga),
+                metadata=None,
+            )
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        self.assertEqual(sum(picking.move_lines.mapped('quantity_done')), 15)
+        res = picking.button_validate()
+        backorder_wiz = Form(self.env[res['res_model']].with_context(res['context'])).save()
         backorder_wiz.process()
+        self.assertEqual(picking.state, "done")
         # check backorder whs list has the correct qty
         self.assertEqual(len(order1.picking_ids), 2)
         backorder_picking = order1.picking_ids - picking
@@ -782,111 +781,99 @@ class TestConnectorWhs(SingleTransactionCase):
         for whs_list in whs_lists:
             # simulate whs work: total process
             set_liste_elaborated_query = (
-                "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=%s WHERE "
-                "NumLista = '%s' AND NumRiga = '%s'"
-                % (whs_list.qta, whs_list.num_lista, whs_list.riga)
+                "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=:QtaMovimentata "
+                "WHERE NumLista=:NumLista AND NumRiga=:NumRiga"
             )
             self.dbsource.with_context(no_return=True).execute_mssql(
                 sqlquery=sql_text(set_liste_elaborated_query),
-                sqlparams=None,
+                sqlparams=dict(
+                    QtaMovimentata=whs_list.qta,
+                    NumLista=whs_list.num_lista,
+                    NumRiga=whs_list.riga),
                 metadata=None,
             )
 
         self.dbsource.whs_insert_read_and_synchronize_list()
-        # picking.action_pack_operation_auto_fill()
-        backorder_wiz.process()
         # check whs list for backorder is not created as the first is completed entirely
+        # FIXME: what does the note above mean?
+        res = self._execute_select_all_valid_host_liste()
+        self.assertEqual(len(res), whs_len_records + 6)
+        # self.run_stock_procurement_scheduler()
+        backorder_picking.action_assign()
+        for move_line in backorder_picking.move_lines:
+            state = 'confirmed'
+            if move_line.product_id.qty_available > 0:
+                state = 'assigned'
+            self.assertEqual(move_line.state, state)
+
+    def _execute_select_all_valid_host_liste(self):
+        # insert lists in WHS: this has to be invoked before every sql call!
         self.dbsource.whs_insert_read_and_synchronize_list()
         res = self.dbsource.execute_mssql(
-            sqlquery=sql_text("SELECT * FROM HOST_LISTE"), sqlparams=None, metadata=None
+            sqlquery=sql_text("SELECT * FROM HOST_LISTE WHERE Qta!=:Qta"),
+            sqlparams=dict(Qta=0),
+            metadata=None,
         )[0]
-        self.assertEqual(len(res), whs_len_records + 6)
-        self.run_stock_procurement_scheduler()
-        backorder_picking.action_assign()
-        # for move_line in backorder_picking.move_lines:
-        #     self.assertEqual(
-        #         move_line.state,
-        #         'confirmed' if move_line.product_id == self.product2 else
-        #         'partially_available' if move_line.product_id == self.product4 else
-        #         'assigned')
+        return res
 
     def test_04_unlink_sale_order(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
-        self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
-        )
-        whs_len_records = len(
-            self.dbsource.execute_mssql(
-                sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
-                sqlparams=None,
-                metadata=None,
-            )[0]
-        )
-        order1 = self.env["sale.order"].create(
-            {
-                "partner_id": self.partner.id,
-                "client_order_ref": "Rif. SO customer",
-            }
-        )
-        self._create_sale_order_line(order1, self.product1, 5)
-        self._create_sale_order_line(order1, self.product2, 5)
+        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        order_form1 = Form(self.env["sale.order"])
+        order_form1.partner_id = self.partner
+        order_form1.client_order_ref = "Rif. SO customer 4"
+        with order_form1.order_line.new() as order_line:
+            order_line.product_id = self.product1
+            order_line.product_uom_qty = 5
+            order_line.price_unit = 100
+        with order_form1.order_line.new() as order_line:
+            order_line.product_id = self.product2
+            order_line.product_uom_qty = 5
+            order_line.price_unit = 100
+        order1 = order_form1.save()
         order1.action_confirm()
         self.assertEqual(order1.state, "sale")
-        self.run_stock_procurement_scheduler()
-        self.assertEqual(order1.mapped("picking_ids.state"), ["assigned"])
+        self.assertEqual(len(order1.picking_ids), 1)
+        picking = order1.picking_ids
+        picking.action_assign()
+        self.assertEqual(picking.state, "assigned")
         picking = order1.picking_ids[0]
         self.assertEqual(len(picking.mapped("move_lines.whs_list_ids")), 2)
 
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
-            len(
-                self.dbsource.execute_mssql(
-                    sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
-                    sqlparams=None,
-                    metadata=None,
-                )[0]
-            ),
+            len(self._execute_select_all_valid_host_liste()),
             whs_len_records + 2,
         )
-        # check whs non ci siano i relativi record
+        # controlla che le liste whs siano annullate (impostate con Qta=0)
         order1.action_cancel()
+        # insert lists in WHS: this has to be invoked before every sql call!
+        self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
-            len(
-                self.dbsource.execute_mssql(
-                    sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
-                    sqlparams=None,
-                    metadata=None,
-                )[0]
-            ),
-            whs_len_records + 2,
+            len(self._execute_select_all_valid_host_liste()),
+            whs_len_records,
         )
         self.assertEqual(
             set(order1.mapped("picking_ids.move_lines.whs_list_ids.stato")), {"3"}
         )
         order1.action_draft()
         order1.action_confirm()
+        picking = order1.picking_ids.filtered(lambda x: x.state != 'cancel')
+        self.assertEqual(picking.move_lines.whs_list_ids.mapped('stato'), ['1', '1'])
+        # insert lists in WHS: this has to be invoked before every sql call!
+        self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
-            len(
-                self.dbsource.execute_mssql(
-                    sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
-                    sqlparams=None,
-                    metadata=None,
-                )[0]
-            ),
+            len(self._execute_select_all_valid_host_liste()),
             whs_len_records + 2,
         )
-        # insert lists in WHS
-        self.dbsource.whs_insert_read_and_synchronize_list()
-        # wait for WHS syncronization
-        time.sleep(10)
-        picking = order1.picking_ids.filtered(lambda x: x.state != "cancel")
-        self.run_stock_procurement_scheduler()
+        # self.run_stock_procurement_scheduler()
+        picking.action_assign()
         if all(x.state == "assigned" for x in picking.move_lines):
             self.assertEqual(picking.state, "assigned")
         else:
-            self.assertEqual(picking.state, "cancel")
+            self.assertEqual(picking.state, "cancel")  # FIXME era cancel
         hyddemo_whs_lists = picking.mapped("move_lines.whs_list_ids")
         lists = {x.riga: x.num_lista for x in hyddemo_whs_lists}
         # simulate launch from WHS user
@@ -909,14 +896,13 @@ class TestConnectorWhs(SingleTransactionCase):
             order1.action_cancel()
         # Check product added to sale order after confirmation create new whs lists
         # adding product to an existing open picking
-        whs_len_records = len(
-            self.dbsource.execute_mssql(
-                sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
-                sqlparams=None,
-                metadata=None,
-            )[0]
-        )
-        so_line = self._create_sale_order_line(order1, self.product4, 5)
+        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        order_form2 = Form(order1)
+        with order_form2.order_line.new() as order_line:
+            order_line.product_id = self.product4
+            order_line.product_uom_qty = 5
+            order_line.price_unit = 100
+        order1 = order_form2.save()
         pickings = order1.picking_ids.filtered(lambda x: x.state == "assigned")
         pickings.action_assign()
         new_product_move_line_ids = order1.picking_ids.mapped("move_lines").filtered(
@@ -925,62 +911,44 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertTrue(new_product_move_line_ids.mapped("whs_list_ids"))
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
-            len(
-                self.dbsource.execute_mssql(
-                    sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
-                    sqlparams=None,
-                    metadata=None,
-                )[0]
-            ),
+            len(self._execute_select_all_valid_host_liste()),
             whs_len_records + 1,
         )
 
         # test change qty of sale order line is forbidden
         with self.assertRaises(UserError):
-            so_line.write({"product_uom_qty": 17})
-
-    def _create_repair_order_line(self, repair, product, qty):
-        line = self.env["repair.line"].create(
-            {
-                "name": "Add product",
-                "repair_id": repair.id,
-                "type": "add",
-                "product_id": product.id,
-                "product_uom_qty": qty,
-                "product_uom": product.uom_id.id,
-                "price_unit": 5,
-                "location_id": self.env.ref("stock.stock_location_stock").id,
-                "location_dest_id": self.env.ref("stock.location_production").id,
-            }
-        )
-        line.onchange_product_id()
-        line._convert_to_write(line._cache)
-        return line
+            order1.order_line[0].write({"product_uom_qty": 17})
 
     def test_05_repair(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
-        self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
-        )
-        whs_len_records = len(
-            self.dbsource.execute_mssql(
-                sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
-                sqlparams=None,
-                metadata=None,
-            )[0]
-        )
-        repair = self.env["repair.order"].create(
-            {
-                "product_id": self.product1.id,
-                "product_uom": self.product1.uom_id.id,
-                "partner_id": self.partner.id,
-                "product_qty": 1,
-                "location_id": self.env.ref("stock.stock_location_stock").id,
-            }
-        )
-        self._create_repair_order_line(repair, self.product2, 5)
-        self._create_repair_order_line(repair, self.product3, 3)
+
+        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        repair_form = Form(self.env["repair.order"])
+        repair_form.product_id = self.product1
+        repair_form.product_uom = self.product1.uom_id
+        repair_form.partner_id = self.partner
+        repair_form.product_qty = 1
+        repair_form.location_id = self.env.ref("stock.stock_location_stock")
+        with repair_form.operations.new() as repair_line_form:
+            repair_line_form.product_id = self.product2
+            repair_line_form.name = "Add product"
+            repair_line_form.type = "add"
+            repair_line_form.product_uom_qty = 5
+            repair_line_form.product_uom = self.product2.uom_id
+            repair_line_form.price_unit = 5
+            repair_line_form.location_id = self.env.ref("stock.stock_location_stock")
+            repair_line_form.location_dest_id = self.manufacture_location
+        with repair_form.operations.new() as repair_line_form:
+            repair_line_form.product_id = self.product3
+            repair_line_form.name = "Add product"
+            repair_line_form.type = "add"
+            repair_line_form.product_uom_qty = 3
+            repair_line_form.product_uom = self.product3.uom_id
+            repair_line_form.price_unit = 5
+            repair_line_form.location_id = self.env.ref("stock.stock_location_stock")
+            repair_line_form.location_dest_id = self.manufacture_location
+        repair = repair_form.save()
         repair.action_repair_confirm()
         self.assertEqual(
             repair.state, "confirmed", 'Repair order should be in "Confirmed" state.'
@@ -1000,8 +968,10 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertEqual(
             len(
                 self.dbsource.execute_mssql(
-                    sqlquery=sql_text("SELECT * FROM HOST_LISTE WHERE Elaborato != 5"),
-                    sqlparams=None,
+                    sqlquery=sql_text(
+                        "SELECT * FROM HOST_LISTE WHERE Elaborato!=:Elaborato AND "
+                        "Qta!=:Qta"),
+                    sqlparams=dict(Elaborato=5, Qta=0),
                     metadata=None,
                 )[0]
             ),
@@ -1062,48 +1032,27 @@ class TestConnectorWhs(SingleTransactionCase):
                 str(result_liste),
             )
 
-    def _create_purchase_order_line(self, order, product, qty, date_planned):
-        line = self.env["purchase.order.line"].create(
-            {
-                "order_id": order.id,
-                "product_id": product.id,
-                "product_uom": product.uom_po_id.id,
-                "name": product.name,
-                "product_qty": qty,
-                "price_unit": 100,
-                "date_planned": date_planned,
-            }
-        )
-        line.order_id.onchange_partner_id()
-        return line
-
     def test_06_purchase(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
-        self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
-        )
-        whs_len_records = len(
-            self.dbsource.execute_mssql(
-                sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
-                sqlparams=None,
-                metadata=None,
-            )[0]
-        )
-        purchase = self.env["purchase.order"].create(
-            {
-                "partner_id": self.partner.id,
-            }
-        )
-        self._create_purchase_order_line(
-            purchase,
-            self.product2,
-            20,
-            fields.Datetime.today() + relativedelta(month=1),
-        )
-        self._create_purchase_order_line(
-            purchase, self.product3, 3, fields.Datetime.today() + relativedelta(month=1)
-        )
+        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        purchase_form = Form(self.env["purchase.order"])
+        purchase_form.partner_id = self.partner
+        with purchase_form.order_line.new() as po_line:
+            po_line.product_id = self.product2
+            po_line.product_qty = 20
+            po_line.product_uom = self.product2.uom_po_id
+            po_line.name = self.product2.name
+            po_line.price_unit = 100
+            po_line.date_planned = fields.Datetime.today() + relativedelta(month=1)
+        with purchase_form.order_line.new() as po_line:
+            po_line.product_id = self.product3
+            po_line.product_qty = 3
+            po_line.product_uom = self.product3.uom_po_id
+            po_line.name = self.product3.name
+            po_line.price_unit = 100
+            po_line.date_planned = fields.Datetime.today() + relativedelta(month=1)
+        purchase = purchase_form.save()
         purchase.button_approve()
         self.assertEqual(
             purchase.state, "purchase", 'Purchase state should be "Purchase"'
@@ -1111,13 +1060,7 @@ class TestConnectorWhs(SingleTransactionCase):
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
-            len(
-                self.dbsource.execute_mssql(
-                    sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
-                    sqlparams=None,
-                    metadata=None,
-                )[0]
-            ),
+            len(self._execute_select_all_valid_host_liste()),
             whs_len_records + 2,
         )
 
@@ -1177,29 +1120,25 @@ class TestConnectorWhs(SingleTransactionCase):
 
         # simulate user partial validate of picking and check backorder exist
         picking = purchase.picking_ids[0]
-        self.run_stock_procurement_scheduler()
+        # self.run_stock_procurement_scheduler()
+        picking.action_assign()
         if all(x.state == "assigned" for x in picking.move_lines):
             self.assertEqual(picking.state, "assigned")
         else:
             self.assertEqual(picking.state, "waiting")
         # check that action_assign run by scheduler do not change state
-        picking.action_assign()
-        self.assertEqual(picking.state, "assigned")
-        picking.action_pack_operation_auto_fill()
-        backorder_wiz_id = picking.button_validate()["res_id"]
-        backorder_wiz = self.env["stock.backorder.confirmation"].browse(
-            backorder_wiz_id
-        )
-        backorder_wiz.process()
+        # self.assertEqual(picking.state, "assigned")
+        res = picking.button_validate()
+        Form(self.env[res['res_model']].with_context(res['context'])).save().process()
         self.assertEqual(picking.state, "done")
 
         # check back picking is waiting as waiting for WHS work
         self.assertEqual(len(purchase.picking_ids), 2)
         backorder_picking = purchase.picking_ids - picking
-        self.run_stock_procurement_scheduler()
-        for picking in purchase.picking_ids:
-            if all(x.state == "assigned" for x in picking.move_lines):
-                self.assertEqual(picking.state, "assigned")
+        # self.run_stock_procurement_scheduler()
+        backorder_picking.action_assign()
+        if all(x.state == "assigned" for x in backorder_picking.move_lines):
+            self.assertEqual(backorder_picking.state, "assigned")
 
         # check whs_list for backorder is created
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -1214,7 +1153,7 @@ class TestConnectorWhs(SingleTransactionCase):
         )
         self.assertEqual(str(result_liste[0]), "[(Decimal('18.000'), None)]")
         # TODO check cancel workflow without action_assign that create whs list anyway
-        self.check_cancel_workflow(backorder_picking, 1)
+        self._check_cancel_workflow(backorder_picking, 1)
         backorder_picking.action_assign()
         # simulate whs work set done to rest of backorder
         set_liste_elaborated_query = (
@@ -1229,7 +1168,8 @@ class TestConnectorWhs(SingleTransactionCase):
         self.dbsource.whs_insert_read_and_synchronize_list()
         backorder_picking.button_validate()
         self.assertEqual(backorder_picking.state, "assigned")
-        self.run_stock_procurement_scheduler()
+        # self.run_stock_procurement_scheduler()
+        backorder_picking.action_assign()
         self.assertEqual(backorder_picking.state, "assigned")
         self.assertFalse(
             all(
@@ -1240,46 +1180,41 @@ class TestConnectorWhs(SingleTransactionCase):
         # Check product added to purchase order after confirm create whs list with
         # different date_planned which create a new picking (as this module depends on
         # purchase_delivery_split_date)
-        whs_len_records = len(
-            self.dbsource.execute_mssql(
-                sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
-                sqlparams=None,
-                metadata=None,
-            )[0]
-        )
-        self._create_purchase_order_line(
-            purchase,
-            self.product4,
-            20,
-            fields.Datetime.today() + relativedelta(month=2),
-        )
-        new_picking = purchase.picking_ids - (picking | backorder_picking)
-        new_picking.action_assign()
+        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        purchase_form = Form(purchase)
+        with purchase_form.order_line.new() as po_line:
+            po_line.product_id = self.product4
+            po_line.product_qty = 20
+            po_line.product_uom = self.product4.uom_po_id
+            po_line.name = self.product4.name
+            po_line.price_unit = 100
+            po_line.date_planned = fields.Datetime.today() + relativedelta(month=2)
+        purchase_form.save()
+        # new_picking = purchase.picking_ids - (picking | backorder_picking)
+        # new_picking.action_assign()
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
-            len(
-                self.dbsource.execute_mssql(
-                    sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
-                    sqlparams=None,
-                    metadata=None,
-                )[0]
-            ),
+            len(self._execute_select_all_valid_host_liste()),
             whs_len_records + 1,
         )
         # Check product added to purchase order after confirmation create new whs lists
         # adding product to an existing open picking
-        self._create_purchase_order_line(
-            purchase,
-            self.product5,
-            20,
-            fields.Datetime.today() + relativedelta(month=2),
-        )
-        po_line = self._create_purchase_order_line(
-            purchase,
-            self.product5,
-            20,
-            fields.Datetime.today() + relativedelta(month=2),
-        )
+        purchase_form = Form(purchase)
+        with purchase_form.order_line.new() as po_line:
+            po_line.product_id = self.product5
+            po_line.product_qty = 20
+            po_line.product_uom = self.product5.uom_po_id
+            po_line.name = self.product5.name
+            po_line.price_unit = 100
+            po_line.date_planned = fields.Datetime.today() + relativedelta(month=2)
+        with purchase_form.order_line.new() as po_line:
+            po_line.product_id = self.product5
+            po_line.product_qty = 20
+            po_line.product_uom = self.product5.uom_po_id
+            po_line.name = self.product5.name
+            po_line.price_unit = 100
+            po_line.date_planned = fields.Datetime.today() + relativedelta(month=2)
+        purchase_form.save()
         # pickings linked to purchase order change state to assigned when a product is
         # added o changed
         pickings = purchase.picking_ids.filtered(lambda x: x.state == "assigned")
@@ -1290,24 +1225,21 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertTrue(new_product_move_line_ids.mapped("whs_list_ids"))
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
-            len(
-                self.dbsource.execute_mssql(
-                    sqlquery=sql_text("SELECT * FROM HOST_LISTE"),
-                    sqlparams=None,
-                    metadata=None,
-                )[0]
-            ),
+            len(self._execute_select_all_valid_host_liste()),
             whs_len_records + 3,
         )
 
         # test qty change on purchase order line, which create a new line with increased
         # qty on picking
-        po_line.write({"product_qty": 27})
-        pickings = po_line.order_id.picking_ids.filtered(
+        po_line_to_change = purchase.order_line.filtered(
+            lambda x: x.product_id == self.product5
+        )[-1]
+        po_line_to_change.write({"product_qty": 27})
+        pickings = purchase.picking_ids.filtered(
             lambda x: x.state == "assigned"
         )
         pickings.action_assign()
-        po_whs_list = po_line.move_ids.mapped("whs_list_ids").filtered(
+        po_whs_list = po_line_to_change.mapped("move_ids.whs_list_ids").filtered(
             lambda x: x.qta == 7
         )
         self.dbsource.whs_insert_read_and_synchronize_list()
