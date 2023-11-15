@@ -8,6 +8,7 @@ from odoo import _, fields, models
 from odoo.exceptions import UserError
 
 EXTRA_PROCUREMENT_PRIORITIES = [('2', 'Very Urgent')]
+# priority (priorità) da odoo14 i valori corrispondono (0='0', ecc.)
 # odoo14: [('0', 'Normal'), ('1', 'Urgent')]
 # odoo12: [('0', 'Not urgent'), ('1', 'Normal'), ('2', 'Urgent'), ('3', 'Very Urgent')]
 # lo script di migrazione attuale traduce '1' a '0' (giusto), '2' a '1' (giusto) e
@@ -115,6 +116,9 @@ class Picking(models.Model):
 
     def action_confirm(self):
         res = super(Picking, self).action_confirm()
+        # added as sale_order_priority add priority only on action_assign()
+        picking_priority = self.env.context.get("sale_priority")
+        self.priority = picking_priority if picking_priority else 0
         self.create_whs_list()
         return res
 
@@ -333,7 +337,7 @@ class StockMove(models.Model):
 
                     if move.picking_id.priority:
                         whsliste_data["priorita"] = (
-                            max([int(move.picking_id.priority), 1]) - 1
+                            max([int(move.picking_id.priority), 0])
                         )
 
                     if ragsoc:
