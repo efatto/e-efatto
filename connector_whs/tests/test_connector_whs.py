@@ -387,7 +387,8 @@ class TestConnectorWhs(SingleTransactionCase):
                     NumRiga=whs_list.riga),
                 metadata=None
             )
-        self.dbsource.whs_insert_read_and_synchronize_list()
+        # do not launch self.dbsource.whs_insert_read_and_synchronize_list() here as it
+        # would change Elaborato from 4 to 5, as it must do
         for whs_list in whs_lists:
             whs_select_query = (
                 "SELECT Qta, QtaMovimentata, Priorita FROM HOST_LISTE WHERE "
