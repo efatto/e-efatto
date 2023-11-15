@@ -131,7 +131,8 @@ class HyddemoWhsListe(models.Model):
     @api.multi
     def cancel_lists(self, datasource_id):
         """
-        Set lists processed on mssql and not processable in Odoo
+        Set lists processed on mssql setting Qta=0 and Elaborato=1
+        and not processable in Odoo setting stato=3
         """
         dbsource_obj = self.env['base.external.dbsource']
         dbsource = dbsource_obj.browse(datasource_id)

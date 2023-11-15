@@ -78,11 +78,11 @@ class Picking(models.Model):
     @api.multi
     def create_whs_list(self):
         for picking in self:
-            picking.mapped('move_lines').filtered(
-                lambda x: not any(
-                    y.stato != '3' for y in x.whs_list_ids
-                )
-            ).create_whs_list()
+            for move in picking.move_lines:
+                if not move.whs_list_ids or all(
+                    x.stato == "3" for x in move.whs_list_ids
+                ):
+                    move.create_whs_list()
 
     @api.multi
     def action_confirm(self):

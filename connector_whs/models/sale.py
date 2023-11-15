@@ -11,8 +11,16 @@ class SaleOrder(models.Model):
     def action_confirm(self):
         res = super(SaleOrder, self).action_confirm()
         for order in self:
-            order.picking_ids.filtered(lambda x: x.state != 'cancel').mapped(
-                'move_lines').create_whs_list()
+            # create_whs_list method is a redundant call as already called by
+            # stock.picking action_confirm(), to cover the cases in which stock.picking
+            # is not confirmed
+            for move in order.picking_ids.filtered(lambda x: x.state != "cancel").mapped(
+                "move_lines"
+            ):
+                if not move.whs_list_ids or all(
+                    x.stato == "3" for x in move.whs_list_ids
+                ):
+                    move.create_whs_list()
         return res
 
     @api.multi
