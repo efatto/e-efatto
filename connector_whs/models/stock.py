@@ -7,7 +7,7 @@ import logging
 from odoo import _, fields, models
 from odoo.exceptions import UserError
 
-EXTRA_PROCUREMENT_PRIORITIES = [('2', 'Very Urgent')]
+EXTRA_PROCUREMENT_PRIORITIES = [("2", "Very Urgent")]
 # priority (priorità) da odoo14 i valori corrispondono (0='0', ecc.)
 # odoo14: [('0', 'Normal'), ('1', 'Urgent')]
 # odoo12: [('0', 'Not urgent'), ('1', 'Normal'), ('2', 'Urgent'), ('3', 'Very Urgent')]
@@ -21,8 +21,7 @@ _logger = logging.getLogger(__name__)
 class Picking(models.Model):
     _inherit = "stock.picking"
 
-    priority = fields.Selection(
-        selection_add=EXTRA_PROCUREMENT_PRIORITIES)
+    priority = fields.Selection(selection_add=EXTRA_PROCUREMENT_PRIORITIES)
 
     def action_pack_operation_auto_fill(self):
         super(Picking, self).action_pack_operation_auto_fill()
@@ -162,8 +161,7 @@ class Picking(models.Model):
 class StockMove(models.Model):
     _inherit = "stock.move"
 
-    priority = fields.Selection(
-        selection_add=EXTRA_PROCUREMENT_PRIORITIES)
+    priority = fields.Selection(selection_add=EXTRA_PROCUREMENT_PRIORITIES)
     whs_list_ids = fields.One2many(
         comodel_name="hyddemo.whs.liste", inverse_name="move_id", string="Whs Lists"
     )
@@ -333,13 +331,11 @@ class StockMove(models.Model):
                         whsliste_data["riferimento"] = pick.origin[:50]
 
                     if move.sale_line_id.priority:
-                        whsliste_data["priorita"] = (
-                            max([int(move.sale_line_id.priority), 0])
+                        whsliste_data["priorita"] = max(
+                            [int(move.sale_line_id.priority), 0]
                         )
                     elif move.priority:
-                        whsliste_data["priorita"] = (
-                            max([int(move.priority), 0])
-                        )
+                        whsliste_data["priorita"] = max([int(move.priority), 0])
 
                     if ragsoc:
                         whsliste_data["ragsoc"] = ragsoc[0:100]

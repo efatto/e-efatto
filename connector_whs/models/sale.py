@@ -9,8 +9,7 @@ from odoo.addons.connector_whs.models.stock import EXTRA_PROCUREMENT_PRIORITIES
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    priority = fields.Selection(
-        selection_add=EXTRA_PROCUREMENT_PRIORITIES)
+    priority = fields.Selection(selection_add=EXTRA_PROCUREMENT_PRIORITIES)
 
     def action_confirm(self):
         res = super(SaleOrder, self).action_confirm()
@@ -18,9 +17,9 @@ class SaleOrder(models.Model):
             # create_whs_list method is a redundant call as already called by
             # stock.picking action_confirm(), to cover the cases in which stock.picking
             # is not confirmed
-            for move in order.picking_ids.filtered(lambda x: x.state != "cancel").mapped(
-                "move_lines"
-            ):
+            for move in order.picking_ids.filtered(
+                lambda x: x.state != "cancel"
+            ).mapped("move_lines"):
                 if not move.whs_list_ids or all(
                     x.stato == "3" for x in move.whs_list_ids
                 ):
@@ -37,5 +36,4 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    priority = fields.Selection(
-        selection_add=EXTRA_PROCUREMENT_PRIORITIES)
+    priority = fields.Selection(selection_add=EXTRA_PROCUREMENT_PRIORITIES)

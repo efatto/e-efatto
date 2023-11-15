@@ -4,10 +4,10 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 import logging
 
+from sqlalchemy import text as sql_text
+
 from odoo import _, fields, models
 from odoo.exceptions import UserError
-
-from sqlalchemy import text as sql_text
 
 _logger = logging.getLogger(__name__)
 
@@ -132,7 +132,9 @@ class HyddemoWhsListe(models.Model):
                 "NumLista='%s' AND NumRiga='%s'" % (lista.num_lista, lista.riga)
             )
             dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=sql_text(set_to_not_elaborate_query), sqlparams=None, metadata=None
+                sqlquery=sql_text(set_to_not_elaborate_query),
+                sqlparams=None,
+                metadata=None,
             )
             _logger.info(
                 "WHS LOG: cancel Lista %s Riga %s" % (lista.num_lista, lista.riga)
@@ -151,7 +153,9 @@ class HyddemoWhsListe(models.Model):
                 "AND Elaborato = 4 AND QtaMovimentata > 0" % (num_lista,)
             )
             elaborated_lists = dbsource.execute_mssql(
-                sqlquery=sql_text(check_elaborated_lists_query), sqlparams=None, metadata=None
+                sqlquery=sql_text(check_elaborated_lists_query),
+                sqlparams=None,
+                metadata=None,
             )
             if elaborated_lists[0]:
                 raise UserError(
@@ -165,7 +169,9 @@ class HyddemoWhsListe(models.Model):
                 "AND Elaborato = 3" % (num_lista,)
             )
             elaborating_lists = dbsource.execute_mssql(
-                sqlquery=sql_text(check_elaborating_lists_query), sqlparams=None, metadata=None
+                sqlquery=sql_text(check_elaborating_lists_query),
+                sqlparams=None,
+                metadata=None,
             )
             if elaborating_lists[0]:
                 raise UserError(
@@ -207,7 +213,9 @@ class HyddemoWhsListe(models.Model):
                         "WHERE NumLista = '%s'" % whs_list.num_lista
                     )
                     esito_lista_simple = dbsource.execute_mssql(
-                        sqlquery=sql_text(whs_liste_query_simple), sqlparams=None, metadata=None
+                        sqlquery=sql_text(whs_liste_query_simple),
+                        sqlparams=None,
+                        metadata=None,
                     )
                     if not esito_lista_simple[0]:
                         whs_liste_query_super_simple = (

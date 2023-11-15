@@ -2,11 +2,11 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 # flake8: noqa: C901
 
+from sqlalchemy import text as sql_text
+
 from odoo import _, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import float_compare
-
-from sqlalchemy import text as sql_text
 
 
 class WizardSyncStockWhsMssql(models.TransientModel):

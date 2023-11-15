@@ -37,9 +37,9 @@ class TestConnectorWhs(SingleTransactionCase):
         )
         self.src_location = self.env.ref("stock.stock_location_stock")
         self.dest_location = self.env.ref("stock.stock_location_customers")
-        self.manufacture_location = self.env["stock.location"].search([
-            ("usage", "=", "production")
-        ], limit=1)[0]
+        self.manufacture_location = self.env["stock.location"].search(
+            [("usage", "=", "production")], limit=1
+        )[0]
         self.procurement_model = self.env["procurement.group"]
         self.partner = self.env.ref("base.res_partner_2")
         # Create product with 16 on hand
@@ -130,11 +130,13 @@ class TestConnectorWhs(SingleTransactionCase):
         whs_records = self.dbsource.execute_mssql(
             sqlquery=sql_text(
                 "SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE "
-                "WHERE Riferimento=:Riferimento"),
+                "WHERE Riferimento=:Riferimento"
+            ),
             sqlparams=dict(
                 Riferimento=picking.sale_id.name
                 if picking.sale_id
-                else picking.purchase_id.name),
+                else picking.purchase_id.name
+            ),
             metadata=None,
         )[0]
         whs_lists = picking.mapped("move_lines.whs_list_ids")
@@ -154,11 +156,13 @@ class TestConnectorWhs(SingleTransactionCase):
         whs_records1 = self.dbsource.execute_mssql(
             sqlquery=sql_text(
                 "SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE "
-                "WHERE Riferimento=:Riferimento"),
+                "WHERE Riferimento=:Riferimento"
+            ),
             sqlparams=dict(
                 Riferimento=picking.sale_id.name
                 if picking.sale_id
-                else picking.purchase_id.name),
+                else picking.purchase_id.name
+            ),
             metadata=None,
         )[0]
         self.assertEqual(len(whs_records1), len(whs_records))
@@ -177,11 +181,13 @@ class TestConnectorWhs(SingleTransactionCase):
         whs_records2 = self.dbsource.execute_mssql(
             sqlquery=sql_text(
                 "SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE "
-                "WHERE Riferimento=:Riferimento"),
+                "WHERE Riferimento=:Riferimento"
+            ),
             sqlparams=dict(
                 Riferimento=picking.sale_id.name
                 if picking.sale_id
-                else picking.purchase_id.name),
+                else picking.purchase_id.name
+            ),
             metadata=None,
         )[0]
         # 4 whs lists of which 2 valid (stato=1) and 2 invalid (stato=3)
@@ -219,11 +225,13 @@ class TestConnectorWhs(SingleTransactionCase):
             self.assertTrue(order1.client_order_ref in whs_record._mapping.values())
             if self.product1.default_code in whs_record._mapping.values():
                 self.assertTrue(
-                    self.product1.customer_ids[0].product_code in whs_record._mapping.values()
+                    self.product1.customer_ids[0].product_code
+                    in whs_record._mapping.values()
                 )
             else:
                 self.assertFalse(
-                    self.product1.customer_ids[0].product_code in whs_record._mapping.values()
+                    self.product1.customer_ids[0].product_code
+                    in whs_record._mapping.values()
                 )
         # check cancel workflow
         whs_lists = picking1.move_lines.whs_list_ids
@@ -343,7 +351,8 @@ class TestConnectorWhs(SingleTransactionCase):
         whs_records = self.dbsource.execute_mssql(
             sqlquery=sql_text(
                 "SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE WHERE "
-                "Qta!=:Qta"),
+                "Qta!=:Qta"
+            ),
             sqlparams=dict(Qta=0),
             metadata=None,
         )[0]
@@ -356,18 +365,21 @@ class TestConnectorWhs(SingleTransactionCase):
             self.assertTrue(order1.client_order_ref in whs_record._mapping.values())
             if self.product1.default_code in whs_record._mapping.values():
                 self.assertTrue(
-                    self.product1.customer_ids[0].product_code in whs_record._mapping.values()
+                    self.product1.customer_ids[0].product_code
+                    in whs_record._mapping.values()
                 )
             else:
                 self.assertFalse(
-                    self.product1.customer_ids[0].product_code in whs_record._mapping.values()
+                    self.product1.customer_ids[0].product_code
+                    in whs_record._mapping.values()
                 )
 
         whs_lists = self._check_cancel_workflow(picking, 2)
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self.dbsource.execute_mssql(
             sqlquery=sql_text(
-                "SELECT Elaborato, NumLista, NumRiga FROM HOST_LISTE WHERE Qta!=:Qta"),
+                "SELECT Elaborato, NumLista, NumRiga FROM HOST_LISTE WHERE Qta!=:Qta"
+            ),
             sqlparams=dict(Qta=0),
             metadata=None,
         )[0]
@@ -383,9 +395,12 @@ class TestConnectorWhs(SingleTransactionCase):
             self.dbsource.with_context(no_return=True).execute_mssql(
                 sqlquery=sql_text(set_liste_elaborated_query),
                 sqlparams=dict(
-                    Elaborato=4, QtaMovimentata=3, NumLista=whs_list.num_lista,
-                    NumRiga=whs_list.riga),
-                metadata=None
+                    Elaborato=4,
+                    QtaMovimentata=3,
+                    NumLista=whs_list.num_lista,
+                    NumRiga=whs_list.riga,
+                ),
+                metadata=None,
             )
         # do not launch self.dbsource.whs_insert_read_and_synchronize_list() here as it
         # would change Elaborato from 4 to 5, as it must do
@@ -397,10 +412,13 @@ class TestConnectorWhs(SingleTransactionCase):
             result_liste = self.dbsource.execute_mssql(
                 sqlquery=sql_text(whs_select_query),
                 sqlparams=dict(
-                    Elaborato=4, NumLista=whs_list.num_lista, NumRiga=whs_list.riga),
-                metadata=None
+                    Elaborato=4, NumLista=whs_list.num_lista, NumRiga=whs_list.riga
+                ),
+                metadata=None,
             )
-            self.assertIn("[(Decimal('5.000'), Decimal('3.000'), 1)]", str(result_liste))
+            self.assertIn(
+                "[(Decimal('5.000'), Decimal('3.000'), 1)]", str(result_liste)
+            )
 
         self.dbsource.whs_insert_read_and_synchronize_list()
 
@@ -415,7 +433,7 @@ class TestConnectorWhs(SingleTransactionCase):
 
         # simulate user partial validate of picking and check backorder exist
         res = picking.button_validate()
-        Form(self.env[res['res_model']].with_context(res['context'])).save().process()
+        Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
         backorder_picking = order1.picking_ids - picking
         # Simulate whs user validation
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -486,19 +504,21 @@ class TestConnectorWhs(SingleTransactionCase):
             self.assertTrue(order1.client_order_ref in whs_record._mapping.values())
             if self.product1.default_code in whs_record._mapping.values():
                 self.assertTrue(
-                    self.product1.customer_ids[0].product_code in whs_record._mapping.values()
+                    self.product1.customer_ids[0].product_code
+                    in whs_record._mapping.values()
                 )
             else:
                 self.assertFalse(
-                    self.product1.customer_ids[0].product_code in whs_record._mapping.values()
+                    self.product1.customer_ids[0].product_code
+                    in whs_record._mapping.values()
                 )
 
         # check backorder is not created without whs list validation
         res = picking.button_validate()
-        Form(self.env[res['res_model']].with_context(res['context'])).save().process()
+        Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
         # Check user cannot create backorder if whs list is not processed on whs system
         # TODO NON QUI PERÒ: check backorder is created for residual
-        self.assertNotEqual(picking.state, 'done')
+        self.assertNotEqual(picking.state, "done")
         self.assertEqual(len(order1.picking_ids), 1)
 
         whs_lists = picking.mapped("move_lines.whs_list_ids")
@@ -539,13 +559,19 @@ class TestConnectorWhs(SingleTransactionCase):
         self.dbsource.whs_insert_read_and_synchronize_list()
 
         # check move and picking linked to sale order have changed state to FIXME ? done
-        self.assertEqual(set(picking.move_lines.mapped('state')), {"assigned"})
-        self.assertEqual(picking.move_lines.filtered(
-            lambda move: move.product_id == self.product1
-        ).move_line_ids.qty_done, 3.0)
-        self.assertEqual(picking.move_lines.filtered(
-            lambda move: move.product_id == self.product2
-        ).move_line_ids.qty_done, 20.0)
+        self.assertEqual(set(picking.move_lines.mapped("state")), {"assigned"})
+        self.assertEqual(
+            picking.move_lines.filtered(
+                lambda move: move.product_id == self.product1
+            ).move_line_ids.qty_done,
+            3.0,
+        )
+        self.assertEqual(
+            picking.move_lines.filtered(
+                lambda move: move.product_id == self.product2
+            ).move_line_ids.qty_done,
+            20.0,
+        )
         picking.action_assign()
         self.assertEqual(picking.state, "assigned")
         # check that action_assign run by scheduler do not change state
@@ -575,7 +601,7 @@ class TestConnectorWhs(SingleTransactionCase):
         #         metadata=None,
         #     )
         res = picking.button_validate()
-        Form(self.env[res['res_model']].with_context(res['context'])).save().process()
+        Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
         self.assertEqual(picking.state, "done")
         # check back picking is waiting as Odoo qty is not considered
         self.assertEqual(len(order1.picking_ids), 2)
@@ -650,11 +676,13 @@ class TestConnectorWhs(SingleTransactionCase):
             self.assertTrue(order1.client_order_ref in whs_record._mapping.values())
             if self.product1.default_code in whs_record._mapping.values():
                 self.assertTrue(
-                    self.product1.customer_ids[0].product_code in whs_record._mapping.values()
+                    self.product1.customer_ids[0].product_code
+                    in whs_record._mapping.values()
                 )
             else:
                 self.assertFalse(
-                    self.product1.customer_ids[0].product_code in whs_record._mapping.values()
+                    self.product1.customer_ids[0].product_code
+                    in whs_record._mapping.values()
                 )
         # simulate whs work: validate first move totally and second move partially
         whs_lists = picking.mapped("move_lines.whs_list_ids")
@@ -725,13 +753,16 @@ class TestConnectorWhs(SingleTransactionCase):
         # simulate user partial validate of picking and check backorder exist
         res = picking.button_validate()
         self.assertEqual(picking.state, "assigned")
-        backorder_wiz = Form(self.env[res['res_model']].with_context(res['context'])).save()
+        backorder_wiz = Form(
+            self.env[res["res_model"]].with_context(res["context"])
+        ).save()
         # User must set correctly quantity as set by WHS user, ignoring qty set
         # automatically by Odoo, so check that error is raised without intervention
         with self.assertRaises(UserError):
             backorder_wiz.process()
         for move_line in picking.move_lines.filtered(
-                lambda x: x.product_id != self.product3):
+            lambda x: x.product_id != self.product3
+        ):
             move_line.quantity_done = 5
         # Simulate whs user partial picking validation
         whs_lists = picking.mapped("move_lines.whs_list_ids")
@@ -745,15 +776,16 @@ class TestConnectorWhs(SingleTransactionCase):
             self.dbsource.with_context(no_return=True).execute_mssql(
                 sqlquery=sql_text(set_liste_elaborated_query),
                 sqlparams=dict(
-                    QtaMovimentata=5,
-                    NumLista=whs_list.num_lista,
-                    NumRiga=whs_list.riga),
+                    QtaMovimentata=5, NumLista=whs_list.num_lista, NumRiga=whs_list.riga
+                ),
                 metadata=None,
             )
         self.dbsource.whs_insert_read_and_synchronize_list()
-        self.assertEqual(sum(picking.move_lines.mapped('quantity_done')), 15)
+        self.assertEqual(sum(picking.move_lines.mapped("quantity_done")), 15)
         res = picking.button_validate()
-        backorder_wiz = Form(self.env[res['res_model']].with_context(res['context'])).save()
+        backorder_wiz = Form(
+            self.env[res["res_model"]].with_context(res["context"])
+        ).save()
         backorder_wiz.process()
         self.assertEqual(picking.state, "done")
         # check backorder whs list has the correct qty
@@ -782,7 +814,8 @@ class TestConnectorWhs(SingleTransactionCase):
                 sqlparams=dict(
                     QtaMovimentata=whs_list.qta,
                     NumLista=whs_list.num_lista,
-                    NumRiga=whs_list.riga),
+                    NumRiga=whs_list.riga,
+                ),
                 metadata=None,
             )
 
@@ -794,9 +827,9 @@ class TestConnectorWhs(SingleTransactionCase):
         # self.run_stock_procurement_scheduler()
         backorder_picking.action_assign()
         for move_line in backorder_picking.move_lines:
-            state = 'confirmed'
+            state = "confirmed"
             if move_line.product_id.qty_available > 0:
-                state = 'assigned'
+                state = "assigned"
             self.assertEqual(move_line.state, state)
 
     def _execute_select_all_valid_host_liste(self):
@@ -853,8 +886,8 @@ class TestConnectorWhs(SingleTransactionCase):
         )
         order1.action_draft()
         order1.action_confirm()
-        picking = order1.picking_ids.filtered(lambda x: x.state != 'cancel')
-        self.assertEqual(picking.move_lines.whs_list_ids.mapped('stato'), ['1', '1'])
+        picking = order1.picking_ids.filtered(lambda x: x.state != "cancel")
+        self.assertEqual(picking.move_lines.whs_list_ids.mapped("stato"), ["1", "1"])
         # insert lists in WHS: this has to be invoked before every sql call, but not
         # before a select for a check, as it change Elaborato from 4 to 5
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -964,7 +997,8 @@ class TestConnectorWhs(SingleTransactionCase):
                 self.dbsource.execute_mssql(
                     sqlquery=sql_text(
                         "SELECT * FROM HOST_LISTE WHERE Elaborato!=:Elaborato AND "
-                        "Qta!=:Qta"),
+                        "Qta!=:Qta"
+                    ),
                     sqlparams=dict(Elaborato=5, Qta=0),
                     metadata=None,
                 )[0]
@@ -1124,7 +1158,7 @@ class TestConnectorWhs(SingleTransactionCase):
         # self.assertEqual(picking.state, "assigned")
         # picking.action_pack_operation_auto_fill() FIXME check what this method do
         res = picking.button_validate()
-        Form(self.env[res['res_model']].with_context(res['context'])).save().process()
+        Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
         self.assertEqual(picking.state, "done")
 
         # check back picking is waiting as waiting for WHS work
@@ -1230,9 +1264,7 @@ class TestConnectorWhs(SingleTransactionCase):
             lambda x: x.product_id == self.product5
         )[-1]
         po_line_to_change.write({"product_qty": 27})
-        pickings = purchase.picking_ids.filtered(
-            lambda x: x.state == "assigned"
-        )
+        pickings = purchase.picking_ids.filtered(lambda x: x.state == "assigned")
         pickings.action_assign()
         po_whs_list = po_line_to_change.mapped("move_ids.whs_list_ids").filtered(
             lambda x: x.qta == 7
