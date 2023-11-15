@@ -573,12 +573,9 @@ class TestConnectorWhs(SingleTransactionCase):
             20.0,
         )
         picking.action_assign()
-        self.assertEqual(picking.state, "assigned")
         # Do not run self.run_stock_procurement_scheduler() here as it will override
         # quantity_done in picking.move_lines as the availability differs from quantity
         # set manually!
-        self.assertEqual(picking.state, "assigned")
-        picking.action_assign()
         self.assertEqual(picking.state, "assigned")
 
         res = picking.button_validate()
