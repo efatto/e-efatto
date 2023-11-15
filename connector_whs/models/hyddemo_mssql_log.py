@@ -5,10 +5,10 @@
 import logging
 import time
 
+from sqlalchemy import text as sql_text
+
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
-
-from sqlalchemy import text as sql_text
 
 _logger = logging.getLogger(__name__)
 
@@ -428,12 +428,14 @@ class HyddemoMssqlLog(models.Model):
                     "NumRiga='%s'" % (num_lista, num_riga)
                 )
                 dbsource.with_context(no_return=True).execute_mssql(
-                    sqlquery=sql_text(set_liste_to_done_query), sqlparams=None, metadata=None
+                    sqlquery=sql_text(set_liste_to_done_query),
+                    sqlparams=None,
+                    metadata=None,
                 )
         if pickings_to_assign:
             pickings_to_assign.filtered(
-                lambda x: x.mapped('move_lines').filtered(
-                    lambda move: move.state not in ('draft', 'cancel', 'done')
+                lambda x: x.mapped("move_lines").filtered(
+                    lambda move: move.state not in ("draft", "cancel", "done")
                 )
             ).action_assign()
 
@@ -459,7 +461,9 @@ class HyddemoMssqlLog(models.Model):
             insert_esiti_liste_params = self._prepare_host_liste_values(lista)
             insert_query = self.get_insert_query(insert_esiti_liste_params)
             if insert_esiti_liste_params:
-                self.execute_query(dbsource, sql_text(insert_query), insert_esiti_liste_params)
+                self.execute_query(
+                    dbsource, sql_text(insert_query), insert_esiti_liste_params
+                )
         # Update lists on mssql from 0 to 1 to be elaborated from WHS all in the same
         # time
         if hyddemo_whs_lists:
@@ -474,7 +478,9 @@ class HyddemoMssqlLog(models.Model):
                 )
             )
             dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=sql_text(set_liste_to_elaborate_query), sqlparams=None, metadata=None
+                sqlquery=sql_text(set_liste_to_elaborate_query),
+                sqlparams=None,
+                metadata=None,
             )
             hyddemo_whs_lists.write({"stato": "2"})
         # commit to exclude rollback as mssql wouldn't be rollbacked too
