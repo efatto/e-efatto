@@ -428,10 +428,14 @@ class HyddemoMssqlLog(models.Model):
                     "NumRiga='%s'" % (num_lista, num_riga)
                 )
                 dbsource.with_context(no_return=True).execute_mssql(
-                    sqlquery=set_liste_to_done_query, sqlparams=None, metadata=None
+                    sqlquery=sql_text(set_liste_to_done_query), sqlparams=None, metadata=None
                 )
         if pickings_to_assign:
-            pickings_to_assign.action_assign()
+            pickings_to_assign.filtered(
+                lambda x: x.mapped('move_lines').filtered(
+                    lambda move: move.state not in ('draft', 'cancel', 'done')
+                )
+            ).action_assign()
 
     def whs_insert_list_to_elaborate(self, datasource_id):
         """
