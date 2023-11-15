@@ -459,7 +459,7 @@ class HyddemoMssqlLog(models.Model):
             insert_esiti_liste_params = self._prepare_host_liste_values(lista)
             insert_query = self.get_insert_query(insert_esiti_liste_params)
             if insert_esiti_liste_params:
-                self.execute_query(dbsource, insert_query, insert_esiti_liste_params)
+                self.execute_query(dbsource, sql_text(insert_query), insert_esiti_liste_params)
         # Update lists on mssql from 0 to 1 to be elaborated from WHS all in the same
         # time
         if hyddemo_whs_lists:
@@ -487,21 +487,21 @@ class HyddemoMssqlLog(models.Model):
             if "RagioneSociale" in insert_esiti_liste_params:
                 insert_query = insert_host_liste_query.format(
                     idCliente="idCliente,",
-                    idClientes="%(idCliente)s,",
+                    idClientes=":idCliente,",
                     RagioneSociale="RagioneSociale,",
-                    RagioneSociales="%(RagioneSociale)s,",
+                    RagioneSociales=":RagioneSociale,",
                 )
             else:
                 insert_query = insert_host_liste_query.format(
                     idCliente="idCliente,",
-                    idClientes="%(idCliente)s,",
+                    idClientes=":idCliente,",
                     RagioneSociale="",
                     RagioneSociales="",
                 )
         elif "RagioneSociale" in insert_esiti_liste_params:
             insert_query = insert_host_liste_query.format(
                 RagioneSociale="RagioneSociale,",
-                RagioneSociales="%(RagioneSociale)s,",
+                RagioneSociales=":RagioneSociale,",
                 idCliente="",
                 idClientes="",
             )
