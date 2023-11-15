@@ -574,32 +574,13 @@ class TestConnectorWhs(SingleTransactionCase):
         )
         picking.action_assign()
         self.assertEqual(picking.state, "assigned")
-        # check that action_assign run by scheduler do not change state
-        # self.run_stock_procurement_scheduler()
+        # Do not run self.run_stock_procurement_scheduler() here as it will override
+        # quantity_done in picking.move_lines as the availability differs from quantity
+        # set manually!
         self.assertEqual(picking.state, "assigned")
         picking.action_assign()
         self.assertEqual(picking.state, "assigned")
 
-        # Simulate whs user validation
-        # FIXME già fatto sopra, consegna parziale, ma non completato il picking, perchè
-        # rifarlo qui?, che poi non è neanche totale?
-        # self.dbsource.whs_insert_read_and_synchronize_list()
-        # whs_lists = picking.mapped("move_lines.whs_list_ids")
-        # for whs_list in whs_lists:
-        #     # simulate whs work: total process
-        #     set_liste_elaborated_query = (
-        #         "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=:QtaMovimentata "
-        #         "WHERE NumLista=:NumLista AND NumRiga=:NumRiga"
-        #     )
-        #     self.dbsource.with_context(no_return=True).execute_mssql(
-        #         sqlquery=sql_text(set_liste_elaborated_query),
-        #         sqlparams=dict(
-        #             QtaMovimentata=2 if whs_list.product_id == self.product2 else 3,
-        #             NumLista=whs_list.num_lista,
-        #             NumRiga=whs_list.riga,
-        #         ),
-        #         metadata=None,
-        #     )
         res = picking.button_validate()
         Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
         self.assertEqual(picking.state, "done")
@@ -610,7 +591,6 @@ class TestConnectorWhs(SingleTransactionCase):
         # todo check also a 'partially_available'
         self.assertEqual(backorder_picking.state, "assigned")
 
-        # todo check whs_list for backorder is created
         self.dbsource.whs_insert_read_and_synchronize_list()
         back_whs_list = backorder_picking.mapped("move_lines.whs_list_ids")
         whs_select_query = (
