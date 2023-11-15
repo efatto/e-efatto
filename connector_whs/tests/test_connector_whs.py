@@ -856,7 +856,7 @@ class TestConnectorWhs(SingleTransactionCase):
         picking = order1.picking_ids.filtered(lambda x: x.state != 'cancel')
         self.assertEqual(picking.move_lines.whs_list_ids.mapped('stato'), ['1', '1'])
         # insert lists in WHS: this has to be invoked before every sql call, but not
-        # before a select of check, as it change Elaborato from 4 to 5
+        # before a select for a check, as it change Elaborato from 4 to 5
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
             len(self._execute_select_all_valid_host_liste()),
