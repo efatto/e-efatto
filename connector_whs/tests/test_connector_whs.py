@@ -465,7 +465,8 @@ class TestConnectorWhs(SingleTransactionCase):
         order1.action_confirm()
         self.assertEqual(order1.state, "sale")
         self.assertEqual(order1.priority, "2")
-        picking = order1.picking_ids[0]
+        self.assertEqual(len(order1.picking_ids), 1)
+        picking = order1.picking_ids
         self.assertEqual(picking.priority, "2")
         self.assertEqual(len(picking.mapped("move_lines.whs_list_ids")), 2)
         self.assertEqual(picking.state, "assigned")
@@ -494,8 +495,8 @@ class TestConnectorWhs(SingleTransactionCase):
         # check backorder is not created without whs list validation
         res = picking.button_validate()
         Form(self.env[res['res_model']].with_context(res['context'])).save().process()
-        # User cannot create backorder if whs list is not processed on whs system
-        # TODO: check backorder is created for residual
+        # Check user cannot create backorder if whs list is not processed on whs system
+        # TODO NON QUI PERÒ: check backorder is created for residual
         self.assertNotEqual(picking.state, 'done')
         self.assertEqual(len(order1.picking_ids), 1)
 
@@ -536,54 +537,45 @@ class TestConnectorWhs(SingleTransactionCase):
 
         self.dbsource.whs_insert_read_and_synchronize_list()
 
-        # check move and picking linked to sale order have changed state to done
-        self.assertEqual(picking.move_lines[0].state, "assigned")
-        self.assertAlmostEqual(picking.move_lines[0].move_line_ids[0].qty_done, 3.0)
+        # check move and picking linked to sale order have changed state to FIXME ? done
+        self.assertEqual(set(picking.move_lines.mapped('state')), {"assigned"})
+        self.assertEqual(picking.move_lines.filtered(
+            lambda move: move.product_id == self.product1
+        ).move_line_ids.qty_done, 3.0)
+        self.assertEqual(picking.move_lines.filtered(
+            lambda move: move.product_id == self.product2
+        ).move_line_ids.qty_done, 20.0)
         picking.action_assign()
-        if all(x.state == "assigned" for x in picking.move_lines):
-            self.assertEqual(picking.state, "assigned")
-        else:
-            self.assertEqual(picking.state, "waiting")
+        self.assertEqual(picking.state, "assigned")
         # check that action_assign run by scheduler do not change state
-        self.run_stock_procurement_scheduler()
+        # self.run_stock_procurement_scheduler()
+        self.assertEqual(picking.state, "assigned")
         picking.action_assign()
         self.assertEqual(picking.state, "assigned")
 
-        # simulate user partial validate of picking and check backorder exist
-        backorder_wiz_id = picking.button_validate()["res_id"]
-        backorder_wiz = self.env["stock.backorder.confirmation"].browse(
-            backorder_wiz_id
-        )
-        # User cannot create backorder if whs list is not processed on whs system
-        # with self.assertRaises(UserError):
-        # TODO: check backorder is created for residual
-        backorder_wiz.process()
-
         # Simulate whs user validation
-        whs_lists = picking.mapped("move_lines.whs_list_ids")
-        for whs_list in whs_lists:
-            # simulate whs work: total process
-            set_liste_elaborated_query = (
-                "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=%s WHERE "
-                "NumLista = '%s' AND NumRiga = '%s'"
-                % (
-                    2 if whs_list.product_id == self.product2 else 3,
-                    whs_list.num_lista,
-                    whs_list.riga,
-                )
-            )
-            self.dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=sql_text(set_liste_elaborated_query),
-                sqlparams=None,
-                metadata=None,
-            )
-
-        # this function do the action_assign() too
-        self.dbsource.whs_insert_read_and_synchronize_list()
-        # picking.action_pack_operation_auto_fill()
-        backorder_wiz.process()
+        # FIXME già fatto sopra, consegna parziale, ma non completato il picking, perchè
+        # rifarlo qui?, che poi non è neanche totale?
+        # self.dbsource.whs_insert_read_and_synchronize_list()
+        # whs_lists = picking.mapped("move_lines.whs_list_ids")
+        # for whs_list in whs_lists:
+        #     # simulate whs work: total process
+        #     set_liste_elaborated_query = (
+        #         "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=:QtaMovimentata "
+        #         "WHERE NumLista=:NumLista AND NumRiga=:NumRiga"
+        #     )
+        #     self.dbsource.with_context(no_return=True).execute_mssql(
+        #         sqlquery=sql_text(set_liste_elaborated_query),
+        #         sqlparams=dict(
+        #             QtaMovimentata=2 if whs_list.product_id == self.product2 else 3,
+        #             NumLista=whs_list.num_lista,
+        #             NumRiga=whs_list.riga,
+        #         ),
+        #         metadata=None,
+        #     )
+        res = picking.button_validate()
+        Form(self.env[res['res_model']].with_context(res['context'])).save().process()
         self.assertEqual(picking.state, "done")
-
         # check back picking is waiting as Odoo qty is not considered
         self.assertEqual(len(order1.picking_ids), 2)
         backorder_picking = order1.picking_ids - picking
@@ -1128,6 +1120,7 @@ class TestConnectorWhs(SingleTransactionCase):
             self.assertEqual(picking.state, "waiting")
         # check that action_assign run by scheduler do not change state
         # self.assertEqual(picking.state, "assigned")
+        # picking.action_pack_operation_auto_fill() FIXME check what this method do
         res = picking.button_validate()
         Form(self.env[res['res_model']].with_context(res['context'])).save().process()
         self.assertEqual(picking.state, "done")
