@@ -116,9 +116,6 @@ class Picking(models.Model):
 
     def action_confirm(self):
         res = super(Picking, self).action_confirm()
-        # added as sale_order_priority add priority only on action_assign()
-        picking_priority = self.env.context.get("sale_priority")
-        self.priority = picking_priority if picking_priority else 0
         self.create_whs_list()
         return res
 
@@ -335,9 +332,13 @@ class StockMove(models.Model):
                     if pick.origin:
                         whsliste_data["riferimento"] = pick.origin[:50]
 
-                    if move.picking_id.priority:
+                    if move.sale_line_id.priority:
                         whsliste_data["priorita"] = (
-                            max([int(move.picking_id.priority), 0])
+                            max([int(move.sale_line_id.priority), 0])
+                        )
+                    elif move.priority:
+                        whsliste_data["priorita"] = (
+                            max([int(move.priority), 0])
                         )
 
                     if ragsoc:
