@@ -31,6 +31,6 @@
         'wizard/view_wizard_sync_stock_whs_mssql.xml',
         'data/cron.xml',
     ],
-    'installable': True,
-    "external_dependencies": {"python": ["sqlalchemy==1.4.50"]},
+    "installable": True,
+    "external_dependencies": {"python": ["sqlalchemy==1.3.24"]},
 }
