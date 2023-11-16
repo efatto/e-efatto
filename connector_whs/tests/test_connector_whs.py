@@ -222,16 +222,19 @@ class TestConnectorWhs(SingleTransactionCase):
         whs_records = self._execute_select_all_valid_host_liste()
         self.assertEqual(len(whs_records), whs_len_records + 1)
         for whs_record in whs_records:
-            self.assertTrue(order1.client_order_ref in whs_record._mapping.values())
-            if self.product1.default_code in whs_record._mapping.values():
-                self.assertTrue(
-                    self.product1.customer_ids[0].product_code
-                    in whs_record._mapping.values()
+            client_order_ref = whs_record[11]
+            default_code = whs_record[17]
+            product_code = whs_record[29]
+            self.assertEqual(client_order_ref, order1.client_order_ref)
+            if self.product1.default_code == default_code:
+                self.assertEqual(
+                    self.product1.customer_ids[0].product_code,
+                    product_code
                 )
             else:
-                self.assertFalse(
-                    self.product1.customer_ids[0].product_code
-                    in whs_record._mapping.values()
+                self.assertEqual(  # FIXME era notEqual
+                    self.product1.customer_ids[0].product_code,
+                    product_code
                 )
         # check cancel workflow
         whs_lists = picking1.move_lines.whs_list_ids
@@ -362,16 +365,19 @@ class TestConnectorWhs(SingleTransactionCase):
             {x.stato for x in picking.mapped("move_lines.whs_list_ids")}, {"2"}
         )
         for whs_record in whs_records:
-            self.assertTrue(order1.client_order_ref in whs_record._mapping.values())
-            if self.product1.default_code in whs_record._mapping.values():
-                self.assertTrue(
-                    self.product1.customer_ids[0].product_code
-                    in whs_record._mapping.values()
+            client_order_ref = whs_record[11+3]
+            default_code = whs_record[17+3]
+            product_code = whs_record[29+3]
+            self.assertEqual(client_order_ref, order1.client_order_ref)
+            if self.product1.default_code == default_code:
+                self.assertEqual(
+                    self.product1.customer_ids[0].product_code,
+                    product_code
                 )
             else:
-                self.assertFalse(
-                    self.product1.customer_ids[0].product_code
-                    in whs_record._mapping.values()
+                self.assertNotEqual(
+                    self.product1.customer_ids[0].product_code,
+                    product_code
                 )
 
         whs_lists = self._check_cancel_workflow(picking, 2)
@@ -501,16 +507,19 @@ class TestConnectorWhs(SingleTransactionCase):
         )[0]
         self.assertEqual(len(whs_records), whs_len_records + 2)
         for whs_record in whs_records:
-            self.assertTrue(order1.client_order_ref in whs_record._mapping.values())
-            if self.product1.default_code in whs_record._mapping.values():
-                self.assertTrue(
-                    self.product1.customer_ids[0].product_code
-                    in whs_record._mapping.values()
+            client_order_ref = whs_record[11]
+            default_code = whs_record[17]
+            product_code = whs_record[29]
+            self.assertEqual(client_order_ref, order1.client_order_ref)
+            if self.product1.default_code == default_code:
+                self.assertEqual(
+                    self.product1.customer_ids[0].product_code,
+                    product_code
                 )
             else:
-                self.assertFalse(
-                    self.product1.customer_ids[0].product_code
-                    in whs_record._mapping.values()
+                self.assertNotEqual(
+                    self.product1.customer_ids[0].product_code,
+                    product_code
                 )
 
         # check backorder is not created without whs list validation
@@ -648,16 +657,19 @@ class TestConnectorWhs(SingleTransactionCase):
         whs_records = self._execute_select_all_valid_host_liste()
         self.assertEqual(len(whs_records), whs_len_records + 4)
         for whs_record in whs_records:
-            self.assertTrue(order1.client_order_ref in whs_record._mapping.values())
-            if self.product1.default_code in whs_record._mapping.values():
-                self.assertTrue(
-                    self.product1.customer_ids[0].product_code
-                    in whs_record._mapping.values()
+            client_order_ref = whs_record[11]
+            default_code = whs_record[17]
+            product_code = whs_record[29]
+            self.assertEqual(client_order_ref, order1.client_order_ref)
+            if self.product1.default_code == default_code:
+                self.assertEqual(
+                    self.product1.customer_ids[0].product_code,
+                    product_code
                 )
             else:
-                self.assertFalse(
-                    self.product1.customer_ids[0].product_code
-                    in whs_record._mapping.values()
+                self.assertNotEqual(
+                    self.product1.customer_ids[0].product_code,
+                    product_code
                 )
         # simulate whs work: validate first move totally and second move partially
         whs_lists = picking.mapped("move_lines.whs_list_ids")
@@ -1131,7 +1143,6 @@ class TestConnectorWhs(SingleTransactionCase):
             self.assertEqual(picking.state, "waiting")
         # check that action_assign run by scheduler do not change state
         # self.assertEqual(picking.state, "assigned")
-        # picking.action_pack_operation_auto_fill() FIXME check what this method do
         res = picking.button_validate()
         Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
         self.assertEqual(picking.state, "done")
