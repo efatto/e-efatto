@@ -11,7 +11,7 @@ class ProductTemplate(models.Model):
     standard_price = fields.Float(string="Landed with adjustment/depreciation")
     adjustment_cost = fields.Float(
         string="Adjustment Cost (€/pz)",
-        digits=dp.get_precision("Product Price"),
+        digits="Product Price",
         compute="_compute_adjustment_cost",
         inverse="_inverse_adjustment_cost",
         search="_search_adjustment_cost",
@@ -76,7 +76,7 @@ class ProductProduct(models.Model):
         string="Adjustment Cost (€/pz)",
         company_dependent=True,
         groups="base.group_user",
-        digits=dp.get_precision("Product Price"),
+        digits="Product Price",
     )
     landed_cost = fields.Float(
         string="Landed cost",
