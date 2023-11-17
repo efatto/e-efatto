@@ -5,13 +5,22 @@
         <field name="model">product.product</field>
         <field name="inherit_id" ref="product.product_normal_form_view" />
         <field name="arch" type="xml">
-            <xpath expr="//group[@name='group_standard_price']/label[@for='standard_price']" position="before">
-                <field name="adjustment_cost" widget="monetary"
-                    options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
-                    attrs="{'invisible': [('product_variant_count', '>', 1), ('is_product_variant', '=', False)]}"/>
-                <field name="landed_cost" widget="monetary"
-                    options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
-                    attrs="{'invisible': [('product_variant_count', '>', 1), ('is_product_variant', '=', False)]}"/>
+            <xpath
+        expr="//group[@name='group_standard_price']/label[@for='standard_price']"
+        position="before"
+      >
+                <field
+          name="adjustment_cost"
+          widget="monetary"
+          options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
+          attrs="{'invisible': [('product_variant_count', '>', 1), ('is_product_variant', '=', False)]}"
+        />
+                <field
+          name="landed_cost"
+          widget="monetary"
+          options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
+          attrs="{'invisible': [('product_variant_count', '>', 1), ('is_product_variant', '=', False)]}"
+        />
             </xpath>
             <xpath expr="//label[@for='standard_price']" position="attributes">
                 <attribute name="string">Landed with adjustment/depreciation</attribute>
@@ -24,10 +33,16 @@
         <field name="inherit_id" ref="product.product_variant_easy_edit_view" />
         <field name="arch" type="xml">
             <field name="standard_price" position="before">
-                <field name="adjustment_cost" widget="monetary"
-                    options="{'currency_field': 'cost_currency_id', 'field_digits': True}"/>
-                <field name="landed_cost" widget="monetary"
-                    options="{'currency_field': 'cost_currency_id', 'field_digits': True}"/>
+                <field
+          name="adjustment_cost"
+          widget="monetary"
+          options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
+        />
+                <field
+          name="landed_cost"
+          widget="monetary"
+          options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
+        />
             </field>
             <field name="standard_price" position="attributes">
                 <attribute name="string">Landed with adjustment/depreciation</attribute>
