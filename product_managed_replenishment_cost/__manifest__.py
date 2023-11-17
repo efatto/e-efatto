@@ -9,7 +9,7 @@
     'license': 'AGPL-3',
     'depends': [
         'l10n_it_intrastat_tariff',
-        'mrp_bom_cost',
+        'mrp',
         'product',
         'product_template_replenishment_cost',
         'purchase_discount',
