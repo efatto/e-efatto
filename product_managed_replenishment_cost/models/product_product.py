@@ -87,18 +87,29 @@ class ProductProduct(models.Model):
         "acquire the goods without adjustment/depreciation.",
     )
 
-    def _get_managed_price_from_bom(self, boms_to_recompute=False):
-        self.ensure_one()
-        bom = self.env["mrp.bom"]._bom_find(product=self)
-        return self._compute_bom_managed_price(bom, boms_to_recompute=boms_to_recompute)
+    def _update_manufactured_prices(
+        self,
+    ):
+        for product in self:
+            bom = self.env["mrp.bom"]._bom_find(
+                product_tmpl=product.product_tmpl_id, product=product
+            )
+            if any(x.child_bom_id for x in bom.bom_line_ids):
+                bom.bom_line_ids.filtered(lambda line: line.child_bom_id).mapped(
+                    "product_id"
+                )._update_manufactured_prices()
+            produce_price, landed_price = product._compute_bom_managed_price(bom)
+            if self.env.context.get("update_managed_replenishment_cost", False):
+                product.managed_replenishment_cost = produce_price
+            if self.env.context.get("update_standard_price", False):
+                product.standard_price = produce_price
+                product.landed_cost = landed_price
 
-    def _compute_bom_managed_price(self, bom, boms_to_recompute=False):
+    def _compute_bom_managed_price(self, bom):
         self.ensure_one()
         update_standard_price = self.env.context.get("update_standard_price", False)
         if not bom:
             return 0
-        if not boms_to_recompute:
-            boms_to_recompute = []
         total = 0
         total_landed = 0
         for opt in bom.operation_ids:
@@ -115,13 +126,11 @@ class ProductProduct(models.Model):
                 continue
 
             # Compute recursive if line has `child_line_ids`
-            if line.child_bom_id and line.child_bom_id in boms_to_recompute:
+            if line.child_bom_id:
                 (
                     child_total,
                     child_total_landed,
-                ) = line.product_id._compute_bom_managed_price(
-                    line.child_bom_id, boms_to_recompute=boms_to_recompute
-                )
+                ) = line.product_id._compute_bom_managed_price(line.child_bom_id)
                 total += (
                     line.product_id.uom_id._compute_price(
                         child_total, line.product_uom_id
@@ -135,6 +144,9 @@ class ProductProduct(models.Model):
                     * line.product_qty
                 )
             else:
+                _products_without_seller_price = (
+                    line.product_id.update_products_tobe_purchased()
+                )
                 cost = (
                     line.product_id.standard_price
                     if update_standard_price
@@ -159,9 +171,17 @@ class ProductProduct(models.Model):
         landed_price = bom.product_uom_id._compute_price(
             total_landed / (bom.product_qty or 1), self.uom_id
         )
+        if bom.type == "subcontract" and self.seller_ids:
+            # subcontract price is added only if bom is of subcontract type
+            product_price += self._get_price_unit_from_seller()
+        product_price += self.adjustment_cost
+        if self.seller_ids:
+            # depreciation cost is always added
+            product_price += self.seller_ids[0].depreciation_cost
         return product_price, landed_price
 
-    def _get_price_unit_from_seller(self, seller):
+    def _get_price_unit_from_seller(self):
+        seller = self.seller_ids[0]
         price_unit = 0.0
         margin_percentage = 0.0
         if seller.price:
@@ -199,7 +219,7 @@ class ProductProduct(models.Model):
         for product in self:
             if product.seller_ids and product.seller_ids[0].price:
                 seller = product.seller_ids[0]
-                price_unit = product._get_price_unit_from_seller(seller)
+                price_unit = product._get_price_unit_from_seller()
                 landed_cost = price_unit
                 # add adjustment and depreciation costs
                 adjustment_cost = product.adjustment_cost
@@ -213,22 +233,6 @@ class ProductProduct(models.Model):
             else:
                 products_without_seller_price |= product
         return products_without_seller_price
-
-    def _get_all_bom_raw_components(self, bom):
-        all_raw_components = self.env["product.product"]
-        all_manuf_components = self.env["product.product"]
-        for line in bom.bom_line_ids:
-            if line.child_bom_id:
-                (
-                    raw_components,
-                    manuf_components,
-                ) = line.product_id._get_all_bom_raw_components(line.child_bom_id)
-                all_raw_components |= raw_components
-                all_manuf_components |= manuf_components
-                all_manuf_components |= line.product_id
-            elif line.product_id:
-                all_raw_components |= line.product_id
-        return all_raw_components, all_manuf_components
 
     def update_managed_replenishment_cost(self):
         update_standard_price = self.env.context.get("update_standard_price", False)
@@ -253,17 +257,6 @@ class ProductProduct(models.Model):
         products_tobe_manufactured = self - (
             products_tobe_purchased + products_nottobe_purchased
         )
-        all_raw_components = self.env["product.product"]
-        for product in products_tobe_manufactured:
-            # get all raw component prices to update before update product manufactured
-            bom = self.env["mrp.bom"]._bom_find(product=product)
-            raw_components, manuf_components = product._get_all_bom_raw_components(bom)
-            all_raw_components |= raw_components
-            products_tobe_manufactured |= manuf_components
-        products_tobe_purchased |= all_raw_components.filtered(lambda x: x.seller_ids)
-        products_nottobe_purchased |= all_raw_components.filtered(
-            lambda x: not x.seller_ids
-        )
         products_without_seller_price = (
             products_tobe_purchased.update_products_tobe_purchased()
         )
@@ -276,17 +269,7 @@ class ProductProduct(models.Model):
             # these products are without seller nor bom
         # compute replenishment cost for product to be manufactured, with or without
         # suppliers
-        for product in self.sort_products_by_parent(products_tobe_manufactured):
-            produce_price, landed_price = product._get_managed_price_from_bom()
-            produce_price += product.adjustment_cost
-            if product.seller_ids:
-                seller = product.seller_ids[0]
-                produce_price += seller.depreciation_cost
-            if update_managed_replenishment_cost:
-                product.managed_replenishment_cost = produce_price
-            if update_standard_price:
-                product.standard_price = produce_price
-                product.landed_cost = landed_price
+        products_tobe_manufactured._update_manufactured_prices()
 
         for product in products_with_bom:
             (
@@ -320,15 +303,3 @@ class ProductProduct(models.Model):
             bom_id.product_uom_id,
         )
         return component_list_price, component_weight
-
-    def sort_products_by_parent(self, products):
-        product_ids = self.env["product.product"]
-        for product in products:
-            # this is used as component
-            if product.bom_line_ids:
-                product_ids |= product
-        for product in products:
-            # add other for last
-            if product not in product_ids:
-                product_ids |= product
-        return product_ids
