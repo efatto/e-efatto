@@ -180,9 +180,7 @@ class ProductProduct(models.Model):
                     round=False,
                 )
         if seller.product_uom != self.uom_id:
-            price_unit = seller.product_uom._compute_price(
-                price_unit, self.uom_id
-            )
+            price_unit = seller.product_uom._compute_price(price_unit, self.uom_id)
         # add tariff cost on country group
         margin_percentage += sum(
             seller.name.country_id.mapped(
@@ -207,9 +205,7 @@ class ProductProduct(models.Model):
                 adjustment_cost = product.adjustment_cost
                 depreciation_cost = seller.depreciation_cost
                 price_unit += adjustment_cost + depreciation_cost
-                if self.env.context.get(
-                    "update_managed_replenishment_cost", False
-                ):
+                if self.env.context.get("update_managed_replenishment_cost", False):
                     product.managed_replenishment_cost = price_unit
                 if self.env.context.get("update_standard_price", False):
                     product.standard_price = price_unit
@@ -223,8 +219,10 @@ class ProductProduct(models.Model):
         all_manuf_components = self.env["product.product"]
         for line in bom.bom_line_ids:
             if line.child_bom_id:
-                raw_components, manuf_components = (
-                    line.product_id._get_all_bom_raw_components(line.child_bom_id))
+                (
+                    raw_components,
+                    manuf_components,
+                ) = line.product_id._get_all_bom_raw_components(line.child_bom_id)
                 all_raw_components |= raw_components
                 all_manuf_components |= manuf_components
                 all_manuf_components |= line.product_id
@@ -259,19 +257,15 @@ class ProductProduct(models.Model):
         for product in products_tobe_manufactured:
             # get all raw component prices to update before update product manufactured
             bom = self.env["mrp.bom"]._bom_find(product=product)
-            raw_components, manuf_components = (
-                product._get_all_bom_raw_components(bom))
+            raw_components, manuf_components = product._get_all_bom_raw_components(bom)
             all_raw_components |= raw_components
             products_tobe_manufactured |= manuf_components
-        products_tobe_purchased |= all_raw_components.filtered(
-            lambda x: x.seller_ids
-        )
+        products_tobe_purchased |= all_raw_components.filtered(lambda x: x.seller_ids)
         products_nottobe_purchased |= all_raw_components.filtered(
             lambda x: not x.seller_ids
         )
         products_without_seller_price = (
-            products_tobe_purchased
-            .update_products_tobe_purchased()
+            products_tobe_purchased.update_products_tobe_purchased()
         )
         # compute replenishment cost for product without suppliers
         for product in products_nottobe_purchased:
