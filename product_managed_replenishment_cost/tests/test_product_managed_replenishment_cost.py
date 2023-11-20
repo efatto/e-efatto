@@ -13,9 +13,11 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         cls.vendor = cls.env.ref("base.res_partner_3")
         cls.vendor.country_id = cls.env.ref("base.be")
         cls.default_category = cls.env.ref("product.product_category_1")
-        cls.test_categ = cls.env["product.category"].create({
-            "name": "Test Categ",
-        })
+        cls.test_categ = cls.env["product.category"].create(
+            {
+                "name": "Test Categ",
+            }
+        )
         supplierinfo = cls.env["product.supplierinfo"].create(
             {
                 "name": cls.vendor.id,
