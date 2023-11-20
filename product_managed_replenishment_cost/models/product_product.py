@@ -161,6 +161,77 @@ class ProductProduct(models.Model):
         )
         return product_price, landed_price
 
+    def _get_price_unit_from_seller(self, seller):
+        price_unit = 0.0
+        margin_percentage = 0.0
+        if seller.price:
+            price_unit = seller.price
+            if hasattr(seller, "discount"):
+                price_unit = price_unit * (1 - seller.discount / 100.0)
+            if hasattr(seller, "discount2") and hasattr(seller, "discount3"):
+                price_unit = price_unit * (1 - seller.discount2 / 100.0)
+                price_unit = price_unit * (1 - seller.discount3 / 100.0)
+            if seller.currency_id != self.env.company.currency_id:
+                price_unit = seller.currency_id._convert(
+                    seller.price,
+                    self.env.company.currency_id,
+                    self.env.company,
+                    fields.Date.today(),
+                    round=False,
+                )
+        if seller.product_uom != self.uom_id:
+            price_unit = seller.product_uom._compute_price(
+                price_unit, self.uom_id
+            )
+        # add tariff cost on country group
+        margin_percentage += sum(
+            seller.name.country_id.mapped(
+                "country_group_ids.logistic_charge_percentage"
+            )
+        )
+        if margin_percentage:
+            price_unit *= 1 + margin_percentage / 100.0
+        tariff_id = self.intrastat_code_id.tariff_id
+        if tariff_id:
+            price_unit *= 1 + tariff_id.tariff_percentage / 100.0
+        return price_unit
+
+    def update_products_tobe_purchased(self):
+        products_without_seller_price = self.env["product.product"]
+        for product in self:
+            if product.seller_ids and product.seller_ids[0].price:
+                seller = product.seller_ids[0]
+                price_unit = product._get_price_unit_from_seller(seller)
+                landed_cost = price_unit
+                # add adjustment and depreciation costs
+                adjustment_cost = product.adjustment_cost
+                depreciation_cost = seller.depreciation_cost
+                price_unit += adjustment_cost + depreciation_cost
+                if self.env.context.get(
+                    "update_managed_replenishment_cost", False
+                ):
+                    product.managed_replenishment_cost = price_unit
+                if self.env.context.get("update_standard_price", False):
+                    product.standard_price = price_unit
+                    product.landed_cost = landed_cost
+            else:
+                products_without_seller_price |= product
+        return products_without_seller_price
+
+    def _get_all_bom_raw_components(self, bom):
+        all_raw_components = self.env["product.product"]
+        all_manuf_components = self.env["product.product"]
+        for line in bom.bom_line_ids:
+            if line.child_bom_id:
+                raw_components, manuf_components = (
+                    line.product_id._get_all_bom_raw_components(line.child_bom_id))
+                all_raw_components |= raw_components
+                all_manuf_components |= manuf_components
+                all_manuf_components |= line.product_id
+            elif line.product_id:
+                all_raw_components |= line.product_id
+        return all_raw_components, all_manuf_components
+
     def update_managed_replenishment_cost(self):
         update_standard_price = self.env.context.get("update_standard_price", False)
         update_managed_replenishment_cost = self.env.context.get(
@@ -170,7 +241,7 @@ class ProductProduct(models.Model):
             "update_bom_products_list_price_weight", False
         )
         products_with_bom = (
-            self.filtered(lambda x: x.bom_count)
+            self.filtered(lambda product: product.bom_count)
             if update_bom_products_list_price_weight
             else self.env["product.product"]
         )
@@ -184,54 +255,24 @@ class ProductProduct(models.Model):
         products_tobe_manufactured = self - (
             products_tobe_purchased + products_nottobe_purchased
         )
-        products_without_seller_price = self.env["product.product"]
-        for product in products_tobe_purchased:
-            price_unit = 0.0
-            margin_percentage = 0.0
-            seller = product.seller_ids[0]
-            if seller.price:
-                price_unit = seller.price
-                if hasattr(seller, "discount"):
-                    price_unit = price_unit * (1 - seller.discount / 100.0)
-                if hasattr(seller, "discount2") and hasattr(seller, "discount3"):
-                    price_unit = price_unit * (1 - seller.discount2 / 100.0)
-                    price_unit = price_unit * (1 - seller.discount3 / 100.0)
-                if seller.currency_id != self.env.company.currency_id:
-                    price_unit = seller.currency_id._convert(
-                        seller.price,
-                        self.env.company.currency_id,
-                        self.env.company,
-                        fields.Date.today(),
-                        round=False,
-                    )
-            else:
-                # this product is without seller price
-                products_without_seller_price |= product
-            if seller.product_uom != product.uom_id:
-                price_unit = seller.product_uom._compute_price(
-                    price_unit, product.uom_id
-                )
-            # add tariff cost on country group
-            margin_percentage += sum(
-                seller.name.country_id.mapped(
-                    "country_group_ids.logistic_charge_percentage"
-                )
-            )
-            if margin_percentage:
-                price_unit *= 1 + margin_percentage / 100.0
-            tariff_id = product.intrastat_code_id.tariff_id
-            if tariff_id:
-                price_unit *= 1 + tariff_id.tariff_percentage / 100.0
-            landed_cost = price_unit
-            # add adjustment and depreciation costs
-            adjustment_cost = product.adjustment_cost
-            depreciation_cost = seller.depreciation_cost
-            price_unit += adjustment_cost + depreciation_cost
-            if update_managed_replenishment_cost:
-                product.managed_replenishment_cost = price_unit
-            if update_standard_price:
-                product.standard_price = price_unit
-                product.landed_cost = landed_cost
+        all_raw_components = self.env["product.product"]
+        for product in products_tobe_manufactured:
+            # get all raw component prices to update before update product manufactured
+            bom = self.env["mrp.bom"]._bom_find(product=product)
+            raw_components, manuf_components = (
+                product._get_all_bom_raw_components(bom))
+            all_raw_components |= raw_components
+            products_tobe_manufactured |= manuf_components
+        products_tobe_purchased |= all_raw_components.filtered(
+            lambda x: x.seller_ids
+        )
+        products_nottobe_purchased |= all_raw_components.filtered(
+            lambda x: not x.seller_ids
+        )
+        products_without_seller_price = (
+            products_tobe_purchased
+            .update_products_tobe_purchased()
+        )
         # compute replenishment cost for product without suppliers
         for product in products_nottobe_purchased:
             if update_managed_replenishment_cost:

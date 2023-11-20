@@ -12,6 +12,10 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         cls.user_model = cls.env["res.users"].with_context(no_reset_password=True)
         cls.vendor = cls.env.ref("base.res_partner_3")
         cls.vendor.country_id = cls.env.ref("base.be")
+        cls.default_category = cls.env.ref("product.product_category_1")
+        cls.test_categ = cls.env["product.category"].create({
+            "name": "Test Categ",
+        })
         supplierinfo = cls.env["product.supplierinfo"].create(
             {
                 "name": cls.vendor.id,
@@ -29,6 +33,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 "seller_ids": [(6, 0, [supplierinfo.id])],
                 "route_ids": [(6, 0, [buy.id, mto.id])],
                 "intrastat_code_id": cls.intrastat.id,
+                "categ_id": cls.default_category.id,
             }
         )
         # MRP BOM product
@@ -39,6 +44,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 "default_code": "COMP1",
                 "list_price": 17.55,
                 "weight": 3.44,
+                "categ_id": cls.default_category.id,
                 "seller_ids": [
                     (
                         0,
@@ -53,11 +59,12 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         )
         cls.product2 = cls.env["product.product"].create(
             {
-                "name": "Component 2",
+                "name": "Component 2 with test categ",
                 "route_ids": [(6, 0, [buy.id, mto.id])],
                 "default_code": "COMP2",
                 "list_price": 11.0,
                 "weight": 18.4,
+                "categ_id": cls.test_categ.id,
                 "seller_ids": [
                     (
                         0,
@@ -77,6 +84,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 "default_code": "COMP3",
                 "list_price": 13.5,
                 "weight": 4.4,
+                "categ_id": cls.default_category.id,
                 "seller_ids": [
                     (
                         0,
@@ -101,6 +109,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 "default_code": "PRODUCED1",
                 "type": "product",
                 "sale_ok": True,
+                "categ_id": cls.default_category.id,
             }
         )
         # create product after bom product, to give an id not in sequence
@@ -112,6 +121,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 "purchase_ok": True,
                 "list_price": 3.33,
                 "weight": 7.79,
+                "categ_id": cls.default_category.id,
                 "seller_ids": [
                     (
                         0,
@@ -163,6 +173,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 "default_code": "PRODUCED2",
                 "type": "product",
                 "sale_ok": True,
+                "categ_id": cls.default_category.id,
             }
         )
         bom_parent_component_values = [
@@ -222,6 +233,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         repl = self.env["replenishment.cost"].create(
             {
                 "name": "Test cost update",
+                "product_ctg_ids": [(6, 0, self.default_category.ids)],
             }
         )
         repl.update_products_replenishment_cost_only()
@@ -266,6 +278,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         repl = self.env["replenishment.cost"].create(
             {
                 "name": "Test cost update bom",
+                "product_ctg_ids": [(6, 0, self.default_category.ids)],
             }
         )
         repl.update_products_standard_price_only()
@@ -289,7 +302,8 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         self.assertEqual(self.product_bom_parent.standard_price, 0.0)
         repl = self.env["replenishment.cost"].create(
             {
-                "name": "Test cost update bom parent",
+                "name": "Test cost update bom parent in default categ",
+                "product_ctg_ids": [(6, 0, self.default_category.ids)],
             }
         )
         repl.update_products_standard_price_only()
@@ -312,11 +326,30 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         )
 
     def test_04_bom_with_nested_parent(self):
+        self.product_bom_parent_parent.categ_id = self.default_category
         self.assertEqual(self.product_bom_parent_parent.managed_replenishment_cost, 0.0)
         self.assertEqual(self.product_bom_parent_parent.standard_price, 0.0)
         repl = self.env["replenishment.cost"].create(
             {
-                "name": "Test cost update bom nested parent",
+                "name": "Test cost update bom nested parent in test categ",
+                "product_ctg_ids": [(6, 0, self.default_category.ids)],
+            }
+        )
+        repl.update_products_standard_price_only()
+        self.assertEqual(
+            self.product_bom_parent_parent.standard_price, 7 + 2 + 3 + 4 + 7
+        )
+        # Do not test update_bom_products_list_price_weight() as this functionality is
+        # not requested for nested BOM
+
+    def test_05_bom_with_nested_parent_test_category(self):
+        self.product_bom_parent_parent.categ_id = self.test_categ
+        self.assertEqual(self.product_bom_parent_parent.managed_replenishment_cost, 0.0)
+        self.assertEqual(self.product_bom_parent_parent.standard_price, 0.0)
+        repl = self.env["replenishment.cost"].create(
+            {
+                "name": "Test cost update bom nested parent in test categ",
+                "product_ctg_ids": [(6, 0, self.test_categ.ids)],
             }
         )
         repl.update_products_standard_price_only()
