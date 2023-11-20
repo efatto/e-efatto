@@ -176,6 +176,16 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 "type": "product",
                 "sale_ok": True,
                 "categ_id": cls.default_category.id,
+                "seller_ids": [
+                    (
+                        0,
+                        0,
+                        {
+                            "name": cls.vendor.id,
+                            "price": 15,
+                        },
+                    )
+                ],
             }
         )
         bom_parent_component_values = [
@@ -358,5 +368,39 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         self.assertEqual(
             self.product_bom_parent_parent.standard_price, 7 + 2 + 3 + 4 + 7
         )
-        # Do not test update_bom_products_list_price_weight() as this functionality is
-        # not requested for nested BOM
+
+    def test_06_bom_with_subcontract_nested_parent_test_category(self):
+        self.product_bom_parent_parent.categ_id = self.test_categ
+        self.bom_parent.type = "subcontract"
+        self.bom_parent_parent.type = "subcontract"
+        self.assertEqual(self.product_bom_parent_parent.managed_replenishment_cost, 0.0)
+        self.assertEqual(self.product_bom_parent_parent.standard_price, 0.0)
+        repl = self.env["replenishment.cost"].create(
+            {
+                "name": "Test cost update bom nested parent in test categ",
+                "product_ctg_ids": [(6, 0, self.test_categ.ids)],
+            }
+        )
+        repl.update_products_standard_price_only()
+        self.assertEqual(
+            self.product_bom_parent_parent.standard_price, 7 + 2 + 3 + 4 + 7 + 15
+        )
+        # test with seller in parent_parent product
+        self.product_bom_parent_parent.write(
+            {
+                "seller_ids": [
+                    (
+                        0,
+                        0,
+                        {
+                            "name": self.vendor.id,
+                            "price": 7,
+                        },
+                    )
+                ],
+            }
+        )
+        repl.update_products_standard_price_only()
+        self.assertEqual(
+            self.product_bom_parent_parent.standard_price, 7 + 2 + 3 + 4 + 7 + 15 + 7
+        )
