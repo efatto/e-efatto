@@ -2,14 +2,24 @@
 <odoo>
 
     <template id="report_simple_label" inherit_id="product.report_simple_label">
+        <table position="attributes">
+            <attribute name="class">table mb-0</attribute>
+        </table>
         <xpath expr="//th[hasclass('table-active', 'text-left')]" position="attributes">
             <attribute name="style">height: 10rem</attribute>
             <attribute name="class">text-left</attribute>
         </xpath>
-        <xpath expr="//td[@style='height: 2rem']" position="replace">
+        <xpath expr="//td[@style='height: 2rem']" position="attributes">
+            <attribute name="t-if">False</attribute>
         </xpath>
-        <xpath expr="//td[hasclass('text-center', 'align-middle')]" position="replace">
+        <xpath expr="//td[hasclass('text-center', 'align-middle')]" position="after">
             <td style="height: 2rem" />
+        </xpath>
+        <xpath
+      expr="//td[hasclass('text-center', 'align-middle')]"
+      position="attributes"
+    >
+            <attribute name="t-if">False</attribute>
         </xpath>
     </template>
 
