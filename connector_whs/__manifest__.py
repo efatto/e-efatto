@@ -10,6 +10,7 @@
     "depends": [
         "base_external_dbsource_mssql",
         "mrp",
+        "product_logistics_uom",
         "product_supplierinfo_for_customer",
         "purchase_delivery_split_date",
         "purchase_stock",
