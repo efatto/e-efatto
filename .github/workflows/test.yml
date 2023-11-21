@@ -55,6 +55,8 @@ jobs:
         run: pip3 install -e "git+https://github.com/sergiocorato/server-backend@14.0-mig-base_external_dbsource_sqlite#egg=odoo14-addon-base_external_dbsource_sqlite&subdirectory=setup/base_external_dbsource_sqlite"
       - name: Install base_external_dbsource_mssql module not yet merged
         run: pip3 install -e "git+https://github.com/sergiocorato/server-backend@14.0-mig-base_external_dbsource_mssql#egg=odoo14-addon-base_external_dbsource_mssql&subdirectory=setup/base_external_dbsource_mssql"
+      - name: Install web_progress module from other repo
+        run: pip3 install -e "git+https://github.com/sergiocorato/odoo-web-progress@14.0#egg=odoo14-addon-web_progress&subdirectory=setup/web_progress"
       - name: Install addons and dependencies
         run: oca_install_addons
       - name: Check licenses
