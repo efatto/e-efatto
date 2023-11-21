@@ -11,6 +11,7 @@
         "l10n_it_intrastat_tariff",
         "mrp_subcontracting",
         "web_progress",
+        "product_logistics_uom",
         "product_template_replenishment_cost",
         "purchase_discount",
         "purchase_stock",
