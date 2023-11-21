@@ -342,8 +342,9 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         )
         repl.update_products_standard_price_only()
         if self.test_all:
-            self.assertEqual(self.product_bom_parent.standard_price,
-                             2 + 3 + 4 + 7 + 25 + 20)
+            self.assertEqual(
+                self.product_bom_parent.standard_price, 2 + 3 + 4 + 7 + 25 + 20
+            )
         else:
             self.assertEqual(self.product_bom_parent.standard_price, 2 + 3 + 4 + 7)
         self.assertEqual(len(self.product_bom_parent.bom_ids), 1)
@@ -386,7 +387,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         if self.test_all:
             self.assertEqual(
                 self.product_bom_parent_parent.standard_price,
-                7 + 2 + 3 + 4 + 7 + 25 + 20
+                7 + 2 + 3 + 4 + 7 + 25 + 20,
             )
         else:
             self.assertEqual(
@@ -418,7 +419,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         if self.test_all:
             self.assertEqual(
                 self.product_bom_parent_parent.standard_price,
-                7 + 2 + 3 + 4 + 7 + 25 + 20
+                7 + 2 + 3 + 4 + 7 + 25 + 20,
             )
         else:
             self.assertEqual(
@@ -450,7 +451,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         if self.test_all:
             self.assertEqual(
                 self.product_bom_parent_parent.standard_price,
-                7 + 2 + 3 + 4 + 7 + 15 + 25 + 20
+                7 + 2 + 3 + 4 + 7 + 15 + 25 + 20,
             )
         else:
             self.assertEqual(
@@ -475,10 +476,10 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         if self.test_all:
             self.assertEqual(
                 self.product_bom_parent_parent.standard_price,
-                7 + 2 + 3 + 4 + 7 + 15 + 7 + 25 + 20
+                7 + 2 + 3 + 4 + 7 + 15 + 7 + 25 + 20,
             )
         else:
             self.assertEqual(
                 self.product_bom_parent_parent.standard_price,
-                7 + 2 + 3 + 4 + 7 + 15 + 7
+                7 + 2 + 3 + 4 + 7 + 15 + 7,
             )
