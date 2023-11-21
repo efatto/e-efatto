@@ -188,8 +188,12 @@ msgstr "Listino prezzi fornitore"
 #. module: product_managed_replenishment_cost
 #: model:ir.model.fields,help:product_managed_replenishment_cost.field_product_product__landed_cost
 #: model:ir.model.fields,help:product_managed_replenishment_cost.field_product_template__landed_cost
-msgid "The cost that you have to support in order to produce or acquire the goods without adjustment/depreciation."
-msgstr "Il costo che si deve sostenere per produrre o acquisire le merci senza adeguamenti/ammortamenti."
+msgid ""
+"The cost that you have to support in order to produce or acquire the goods "
+"without adjustment/depreciation."
+msgstr ""
+"Il costo che si deve sostenere per produrre o acquisire le merci senza "
+"adeguamenti/ammortamenti."
 
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
