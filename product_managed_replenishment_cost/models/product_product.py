@@ -1,12 +1,7 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 # flake8: noqa: C901
-import logging
-import time
-
-from odoo import api, fields, models
-
-_logger = logging.getLogger(__name__)
+from odoo import _, api, fields, models
 
 
 class ProductTemplate(models.Model):
@@ -94,10 +89,7 @@ class ProductProduct(models.Model):
     def _update_manufactured_prices(
         self,
     ):
-        started_at = time.time()
-        number_products_todo = len(self)
-        number_products_done = 0
-        for product in self:
+        for product in self.with_progress(_("Update manufactured prices")):
             bom = self.env["mrp.bom"]._bom_find(
                 product_tmpl=product.product_tmpl_id, product=product
             )
@@ -112,12 +104,6 @@ class ProductProduct(models.Model):
                 if self.env.context.get("update_standard_price", False):
                     product.standard_price = produce_price
                     product.landed_cost = landed_price
-            duration = time.time() - started_at
-            number_products_done += 1
-            _logger.info(
-                "Products done: %s / %s in %s time"
-                % (number_products_done, number_products_todo, duration)
-            )
 
     def _compute_bom_managed_price(self, bom):
         self.ensure_one()
