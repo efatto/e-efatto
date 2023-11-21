@@ -94,16 +94,17 @@ class ProductProduct(models.Model):
             bom = self.env["mrp.bom"]._bom_find(
                 product_tmpl=product.product_tmpl_id, product=product
             )
-            if any(x.child_bom_id for x in bom.bom_line_ids):
-                bom.bom_line_ids.filtered(lambda line: line.child_bom_id).mapped(
-                    "product_id"
-                )._update_manufactured_prices()
-            produce_price, landed_price = product._compute_bom_managed_price(bom)
-            if self.env.context.get("update_managed_replenishment_cost", False):
-                product.managed_replenishment_cost = produce_price
-            if self.env.context.get("update_standard_price", False):
-                product.standard_price = produce_price
-                product.landed_cost = landed_price
+            if bom:
+                if any(x.child_bom_id for x in bom.bom_line_ids):
+                    bom.bom_line_ids.filtered(lambda line: line.child_bom_id).mapped(
+                        "product_id"
+                    )._update_manufactured_prices()
+                produce_price, landed_price = product._compute_bom_managed_price(bom)
+                if self.env.context.get("update_managed_replenishment_cost", False):
+                    product.managed_replenishment_cost = produce_price
+                if self.env.context.get("update_standard_price", False):
+                    product.standard_price = produce_price
+                    product.landed_cost = landed_price
 
     def _compute_bom_managed_price(self, bom):
         self.ensure_one()

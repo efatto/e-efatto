@@ -10,6 +10,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         super().setUpClass()
         cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
         cls.user_model = cls.env["res.users"].with_context(no_reset_password=True)
+        cls.test_all = False
         cls.vendor = cls.env.ref("base.res_partner_3")
         cls.vendor.country_id = cls.env.ref("base.be")
         cls.default_category = cls.env.ref("product.product_category_1")
@@ -285,6 +286,15 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         self.assertAlmostEqual(self.product.standard_price, (60.0 * 0.9 * 1.15) * 1.10)
 
     def test_02_bom(self):
+        self._test_02()
+
+    def test_02_bom_all(self):
+        self.test_all = True
+        self.product_bom.adjustment_cost = 25
+        self.product4.seller_ids[0].depreciation_cost = 20
+        self._test_02()
+
+    def _test_02(self):
         self.assertEqual(self.product_bom.managed_replenishment_cost, 0.0)
         self.assertEqual(self.product_bom.standard_price, 0.0)
         repl = self.env["replenishment.cost"].create(
@@ -294,7 +304,10 @@ class TestProductManagedReplenishmentCost(SavepointCase):
             }
         )
         repl.update_products_standard_price_only()
-        self.assertEqual(self.product_bom.standard_price, 3 + 4 + 7)
+        if self.test_all:
+            self.assertEqual(self.product_bom.standard_price, 3 + 4 + 7 + 25 + 20)
+        else:
+            self.assertEqual(self.product_bom.standard_price, 3 + 4 + 7)
         self.assertEqual(len(self.product_bom.bom_ids), 1)
         repl.update_bom_products_list_price_weight()
         self.assertAlmostEqual(
@@ -310,6 +323,15 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         )
 
     def test_03_bom_with_parent(self):
+        self._test_03()
+
+    def test_03_bom_with_parent_all(self):
+        self.test_all = True
+        self.product_bom.adjustment_cost = 25
+        self.product4.seller_ids[0].depreciation_cost = 20
+        self._test_03()
+
+    def _test_03(self):
         self.assertEqual(self.product_bom_parent.managed_replenishment_cost, 0.0)
         self.assertEqual(self.product_bom_parent.standard_price, 0.0)
         repl = self.env["replenishment.cost"].create(
@@ -319,7 +341,11 @@ class TestProductManagedReplenishmentCost(SavepointCase):
             }
         )
         repl.update_products_standard_price_only()
-        self.assertEqual(self.product_bom_parent.standard_price, 2 + 3 + 4 + 7)
+        if self.test_all:
+            self.assertEqual(self.product_bom_parent.standard_price,
+                             2 + 3 + 4 + 7 + 25 + 20)
+        else:
+            self.assertEqual(self.product_bom_parent.standard_price, 2 + 3 + 4 + 7)
         self.assertEqual(len(self.product_bom_parent.bom_ids), 1)
         repl.update_bom_products_list_price_weight()
         self.assertAlmostEqual(
@@ -338,6 +364,15 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         )
 
     def test_04_bom_with_nested_parent(self):
+        self._test_04()
+
+    def test_04_bom_with_nested_parent_all(self):
+        self.test_all = True
+        self.product_bom.adjustment_cost = 25
+        self.product4.seller_ids[0].depreciation_cost = 20
+        self._test_04()
+
+    def _test_04(self):
         self.product_bom_parent_parent.categ_id = self.default_category
         self.assertEqual(self.product_bom_parent_parent.managed_replenishment_cost, 0.0)
         self.assertEqual(self.product_bom_parent_parent.standard_price, 0.0)
@@ -348,13 +383,28 @@ class TestProductManagedReplenishmentCost(SavepointCase):
             }
         )
         repl.update_products_standard_price_only()
-        self.assertEqual(
-            self.product_bom_parent_parent.standard_price, 7 + 2 + 3 + 4 + 7
-        )
+        if self.test_all:
+            self.assertEqual(
+                self.product_bom_parent_parent.standard_price,
+                7 + 2 + 3 + 4 + 7 + 25 + 20
+            )
+        else:
+            self.assertEqual(
+                self.product_bom_parent_parent.standard_price, 7 + 2 + 3 + 4 + 7
+            )
         # Do not test update_bom_products_list_price_weight() as this functionality is
         # not requested for nested BOM
 
     def test_05_bom_with_nested_parent_test_category(self):
+        self._test_05()
+
+    def test_05_bom_with_nested_parent_test_category_all(self):
+        self.test_all = True
+        self.product_bom.adjustment_cost = 25
+        self.product4.seller_ids[0].depreciation_cost = 20
+        self._test_05()
+
+    def _test_05(self):
         self.product_bom_parent_parent.categ_id = self.test_categ
         self.assertEqual(self.product_bom_parent_parent.managed_replenishment_cost, 0.0)
         self.assertEqual(self.product_bom_parent_parent.standard_price, 0.0)
@@ -365,11 +415,26 @@ class TestProductManagedReplenishmentCost(SavepointCase):
             }
         )
         repl.update_products_standard_price_only()
-        self.assertEqual(
-            self.product_bom_parent_parent.standard_price, 7 + 2 + 3 + 4 + 7
-        )
+        if self.test_all:
+            self.assertEqual(
+                self.product_bom_parent_parent.standard_price,
+                7 + 2 + 3 + 4 + 7 + 25 + 20
+            )
+        else:
+            self.assertEqual(
+                self.product_bom_parent_parent.standard_price, 7 + 2 + 3 + 4 + 7
+            )
 
-    def test_06_bom_with_subcontract_nested_parent_test_category(self):
+    def test_06_1_bom_with_subcontract_nested_parent_test_category(self):
+        self._test_06()
+
+    def test_06_2_bom_with_subcontract_nested_parent_test_category_all(self):
+        self.test_all = True
+        self.product_bom.adjustment_cost = 25
+        self.product4.seller_ids[0].depreciation_cost = 20
+        self._test_06()
+
+    def _test_06(self):
         self.product_bom_parent_parent.categ_id = self.test_categ
         self.bom_parent.type = "subcontract"
         self.bom_parent_parent.type = "subcontract"
@@ -382,9 +447,15 @@ class TestProductManagedReplenishmentCost(SavepointCase):
             }
         )
         repl.update_products_standard_price_only()
-        self.assertEqual(
-            self.product_bom_parent_parent.standard_price, 7 + 2 + 3 + 4 + 7 + 15
-        )
+        if self.test_all:
+            self.assertEqual(
+                self.product_bom_parent_parent.standard_price,
+                7 + 2 + 3 + 4 + 7 + 15 + 25 + 20
+            )
+        else:
+            self.assertEqual(
+                self.product_bom_parent_parent.standard_price, 7 + 2 + 3 + 4 + 7 + 15
+            )
         # test with seller in parent_parent product
         self.product_bom_parent_parent.write(
             {
@@ -401,6 +472,13 @@ class TestProductManagedReplenishmentCost(SavepointCase):
             }
         )
         repl.update_products_standard_price_only()
-        self.assertEqual(
-            self.product_bom_parent_parent.standard_price, 7 + 2 + 3 + 4 + 7 + 15 + 7
-        )
+        if self.test_all:
+            self.assertEqual(
+                self.product_bom_parent_parent.standard_price,
+                7 + 2 + 3 + 4 + 7 + 15 + 7 + 25 + 20
+            )
+        else:
+            self.assertEqual(
+                self.product_bom_parent_parent.standard_price,
+                7 + 2 + 3 + 4 + 7 + 15 + 7
+            )
