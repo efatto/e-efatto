@@ -174,7 +174,9 @@ class ProductProduct(models.Model):
         )
         if bom.type == "subcontract" and self.seller_ids:
             # subcontract price is added only if bom is of subcontract type
-            product_price += self._get_price_unit_from_seller()
+            subcontract_price = self._get_price_unit_from_seller()
+            product_price += subcontract_price
+            landed_price += subcontract_price
         product_price += self.adjustment_cost
         if self.seller_ids:
             # depreciation cost is always added
@@ -219,12 +221,11 @@ class ProductProduct(models.Model):
         products_without_seller_price = self.env["product.product"]
         for product in self:
             if product.seller_ids and product.seller_ids[0].price:
-                seller = product.seller_ids[0]
                 price_unit = product._get_price_unit_from_seller()
                 landed_cost = price_unit
                 # add adjustment and depreciation costs
                 adjustment_cost = product.adjustment_cost
-                depreciation_cost = seller.depreciation_cost
+                depreciation_cost = product.seller_ids[0].depreciation_cost
                 price_unit += adjustment_cost + depreciation_cost
                 if self.env.context.get("update_managed_replenishment_cost", False):
                     product.managed_replenishment_cost = price_unit
