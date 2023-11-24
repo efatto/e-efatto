@@ -1,14 +1,14 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* maintenance_plan_step
+# 	* maintenance_plan_step
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 12.0\n"
+"Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-14 08:48+0000\n"
-"PO-Revision-Date: 2023-09-14 08:48+0000\n"
-"Last-Translator: <>\n"
+"POT-Creation-Date: 2023-11-24 17:50+0000\n"
+"PO-Revision-Date: 2023-11-24 17:50+0000\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -16,11 +16,25 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: maintenance_plan_step
-#: selection:maintenance.equipment,maintenance_plan_step:0
-#: selection:maintenance.plan,planning_step:0
-#: selection:maintenance.plan,planning_step_max:0
+#: model:ir.model.fields.selection,name:maintenance_plan_step.selection__maintenance_equipment__maintenance_plan_step__day
+#: model:ir.model.fields.selection,name:maintenance_plan_step.selection__maintenance_plan__planning_step__day
+#: model:ir.model.fields.selection,name:maintenance_plan_step.selection__maintenance_plan__planning_step_max__day
 msgid "Day(s)"
 msgstr "Giorno(i)"
+
+#. module: maintenance_plan_step
+#: model:ir.model.fields,field_description:maintenance_plan_step.field_maintenance_equipment__display_name
+#: model:ir.model.fields,field_description:maintenance_plan_step.field_maintenance_plan__display_name
+#: model:ir.model.fields,field_description:maintenance_plan_step.field_maintenance_request__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
+
+#. module: maintenance_plan_step
+#: model:ir.model.fields,field_description:maintenance_plan_step.field_maintenance_equipment__id
+#: model:ir.model.fields,field_description:maintenance_plan_step.field_maintenance_plan__id
+#: model:ir.model.fields,field_description:maintenance_plan_step.field_maintenance_request__id
+msgid "ID"
+msgstr ""
 
 #. module: maintenance_plan_step
 #: model:ir.model.fields,help:maintenance_plan_step.field_maintenance_equipment__maintenance_plan_step
@@ -28,10 +42,18 @@ msgid "Interval used to automatically repeat the event"
 msgstr "Intervallo usato per ripetere automaticamente l'evento"
 
 #. module: maintenance_plan_step
+#: model:ir.model.fields,field_description:maintenance_plan_step.field_maintenance_equipment____last_update
+#: model:ir.model.fields,field_description:maintenance_plan_step.field_maintenance_plan____last_update
+#: model:ir.model.fields,field_description:maintenance_plan_step.field_maintenance_request____last_update
+msgid "Last Modified on"
+msgstr "Ultima modifica il"
+
+#. module: maintenance_plan_step
 #: model:ir.model.fields,help:maintenance_plan_step.field_maintenance_plan__planning_step
 #: model:ir.model.fields,help:maintenance_plan_step.field_maintenance_plan__planning_step_max
 msgid "Let the event automatically repeat at that interval"
-msgstr "Consente la ripetizione automatica dell'evento all'intervallo specificato"
+msgstr ""
+"Consente la ripetizione automatica dell'evento all'intervallo specificato"
 
 #. module: maintenance_plan_step
 #: model:ir.model,name:maintenance_plan_step.model_maintenance_equipment
@@ -50,19 +72,30 @@ msgstr "Richiesta manutenzione"
 
 #. module: maintenance_plan_step
 #: model:ir.model.fields,help:maintenance_plan_step.field_maintenance_equipment__maintenance_plan_horizon
-msgid "Maintenance planning horizon. Limit the maintenance requests created inside this horizon, instead of the one set in maintenance plan. Cron is run everyday by default, so the rest of maintenance will be created day by day."
-msgstr "Orizzonte pianificazione manutenzioni. Limita le richieste di manutenzione create in questo orizzonte, invece di quello impostato nel piano di manutenzione. Il cron viene eseguito ogni giorno per default, in modo che il resto delle manutenzioni verranno create giorno per giorno."
+msgid ""
+"Maintenance planning horizon. Limit the maintenance requests created inside "
+"this horizon, instead of the one set in maintenance plan. Cron is run "
+"everyday by default, so the rest of maintenance will be created day by day."
+msgstr ""
+"Orizzonte pianificazione manutenzioni. Limita le richieste di manutenzione "
+"create in questo orizzonte, invece di quello impostato nel piano di "
+"manutenzione. Il cron viene eseguito ogni giorno per default, in modo che il"
+" resto delle manutenzioni verranno create giorno per giorno."
 
 #. module: maintenance_plan_step
 #: model:ir.model.fields,help:maintenance_plan_step.field_maintenance_plan__maintenance_plan_horizon
 #: model:ir.model.fields,help:maintenance_plan_step.field_maintenance_plan__maintenance_plan_horizon_max
-msgid "Maintenance planning horizon. Only the maintenance requests inside the horizon will be created."
-msgstr "Orizzonte pianificazione manutenzione. Solo le manutenzioni richieste entro l'orizzonte verranno create."
+msgid ""
+"Maintenance planning horizon. Only the maintenance requests inside the "
+"horizon will be created."
+msgstr ""
+"Orizzonte pianificazione manutenzione. Solo le manutenzioni richieste entro "
+"l'orizzonte verranno create."
 
 #. module: maintenance_plan_step
-#: selection:maintenance.equipment,maintenance_plan_step:0
-#: selection:maintenance.plan,planning_step:0
-#: selection:maintenance.plan,planning_step_max:0
+#: model:ir.model.fields.selection,name:maintenance_plan_step.selection__maintenance_equipment__maintenance_plan_step__month
+#: model:ir.model.fields.selection,name:maintenance_plan_step.selection__maintenance_plan__planning_step__month
+#: model:ir.model.fields.selection,name:maintenance_plan_step.selection__maintenance_plan__planning_step_max__month
 msgid "Month(s)"
 msgstr "Mese(i)"
 
@@ -100,26 +133,25 @@ msgstr "Incremento orizzonte pianificazione"
 #. module: maintenance_plan_step
 #: model:ir.model.fields,field_description:maintenance_plan_step.field_maintenance_request__user_id
 msgid "Team"
-msgstr "Team"
+msgstr ""
 
 #. module: maintenance_plan_step
-#: code:addons/maintenance_plan_step/tests/test_maintenance_plan_step.py:63
-#: code:addons/maintenance_plan_step/tests/test_maintenance_plan_step.py:67
+#: code:addons/maintenance_plan_step/tests/test_maintenance_plan_step.py:0
+#: code:addons/maintenance_plan_step/tests/test_maintenance_plan_step.py:0
 #, python-format
 msgid "Unnamed %s plan (%s)"
 msgstr "Piano %s senza nome (%s)"
 
 #. module: maintenance_plan_step
-#: selection:maintenance.equipment,maintenance_plan_step:0
-#: selection:maintenance.plan,planning_step:0
-#: selection:maintenance.plan,planning_step_max:0
+#: model:ir.model.fields.selection,name:maintenance_plan_step.selection__maintenance_equipment__maintenance_plan_step__week
+#: model:ir.model.fields.selection,name:maintenance_plan_step.selection__maintenance_plan__planning_step__week
+#: model:ir.model.fields.selection,name:maintenance_plan_step.selection__maintenance_plan__planning_step_max__week
 msgid "Week(s)"
 msgstr "Settimana(e)"
 
 #. module: maintenance_plan_step
-#: selection:maintenance.equipment,maintenance_plan_step:0
-#: selection:maintenance.plan,planning_step:0
-#: selection:maintenance.plan,planning_step_max:0
+#: model:ir.model.fields.selection,name:maintenance_plan_step.selection__maintenance_equipment__maintenance_plan_step__year
+#: model:ir.model.fields.selection,name:maintenance_plan_step.selection__maintenance_plan__planning_step__year
+#: model:ir.model.fields.selection,name:maintenance_plan_step.selection__maintenance_plan__planning_step_max__year
 msgid "Year(s)"
 msgstr "Anno(i)"
-
