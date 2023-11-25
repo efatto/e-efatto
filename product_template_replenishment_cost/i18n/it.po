@@ -1,19 +1,37 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* product_template_replenishment_cost
+# 	* product_template_replenishment_cost
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 12.0\n"
+"Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-30 08:14+0000\n"
-"PO-Revision-Date: 2021-07-30 08:14+0000\n"
-"Last-Translator: <>\n"
+"POT-Creation-Date: 2023-11-25 08:37+0000\n"
+"PO-Revision-Date: 2023-11-25 08:37+0000\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: product_template_replenishment_cost
+#: model:ir.model.fields,field_description:product_template_replenishment_cost.field_product_product__display_name
+#: model:ir.model.fields,field_description:product_template_replenishment_cost.field_product_template__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
+
+#. module: product_template_replenishment_cost
+#: model:ir.model.fields,field_description:product_template_replenishment_cost.field_product_product__id
+#: model:ir.model.fields,field_description:product_template_replenishment_cost.field_product_template__id
+msgid "ID"
+msgstr ""
+
+#. module: product_template_replenishment_cost
+#: model:ir.model.fields,field_description:product_template_replenishment_cost.field_product_product____last_update
+#: model:ir.model.fields,field_description:product_template_replenishment_cost.field_product_template____last_update
+msgid "Last Modified on"
+msgstr "Ultima modifica il"
 
 #. module: product_template_replenishment_cost
 #: model:ir.model.fields,field_description:product_template_replenishment_cost.field_product_product__managed_replenishment_cost
@@ -28,12 +46,12 @@ msgstr "Prodotto"
 
 #. module: product_template_replenishment_cost
 #: model:ir.model,name:product_template_replenishment_cost.model_product_template
-msgid "Product Template"
-msgstr "Modello prodotto"
+msgid "Product Template (Multi-Company)"
+msgstr "Modello prodotto (Multi-azienda)"
 
 #. module: product_template_replenishment_cost
 #: model:ir.model.fields,help:product_template_replenishment_cost.field_product_product__managed_replenishment_cost
 #: model:ir.model.fields,help:product_template_replenishment_cost.field_product_template__managed_replenishment_cost
-msgid "The cost that you have to support in order to produce or acquire the goods."
+msgid ""
+"The cost that you have to support in order to produce or acquire the goods."
 msgstr "Il costo da sostenere per produrre o acquisire la merce."
-
