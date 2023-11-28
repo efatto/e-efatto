@@ -17,13 +17,12 @@ class SaleOrder(models.Model):
             # create_whs_list method is a redundant call as already called by
             # stock.picking action_confirm(), to cover the cases in which stock.picking
             # is not confirmed
-            for move in order.picking_ids.filtered(
-                lambda x: x.state != "cancel"
-            ).mapped("move_lines"):
-                if not move.whs_list_ids or all(
-                    x.stato == "3" for x in move.whs_list_ids
-                ):
-                    move.create_whs_list()
+            order.picking_ids.filtered(lambda x: x.state != "cancel").mapped(
+                "move_lines"
+            ).filtered(
+                lambda move_line: not move_line.whs_list_ids
+                or all(x.stato == "3" for x in move_line.whs_list_ids)
+            ).create_whs_list()
         return res
 
     def action_cancel(self):
