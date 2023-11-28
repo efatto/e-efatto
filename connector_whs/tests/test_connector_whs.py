@@ -317,6 +317,9 @@ class TestConnectorWhs(SingleTransactionCase):
                 self.assertEqual(picking.state, 'waiting')
         picking = order1.picking_ids[0]
         self.assertEqual(len(picking.mapped('move_lines.whs_list_ids')), 2)
+        self.assertEqual(
+            len(set(picking.mapped("move_lines.whs_list_ids.num_lista"))), 1
+        )
 
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
