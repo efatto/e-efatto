@@ -105,22 +105,21 @@ class Picking(models.Model):
         super(Picking, self)._action_done()
         return True
 
-    def create_whs_list(self):
+    def picking_create_whs_list(self):
         for picking in self:
-            for move in picking.move_lines:
-                if not move.whs_list_ids or all(
-                    x.stato == "3" for x in move.whs_list_ids
-                ):
-                    move.create_whs_list()
+            picking.move_lines.filtered(
+                lambda move_line: not move_line.whs_list_ids
+                or all(x.stato == "3" for x in move_line.whs_list_ids)
+            ).create_whs_list()
 
     def action_confirm(self):
         res = super(Picking, self).action_confirm()
-        self.create_whs_list()
+        self.picking_create_whs_list()
         return res
 
     def action_assign(self):
         res = super(Picking, self).action_assign()
-        self.create_whs_list()
+        self.picking_create_whs_list()
         return res
 
     def unlink(self):
@@ -190,13 +189,28 @@ class StockMove(models.Model):
         self.create_whs_list()
         return super()._action_confirm(merge, merge_into)
 
-    def _action_assign(self):
-        self.create_whs_list()
-        return super()._action_assign()
+    # def _action_assign(self):
+    #     self.create_whs_list()
+    #     return super()._action_assign()
 
     def create_whs_list(self):
         whsliste_obj = self.env["hyddemo.whs.liste"]
-        list_number = False
+        list_number = False  # get existing active list_number to append new whslist
+        list_numbers = list(
+            set(
+                self.mapped("whs_list_ids")
+                .filtered(lambda x: x.stato != "3")
+                .mapped("num_lista")
+            )
+        )
+        if list_numbers:
+            if len(list_numbers) > 1:
+                raise UserError(
+                    _("More than one list number found for picking %s:" "%s")
+                    % (self.mapped("picking_id").name, "|".join(list_numbers))
+                )
+            if len(list_numbers) == 0:
+                list_number = list_numbers[0]
         riga = 0
         for move in self:
             pick = move.picking_id
