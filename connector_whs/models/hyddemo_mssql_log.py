@@ -203,6 +203,7 @@ class HyddemoMssqlLog(models.Model):
         dbsource.connection_close_mssql(connection)
         return True
 
+    @api.model
     def _prepare_host_articoli_values(
         self, product, warehouse_id, location_id, last_id
     ):
@@ -215,7 +216,6 @@ class HyddemoMssqlLog(models.Model):
             ('A', 'aggiungi se non esiste, modifica se già inserito'),
             ('C', 'rimuovi il codice dal database WHS solo se non utilizzato'),
         """
-        self.ensure_one()
         ops = self.env["stock.warehouse.orderpoint"].search(
             [
                 ("warehouse_id", "=", warehouse_id),
