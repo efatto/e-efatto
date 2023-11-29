@@ -89,7 +89,7 @@ class ProductProduct(models.Model):
     def _update_manufactured_prices(
         self,
     ):
-        for product in self.with_progress(_("Update manufactured prices")):
+        for product in self:
             bom = self.env["mrp.bom"]._bom_find(
                 product_tmpl=product.product_tmpl_id, product=product
             )
