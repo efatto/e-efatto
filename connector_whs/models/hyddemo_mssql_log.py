@@ -160,8 +160,8 @@ class HyddemoMssqlLog(models.Model):
             [], ["ultimo_invio", "ultimo_id"], order="ultimo_id desc", limit=1
         )
         _logger.info(log_data)
-        last_id = log_data[0]["ultimo_id"]
-        last_date_dt = log_data[0]["ultimo_invio"]
+        last_id = log_data and log_data[0]["ultimo_id"] or 0
+        last_date_dt = log_data and log_data[0]["ultimo_invio"] or fields.Datetime.now()
         last_date = fields.Datetime.to_string(last_date_dt)
         products = self.env["product.product"].search(
             [

@@ -197,7 +197,13 @@ class TestConnectorWhs(SingleTransactionCase):
             self.assertIn(Elaborato, {5, 1, 2})
         return valid_whs_lists
 
-    def test_00_complete_picking_from_sale(self):
+    def test_00_dbsource_update_products(self):
+        with self.assertRaises(ValidationError):
+            self.dbsource.connection_test()
+        res = self.dbsource.whs_update_products()
+        self.assertTrue(res)
+
+    def test_01_complete_picking_from_sale(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         whs_len_records = len(self._execute_select_all_valid_host_liste())
@@ -318,7 +324,7 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertEqual(whs_list.lotto4, lotto4)
         self.assertEqual(whs_list.lotto5, lotto5)
 
-    def test_01_partial_picking_from_sale(self):
+    def test_02_partial_picking_from_sale(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
 
@@ -469,7 +475,7 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertEqual(backorder_picking.state, "assigned")
         self.assertEqual(backorder_picking.move_lines[0].state, "assigned")
 
-    def test_02_partial_picking_partial_available_from_sale(self):
+    def test_03_partial_picking_partial_available_from_sale(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         whs_len_records = len(self._execute_select_all_valid_host_liste())
@@ -618,7 +624,7 @@ class TestConnectorWhs(SingleTransactionCase):
         backorder_picking.button_validate()
         self.assertEqual(backorder_picking.state, "done")
 
-    def test_03_partial_picking_from_sale(self):
+    def test_04_partial_picking_from_sale(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         whs_len_records = len(self._execute_select_all_valid_host_liste())
@@ -824,7 +830,7 @@ class TestConnectorWhs(SingleTransactionCase):
         )[0]
         return res
 
-    def test_04_unlink_sale_order(self):
+    def test_05_unlink_sale_order(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         whs_len_records = len(self._execute_select_all_valid_host_liste())
@@ -928,7 +934,7 @@ class TestConnectorWhs(SingleTransactionCase):
         with self.assertRaises(UserError):
             order1.order_line[0].write({"product_uom_qty": 17})
 
-    def test_05_repair(self):
+    def test_06_repair(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
 
@@ -1042,7 +1048,7 @@ class TestConnectorWhs(SingleTransactionCase):
                 str(result_liste),
             )
 
-    def test_06_purchase(self):
+    def test_07_purchase(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         whs_len_records = len(self._execute_select_all_valid_host_liste())
