@@ -1,7 +1,7 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 # flake8: noqa: C901
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 
 
 class ProductTemplate(models.Model):
