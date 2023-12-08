@@ -169,21 +169,29 @@ class StockMove(models.Model):
         for move in self:
             valid_whs_list = move.whs_list_ids.filtered(lambda x: x.stato != "3")
             if valid_whs_list and not move.state == "done":
-                if move.product_uom_qty != valid_whs_list.qta:
+                if move.product_qty != valid_whs_list.qta:
                     raise UserError(
-                        _("Whs valid list exists and qty cannot be " "modified!")
+                        _(
+                            "A WHS valid list exists and qty cannot be modified!\n"
+                            "To proceed, create a new line with the additional "
+                            "requested quantity."
+                        )
                     )
 
     def write(self, vals):
-        res = super().write(vals=vals)
-        if (
-            not self._context.get("do_not_propagate", False)
-            and not self._context.get("do_not_unreserve", False)
-            and not self._context.get("skip_overprocessed_check", False)
-            and (vals.get("product_uom_qty") or vals.get("product_qty"))
+        # this check is needed because qty can be changed in a sale order, wich trigger
+        # the change in stock move, which must be forbidden because WHS list is already
+        # created and sent to WHS. The user must create a new line.
+        # TODO CHECK:
+        #  this key does not exist anymore and seems unused
+        #  not self._context.get("do_not_propagate", False)
+        if not self._context.get("do_not_unreserve", False) and (
+            vals.get("product_uom_qty") or vals.get("product_qty")
         ):
+            res = super().write(vals=vals)
             self._check_valid_whs_list()
-        return res
+            return res
+        return super().write(vals=vals)
 
     def _action_confirm(self, merge=True, merge_into=False):
         self.create_whs_list()
