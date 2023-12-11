@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="mrp_production_form_view" model="ir.ui.view">
+        <field name="name">mrp.production.form</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view" />
+        <field name="arch" type="xml">
+            <button name="button_mark_done" position="before">
+                <field name="sent_to_whs" invisible="1"/>
+                <button name="button_send_to_whs"
+                    type="object"
+                    string="Send to WHS"
+                    class="oe_highlight"
+                    attrs="{'invisible': ['|', ('state', '!=', 'progress'), ('sent_to_whs', '=', True)]}"/>
+            </button>
+            <xpath
+        expr="/form/header/button[@name='button_mark_done']"
+        position="attributes"
+      >
+                <attribute name="string">Produce</attribute>
+                <attribute
+          name="attrs"
+        >{'invisible': ['|', '|', ('state', '!=', 'progress'), ('qty_producing', '=', 0), ('sent_to_whs', '=', False)]}</attribute>
+            </xpath>
+            <xpath
+        expr="//button[@name='button_mark_done'][last()]"
+        position="attributes"
+      >
+                <attribute name="attrs">{'invisible': True}</attribute>
+            </xpath>
+            <field name="qty_producing" position="attributes">
+                <attribute
+          name="attrs"
+        >{'readonly': ['|', ('sent_to_whs', '=', True), ('state', 'not in', ['draft', 'confirmed', 'progress'])]}</attribute>
+            </field>
+        </field>
+    </record>
+</odoo>

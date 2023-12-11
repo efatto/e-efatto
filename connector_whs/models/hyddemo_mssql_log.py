@@ -434,8 +434,9 @@ class HyddemoMssqlLog(models.Model):
                 )
         if pickings_to_assign:
             pickings_to_assign.filtered(
-                lambda x: x.mapped("move_lines").filtered(
-                    lambda move: move.state not in ("draft", "cancel", "done")
+                lambda picking: any(
+                    m.state not in ("draft", "cancel", "done")
+                    for m in picking.move_lines
                 )
             ).action_assign()
 

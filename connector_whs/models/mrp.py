@@ -2,30 +2,85 @@
 # Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 # flake8: noqa: C901
-
-from odoo import _, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 
 class MrpProduction(models.Model):
     _inherit = "mrp.production"
 
-    def button_mark_done(self):
-        res = super().button_mark_done()
-        self._generate_whs()
-        return res
+    sent_to_whs = fields.Boolean(
+        string="Sento to WHS",
+        compute="_compute_sent_to_whs",
+        store=True,
+    )
 
-    def _post_inventory(self, cancel_backorder):
+    @api.depends("move_raw_ids.whs_list_ids", "move_finished_ids.whs_list_ids")
+    def _compute_sent_to_whs(self):
+        for production in self.filtered(lambda mo: mo.state not in ["done", "cancel"]):
+            production.sent_to_whs = all(
+                x.whs_list_ids
+                and not all(whs_list.tipo == "3" for whs_list in x.whs_list_ids)
+                for x in (
+                    production.move_finished_ids | production.move_raw_ids
+                ).filtered(lambda move: move.state != "done")
+            )
+        for production in self.filtered(lambda mo: mo.state in ["done", "cancel"]):
+            production.sent_to_whs = False
+
+    def button_mark_done(self):
+        for production in self:
+            if production.state != "progress":
+                raise UserError(_("Production %s is not in progress.") % production)
+        return super().button_mark_done()
+
+    # def _set_qty_producing(self):
+    #     super()._set_qty_producing()
+    #     finish_moves = self.move_finished_ids.filtered(
+    #         lambda m: m.product_id == self.product_id
+    #         and m.state not in ("done", "cancel")
+    #     )
+    #     for move in finish_moves:
+    #         if move._should_bypass_set_qty_producing() or not move.product_uom:
+    #             continue
+    #         new_qty = float_round(
+    #             (self.qty_producing - self.qty_produced),
+    #             precision_rounding=move.product_uom.rounding,
+    #         )
+    #         move.move_line_ids.filtered(
+    #             lambda ml: ml.state not in ("done", "cancel")
+    #         ).qty_done = 0
+    #         move.move_line_ids = move._set_quantity_done_prepare_vals(new_qty)
+
+    def button_send_to_whs(self):
+        self._generate_whs()
+
+    @api.depends(
+        "move_raw_ids.state",
+        "move_raw_ids.quantity_done",
+        "move_finished_ids.state",
+        "workorder_ids",
+        "workorder_ids.state",
+        "product_qty",
+        "qty_producing",
+    )
+    def _compute_state(self):
+        # replace 'to_close' state with 'progress' to simplify flow
+        super()._compute_state()
+        for production in self:
+            if production.state == "to_close":
+                production.state = "progress"
+
+    def _post_inventory(self, cancel_backorder=False):
         if any(
-            x.stato != "4" and x.qta for x in self.move_raw_ids.mapped("whs_list_ids")
+            x.stato != "4" and x.qta
+            for x in (self.move_raw_ids | self.move_finished_ids).mapped("whs_list_ids")
         ):
             raise UserError(_('Almost a WHS list is not in state "Ricevuto Esito"!'))
         res = super()._post_inventory(cancel_backorder=cancel_backorder)
         return res
 
     def _generate_whs(self):
-        # FIXME: this works only for complete production, add support for partial
-        #  production
         whsliste_obj = self.env["hyddemo.whs.liste"]
         for production in self:
             # Create WHS list for raw materials
@@ -37,11 +92,15 @@ class MrpProduction(models.Model):
                 riga = 0
                 # Location of raw material is linked to WHS
                 for move in production.move_raw_ids:
+                    if move.whs_list_ids and not all(
+                        x.stato == "3" for x in move.whs_list_ids
+                    ):
+                        continue
                     if move.scrapped:
                         continue
                     if move.state in ("done", "cancel") and move.whs_list_ids:
                         continue
-                    if move.quantity_done <= 0:
+                    if move.product_uom_qty <= 0:
                         continue
                     if (
                         move.product_id.type == "product"
@@ -63,7 +122,7 @@ class MrpProduction(models.Model):
                             product_id=move.product_id.id,
                             parent_product_id=production.product_id.id,
                             qta=move.quantity_done,
-                            move_id=move.id,
+                            move_id=move._origin.id,
                             tipo_mov="mrpout",
                         )
                         whsliste_obj.create(whsliste_data)
@@ -77,13 +136,17 @@ class MrpProduction(models.Model):
                 num_lista = False
                 riga = 0
                 for move in production.move_finished_ids:
+                    if move.whs_list_ids and not all(
+                        x.stato == "3" for x in move.whs_list_ids
+                    ):
+                        continue
                     if move.scrapped or (
                         move.product_id.id != production.product_id.id
                     ):
                         continue
                     if move.state in ("done", "cancel") and move.whs_list_ids:
                         continue
-                    if move.quantity_done <= 0:
+                    if move.product_uom_qty <= 0:
                         continue
                     if move.location_dest_id == production.location_dest_id:
                         if all(
@@ -118,9 +181,9 @@ class MrpProduction(models.Model):
                             data_lista=fields.Datetime.now(),
                             riferimento=production.name,
                             product_id=move.product_id.id,
-                            qta=move.quantity_done,
-                            move_id=move.id,
+                            qta=production.qty_producing,
+                            move_id=move._origin.id,
                             tipo_mov="mrpin",
                             riga=riga,
                         )
-                        whsliste_obj.create([whsliste_data])
+                        whsliste_obj.create(whsliste_data)
