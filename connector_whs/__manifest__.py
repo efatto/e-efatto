@@ -10,7 +10,7 @@
     "depends": [
         "base_external_dbsource_mssql",
         "mrp",
-        "product_logistics_uom",
+        "mrp_production_demo",
         "product_supplierinfo_for_customer",
         "purchase_delivery_split_date",
         "purchase_stock",
@@ -27,6 +27,7 @@
         "views/dbsource.xml",
         "views/hyddemo_mssql_log.xml",
         "views/hyddemo_whs_liste.xml",
+        "views/mrp_production.xml",
         "views/product_template.xml",
         "views/stock.xml",
         "wizard/view_wizard_sync_stock_whs_mssql.xml",

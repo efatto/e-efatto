@@ -103,6 +103,84 @@ class TestConnectorWhs(SingleTransactionCase):
             }
         )
         self.product2.invoice_policy = "order"
+        # MRP data
+        self.top_product = self.env.ref(
+            "mrp_production_demo.product_product_manufacture_1"
+        )
+        self.warehouse = self.env["stock.warehouse"].search(
+            [("company_id", "=", self.env.user.company_id.id)],
+            limit=1,
+        )
+        self.warehouse.mto_pull_id.route_id.active = True
+        self.top_product.write(
+            dict(
+                route_ids=[
+                    (
+                        6,
+                        0,
+                        [
+                            self.warehouse.mto_pull_id.route_id.id,
+                            self.warehouse.manufacture_pull_id.route_id.id,
+                        ],
+                    ),
+                ]
+            )
+        )
+        self.subproduct1 = self.env.ref(
+            "mrp_production_demo.product_product_manufacture_1_1"
+        )
+        self.subproduct2 = self.env.ref(
+            "mrp_production_demo.product_product_manufacture_1_2"
+        )
+        self.subproduct_1_1 = self.env.ref(
+            "mrp_production_demo.product_product_manufacture_1_1_1"
+        )
+        self.subproduct_1_1.write(
+            dict(
+                route_ids=[
+                    (
+                        6,
+                        0,
+                        [
+                            self.warehouse.mto_pull_id.route_id.id,
+                            self.env.ref("purchase_stock.route_warehouse0_buy").id,
+                        ],
+                    ),
+                ]
+            )
+        )
+        self.subproduct_2_1 = self.env.ref(
+            "mrp_production_demo.product_product_manufacture_1_2_1"
+        )
+        self.main_bom = self.env.ref("mrp_production_demo.mrp_bom_manuf_1")
+        self.sub_bom_phantom_1 = self.env.ref("mrp_production_demo.mrp_bom_manuf_1_1")
+        self.sub_bom_phantom_2 = self.env.ref("mrp_production_demo.mrp_bom_manuf_1_2")
+        self.sub_bom_normal_1 = self.env.ref("mrp_production_demo.mrp_bom_manuf_1_3")
+        self.workcenter1 = self.env["mrp.workcenter"].create(
+            {
+                "name": "Base Workcenter",
+                "capacity": 1,
+                "time_start": 10,
+                "time_stop": 5,
+                "time_efficiency": 80,
+                "costs_hour": 23.0,
+            }
+        )
+        self.operation1 = self.env["mrp.routing.workcenter"].create(
+            {
+                "name": "Operation 1",
+                "workcenter_id": self.workcenter1.id,
+                "time_mode": "manual",
+                "time_cycle_manual": 90,
+                "sequence": 1,
+            }
+        )
+        self.mrp_user = self.env.ref("base.user_demo")
+        self.mrp_user.write(
+            {
+                "groups_id": [(4, self.env.ref("mrp.group_mrp_user").id)],
+            }
+        )
 
     def run_stock_procurement_scheduler(self):
         with mute_logger("odoo.addons.stock.models.procurement"):
@@ -1267,3 +1345,191 @@ class TestConnectorWhs(SingleTransactionCase):
         )
         # whs list is created for the increased qty
         self.assertEqual(str(result_liste[0]), "[(Decimal('7.000'), None)]")
+
+    def test_08_mrp_partial_from_sale(self):
+        with self.assertRaises(ValidationError):
+            self.dbsource.connection_test()
+        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        order_form = Form(self.env["sale.order"])
+        order_form.partner_id = self.env.ref("base.res_partner_12")
+        order_form.date_order = fields.Date.today()
+        order_form.picking_policy = "direct"
+        with order_form.order_line.new() as line:
+            line.product_id = self.top_product
+            line.product_uom_qty = 20
+            line.product_uom = self.top_product.uom_po_id
+            line.price_unit = self.top_product.list_price
+            line.name = self.top_product.name
+        order = order_form.save()
+        order.action_confirm()
+        self.assertEqual(order.state, "sale")
+        man_order = self.env["mrp.production"].search([("origin", "ilike", order.name)])
+        self.assertTrue(man_order)
+        man_order.action_confirm()
+        self.assertEqual(man_order.state, "confirmed")
+        mo_form = Form(man_order)
+        mo_form.qty_producing = 5
+        man_order = mo_form.save()
+        self.assertTrue(man_order.move_raw_ids.move_line_ids)
+        # self.assertTrue(man_order.move_finished_ids.move_line_ids)
+        # self.assertEqual(
+        #     man_order.move_finished_ids.move_line_ids.mapped("state"), ["confirmed"]
+        # )
+        man_order.button_send_to_whs()
+        # check whs list are added: 3 components and 1 finished product
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        self.assertEqual(
+            len(self._execute_select_all_valid_host_liste()),
+            whs_len_records + 4,
+        )
+
+        # simulate whs work: consume 25% of components to produce 5 finished product
+        # consumed and finished product are sent to WHS for the consumed/produced qty
+        component_whs_lists = man_order.mapped("move_raw_ids.whs_list_ids")
+        finished_whs_lists = man_order.mapped("move_finished_ids.whs_list_ids")
+        for whs_list in component_whs_lists | finished_whs_lists:
+            set_liste_elaborated_query = (
+                "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=%s WHERE "
+                "NumLista = '%s' AND NumRiga = '%s'"
+                % (
+                    whs_list.qta,
+                    whs_list.num_lista,
+                    whs_list.riga,
+                )
+            )
+            self.dbsource.with_context(no_return=True).execute_mssql(
+                sqlquery=sql_text(set_liste_elaborated_query),
+                sqlparams=None,
+                metadata=None,
+            )
+
+        for whs_list in component_whs_lists | finished_whs_lists:
+            whs_select_query = (
+                "SELECT Qta, QtaMovimentata FROM HOST_LISTE WHERE Elaborato = 4 AND "
+                "NumLista = '%s' AND NumRiga = '%s'"
+                % (whs_list.num_lista, whs_list.riga)
+            )
+            result_liste = self.dbsource.execute_mssql(
+                sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+            )
+            if whs_list.product_id == self.subproduct_1_1:
+                self.assertIn(
+                    str(result_liste[0]),
+                    [
+                        "[(Decimal('50.000'), Decimal('50.000'))]",
+                        "[(Decimal('30.000'), Decimal('30.000'))]",
+                    ],
+                )
+            elif whs_list.product_id == self.subproduct_2_1:
+                self.assertEqual(
+                    str(result_liste[0]), "[(Decimal('40.000'), Decimal('40.000'))]"
+                )
+            elif whs_list.product_id == self.top_product:
+                self.assertEqual(
+                    str(result_liste[0]), "[(Decimal('5.000'), Decimal('5.000'))]"
+                )
+
+        # this update Odoo from WHS
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        action = man_order.button_mark_done()
+        backorder_form = Form(
+            self.env["mrp.production.backorder"].with_context(**action["context"])
+        )
+        backorder_form.save().action_backorder()
+        self.assertEqual(len(man_order.procurement_group_id.mrp_production_ids), 2)
+        self.assertEqual(man_order.state, "done")
+
+        mo_backorder = man_order.procurement_group_id.mrp_production_ids[-1]
+        self.assertEqual(mo_backorder.state, "confirmed")
+        with self.assertRaises(UserError):
+            # check production ore cannot be done without WHS lists
+            mo_backorder.button_mark_done()
+
+    def test_09_mrp_total_from_sale(self):
+        with self.assertRaises(ValidationError):
+            self.dbsource.connection_test()
+        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        order_form = Form(self.env["sale.order"])
+        order_form.partner_id = self.env.ref("base.res_partner_12")
+        order_form.date_order = fields.Date.today()
+        order_form.picking_policy = "direct"
+        with order_form.order_line.new() as line:
+            line.product_id = self.top_product
+            line.product_uom_qty = 20
+            line.product_uom = self.top_product.uom_po_id
+            line.price_unit = self.top_product.list_price
+            line.name = self.top_product.name
+        order = order_form.save()
+        order.action_confirm()
+        self.assertEqual(order.state, "sale")
+        man_order = self.env["mrp.production"].search([("origin", "ilike", order.name)])
+        self.assertTrue(man_order)
+        man_order.action_confirm()
+        self.assertEqual(man_order.state, "confirmed")
+        mo_form = Form(man_order)
+        mo_form.qty_producing = 20
+        man_order = mo_form.save()
+        self.assertTrue(man_order.move_raw_ids.move_line_ids)
+        # self.assertTrue(man_order.move_finished_ids.move_line_ids)
+        # self.assertEqual(
+        #     man_order.move_finished_ids.move_line_ids.mapped("state"), ["confirmed"]
+        # )
+        man_order.button_send_to_whs()
+        # check whs list are added: 3 components and 1 finished product
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        self.assertEqual(
+            len(self._execute_select_all_valid_host_liste()),
+            whs_len_records + 4,
+        )
+
+        # simulate whs work: consume 25% of components to produce 5 finished product
+        component_whs_lists = man_order.mapped("move_raw_ids.whs_list_ids")
+        finished_whs_lists = man_order.mapped("move_finished_ids.whs_list_ids")
+        for whs_list in component_whs_lists | finished_whs_lists:
+            set_liste_elaborated_query = (
+                "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=%s WHERE "
+                "NumLista = '%s' AND NumRiga = '%s'"
+                % (
+                    whs_list.qta,
+                    whs_list.num_lista,
+                    whs_list.riga,
+                )
+            )
+            self.dbsource.with_context(no_return=True).execute_mssql(
+                sqlquery=sql_text(set_liste_elaborated_query),
+                sqlparams=None,
+                metadata=None,
+            )
+
+        for whs_list in component_whs_lists | finished_whs_lists:
+            whs_select_query = (
+                "SELECT Qta, QtaMovimentata FROM HOST_LISTE WHERE Elaborato = 4 AND "
+                "NumLista = '%s' AND NumRiga = '%s'"
+                % (whs_list.num_lista, whs_list.riga)
+            )
+            result_liste = self.dbsource.execute_mssql(
+                sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+            )
+            if whs_list.product_id == self.subproduct_1_1:
+                self.assertIn(
+                    str(result_liste[0]),
+                    [
+                        "[(Decimal('200.000'), Decimal('200.000'))]",
+                        "[(Decimal('120.000'), Decimal('120.000'))]",
+                    ],
+                )
+            elif whs_list.product_id == self.subproduct_2_1:
+                self.assertEqual(
+                    str(result_liste[0]), "[(Decimal('160.000'), Decimal('160.000'))]"
+                )
+            elif whs_list.product_id == self.top_product:
+                self.assertEqual(
+                    str(result_liste[0]), "[(Decimal('20.000'), Decimal('20.000'))]"
+                )
+
+        # this update Odoo from WHS
+        self.dbsource.whs_insert_read_and_synchronize_list()
+
+        man_order.button_mark_done()
+        self.assertEqual(len(man_order.procurement_group_id.mrp_production_ids), 1)
+        self.assertEqual(man_order.state, "done")
