@@ -169,12 +169,24 @@ class StockMove(models.Model):
         for move in self:
             valid_whs_list = move.whs_list_ids.filtered(lambda x: x.stato != "3")
             if valid_whs_list and not move.state == "done":
-                if move.product_qty != valid_whs_list.qta:
+                if (
+                    not move.purchase_line_id
+                    and move.product_uom_qty != valid_whs_list.qta
+                ):
                     raise UserError(
                         _(
                             "A WHS valid list exists and qty cannot be modified!\n"
                             "To proceed, create a new line with the additional "
                             "requested quantity."
+                        )
+                    )
+                if move.quantity_done != valid_whs_list.qtamov:
+                    raise UserError(
+                        _(
+                            "A WHS valid list exists and qty moved is different "
+                            "from quantity done on move!\n"
+                            "To proceed, align quantity done in move to the quantity "
+                            "moved in WHS list."
                         )
                     )
 
