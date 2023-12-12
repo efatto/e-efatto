@@ -10,7 +10,7 @@ class MrpProduction(models.Model):
     _inherit = "mrp.production"
 
     sent_to_whs = fields.Boolean(
-        string="Sento to WHS",
+        string="Sent to WHS",
         compute="_compute_sent_to_whs",
         store=True,
     )
