@@ -34,24 +34,6 @@ class MrpProduction(models.Model):
                 raise UserError(_("Production %s is not in progress.") % production)
         return super().button_mark_done()
 
-    # def _set_qty_producing(self):
-    #     super()._set_qty_producing()
-    #     finish_moves = self.move_finished_ids.filtered(
-    #         lambda m: m.product_id == self.product_id
-    #         and m.state not in ("done", "cancel")
-    #     )
-    #     for move in finish_moves:
-    #         if move._should_bypass_set_qty_producing() or not move.product_uom:
-    #             continue
-    #         new_qty = float_round(
-    #             (self.qty_producing - self.qty_produced),
-    #             precision_rounding=move.product_uom.rounding,
-    #         )
-    #         move.move_line_ids.filtered(
-    #             lambda ml: ml.state not in ("done", "cancel")
-    #         ).qty_done = 0
-    #         move.move_line_ids = move._set_quantity_done_prepare_vals(new_qty)
-
     def button_send_to_whs(self):
         self._generate_whs()
 
