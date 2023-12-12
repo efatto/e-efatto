@@ -334,24 +334,31 @@ class HyddemoMssqlLog(models.Model):
                         % esito_lista
                     )
                     continue
-                hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
-                    [("num_lista", "=", num_lista), ("riga", "=", num_riga)]
+                whs_lista = self.env["hyddemo.whs.liste"].search(
+                    [("num_lista", "=", num_lista)]
                 )
-                if not hyddemo_whs_lists:
-                    # ROADMAP: if the user want to create the list directly in WHS, do
-                    # the reverse synchronization (not requested so far)
-                    _logger.info(
-                        "WHS LOG: list num_riga %s num_lista %s not found in "
-                        "lists (found list %s but not row)"
-                        % (
-                            num_riga,
-                            num_lista,
-                            self.env["hyddemo.whs.liste"].search(
-                                [("num_lista", "=", num_lista)]
-                            ),
-                        )
+                if not whs_lista:
+                    _logger.debug(
+                        "WHS LOG: list %s does not exist in Odoo." % num_lista
                     )
                     continue
+                else:
+                    hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
+                        [("num_lista", "=", num_lista), ("riga", "=", num_riga)]
+                    )
+                    if not hyddemo_whs_lists:
+                        # ROADMAP: if the user want to create the list directly in WHS,
+                        # do the reverse synchronization (not requested until now)
+                        _logger.info(
+                            "WHS LOG: list num_riga %s num_lista %s not found in Odoo "
+                            "(found list %s but not row)"
+                            % (
+                                num_riga,
+                                num_lista,
+                                whs_lista,
+                            )
+                        )
+                        continue
                 if len(hyddemo_whs_lists) > 1:
                     _logger.info(
                         "WHS LOG: More than 1 list found for lista %s"
