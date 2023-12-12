@@ -414,7 +414,7 @@ class HyddemoMssqlLog(models.Model):
                 if move.move_line_ids:
                     move.move_line_ids[0].qty_done = qty_moved
                 else:
-                    _logger.info("WHS LOG: Missing move lines in move %s" % move.name)
+                    move.quantity_done = qty_moved
                 if move.picking_id.mapped("move_lines").filtered(
                     lambda m: m.state not in ("draft", "cancel", "done")
                 ):
