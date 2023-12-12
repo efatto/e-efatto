@@ -1346,6 +1346,8 @@ class TestConnectorWhs(SingleTransactionCase):
         # whs list is created for the increased qty
         self.assertEqual(str(result_liste[0]), "[(Decimal('7.000'), None)]")
 
+        # test user can receive in WHS a qty > move quantity
+
     def test_08_mrp_partial_from_sale(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
