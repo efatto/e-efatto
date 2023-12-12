@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-24 17:32+0000\n"
-"PO-Revision-Date: 2023-11-24 17:32+0000\n"
+"POT-Creation-Date: 2023-12-12 15:04+0000\n"
+"PO-Revision-Date: 2023-12-12 15:04+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -23,6 +23,16 @@ msgid ""
 msgstr ""
 "<span>Sincronizza inventario. </span>\n"
 "                        <span>Se 'do_sync' non è impostato, crea e mostra solo un log salvato in Whslog.</span>"
+
+#. module: connector_whs
+#: code:addons/connector_whs/models/stock.py:0
+#, python-format
+msgid ""
+"A WHS valid list exists and qty cannot be modified!\n"
+"To proceed, create a new line with the additional requested quantity."
+msgstr ""
+"Esiste una lista WHS valida e la quantità non può essere modificata!"
+"Per proseguire, creare una nuova riga con la quantità aggiuntiva richiesta."
 
 #. module: connector_whs
 #: code:addons/connector_whs/models/mrp.py:0
@@ -334,6 +344,12 @@ msgid "Missing connection string!"
 msgstr "Stringa di connessione mancante!"
 
 #. module: connector_whs
+#: code:addons/connector_whs/models/stock.py:0
+#, python-format
+msgid "More than one list number found for picking %s:%s"
+msgstr "Più di un numero lista trovato per il trasferimento %s:%s"
+
+#. module: connector_whs
 #: model:ir.model,name:connector_whs.model_hyddemo_mssql_log_line
 msgid "Mssql Log Line"
 msgstr "Linea Log Mssql"
@@ -406,6 +422,11 @@ msgid "Prodotto Padre"
 msgstr ""
 
 #. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.mrp_production_form_view
+msgid "Produce"
+msgstr "Produci"
+
+#. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__product_id
 msgid "Product"
 msgstr "Prodotto"
@@ -421,6 +442,12 @@ msgid "Product Template (Multi-Company)"
 msgstr "Modello prodotto (Multi-azienda)"
 
 #. module: connector_whs
+#: code:addons/connector_whs/models/mrp.py:0
+#, python-format
+msgid "Production %s is not in progress."
+msgstr "La produzione %s non è in corso."
+
+#. module: connector_whs
 #: model:ir.model,name:connector_whs.model_mrp_production
 msgid "Production Order"
 msgstr "Ordine di Produzione"
@@ -431,8 +458,8 @@ msgid ""
 "Products will be reserved first for the transfers with the highest "
 "priorities."
 msgstr ""
-"I prodotti saranno riservati prima per i trasferimenti con la priorità "
-"più alta."
+"I prodotti saranno riservati prima per i trasferimenti con la priorità più "
+"alta."
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__provincia
@@ -493,6 +520,16 @@ msgstr "Ordine di vendita"
 #: model:ir.model,name:connector_whs.model_sale_order_line
 msgid "Sales Order Line"
 msgstr "Linea d'ordine di vendita"
+
+#. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.mrp_production_form_view
+msgid "Send to WHS"
+msgstr "Invia a WHS"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_mrp_production__sent_to_whs
+msgid "Sent to WHS"
+msgstr "Inviato a WHS"
 
 #. module: connector_whs
 #: model:ir.model.fields.selection,name:connector_whs.selection__hyddemo_mssql_log_line__type__service
@@ -667,12 +704,6 @@ msgstr "Liste Whs"
 #: model:ir.model.fields,field_description:connector_whs.field_stock_move__whs_list_ids
 msgid "Whs Lists"
 msgstr "Liste Whs"
-
-#. module: connector_whs
-#: code:addons/connector_whs/models/stock.py:0
-#, python-format
-msgid "Whs valid list exists and qty cannot be modified!"
-msgstr "Esiste una lista WHS valida e la quantità non può essere modificata!"
 
 #. module: connector_whs
 #: model:ir.actions.act_window,name:connector_whs.action_whslog
