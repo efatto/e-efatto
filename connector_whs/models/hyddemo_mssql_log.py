@@ -414,7 +414,12 @@ class HyddemoMssqlLog(models.Model):
                 if move.move_line_ids:
                     move.move_line_ids[0].qty_done = qty_moved
                 else:
-                    move.quantity_done = qty_moved
+                    if move.quantity_done != qty_moved:
+                        move.quantity_done = qty_moved
+                        _logger.info(
+                            "WHS LOG: set quantity_done in move %s instead of "
+                            "move line not yet created." % move.name
+                        )
                 if move.picking_id.mapped("move_lines").filtered(
                     lambda m: m.state not in ("draft", "cancel", "done")
                 ):
