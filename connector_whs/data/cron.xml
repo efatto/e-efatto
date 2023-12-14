@@ -8,6 +8,7 @@
         <field name="numbercall">-1</field>
         <field name="active" eval="True" />
         <field name="model_id" ref="model_base_external_dbsource" />
+        <field name="state">code</field>
         <field name="code">model._cron_whs_synchronize()</field>
         <field name="doall" eval="False" />
     </record>
@@ -21,6 +22,7 @@
         <field name="numbercall">-1</field>
         <field name="active" eval="False" />
         <field name="model_id" ref="model_base_external_dbsource" />
+        <field name="state">code</field>
         <field name="code">model._cron_whs_synchronize_stock(True)</field>
         <field name="doall" eval="False" />
     </record>
