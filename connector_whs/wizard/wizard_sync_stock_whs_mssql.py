@@ -16,6 +16,10 @@ class WizardSyncStockWhsMssql(models.TransientModel):
     do_sync = fields.Boolean(string="Synchronize stock inventory")
 
     def apply(self):
+        weight = False
+        inventory = False
+        inventory_lines_data = []
+        inventory_obj = self.env["stock.inventory"]
         for wizard in self:
             dbsource_obj = self.env["base.external.dbsource"]
             dbsource = dbsource_obj.browse(self._context["active_ids"])
@@ -24,18 +28,6 @@ class WizardSyncStockWhsMssql(models.TransientModel):
             if not connection:
                 raise UserError(_("Failed to open connection!"))
             new_last_update = fields.Datetime.now()
-            if wizard.do_sync:
-                inventory_obj = self.env["stock.inventory"]
-                inventory_line_obj = self.env["stock.inventory.line"]
-                inventory = inventory_obj.create(
-                    [
-                        {
-                            "name": "WHS sync inventory "
-                            + new_last_update.strftime("%Y-%m-%d"),
-                            "location_ids": [(0, 0, dbsource.location_id.ids)],
-                        }
-                    ]
-                )
             product_obj = self.env["product.product"]
             i = 0
             whs_log_lines = []
@@ -168,15 +160,15 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                             }
                         )
                         if wizard.do_sync:
-                            line_data = {
-                                "inventory_id": inventory.id,
-                                "product_qty": product_qty,
-                                "location_id": dbsource.location_id.id,
-                                "product_id": product.id,
-                                "product_uom_id": product.uom_id.id,
-                                "reason": "WHS synchronize",
-                            }
-                            inventory_line_obj.create(line_data)
+                            inventory_lines_data.append(
+                                {
+                                    "product_qty": product_qty,
+                                    "location_id": dbsource.location_id.id,
+                                    "product_id": product.id,
+                                    "product_uom_id": product.uom_id.id,
+                                    "reason": "WHS synchronize",
+                                }
+                            )
                     else:
                         whs_log_line.update(
                             {
@@ -234,6 +226,16 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     whs_log_lines.append(whs_log_line)
 
             if wizard.do_sync:
+                inventory = inventory_obj.create(
+                    {
+                        "name": "WHS sync inventory "
+                        + new_last_update.strftime("%Y-%m-%d"),
+                        "location_ids": [(6, 0, dbsource.location_id.ids)],
+                        "company_id": dbsource.company_id.id,
+                        "line_ids": [(0, 0, x) for x in inventory_lines_data],
+                    }
+                )
+                inventory.action_start()
                 inventory.action_validate()
 
             hyddemo_mssql_log = hyddemo_mssql_log_obj.create(

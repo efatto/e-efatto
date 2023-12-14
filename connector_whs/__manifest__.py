@@ -11,6 +11,7 @@
         "base_external_dbsource_mssql",
         "mrp",
         "mrp_production_demo",
+        "product_logistics_uom",
         "product_supplierinfo_for_customer",
         "purchase_delivery_split_date",
         "purchase_stock",

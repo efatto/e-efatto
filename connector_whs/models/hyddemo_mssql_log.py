@@ -157,7 +157,7 @@ class HyddemoMssqlLog(models.Model):
             sqlquery=sql_text(clean_product_query), sqlparams=None, metadata=None
         )
         log_data = self.search_read(
-            [], ["ultimo_invio", "ultimo_id"], order="ultimo_id desc", limit=1
+            [], ["ultimo_invio", "ultimo_id"], order="ultimo_invio desc", limit=1
         )
         _logger.info(log_data)
         last_id = log_data and log_data[0]["ultimo_id"] or 0
