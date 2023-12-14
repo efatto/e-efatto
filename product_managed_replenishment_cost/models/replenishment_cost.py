@@ -21,7 +21,7 @@ class ReplenishmentCost(models.Model):
         comodel_name="product.category", string="Product Categories"
     )
     log = fields.Text()
-    product_ids = fields.Many2many(comodel_name="product.product", check_company=True)
+    product_ids = fields.Many2many(comodel_name="product.product")
     products_count = fields.Integer(compute="_compute_products_count", store=True)
     missing_seller_ids = fields.Many2many(
         comodel_name="product.product",
@@ -29,7 +29,6 @@ class ReplenishmentCost(models.Model):
         column1="repl_id",
         column2="prod_id",
         string="Product missing seller",
-        check_company=True,
     )
     missing_seller_price_ids = fields.Many2many(
         comodel_name="product.product",
@@ -37,7 +36,6 @@ class ReplenishmentCost(models.Model):
         column1="repl_id",
         column2="prod_id",
         string="Product missing price",
-        check_company=True,
     )
 
     @api.depends("product_ids")
