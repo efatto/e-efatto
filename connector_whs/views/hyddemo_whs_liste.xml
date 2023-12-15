@@ -64,6 +64,7 @@
             string="Check list state"
             type="object"
           />
+                    <button name="whs_list_sync" string="Sync list" type="object" />
                 </header>
                 <sheet string="WHS liste">
                     <group>
