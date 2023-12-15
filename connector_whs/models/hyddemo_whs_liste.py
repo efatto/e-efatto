@@ -176,10 +176,34 @@ class HyddemoWhsListe(models.Model):
             if elaborating_lists[0]:
                 raise UserError(
                     _(
-                        "Trying to cancel lists launched in processing from user in WHS, "
-                        "please wait for order end processing."
+                        "Trying to cancel lists launched in processing from user in WHS"
+                        ", please wait for order end processing."
                     )
                 )
+
+    def whs_list_sync(self):
+        """
+        Funzione lanciabile da una o più liste per sincronizzarle con WHS.
+        Usabile per verificare se il cron ha problemi.
+        """
+        num_lista_done = []
+        for whs_list in self:
+            if whs_list.move_id:
+                dbsource = self.env["base.external.dbsource"].search(
+                    [("location_id", "=", whs_list.move_id.location_id.id)]
+                )
+                if not dbsource:
+                    dbsource = self.env["base.external.dbsource"].search(
+                        [("location_id", "=", whs_list.move_id.location_dest_id.id)]
+                    )
+                connection = dbsource.connection_open_mssql()
+                if not connection:
+                    raise UserError(_("Failed to open connection!"))
+                if whs_list.num_lista not in num_lista_done:
+                    self.env["hyddemo.mssql.log"].whs_read_and_synchronize_list(
+                        dbsource.id, whs_list.num_lista
+                    )
+                    num_lista_done.append(whs_list.num_lista)
 
     def whs_check_list_state(self):
         """
@@ -200,7 +224,7 @@ class HyddemoWhsListe(models.Model):
                 if not connection:
                     raise UserError(_("Failed to open connection!"))
                 whs_liste_query = (
-                    "SELECT NumLista, NumRiga, Elaborato FROM HOST_LISTE "
+                    "SELECT NumLista, NumRiga, Elaborato, * FROM HOST_LISTE "
                     "WHERE NumLista = '%s' AND NumRiga = '%s'"
                     % (whs_list.num_lista, whs_list.riga)
                 )
@@ -262,6 +286,6 @@ class HyddemoWhsListe(models.Model):
                     whs_list.write(
                         {
                             "whs_list_absent": False,
-                            "whs_list_log": "Ok",
+                            "whs_list_log": "Ok %s" % str(esito_lista),
                         }
                     )

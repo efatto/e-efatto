@@ -293,11 +293,12 @@ class HyddemoMssqlLog(models.Model):
                 step += 1
 
     @api.model
-    def whs_read_and_synchronize_list(self, datasource_id):
+    def whs_read_and_synchronize_list(self, datasource_id, numlista=False):
         """
         Funzione lanciabile tramite cron per aggiornare i movimenti dalle liste create
         per WHS da Odoo nei vari moduli collegati (mrp, stock, ecc.)
-        :param datasource_id:
+        :param datasource_id: id of datasource (aka dbsource)
+        :param numlista: (str) lista number to filter on that list only
         :return:
         """
         dbsource_obj = self.env["base.external.dbsource"]
@@ -315,8 +316,9 @@ class HyddemoMssqlLog(models.Model):
                 "SELECT * FROM (SELECT row_number() OVER (ORDER BY NumLista, NumRiga) "
                 "AS rownum, NumLista, NumRiga, Qta, QtaMovimentata, Lotto, Lotto2, "
                 "Lotto3, Lotto4, Lotto5, Articolo, DescrizioneArticolo FROM HOST_LISTE "
-                "WHERE Elaborato=4) AS A "
-                "WHERE A.rownum BETWEEN %s AND %s" % (i, i + 1000)
+                "WHERE Elaborato=4 %s) AS A "
+                "WHERE A.rownum BETWEEN %s AND %s"
+                % (numlista and "AND NumLista='%s'" % numlista or "", i, i + 1000)
             )
             i += 1000
             esiti_liste = dbsource.execute_mssql(
