@@ -1380,9 +1380,14 @@ class TestConnectorWhs(SingleTransactionCase):
         man_order.button_send_to_whs()
         # check whs list are added: 3 components and 1 finished product
         self.dbsource.whs_insert_read_and_synchronize_list()
+        created_whs_list_number = (
+            3
+            if self.warehouse.mto_pull_id.route_id in man_order.product_id.route_ids
+            else 4
+        )
         self.assertEqual(
             len(self._execute_select_all_valid_host_liste()),
-            whs_len_records + 4,
+            whs_len_records + created_whs_list_number,
         )
 
         # simulate whs work: consume 25% of components to produce 5 finished product
@@ -1479,9 +1484,14 @@ class TestConnectorWhs(SingleTransactionCase):
         man_order.button_send_to_whs()
         # check whs list are added: 3 components and 1 finished product
         self.dbsource.whs_insert_read_and_synchronize_list()
+        created_whs_list_number = (
+            3
+            if self.warehouse.mto_pull_id.route_id in man_order.product_id.route_ids
+            else 4
+        )
         self.assertEqual(
             len(self._execute_select_all_valid_host_liste()),
-            whs_len_records + 4,
+            whs_len_records + created_whs_list_number,
         )
 
         # simulate whs work: consume 25% of components to produce 5 finished product

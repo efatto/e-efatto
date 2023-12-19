@@ -113,7 +113,11 @@ class MrpProduction(models.Model):
             finished_dbsource = self.env["base.external.dbsource"].search(
                 [("location_id", "=", production.location_dest_id.id)]
             )
-            if finished_dbsource:
+            if finished_dbsource and not (
+                production.picking_type_id.warehouse_id.mto_pull_id.route_id
+                in production.product_id.route_ids
+            ):
+                # Do not create WHS lists for finished products that have an MTO route
                 # Location of finished material is linked to WHS
                 num_lista = False
                 riga = 0
