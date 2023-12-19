@@ -15,7 +15,8 @@ class MrpProduction(models.Model):
         store=True,
     )
 
-    @api.depends("move_raw_ids.whs_list_ids", "move_finished_ids.whs_list_ids")
+    @api.depends("move_raw_ids.whs_list_ids", "move_finished_ids.whs_list_ids",
+                 "product_id.route_ids")
     def _compute_sent_to_whs(self):
         for production in self.filtered(lambda mo: mo.state not in ["done", "cancel"]):
             moves = production.move_raw_ids
