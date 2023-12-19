@@ -18,12 +18,14 @@ class MrpProduction(models.Model):
     @api.depends("move_raw_ids.whs_list_ids", "move_finished_ids.whs_list_ids")
     def _compute_sent_to_whs(self):
         for production in self.filtered(lambda mo: mo.state not in ["done", "cancel"]):
+            moves = production.move_raw_ids
+            if production.picking_type_id.warehouse_id.mto_pull_id.route_id \
+                    not in production.product_id.route_ids:
+                moves |= production.move_finished_ids
             production.sent_to_whs = all(
                 x.whs_list_ids
                 and not all(whs_list.tipo == "3" for whs_list in x.whs_list_ids)
-                for x in (
-                    production.move_finished_ids | production.move_raw_ids
-                ).filtered(lambda move: move.state != "done")
+                for x in moves.filtered(lambda move: move.state != "done")
             )
         for production in self.filtered(lambda mo: mo.state in ["done", "cancel"]):
             production.sent_to_whs = False

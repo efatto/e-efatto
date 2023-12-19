@@ -1378,6 +1378,7 @@ class TestConnectorWhs(SingleTransactionCase):
         #     man_order.move_finished_ids.move_line_ids.mapped("state"), ["confirmed"]
         # )
         man_order.button_send_to_whs()
+        self.assertTrue(man_order.sent_to_whs)
         # check whs list are added: 3 components and 1 finished product
         self.dbsource.whs_insert_read_and_synchronize_list()
         created_whs_list_number = (
@@ -1482,6 +1483,7 @@ class TestConnectorWhs(SingleTransactionCase):
         #     man_order.move_finished_ids.move_line_ids.mapped("state"), ["confirmed"]
         # )
         man_order.button_send_to_whs()
+        self.assertTrue(man_order.sent_to_whs)
         # check whs list are added: 3 components and 1 finished product
         self.dbsource.whs_insert_read_and_synchronize_list()
         created_whs_list_number = (
