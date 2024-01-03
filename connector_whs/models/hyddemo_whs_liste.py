@@ -224,7 +224,8 @@ class HyddemoWhsListe(models.Model):
                 if not connection:
                     raise UserError(_("Failed to open connection!"))
                 whs_liste_query = (
-                    "SELECT NumLista, NumRiga, Elaborato, * FROM HOST_LISTE "
+                    "SELECT NumLista, NumRiga, Elaborato, DataLista, TipoOrdine, "
+                    "Stato, Articolo, Qta, QtaMovimentata FROM HOST_LISTE "
                     "WHERE NumLista = '%s' AND NumRiga = '%s'"
                     % (whs_list.num_lista, whs_list.riga)
                 )
@@ -286,6 +287,8 @@ class HyddemoWhsListe(models.Model):
                     whs_list.write(
                         {
                             "whs_list_absent": False,
-                            "whs_list_log": "Ok %s" % str(esito_lista),
+                            "whs_list_log": "Ok: (NumLista, NumRiga, Elaborato, "
+                            "DataLista, TipoOrdine, Stato, Articolo, Qta, "
+                            "QtaMovimentata) %s" % str(esito_lista[0]),
                         }
                     )
