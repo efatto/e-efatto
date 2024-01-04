@@ -116,10 +116,10 @@ class HyddemoWhsListe(models.Model):
             lista.unlink()
         return True
 
-    def whs_recreate_lists(self):
-        for whs_list in self:
-            if whs_list.whs_list_absent:
-                whs_list.move_id.create_whs_list()
+    # def whs_recreate_lists(self):
+    #     for whs_list in self:
+    #         if whs_list.whs_list_absent:
+    #             whs_list.move_id.create_whs_list()
 
     def whs_deduplicate_lists(self):
         """
