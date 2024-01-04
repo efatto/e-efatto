@@ -315,7 +315,8 @@ class HyddemoWhsListe(models.Model):
                 whs_liste_query = (
                     "SELECT NumLista, NumRiga, Elaborato, DataLista, TipoOrdine, "
                     "Stato, Articolo, Qta, QtaMovimentata FROM HOST_LISTE "
-                    "WHERE NumLista = '%s' AND NumRiga = '%s'"
+                    "WHERE NumLista = '%s' AND NumRiga = '%s' "
+                    "AND Elaborato != 5"
                     % (whs_list.num_lista, whs_list.riga)
                 )
                 esito_lista = dbsource.execute_mssql(
@@ -324,7 +325,7 @@ class HyddemoWhsListe(models.Model):
                 if not esito_lista[0]:
                     whs_liste_query_simple = (
                         "SELECT NumLista, Elaborato FROM HOST_LISTE "
-                        "WHERE NumLista = '%s'" % whs_list.num_lista
+                        "WHERE NumLista = '%s' AND Elaborato != 5" % whs_list.num_lista
                     )
                     esito_lista_simple = dbsource.execute_mssql(
                         sqlquery=sql_text(whs_liste_query_simple),
@@ -334,7 +335,7 @@ class HyddemoWhsListe(models.Model):
                     if not esito_lista_simple[0]:
                         whs_liste_query_super_simple = (
                             "SELECT NumLista, Elaborato FROM HOST_LISTE "
-                            "WHERE NumLista like '%s'"
+                            "WHERE NumLista like '%s' AND Elaborato != 5"
                             % whs_list.num_lista.replace("WHS/", "")
                         )
                         esito_lista_super_simple = dbsource.execute_mssql(
