@@ -24,6 +24,7 @@
                 <field name="move_id" />
                 <field name="tipo_mov" />
                 <field name="whs_list_absent" />
+                <field name="whs_list_multiple" />
             </search>
         </field>
     </record>
@@ -34,6 +35,7 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="whs_list_absent" />
+                <field name="whs_list_multiple" />
                 <field name="priorita" />
                 <field name="num_lista" />
                 <field name="stato" />

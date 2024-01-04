@@ -285,8 +285,13 @@ class HyddemoMssqlLog(models.Model):
             # esiti_liste[0] contains result
             if not esiti_liste[0]:
                 whs_list.whs_list_absent = True
+                whs_list.whs_list_multiple = False
             else:
                 whs_list.whs_list_absent = False
+                if len(esiti_liste[0]) > 1:
+                    whs_list.whs_list_multiple = True
+                else:
+                    whs_list.whs_list_multiple = False
             i += 1
             if i * 100.0 / imax > step:
                 _logger.info("WHS LOG: Execution {}% ".format(int(i * 100.0 / imax)))

@@ -73,8 +73,8 @@ msgstr "Controlla lo stato della lista WHS"
 
 #. module: connector_whs
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_dbsource_form
-msgid "Check missing lists"
-msgstr "Controlla liste mancanti"
+msgid "Check lists status"
+msgstr "Controlla stato liste"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__client_order_ref
