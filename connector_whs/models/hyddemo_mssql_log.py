@@ -276,7 +276,8 @@ class HyddemoMssqlLog(models.Model):
             whs_liste_query = (
                 "SELECT NumLista, NumRiga, Qta, QtaMovimentata, Elaborato "
                 "FROM HOST_LISTE "
-                "WHERE NumLista = '%s' AND NumRiga = '%s'"
+                "WHERE NumLista = '%s' AND NumRiga = '%s' "
+                "AND Elaborato != 5"
                 % (whs_list.num_lista, whs_list.riga)
             )
             esiti_liste = dbsource.execute_mssql(
