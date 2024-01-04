@@ -149,7 +149,7 @@ class HyddemoWhsListe(models.Model):
                 sqlparams=None,
                 metadata=None,
             )
-            if number_of_duplicates[0]:
+            if len(number_of_duplicates[0]) > 1:
                 delete_lists_query = (
                     "DELETE TOP(%s) FROM HOST_LISTE WHERE NumLista = '%s' "
                     "AND NumRiga = '%s' AND ISNULL(QtaMovimentata, 0) = 0"
@@ -183,7 +183,7 @@ class HyddemoWhsListe(models.Model):
                 sqlparams=None,
                 metadata=None,
             )
-            if residual_number_of_duplicates[0]:
+            if len(residual_number_of_duplicates[0]) > 1:
                 residual_delete_lists_query = (
                     "DELETE TOP(%s) FROM HOST_LISTE WHERE NumLista = '%s' "
                     "AND NumRiga = '%s'"
