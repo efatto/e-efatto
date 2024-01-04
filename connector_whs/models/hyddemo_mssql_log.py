@@ -452,12 +452,7 @@ class HyddemoMssqlLog(models.Model):
                     metadata=None,
                 )
         if pickings_to_assign:
-            pickings_to_assign.filtered(
-                lambda picking: any(
-                    m.state not in ("draft", "cancel", "done")
-                    for m in picking.move_lines
-                )
-            ).action_assign()
+            pickings_to_assign.action_assign()
 
     def whs_insert_list_to_elaborate(self, datasource_id):
         """
@@ -489,7 +484,7 @@ class HyddemoMssqlLog(models.Model):
         if hyddemo_whs_lists:
             set_liste_to_elaborate_query = (
                 "UPDATE HOST_LISTE SET Elaborato=1 WHERE Elaborato=0 "
-                "AND %s"
+                "AND (%s)"
                 % (
                     " OR ".join(
                         "(NumLista='%s' AND NumRiga='%s')" % (y.num_lista, y.riga)
