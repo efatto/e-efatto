@@ -382,3 +382,7 @@ class HyddemoWhsListe(models.Model):
                             "QtaMovimentata) %s" % str(esito_lista[0]),
                         }
                     )
+                    if len(esito_lista[0]) > 1:
+                        whs_list.whs_list_multiple = True
+                    else:
+                        whs_list.whs_list_multiple = False
