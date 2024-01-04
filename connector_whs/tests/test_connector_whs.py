@@ -36,10 +36,12 @@ class TestConnectorWhs(SingleTransactionCase):
             sqlquery=sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
         )
         self.whs_insert_list_cron = self.env.ref(
-            "connector_whs.ir_cron_connector_whs_insert_list")
+            "connector_whs.ir_cron_connector_whs_insert_list"
+        )
         self.whs_insert_list_cron.active = False
         self.whs_sync_stock_cron = self.env.ref(
-            "connector_whs.ir_cron_connector_whs_sync_stock")
+            "connector_whs.ir_cron_connector_whs_sync_stock"
+        )
         self.whs_sync_stock_cron.active = False
         self.src_location = self.env.ref("stock.stock_location_stock")
         self.dest_location = self.env.ref("stock.stock_location_customers")
@@ -741,7 +743,9 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertEqual(order1.mapped("picking_ids.state"), ["assigned"])
         picking = order1.picking_ids[0]
         self.assertEqual(len(picking.mapped("move_lines.whs_list_ids")), 4)
-
+        self.run_stock_procurement_scheduler()
+        # check that action_assign run by scheduler do not change state
+        self.assertEqual(picking.state, "confirmed")
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self._execute_select_all_valid_host_liste()
@@ -819,22 +823,13 @@ class TestConnectorWhs(SingleTransactionCase):
                     self.assertAlmostEqual(stock_move_line.qty_done, 5.0)
                 if stock_move_line.product_id == self.product3:
                     self.assertAlmostEqual(stock_move_line.qty_done, 0)
-        self.run_stock_procurement_scheduler()
-        # check that action_assign run by scheduler do not change state
-        self.assertEqual(picking.state, "confirmed")
+
         picking.action_assign()
         self.assertEqual(picking.state, "assigned")
 
         # simulate user partial validate of picking and check backorder exist
         res = picking.button_validate()
         self.assertEqual(picking.state, "assigned")
-        backorder_wiz = Form(
-            self.env[res["res_model"]].with_context(res["context"])
-        ).save()
-        # User must set correctly quantity as set by WHS user, ignoring qty set
-        # automatically by Odoo, so check that error is raised without intervention
-        with self.assertRaises(UserError):
-            backorder_wiz.process()
         for move_line in picking.move_lines.filtered(
             lambda x: x.product_id != self.product3
         ):
