@@ -116,6 +116,60 @@ class HyddemoWhsListe(models.Model):
             lista.unlink()
         return True
 
+    def whs_deduplicate_lists(self):
+        """
+        Set Elaborato=5 to fix duplicated lists on mssql
+        """
+        for whs_list in self:
+            dbsource = False
+            if whs_list.move_id:
+                dbsource = self.env["base.external.dbsource"].search(
+                    [("location_id", "=", whs_list.move_id.location_id.id)]
+                )
+                if not dbsource:
+                    dbsource = self.env["base.external.dbsource"].search(
+                        [("location_id", "=", whs_list.move_id.location_dest_id.id)]
+                    )
+                connection = dbsource.connection_open_mssql()
+                if not connection:
+                    raise UserError(_("Failed to open connection!"))
+            if not dbsource:
+                return False
+            number_of_duplicates = dbsource.execute_mssql(
+                sqlquery=sql_text(
+                    (
+                        "SELECT * FROM HOST_LISTE WHERE NumLista = '%s' "
+                        "AND NumRiga = '%s' AND ISNULL(QtaMovimentata, 0) = 0"
+                        % (
+                            whs_list.num_lista,
+                            whs_list.riga,
+                        )
+                    ).replace("\n", " ")
+                ),
+                sqlparams=None,
+                metadata=None,
+            )
+            if number_of_duplicates[0]:
+                delete_lists_query = (
+                    "DELETE TOP(%s) FROM HOST_LISTE WHERE NumLista = '%s' "
+                    "AND NumRiga = '%s' AND ISNULL(QtaMovimentata, 0) = 0"
+                    % (
+                        len(number_of_duplicates[0]) - 1,
+                        whs_list.num_lista,
+                        whs_list.riga,
+                    )
+                )
+                dbsource.with_context(no_return=True).execute_mssql(
+                    sqlquery=sql_text(delete_lists_query.replace("\n", " ")),
+                    sqlparams=None,
+                    metadata=None,
+                )
+                _logger.info(
+                    "WHS LOG: deduplicated Lista %s Riga %s"
+                    % (whs_list.num_lista, whs_list.riga)
+                )
+        return True
+
     def whs_cancel_lists(self, datasource_id):
         """
         Set lists processed on mssql setting Qta=0 and Elaborato=1
