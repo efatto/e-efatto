@@ -504,7 +504,8 @@ class HyddemoMssqlLog(models.Model):
             )
             hyddemo_whs_lists.write({"stato": "2"})
         # commit to exclude rollback as mssql wouldn't be rollbacked too
-        # self._cr.commit()  # pylint: disable=E8102
+        # without this commit, record will be inserted multiple times too
+        self.env.cr.commit()  # pylint: disable=E8102
         self.whs_read_and_synchronize_list(datasource_id)
 
     @staticmethod
