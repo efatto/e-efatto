@@ -35,6 +35,12 @@ class TestConnectorWhs(SingleTransactionCase):
         self.dbsource.with_context(no_return=True).execute_mssql(
             sqlquery=sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
         )
+        self.whs_insert_list_cron = self.env.ref(
+            "connector_whs.ir_cron_connector_whs_insert_list")
+        self.whs_insert_list_cron.active = False
+        self.whs_sync_stock_cron = self.env.ref(
+            "connector_whs.ir_cron_connector_whs_sync_stock")
+        self.whs_sync_stock_cron.active = False
         self.src_location = self.env.ref("stock.stock_location_stock")
         self.dest_location = self.env.ref("stock.stock_location_customers")
         self.manufacture_location = self.env["stock.location"].search(
@@ -284,6 +290,7 @@ class TestConnectorWhs(SingleTransactionCase):
     def test_01_complete_picking_from_sale(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
+        self.assertFalse(self.whs_insert_list_cron.active)
         whs_len_records = len(self._execute_select_all_valid_host_liste())
         order_form1 = Form(self.env["sale.order"])
         order_form1.partner_id = self.partner
@@ -705,6 +712,8 @@ class TestConnectorWhs(SingleTransactionCase):
     def test_04_partial_picking_from_sale(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
+        self.assertFalse(self.whs_insert_list_cron.active)
+        self.assertFalse(self.whs_sync_stock_cron.active)
         whs_len_records = len(self._execute_select_all_valid_host_liste())
         order_form1 = Form(self.env["sale.order"])
         order_form1.partner_id = self.partner
