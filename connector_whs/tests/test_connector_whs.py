@@ -656,7 +656,9 @@ class TestConnectorWhs(SingleTransactionCase):
             )
 
         self.dbsource.whs_insert_read_and_synchronize_list()
-        self.assertEqual(set(picking.move_lines.mapped("state")), {"assigned"})
+        self.assertEqual(
+            set(picking.move_lines.mapped("state")), {"assigned", "partially_available"}
+        )
         self.assertEqual(
             picking.move_lines.filtered(
                 lambda move: move.product_id == self.product1
@@ -812,7 +814,7 @@ class TestConnectorWhs(SingleTransactionCase):
                 if move_line.product_id in [self.product1, self.product3]
                 else "confirmed"
                 if move_line.product_id == self.product4
-                else "partially_available",
+                else "confirmed",
             )
             for stock_move_line in move_line.move_line_ids:
                 if stock_move_line.product_id in [
