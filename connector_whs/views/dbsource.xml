@@ -33,7 +33,7 @@
           />
                     <button
             name="whs_check_lists"
-            string="Check missing lists"
+            string="Check lists status"
             type="object"
           />
                 </header>
