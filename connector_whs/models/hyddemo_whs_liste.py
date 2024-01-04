@@ -116,6 +116,11 @@ class HyddemoWhsListe(models.Model):
             lista.unlink()
         return True
 
+    def whs_recreate_lists(self):
+        for whs_list in self:
+            if whs_list.whs_list_absent:
+                whs_list.move_id.create_whs_list()
+
     def whs_deduplicate_lists(self):
         """
         Set Elaborato=5 to fix duplicated lists on mssql
@@ -316,8 +321,7 @@ class HyddemoWhsListe(models.Model):
                     "SELECT NumLista, NumRiga, Elaborato, DataLista, TipoOrdine, "
                     "Stato, Articolo, Qta, QtaMovimentata FROM HOST_LISTE "
                     "WHERE NumLista = '%s' AND NumRiga = '%s' "
-                    "AND Elaborato != 5"
-                    % (whs_list.num_lista, whs_list.riga)
+                    "AND Elaborato != 5" % (whs_list.num_lista, whs_list.riga)
                 )
                 esito_lista = dbsource.execute_mssql(
                     sqlquery=sql_text(whs_liste_query), sqlparams=None, metadata=None
