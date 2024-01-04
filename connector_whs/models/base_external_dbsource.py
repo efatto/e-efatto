@@ -52,9 +52,12 @@ class BaseExternalDbsource(models.Model):
         return True
 
     def whs_insert_read_and_synchronize_list(self):
-        for dbsource in self:
-            self.env["hyddemo.mssql.log"].whs_insert_list_to_elaborate(dbsource.id)
-        return True
+        self.env["hyddemo.mssql.log"].whs_insert_list_to_elaborate(self.id)
+        # commit to exclude rollback as mssql wouldn't be rollbacked too
+        # without this commit, record will be inserted multiple times too
+        self.env.cr.commit()  # pylint: disable=E8102
+        self.env["hyddemo.mssql.log"].whs_read_and_synchronize_list(self.id)
+        self.env.cr.commit()  # pylint: disable=E8102
 
     def whs_check_lists(self):
         for dbsource in self:
