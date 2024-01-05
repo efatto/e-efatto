@@ -42,6 +42,7 @@
                 <group>
                     <field name="location_id" />
                     <field name="warehouse_id" />
+                    <field name="clean_days_limit" />
                 </group>
             </xpath>
         </field>

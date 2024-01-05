@@ -27,4 +27,18 @@
         <field name="doall" eval="False" />
     </record>
 
+    <record id="ir_cron_connector_whs_clean_lists" model="ir.cron">
+        <field
+      name="name"
+    >Connector WHS - remove old lists from Odoo and from WHS</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="numbercall">-1</field>
+        <field name="active" eval="False" />
+        <field name="model_id" ref="model_base_external_dbsource" />
+        <field name="state">code</field>
+        <field name="code">model._cron_whs_clean_lists()</field>
+        <field name="doall" eval="False" />
+    </record>
+
 </odoo>
