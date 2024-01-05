@@ -116,10 +116,60 @@ class HyddemoWhsListe(models.Model):
             lista.unlink()
         return True
 
-    # def whs_recreate_lists(self):
-    #     for whs_list in self:
-    #         if whs_list.whs_list_absent:
-    #             whs_list.move_id.create_whs_list()
+    def whs_recreate_db_lists(self):
+        for whs_list in self:
+            dbsource = False
+            if whs_list.whs_list_absent and whs_list.move_id:
+                dbsource = self.env["base.external.dbsource"].search(
+                    [("location_id", "=", whs_list.move_id.location_id.id)]
+                )
+                if not dbsource:
+                    dbsource = self.env["base.external.dbsource"].search(
+                        [("location_id", "=", whs_list.move_id.location_dest_id.id)]
+                    )
+                connection = dbsource.connection_open_mssql()
+                if not connection:
+                    raise UserError(_("Failed to open connection!"))
+            if not dbsource:
+                return False
+            db_lists = dbsource.execute_mssql(
+                sqlquery=sql_text(
+                    (
+                        "SELECT * FROM HOST_LISTE WHERE NumLista = '%s' "
+                        "AND NumRiga = '%s' AND Elaborato != 5"
+                        % (
+                            whs_list.num_lista,
+                            whs_list.riga,
+                        )
+                    ).replace("\n", " ")
+                ),
+                sqlparams=None,
+                metadata=None,
+            )
+            if len(db_lists[0]) == 0:
+                # recreate list
+                hyddemo_mssql_log_model = self.env["hyddemo.mssql.log"]
+                insert_esiti_liste_params = (
+                    hyddemo_mssql_log_model._prepare_host_liste_values(whs_list)
+                )
+                insert_query = hyddemo_mssql_log_model.get_insert_query(
+                    insert_esiti_liste_params
+                )
+                if insert_esiti_liste_params:
+                    hyddemo_mssql_log_model.execute_query(
+                        dbsource, sql_text(insert_query), insert_esiti_liste_params
+                    )
+                    set_liste_to_elaborate_query = (
+                        "UPDATE HOST_LISTE SET Elaborato=1 WHERE Elaborato=0 "
+                        "AND NumLista='%s' AND NumRiga='%s'"
+                        % (whs_list.num_lista, whs_list.riga)
+                    )
+                    dbsource.with_context(no_return=True).execute_mssql(
+                        sqlquery=sql_text(set_liste_to_elaborate_query),
+                        sqlparams=None,
+                        metadata=None,
+                    )
+                    whs_list.write({"stato": "2"})
 
     def whs_deduplicate_lists(self):
         """
