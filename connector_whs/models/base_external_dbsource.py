@@ -24,6 +24,11 @@ class BaseExternalDbsource(models.Model):
         string="Warehouse linked to WHS",
     )
     conn_string_sandbox = fields.Text("Connection string sandbox")
+    clean_days_limit = fields.Integer(
+        string="Days to keep active lists",
+        default=365,
+        help="Clean whs lists and db list older than this number of days.",
+    )
 
     @api.depends("conn_string", "conn_string_sandbox", "password")
     def _compute_conn_string_full(self):
@@ -62,6 +67,12 @@ class BaseExternalDbsource(models.Model):
     def whs_check_lists(self):
         for dbsource in self:
             self.env["hyddemo.mssql.log"].whs_check_list_state(dbsource.id)
+        return True
+
+    @api.model
+    def _cron_whs_clean_lists(self):
+        for dbsource in self.search([]):
+            self.env["hyddemo.mssql.log"].whs_clean_lists(dbsource.id)
         return True
 
     @api.model

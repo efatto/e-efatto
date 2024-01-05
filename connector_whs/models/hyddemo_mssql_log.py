@@ -9,6 +9,7 @@ from sqlalchemy import text as sql_text
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+from odoo.tools.date_utils import relativedelta
 
 _logger = logging.getLogger(__name__)
 
@@ -459,6 +460,53 @@ class HyddemoMssqlLog(models.Model):
                 )
         if pickings_to_assign:
             pickings_to_assign.action_assign()
+
+    @api.model
+    def whs_clean_lists(self, datasource_id):
+        """
+        Function launchable by cron to delete old lists in Odoo and in WHS:
+        1. delete whs lists without db list older than clean_days_limit
+        2. delete whs lists with move in state 'done' or 'cancel' older than
+        clean_days_limit
+        3. delete orphan db list older than clean_days_limit
+        :param datasource_id: id of datasource (aka dbsource)
+        :return:
+        """
+        dbsource_obj = self.env["base.external.dbsource"]
+        dbsource = dbsource_obj.browse(datasource_id)
+        connection = dbsource.connection_open_mssql()
+        if not connection:
+            raise UserError(_("Failed to open connection!"))
+        date_limit = fields.Datetime.now() - relativedelta(
+            days=dbsource.clean_days_limit
+        )
+        # 2.
+        hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
+            [
+                ("move_id.state", "in", ["done", "cancel"]),
+                ("data_lista", "<", date_limit),
+            ]
+        )
+        for i in range(0, len(hyddemo_whs_lists), 1000):
+            whs_lists = hyddemo_whs_lists[i : i + 1000]
+            delete_query = (
+                "DELETE FROM HOST_LISTE WHERE (%s)"
+                % (
+                    " OR ".join(
+                        "(NumLista='%s' AND NumRiga='%s')" % (y.num_lista, y.riga)
+                        for y in whs_lists
+                    )
+                )
+            ).replace("\n", " ")
+            _logger.info(
+                "WHS LOG: delete old record from HOST_LISTE [query: %s]" % delete_query
+            )
+            dbsource.with_context(no_return=True).execute_mssql(
+                sqlquery=sql_text(delete_query),
+                sqlparams=None,
+                metadata=None,
+            )
+            whs_lists.unlink()
 
     def whs_insert_list_to_elaborate(self, datasource_id):
         """
