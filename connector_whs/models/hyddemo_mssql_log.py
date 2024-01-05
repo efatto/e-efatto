@@ -432,7 +432,13 @@ class HyddemoMssqlLog(models.Model):
                         % (num_lista, num_riga, move.name)
                     )
                 else:
-                    move.quantity_done = qty_moved
+                    try:
+                        move.quantity_done = qty_moved
+                    except UserError as error:
+                        _logger.info(
+                            "WHS LOG: move id %s is not writeable for %s"
+                            % (move.id, error)
+                        )
                 if move.picking_id.mapped("move_lines").filtered(
                     lambda m: m.state not in ("draft", "cancel", "done")
                 ):
