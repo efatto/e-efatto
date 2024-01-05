@@ -239,24 +239,57 @@ class HyddemoWhsListe(models.Model):
                 metadata=None,
             )
             if len(residual_number_of_duplicates[0]) > 1:
-                residual_delete_lists_query = (
-                    "DELETE TOP(%s) FROM HOST_LISTE WHERE NumLista = '%s' "
-                    "AND NumRiga = '%s'"
-                    % (
-                        len(residual_number_of_duplicates[0]) - 1,
-                        whs_list.num_lista,
-                        whs_list.riga,
-                    )
-                )
+                # first remove possible lines without QtaMovimentata
                 dbsource.with_context(no_return=True).execute_mssql(
-                    sqlquery=sql_text(residual_delete_lists_query.replace("\n", " ")),
+                    sqlquery=sql_text(
+                        (
+                            "DELETE FROM HOST_LISTE WHERE NumLista = '%s' "
+                            "AND NumRiga = '%s' AND ISNULL(QtaMovimentata, 0) = 0"
+                            % (
+                                whs_list.num_lista,
+                                whs_list.riga,
+                            )
+                        ).replace("\n", " ")
+                    ),
                     sqlparams=None,
                     metadata=None,
                 )
-                _logger.info(
-                    "WHS LOG: deduplicated residual Lista %s Riga %s"
-                    % (whs_list.num_lista, whs_list.riga)
+                # check if there are other duplicates
+                residual_number_of_duplicates = dbsource.execute_mssql(
+                    sqlquery=sql_text(
+                        (
+                            "SELECT * FROM HOST_LISTE WHERE NumLista = '%s' "
+                            "AND NumRiga = '%s'"
+                            % (
+                                whs_list.num_lista,
+                                whs_list.riga,
+                            )
+                        ).replace("\n", " ")
+                    ),
+                    sqlparams=None,
+                    metadata=None,
                 )
+                if len(residual_number_of_duplicates[0]) > 1:
+                    residual_delete_lists_query = (
+                        "DELETE TOP(%s) FROM HOST_LISTE WHERE NumLista = '%s' "
+                        "AND NumRiga = '%s'"
+                        % (
+                            len(residual_number_of_duplicates[0]) - 1,
+                            whs_list.num_lista,
+                            whs_list.riga,
+                        )
+                    )
+                    dbsource.with_context(no_return=True).execute_mssql(
+                        sqlquery=sql_text(
+                            residual_delete_lists_query.replace("\n", " ")
+                        ),
+                        sqlparams=None,
+                        metadata=None,
+                    )
+                    _logger.info(
+                        "WHS LOG: deduplicated residual Lista %s Riga %s"
+                        % (whs_list.num_lista, whs_list.riga)
+                    )
         return True
 
     def whs_cancel_lists(self, datasource_id):
