@@ -332,6 +332,8 @@ class HyddemoMssqlLog(models.Model):
             # esiti_liste[0] contains result
             if esiti_liste[0]:
                 whs_list.whs_not_passed = True
+                # update this check as it exists, but not possible to know if it doesn't
+                whs_list.whs_list_absent = False
             else:
                 whs_list.whs_not_passed = False
             i += 1
