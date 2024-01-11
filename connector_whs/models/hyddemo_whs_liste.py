@@ -85,6 +85,7 @@ class HyddemoWhsListe(models.Model):
     product_customer_code = fields.Char(size=250)
     whs_list_absent = fields.Boolean()
     whs_list_multiple = fields.Boolean()
+    whs_not_passed = fields.Boolean()
     whs_list_log = fields.Text()
 
     def whs_unlink_lists(self, datasource_id):
