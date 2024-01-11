@@ -36,6 +36,7 @@
             <tree>
                 <field name="whs_list_absent" />
                 <field name="whs_list_multiple" />
+                <field name="whs_not_passed" />
                 <field name="priorita" />
                 <field name="num_lista" />
                 <field name="stato" />
@@ -94,6 +95,8 @@
                             <field name="qta" />
                             <field name="qtamov" />
                             <field name="whs_list_absent" />
+                            <field name="whs_list_multiple" />
+                            <field name="whs_not_passed" />
                             <field name="whs_list_log" />
                         </group>
                     </group>

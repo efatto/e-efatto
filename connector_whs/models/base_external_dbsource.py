@@ -71,7 +71,7 @@ class BaseExternalDbsource(models.Model):
 
     def whs_check_list_not_passed(self):
         for dbsource in self:
-            self.env["hyddemo.mssql.log"].whs_check_list_state(dbsource.id)
+            self.env["hyddemo.mssql.log"].whs_check_list_not_passed(dbsource.id)
         return True
 
     @api.model
