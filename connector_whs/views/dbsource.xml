@@ -36,6 +36,11 @@
             string="Check lists status"
             type="object"
           />
+                    <button
+            name="whs_check_list_not_passed"
+            string="Check lists not passed"
+            type="object"
+          />
                 </header>
             </xpath>
             <xpath expr="//group" position="after">
