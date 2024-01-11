@@ -69,6 +69,11 @@ class BaseExternalDbsource(models.Model):
             self.env["hyddemo.mssql.log"].whs_check_list_state(dbsource.id)
         return True
 
+    def whs_check_list_not_passed(self):
+        for dbsource in self:
+            self.env["hyddemo.mssql.log"].whs_check_list_state(dbsource.id)
+        return True
+
     @api.model
     def _cron_whs_clean_lists(self):
         for dbsource in self.search([]):

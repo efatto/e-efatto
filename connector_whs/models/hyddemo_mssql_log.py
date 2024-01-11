@@ -299,6 +299,47 @@ class HyddemoMssqlLog(models.Model):
                 step += 1
 
     @api.model
+    def whs_check_list_not_passed(self, datasource_id):
+        """
+        Funzione lanciabile manualmente per cercare le liste in Odoo che risultano
+        ancora da lavorare in WHS ma che sono già state lavorate
+        :param datasource_id:
+        :return:
+        """
+        dbsource_obj = self.env["base.external.dbsource"]
+        dbsource = dbsource_obj.browse(datasource_id)
+        connection = dbsource.connection_open_mssql()
+        if not connection:
+            raise UserError(_("Failed to open connection!"))
+        whs_lists = self.env["hyddemo.whs.liste"].search(
+            [
+                ("stato", "=", "2"),
+            ]
+        )
+        i = 0
+        imax = len(whs_lists)
+        step = 1
+        for whs_list in whs_lists:
+            whs_liste_query = (
+                "SELECT NumLista, NumRiga, Qta, QtaMovimentata, Elaborato "
+                "FROM HOST_LISTE "
+                "WHERE NumLista = '%s' AND NumRiga = '%s' "
+                "AND Elaborato = 5" % (whs_list.num_lista, whs_list.riga)
+            )
+            esiti_liste = dbsource.execute_mssql(
+                sqlquery=sql_text(whs_liste_query), sqlparams=None, metadata=None
+            )
+            # esiti_liste[0] contains result
+            if esiti_liste[0]:
+                whs_list.whs_not_passed = True
+            else:
+                whs_list.whs_not_passed = False
+            i += 1
+            if i * 100.0 / imax > step:
+                _logger.info("WHS LOG: Execution {}% ".format(int(i * 100.0 / imax)))
+                step += 1
+
+    @api.model
     def whs_read_and_synchronize_list(self, datasource_id, numlista=False):
         """
         Funzione lanciabile tramite cron per aggiornare i movimenti dalle liste create
