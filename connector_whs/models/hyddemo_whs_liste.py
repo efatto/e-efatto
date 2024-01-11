@@ -403,8 +403,8 @@ class HyddemoWhsListe(models.Model):
                 whs_liste_query = (
                     "SELECT NumLista, NumRiga, Elaborato, DataLista, TipoOrdine, "
                     "Stato, Articolo, Qta, QtaMovimentata FROM HOST_LISTE "
-                    "WHERE NumLista = '%s' AND NumRiga = '%s' "
-                    "AND Elaborato != 5" % (whs_list.num_lista, whs_list.riga)
+                    "WHERE NumLista = '%s' AND NumRiga = '%s'" % (
+                        whs_list.num_lista, whs_list.riga)
                 )
                 esito_lista = dbsource.execute_mssql(
                     sqlquery=sql_text(whs_liste_query), sqlparams=None, metadata=None
