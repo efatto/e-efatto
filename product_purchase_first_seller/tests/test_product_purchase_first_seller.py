@@ -1,10 +1,8 @@
 # Copyright 2024 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import time
 
 from odoo.tests.common import Form, SavepointCase
-from odoo.tools import mute_logger
 
 
 class ProductPurchaseFirstSeller(SavepointCase):
@@ -61,9 +59,11 @@ class ProductPurchaseFirstSeller(SavepointCase):
 
     def test_00_purchase_order(self):
         self._product_replenish(self.product, 5)
-        purchase_order = self.env["purchase.order"].search([
-            ("order_line.product_id", "=", self.product.id),
-        ])
+        purchase_order = self.env["purchase.order"].search(
+            [
+                ("order_line.product_id", "=", self.product.id),
+            ]
+        )
         purchase_order.button_confirm()
         self.assertEqual(
             len(purchase_order.order_line), 1, msg="Order line was not created"

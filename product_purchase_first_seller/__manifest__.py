@@ -10,7 +10,6 @@
     "depends": [
         "purchase_stock",
     ],
-    "data": [
-    ],
+    "data": [],
     "installable": True,
 }
