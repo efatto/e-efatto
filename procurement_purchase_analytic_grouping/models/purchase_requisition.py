@@ -15,6 +15,7 @@ class PurchaseRequisition(models.Model):
                 ('partner_id', '=', seller_id),
                 ('order_line.account_analytic_id', '=', account_analytic.id),
                 ('order_line.product_id', 'in', self.mapped('line_ids.product_id.id')),
+                ('requisition_id', '=', False),
             ])
             if purchase_orders:
                 purchase_order = purchase_orders[0]
