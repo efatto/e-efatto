@@ -418,38 +418,30 @@ ul.auto-toc {
 <div class="section" id="processo-di-creazione-del-nuovo-costo">
 <h2><a class="toc-backref" href="#toc-entry-4">Processo di creazione del nuovo costo</a></h2>
 <p>Viene cercato il primo fornitore con data di validità in corso e prezzo diverso da zero. Se non viene trovato alcun fornitore:</p>
-<blockquote>
 <ol class="arabic simple">
 <li>se il prodotto non ha né un ultimo acquisto né un’ultima fattura: il nuovo costo viene calcolato dal costo del prodotto con la regola del listino selezionato</li>
 <li>in caso contrario il processo termina e passa al prodotto successivo (l’ultimo costo d’acquisto o l’ultimo costo in fattura quindi non vengono utilizzati)</li>
 <li>(i prodotti con il nuovo costo pari a zero vengono mostrati in “Prodotti a costo calcolato zero senza acquisto né fattura”)</li>
 <li>(i prodotti vengono mostrati in ‘Prodotti senza fornitore’)</li>
 </ol>
-</blockquote>
 <p>Altrimenti, se viene trovato almeno un fornitore valido con prezzo diverso da zero:</p>
-<blockquote>
 <ol class="arabic simple">
 <li>viene selezionato solo il primo fornitore valido</li>
 <li>se è indicata la Data Obsolescenza Prezzi Fornitori, i prodotti con la data di ultima modifica del prezzo di questo fornitore precedente alla data indicata vengono mostrati nei ‘Prodotti con prezzo fornitore obsoleto’</li>
 </ol>
-</blockquote>
 <p>Di questi prodotti:</p>
 <p>se il prodotto ha un ultimo acquisto ed è più recente dell’ultimo prezzo fornitore:</p>
-<blockquote>
 <ol class="arabic simple">
 <li>se l’ultimo fornitore è diverso dal fornitore valido, viene mostrato in ‘Prodotti con fornitore non coincidente’;</li>
 <li>se l’ultimo acquisto è uguale all’ultimo prezzo fornitore, il processo termina e passa al prodotto successivo</li>
 <li>se è diverso, viene calcolato il nuovo costo dal costo dell’ultimo acquisto con la regola del listino selezionato (se il nuovo costo è pari a zero il prodotto viene mostrato in “Prodotti a costo calcolato zero con acquisto”)</li>
 </ol>
-</blockquote>
 <p>altrimenti, se il prodotto ha un’ultima fattura ed è più recente dell’ultimo prezzo fornitore:</p>
-<blockquote>
 <ol class="arabic simple">
 <li>se l’ultima fattura è di un fornitore diverso dal fornitore valido, viene mostrato in ‘Prodotti con fornitore non coincidente’;</li>
 <li>se l’ultimo acquisto da fattura è uguale all’ultimo prezzo fornitore, il processo termina e passa al prodotto successivo</li>
 <li>se è diverso, viene calcolato il nuovo costo dal costo dell’ultima fattura con la regola del listino selezionato (se il nuovo costo è pari a zero il prodotto viene mostrato in “Prodotti a costo calcolato zero con fattura”)</li>
 </ol>
-</blockquote>
 <p>altrimenti viene calcolato il nuovo costo dal costo del fornitore valido (se il nuovo costo è pari a zero il prodotto viene mostrato in “Prodotti a costo calcolato zero con acquisto o fattura più vecchi”)</p>
 </div>
 </div>
