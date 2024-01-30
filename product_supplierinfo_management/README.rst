@@ -31,6 +31,18 @@ Configuration
 
 Questo modulo mette a disposizione delle funzionalità per verificare l'attendibilità dei prezzi di acquisto dei prodotti e per aggiornare il costo o il costo di sostituzione in base a questi prezzi.
 
+Le operazioni scelte vengono eseguite su tutti i prodotti che sono acquistabili. È possibile filtrare una o più categorie di prodotti tramite il campo Categorie prodotto:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_supplierinfo_management/static/description/categorie_prodotti.png
+    :alt: Categorie prodotti
+
+I prezzi vengono aggiornati tramite il listino collegato
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_supplierinfo_management/static/description/listino.png
+    :alt: Listino
+
+che deve essere abilitato per l'uso in questa funzione:
+
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_supplierinfo_management/static/description/abilita-listino.png
     :alt: Abilita listino
 
