@@ -46,7 +46,7 @@ che deve essere abilitato per l'uso in questa funzione:
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_supplierinfo_management/static/description/abilita-listino.png
     :alt: Abilita listino
 
-Il menu creato dal modulo mette a disposizione quattro azioni:
+Il menu creato dal modulo mette a disposizione due azioni:
 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_supplierinfo_management/static/description/menu.png
     :alt: Menu in impostazioni Magazzino
@@ -56,22 +56,12 @@ La prima esegue il solo controllo dei prezzi:
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_supplierinfo_management/static/description/controllo.png
     :alt: Controllo prezzi
 
-La seconda esegue l'aggiornamento del costo:
-
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_supplierinfo_management/static/description/aggiorna_costo.png
-    :alt: Aggiorna il costo
-
-La terza esegue l'aggiornamento del costo di sostituzione:
+La seconda esegue l'aggiornamento del costo di sostituzione:
 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_supplierinfo_management/static/description/aggiorna_sostituzione.png
     :alt: Aggiorna il costo di sostituzione
 
-N.B.: Non è possibile ripristinare questa operazione, per cui il campo costo da ora in poi sarà questo. Tenere conto in ogni caso che questo campo potrebbe essere modificato in maniera automatica dal sistema in base alla configurazione.
-
-La quarta copia il costo di sostituzione sul costo del prodotto:
-
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/12.0/product_supplierinfo_management/static/description/copia.png
-    :alt: Copia
+N.B.: Non è possibile ripristinare questa operazione, per cui il campo costo di sostituzione da ora in poi sarà questo.
 
 N.B.: Nel caso sia installato il modulo https://github.com/sergiocorato/e-efatto/tree/12.0/product_pricelist_replenishment_cost è possibile impostare i listini di vendita sulla base del costo di sostituzione, su cui sarà calcolato il margine di vendita, senza andare a toccare il costo del prodotto.
 
