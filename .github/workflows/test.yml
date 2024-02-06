@@ -36,15 +36,6 @@ jobs:
       matrix:
         include:
           - container: ghcr.io/oca/oca-ci/py3.6-ocb14.0:latest
-            include: "purchase_autocomplete_no_reference"
-            name: test with OCB
-            makepot: "false"
-          - container: ghcr.io/oca/oca-ci/py3.6-ocb14.0:latest
-            include: "purchase_autocomplete_no_invoice"
-            name: test with OCB
-            makepot: "false"
-          - container: ghcr.io/oca/oca-ci/py3.6-ocb14.0:latest
-            exclude: "purchase_autocomplete_no_reference,purchase_autocomplete_no_invoice"
             name: test with OCB
             makepot: "false"
     services:
@@ -56,9 +47,6 @@ jobs:
           POSTGRES_DB: odoo
         ports:
           - 5432:5432
-    env:
-      INCLUDE: "${{ matrix.include }}"
-      EXCLUDE: "${{ matrix.exclude }}"
     steps:
       - uses: actions/checkout@v3
         with:

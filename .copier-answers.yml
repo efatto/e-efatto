@@ -15,9 +15,7 @@ odoo_test_flavor: OCB
 odoo_version: 14.0
 org_name: Sergio Corato
 org_slug: sergiocorato
-rebel_module_groups:
-- purchase_autocomplete_no_reference
-- purchase_autocomplete_no_invoice
+rebel_module_groups: []
 repo_description: Tools for Italian companies
 repo_name: Extra Efatto tools
 repo_slug: e-efatto
