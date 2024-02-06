@@ -55,7 +55,7 @@ class PurchaseAutocompleteQtyToInvoice(SavepointCase):
                 default_move_type="in_invoice",
             )
         )
-        invoice_form.date = fields.Date.today()
+        invoice_form.invoice_date = fields.Date.today()
         invoice_form.partner_id = self.vendor
         invoice_form.ref = "Invoice Reference"
         invoice = invoice_form.save()
@@ -78,3 +78,5 @@ class PurchaseAutocompleteQtyToInvoice(SavepointCase):
         invoice_lines = invoice1.invoice_line_ids
         self.assertEqual(invoice_lines.product_id, self.product)
         self.assertEqual(invoice_lines.quantity, 10)
+        invoice1.action_post()
+        self.assertEqual(invoice1.state, 'posted')
