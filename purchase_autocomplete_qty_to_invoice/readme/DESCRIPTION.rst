@@ -1,0 +1,1 @@
+This module restrict autocomplete selection in vendors invoices only to purchase orders in state 'purchase' or 'done', with invoice status 'to invoice' or 'no', and with purchase order line with quantity to invoice different from zero.
