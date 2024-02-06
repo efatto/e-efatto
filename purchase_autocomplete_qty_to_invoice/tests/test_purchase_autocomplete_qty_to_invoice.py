@@ -79,4 +79,4 @@ class PurchaseAutocompleteQtyToInvoice(SavepointCase):
         self.assertEqual(invoice_lines.product_id, self.product)
         self.assertEqual(invoice_lines.quantity, 10)
         invoice1.action_post()
-        self.assertEqual(invoice1.state, 'posted')
+        self.assertEqual(invoice1.state, "posted")
