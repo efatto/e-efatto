@@ -5,7 +5,7 @@
     'version': '12.0.1.0.0',
     'category': 'Manufacture',
     'license': 'AGPL-3',
-    'summanry': "Add created production on raw products.",
+    'summary': "Show created production on raw products.",
     'author': "Sergio Corato",
     'website': 'https://github.com/sergiocorato/e-efatto',
     'depends': [
