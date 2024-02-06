@@ -33,4 +33,5 @@ class AccountMove(models.Model):
                 new_line._onchange_price_subtotal()
                 new_lines += new_line
             new_lines._onchange_mark_recompute_taxes()
+            self._onchange_currency()
         return res
