@@ -18,7 +18,7 @@ class PurchaseAutocompleteQtyToInvoice(SavepointCase):
         purchase_form = Form(self.env["purchase.order"])
         purchase_form.date_order = fields.Date.today()
         purchase_form.partner_id = self.vendor
-        purchase_form.partner_ref = "Vendor Reference"
+        purchase_form.partner_ref = "Vendor Reference ATCPO"
         with purchase_form.order_line.new() as purchase_line_form:
             purchase_line_form.product_id = self.product
             purchase_line_form.product_qty = 20
@@ -49,7 +49,7 @@ class PurchaseAutocompleteQtyToInvoice(SavepointCase):
         backorder_picking = purchase_order.picking_ids - picking
         self.assertTrue(backorder_picking)
         vendor_bill_purchase_id = self.env["purchase.bill.union"].search(
-            [("reference", "=", "Vendor Reference")]
+            [("reference", "=", "Vendor Reference ATCPO")]
         )
         self.assertTrue(vendor_bill_purchase_id)
 
