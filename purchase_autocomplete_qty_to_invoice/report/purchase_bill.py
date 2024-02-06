@@ -18,7 +18,7 @@ class PurchaseBillUnion(models.Model):
                     po.currency_id, po.company_id, NULL as vendor_bill_id,
                     po.id as purchase_order_id
                 FROM purchase_order po
-                LEFT JOIN purchase_order_line pol ON pol.order_id = po.id 
+                LEFT JOIN purchase_order_line pol ON pol.order_id = po.id
                 WHERE
                     pol.qty_to_invoice <> 0.0
                     AND po.state in ('purchase', 'done') AND

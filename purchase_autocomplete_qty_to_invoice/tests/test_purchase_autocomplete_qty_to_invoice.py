@@ -1,4 +1,3 @@
-
 from datetime import timedelta
 
 from odoo import fields
@@ -49,6 +48,11 @@ class PurchaseAutocompleteQtyToInvoice(SavepointCase):
         Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
         backorder_picking = purchase_order.picking_ids - picking
         self.assertTrue(backorder_picking)
+        vendor_bill_purchase_id = self.env["purchase.bill.union"].search(
+            [("reference", "=", "Vendor Reference")]
+        )
+        self.assertTrue(vendor_bill_purchase_id)
+
         invoice_form = Form(
             self.env["account.move"].with_context(
                 check_move_validity=False,
@@ -60,13 +64,18 @@ class PurchaseAutocompleteQtyToInvoice(SavepointCase):
         invoice_form.partner_id = self.vendor
         invoice_form.ref = "Invoice Reference"
         invoice = invoice_form.save()
-        vendor_bill_purchase_id = self.env["purchase.bill.union"].search(
-            [("reference", "=", "Vendor Reference")]
+
+        invoice_form1 = Form(
+            self.env["account.move"]
+            .with_context(
+                check_move_validity=False,
+                company_id=self.env.user.company_id.id,
+            )
+            .browse(invoice.id)
         )
-        self.assertTrue(vendor_bill_purchase_id)
-        invoice.purchase_vendor_bill_id = vendor_bill_purchase_id
-        invoice._onchange_purchase_auto_complete()
-        self.assertEqual(invoice.ref, "Invoice Reference")
-        invoice_lines = invoice.invoice_line_ids
+        invoice_form1.purchase_vendor_bill_id = vendor_bill_purchase_id
+        invoice1 = invoice_form1.save()
+        self.assertEqual(invoice1.ref, "Invoice Reference")
+        invoice_lines = invoice1.invoice_line_ids
         self.assertEqual(invoice_lines.product_id, self.product)
         self.assertEqual(invoice_lines.quantity, 10)
