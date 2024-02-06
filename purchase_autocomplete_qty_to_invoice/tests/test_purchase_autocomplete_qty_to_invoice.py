@@ -48,11 +48,6 @@ class PurchaseAutocompleteQtyToInvoice(SavepointCase):
         Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
         backorder_picking = purchase_order.picking_ids - picking
         self.assertTrue(backorder_picking)
-        vendor_bill_purchase_id = self.env["purchase.bill.union"].search(
-            [("reference", "=", "Vendor Reference ATCPO")]
-        )
-        self.assertTrue(vendor_bill_purchase_id)
-
         invoice_form = Form(
             self.env["account.move"].with_context(
                 check_move_validity=False,
@@ -64,7 +59,11 @@ class PurchaseAutocompleteQtyToInvoice(SavepointCase):
         invoice_form.partner_id = self.vendor
         invoice_form.ref = "Invoice Reference"
         invoice = invoice_form.save()
-
+        # purchase.bill.union is created only when at least one vendor invoice exists
+        vendor_bill_purchase_id = self.env["purchase.bill.union"].search(
+            [("reference", "=", "Vendor Reference ATCPO")]
+        )
+        self.assertTrue(vendor_bill_purchase_id)
         invoice_form1 = Form(
             self.env["account.move"]
             .with_context(
