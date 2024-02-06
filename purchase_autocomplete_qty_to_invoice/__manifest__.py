@@ -13,4 +13,8 @@
     "data": [],
     "summary": "Filter purchases row to invoice when using order autocomplete.",
     "installable": True,
+    "excludes": [
+        "purchase_autocomplete_no_invoice",
+        "purchase_autocomplete_no_reference",
+    ],
 }
