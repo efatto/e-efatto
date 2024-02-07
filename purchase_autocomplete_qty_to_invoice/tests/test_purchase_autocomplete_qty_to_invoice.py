@@ -58,6 +58,12 @@ class PurchaseAutocompleteQtyToInvoice(SavepointCase):
         invoice_form.invoice_date = fields.Date.today()
         invoice_form.partner_id = self.vendor
         invoice_form.ref = "Invoice Reference"
+        # add line by hand
+        with invoice_form.invoice_line_ids.new() as invoice_line_form:
+            invoice_line_form.product_id = self.product2
+            invoice_line_form.quantity = 1.0
+            invoice_line_form.price_unit = 100.0
+            invoice_line_form.name = "product that cost 100"
         invoice = invoice_form.save()
         # purchase.bill.union is created only when at least one vendor invoice exists
         vendor_bill_purchase_id = self.env["purchase.bill.union"].search(
@@ -76,7 +82,11 @@ class PurchaseAutocompleteQtyToInvoice(SavepointCase):
         invoice1 = invoice_form1.save()
         self.assertEqual(invoice1.ref, "Invoice Reference")
         invoice_lines = invoice1.invoice_line_ids
-        self.assertEqual(invoice_lines.product_id, self.product)
-        self.assertEqual(invoice_lines.quantity, 10)
+        self.assertEqual(len(invoice_lines), 2)
+        for invoice_line in invoice_lines:
+            if invoice_line.product_id == self.product:
+                self.assertEqual(invoice_line.quantity, 10)
+            elif invoice_line.product_id == self.product2:
+                self.assertEqual(invoice_line.quantity, 1)
         invoice1.action_post()
         self.assertEqual(invoice1.state, "posted")
