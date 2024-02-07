@@ -1,6 +1,3 @@
-# Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-
 from odoo import api, models
 
 
@@ -14,14 +11,22 @@ class AccountMove(models.Model):
             purchase_id = self.purchase_vendor_bill_id.purchase_order_id
         res = super()._onchange_purchase_auto_complete()
         if purchase_id:
-            # put only purchase order line with qty to invoice
-            self.line_ids.filtered(
-                lambda x: x.purchase_line_id in purchase_id.order_line).unlink()
+            # do not unlink lines as it will remove all lines in cache
+            lines_to_preserve = self.line_ids.filtered(
+                lambda x: not x.purchase_line_id
+                or x.purchase_line_id not in purchase_id.order_line
+            )
+            lines_to_detach = self.line_ids - lines_to_preserve
+            lines_to_detach.move_id = False
             # Copy purchase lines.
-            po_lines = purchase_id.order_line - self.line_ids.mapped("purchase_line_id")
+            po_lines = purchase_id.order_line - lines_to_preserve.mapped(
+                "purchase_line_id"
+            )
             new_lines = self.env["account.move.line"]
             sequence = (
-                max(self.line_ids.mapped("sequence")) + 1 if self.line_ids else 10
+                max(lines_to_preserve.mapped("sequence")) + 1
+                if lines_to_preserve
+                else 10
             )
             for line in po_lines.filtered(
                 lambda l: not l.display_type and l.qty_to_invoice != 0
