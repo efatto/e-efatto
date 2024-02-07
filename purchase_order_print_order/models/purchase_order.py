@@ -1,4 +1,4 @@
-from odoo import api, fields, models
+from odoo import models
 
 
 class PurchaseOrder(models.Model):
@@ -6,4 +6,4 @@ class PurchaseOrder(models.Model):
 
     def print_quotation(self):
         super().print_quotation()
-        return self.env.ref('purchase.action_report_purchase_order').report_action(self)
+        return self.env.ref("purchase.action_report_purchase_order").report_action(self)
