@@ -15,7 +15,8 @@ class AccountMove(models.Model):
         res = super()._onchange_purchase_auto_complete()
         if purchase_id:
             # put only purchase order line with qty to invoice
-            self.line_ids.unlink()
+            self.line_ids.filtered(
+                lambda x: x.purchase_line_id in purchase_id.order_line).unlink()
             # Copy purchase lines.
             po_lines = purchase_id.order_line - self.line_ids.mapped("purchase_line_id")
             new_lines = self.env["account.move.line"]
