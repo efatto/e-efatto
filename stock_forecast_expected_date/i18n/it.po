@@ -1,13 +1,13 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# 	* stock_picking_ddt_info
+# 	* stock_forecast_expected_date
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-28 13:39+0000\n"
-"PO-Revision-Date: 2023-11-28 13:39+0000\n"
+"POT-Creation-Date: 2024-02-21 10:58+0000\n"
+"PO-Revision-Date: 2024-02-21 10:58+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -15,37 +15,48 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
-#. module: stock_picking_ddt_info
-#: model:ir.model.fields,field_description:stock_picking_ddt_info.field_stock_picking__display_name
+#. module: stock_forecast_expected_date
+#: model:ir.model.fields,field_description:stock_forecast_expected_date.field_stock_move__display_name
+#: model:ir.model.fields,field_description:stock_forecast_expected_date.field_stock_picking__display_name
 msgid "Display Name"
 msgstr "Nome visualizzato"
 
-#. module: stock_picking_ddt_info
-#: model:ir.model.fields,field_description:stock_picking_ddt_info.field_stock_picking__id
+#. module: stock_forecast_expected_date
+#: model:ir.model.fields,field_description:stock_forecast_expected_date.field_stock_move__forecast_expected_date
+#: model:ir.model.fields,field_description:stock_forecast_expected_date.field_stock_picking__forecast_expected_date
+msgid "Forecasted Expected date"
+msgstr "Data attesa prevista"
+
+#. module: stock_forecast_expected_date
+#: model:ir.model.fields,field_description:stock_forecast_expected_date.field_stock_move__id
+#: model:ir.model.fields,field_description:stock_forecast_expected_date.field_stock_picking__id
 msgid "ID"
 msgstr ""
 
-#. module: stock_picking_ddt_info
-#: model:ir.model.fields,field_description:stock_picking_ddt_info.field_stock_picking____last_update
+#. module: stock_forecast_expected_date
+#: code:addons/stock_forecast_expected_date/models/stock.py:0
+#, python-format
+msgid "Invalid domain operator %s"
+msgstr "Dominio operatore non valido %s"
+
+#. module: stock_forecast_expected_date
+#: code:addons/stock_forecast_expected_date/models/stock.py:0
+#, python-format
+msgid "Invalid domain right operand %s"
+msgstr "Dominio operatore destro non valido %s"
+
+#. module: stock_forecast_expected_date
+#: model:ir.model.fields,field_description:stock_forecast_expected_date.field_stock_move____last_update
+#: model:ir.model.fields,field_description:stock_forecast_expected_date.field_stock_picking____last_update
 msgid "Last Modified on"
 msgstr "Ultima modifica il"
 
-#. module: stock_picking_ddt_info
-#: model:ir.model.fields,field_description:stock_picking_ddt_info.field_stock_picking__ddt_supplier_date
-msgid "Supplier TD Date"
-msgstr "Data DDT fornitore"
+#. module: stock_forecast_expected_date
+#: model:ir.model,name:stock_forecast_expected_date.model_stock_move
+msgid "Stock Move"
+msgstr "Movimento di magazzino"
 
-#. module: stock_picking_ddt_info
-#: model:ir.model.fields,field_description:stock_picking_ddt_info.field_stock_picking__ddt_supplier_number
-msgid "Supplier TD Number"
-msgstr "Numero DDT fornitore"
-
-#. module: stock_picking_ddt_info
-#: model_terms:ir.ui.view,arch_db:stock_picking_ddt_info.view_picking_form
-msgid "TD Info"
-msgstr "Informazioni DDT"
-
-#. module: stock_picking_ddt_info
-#: model:ir.model,name:stock_picking_ddt_info.model_stock_picking
+#. module: stock_forecast_expected_date
+#: model:ir.model,name:stock_forecast_expected_date.model_stock_picking
 msgid "Transfer"
 msgstr "Trasferimento"
