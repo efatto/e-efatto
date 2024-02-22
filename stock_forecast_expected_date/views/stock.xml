@@ -11,8 +11,12 @@
                 <field name="forecast_expected_late" />
             </field>
             <filter name="late" position="after">
-                <filter name="expected_late" string="Expected Late" help="Scheduled date is not respected"
-                        domain="[('forecast_expected_late', '=', True)]"/>
+                <filter
+          name="expected_late"
+          string="Expected Late"
+          help="Scheduled date is not respected"
+          domain="[('forecast_expected_late', '=', True)]"
+        />
             </filter>
         </field>
     </record>

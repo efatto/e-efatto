@@ -1,3 +1,4 @@
+# flake8: noqa: C901
 from collections import defaultdict
 from datetime import datetime, timedelta
 
@@ -24,16 +25,18 @@ class StockMove(models.Model):
     forecast_expected_date = fields.Datetime(search="_search_forecast_expected_date")
     forecast_expected_late = fields.Boolean(
         string="Forecast Expected Late",
-        compute='_compute_forecast_information',
+        compute="_compute_forecast_information",
         compute_sudo=True,
-        search="_search_forecast_expected_late")
+        search="_search_forecast_expected_late",
+    )
 
     @api.model
     def _search_forecast_expected_late(self, operator, value):
         if operator != "=":
             raise UserError(_("Invalid domain operator %s") % operator)
         domain = self.with_context(
-            forecast_expected_late=True)._search_forecast_expected_date(operator, value)
+            forecast_expected_late=True
+        )._search_forecast_expected_date(operator, value)
         return domain
 
     @api.model
