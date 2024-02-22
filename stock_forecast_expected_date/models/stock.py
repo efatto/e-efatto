@@ -13,20 +13,37 @@ class StockPicking(models.Model):
     forecast_expected_date = fields.Datetime(
         related="move_lines.forecast_expected_date",
     )
+    forecast_expected_late = fields.Boolean(
+        related="move_lines.forecast_expected_late",
+    )
 
 
 class StockMove(models.Model):
     _inherit = "stock.move"
 
     forecast_expected_date = fields.Datetime(search="_search_forecast_expected_date")
+    forecast_expected_late = fields.Boolean(
+        string="Forecast Expected Late",
+        compute='_compute_forecast_information',
+        compute_sudo=True,
+        search="_search_forecast_expected_late")
+
+    @api.model
+    def _search_forecast_expected_late(self, operator, value):
+        if operator != "=":
+            raise UserError(_("Invalid domain operator %s") % operator)
+        domain = self.with_context(
+            forecast_expected_late=True)._search_forecast_expected_date(operator, value)
+        return domain
 
     @api.model
     def _search_forecast_expected_date(self, operator, value):
         if operator not in ("<", ">", "=", "!=", "<=", ">="):
             raise UserError(_("Invalid domain operator %s") % operator)
-        value_dt = fields.Datetime.from_string(value)
-        if not isinstance(value_dt, datetime):
-            raise UserError(_("Invalid domain right operand %s") % value_dt)
+        if not self._context.get("forecast_expected_late", False):
+            value_dt = fields.Datetime.from_string(value)
+            if not isinstance(value_dt, datetime):
+                raise UserError(_("Invalid domain right operand %s") % value_dt)
         move_expected_date_dict = {}
         product_moves = self.search(
             [
@@ -83,13 +100,16 @@ class StockMove(models.Model):
                     )
                     if move_ins_lines:
                         expected_date = max(m["move_in"].date for m in move_ins_lines)
-                        move_expected_date_dict.update({move.id: expected_date})
+                        move_expected_date_dict.update({move: expected_date})
         ids = []
         for move in move_expected_date_dict:
-            if operator == "=":
+            if self._context.get("forecast_expected_late", False):
+                if move_expected_date_dict[move] > move.date:
+                    ids.append(move.id)
+            elif operator == "=":
                 value_dt_end_day = value_dt + timedelta(days=1)
                 if value_dt <= move_expected_date_dict[move] <= value_dt_end_day:
-                    ids.append(move)
-            if OPERATORS[operator](move_expected_date_dict[move], value_dt):
-                ids.append(move)
+                    ids.append(move.id)
+            elif OPERATORS[operator](move_expected_date_dict[move], value_dt):
+                ids.append(move.id)
         return [("id", "in", ids)]
