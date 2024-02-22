@@ -2,13 +2,18 @@
 <odoo>
 
     <record id="view_picking_internal_search" model="ir.ui.view">
-        <field name="name">view.picking.search.ddt</field>
+        <field name="name">view.picking.search.forecast</field>
         <field name="model">stock.picking</field>
         <field name="inherit_id" ref="stock.view_picking_internal_search" />
         <field name="arch" type="xml">
             <field name="origin" position="after">
                 <field name="forecast_expected_date" />
+                <field name="forecast_expected_late" />
             </field>
+            <filter name="late" position="after">
+                <filter name="expected_late" string="Expected Late" help="Scheduled date is not respected"
+                        domain="[('forecast_expected_late', '=', True)]"/>
+            </filter>
         </field>
     </record>
 
