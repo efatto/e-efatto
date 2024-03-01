@@ -62,6 +62,7 @@
                             'G2': 'product_id.uom_id.name${value or ""}#{style=text}',
                             'H2': 'quantity_done${value or 0}#{style=number}',
                             'I2': 'raw_material_production_id${value.product_qty or 1}#{style=number}',
+                            'J2': 'product_id.name${value or ""}#{style=text}',
                         }
                     }
                 },
