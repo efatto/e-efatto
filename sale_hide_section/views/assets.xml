@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="assets_backend"
+              name="sale_hide_section assets_backend"
+              inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <script src="/sale_hide_section/static/src/js/boolean_fa_icon_widget.js"
+                    type="text/javascript"></script>
+            <script src="/sale_hide_section/static/src/js/sale_hide_section.js"
+                    type="text/javascript"></script>
+            <script src="/sale_hide_section/static/src/js/hide_details_translations.js"
+                    type="text/javascript"></script>
+        </xpath>
+    </template>
+</odoo>
