@@ -1,5 +1,4 @@
-
-from odoo import fields, models
+from odoo import models
 
 
 class QcTriggerProductTemplateLine(models.Model):
@@ -11,12 +10,17 @@ class QcTriggerProductTemplateLine(models.Model):
         )
         # deactivate trigger line when success number of tests is reached
         for trigger_line in trigger_lines:
-            inspections = self.env["qc.inspection"].search([
-                ("product_id", "=", product.id),
-                ("test", "=", trigger_line.test.id),
-            ], order="date desc", limit=trigger_line.success_number_to_deactivation)
-            if len(inspections) == trigger_line.success_number_to_deactivation and \
-                    all(inspections.mapped("success")):
+            inspections = self.env["qc.inspection"].search(
+                [
+                    ("product_id", "=", product.id),
+                    ("test", "=", trigger_line.test.id),
+                ],
+                order="date desc",
+                limit=trigger_line.success_number_to_deactivation,
+            )
+            if len(inspections) == trigger_line.success_number_to_deactivation and all(
+                inspections.mapped("success")
+            ):
                 trigger_line.active = False
                 # todo disattivare anche i controlli in attesa?
         if trigger_lines:

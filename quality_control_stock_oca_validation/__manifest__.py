@@ -10,7 +10,6 @@
     "depends": [
         "quality_control_stock_oca",
     ],
-    "data": [
-    ],
+    "data": [],
     "installable": True,
 }
