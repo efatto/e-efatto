@@ -10,10 +10,13 @@ class QcTriggerProductLine(models.Model):
         )
         # deactivate trigger line when success number of tests is reached
         for trigger_line in trigger_lines:
+            if not trigger_line.success_number_to_deactivation:
+                continue
             inspections = self.env["qc.inspection"].search(
                 [
                     ("product_id", "=", product.id),
                     ("test", "=", trigger_line.test.id),
+                    ("state", "in", ["success", "failed"]),
                 ],
                 order="date desc",
                 limit=trigger_line.success_number_to_deactivation,
