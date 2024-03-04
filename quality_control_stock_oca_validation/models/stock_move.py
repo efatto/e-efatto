@@ -1,4 +1,3 @@
-
 from odoo import api, models
 
 from odoo.addons.quality_control_oca.models.qc_trigger_line import _filter_trigger_lines
@@ -18,8 +17,9 @@ class StockMove(models.Model):
             qc_trigger = (
                 self.env["qc.trigger"]
                 .sudo()
-                .search([("picking_type_id", "=",
-                          operation.picking_id.picking_type_id.id)])
+                .search(
+                    [("picking_type_id", "=", operation.picking_id.picking_type_id.id)]
+                )
             )
             trigger_lines = set()
             for model in [
@@ -27,8 +27,11 @@ class StockMove(models.Model):
                 "qc.trigger.product_template_line",
                 "qc.trigger.product_line",
             ]:
-                partner = operation.picking_id.partner_id if (
-                    qc_trigger.partner_selectable) else False
+                partner = (
+                    operation.picking_id.partner_id
+                    if (qc_trigger.partner_selectable)
+                    else False
+                )
                 trigger_lines = trigger_lines.union(
                     self.env[model]
                     .sudo()
