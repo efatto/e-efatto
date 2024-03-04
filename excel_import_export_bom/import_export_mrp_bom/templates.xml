@@ -20,7 +20,7 @@
                             'E2': 'product_id.barcode${value or ""}#{style=text}',
                             'F2': 'product_qty${value or 0}#{style=number}',
                             'G2': 'product_uom_id.name${value or ""}#{style=text}',
-                            'H2': 'product_id.name${value or ""}#{style=text}',
+                            'J2': 'product_id.name${value or ""}#{style=text}',
                         }
                     }
                 },
