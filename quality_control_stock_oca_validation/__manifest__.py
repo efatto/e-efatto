@@ -8,6 +8,7 @@
     "license": "AGPL-3",
     "category": "Products",
     "depends": [
+        "purchase_stock",
         "quality_control_stock_oca",
     ],
     "data": [],
