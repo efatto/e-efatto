@@ -40,5 +40,22 @@
             </xpath>
         </field>
     </record>
-
+    <record id="mrp_production_timeline" model="ir.ui.view">
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp_production_calendar.mrp_production_timeline"/>
+        <field name="arch" type="xml">
+            <timeline position="attributes">
+                <attribute name="color_field">color</attribute>
+            </timeline>
+        </field>
+    </record>
+    <record id="mrp_workorder_timeline" model="ir.ui.view">
+        <field name="model">mrp.workorder</field>
+        <field name="inherit_id" ref="mrp_production_calendar.mrp_workorder_timeline"/>
+        <field name="arch" type="xml">
+            <timeline position="attributes">
+                <attribute name="color_field">color</attribute>
+            </timeline>
+        </field>
+    </record>
 </odoo>
