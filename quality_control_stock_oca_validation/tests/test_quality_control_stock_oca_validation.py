@@ -15,9 +15,11 @@ class QualityControlStockOcaValidation(SavepointCase):
         cls.product = cls.env.ref("product.product_delivery_01")
         cls.product2 = cls.env.ref("product.product_delivery_02")
         cls.picking_type_in = cls.env.ref("stock.picking_type_in")
-        cls.in_trigger = cls.env["qc.trigger"].search([
-            ("picking_type_id", "=", cls.picking_type_in.id),
-        ])
+        cls.in_trigger = cls.env["qc.trigger"].search(
+            [
+                ("picking_type_id", "=", cls.picking_type_in.id),
+            ]
+        )
         qc_test_form = Form(cls.env["qc.test"])
         qc_test_form.name = "Quality check"
         qc_test_form.type = "generic"
@@ -73,12 +75,20 @@ class QualityControlStockOcaValidation(SavepointCase):
             sml.qty_done = sml.product_uom_qty / 2.0
         self.assertEqual(len(picking.qc_inspections_ids), 1)
         res = picking.button_validate()
-        ok_ql = self.env["qc.inspection.line"].search([
-            ("inspection_id", "=", picking.qc_inspections_ids.id),
-            ("possible_ql_values.ok", "=", True),
-        ]).possible_ql_values.filtered("ok")
+        ok_ql = (
+            self.env["qc.inspection.line"]
+            .search(
+                [
+                    ("inspection_id", "=", picking.qc_inspections_ids.id),
+                    ("possible_ql_values.ok", "=", True),
+                ]
+            )
+            .possible_ql_values.filtered("ok")
+        )
         with self.assertRaises(ValidationError):
-            Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
+            Form(
+                self.env[res["res_model"]].with_context(res["context"])
+            ).save().process()
         qc_inspection_form = Form(picking.qc_inspections_ids)
         qc_inspection_line_form = Form(picking.qc_inspections_ids.inspection_lines)
         qc_inspection_line_form.qualitative_value = ok_ql
