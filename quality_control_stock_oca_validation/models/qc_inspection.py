@@ -6,16 +6,17 @@ class QcInspection(models.Model):
 
     def _make_inspection(self, object_ref, trigger_line):
         # do not create inspection if already created
-        if object_ref._name == "stock.move":
-            inspection = self.search(
-                [
-                    ("object_id", "=", object_ref.id),
-                    ("product_id", "=", trigger_line.product.id),
-                    ("picking_id", "=", object_ref.picking_id.id),
-                ]
-            )
-            if inspection:
-                inspection.set_test(trigger_line)
-                return inspection
+        picking_id = object_ref
+        if object_ref._name in ["stock.move", "stock.move.line"]:
+            picking_id = object_ref.picking_id
+        inspection = self.search(
+            [
+                ("product_id", "=", trigger_line.product.id),
+                ("picking_id", "=", picking_id.id),
+            ]
+        )
+        if inspection and inspection.object_id == object_ref:
+            inspection.set_test(trigger_line)
+            return inspection
         inspection = super()._make_inspection(object_ref, trigger_line)
         return inspection
