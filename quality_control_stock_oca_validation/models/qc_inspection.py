@@ -9,14 +9,19 @@ class QcInspection(models.Model):
         picking_id = object_ref
         if object_ref._name in ["stock.move", "stock.move.line"]:
             picking_id = object_ref.picking_id
-        inspection = self.search(
+        inspection_ids = self.search(
             [
                 ("product_id", "=", trigger_line.product.id),
                 ("picking_id", "=", picking_id.id),
             ]
         )
-        if inspection and inspection.object_id == object_ref:
-            inspection.set_test(trigger_line)
-            return inspection
+        if inspection_ids:
+            for inspection in inspection_ids:
+                if (
+                        object_ref._name in ["stock.move", "stock.move.line"]
+                        and inspection.object_id == object_ref
+                ):
+                    inspection.set_test(trigger_line)
+            return inspection_ids
         inspection = super()._make_inspection(object_ref, trigger_line)
         return inspection
