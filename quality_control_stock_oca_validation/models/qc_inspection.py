@@ -18,8 +18,8 @@ class QcInspection(models.Model):
         if inspection_ids:
             for inspection in inspection_ids:
                 if (
-                        object_ref._name in ["stock.move", "stock.move.line"]
-                        and inspection.object_id == object_ref
+                    object_ref._name in ["stock.move", "stock.move.line"]
+                    and inspection.object_id == object_ref
                 ):
                     inspection.set_test(trigger_line)
             return inspection_ids
