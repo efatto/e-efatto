@@ -14,6 +14,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
     _description = "Synchronize stock inventory with Remote Mssql DB"
 
     do_sync = fields.Boolean(string="Synchronize stock inventory")
+    product_id = fields.Many2one("product.product", string="Product to sync")
 
     def apply(self):
         weight = False
@@ -40,6 +41,12 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     "dataora, Qta, Peso FROM HOST_GIACENZE) as A "
                     "WHERE A.rownum BETWEEN %s AND %s" % (i, i + 2000)
                 )
+                if wizard.product_id:
+                    giacenze_query = giacenze_query.replace(
+                        "HOST_GIACENZE",
+                        "HOST_GIACENZE WHERE Articolo = '%s'"
+                        % wizard.product_id.default_code,
+                    )
                 i += 2000
                 esiti_liste = dbsource.execute_mssql(
                     sqlquery=sql_text(giacenze_query), sqlparams=None, metadata=None
@@ -225,7 +232,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 if whs_log_line.get("type"):
                     whs_log_lines.append(whs_log_line)
 
-            if wizard.do_sync:
+            if wizard.do_sync and inventory_lines_data:
                 inventory = inventory_obj.create(
                     {
                         "name": "WHS sync inventory "
@@ -245,7 +252,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         % ("sync" if wizard.do_sync else "check"),
                         "ultimo_invio": new_last_update,
                         "dbsource_id": dbsource.id,
-                        "inventory_id": inventory.id if wizard.do_sync else False,
+                        "inventory_id": inventory.id if inventory else False,
                         "hyddemo_mssql_log_line_ids": [
                             (0, 0, x) for x in whs_log_lines
                         ],
