@@ -7,3 +7,4 @@ access_hyddemo_whsliste_all,hyddemo_whsliste all,model_hyddemo_whs_liste,,1,0,0,
 access_hyddemo_whsliste_manager,hyddemo_whsliste manager,model_hyddemo_whs_liste,base.group_no_one,1,1,1,1
 access_base_external_dbsource_all,base_external_dbsource all,model_base_external_dbsource,,1,0,0,0
 access_wizard_sync_stock_whs_mssql,access_wizard_sync_stock_whs_mssql,model_wizard_sync_stock_whs_mssql,base.group_user,1,0,0,0
+access_wizard_sync_stock_user,access_wizard_sync stock_user,model_wizard_sync_stock_whs_mssql,stock.group_stock_user,1,1,1,1
