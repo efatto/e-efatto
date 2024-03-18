@@ -40,9 +40,6 @@ class TestConnectorWhs(SingleTransactionCase):
                 }
             )
         self.dbsource = dbsource
-        self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
-        )
         self.whs_insert_list_cron = self.env.ref(
             "connector_whs.ir_cron_connector_whs_insert_list"
         )
