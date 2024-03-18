@@ -723,7 +723,10 @@ class TestConnectorWhs(SingleTransactionCase):
 
         # check backorder is not created without whs list validation
         res = picking.button_validate()
-        Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
+        with self.assertRaises(UserError):
+            Form(
+                self.env[res["res_model"]].with_context(res["context"])
+            ).save().process()
         # Check user cannot create backorder if whs list is not processed on whs system
         # TODO NON QUI PERÒ: check backorder is created for residual
         self.assertNotEqual(picking.state, "done")
