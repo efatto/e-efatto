@@ -370,6 +370,14 @@ class TestConnectorWhs(SingleTransactionCase):
             self.dbsource.connection_test()
         res = self.dbsource.whs_update_products()
         self.assertTrue(res)
+        # FIXME per rendere fattibile questo test, si deve entrare nell'UI di WHSystem
+        #  e validare l'ingresso del product1 e attendere poi il cron di WHSystem che
+        #  aggiorni le giacenze (da verificare)
+        # check stock inventory: modify quantity in Odoo and lauch stock sync
+        # self.product1.qty_available = 13
+        # mssql_log = self.run_wizard_sync_stock(
+        #     dbsource=self.dbsource, do_sync=True, product_id=self.product1)
+        # self.assertEqual(len(mssql_log.hyddemo_mssql_log_line_ids), 1)
 
     def test_01_complete_picking_from_sale(self):
         with self.assertRaises(ValidationError):
