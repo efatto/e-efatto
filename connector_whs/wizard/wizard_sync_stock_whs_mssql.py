@@ -146,6 +146,15 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                             if x != "weight"
                         ]
                     )
+                    # Remove from product_qty stock.move which whs lists
+                    # are on stato 'ricevuto esito' but not done in Odoo
+                    open_whs_list_ids = self.env["hyddemo.whs.liste"].search([
+                        ("product_id", "=", product.id),
+                        ("stato", "=", "4"),
+                        ("move_id.state", "!=", "done"),
+                    ])
+                    if open_whs_list_ids:
+                        product_qty -= sum(open_whs_list_ids.mapped("qtamov"))
                     if float_compare(
                         product_qty,
                         product.qty_available,

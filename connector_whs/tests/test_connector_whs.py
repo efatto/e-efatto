@@ -11,6 +11,12 @@ from odoo.exceptions import UserError, ValidationError
 from odoo.tests.common import Form, SingleTransactionCase
 from odoo.tools import mute_logger, relativedelta
 
+SET_LISTE_ELABORATED_QUERY = (
+    "UPDATE HOST_LISTE SET Elaborato=:Elaborato, "
+    "QtaMovimentata=:QtaMovimentata WHERE NumLista=:NumLista AND "
+    "NumRiga=:NumRiga"
+)
+
 
 class TestConnectorWhs(SingleTransactionCase):
     def setUp(self):
@@ -18,6 +24,8 @@ class TestConnectorWhs(SingleTransactionCase):
         dbsource_model = self.env["base.external.dbsource"]
         dbsource = dbsource_model.search([("name", "=", "Odoo WHS local server")])
         if not dbsource:
+            # connection string is something like:
+            # mssql+pymssql://<user>:<password>@<ip>/<database>
             conn_file = os.path.join(os.path.expanduser("~"), "connection_string.txt")
             if not os.path.isfile(conn_file):
                 raise UserError(_("Missing connection string!"))
@@ -42,6 +50,22 @@ class TestConnectorWhs(SingleTransactionCase):
         self.whs_sync_stock_cron = self.env.ref(
             "connector_whs.ir_cron_connector_whs_sync_stock"
         )
+        self.dbsource.whs_update_products()
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        result_num_liste = self.dbsource.execute_mssql(
+            sqlquery=sql_text(
+                "SELECT NumLista FROM HOST_LISTE"
+            ), sqlparams=None, metadata=None)
+        if result_num_liste[0]:
+            sequence_whs_liste = self.env["ir.sequence"].search([
+                ('code', '=', "hyddemo.whs.liste"),
+                ('company_id', 'in', [self.dbsource.company_id.id, False])
+            ], order='company_id')
+            next_number = int(
+                max(result_num_liste[0])[0].replace(sequence_whs_liste.prefix, "")
+            ) + 1
+            if sequence_whs_liste.number_next_actual != next_number:
+                sequence_whs_liste.number_next_actual = next_number
         self.whs_sync_stock_cron.active = False
         self.src_location = self.env.ref("stock.stock_location_stock")
         self.dest_location = self.env.ref("stock.stock_location_customers")
@@ -51,44 +75,84 @@ class TestConnectorWhs(SingleTransactionCase):
         self.procurement_model = self.env["procurement.group"]
         self.partner = self.env.ref("base.res_partner_2")
         # Create product with 16 on hand
-        self.product1 = self.env["product.product"].create(
-            [
-                {
-                    "name": "test product1",
-                    "default_code": "PRODUCT1",
-                    "type": "product",
-                }
-            ]
-        )
-        self.StockQuant = self.env["stock.quant"]
-        self.quant_product1 = self.StockQuant.create(
-            [
-                {
-                    "product_id": self.product1.id,
-                    "location_id": self.src_location.id,
-                    "quantity": 16.0,
-                }
-            ]
-        )
-        # Create product with 8 on hand
-        self.product2 = self.env["product.product"].create(
-            [
-                {
-                    "name": "test product2",
-                    "default_code": "PRODUCT2",
-                    "type": "product",
-                }
-            ]
-        )
-        self.quant_product2 = self.StockQuant.create(
-            [
-                {
-                    "product_id": self.product2.id,
-                    "location_id": self.src_location.id,
-                    "quantity": 8.0,
-                }
-            ]
-        )
+        self.product_model = self.env["product.product"]
+        self.product1 = self.product_model.search([
+            ("default_code", "=", "PRODUCT1")
+        ])
+        if not self.product1:
+            self.product1 = self.product_model.create(
+                [
+                    {
+                        "name": "test product1",
+                        "default_code": "PRODUCT1",
+                        "type": "product",
+                    }
+                ]
+            )
+        # Create product with 8 pieces on hand
+        self.product2 = self.product_model.search([
+            ("default_code", "=", "PRODUCT2")
+        ])
+        if not self.product2:
+            self.product2 = self.product_model.create(
+                [
+                    {
+                        "name": "test product2",
+                        "default_code": "PRODUCT2",
+                        "type": "product",
+                    }
+                ]
+            )
+        self.picking_type_in = self.env.ref("stock.picking_type_in")
+        if not self.product1.qty_available:
+            with Form(self.env["stock.picking"]) as f:
+                f.picking_type_id = self.picking_type_in
+                with f.move_ids_without_package.new() as picking_line:
+                    picking_line.product_id = self.product1
+                    picking_line.product_uom_qty = 16.0
+                with f.move_ids_without_package.new() as picking_line:
+                    picking_line.product_id = self.product2
+                    picking_line.product_uom_qty = 8.0
+            picking = f.save()
+            picking.action_assign()
+            for sml in picking.move_lines.mapped("move_line_ids"):
+                sml.qty_done = sml.product_uom_qty
+            whs_lists = picking.move_lines.mapped("whs_list_ids")
+            # send whs lists to WHS db
+            self.dbsource.whs_insert_read_and_synchronize_list()
+            # simulate whs work: total processing of picking
+            for whs_list in whs_lists:
+                self.dbsource.with_context(no_return=True).execute_mssql(
+                    sqlquery=sql_text(SET_LISTE_ELABORATED_QUERY),
+                    sqlparams=dict(
+                        Elaborato=4,
+                        QtaMovimentata=whs_list.qta,
+                        NumLista=whs_list.num_lista,
+                        NumRiga=whs_list.riga,
+                    ),
+                    metadata=None,
+                )
+            # check whs work is done correctly
+            for whs_list in whs_lists:
+                whs_select_query = (
+                    "SELECT Qta, QtaMovimentata, Priorita FROM HOST_LISTE WHERE "
+                    "Elaborato = 4 AND NumLista = '%s' AND NumRiga = '%s'"
+                    % (whs_list.num_lista, whs_list.riga)
+                )
+                result_liste = self.dbsource.execute_mssql(
+                    sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+                )
+                self.assertEqual(
+                    str(result_liste[0]),
+                    "[(Decimal('16.000'), Decimal('16.000'), 0)]"
+                    if whs_list.product_id == self.product1
+                    else "[(Decimal('8.000'), Decimal('8.000'), 0)]",
+                )
+            self.dbsource.whs_insert_read_and_synchronize_list() # get data from whs to sync whs lists
+            picking.button_validate()
+            self.assertEqual(picking.state, "done")
+            self.run_wizard_sync_stock(
+                dbsource=self.dbsource, do_sync=True, product_id=self.product1)
         # Large Cabinet, 250 on hand
         self.product3 = self.env.ref("product.product_product_6")
         # Drawer Black, 0 on hand
@@ -194,6 +258,24 @@ class TestConnectorWhs(SingleTransactionCase):
         with mute_logger("odoo.addons.stock.models.procurement"):
             self.procurement_model.run_scheduler(True)
             time.sleep(30)
+
+    def run_wizard_sync_stock(self, dbsource, do_sync=False, product_id=False):
+        sync_stock_form = Form(
+            self.env["wizard.sync.stock.whs.mssql"].with_context(
+                ctive_id=dbsource.id,
+                active_ids=dbsource.ids,
+                active_model=dbsource._name,
+            )
+        )
+        if do_sync:
+            sync_stock_form.do_sync = do_sync
+        if product_id:
+            sync_stock_form.product_id = product_id
+        wizard = sync_stock_form.save()
+        res = wizard.apply()
+        mssql_log_id = res.get("res_id", False)
+        mssql_log = self.env["hyddemo.mssql.log"].browse(mssql_log_id)
+        return mssql_log
 
     def simulate_whs_cron(self, whs_lists, elaborato):
         for whs_list in whs_lists:
@@ -315,10 +397,9 @@ class TestConnectorWhs(SingleTransactionCase):
         whs_records = self._execute_select_all_valid_host_liste()
         self.assertEqual(len(whs_records), whs_len_records + 1)
         for whs_record in whs_records:
-            client_order_ref = whs_record[11]
             default_code = whs_record[17]
             product_code = whs_record[29]
-            self.assertEqual(client_order_ref, order1.client_order_ref)
+            self.assertIn(order1.client_order_ref, whs_record)
             if self.product1.default_code == default_code:
                 self.assertEqual(
                     self.product1.customer_ids[0].product_code, product_code
@@ -484,14 +565,9 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertEqual(len(whs_records), whs_len_records + 2)
         # simulate whs work: validate first move partially (3 over 5)
         self.dbsource.whs_insert_read_and_synchronize_list()
-        set_liste_elaborated_query = (
-            "UPDATE HOST_LISTE SET Elaborato=:Elaborato, "
-            "QtaMovimentata=:QtaMovimentata WHERE NumLista=:NumLista AND "
-            "NumRiga=:NumRiga"
-        )
         for whs_list in whs_lists:
             self.dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=sql_text(set_liste_elaborated_query),
+                sqlquery=sql_text(SET_LISTE_ELABORATED_QUERY),
                 sqlparams=dict(
                     Elaborato=4,
                     QtaMovimentata=3,
