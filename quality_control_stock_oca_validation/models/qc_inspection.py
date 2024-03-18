@@ -11,7 +11,7 @@ class QcInspection(models.Model):
             picking_id = object_ref.picking_id
         inspection_ids = self.search(
             [
-                ("product_id", "=", trigger_line.product_id.id),
+                ("product_id", "=", object_ref.product_id.id),
                 ("picking_id", "=", picking_id.id),
             ]
         )
