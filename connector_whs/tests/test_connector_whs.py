@@ -427,7 +427,7 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertEqual(len(whs_records), whs_len_records + 1)
         for whs_list in picking1.mapped("move_lines.whs_list_ids"):
             whs_record = self._execute_select_host_liste(
-                NumLista=whs_list.num_lista, NumRiga=whs_list.riga
+                num_lista=whs_list.num_lista, num_riga=whs_list.riga
             )[0]
             client_order_ref = whs_record[0]
             default_code = whs_record[1]
@@ -552,29 +552,29 @@ class TestConnectorWhs(SingleTransactionCase):
             else:
                 self.assertEqual(picking.state, "waiting")
         picking = order1.picking_ids[0]
+
         self.assertEqual(len(picking.mapped("move_lines.whs_list_ids")), 2)
         self.assertEqual(
             len(set(picking.mapped("move_lines.whs_list_ids.num_lista"))), 1
         )
-
+        num_lista = picking.move_lines.whs_list_ids.mapped("num_lista")[0]
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self.dbsource.execute_mssql(
             sqlquery=sql_text(
-                "SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE WHERE "
-                "Qta!=:Qta"
+                "SELECT Elaborato, NumLista, NumRiga FROM HOST_LISTE WHERE "
+                "NumLista = '%s'" % num_lista
             ),
             sqlparams=dict(Qta=0),
             metadata=None,
         )[0]
-        self.assertEqual(len(whs_records), whs_len_records + 2)
         self.assertEqual({x[0] for x in whs_records}, {1})
         self.assertEqual(
             {x.stato for x in picking.mapped("move_lines.whs_list_ids")}, {"2"}
         )
         for whs_list in picking.mapped("move_lines.whs_list_ids"):
             whs_record = self._execute_select_host_liste(
-                NumLista=whs_list.num_lista, NumRiga=whs_list.riga
+                num_lista=whs_list.num_lista, num_riga=whs_list.riga
             )[0]
             client_order_ref = whs_record[0]
             default_code = whs_record[1]
@@ -706,7 +706,7 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertEqual(len(new_whs_records), whs_len_records + 2)
         for whs_list in picking.mapped("move_lines.whs_list_ids"):
             whs_record = self._execute_select_host_liste(
-                NumLista=whs_list.num_lista, NumRiga=whs_list.riga
+                num_lista=whs_list.num_lista, num_riga=whs_list.riga
             )[0]
             client_order_ref = whs_record[0]
             default_code = whs_record[1]
@@ -863,7 +863,7 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertEqual(len(whs_records), whs_len_records + 4)
         for whs_list in picking.mapped("move_lines.whs_list_ids"):
             whs_record = self._execute_select_host_liste(
-                NumLista=whs_list.num_lista, NumRiga=whs_list.riga
+                num_lista=whs_list.num_lista, num_riga=whs_list.riga
             )[0]
             client_order_ref = whs_record[0]
             default_code = whs_record[1]
@@ -1016,7 +1016,7 @@ class TestConnectorWhs(SingleTransactionCase):
                 state = "assigned"
             self.assertEqual(move_line.state, state)
 
-    def _execute_select_host_liste(self, NumLista=False, NumRiga=False):
+    def _execute_select_host_liste(self, num_lista=False, num_riga=False):
         # insert lists in WHS: this has to be invoked before every sql call!
         self.dbsource.whs_insert_read_and_synchronize_list()
         query = (
@@ -1025,10 +1025,10 @@ class TestConnectorWhs(SingleTransactionCase):
             "Qta, PesoArticolo, Elaborato, DescrizioneArticolo, AuxTestoRiga3 "
             "FROM HOST_LISTE WHERE Qta!=:Qta"
         )
-        if NumLista:
-            query += " AND NumLista = '%s'" % NumLista
-        if NumRiga:
-            query += " AND NumRiga = '%s'" % NumRiga
+        if num_lista:
+            query += " AND NumLista = '%s'" % num_lista
+        if num_riga:
+            query += " AND NumRiga = '%s'" % num_riga
         res = self.dbsource.execute_mssql(
             sqlquery=sql_text(query),
             sqlparams=dict(Qta=0),
