@@ -15,6 +15,7 @@
         "purchase_discount",
         "purchase_stock",
         "res_country_logistic_charge",
+        "res_currency_change_charge",
     ],
     "data": [
         "security/ir.model.access.csv",

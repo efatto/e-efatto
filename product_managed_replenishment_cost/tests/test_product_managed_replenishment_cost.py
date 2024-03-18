@@ -258,32 +258,47 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         self.assertEqual(self.product.managed_replenishment_cost, 60.0 * 0.9)
         self.assertEqual(self.product.standard_price, 60.0 * 0.9)
         self.vendor.country_id.country_group_ids[0].logistic_charge_percentage = 15.0
+        self.vendor.currency_id.change_charge_percentage = 12.0
         repl.update_products_standard_price_only()
-        self.assertAlmostEqual(self.product.standard_price, 60.0 * 0.9 * 1.15)
+        self.assertAlmostEqual(
+            self.product.standard_price, 60.0 * 0.9 * (1 + 0.15 + 0.12)
+        )
         self.assertAlmostEqual(self.product.managed_replenishment_cost, 60.0 * 0.9)
         repl.update_products_replenishment_cost_only()
         self.assertAlmostEqual(
-            self.product.managed_replenishment_cost, 60.0 * 0.9 * 1.15
+            self.product.managed_replenishment_cost, 60.0 * 0.9 * (1 + 0.15 + 0.12)
         )
         repl.update_products_standard_price_and_replenishment_cost()
         self.assertAlmostEqual(
-            self.product.managed_replenishment_cost, 60.0 * 0.9 * 1.15
+            self.product.managed_replenishment_cost, 60.0 * 0.9 * (1 + 0.15 + 0.12)
         )
-        self.assertAlmostEqual(self.product.standard_price, 60.0 * 0.9 * 1.15)
+        self.assertAlmostEqual(
+            self.product.standard_price, 60.0 * 0.9 * (1 + 0.15 + 0.12)
+        )
         tariff = self.env["report.intrastat.tariff"].create({"tariff_percentage": 10.0})
         self.intrastat.tariff_id = tariff
         repl.update_products_replenishment_cost_only()
         self.assertAlmostEqual(
-            self.product.managed_replenishment_cost, (60.0 * 0.9 * 1.15) * 1.10
+            self.product.managed_replenishment_cost,
+            (60.0 * 0.9 * (1 + 0.15 + 0.12)) * 1.10,
+            2,
         )
-        self.assertAlmostEqual(self.product.standard_price, 60.0 * 0.9 * 1.15)
+        self.assertAlmostEqual(
+            self.product.standard_price, 60.0 * 0.9 * (1 + 0.15 + 0.12)
+        )
         repl.update_products_standard_price_only()
-        self.assertAlmostEqual(self.product.standard_price, (60.0 * 0.9 * 1.15) * 1.10)
+        self.assertAlmostEqual(
+            self.product.standard_price, (60.0 * 0.9 * (1 + 0.15 + 0.12)) * 1.10, 2
+        )
         repl.update_products_standard_price_and_replenishment_cost()
         self.assertAlmostEqual(
-            self.product.managed_replenishment_cost, (60.0 * 0.9 * 1.15) * 1.10
+            self.product.managed_replenishment_cost,
+            (60.0 * 0.9 * (1 + 0.15 + 0.12) * 1.10),
+            2,
         )
-        self.assertAlmostEqual(self.product.standard_price, (60.0 * 0.9 * 1.15) * 1.10)
+        self.assertAlmostEqual(
+            self.product.standard_price, (60.0 * 0.9 * (1 + 0.15 + 0.12)) * 1.10, 2
+        )
 
     def test_02_bom(self):
         self._test_02()
