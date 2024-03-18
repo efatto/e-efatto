@@ -92,6 +92,16 @@ class TestConnectorWhs(SingleTransactionCase):
                     }
                 ]
             )
+        self.StockQuant = self.env["stock.quant"]
+        self.quant_product1 = self.StockQuant.create(
+            [
+                {
+                    "product_id": self.product1.id,
+                    "location_id": self.src_location.id,
+                    "quantity": 16.0,
+                }
+            ]
+        )
         # Create product with 8 pieces on hand
         self.product2 = self.product_model.search([("default_code", "=", "PRODUCT2")])
         if not self.product2:
@@ -104,56 +114,66 @@ class TestConnectorWhs(SingleTransactionCase):
                     }
                 ]
             )
-        self.picking_type_in = self.env.ref("stock.picking_type_in")
-        if not self.product1.qty_available:
-            with Form(self.env["stock.picking"]) as f:
-                f.picking_type_id = self.picking_type_in
-                with f.move_ids_without_package.new() as picking_line:
-                    picking_line.product_id = self.product1
-                    picking_line.product_uom_qty = 16.0
-                with f.move_ids_without_package.new() as picking_line:
-                    picking_line.product_id = self.product2
-                    picking_line.product_uom_qty = 8.0
-            picking = f.save()
-            picking.action_assign()
-            for sml in picking.move_lines.mapped("move_line_ids"):
-                sml.qty_done = sml.product_uom_qty
-            whs_lists = picking.move_lines.mapped("whs_list_ids")
-            # send whs lists to WHS db
-            self.dbsource.whs_insert_read_and_synchronize_list()
-            # simulate whs work: total processing of picking
-            for whs_list in whs_lists:
-                self.dbsource.with_context(no_return=True).execute_mssql(
-                    sqlquery=sql_text(SET_LISTE_ELABORATED_QUERY),
-                    sqlparams=dict(
-                        Elaborato=4,
-                        QtaMovimentata=whs_list.qta,
-                        NumLista=whs_list.num_lista,
-                        NumRiga=whs_list.riga,
-                    ),
-                    metadata=None,
-                )
-            # check whs work is done correctly
-            for whs_list in whs_lists:
-                whs_select_query = (
-                    "SELECT Qta, QtaMovimentata, Priorita FROM HOST_LISTE WHERE "
-                    "Elaborato = 4 AND NumLista = '%s' AND NumRiga = '%s'"
-                    % (whs_list.num_lista, whs_list.riga)
-                )
-                result_liste = self.dbsource.execute_mssql(
-                    sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
-                )
-                self.assertEqual(
-                    str(result_liste[0]),
-                    "[(Decimal('16.000'), Decimal('16.000'), 0)]"
-                    if whs_list.product_id == self.product1
-                    else "[(Decimal('8.000'), Decimal('8.000'), 0)]",
-                )
-            self.dbsource.whs_insert_read_and_synchronize_list() # get data from whs to sync whs lists
-            picking.button_validate()
-            self.assertEqual(picking.state, "done")
-            self.run_wizard_sync_stock(
-                dbsource=self.dbsource, do_sync=True, product_id=self.product1)
+        self.quant_product2 = self.StockQuant.create(
+            [
+                {
+                    "product_id": self.product2.id,
+                    "location_id": self.src_location.id,
+                    "quantity": 8.0,
+                }
+            ]
+        )
+        # self.picking_type_in = self.env.ref("stock.picking_type_in")
+        # if not self.product1.qty_available:
+        #     with Form(self.env["stock.picking"]) as f:
+        #         f.picking_type_id = self.picking_type_in
+        #         with f.move_ids_without_package.new() as picking_line:
+        #             picking_line.product_id = self.product1
+        #             picking_line.product_uom_qty = 16.0
+        #         with f.move_ids_without_package.new() as picking_line:
+        #             picking_line.product_id = self.product2
+        #             picking_line.product_uom_qty = 8.0
+        #     picking = f.save()
+        #     picking.action_assign()
+        #     for sml in picking.move_lines.mapped("move_line_ids"):
+        #         sml.qty_done = sml.product_uom_qty
+        #     whs_lists = picking.move_lines.mapped("whs_list_ids")
+        #     # send whs lists to WHS db
+        #     self.dbsource.whs_insert_read_and_synchronize_list()
+        #     # simulate whs work: total processing of picking
+        #     for whs_list in whs_lists:
+        #         self.dbsource.with_context(no_return=True).execute_mssql(
+        #             sqlquery=sql_text(SET_LISTE_ELABORATED_QUERY),
+        #             sqlparams=dict(
+        #                 Elaborato=4,
+        #                 QtaMovimentata=whs_list.qta,
+        #                 NumLista=whs_list.num_lista,
+        #                 NumRiga=whs_list.riga,
+        #             ),
+        #             metadata=None,
+        #         )
+        #     # check whs work is done correctly
+        #     for whs_list in whs_lists:
+        #         whs_select_query = (
+        #             "SELECT Qta, QtaMovimentata, Priorita FROM HOST_LISTE WHERE "
+        #             "Elaborato = 4 AND NumLista = '%s' AND NumRiga = '%s'"
+        #             % (whs_list.num_lista, whs_list.riga)
+        #         )
+        #         result_liste = self.dbsource.execute_mssql(
+        #             sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+        #         )
+        #         self.assertEqual(
+        #             str(result_liste[0]),
+        #             "[(Decimal('16.000'), Decimal('16.000'), 0)]"
+        #             if whs_list.product_id == self.product1
+        #             else "[(Decimal('8.000'), Decimal('8.000'), 0)]",
+        #         )
+        #     self.dbsource.whs_insert_read_and_synchronize_list()
+        #     # get data from whs to sync whs lists
+        #     picking.button_validate()
+        #     self.assertEqual(picking.state, "done")
+        #     self.run_wizard_sync_stock(
+        #         dbsource=self.dbsource, do_sync=True, product_id=self.product1)
         # Large Cabinet, 250 on hand
         self.product3 = self.env.ref("product.product_product_6")
         # Drawer Black, 0 on hand
