@@ -156,7 +156,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         ]
                     )
                     if open_whs_list_ids:
-                        product_qty -= sum(open_whs_list_ids.mapped("qtamov"))
+                        product_qty += sum(open_whs_list_ids.mapped("qtamov"))
                     if float_compare(
                         product_qty,
                         product.qty_available,
