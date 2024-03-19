@@ -209,9 +209,7 @@ class ProductProduct(models.Model):
                 "country_group_ids.logistic_charge_percentage"
             )
         )
-        margin_percentage += sum(
-            seller.name.currency_id.mapped("change_charge_percentage")
-        )
+        margin_percentage += seller.currency_id.change_charge_percentage
         if margin_percentage:
             price_unit *= 1 + margin_percentage / 100.0
         tariff_id = self.intrastat_code_id.tariff_id
