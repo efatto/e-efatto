@@ -18,6 +18,8 @@ class TestConnectorWhs(SingleTransactionCase):
         dbsource_model = self.env["base.external.dbsource"]
         dbsource = dbsource_model.search([("name", "=", "Odoo WHS local server")])
         if not dbsource:
+            # connection string is something like:
+            # mssql+pymssql://<user>:<password>@<ip>/<database>
             conn_file = os.path.join(os.path.expanduser("~"), "connection_string.txt")
             if not os.path.isfile(conn_file):
                 raise UserError(_("Missing connection string!"))
@@ -293,7 +295,7 @@ class TestConnectorWhs(SingleTransactionCase):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         self.assertFalse(self.whs_insert_list_cron.active)
-        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        whs_len_records = len(self._execute_select_host_liste())
         order_form1 = Form(self.env["sale.order"])
         order_form1.partner_id = self.partner
         order_form1.client_order_ref = "Rif. SO customer"
@@ -312,7 +314,7 @@ class TestConnectorWhs(SingleTransactionCase):
             self.assertEqual(picking1.state, "waiting")
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
-        whs_records = self._execute_select_all_valid_host_liste()
+        whs_records = self._execute_select_host_liste()
         self.assertEqual(len(whs_records), whs_len_records + 1)
         for whs_record in whs_records:
             client_order_ref = whs_record[11]
@@ -350,7 +352,7 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertTrue(whs_list)
         # check whs list is added, and only 1 valid whs list exists
         self.dbsource.whs_insert_read_and_synchronize_list()
-        whs_records = self._execute_select_all_valid_host_liste()
+        whs_records = self._execute_select_host_liste()
         self.assertEqual(len(whs_records), whs_len_records + 1)
         # simulate whs work
         lotto = "55A1"
@@ -415,7 +417,7 @@ class TestConnectorWhs(SingleTransactionCase):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
 
-        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        whs_len_records = len(self._execute_select_host_liste())
         order_form1 = Form(self.env["sale.order"])
         order_form1.partner_id = self.partner
         order_form1.client_order_ref = "Rif. SO customer 1"
@@ -553,7 +555,7 @@ class TestConnectorWhs(SingleTransactionCase):
 
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
-            len(self._execute_select_all_valid_host_liste()),
+            len(self._execute_select_host_liste()),
             whs_len_records + 4,
         )
 
@@ -565,7 +567,7 @@ class TestConnectorWhs(SingleTransactionCase):
     def test_03_partial_picking_partial_available_from_sale(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
-        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        whs_len_records = len(self._execute_select_host_liste())
         order_form1 = Form(self.env["sale.order"])
         order_form1.partner_id = self.partner
         order_form1.client_order_ref = "Rif. SO customer 2"
@@ -718,7 +720,7 @@ class TestConnectorWhs(SingleTransactionCase):
             self.dbsource.connection_test()
         self.assertFalse(self.whs_insert_list_cron.active)
         self.assertFalse(self.whs_sync_stock_cron.active)
-        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        whs_len_records = len(self._execute_select_host_liste())
         order_form1 = Form(self.env["sale.order"])
         order_form1.partner_id = self.partner
         order_form1.client_order_ref = "Rif. SO customer 3"
@@ -750,7 +752,7 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertEqual(picking.state, "confirmed")
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
-        whs_records = self._execute_select_all_valid_host_liste()
+        whs_records = self._execute_select_host_liste()
         self.assertEqual(len(whs_records), whs_len_records + 4)
         for whs_record in whs_records:
             client_order_ref = whs_record[11]
@@ -894,7 +896,7 @@ class TestConnectorWhs(SingleTransactionCase):
         self.dbsource.whs_insert_read_and_synchronize_list()
         # check whs list for backorder is not created as the first is completed entirely
         # FIXME: what does the note above mean?
-        res = self._execute_select_all_valid_host_liste()
+        res = self._execute_select_host_liste()
         self.assertEqual(len(res), whs_len_records + 6)
         # self.run_stock_procurement_scheduler()
         backorder_picking.action_assign()
@@ -904,7 +906,7 @@ class TestConnectorWhs(SingleTransactionCase):
                 state = "assigned"
             self.assertEqual(move_line.state, state)
 
-    def _execute_select_all_valid_host_liste(self):
+    def _execute_select_host_liste(self):
         # insert lists in WHS: this has to be invoked before every sql call!
         self.dbsource.whs_insert_read_and_synchronize_list()
         res = self.dbsource.execute_mssql(
@@ -917,7 +919,7 @@ class TestConnectorWhs(SingleTransactionCase):
     def test_05_unlink_sale_order(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
-        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        whs_len_records = len(self._execute_select_host_liste())
         order_form1 = Form(self.env["sale.order"])
         order_form1.partner_id = self.partner
         order_form1.client_order_ref = "Rif. SO customer 4"
@@ -942,7 +944,7 @@ class TestConnectorWhs(SingleTransactionCase):
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
-            len(self._execute_select_all_valid_host_liste()),
+            len(self._execute_select_host_liste()),
             whs_len_records + 2,
         )
         # controlla che le liste whs siano annullate (impostate con Qta=0)
@@ -950,7 +952,7 @@ class TestConnectorWhs(SingleTransactionCase):
         # insert lists in WHS: this has to be invoked before every sql call!
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
-            len(self._execute_select_all_valid_host_liste()),
+            len(self._execute_select_host_liste()),
             whs_len_records,
         )
         self.assertEqual(
@@ -964,7 +966,7 @@ class TestConnectorWhs(SingleTransactionCase):
         # before a select for a check, as it change Elaborato from 4 to 5
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
-            len(self._execute_select_all_valid_host_liste()),
+            len(self._execute_select_host_liste()),
             whs_len_records + 2,
         )
         # self.run_stock_procurement_scheduler()
@@ -995,7 +997,7 @@ class TestConnectorWhs(SingleTransactionCase):
             order1.action_cancel()
         # Check product added to sale order after confirmation create new whs lists
         # adding product to an existing open picking
-        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        whs_len_records = len(self._execute_select_host_liste())
         order_form2 = Form(order1)
         with order_form2.order_line.new() as order_line:
             order_line.product_id = self.product4
@@ -1010,7 +1012,7 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertTrue(new_product_move_line_ids.mapped("whs_list_ids"))
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
-            len(self._execute_select_all_valid_host_liste()),
+            len(self._execute_select_host_liste()),
             whs_len_records + 1,
         )
 
@@ -1022,7 +1024,7 @@ class TestConnectorWhs(SingleTransactionCase):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
 
-        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        whs_len_records = len(self._execute_select_host_liste())
         repair_form = Form(self.env["repair.order"])
         repair_form.product_id = self.product1
         repair_form.product_uom = self.product1.uom_id
@@ -1135,7 +1137,7 @@ class TestConnectorWhs(SingleTransactionCase):
     def test_07_purchase(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
-        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        whs_len_records = len(self._execute_select_host_liste())
         purchase_form = Form(self.env["purchase.order"])
         purchase_form.partner_id = self.partner
         with purchase_form.order_line.new() as po_line:
@@ -1160,7 +1162,7 @@ class TestConnectorWhs(SingleTransactionCase):
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
-            len(self._execute_select_all_valid_host_liste()),
+            len(self._execute_select_host_liste()),
             whs_len_records + 2,
         )
 
@@ -1280,7 +1282,7 @@ class TestConnectorWhs(SingleTransactionCase):
         # Check product added to purchase order after confirm create whs list with
         # different date_planned which create a new picking (as this module depends on
         # purchase_delivery_split_date)
-        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        whs_len_records = len(self._execute_select_host_liste())
         purchase_form = Form(purchase)
         with purchase_form.order_line.new() as po_line:
             po_line.product_id = self.product4
@@ -1294,7 +1296,7 @@ class TestConnectorWhs(SingleTransactionCase):
         # new_picking.action_assign()
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
-            len(self._execute_select_all_valid_host_liste()),
+            len(self._execute_select_host_liste()),
             whs_len_records + 1,
         )
         # Check product added to purchase order after confirmation create new whs lists
@@ -1325,7 +1327,7 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertTrue(new_product_move_line_ids.mapped("whs_list_ids"))
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
-            len(self._execute_select_all_valid_host_liste()),
+            len(self._execute_select_host_liste()),
             whs_len_records + 3,
         )
 
@@ -1357,7 +1359,7 @@ class TestConnectorWhs(SingleTransactionCase):
     def test_08_mrp_partial_from_sale(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
-        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        whs_len_records = len(self._execute_select_host_liste())
         order_form = Form(self.env["sale.order"])
         order_form.partner_id = self.env.ref("base.res_partner_12")
         order_form.date_order = fields.Date.today()
@@ -1393,7 +1395,7 @@ class TestConnectorWhs(SingleTransactionCase):
             else 4
         )
         self.assertEqual(
-            len(self._execute_select_all_valid_host_liste()),
+            len(self._execute_select_host_liste()),
             whs_len_records + created_whs_list_number,
         )
 
@@ -1462,7 +1464,7 @@ class TestConnectorWhs(SingleTransactionCase):
     def test_09_mrp_total_from_sale(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
-        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        whs_len_records = len(self._execute_select_host_liste())
         order_form = Form(self.env["sale.order"])
         order_form.partner_id = self.env.ref("base.res_partner_12")
         order_form.date_order = fields.Date.today()
@@ -1498,7 +1500,7 @@ class TestConnectorWhs(SingleTransactionCase):
             else 4
         )
         self.assertEqual(
-            len(self._execute_select_all_valid_host_liste()),
+            len(self._execute_select_host_liste()),
             whs_len_records + created_whs_list_number,
         )
 
