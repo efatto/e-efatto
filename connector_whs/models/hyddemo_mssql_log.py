@@ -189,11 +189,11 @@ class HyddemoMssqlLog(models.Model):
         dbsource.with_context(no_return=True).execute_mssql(
             sqlquery=sql_text(update_product_query), sqlparams=None, metadata=None
         )
-        res = self.env["hyddemo.mssql.log"].create(
+        self.env["hyddemo.mssql.log"].create(
             [
                 {
                     "ultimo_invio": new_last_update,
-                    "errori": "Added %s products" % len(products),
+                    "errori": "Added/Updated %s products" % len(products),
                     "dbsource_id": datasource_id,
                 }
             ]
