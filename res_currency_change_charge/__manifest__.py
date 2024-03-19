@@ -14,6 +14,6 @@
         "views/res_currency.xml",
     ],
     "summary": "Add a percentage value of currency change costs to be paid when "
-               "purchasing from supplier.",
+    "purchasing from supplier.",
     "installable": True,
 }
