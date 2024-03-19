@@ -157,13 +157,11 @@ class HyddemoMssqlLog(models.Model):
         dbsource.with_context(no_return=True).execute_mssql(
             sqlquery=sql_text(clean_product_query), sqlparams=None, metadata=None
         )
-        log_data = self.search_read(
-            [], ["ultimo_invio", "ultimo_id"], order="ultimo_invio desc", limit=1
-        )
-        _logger.info(log_data)
-        last_id = log_data and log_data[0]["ultimo_id"] or 0
-        last_date_dt = log_data and log_data[0]["ultimo_invio"] or fields.Datetime.now()
+        log_data = self.search([], order="ultimo_invio desc", limit=1)
+        last_id = log_data and log_data.ultimo_id or 0
+        last_date_dt = log_data and log_data.ultimo_invio or fields.Datetime.now()
         last_date = fields.Datetime.to_string(last_date_dt)
+        _logger.info("WHS update products (last update: %s)" % last_date)
         products = self.env["product.product"].search(
             [
                 "|",
@@ -200,7 +198,6 @@ class HyddemoMssqlLog(models.Model):
                 }
             ]
         )
-        _logger.info(res)
         dbsource.connection_close_mssql(connection)
         return True
 
@@ -233,7 +230,7 @@ class HyddemoMssqlLog(models.Model):
             "Codice": product.default_code[:75]
             if product.default_code
             else "articolo senza codice",
-            "Descrizione": product.name[:70],
+            "Descrizione": product.with_context(lang="it_IT").name[:70],
             "Peso": product.weight * 1000 if product.weight else 0.0,  # digits=(18, 5)
             "Barcode": product.barcode[:30] if product.barcode else " ",
             "UM": "PZ"
