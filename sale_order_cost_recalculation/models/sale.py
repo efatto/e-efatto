@@ -53,7 +53,9 @@ class SaleOrder(models.Model):
 
     @api.multi
     def recalculate_prices(self):
-        res = super().recalculate_prices()
+        res = super(
+            SaleOrder, self.with_context(recalculate_prices=True)
+        ).recalculate_prices()
         for line in self.mapped('order_line'):
             dict = line._convert_to_write(line.read()[0])
             if 'product_tmpl_id' in line._fields:
