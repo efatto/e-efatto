@@ -40,9 +40,9 @@ class TestConnectorWhs(SingleTransactionCase):
                 }
             )
         self.dbsource = dbsource
-        # self.dbsource.with_context(no_return=True).execute_mssql(
-        #     sqlquery=sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
-        # )
+        self.dbsource.with_context(no_return=True).execute_mssql(
+            sqlquery=sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
+        )
         self.whs_insert_list_cron = self.env.ref(
             "connector_whs.ir_cron_connector_whs_insert_list"
         )
@@ -93,15 +93,16 @@ class TestConnectorWhs(SingleTransactionCase):
                 ]
             )
         self.StockQuant = self.env["stock.quant"]
-        self.quant_product1 = self.StockQuant.create(
-            [
-                {
-                    "product_id": self.product1.id,
-                    "location_id": self.src_location.id,
-                    "quantity": 16.0,
-                }
-            ]
-        )
+        if not self.product1.qty_available:
+            self.StockQuant.create(
+                [
+                    {
+                        "product_id": self.product1.id,
+                        "location_id": self.src_location.id,
+                        "quantity": 16.0,
+                    }
+                ]
+            )
         # Create product with 8 pieces on hand
         self.product2 = self.product_model.search([("default_code", "=", "PRODUCT2")])
         if not self.product2:
@@ -114,15 +115,17 @@ class TestConnectorWhs(SingleTransactionCase):
                     }
                 ]
             )
-        self.quant_product2 = self.StockQuant.create(
-            [
-                {
-                    "product_id": self.product2.id,
-                    "location_id": self.src_location.id,
-                    "quantity": 8.0,
-                }
-            ]
-        )
+        if not self.product2.qty_available:
+            self.StockQuant.create(
+                [
+                    {
+                        "product_id": self.product2.id,
+                        "location_id": self.src_location.id,
+                        "quantity": 8.0,
+                    }
+                ]
+            )
+        # possible alternative way to create stock for products, but not working
         # self.picking_type_in = self.env.ref("stock.picking_type_in")
         # if not self.product1.qty_available:
         #     with Form(self.env["stock.picking"]) as f:
