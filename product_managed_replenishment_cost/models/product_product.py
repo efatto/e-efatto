@@ -210,11 +210,10 @@ class ProductProduct(models.Model):
             )
         )
         margin_percentage += seller.currency_id.change_charge_percentage
+        if self.intrastat_code_id.tariff_id:
+            margin_percentage += self.intrastat_code_id.tariff_id.tariff_percentage
         if margin_percentage:
             price_unit *= 1 + margin_percentage / 100.0
-        tariff_id = self.intrastat_code_id.tariff_id
-        if tariff_id:
-            price_unit *= 1 + tariff_id.tariff_percentage / 100.0
         return price_unit
 
     def update_products_tobe_purchased(self):

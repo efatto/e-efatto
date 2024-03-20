@@ -280,7 +280,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         repl.update_products_replenishment_cost_only()
         self.assertAlmostEqual(
             self.product.managed_replenishment_cost,
-            (60.0 * 0.9 * (1 + 0.15 + 0.12)) * 1.10,
+            (60.0 * 0.9 * (1 + 0.15 + 0.12 + 0.10)),
             2,
         )
         self.assertAlmostEqual(
@@ -288,16 +288,16 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         )
         repl.update_products_standard_price_only()
         self.assertAlmostEqual(
-            self.product.standard_price, (60.0 * 0.9 * (1 + 0.15 + 0.12)) * 1.10, 2
+            self.product.standard_price, (60.0 * 0.9 * (1 + 0.15 + 0.12 + 0.10)), 2
         )
         repl.update_products_standard_price_and_replenishment_cost()
         self.assertAlmostEqual(
             self.product.managed_replenishment_cost,
-            (60.0 * 0.9 * (1 + 0.15 + 0.12) * 1.10),
+            (60.0 * 0.9 * (1 + 0.15 + 0.12 + 0.10)),
             2,
         )
         self.assertAlmostEqual(
-            self.product.standard_price, (60.0 * 0.9 * (1 + 0.15 + 0.12)) * 1.10, 2
+            self.product.standard_price, (60.0 * 0.9 * (1 + 0.15 + 0.12 + 0.10)), 2
         )
 
     def test_02_bom(self):
