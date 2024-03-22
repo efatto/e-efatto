@@ -93,7 +93,7 @@ class MrpProduction(models.Model):
                 production.move_finished_ids.move_line_ids.consume_line_ids = [
                     (6, 0, production.moves_to_do_ids.mapped("move_line_ids").ids)
                 ]
-                production.moves_to_do_ids = [(5, )]
+                production.moves_to_do_ids = [(5,)]
         return res
 
     def button_send_to_whs(self):
