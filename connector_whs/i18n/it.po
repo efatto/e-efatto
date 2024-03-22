@@ -6,14 +6,31 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-12 15:55+0000\n"
-"PO-Revision-Date: 2023-12-12 15:55+0000\n"
+"POT-Creation-Date: 2024-03-22 14:37+0000\n"
+"PO-Revision-Date: 2024-03-22 14:37+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: connector_whs
+#: model:ir.model.fields,help:connector_whs.field_mrp_production__state
+msgid ""
+" * Draft: The MO is not confirmed yet.\n"
+" * Confirmed: The MO is confirmed, the stock rules and the reordering of the components are trigerred.\n"
+" * In Progress: The production has started (on the MO or on the WO).\n"
+" * To Close: The production is done, the MO has to be closed.\n"
+" * Done: The MO is closed, the stock moves are posted. \n"
+" * Cancelled: The MO has been cancelled, can't be confirmed anymore."
+msgstr ""
+" * Bozza: OdP non ancora confermato.\n"
+" * Confermato: OdP confermato, vengono attivate le regole di magazzino e il riordino dei componenti.\n"
+" * In corso: produzione avviata (su OdP o su OdL).\n"
+" * Da chiudere: produzione completata, l'OdP deve essere chiuso.\n"
+" * Completato: OdP chiuso, i movimenti di magazzino vengono registrati. \n"
+" * Annullato: OdP annullato, non può più essere confermato."
 
 #. module: connector_whs
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_wizard_sync_stock_whs_mssql
@@ -41,20 +58,36 @@ msgid ""
 "A WHS valid list exists and qty moved is different from quantity done on move!\n"
 "To proceed, align quantity done in move to the quantity moved in WHS list."
 msgstr ""
-"Esiste una lista WHS valida e la quantità movimentata è differente dalla quantità"
-"completata nel trasferimento!\nPer proseguire, allineare alla quantità trasferita "
-"nella lista WHS."
+"Esiste una lista WHS valida e la quantità movimentata è differente dalla quantità completata nel trasferimento!\n"
+"Per proseguire, allineare alla quantità trasferita nella lista WHS."
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/mrp.py:0
+#: code:addons/connector_whs/models/stock.py:0
 #, python-format
 msgid "Almost a WHS list is not in state \"Ricevuto Esito\"!"
-msgstr ""
+msgstr "Almeno una lista WHS non è in stato \"Ricevuto Esito\"!"
 
 #. module: connector_whs
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_wizard_sync_stock_whs_mssql
 msgid "Apply"
 msgstr "Salva"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_base_external_dbsource__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_mrp_production__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_product_template__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_purchase_order__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_repair_order__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_sale_order__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_sale_order_line__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_stock_move__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_stock_picking__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_wizard_sync_stock_whs_mssql__assigned_attachment_ids
+msgid "Assigned Attachments"
+msgstr "Allegati assegnati"
 
 #. module: connector_whs
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_wizard_sync_stock_whs_mssql
@@ -73,8 +106,18 @@ msgstr "Controlla lo stato della lista WHS"
 
 #. module: connector_whs
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_dbsource_form
+msgid "Check lists not passed"
+msgstr "Controllo liste non caricate in WHS"
+
+#. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_dbsource_form
 msgid "Check lists status"
 msgstr "Controlla stato liste"
+
+#. module: connector_whs
+#: model:ir.model.fields,help:connector_whs.field_base_external_dbsource__clean_days_limit
+msgid "Clean whs lists and db list older than this number of days."
+msgstr "Elimina le liste WHS e le liste nel DB più vecchie di questo numero di giorni."
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__client_order_ref
@@ -90,6 +133,13 @@ msgstr ""
 #: model:ir.model.fields,field_description:connector_whs.field_base_external_dbsource__conn_string_sandbox
 msgid "Connection string sandbox"
 msgstr "Stringa di connessione test"
+
+#. module: connector_whs
+#: model:ir.actions.server,name:connector_whs.ir_cron_connector_whs_clean_lists_ir_actions_server
+#: model:ir.cron,cron_name:connector_whs.ir_cron_connector_whs_clean_lists
+#: model:ir.cron,name:connector_whs.ir_cron_connector_whs_clean_lists
+msgid "Connector WHS - remove old lists from Odoo and from WHS"
+msgstr "Connettore WHS - rimuove le vecchie liste da Odoo e WHS"
 
 #. module: connector_whs
 #: model:ir.actions.server,name:connector_whs.ir_cron_connector_whs_insert_list_ir_actions_server
@@ -108,6 +158,16 @@ msgid ""
 msgstr ""
 "Connettore WHS - sincronizza il magazzino (passare la variabile True per "
 "sincronizzare il magazzino, altrimenti verrà solo creato il log WHS)"
+
+#. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.mrp_production_form_view
+msgid "Consume components"
+msgstr "Preleva componenti"
+
+#. module: connector_whs
+#: model:ir.model.fields.selection,name:connector_whs.selection__mrp_production__state__consumed
+msgid "Consumed"
+msgstr "Prelevato"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__create_uid
@@ -149,6 +209,16 @@ msgstr ""
 #: model:ir.ui.menu,name:connector_whs.menu_dbsource_stock
 msgid "Database Sources"
 msgstr "Sorgenti Database"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_base_external_dbsource__clean_days_limit
+msgid "Days to keep active lists"
+msgstr "Giorni per cui mantenere attive le liste"
+
+#. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_whs_liste_form
+msgid "Deduplicate list"
+msgstr "Deduplica le liste"
 
 #. module: connector_whs
 #: model:ir.model.fields.selection,name:connector_whs.selection__hyddemo_whs_liste__tipo__2
@@ -198,6 +268,11 @@ msgstr "Sorgenti Database Esterne"
 #: code:addons/connector_whs/models/hyddemo_mssql_log.py:0
 #: code:addons/connector_whs/models/hyddemo_mssql_log.py:0
 #: code:addons/connector_whs/models/hyddemo_mssql_log.py:0
+#: code:addons/connector_whs/models/hyddemo_mssql_log.py:0
+#: code:addons/connector_whs/models/hyddemo_mssql_log.py:0
+#: code:addons/connector_whs/models/hyddemo_whs_liste.py:0
+#: code:addons/connector_whs/models/hyddemo_whs_liste.py:0
+#: code:addons/connector_whs/models/hyddemo_whs_liste.py:0
 #: code:addons/connector_whs/models/hyddemo_whs_liste.py:0
 #: code:addons/connector_whs/models/hyddemo_whs_liste.py:0
 #: code:addons/connector_whs/models/hyddemo_whs_liste.py:0
@@ -237,6 +312,11 @@ msgstr ""
 #: model:ir.model.fields.selection,name:connector_whs.selection__hyddemo_whs_liste__tipo__3
 msgid "Inventario"
 msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_mrp_production__is_consumable
+msgid "Is Consumable"
+msgstr "È prelevabile"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__ultimo_id
@@ -453,15 +533,21 @@ msgid "Product Template (Multi-Company)"
 msgstr "Modello prodotto (Multi-azienda)"
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/mrp.py:0
-#, python-format
-msgid "Production %s is not in progress."
-msgstr "La produzione %s non è in corso."
+#: model:ir.model.fields,field_description:connector_whs.field_wizard_sync_stock_whs_mssql__product_id
+msgid "Product to sync"
+msgstr "Prodotto da sincronizzare"
 
 #. module: connector_whs
 #: model:ir.model,name:connector_whs.model_mrp_production
 msgid "Production Order"
 msgstr "Ordine di Produzione"
+
+#. module: connector_whs
+#: code:addons/connector_whs/models/mrp.py:0
+#: code:addons/connector_whs/models/mrp.py:0
+#, python-format
+msgid "Production is not sent to WHS!"
+msgstr "La produzione non è stata inviata a WHS!"
 
 #. module: connector_whs
 #: model:ir.model.fields,help:connector_whs.field_stock_picking__priority
@@ -480,7 +566,7 @@ msgstr ""
 #. module: connector_whs
 #: model:ir.model,name:connector_whs.model_purchase_order
 msgid "Purchase Order"
-msgstr "Ordine di Acquisto"
+msgstr "Ordine di acquisto"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__qty
@@ -506,6 +592,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__ragsoc
 msgid "Ragione sociale"
 msgstr ""
+
+#. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_whs_liste_form
+msgid "Recreate list in DB"
+msgstr "Ricrea lista nel DB"
 
 #. module: connector_whs
 #: model:ir.model,name:connector_whs.model_repair_order
@@ -554,10 +645,20 @@ msgid "Some moves already elaborated from WHS!"
 msgstr "Alcuni movimenti già elaborati da WHS!"
 
 #. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_mrp_production__state
+msgid "State"
+msgstr "Stato"
+
+#. module: connector_whs
 #: model:ir.model,name:connector_whs.model_stock_move
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__move_id
 msgid "Stock Move"
 msgstr "Movimento di magazzino"
+
+#. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_whs_liste_form
+msgid "Sync list"
+msgstr "Sincronizza lista"
 
 #. module: connector_whs
 #: model:ir.model,name:connector_whs.model_hyddemo_mssql_log
@@ -706,6 +807,11 @@ msgid "Whs List Log"
 msgstr "Log Lista WHS"
 
 #. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__whs_list_multiple
+msgid "Whs List Multiple"
+msgstr "Liste WHS multiple"
+
+#. module: connector_whs
 #: model:ir.actions.act_window,name:connector_whs.action_whs_liste
 #: model:ir.ui.menu,name:connector_whs.menu_whsliste
 msgid "Whs Liste"
@@ -715,6 +821,11 @@ msgstr "Liste Whs"
 #: model:ir.model.fields,field_description:connector_whs.field_stock_move__whs_list_ids
 msgid "Whs Lists"
 msgstr "Liste Whs"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__whs_not_passed
+msgid "Whs Not Passed"
+msgstr "Lista WHS non caricata"
 
 #. module: connector_whs
 #: model:ir.actions.act_window,name:connector_whs.action_whslog
