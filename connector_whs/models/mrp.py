@@ -18,14 +18,14 @@ class MrpProduction(models.Model):
         selection_add=[("consumed", "Consumed"), ("done",)],
         ondelete={"consumed": lambda r: r.write({"state": "progress"})},
         help=" * Draft: The MO is not confirmed yet.\n"
-             " * Confirmed: The MO is confirmed, the stock rules and the reordering of "
-             "the components are trigerred.\n"
-             " * In Progress: The production has started (on the MO or on the WO).\n"
-             " * To Close: The production is done, the MO has to be closed.\n"
-             " * Consumed: The production is in progress, raw components has been "
-             "moved from stock to production area.\n"
-             " * Done: The MO is closed, the stock moves are posted. \n"
-             " * Cancelled: The MO has been cancelled, can't be confirmed anymore."
+        " * Confirmed: The MO is confirmed, the stock rules and the reordering of "
+        "the components are trigerred.\n"
+        " * In Progress: The production has started (on the MO or on the WO).\n"
+        " * To Close: The production is done, the MO has to be closed.\n"
+        " * Consumed: The production is in progress, raw components has been "
+        "moved from stock to production area.\n"
+        " * Done: The MO is closed, the stock moves are posted. \n"
+        " * Cancelled: The MO has been cancelled, can't be confirmed anymore.",
     )
     is_consumable = fields.Boolean(
         compute="_compute_is_consumable",
