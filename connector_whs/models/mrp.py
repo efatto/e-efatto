@@ -14,6 +14,18 @@ class MrpProduction(models.Model):
         compute="_compute_sent_to_whs",
         store=True,
     )
+    state = fields.Selection(
+        selection_add=[("consumed", "Consumed"), ("done",)],
+        ondelete={"consumed": lambda r: r.write({"state": "progress"})},
+    )
+    is_consumable = fields.Boolean(
+        compute="_compute_is_consumable",
+        store=True,
+    )
+    moves_to_do_ids = fields.Many2many(
+        comodel_name="stock.move",
+        string="Technical field to store moves to do in consume workflow",
+    )
 
     @api.depends(
         "move_raw_ids.whs_list_ids",
@@ -36,11 +48,53 @@ class MrpProduction(models.Model):
         for production in self.filtered(lambda mo: mo.state in ["done", "cancel"]):
             production.sent_to_whs = False
 
+    @api.depends("product_qty", "qty_producing", "state")
+    def _compute_is_consumable(self):
+        for production in self:
+            production.is_consumable = bool(
+                production.product_qty == production.qty_producing
+                and not production.state == "consumed"
+            )
+
+    def button_consume(self):
+        self._button_mark_done_sanity_checks()
+        for production in self:
+            if not production.sent_to_whs:
+                raise UserError(_("Production is not sent to WHS!"))
+            production.move_raw_ids._check_done_whs_list()
+            if production.state == "progress":
+                moves_to_do = production.move_raw_ids.filtered(
+                    lambda x: x.state not in ("done", "cancel")
+                )
+                for move in moves_to_do.filtered(
+                    lambda m: m.product_qty == 0.0 and m.quantity_done > 0
+                ):
+                    move.product_uom_qty = move.quantity_done
+                # MRP do not merge move, catch the result of _action_done in order
+                # to get extra moves.
+                moves_to_do = moves_to_do._action_done()
+                production._cal_price(moves_to_do)
+                production.action_assign()
+                production.moves_to_do_ids = [(6, 0, moves_to_do.ids)]
+            production.write({"state": "consumed"})
+
     def button_mark_done(self):
         for production in self:
-            if production.state != "progress":
-                raise UserError(_("Production %s is not in progress.") % production)
-        return super().button_mark_done()
+            if not production.sent_to_whs:
+                raise UserError(_("Production is not sent to WHS!"))
+            (
+                production.move_raw_ids | production.move_finished_ids
+            )._check_done_whs_list()
+            if production.state == "consumed":
+                production.write({"state": "progress"})
+        res = super().button_mark_done()
+        for production in self:
+            if not production.move_finished_ids.move_line_ids.consume_line_ids:
+                production.move_finished_ids.move_line_ids.consume_line_ids = [
+                    (6, 0, production.moves_to_do_ids.mapped("move_line_ids").ids)
+                ]
+                production.moves_to_do_ids = [(5, )]
+        return res
 
     def button_send_to_whs(self):
         self._generate_whs()
@@ -62,11 +116,7 @@ class MrpProduction(models.Model):
                 production.state = "progress"
 
     def _post_inventory(self, cancel_backorder=False):
-        if any(
-            x.stato != "4" and x.qta
-            for x in (self.move_raw_ids | self.move_finished_ids).mapped("whs_list_ids")
-        ):
-            raise UserError(_('Almost a WHS list is not in state "Ricevuto Esito"!'))
+        (self.move_raw_ids | self.move_finished_ids)._check_done_whs_list()
         res = super()._post_inventory(cancel_backorder=cancel_backorder)
         return res
 

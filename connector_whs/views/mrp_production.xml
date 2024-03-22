@@ -15,6 +15,16 @@
           attrs="{'invisible': ['|', ('state', '!=', 'progress'), ('sent_to_whs', '=', True)]}"
         />
             </button>
+            <xpath expr="//button[@name='button_mark_done']" position="before">
+                <field name="is_consumable" invisible="1" />
+                <button
+          name="button_consume"
+          type="object"
+          class="oe_highlight"
+          string="Consume components"
+          attrs="{'invisible': ['|', '|', '|', ('is_consumable', '=', False), ('state', '!=', 'progress'), ('qty_producing', '=', 0), ('sent_to_whs', '=', False)]}"
+        />
+            </xpath>
             <xpath
         expr="/form/header/button[@name='button_mark_done']"
         position="attributes"
@@ -22,7 +32,7 @@
                 <attribute name="string">Produce</attribute>
                 <attribute
           name="attrs"
-        >{'invisible': ['|', '|', ('state', '!=', 'progress'), ('qty_producing', '=', 0), ('sent_to_whs', '=', False)]}</attribute>
+        >{'invisible': ['|', '|', '|', ('is_consumable', '=', True), ('state', 'not in', ['progress', 'consumed']), ('qty_producing', '=', 0), ('sent_to_whs', '=', False)]}</attribute>
             </xpath>
             <xpath
         expr="//button[@name='button_mark_done'][last()]"
