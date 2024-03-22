@@ -165,6 +165,10 @@ class StockMove(models.Model):
         comodel_name="hyddemo.whs.liste", inverse_name="move_id", string="Whs Lists"
     )
 
+    def _check_done_whs_list(self):
+        if any(x.stato != "4" and x.qta for x in self.mapped("whs_list_ids")):
+            raise UserError(_('Almost a WHS list is not in state "Ricevuto Esito"!'))
+
     def _check_valid_whs_list(self):
         for move in self:
             valid_whs_list = move.whs_list_ids.filtered(lambda x: x.stato != "3")
