@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-22 14:37+0000\n"
-"PO-Revision-Date: 2024-03-22 14:37+0000\n"
+"POT-Creation-Date: 2024-03-22 14:51+0000\n"
+"PO-Revision-Date: 2024-03-22 14:51+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -22,6 +22,7 @@ msgid ""
 " * Confirmed: The MO is confirmed, the stock rules and the reordering of the components are trigerred.\n"
 " * In Progress: The production has started (on the MO or on the WO).\n"
 " * To Close: The production is done, the MO has to be closed.\n"
+" * Consumed: The production is in progress, raw components has been moved from stock to production area.\n"
 " * Done: The MO is closed, the stock moves are posted. \n"
 " * Cancelled: The MO has been cancelled, can't be confirmed anymore."
 msgstr ""
@@ -29,6 +30,7 @@ msgstr ""
 " * Confermato: OdP confermato, vengono attivate le regole di magazzino e il riordino dei componenti.\n"
 " * In corso: produzione avviata (su OdP o su OdL).\n"
 " * Da chiudere: produzione completata, l'OdP deve essere chiuso.\n"
+" * Prelevato: OdP avviato, componenti prelevati e spostati nell'area di produzione.\n"
 " * Completato: OdP chiuso, i movimenti di magazzino vengono registrati. \n"
 " * Annullato: OdP annullato, non può più essere confermato."
 
@@ -58,7 +60,8 @@ msgid ""
 "A WHS valid list exists and qty moved is different from quantity done on move!\n"
 "To proceed, align quantity done in move to the quantity moved in WHS list."
 msgstr ""
-"Esiste una lista WHS valida e la quantità movimentata è differente dalla quantità completata nel trasferimento!\n"
+"Esiste una lista WHS valida e la quantità movimentata è differente dalla quantità "
+"completata nel trasferimento!\n"
 "Per proseguire, allineare alla quantità trasferita nella lista WHS."
 
 #. module: connector_whs
@@ -117,7 +120,9 @@ msgstr "Controlla stato liste"
 #. module: connector_whs
 #: model:ir.model.fields,help:connector_whs.field_base_external_dbsource__clean_days_limit
 msgid "Clean whs lists and db list older than this number of days."
-msgstr "Elimina le liste WHS e le liste nel DB più vecchie di questo numero di giorni."
+msgstr ""
+"Elimina le liste WHS e le liste nel DB più vecchie di questo numero di "
+"giorni."
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__client_order_ref
@@ -689,6 +694,11 @@ msgstr "Sincronizza inventario"
 #: model:ir.model,name:connector_whs.model_wizard_sync_stock_whs_mssql
 msgid "Synchronize stock inventory with Remote Mssql DB"
 msgstr "Sincronizza inventario con Database remoto Mssql"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_mrp_production__moves_to_do_ids
+msgid "Technical field to store moves to do in consume workflow"
+msgstr "Campo tecnico per salvare movimenti da fare in worflow prelievo componenti"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__tipo
