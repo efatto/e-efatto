@@ -51,8 +51,10 @@ class MrpProduction(models.Model):
                 moves |= production.move_finished_ids
             production.sent_to_whs = all(
                 x.whs_list_ids
-                and not all(whs_list.tipo == "3" for whs_list in x.whs_list_ids)
-                for x in moves.filtered(lambda move: move.state != "done")
+                and not all(whs_list.stato == "3" for whs_list in x.whs_list_ids)
+                for x in moves.filtered(
+                    lambda move: move.state not in ["done", "cancel"]
+                    and move.product_uom_qty > 0)
             )
         for production in self.filtered(lambda mo: mo.state in ["done", "cancel"]):
             production.sent_to_whs = False
@@ -107,6 +109,7 @@ class MrpProduction(models.Model):
 
     def button_send_to_whs(self):
         self._generate_whs()
+        self._compute_sent_to_whs()
 
     @api.depends(
         "move_raw_ids.state",
