@@ -54,7 +54,8 @@ class MrpProduction(models.Model):
                 and not all(whs_list.stato == "3" for whs_list in x.whs_list_ids)
                 for x in moves.filtered(
                     lambda move: move.state not in ["done", "cancel"]
-                    and move.product_uom_qty > 0)
+                    and move.product_uom_qty > 0
+                )
             )
         for production in self.filtered(lambda mo: mo.state in ["done", "cancel"]):
             production.sent_to_whs = False
