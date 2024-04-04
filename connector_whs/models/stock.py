@@ -213,10 +213,6 @@ class StockMove(models.Model):
         self.create_whs_list()
         return super()._action_confirm(merge, merge_into)
 
-    # def _action_assign(self):
-    #     self.create_whs_list()
-    #     return super()._action_assign()
-
     def create_whs_list(self):
         whsliste_obj = self.env["hyddemo.whs.liste"]
         list_number = False  # get existing active list_number to append new whslist
