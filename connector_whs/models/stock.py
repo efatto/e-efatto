@@ -215,178 +215,180 @@ class StockMove(models.Model):
 
     def create_whs_list(self):
         whsliste_obj = self.env["hyddemo.whs.liste"]
-        list_number = False  # get existing active list_number to append new whslist
-        list_numbers = list(
-            set(
-                self.mapped("whs_list_ids")
-                .filtered(lambda x: x.stato != "3")
-                .mapped("num_lista")
+        for picking in self.mapped("picking_id"):
+            moves = self.filtered(lambda m: m.picking_id == picking)
+            list_number = False  # get existing active list_number to append new whslist
+            list_numbers = list(
+                set(
+                    moves.mapped("whs_list_ids")
+                    .filtered(lambda x: x.stato != "3")
+                    .mapped("num_lista")
+                )
             )
-        )
-        if list_numbers:
-            if len(list_numbers) > 1:
-                raise UserError(
-                    _("More than one list number found for picking %s:" "%s")
-                    % (self.mapped("picking_id").name, "|".join(list_numbers))
-                )
-            if len(list_numbers) == 0:
-                list_number = list_numbers[0]
-        riga = 0
-        for move in self:
-            pick = move.picking_id
-            tipo = False
-            location_id = pick.location_id.id
-            ragsoc = False
-            indirizzo = False
-            cliente = False
-            cap = False
-            localita = False
-            provincia = False
-            nazione = False
-            if pick.picking_type_id.code == "incoming":
-                tipo = "2"
-                location_id = pick.location_dest_id.id
-            elif pick.picking_type_id.code == "outgoing":
-                tipo = "1"
-            # ROADMAP check this part as it is duplicated in mrp.py and an MO creates
-            # whs_list with that function
-            if all(
-                [
-                    x
-                    in [
-                        self.env.ref("mrp.route_warehouse0_manufacture"),
-                        self.env.ref("stock.route_warehouse0_mto"),
-                    ]
-                    for x in move.product_id.route_ids
-                ]
-            ):
-                # Never create whs list for OUT or IN related to manufactured products,
-                # only create MO.
-                # The IN will be without whs_list_ids so freely validatable
-                # as production is done.
-                # Same for the OUT, that one will be based only on Odoo stock current
-                # availability (user has to check this one is correct)
-                if move.procure_method == "make_to_order":
-                    continue
-            #
-
-            dbsource = self.env["base.external.dbsource"].search(
-                [("location_id", "=", location_id)]
-            )
-            if not dbsource:
-                # This location is not linked to WHS System
-                continue
-            if pick.partner_id:
-                ragsoc = pick.partner_id.name
-                cliente = (
-                    pick.partner_id.ref
-                    if pick.partner_id.ref
-                    else pick.partner_id.parent_id.ref
-                    if pick.partner_id.parent_id.ref
-                    else False
-                )
-                indirizzo = pick.partner_id.street if pick.partner_id.street else False
-                cap = pick.partner_id.zip if pick.partner_id.zip else False
-                localita = pick.partner_id.city if pick.partner_id.city else False
-                provincia = (
-                    pick.partner_id.state_id.code if pick.partner_id.state_id else False
-                )
-                nazione = (
-                    pick.partner_id.country_id.name
-                    if pick.partner_id.country_id
-                    else False
-                )
-
-            if tipo:
-                # ROADMAP check phantom products that generates only out moves
-                if (
-                    move.state != "cancel"
-                    and move.product_id.type == "product"
-                    and (
-                        (
-                            pick.picking_type_id.code == "incoming"
-                            and move.location_dest_id.id == location_id
-                        )
-                        or (
-                            pick.picking_type_id.code == "outgoing"
-                            and move.location_id.id == location_id
-                        )
+            if list_numbers:
+                if len(list_numbers) > 1:
+                    raise UserError(
+                        _("More than one list number found for picking %s:" "%s")
+                        % (picking.name, "|".join(list_numbers))
                     )
+                if len(list_numbers) == 0:
+                    list_number = list_numbers[0]
+            riga = 0
+            for move in moves:
+                pick = move.picking_id
+                tipo = False
+                location_id = pick.location_id.id
+                ragsoc = False
+                indirizzo = False
+                cliente = False
+                cap = False
+                localita = False
+                provincia = False
+                nazione = False
+                if pick.picking_type_id.code == "incoming":
+                    tipo = "2"
+                    location_id = pick.location_dest_id.id
+                elif pick.picking_type_id.code == "outgoing":
+                    tipo = "1"
+                # ROADMAP check this part as it is duplicated in mrp.py and an MO create
+                # whs_list with that function
+                if all(
+                    [
+                        x
+                        in [
+                            self.env.ref("mrp.route_warehouse0_manufacture"),
+                            self.env.ref("stock.route_warehouse0_mto"),
+                        ]
+                        for x in move.product_id.route_ids
+                    ]
                 ):
-                    if move.whs_list_ids and any(
-                        x.stato != "3" for x in move.whs_list_ids
-                    ):
-                        _logger.info(
-                            "WHS LOG: Ignored creation of WHS list %s as it "
-                            "already exists and is processable!"
-                            % str(
-                                [
-                                    "%s-%s" % (x.riga, x.num_lista)
-                                    for x in move.whs_list_ids
-                                    if x.stato != "3"
-                                ]
+                    # Never create whs list for OUT or IN related to manufactured produc
+                    # ts only create MO.
+                    # The IN will be without whs_list_ids so freely validatable
+                    # as production is done.
+                    # Same for the OUT, that one will be based only on Odoo stock curren
+                    # t availability (user has to check this one is correct)
+                    if move.procure_method == "make_to_order":
+                        continue
+                #
+
+                dbsource = self.env["base.external.dbsource"].search(
+                    [("location_id", "=", location_id)]
+                )
+                if not dbsource:
+                    # This location is not linked to WHS System
+                    continue
+                if pick.partner_id:
+                    ragsoc = pick.partner_id.name
+                    cliente = (
+                        pick.partner_id.ref
+                        if pick.partner_id.ref
+                        else pick.partner_id.parent_id.ref
+                        if pick.partner_id.parent_id.ref
+                        else False
+                    )
+                    indirizzo = pick.partner_id.street if pick.partner_id.street else False
+                    cap = pick.partner_id.zip if pick.partner_id.zip else False
+                    localita = pick.partner_id.city if pick.partner_id.city else False
+                    provincia = (
+                        pick.partner_id.state_id.code if pick.partner_id.state_id else False
+                    )
+                    nazione = (
+                        pick.partner_id.country_id.name
+                        if pick.partner_id.country_id
+                        else False
+                    )
+
+                if tipo:
+                    # ROADMAP check phantom products that generates only out moves
+                    if (
+                        move.state != "cancel"
+                        and move.product_id.type == "product"
+                        and (
+                            (
+                                pick.picking_type_id.code == "incoming"
+                                and move.location_dest_id.id == location_id
+                            )
+                            or (
+                                pick.picking_type_id.code == "outgoing"
+                                and move.location_id.id == location_id
                             )
                         )
-                        continue
-                    if not list_number:
-                        list_number = self.env["ir.sequence"].next_by_code(
-                            "hyddemo.whs.liste"
+                    ):
+                        if move.whs_list_ids and any(
+                            x.stato != "3" for x in move.whs_list_ids
+                        ):
+                            _logger.info(
+                                "WHS LOG: Ignored creation of WHS list %s as it "
+                                "already exists and is processable!"
+                                % str(
+                                    [
+                                        "%s-%s" % (x.riga, x.num_lista)
+                                        for x in move.whs_list_ids
+                                        if x.stato != "3"
+                                    ]
+                                )
+                            )
+                            continue
+                        if not list_number:
+                            list_number = self.env["ir.sequence"].next_by_code(
+                                "hyddemo.whs.liste"
+                            )
+                            riga = 0
+                        riga += 1
+                        customer = move.product_id.customer_ids.filtered(
+                            lambda x: x.name == pick.partner_id.commercial_partner_id
                         )
-                        riga = 0
-                    riga += 1
-                    customer = move.product_id.customer_ids.filtered(
-                        lambda x: x.name == pick.partner_id.commercial_partner_id
-                    )
-                    whsliste_data = {
-                        "stato": "1",
-                        "tipo": tipo,
-                        "num_lista": list_number,
-                        "data_lista": fields.Datetime.now(),
-                        "product_id": move.product_id.id,
-                        "qta": move.product_qty,
-                        "move_id": move.id,
-                        "tipo_mov": "move",
-                        "riga": riga,
-                        "client_order_ref": move.sale_line_id.order_id.client_order_ref,
-                    }
-                    if move.sale_line_id.product_id != move.product_id:
-                        whsliste_data.update(
-                            {
-                                "parent_product_id": move.sale_line_id.product_id.id,
-                            }
-                        )
-                    if customer:
-                        whsliste_data.update(
-                            {
-                                "product_customer_code": customer[0].product_code,
-                            }
-                        )
-                    if pick.origin:
-                        whsliste_data["riferimento"] = pick.origin[:50]
+                        whsliste_data = {
+                            "stato": "1",
+                            "tipo": tipo,
+                            "num_lista": list_number,
+                            "data_lista": fields.Datetime.now(),
+                            "product_id": move.product_id.id,
+                            "qta": move.product_qty,
+                            "move_id": move.id,
+                            "tipo_mov": "move",
+                            "riga": riga,
+                            "client_order_ref": move.sale_line_id.order_id.client_order_ref,
+                        }
+                        if move.sale_line_id.product_id != move.product_id:
+                            whsliste_data.update(
+                                {
+                                    "parent_product_id": move.sale_line_id.product_id.id,
+                                }
+                            )
+                        if customer:
+                            whsliste_data.update(
+                                {
+                                    "product_customer_code": customer[0].product_code,
+                                }
+                            )
+                        if pick.origin:
+                            whsliste_data["riferimento"] = pick.origin[:50]
 
-                    if move.sale_line_id.priority:
-                        whsliste_data["priorita"] = max(
-                            [int(move.sale_line_id.priority), 0]
-                        )
-                    elif move.priority:
-                        whsliste_data["priorita"] = max([int(move.priority), 0])
+                        if move.sale_line_id.priority:
+                            whsliste_data["priorita"] = max(
+                                [int(move.sale_line_id.priority), 0]
+                            )
+                        elif move.priority:
+                            whsliste_data["priorita"] = max([int(move.priority), 0])
 
-                    if ragsoc:
-                        whsliste_data["ragsoc"] = ragsoc[0:100]
-                    if indirizzo:
-                        whsliste_data["indirizzo"] = indirizzo[0:50]
-                    if cliente:
-                        whsliste_data["cliente"] = cliente.strip()[0:30]
-                    if cap:
-                        whsliste_data["cap"] = cap[0:5]
-                    if localita:
-                        whsliste_data["localita"] = localita[0:50]
-                    if provincia:
-                        whsliste_data["provincia"] = provincia[0:2]
-                    if nazione:
-                        whsliste_data["nazione"] = nazione[0:50]
-                    whsliste_obj.create(whsliste_data)
-                    _logger.info(
-                        "WHS LOG: create list with data:\n %s" % (str(whsliste_data))
-                    )
+                        if ragsoc:
+                            whsliste_data["ragsoc"] = ragsoc[0:100]
+                        if indirizzo:
+                            whsliste_data["indirizzo"] = indirizzo[0:50]
+                        if cliente:
+                            whsliste_data["cliente"] = cliente.strip()[0:30]
+                        if cap:
+                            whsliste_data["cap"] = cap[0:5]
+                        if localita:
+                            whsliste_data["localita"] = localita[0:50]
+                        if provincia:
+                            whsliste_data["provincia"] = provincia[0:2]
+                        if nazione:
+                            whsliste_data["nazione"] = nazione[0:50]
+                        whsliste_obj.create(whsliste_data)
+                        _logger.info(
+                            "WHS LOG: create list with data:\n %s" % (str(whsliste_data))
+                        )
         return True
