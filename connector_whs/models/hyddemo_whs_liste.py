@@ -485,8 +485,8 @@ class HyddemoWhsListe(models.Model):
                                 {
                                     "whs_list_log": "Ok: (NumLista, NumRiga, Elaborato,"
                                     " DataLista, TipoOrdine, Stato, Articolo, Qta, "
-                                    "QtaMovimentata) [lista singola] %s" %
-                                    str(esito_lista),
+                                    "QtaMovimentata) [lista singola] %s"
+                                    % str(esito_lista),
                                 }
                             )
                             whs_list.whs_not_passed = False
