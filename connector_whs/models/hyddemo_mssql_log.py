@@ -315,6 +315,7 @@ class HyddemoMssqlLog(models.Model):
             [
                 ("stato", "=", "2"),
                 ("whs_list_absent", "=", False),
+                ("tipo_mov", "!=", "mrpout"),
                 (
                     "data_lista",
                     ">",
