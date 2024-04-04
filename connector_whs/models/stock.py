@@ -250,27 +250,13 @@ class StockMove(models.Model):
                     location_id = pick.location_dest_id.id
                 elif pick.picking_type_id.code == "outgoing":
                     tipo = "1"
-                # ROADMAP check this part as it is duplicated in mrp.py and an MO create
-                # whs_list with that function
-                if all(
-                    [
-                        x
-                        in [
-                            self.env.ref("mrp.route_warehouse0_manufacture"),
-                            self.env.ref("stock.route_warehouse0_mto"),
-                        ]
-                        for x in move.product_id.route_ids
-                    ]
+                # Do not create whs list as not created in mrp.py
+                if (
+                    picking.picking_type_id.warehouse_id.mto_pull_id.route_id
+                    in move.product_id.route_ids
+                    or move.product_id.categ_id.name == "CUSTOM"
                 ):
-                    # Never create whs list for OUT or IN related to manufactured produc
-                    # ts only create MO.
-                    # The IN will be without whs_list_ids so freely validatable
-                    # as production is done.
-                    # Same for the OUT, that one will be based only on Odoo stock curren
-                    # t availability (user has to check this one is correct)
-                    if move.procure_method == "make_to_order":
-                        continue
-                #
+                    continue
 
                 dbsource = self.env["base.external.dbsource"].search(
                     [("location_id", "=", location_id)]
