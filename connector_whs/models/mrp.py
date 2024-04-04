@@ -215,9 +215,10 @@ class MrpProduction(models.Model):
                                 ]
                                 for x in move.product_id.route_ids
                             ]
+                            and move.product_id.categ_id.name == "CUSTOM"
                         ):
                             # Never create whs list for OUT or IN related to
-                            # manufactured products, only create MO.
+                            # CUSTOM manufactured products, only create MO.
                             # The IN will be without whs_list_ids so freely validatable
                             # as production is done.
                             # Same for the OUT, that one will be based only on Odoo
