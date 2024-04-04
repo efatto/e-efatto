@@ -479,7 +479,7 @@ class HyddemoWhsListe(models.Model):
                         if (
                             whs_list.whs_not_passed
                             and whs_list.stato == "4"
-                            and eval(esito_lista)[2] == 5
+                            # and eval(esito_lista)[2] == 5
                         ):
                             whs_list.write(
                                 {
