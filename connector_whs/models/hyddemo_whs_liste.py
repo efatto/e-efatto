@@ -408,10 +408,10 @@ class HyddemoWhsListe(models.Model):
                     "WHERE NumLista = '%s' AND NumRiga = '%s'"
                     % (whs_list.num_lista, whs_list.riga)
                 )
-                esito_lista = dbsource.execute_mssql(
+                esiti_liste = dbsource.execute_mssql(
                     sqlquery=sql_text(whs_liste_query), sqlparams=None, metadata=None
                 )
-                if not esito_lista[0]:
+                if not esiti_liste[0]:
                     whs_liste_query_simple = (
                         "SELECT NumLista, Elaborato FROM HOST_LISTE "
                         "WHERE NumLista = '%s' AND Elaborato != 5" % whs_list.num_lista
@@ -440,7 +440,7 @@ class HyddemoWhsListe(models.Model):
                                 "Query super simple: %s result:\n [%s]"
                                 % (
                                     whs_liste_query,
-                                    str(esito_lista),
+                                    str(esiti_liste),
                                     whs_liste_query_simple,
                                     str(esito_lista_simple),
                                     whs_liste_query_super_simple,
@@ -456,7 +456,7 @@ class HyddemoWhsListe(models.Model):
                                 "Query simple: %s result:\n [%s]"
                                 % (
                                     whs_liste_query,
-                                    str(esito_lista),
+                                    str(esiti_liste),
                                     whs_liste_query_simple,
                                     str(esito_lista_simple),
                                 ),
@@ -468,16 +468,17 @@ class HyddemoWhsListe(models.Model):
                             "whs_list_absent": False,
                             "whs_list_log": "Ok: (NumLista, NumRiga, Elaborato, "
                             "DataLista, TipoOrdine, Stato, Articolo, Qta, "
-                            "QtaMovimentata) %s" % str(esito_lista[0]),
+                            "QtaMovimentata) %s" % str(esiti_liste[0]),
                         }
                     )
-                    if len(esito_lista[0]) > 1:
+                    if len(esiti_liste[0]) > 1:
                         whs_list.whs_list_multiple = True
                     else:
                         whs_list.whs_list_multiple = False
+                        esito_lista = esiti_liste[0]
                         if (
                             whs_list.whs_not_passed
                             and whs_list.stato == "4"
-                            and esito_lista[0][2] == "5"
+                            and esito_lista[2] == 5
                         ):
                             whs_list.whs_not_passed = False
