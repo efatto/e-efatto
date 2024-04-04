@@ -475,9 +475,9 @@ class HyddemoWhsListe(models.Model):
                         whs_list.whs_list_multiple = True
                     else:
                         whs_list.whs_list_multiple = False
-                if (
-                    whs_list.whs_not_passed
-                    and whs_list.stato == "4"
-                    and esito_lista[0][2] == "5"
-                ):
-                    whs_list.whs_not_passed = False
+                        if (
+                            whs_list.whs_not_passed
+                            and whs_list.stato == "4"
+                            and esito_lista[0][2] == "5"
+                        ):
+                            whs_list.whs_not_passed = False
