@@ -479,6 +479,14 @@ class HyddemoWhsListe(models.Model):
                         if (
                             whs_list.whs_not_passed
                             and whs_list.stato == "4"
-                            and esito_lista[2] == 5
+                            and eval(esito_lista)[2] == 5
                         ):
+                            whs_list.write(
+                                {
+                                    "whs_list_log": "Ok: (NumLista, NumRiga, Elaborato,"
+                                    " DataLista, TipoOrdine, Stato, Articolo, Qta, "
+                                    "QtaMovimentata) [lista singola] %s" %
+                                    str(esito_lista),
+                                }
+                            )
                             whs_list.whs_not_passed = False
