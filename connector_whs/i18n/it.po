@@ -835,7 +835,7 @@ msgstr "Liste Whs"
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__whs_not_passed
 msgid "Whs Not Passed"
-msgstr "Lista WHS non caricata"
+msgstr "Lista WHS non allineata"
 
 #. module: connector_whs
 #: model:ir.actions.act_window,name:connector_whs.action_whslog
