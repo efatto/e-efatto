@@ -187,8 +187,10 @@ class MrpProduction(models.Model):
             if finished_dbsource and not (
                 production.picking_type_id.warehouse_id.mto_pull_id.route_id
                 in production.product_id.route_ids
+                and production.product_id.categ_id.name == "CUSTOM"
             ):
                 # Do not create WHS lists for finished products that have an MTO route
+                # and with category name equal to CUSTOM
                 # Location of finished material is linked to WHS
                 num_lista = False
                 riga = 0
@@ -206,26 +208,25 @@ class MrpProduction(models.Model):
                     if move.product_uom_qty <= 0:
                         continue
                     if move.location_dest_id == production.location_dest_id:
-                        if all(
-                            [
-                                x
-                                in [
-                                    self.env.ref("mrp.route_warehouse0_manufacture"),
-                                    self.env.ref("stock.route_warehouse0_mto"),
-                                ]
-                                for x in move.product_id.route_ids
-                            ]
-                            and move.product_id.categ_id.name == "CUSTOM"
-                        ):
-                            # Never create whs list for OUT or IN related to
-                            # CUSTOM manufactured products, only create MO.
-                            # The IN will be without whs_list_ids so freely validatable
-                            # as production is done.
-                            # Same for the OUT, that one will be based only on Odoo
-                            # stock current availability (user has to check this one is
-                            # correct)
-                            if move.procure_method == "make_to_order":
-                                continue
+                        # if all(
+                        #     [
+                        #         x
+                        #         in [
+                        #             self.env.ref("mrp.route_warehouse0_manufacture"),
+                        #             self.env.ref("stock.route_warehouse0_mto"),
+                        #         ]
+                        #         for x in move.product_id.route_ids
+                        #     ]
+                        # ):
+                        #     # Never create whs list for OUT or IN related to
+                        #     # CUSTOM manufactured products, only create MO.
+                        #     #The IN will be without whs_list_ids so freely validatable
+                        #     # as production is done.
+                        #     # Same for the OUT, that one will be based only on Odoo
+                        #     #stock current availability (user has to check this one is
+                        #     # correct)
+                        #     if move.procure_method == "make_to_order":
+                        #         continue
                         if not num_lista:
                             num_lista = self.env["ir.sequence"].next_by_code(
                                 "hyddemo.whs.liste"
