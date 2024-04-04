@@ -315,7 +315,6 @@ class HyddemoMssqlLog(models.Model):
             [
                 ("stato", "=", "2"),
                 ("whs_list_absent", "=", False),
-                ("tipo_mov", "!=", "mrpout"),
                 (
                     "data_lista",
                     ">",
@@ -338,7 +337,7 @@ class HyddemoMssqlLog(models.Model):
                 sqlquery=sql_text(whs_liste_query), sqlparams=None, metadata=None
             )
             # esiti_liste[0] contains result
-            if esiti_liste[0]:
+            if esiti_liste[0] and not whs_list.move_id.raw_material_production_id:
                 whs_list.whs_not_passed = True
                 # update this check as it exists, but not possible to know if it doesn't
                 whs_list.whs_list_absent = False

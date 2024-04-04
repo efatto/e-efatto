@@ -485,7 +485,7 @@ class HyddemoWhsListe(models.Model):
                         )
                         # Nota le liste dei componenti della produzione restano disal-
                         # lineate fino a quando l'utente non clicca su Preleva
-                        if whs_list.tipo_mov != "mrp_out" or (
+                        if not whs_list.move_id.raw_material_production_id or (
                             whs_list.stato == "4" and esito_lista[0][2] == 5
                         ):
                             whs_list.whs_not_passed = False
