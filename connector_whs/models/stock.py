@@ -273,11 +273,15 @@ class StockMove(models.Model):
                         if pick.partner_id.parent_id.ref
                         else False
                     )
-                    indirizzo = pick.partner_id.street if pick.partner_id.street else False
+                    indirizzo = (
+                        pick.partner_id.street if pick.partner_id.street else False
+                    )
                     cap = pick.partner_id.zip if pick.partner_id.zip else False
                     localita = pick.partner_id.city if pick.partner_id.city else False
                     provincia = (
-                        pick.partner_id.state_id.code if pick.partner_id.state_id else False
+                        pick.partner_id.state_id.code
+                        if pick.partner_id.state_id
+                        else False
                     )
                     nazione = (
                         pick.partner_id.country_id.name
@@ -375,6 +379,7 @@ class StockMove(models.Model):
                             whsliste_data["nazione"] = nazione[0:50]
                         whsliste_obj.create(whsliste_data)
                         _logger.info(
-                            "WHS LOG: create list with data:\n %s" % (str(whsliste_data))
+                            "WHS LOG: create list with data:\n %s"
+                            % (str(whsliste_data))
                         )
         return True
