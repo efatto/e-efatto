@@ -314,6 +314,13 @@ class HyddemoMssqlLog(models.Model):
         whs_lists = self.env["hyddemo.whs.liste"].search(
             [
                 ("stato", "=", "2"),
+                ("whs_list_absent", "=", False),
+                (
+                    "data_lista",
+                    ">",
+                    fields.Datetime.now()
+                    + relativedelta(days=-dbsource.clean_days_limit),
+                ),
             ]
         )
         i = 0
