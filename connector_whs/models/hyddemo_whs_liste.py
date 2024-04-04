@@ -385,8 +385,9 @@ class HyddemoWhsListe(models.Model):
 
     def whs_check_list_state(self):
         """
-        Funzione lanciabile manualmente per marcare la lista in Odoo che non è più
-        presenti in WHS in quanto cancellate, per verifiche
+        Funzione lanciabile manualmente per controllare la congruenza della lista
+        tra Odoo e WHSystem.
+        Aggiorna i campi whs_list_absent, whs_list_multiple e whs_not_passed
         :return:
         """
         for whs_list in self:
@@ -474,3 +475,9 @@ class HyddemoWhsListe(models.Model):
                         whs_list.whs_list_multiple = True
                     else:
                         whs_list.whs_list_multiple = False
+                if (
+                    whs_list.whs_not_passed
+                    and whs_list.stato == "4"
+                    and esito_lista[0][2] == "5"
+                ):
+                    whs_list.whs_not_passed = False
