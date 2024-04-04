@@ -463,30 +463,31 @@ class HyddemoWhsListe(models.Model):
                             }
                         )
                 else:
-                    whs_list.write(
-                        {
-                            "whs_list_absent": False,
-                            "whs_list_log": "Ok: (NumLista, NumRiga, Elaborato, "
-                            "DataLista, TipoOrdine, Stato, Articolo, Qta, "
-                            "QtaMovimentata) %s" % str(esiti_liste[0]),
-                        }
-                    )
                     if len(esiti_liste[0]) > 1:
-                        whs_list.whs_list_multiple = True
+                        whs_list.write(
+                            {
+                                "whs_list_absent": False,
+                                "whs_list_multiple": True,
+                                "whs_list_log": "Ok: (NumLista, NumRiga, Elaborato, "
+                                "DataLista, TipoOrdine, Stato, Articolo, Qta, "
+                                "QtaMovimentata) %s" % str(esiti_liste[0]),
+                            }
+                        )
                     else:
                         whs_list.whs_list_multiple = False
                         esito_lista = esiti_liste[0]
+                        whs_list.write(
+                            {
+                                "whs_list_log": "Ok: (NumLista, NumRiga, Elaborato,"
+                                " DataLista, TipoOrdine, Stato, Articolo, Qta, "
+                                "QtaMovimentata) [lista singola] %s" % str(esito_lista),
+                            }
+                        )
                         if (
                             whs_list.whs_not_passed
                             and whs_list.stato == "4"
                             and esito_lista[0][2] == 5
                         ):
-                            whs_list.write(
-                                {
-                                    "whs_list_log": "Ok: (NumLista, NumRiga, Elaborato,"
-                                    " DataLista, TipoOrdine, Stato, Articolo, Qta, "
-                                    "QtaMovimentata) [lista singola] %s"
-                                    % str(esito_lista),
-                                }
-                            )
                             whs_list.whs_not_passed = False
+                        else:
+                            whs_list.whs_not_passed = True
