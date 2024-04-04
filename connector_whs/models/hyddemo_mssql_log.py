@@ -299,7 +299,10 @@ class HyddemoMssqlLog(models.Model):
     def whs_check_list_not_passed(self, datasource_id):
         """
         Funzione lanciabile manualmente per cercare le liste in Odoo che risultano
-        ancora da lavorare in WHS ma che sono già state lavorate
+        ancora da lavorare in WHS ma che sono già state lavorate.
+        Si cercano quindi le liste che in Odoo sono in stato 2 (Elaborato) mentre in
+        WHS sono in stato 5, per cui dovrebbero essere in stato 4 (Ricevuto esito) in
+        Odoo.
         :param datasource_id:
         :return:
         """
