@@ -1392,6 +1392,7 @@ class TestConnectorWhs(SingleTransactionCase):
         created_whs_list_number = (
             3
             if self.warehouse.mto_pull_id.route_id in man_order.product_id.route_ids
+            and man_order.product_id.categ_id.name == "CUSTOM"
             else 4
         )
         self.assertEqual(
@@ -1497,6 +1498,7 @@ class TestConnectorWhs(SingleTransactionCase):
         created_whs_list_number = (
             3
             if self.warehouse.mto_pull_id.route_id in man_order.product_id.route_ids
+            and man_order.product_id.categ_id.name == "CUSTOM"
             else 4
         )
         self.assertEqual(
