@@ -488,9 +488,7 @@ class HyddemoWhsListe(models.Model):
                         if (
                             esito_lista[0][2] == 2
                             and not whs_list.move_id.raw_material_production_id
-                        ) or (
-                            whs_list.stato == "4" and esito_lista[0][2] == 5
-                        ):
+                        ) or (whs_list.stato == "4" and esito_lista[0][2] == 5):
                             whs_list.whs_not_passed = False
                         else:
                             whs_list.whs_not_passed = True
