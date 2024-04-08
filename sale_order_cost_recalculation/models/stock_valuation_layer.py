@@ -3,9 +3,9 @@
 from odoo import fields, models
 
 
-class ProductPriceHistory(models.Model):
-    _inherit = 'product.price.history'
+class StockValuationLayer(models.Model):
+    _inherit = "stock.valuation.layer"
 
     # extend digits to show anyway digits, in case product price precision is changed
     # during time
-    cost = fields.Float('Cost', digits=(20, 8))
+    unit_cost = fields.Float("Unit Cost", digits=(20, 8))
