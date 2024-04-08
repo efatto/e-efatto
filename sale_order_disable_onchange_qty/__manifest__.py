@@ -6,10 +6,10 @@
     "category": "other",
     "author": "Sergio Corato",
     "summary": "Onchange on product qty no more modify unit price.",
-    "website": "https://github.com/sergiocorato/e-efatto",
+    "website": "https://github.com/efatto/e-efatto",
     "license": "AGPL-3",
     "depends": [
-        "sale_order_price_recalculation",
+        "sale_order_cost_recalculation",
     ],
     "data": [],
     "installable": True,
