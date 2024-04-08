@@ -8,25 +8,28 @@ class ProductTemplate(models.Model):
 
     standard_price = fields.Float(digits=(20, 8))
     standard_price_write_date = fields.Datetime(
-        compute='_compute_standard_price_write_date',
-        search='_search_standard_price_write_date',
+        compute="_compute_standard_price_write_date",
+        search="_search_standard_price_write_date",
         groups="base.group_user",
     )
 
-    @api.depends('product_variant_ids', 'product_variant_ids.standard_price')
+    @api.depends("product_variant_ids", "product_variant_ids.standard_price")
     def _compute_standard_price_write_date(self):
         unique_variants = self.filtered(
-            lambda template: len(template.product_variant_ids) == 1)
+            lambda templ: len(templ.product_variant_ids) == 1
+        )
         for template in unique_variants:
-            template.standard_price_write_date = template.product_variant_ids[0].\
-                standard_price_write_date
-        for template in (self - unique_variants):
+            template.standard_price_write_date = template.product_variant_ids[
+                0
+            ].standard_price_write_date
+        for template in self - unique_variants:
             template.standard_price_write_date = False
 
     def _search_standard_price_write_date(self, operator, value):
-        products = self.env['product.product'].search([
-            ('standard_price_write_date', operator, value)], limit=None)
-        return [('id', 'in', products.mapped('product_tmpl_id').ids)]
+        products = self.env["product.product"].search(
+            [("standard_price_write_date", operator, value)]
+        )
+        return [("id", "in", products.mapped("product_tmpl_id").ids)]
 
 
 class ProductProduct(models.Model):
@@ -34,12 +37,12 @@ class ProductProduct(models.Model):
 
     standard_price = fields.Float(digits=(20, 8))
     standard_price_write_date = fields.Datetime(
-        compute='_compute_product_standard_price_write_date',
+        compute="_compute_product_standard_price_write_date",
         store=True,
         groups="base.group_user",
     )
 
-    @api.depends('standard_price')
+    @api.depends("standard_price")
     def _compute_product_standard_price_write_date(self):
         for record in self:
             record.standard_price_write_date = fields.Datetime.now()
