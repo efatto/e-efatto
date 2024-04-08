@@ -6,6 +6,7 @@ from odoo import api, fields, models
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
+    # Extend digits of existing standard_price field
     standard_price = fields.Float(digits=(20, 8))
     standard_price_write_date = fields.Datetime(
         compute="_compute_standard_price_write_date",
@@ -35,6 +36,7 @@ class ProductTemplate(models.Model):
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
+    # Extend digits of existing standard_price field
     standard_price = fields.Float(digits=(20, 8))
     standard_price_write_date = fields.Datetime(
         compute="_compute_product_standard_price_write_date",
