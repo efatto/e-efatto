@@ -7,5 +7,6 @@ class StockValuationLayer(models.Model):
     _inherit = "stock.valuation.layer"
 
     # extend digits to show anyway digits, in case product price precision is changed
-    # during time
+    # during time, and change field from Monetary to Float, as Monetary does not
+    # support arbitrary digits
     unit_cost = fields.Float("Unit Cost", digits=(20, 8))

@@ -9,6 +9,7 @@
     "summary": "Add recalculation of cost when recalculating prices on sale order.",
     "website": "https://github.com/sergiocorato/e-efatto",
     "depends": [
+        "sale_margin",
         "sale_margin_security",
         "sale_order_price_recalculation",
         "stock_account",

@@ -10,6 +10,7 @@ class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     purchase_date = fields.Datetime(compute="_compute_purchase_date", store=True)
+    # Extend digits of existing purchase_price field
     purchase_price = fields.Float(digits=(20, 8))
 
     @api.depends("purchase_price")
@@ -63,16 +64,4 @@ class SaleOrder(models.Model):
     def recalculate_prices(self):
         res = super().recalculate_prices()
         self.mapped("order_line")._compute_purchase_price()
-        # line_dict = line._convert_to_write(line.read()[0])
-        # if hasattr(line, "product_tmpl_id"):
-        #     line_dict["product_tmpl_id"] = line.product_id.product_tmpl_id
-        # line2 = self.env["sale.order.line"].new(line_dict)
-        # # we make this to isolate changed values:
-        # line2._compute_purchase_price()
-        # line.write(
-        #     {
-        #         "purchase_price": line2.purchase_price,
-        #         "purchase_date": line2.product_id.standard_price_write_date,
-        #     }
-        # )
         return res
