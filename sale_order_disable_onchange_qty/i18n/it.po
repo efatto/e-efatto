@@ -1,0 +1,76 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* sale_order_margin_state
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-01-10 07:20+0000\n"
+"PO-Revision-Date: 2022-01-10 07:20+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: sale_order_margin_state
+#: model:ir.model.fields,help:sale_order_margin_state.field_res_company__margin_min
+#: model:ir.model.fields,help:sale_order_margin_state.field_res_config_settings__margin_min
+msgid "An order line with a margin below this value will be signaled in red."
+msgstr "Una riga di ordine di vendita con un margine inferiore a questo valore verrà segnalata in rosso."
+
+#. module: sale_order_margin_state
+#: model:ir.model.fields,help:sale_order_margin_state.field_res_company__margin_max
+#: model:ir.model.fields,help:sale_order_margin_state.field_res_config_settings__margin_max
+msgid "An order line with a margin over this value will be signaled in grey."
+msgstr "Una riga di ordine di vendita con un margine superiore a questo valore verrà segnalata in grigio."
+
+#. module: sale_order_margin_state
+#: model:ir.model,name:sale_order_margin_state.model_res_company
+msgid "Companies"
+msgstr "Aziende"
+
+#. module: sale_order_margin_state
+#: model:ir.model,name:sale_order_margin_state.model_res_config_settings
+msgid "Config Settings"
+msgstr "Impostazioni di configurazione"
+
+#. module: sale_order_margin_state
+#: model:ir.model.fields,field_description:sale_order_margin_state.field_sale_order_line__margin_state
+msgid "Margin State"
+msgstr "Stato del Margine"
+
+#. module: sale_order_margin_state
+#: selection:sale.order.line,margin_state:0
+msgid "Margin between mininum and zero"
+msgstr "Margine tra il minimo e zero"
+
+#. module: sale_order_margin_state
+#: selection:sale.order.line,margin_state:0
+msgid "Margin missing or over maximum"
+msgstr "Margine mancante o sopra il massimo"
+
+#. module: sale_order_margin_state
+#: selection:sale.order.line,margin_state:0
+msgid "Margin normal (between minimum and maximum)"
+msgstr "Margine normale (tra il minimo e il massimo)"
+
+#. module: sale_order_margin_state
+#: model:ir.model.fields,field_description:sale_order_margin_state.field_res_company__margin_max
+#: model:ir.model.fields,field_description:sale_order_margin_state.field_res_config_settings__margin_max
+msgid "Maximum margin on order line"
+msgstr "Margine massimo sulla riga"
+
+#. module: sale_order_margin_state
+#: model:ir.model.fields,field_description:sale_order_margin_state.field_res_company__margin_min
+#: model:ir.model.fields,field_description:sale_order_margin_state.field_res_config_settings__margin_min
+msgid "Minimum margin on order line"
+msgstr "Margine minimo sulla riga"
+
+#. module: sale_order_margin_state
+#: model:ir.model,name:sale_order_margin_state.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Linea d'ordine di vendita"
+
