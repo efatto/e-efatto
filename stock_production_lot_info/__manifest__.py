@@ -3,7 +3,7 @@
 {
     "name": "Stock product lot qty info",
     "summary": "Show product lot qty in name",
-    "version": "12.0.1.0.0",
+    "version": "14.0.1.0.0",
     "category": "Warehouse",
     "website": "https://github.com/sergiocorato/e-efatto",
     "author": "Sergio Corato, Efatto.it",
@@ -13,6 +13,5 @@
     "depends": [
         "stock",
     ],
-    "data": [
-    ],
+    "data": [],
 }
