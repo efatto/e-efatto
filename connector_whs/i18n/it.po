@@ -110,7 +110,7 @@ msgstr "Controlla lo stato della lista WHS"
 #. module: connector_whs
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_dbsource_form
 msgid "Check lists not passed"
-msgstr "Controllo liste non caricate in WHS"
+msgstr "Controllo liste non allineate in WHS"
 
 #. module: connector_whs
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_dbsource_form
