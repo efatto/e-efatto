@@ -14,7 +14,7 @@ _logger = logging.getLogger(__name__)
 
 class HyddemoWhsListe(models.Model):
     _name = "hyddemo.whs.liste"
-    _inherit = ['mail.thread']
+    _inherit = ["mail.thread"]
     _description = "Lists to synchronize with WHS"
     _order = "id desc"
 
