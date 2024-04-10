@@ -63,20 +63,20 @@
             <form string="Liste prelievo, deposito e inventario">
                 <header>
                     <button
-                        name="whs_check_list_state"
-                        string="Check list state"
-                        type="object"
-                    />
+            name="whs_check_list_state"
+            string="Check list state"
+            type="object"
+          />
                     <button
-                        name="whs_deduplicate_lists"
-                        string="Deduplicate list"
-                        type="object"
-                    />
+            name="whs_deduplicate_lists"
+            string="Deduplicate list"
+            type="object"
+          />
                     <button
-                        name="whs_recreate_db_lists"
-                        string="Recreate list in DB"
-                        type="object"
-                    />
+            name="whs_recreate_db_lists"
+            string="Recreate list in DB"
+            type="object"
+          />
                     <button name="whs_list_sync" string="Sync list" type="object" />
                 </header>
                 <sheet string="WHS liste">
