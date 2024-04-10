@@ -14,6 +14,7 @@ _logger = logging.getLogger(__name__)
 
 class HyddemoWhsListe(models.Model):
     _name = "hyddemo.whs.liste"
+    _inherit = ['mail.thread']
     _description = "Lists to synchronize with WHS"
     _order = "id desc"
 
@@ -27,6 +28,7 @@ class HyddemoWhsListe(models.Model):
             ("4", "Ricevuto esito"),
         ],
         string="stato",
+        tracking=True,
     )
     # Equivale al campo 'Elaborato' nel database
     # campo   campo
@@ -77,7 +79,7 @@ class HyddemoWhsListe(models.Model):
     lotto4 = fields.Char(size=20)
     lotto5 = fields.Char(size=20)
     qta = fields.Float("Quantità")
-    qtamov = fields.Float("Quantità movimentata")
+    qtamov = fields.Float("Quantità movimentata", tracking=True)
     move_id = fields.Many2one("stock.move", string="Stock Move")
     tipo_mov = fields.Text("tipo movimento")  # , size=16)
     # mrpin mrpout move noback ripin ripout
