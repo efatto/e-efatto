@@ -556,7 +556,7 @@ class HyddemoMssqlLog(models.Model):
                 sqlparams=None,
                 metadata=None,
             )
-            whs_lists.unlink()
+            whs_lists.sudo().unlink()
 
     def whs_insert_list_to_elaborate(self, datasource_id):
         """
