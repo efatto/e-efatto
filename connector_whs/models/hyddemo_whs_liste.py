@@ -116,7 +116,7 @@ class HyddemoWhsListe(models.Model):
             _logger.info(
                 "WHS LOG: unlink Lista %s Riga %s" % (lista.num_lista, lista.riga)
             )
-            lista.unlink()
+            lista.sudo().unlink()
         return True
 
     def whs_recreate_db_lists(self):
