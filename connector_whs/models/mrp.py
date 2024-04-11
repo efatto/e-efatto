@@ -72,7 +72,7 @@ class MrpProduction(models.Model):
         self._button_mark_done_sanity_checks()
         for production in self:
             if not production.sent_to_whs:
-                raise UserError(_("Production is not sent to WHS!"))
+                raise UserError(_("Production %s is not sent to WHS!") % production.id)
             production.move_raw_ids._check_done_whs_list()
             if production.state == "progress":
                 moves_to_do = production.move_raw_ids.filtered(
@@ -93,7 +93,7 @@ class MrpProduction(models.Model):
     def button_mark_done(self):
         for production in self:
             if not production.sent_to_whs:
-                raise UserError(_("Production is not sent to WHS!"))
+                raise UserError(_("Production %s is not sent to WHS!") % production.id)
             (
                 production.move_raw_ids | production.move_finished_ids
             )._check_done_whs_list()
