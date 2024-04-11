@@ -1159,6 +1159,19 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertEqual(
             purchase.state, "purchase", 'Purchase state should be "Purchase"'
         )
+        move_line = purchase.picking_ids.move_lines.filtered(
+            lambda x: x.product_id == self.product2)
+        order_line = purchase.order_line.filtered(
+            lambda x: x.product_id == self.product2
+        )
+        order_line.product_qty = 17
+        # todo find a method to update a readonly field in view
+        #  as Form() doesn't work
+        move_line.product_uom_qty = 17
+        self.assertEqual(
+            order_line.product_qty,
+            move_line.whs_list_ids.qta
+        )
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
@@ -1196,7 +1209,7 @@ class TestConnectorWhs(SingleTransactionCase):
             )
             self.assertEqual(
                 str(result_liste[0]),
-                "[(Decimal('20.000'), Decimal('2.000'))]"
+                "[(Decimal('17.000'), Decimal('2.000'))]"
                 if whs_list.product_id == self.product2
                 else "[(Decimal('3.000'), Decimal('3.000'))]",
             )
@@ -1215,7 +1228,7 @@ class TestConnectorWhs(SingleTransactionCase):
             )
             self.assertEqual(
                 str(result_liste[0]),
-                "[(Decimal('20.000'), Decimal('2.000'))]"
+                "[(Decimal('17.000'), Decimal('2.000'))]"
                 if whs_list.product_id == self.product2
                 else "[(Decimal('3.000'), Decimal('3.000'))]",
             )
@@ -1253,7 +1266,7 @@ class TestConnectorWhs(SingleTransactionCase):
         result_liste = self.dbsource.execute_mssql(
             sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
         )
-        self.assertEqual(str(result_liste[0]), "[(Decimal('18.000'), None)]")
+        self.assertEqual(str(result_liste[0]), "[(Decimal('15.000'), None)]")
         # TODO check cancel workflow without action_assign that create whs list anyway
         self._check_cancel_workflow(backorder_picking, 1)
         backorder_picking.action_assign()
