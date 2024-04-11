@@ -173,7 +173,10 @@ class StockMove(models.Model):
         for move in self:
             valid_whs_list = move.whs_list_ids.filtered(lambda x: x.stato != "3")
             if valid_whs_list and not move.state == "done":
-                if (
+                if move.purchase_line_id and valid_whs_list.stato == "1":
+                    # update whs_list as it is not yet sent to WHS
+                    valid_whs_list.qta = move.product_uom_qty
+                elif (
                     not move.purchase_line_id
                     and move.product_uom_qty != valid_whs_list.qta
                 ):
