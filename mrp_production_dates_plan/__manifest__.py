@@ -6,7 +6,7 @@
     "author": "Sergio Corato",
     "website": "https://github.com/sergiocorato/e-efatto",
     "summary": "Ignore manufacturing_lead on setting dates in production on "
-               "product moves dates.",
+    "product moves dates.",
     "license": "AGPL-3",
     "category": "Manufacture",
     "depends": [
