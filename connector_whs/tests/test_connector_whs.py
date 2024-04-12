@@ -1160,7 +1160,8 @@ class TestConnectorWhs(SingleTransactionCase):
             purchase.state, "purchase", 'Purchase state should be "Purchase"'
         )
         move_line = purchase.picking_ids.move_lines.filtered(
-            lambda x: x.product_id == self.product2)
+            lambda x: x.product_id == self.product2
+        )
         order_line = purchase.order_line.filtered(
             lambda x: x.product_id == self.product2
         )
@@ -1168,10 +1169,7 @@ class TestConnectorWhs(SingleTransactionCase):
         # todo find a method to update a readonly field in view
         #  as Form() doesn't work
         move_line.product_uom_qty = 17
-        self.assertEqual(
-            order_line.product_qty,
-            move_line.whs_list_ids.qta
-        )
+        self.assertEqual(order_line.product_qty, move_line.whs_list_ids.qta)
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
