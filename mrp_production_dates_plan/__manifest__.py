@@ -11,6 +11,7 @@
     "category": "Manufacture",
     "depends": [
         "mrp",
+        "stock_reserve_date_check",
     ],
     "data": [],
     "installable": True,
