@@ -376,10 +376,7 @@ class HyddemoMssqlLog(models.Model):
                 "WHERE A.rownum BETWEEN %s AND %s"
                 % (numlista and "AND NumLista='%s'" % numlista or "", i, i + 1000)
             )
-            _logger.info(
-                "WHS LOG: synchronizing lists from %s to %s"
-                % (i, i + 1000)
-            )
+            _logger.info("WHS LOG: synchronizing lists from %s to %s" % (i, i + 1000))
             i += 1000
             esiti_liste = dbsource.execute_mssql(
                 sqlquery=sql_text(esiti_liste_query), sqlparams=None, metadata=None
@@ -404,9 +401,7 @@ class HyddemoMssqlLog(models.Model):
                     [("num_lista", "=", num_lista)]
                 )
                 if not whs_lista:
-                    _logger.info(
-                        "WHS LOG: list %s does not exist in Odoo." % num_lista
-                    )
+                    _logger.info("WHS LOG: list %s does not exist in Odoo." % num_lista)
                     continue
                 else:
                     hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
@@ -527,7 +522,7 @@ class HyddemoMssqlLog(models.Model):
         2. delete whs lists with move in state 'done' or 'cancel' older than
         clean_days_limit
         3. delete orphan db list older than clean_days_limit
-        4. delete whs lists and db lists on state '3' ("Da NON elaborare") older than 6
+        4. delete whs lists and db lists on state '3' ("Da NON elaborare") older than 3
         months
         :param datasource_id: id of datasource (aka dbsource)
         :return:
@@ -548,11 +543,27 @@ class HyddemoMssqlLog(models.Model):
             ]
         )
         self._clean_lists(dbsource, hyddemo_whs_lists)
+        # 3.
+        hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
+            [
+                ("move_id", "=", False),
+                ("data_lista", "<", date_limit),
+            ]
+        )
+        self._clean_lists(dbsource, hyddemo_whs_lists)
+        # 4.
+        hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
+            [
+                ("stato", "=", "3"),
+                ("data_lista", "<", fields.Datetime.now() - relativedelta(months=3)),
+            ]
+        )
+        self._clean_lists(dbsource, hyddemo_whs_lists)
 
     @staticmethod
     def _clean_lists(dbsource, hyddemo_whs_lists):
         for i in range(0, len(hyddemo_whs_lists), 1000):
-            whs_lists = hyddemo_whs_lists[i: i + 1000]
+            whs_lists = hyddemo_whs_lists[i : i + 1000]
             delete_query = (
                 "DELETE FROM HOST_LISTE WHERE (%s)"
                 % (
