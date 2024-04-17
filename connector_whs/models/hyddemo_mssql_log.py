@@ -527,6 +527,8 @@ class HyddemoMssqlLog(models.Model):
         2. delete whs lists with move in state 'done' or 'cancel' older than
         clean_days_limit
         3. delete orphan db list older than clean_days_limit
+        4. delete whs lists and db lists on state '3' ("Da NON elaborare") older than 6
+        months
         :param datasource_id: id of datasource (aka dbsource)
         :return:
         """
@@ -545,8 +547,12 @@ class HyddemoMssqlLog(models.Model):
                 ("data_lista", "<", date_limit),
             ]
         )
+        self._clean_lists(dbsource, hyddemo_whs_lists)
+
+    @staticmethod
+    def _clean_lists(dbsource, hyddemo_whs_lists):
         for i in range(0, len(hyddemo_whs_lists), 1000):
-            whs_lists = hyddemo_whs_lists[i : i + 1000]
+            whs_lists = hyddemo_whs_lists[i: i + 1000]
             delete_query = (
                 "DELETE FROM HOST_LISTE WHERE (%s)"
                 % (
