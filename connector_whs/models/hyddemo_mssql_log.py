@@ -376,6 +376,10 @@ class HyddemoMssqlLog(models.Model):
                 "WHERE A.rownum BETWEEN %s AND %s"
                 % (numlista and "AND NumLista='%s'" % numlista or "", i, i + 1000)
             )
+            _logger.info(
+                "WHS LOG: synchronizing lists from %s to %s"
+                % (i, i + 1000)
+            )
             i += 1000
             esiti_liste = dbsource.execute_mssql(
                 sqlquery=sql_text(esiti_liste_query), sqlparams=None, metadata=None
@@ -392,11 +396,15 @@ class HyddemoMssqlLog(models.Model):
                         % esito_lista
                     )
                     continue
+                _logger.info(
+                    "WHS LOG: synchronizing list %s row %s in db"
+                    % (num_lista, num_riga)
+                )
                 whs_lista = self.env["hyddemo.whs.liste"].search(
                     [("num_lista", "=", num_lista)]
                 )
                 if not whs_lista:
-                    _logger.debug(
+                    _logger.info(
                         "WHS LOG: list %s does not exist in Odoo." % num_lista
                     )
                     continue
@@ -424,7 +432,7 @@ class HyddemoMssqlLog(models.Model):
                     )
                 hyddemo_whs_list = hyddemo_whs_lists[0]
                 if hyddemo_whs_list.stato == "3":
-                    _logger.debug(
+                    _logger.info(
                         "WHS LOG: list not processable: %s-%s"
                         % (
                             hyddemo_whs_list.num_lista,
