@@ -552,10 +552,27 @@ class HyddemoMssqlLog(models.Model):
         )
         self._clean_lists(dbsource, hyddemo_whs_lists)
         # 4.
+        date_limit_deactivated = fields.Datetime.now() - relativedelta(months=3)
         hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
             [
                 ("stato", "=", "3"),
-                ("data_lista", "<", fields.Datetime.now() - relativedelta(months=3)),
+                ("data_lista", "<", date_limit_deactivated),
+            ]
+        )
+        self._clean_lists(dbsource, hyddemo_whs_lists)
+        # 1.
+        hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
+            [
+                ("data_lista", "<", date_limit),
+            ],
+            limit=100,
+        )
+        # call method to update whs_list_absent on only 100 records to exclude timeout
+        hyddemo_whs_lists.whs_check_list_state()
+        hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
+            [
+                ("data_lista", "<", date_limit),
+                ("whs_list_absent", "=", True),
             ]
         )
         self._clean_lists(dbsource, hyddemo_whs_lists)
