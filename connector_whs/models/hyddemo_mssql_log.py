@@ -533,11 +533,12 @@ class HyddemoMssqlLog(models.Model):
         1. delete whs lists without db list older than clean_days_limit
         2. delete whs lists with move in state 'done' or 'cancel' older than
         clean_days_limit
-        3. delete orphan db list older than clean_days_limit
+        3. delete whs lists without move older than clean_days_limit
         4. delete whs lists and db lists on state '3' ("Da NON elaborare") older than 3
         months
         5. delete whs lists and db lists on state '2' with move on state 'done' or
         'cancel' and tipo_mov in ['mrpin', 'mprout'] older 3 months
+        6. delete orphan db lists > done in whs_read_and_synchronize_list
         :param datasource_id: id of datasource (aka dbsource)
         :return:
         """
