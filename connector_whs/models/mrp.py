@@ -99,7 +99,7 @@ class MrpProduction(models.Model):
                     "WHS LOG: unlink lists for product %s of production %s"
                     % (whs_list_id.move_id.product_id.name, production.name)
                 )
-                whs_list_ids.whs_unlink_lists(dbsource.id)
+                whs_list_id.whs_unlink_lists(dbsource.id)
         return res
 
     def button_consume(self):
