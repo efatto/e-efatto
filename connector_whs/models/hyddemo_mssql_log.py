@@ -393,7 +393,7 @@ class HyddemoMssqlLog(models.Model):
                         % esito_lista
                     )
                     continue
-                _logger.info(
+                _logger.debug(
                     "WHS LOG: synchronizing list %s row %s in db"
                     % (num_lista, num_riga)
                 )
