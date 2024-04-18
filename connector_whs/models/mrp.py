@@ -2,8 +2,12 @@
 # Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 # flake8: noqa: C901
+import logging
+
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+
+_logger = logging.getLogger(__name__)
 
 
 class MrpProduction(models.Model):
@@ -67,6 +71,36 @@ class MrpProduction(models.Model):
                 production.product_qty == production.qty_producing
                 and not production.state == "consumed"
             )
+
+    def action_cancel(self):
+        res = super().action_cancel()
+        for production in self:
+            whs_list_ids = (
+                production.move_raw_ids | production.move_finished_ids
+            ).mapped("whs_list_ids")
+            if any([x.stato != "1" and x.qtamov != 0 for x in whs_list_ids]):
+                raise UserError(_("Some moves already elaborated from WHS!"))
+            for whs_list_id in whs_list_ids:
+                location = (
+                    whs_list_id.move_id.location_dest_id
+                    if whs_list_id.tipo_mov == "mrpin"
+                    else whs_list_id.move_id.location_id
+                )
+                dbsource = self.env["base.external.dbsource"].search(
+                    [("location_id", "=", location.id)]
+                )
+                if not dbsource:
+                    _logger.info(
+                        "WHS LOG: Location %s is not linked to WHS System"
+                        % location.name
+                    )
+                    continue
+                _logger.info(
+                    "WHS LOG: unlink lists for product %s of production %s"
+                    % (whs_list_id.move_id.product_id.name, production.name)
+                )
+                whs_list_ids.whs_unlink_lists(dbsource.id)
+        return res
 
     def button_consume(self):
         self._button_mark_done_sanity_checks()
