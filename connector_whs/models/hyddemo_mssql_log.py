@@ -358,6 +358,7 @@ class HyddemoMssqlLog(models.Model):
         :return:
         """
         dbsource_obj = self.env["base.external.dbsource"]
+        hyddemo_mssql_log_obj = self.env["hyddemo.mssql.log"]
         dbsource = dbsource_obj.browse(datasource_id)
         connection = dbsource.connection_open_mssql()
         if not connection:
@@ -401,7 +402,13 @@ class HyddemoMssqlLog(models.Model):
                     [("num_lista", "=", num_lista)]
                 )
                 if not whs_lista:
-                    _logger.info("WHS LOG: list %s does not exist in Odoo." % num_lista)
+                    _logger.info(
+                        "WHS LOG: deleting orphan db list number %s row %s "
+                        "as does not more exist in Odoo." % (num_lista, num_riga)
+                    )
+                    hyddemo_mssql_log_obj._clean_orphan_db_list(
+                        dbsource, num_lista, num_riga
+                    )
                     continue
                 else:
                     hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
@@ -419,6 +426,11 @@ class HyddemoMssqlLog(models.Model):
                                 whs_lista,
                             )
                         )
+                        _logger.info(
+                            "WHS LOG: deleting orphan db list number %s "
+                            "as does not more exist in Odoo." % num_lista
+                        )
+                        hyddemo_mssql_log_obj._clean_orphan_db_list(dbsource, num_lista)
                         continue
                 if len(hyddemo_whs_lists) > 1:
                     _logger.info(
@@ -612,6 +624,24 @@ class HyddemoMssqlLog(models.Model):
                 metadata=None,
             )
             whs_lists.sudo().unlink()
+
+    @staticmethod
+    def _clean_orphan_db_list(dbsource, num_lista, num_riga=False):
+        if num_riga:
+            delete_query = (
+                "DELETE FROM HOST_LISTE WHERE NumLista='%s' AND NumRiga='%s'"
+                % (num_lista, num_riga)
+            )
+        else:
+            delete_query = "DELETE FROM HOST_LISTE WHERE NumLista='%s'" % num_lista
+        _logger.info(
+            "WHS LOG: delete orphan record from HOST_LISTE [query: %s]" % delete_query
+        )
+        dbsource.with_context(no_return=True).execute_mssql(
+            sqlquery=sql_text(delete_query.replace("\n", " ")),
+            sqlparams=None,
+            metadata=None,
+        )
 
     def whs_insert_list_to_elaborate(self, datasource_id):
         """
