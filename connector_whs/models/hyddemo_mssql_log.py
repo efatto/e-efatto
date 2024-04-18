@@ -524,6 +524,8 @@ class HyddemoMssqlLog(models.Model):
         3. delete orphan db list older than clean_days_limit
         4. delete whs lists and db lists on state '3' ("Da NON elaborare") older than 3
         months
+        5. delete whs lists and db lists on state '2' with move on state 'done' or
+        'cancel' and tipo_mov in ['mrpin', 'mprout'] older 3 months
         :param datasource_id: id of datasource (aka dbsource)
         :return:
         """
@@ -573,6 +575,17 @@ class HyddemoMssqlLog(models.Model):
             [
                 ("data_lista", "<", date_limit),
                 ("whs_list_absent", "=", True),
+            ]
+        )
+        self._clean_lists(dbsource, hyddemo_whs_lists)
+        # 5.
+        date_limit_mrp = fields.Datetime.now() - relativedelta(months=3)
+        hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
+            [
+                ("stato", "=", "2"),
+                ("tipo_mov", "in", ["mrpin", "mrpout"]),
+                ("move_id.state", "in", ["done", "cancel"]),
+                ("data_lista", "<", date_limit_mrp),
             ]
         )
         self._clean_lists(dbsource, hyddemo_whs_lists)
