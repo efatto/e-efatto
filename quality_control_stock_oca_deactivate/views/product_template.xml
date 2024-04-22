@@ -8,6 +8,7 @@
             <xpath expr="//field[@name='trigger']" position="after">
                 <field name="active" />
                 <field name="success_number_to_deactivation" />
+                <field name="trigger_activation_days" />
             </xpath>
         </field>
     </record>
