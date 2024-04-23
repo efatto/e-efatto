@@ -68,9 +68,9 @@ class QualityControlStockOcaValidation(SavepointCase):
 
         purchase_order = self._create_purchase_order(20, 40, "Vendor Reference")
         picking = purchase_order.picking_ids
-        # set done 10 pc of product
+        # set done 10 pc of product2, which has generated a check
         for sml in picking.move_lines.mapped("move_line_ids").filtered(
-            lambda x: x.product_id == self.product
+            lambda x: x.product_id == self.product2
         ):
             sml.qty_done = sml.product_uom_qty / 2.0
         self.assertEqual(len(picking.qc_inspections_ids), 1)
@@ -86,6 +86,7 @@ class QualityControlStockOcaValidation(SavepointCase):
             .possible_ql_values.filtered("ok")
         )
         with self.assertRaises(ValidationError):
+            # check it is impossible to validate as product2 is linked to a draft check
             Form(
                 self.env[res["res_model"]].with_context(res["context"])
             ).save().process()
