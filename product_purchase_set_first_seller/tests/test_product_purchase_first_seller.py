@@ -64,3 +64,8 @@ class ProductPurchaseFirstSeller(SavepointCase):
         self.assertEqual(purchase_order.partner_id, self.vendor1)
         self.product.refresh()
         self.assertEqual(fields.first(self.product.seller_ids).name, self.vendor1)
+        self.assertTrue(
+            self.product.seller_ids.filtered(
+                lambda x: x.name == self.vendor1
+            ).is_auto_set_first
+        )

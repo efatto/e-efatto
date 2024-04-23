@@ -1,16 +1,56 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# 	* product_purchase_first_seller
+# 	* product_purchase_set_first_seller
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-25 08:37+0000\n"
-"PO-Revision-Date: 2023-11-25 08:37+0000\n"
+"POT-Creation-Date: 2024-04-23 14:58+0000\n"
+"PO-Revision-Date: 2024-04-23 14:58+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: product_purchase_set_first_seller
+#: model:ir.model.fields,field_description:product_purchase_set_first_seller.field_product_supplierinfo__assigned_attachment_ids
+#: model:ir.model.fields,field_description:product_purchase_set_first_seller.field_purchase_order__assigned_attachment_ids
+msgid "Assigned Attachments"
+msgstr "Allegati assegnati"
+
+#. module: product_purchase_set_first_seller
+#: model:ir.model.fields,field_description:product_purchase_set_first_seller.field_product_customerinfo__is_auto_set_first
+#: model:ir.model.fields,field_description:product_purchase_set_first_seller.field_product_supplierinfo__is_auto_set_first
+msgid "Auto Set First"
+msgstr "Auto-impostato prioritario"
+
+#. module: product_purchase_set_first_seller
+#: model:ir.model.fields,field_description:product_purchase_set_first_seller.field_product_supplierinfo__display_name
+#: model:ir.model.fields,field_description:product_purchase_set_first_seller.field_purchase_order__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
+
+#. module: product_purchase_set_first_seller
+#: model:ir.model.fields,field_description:product_purchase_set_first_seller.field_product_supplierinfo__id
+#: model:ir.model.fields,field_description:product_purchase_set_first_seller.field_purchase_order__id
+msgid "ID"
+msgstr ""
+
+#. module: product_purchase_set_first_seller
+#: model:ir.model.fields,field_description:product_purchase_set_first_seller.field_product_supplierinfo____last_update
+#: model:ir.model.fields,field_description:product_purchase_set_first_seller.field_purchase_order____last_update
+msgid "Last Modified on"
+msgstr "Ultima modifica il"
+
+#. module: product_purchase_set_first_seller
+#: model:ir.model,name:product_purchase_set_first_seller.model_purchase_order
+msgid "Purchase Order"
+msgstr "Ordine di acquisto"
+
+#. module: product_purchase_set_first_seller
+#: model:ir.model,name:product_purchase_set_first_seller.model_product_supplierinfo
+msgid "Supplier Pricelist"
+msgstr "Listino prezzi fornitore"

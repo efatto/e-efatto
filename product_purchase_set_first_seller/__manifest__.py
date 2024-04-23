@@ -10,6 +10,8 @@
     "depends": [
         "purchase_stock",
     ],
-    "data": [],
+    "data": [
+        "views/product_supplierinfo.xml",
+    ],
     "installable": True,
 }
