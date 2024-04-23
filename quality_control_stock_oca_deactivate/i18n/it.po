@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-25 08:37+0000\n"
-"PO-Revision-Date: 2023-11-25 08:37+0000\n"
+"POT-Creation-Date: 2024-04-23 14:06+0000\n"
+"PO-Revision-Date: 2024-04-23 14:06+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -15,3 +15,69 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
+#. module: quality_control_stock_oca_deactivate
+#: model:ir.model,name:quality_control_stock_oca_deactivate.model_qc_trigger_line
+msgid "Abstract line for defining triggers"
+msgstr "Riga base per la definizione delle attivazioni"
+
+#. module: quality_control_stock_oca_deactivate
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_line__active
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_product_category_line__active
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_product_line__active
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_product_template_line__active
+msgid "Active"
+msgstr "Attivo"
+
+#. module: quality_control_stock_oca_deactivate
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_line__assigned_attachment_ids
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_product_line__assigned_attachment_ids
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_product_template_line__assigned_attachment_ids
+msgid "Assigned Attachments"
+msgstr "Allegati assegnati"
+
+#. module: quality_control_stock_oca_deactivate
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_line__success_number_to_deactivation
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_product_category_line__success_number_to_deactivation
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_product_line__success_number_to_deactivation
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_product_template_line__success_number_to_deactivation
+msgid "Deactivate after successfull tests number"
+msgstr "Disattiva dopo numero di test positivi"
+
+#. module: quality_control_stock_oca_deactivate
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_line__display_name
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_product_line__display_name
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_product_template_line__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
+
+#. module: quality_control_stock_oca_deactivate
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_line__id
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_product_line__id
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_product_template_line__id
+msgid "ID"
+msgstr ""
+
+#. module: quality_control_stock_oca_deactivate
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_line____last_update
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_product_line____last_update
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_product_template_line____last_update
+msgid "Last Modified on"
+msgstr "Ultima modifica il"
+
+#. module: quality_control_stock_oca_deactivate
+#: model:ir.model,name:quality_control_stock_oca_deactivate.model_qc_trigger_product_line
+msgid "Quality Control Trigger Product Line"
+msgstr "Riga prodotto attivazione controllo qualità"
+
+#. module: quality_control_stock_oca_deactivate
+#: model:ir.model,name:quality_control_stock_oca_deactivate.model_qc_trigger_product_template_line
+msgid "Quality Control Trigger Product Template Line"
+msgstr "Riga modello prodotto attivazione contro qualità"
+
+#. module: quality_control_stock_oca_deactivate
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_line__trigger_activation_days
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_product_category_line__trigger_activation_days
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_product_line__trigger_activation_days
+#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_product_template_line__trigger_activation_days
+msgid "Trigger activation on days"
+msgstr "Attiva ogni numero di giorni"
