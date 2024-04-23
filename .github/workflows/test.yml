@@ -55,6 +55,8 @@ jobs:
         run: pip3 install -e "git+https://github.com/sergiocorato/server-backend@14.0-mig-base_external_dbsource_sqlite#egg=odoo14-addon-base_external_dbsource_sqlite&subdirectory=setup/base_external_dbsource_sqlite"
       - name: Install base_external_dbsource_mssql module not yet merged
         run: pip3 install -e "git+https://github.com/sergiocorato/server-backend@14.0-mig-base_external_dbsource_mssql#egg=odoo14-addon-base_external_dbsource_mssql&subdirectory=setup/base_external_dbsource_mssql"
+      - name: Install stock_reserve_date_check module from efatto repo
+        run: pip3 install -e "git+https://github.com/sergiocorato/efatto@14.0#egg=odoo14-addon-stock_reserve_date_check&subdirectory=setup/stock_reserve_date_check"
       - name: Install addons and dependencies
         run: oca_install_addons
       - name: Check licenses
