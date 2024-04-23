@@ -55,6 +55,12 @@ jobs:
         run: pip3 install -e "git+https://github.com/sergiocorato/server-backend@14.0-mig-base_external_dbsource_sqlite#egg=odoo14-addon-base_external_dbsource_sqlite&subdirectory=setup/base_external_dbsource_sqlite"
       - name: Install base_external_dbsource_mssql module not yet merged
         run: pip3 install -e "git+https://github.com/sergiocorato/server-backend@14.0-mig-base_external_dbsource_mssql#egg=odoo14-addon-base_external_dbsource_mssql&subdirectory=setup/base_external_dbsource_mssql"
+      - name: Install mrp_production_demo module from e-efatto repo as it is needed before normal installation from stock_reserve_date_check
+        run: pip3 install -e "git+https://github.com/sergiocorato/e-efatto@14.0#egg=odoo14-addon-mrp_production_demo&subdirectory=setup/mrp_production_demo"
+      - name: Install product_sellers_info module from efatto repo
+        run: pip3 install -e "git+https://github.com/sergiocorato/efatto@14.0#egg=odoo14-addon-product_sellers_info&subdirectory=setup/product_sellers_info"
+      - name: Install stock_move_available_date_expected module from efatto repo
+        run: pip3 install -e "git+https://github.com/sergiocorato/efatto@14.0#egg=odoo14-addon-stock_move_available_date_expected&subdirectory=setup/stock_move_available_date_expected"
       - name: Install stock_reserve_date_check module from efatto repo
         run: pip3 install -e "git+https://github.com/sergiocorato/efatto@14.0#egg=odoo14-addon-stock_reserve_date_check&subdirectory=setup/stock_reserve_date_check"
       - name: Install addons and dependencies
