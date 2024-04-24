@@ -29,6 +29,16 @@ With this module the newer seller will be set as the first active seller.
 .. contents::
    :local:
 
+Configuration
+=============
+
+Nel fornitore del prodotto è stato aggiunto un campo che mostra se il fornitore è stato impostato come prioritario (minore sequenza) da questo modulo, bypassando quindi la normale funzionalità di Odoo:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/product_purchase_set_first_seller/static/description/auto_impostato_prioritario.png
+    :alt: Auto impostato prioritario
+
+Questo flag viene impostato automaticamente quando viene aggiunto un fornitore, in seguito viene rimosso automaticamente quando viene aggiunto un altro fornitore e così via.
+
 Bug Tracker
 ===========
 
