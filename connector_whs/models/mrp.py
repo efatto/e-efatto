@@ -129,7 +129,9 @@ class MrpProduction(models.Model):
 
     def button_mark_done(self):
         for production in self:
-            if not production.sent_to_whs and production.state not in [
+            if not production.sent_to_whs \
+                and not production.bom_id.type == "subcontract" \
+                and production.state not in [
                 "done",
                 "cancel",
             ]:
