@@ -207,10 +207,10 @@ class StockMove(models.Model):
         if not self._context.get("do_not_unreserve", False) and (
             vals.get("product_uom_qty") or vals.get("product_qty")
         ):
-            res = super().write(vals=vals)
+            res = super().write(vals)
             self._check_valid_whs_list()
             return res
-        return super().write(vals=vals)
+        return super().write(vals)
 
     def _action_confirm(self, merge=True, merge_into=False):
         self.create_whs_list()
