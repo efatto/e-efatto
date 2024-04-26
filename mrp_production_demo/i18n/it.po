@@ -1,15 +1,84 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
+# 	* mrp_production_demo
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 14.0\n"
+"Project-Id-Version: Odoo Server 14.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-24 17:52+0000\n"
-"PO-Revision-Date: 2023-11-24 17:52+0000\n"
+"POT-Creation-Date: 2024-04-26 13:16+0000\n"
+"PO-Revision-Date: 2024-04-26 13:16+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: mrp_production_demo
+#: model:product.product,name:mrp_production_demo.product_product_manufacture_1_3
+#: model:product.template,name:mrp_production_demo.product_product_manufacture_1_3_product_template
+msgid "Subproduct normal"
+msgstr "Componente normale"
+
+#. module: mrp_production_demo
+#: model:product.product,name:mrp_production_demo.product_product_manufacture_1_1
+#: model:product.template,name:mrp_production_demo.product_product_manufacture_1_1_product_template
+msgid "Subproduct phantom 1"
+msgstr "Componente kit 1"
+
+#. module: mrp_production_demo
+#: model:product.product,name:mrp_production_demo.product_product_manufacture_1_2
+#: model:product.template,name:mrp_production_demo.product_product_manufacture_1_2_product_template
+msgid "Subproduct phantom 2"
+msgstr "Componente kit 2"
+
+#. module: mrp_production_demo
+#: model:product.product,name:mrp_production_demo.product_product_manufacture_1_1_1
+#: model:product.template,name:mrp_production_demo.product_product_manufacture_1_1_1_product_template
+msgid "Subproduct to buy 1-1"
+msgstr "Componente da acquistare 1-1"
+
+#. module: mrp_production_demo
+#: model:product.product,name:mrp_production_demo.product_product_manufacture_1_2_1
+#: model:product.template,name:mrp_production_demo.product_product_manufacture_1_2_1_product_template
+msgid "Subproduct to buy 2-1"
+msgstr "Componente da acquistare 2-1"
+
+#. module: mrp_production_demo
+#: model:product.product,description:mrp_production_demo.product_product_manufacture_1
+#: model:product.product,description:mrp_production_demo.product_product_manufacture_1_1
+#: model:product.product,description:mrp_production_demo.product_product_manufacture_1_1_1
+#: model:product.product,description:mrp_production_demo.product_product_manufacture_1_2
+#: model:product.product,description:mrp_production_demo.product_product_manufacture_1_2_1
+#: model:product.product,description:mrp_production_demo.product_product_manufacture_1_3
+#: model:product.template,description:mrp_production_demo.product_product_manufacture_1_1_1_product_template
+#: model:product.template,description:mrp_production_demo.product_product_manufacture_1_1_product_template
+#: model:product.template,description:mrp_production_demo.product_product_manufacture_1_2_1_product_template
+#: model:product.template,description:mrp_production_demo.product_product_manufacture_1_2_product_template
+#: model:product.template,description:mrp_production_demo.product_product_manufacture_1_3_product_template
+#: model:product.template,description:mrp_production_demo.product_product_manufacture_1_product_template
+msgid "TODO"
+msgstr "DAFARE"
+
+#. module: mrp_production_demo
+#: model:product.product,name:mrp_production_demo.product_product_manufacture_1
+#: model:product.template,name:mrp_production_demo.product_product_manufacture_1_product_template
+msgid "TOP"
+msgstr "PRINCIPALE"
+
+#. module: mrp_production_demo
+#: model:product.product,uom_name:mrp_production_demo.product_product_manufacture_1
+#: model:product.product,uom_name:mrp_production_demo.product_product_manufacture_1_1
+#: model:product.product,uom_name:mrp_production_demo.product_product_manufacture_1_1_1
+#: model:product.product,uom_name:mrp_production_demo.product_product_manufacture_1_2
+#: model:product.product,uom_name:mrp_production_demo.product_product_manufacture_1_2_1
+#: model:product.product,uom_name:mrp_production_demo.product_product_manufacture_1_3
+#: model:product.template,uom_name:mrp_production_demo.product_product_manufacture_1_1_1_product_template
+#: model:product.template,uom_name:mrp_production_demo.product_product_manufacture_1_1_product_template
+#: model:product.template,uom_name:mrp_production_demo.product_product_manufacture_1_2_1_product_template
+#: model:product.template,uom_name:mrp_production_demo.product_product_manufacture_1_2_product_template
+#: model:product.template,uom_name:mrp_production_demo.product_product_manufacture_1_3_product_template
+#: model:product.template,uom_name:mrp_production_demo.product_product_manufacture_1_product_template
+msgid "Units"
+msgstr "Pezzi"
