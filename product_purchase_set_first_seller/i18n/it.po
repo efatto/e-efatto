@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 14.0\n"
+"Project-Id-Version: Odoo Server 14.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-23 14:58+0000\n"
-"PO-Revision-Date: 2024-04-23 14:58+0000\n"
+"POT-Creation-Date: 2024-04-26 12:58+0000\n"
+"PO-Revision-Date: 2024-04-26 12:58+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,13 +16,6 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: product_purchase_set_first_seller
-#: model:ir.model.fields,field_description:product_purchase_set_first_seller.field_product_supplierinfo__assigned_attachment_ids
-#: model:ir.model.fields,field_description:product_purchase_set_first_seller.field_purchase_order__assigned_attachment_ids
-msgid "Assigned Attachments"
-msgstr "Allegati assegnati"
-
-#. module: product_purchase_set_first_seller
-#: model:ir.model.fields,field_description:product_purchase_set_first_seller.field_product_customerinfo__is_auto_set_first
 #: model:ir.model.fields,field_description:product_purchase_set_first_seller.field_product_supplierinfo__is_auto_set_first
 msgid "Auto Set First"
 msgstr "Auto-impostato prioritario"
