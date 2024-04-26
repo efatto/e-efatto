@@ -4,13 +4,33 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 14.0\n"
+"Project-Id-Version: Odoo Server 14.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-25 08:37+0000\n"
-"PO-Revision-Date: 2023-11-25 08:37+0000\n"
+"POT-Creation-Date: 2024-04-26 12:48+0000\n"
+"PO-Revision-Date: 2024-04-26 12:48+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: product_purchase_first_seller
+#: model:ir.model.fields,field_description:product_purchase_first_seller.field_product_product__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
+
+#. module: product_purchase_first_seller
+#: model:ir.model.fields,field_description:product_purchase_first_seller.field_product_product__id
+msgid "ID"
+msgstr ""
+
+#. module: product_purchase_first_seller
+#: model:ir.model.fields,field_description:product_purchase_first_seller.field_product_product____last_update
+msgid "Last Modified on"
+msgstr "Ultima modifica il"
+
+#. module: product_purchase_first_seller
+#: model:ir.model,name:product_purchase_first_seller.model_product_product
+msgid "Product"
+msgstr "Prodotto"
