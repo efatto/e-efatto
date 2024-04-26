@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 14.0\n"
+"Project-Id-Version: Odoo Server 14.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-21 10:07+0000\n"
-"PO-Revision-Date: 2023-11-21 10:07+0000\n"
+"POT-Creation-Date: 2024-04-26 13:06+0000\n"
+"PO-Revision-Date: 2024-04-26 13:06+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -37,13 +37,11 @@ msgid "Created on"
 msgstr "Creato il"
 
 #. module: product_managed_replenishment_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_customerinfo__depreciation_cost
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_supplierinfo__depreciation_cost
 msgid "Depreciation Cost (€/pz)"
 msgstr "Costo Ammortamento (€/pz)"
 
 #. module: product_managed_replenishment_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_customerinfo__depreciation_cost_note
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_supplierinfo__depreciation_cost_note
 msgid "Depreciation Cost Note"
 msgstr "Note Costo Ammortamento"
@@ -73,6 +71,10 @@ msgid ""
 "        Used to value the product when the purchase cost is not known (e.g. inventory adjustment).\n"
 "        Used to compute margins on sale orders."
 msgstr ""
+"Con prezzo standard e CMP: valore del prodotto (calcolato automaticamente con CMP).\n"
+"        Con FIFO: valore della prossima unità che esce dalla giacenza (calcolato automaticamente).\n"
+"        Utilizzato per dare un valore al prodotto quando il costo di acquisto non è conosciuto (es. rettifica di inventario).\n"
+"        Utilizzato per calcolare i margini sugli ordini di vendita."
 
 #. module: product_managed_replenishment_cost
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_product__landed_cost
@@ -141,8 +143,8 @@ msgstr "Costo Sostituzione Prodotto"
 
 #. module: product_managed_replenishment_cost
 #: model:ir.model,name:product_managed_replenishment_cost.model_product_template
-msgid "Product Template (Multi-Company)"
-msgstr "Modello prodotto (Multi-azienda)"
+msgid "Product Template"
+msgstr "Modello prodotto"
 
 #. module: product_managed_replenishment_cost
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__missing_seller_price_ids
@@ -214,12 +216,6 @@ msgstr "Aggiorna costi landed e di sostituzione"
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
 msgid "Update Replenishment Cost"
 msgstr "Aggiorna costo di sostituzione"
-
-#. module: product_managed_replenishment_cost
-#: code:addons/product_managed_replenishment_cost/models/product_product.py:0
-#, python-format
-msgid "Update manufactured prices"
-msgstr "Aggiornamento prezzi costruiti"
 
 #. module: product_managed_replenishment_cost
 #: code:addons/product_managed_replenishment_cost/models/replenishment_cost.py:0
