@@ -1,14 +1,14 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* sale_comment_product
+# 	* sale_comment_product
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 12.0\n"
+"Project-Id-Version: Odoo Server 14.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-06 13:28+0000\n"
-"PO-Revision-Date: 2022-09-06 13:28+0000\n"
-"Last-Translator: <>\n"
+"POT-Creation-Date: 2024-04-26 13:12+0000\n"
+"PO-Revision-Date: 2024-04-26 13:12+0000\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -16,9 +16,21 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: sale_comment_product
+#: model:ir.model.fields,field_description:sale_comment_product.field_product_template__display_name
+#: model:ir.model.fields,field_description:sale_comment_product.field_sale_order__display_name
+#: model:ir.model.fields,field_description:sale_comment_product.field_sale_order_line__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
+
+#. module: sale_comment_product
 #: model_terms:ir.ui.view,arch_db:sale_comment_product.view_order_form
 msgid "Formatted"
 msgstr "Formattazione"
+
+#. module: sale_comment_product
+#: model:ir.model.fields,field_description:sale_comment_product.field_sale_order_line__formatted_note
+msgid "Formatted Note"
+msgstr "Nota formattata"
 
 #. module: sale_comment_product
 #: model:ir.model.fields,field_description:sale_comment_product.field_product_product__formatted_note_sale
@@ -32,13 +44,27 @@ msgid "Formatted description for Customers"
 msgstr "Descrizione formattata per Clienti"
 
 #. module: sale_comment_product
+#: model:ir.model.fields,field_description:sale_comment_product.field_product_template__id
+#: model:ir.model.fields,field_description:sale_comment_product.field_sale_order__id
+#: model:ir.model.fields,field_description:sale_comment_product.field_sale_order_line__id
+msgid "ID"
+msgstr ""
+
+#. module: sale_comment_product
+#: model:ir.model.fields,field_description:sale_comment_product.field_product_template____last_update
+#: model:ir.model.fields,field_description:sale_comment_product.field_sale_order____last_update
+#: model:ir.model.fields,field_description:sale_comment_product.field_sale_order_line____last_update
+msgid "Last Modified on"
+msgstr "Ultima modifica il"
+
+#. module: sale_comment_product
 #: model:ir.model,name:sale_comment_product.model_product_template
 msgid "Product Template"
 msgstr "Modello prodotto"
 
 #. module: sale_comment_product
 #: model:ir.model,name:sale_comment_product.model_sale_order
-msgid "Sale Order"
+msgid "Sales Order"
 msgstr "Ordine di vendita"
 
 #. module: sale_comment_product
@@ -56,4 +82,3 @@ msgstr "Mostra Formattazioni"
 #: model_terms:ir.ui.view,arch_db:sale_comment_product.product_template_form_view
 msgid "This formatted note will be shown only on sale orders."
 msgstr "Questa nota formattata sarà mostrata solo negli ordini di vendita."
-
