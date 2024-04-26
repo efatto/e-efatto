@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 14.0\n"
+"Project-Id-Version: Odoo Server 14.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-23 14:06+0000\n"
-"PO-Revision-Date: 2024-04-23 14:06+0000\n"
+"POT-Creation-Date: 2024-04-26 12:38+0000\n"
+"PO-Revision-Date: 2024-04-26 12:38+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -27,13 +27,6 @@ msgstr "Riga base per la definizione delle attivazioni"
 #: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_product_template_line__active
 msgid "Active"
 msgstr "Attivo"
-
-#. module: quality_control_stock_oca_deactivate
-#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_line__assigned_attachment_ids
-#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_product_line__assigned_attachment_ids
-#: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_product_template_line__assigned_attachment_ids
-msgid "Assigned Attachments"
-msgstr "Allegati assegnati"
 
 #. module: quality_control_stock_oca_deactivate
 #: model:ir.model.fields,field_description:quality_control_stock_oca_deactivate.field_qc_trigger_line__success_number_to_deactivation
