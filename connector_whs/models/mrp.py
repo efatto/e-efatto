@@ -130,16 +130,18 @@ class MrpProduction(models.Model):
 
     def button_mark_done(self):
         for production in self:
-            if not config["test_enable"] or self.env.context.get(
-                "test_connector_whs"
-            ) and (
-                not production.sent_to_whs
-                and not production.bom_id.type == "subcontract"
-                and production.state
-                not in [
-                    "done",
-                    "cancel",
-                ]
+            if (
+                not config["test_enable"]
+                or self.env.context.get("test_connector_whs")
+                and (
+                    not production.sent_to_whs
+                    and not production.bom_id.type == "subcontract"
+                    and production.state
+                    not in [
+                        "done",
+                        "cancel",
+                    ]
+                )
             ):
                 raise UserError(_("Production %s is not sent to WHS!") % production.id)
             (
