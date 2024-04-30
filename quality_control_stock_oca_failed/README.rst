@@ -22,7 +22,7 @@ Quality Control Stock OCA Move Failed to location
 
 |badge1| |badge2| |badge3|
 
-This module create quality control check before validation of stock picking.
+This module moves failed quality control check stock move to quality control location.
 
 **Table of contents**
 
@@ -32,7 +32,7 @@ This module create quality control check before validation of stock picking.
 Configuration
 =============
 
-Con questo modulo il controllo di qualità viene anticipato a prima che il trasferimento sia completato, bloccando l'utente nel caso cerchi di validare il trasferimento senza aver eseguito i controlli.
+Con questo modulo il controllo di qualità fallito sposta il trasferimento dell'articolo verso l'ubicazione impostata nel magazzino di Controllo di qualità.
 
 Bug Tracker
 ===========

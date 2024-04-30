@@ -1,1 +1,1 @@
-Con questo modulo il controllo di qualità viene anticipato a prima che il trasferimento sia completato, bloccando l'utente nel caso cerchi di validare il trasferimento senza aver eseguito i controlli.
+Con questo modulo il controllo di qualità fallito sposta il trasferimento dell'articolo verso l'ubicazione impostata nel magazzino di Controllo di qualità.

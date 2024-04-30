@@ -6,8 +6,8 @@ class StockPicking(models.Model):
 
     def _action_done(self):
         res = super()._action_done()
-        if self.qc_inspections_ids:
-            qc_inspection_failed_ids = self.qc_inspections_ids.filtered(
+        if self.sudo().qc_inspections_ids:
+            qc_inspection_failed_ids = self.sudo().qc_inspections_ids.filtered(
                 lambda x: x.state == "failed"
             )
             for qc_inspection_failed in qc_inspection_failed_ids:
