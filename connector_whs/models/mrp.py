@@ -6,6 +6,7 @@ import logging
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+from odoo.tools import config
 
 _logger = logging.getLogger(__name__)
 
@@ -129,7 +130,9 @@ class MrpProduction(models.Model):
 
     def button_mark_done(self):
         for production in self:
-            if (
+            if not config["test_enable"] or self.env.context.get(
+                "test_connector_whs"
+            ) and (
                 not production.sent_to_whs
                 and not production.bom_id.type == "subcontract"
                 and production.state
