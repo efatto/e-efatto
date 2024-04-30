@@ -1459,7 +1459,7 @@ class TestConnectorWhs(SingleTransactionCase):
 
         # this update Odoo from WHS
         self.dbsource.whs_insert_read_and_synchronize_list()
-        action = man_order.button_mark_done()
+        action = man_order.with_context(test_connector_whs=True).button_mark_done()
         backorder_form = Form(
             self.env["mrp.production.backorder"].with_context(**action["context"])
         )
@@ -1471,7 +1471,7 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertEqual(mo_backorder.state, "confirmed")
         with self.assertRaises(UserError):
             # check production ore cannot be done without WHS lists
-            mo_backorder.button_mark_done()
+            mo_backorder.with_context(test_connector_whs=True).button_mark_done()
 
     def test_09_mrp_total_from_sale(self):
         with self.assertRaises(ValidationError):
@@ -1565,6 +1565,6 @@ class TestConnectorWhs(SingleTransactionCase):
         # this update Odoo from WHS
         self.dbsource.whs_insert_read_and_synchronize_list()
 
-        man_order.button_mark_done()
+        man_order.with_context(test_connector_whs=True).button_mark_done()
         self.assertEqual(len(man_order.procurement_group_id.mrp_production_ids), 1)
         self.assertEqual(man_order.state, "done")
