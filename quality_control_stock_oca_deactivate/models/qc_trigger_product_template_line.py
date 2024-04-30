@@ -10,6 +10,7 @@ class QcTriggerProductTemplateLine(models.Model):
         trigger_lines = super().get_trigger_line_for_product(
             trigger, product.with_context(active_test=False), partner=partner
         )
+        inspection_obj = self.env["qc.inspection"].sudo()
         # deactivate trigger line when success number of tests is reached
         for trigger_line in trigger_lines:
             if (
@@ -17,7 +18,7 @@ class QcTriggerProductTemplateLine(models.Model):
                 or not trigger_line.active
             ):
                 continue
-            inspections = self.env["qc.inspection"].search(
+            inspections = inspection_obj.search(
                 [
                     ("product_id", "=", product.id),
                     ("test", "=", trigger_line.test.id),
@@ -35,7 +36,7 @@ class QcTriggerProductTemplateLine(models.Model):
         for trigger_line in trigger_lines:
             if not trigger_line.trigger_activation_days:
                 continue
-            inspections = self.env["qc.inspection"].search(
+            inspections = inspection_obj.search(
                 [
                     ("product_id", "=", product.id),
                     ("test", "=", trigger_line.test.id),
