@@ -6,7 +6,7 @@ class StockPicking(models.Model):
     _inherit = "stock.picking"
 
     def _action_done(self):
-        for picking in self:
+        for picking in self.sudo():
             for inspection in picking.qc_inspections_ids:
                 if inspection.state not in ["success", "failed"] and (
                     inspection.object_id._name == "stock.move"
