@@ -369,7 +369,7 @@ ul.auto-toc {
 !! source digest: sha256:131df7ca42d7a82d301ea805b8da9699d3c4bbb950d9a90b128afa8f5b0e51fe
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 <p><a class="reference external image-reference" href="https://odoo-community.org/page/development-status"><img alt="Beta" src="https://img.shields.io/badge/maturity-Beta-yellow.png" /></a> <a class="reference external image-reference" href="http://www.gnu.org/licenses/agpl-3.0-standalone.html"><img alt="License: AGPL-3" src="https://img.shields.io/badge/licence-AGPL--3-blue.png" /></a> <a class="reference external image-reference" href="https://github.com/sergiocorato/e-efatto/tree/14.0/quality_control_stock_oca_failed"><img alt="sergiocorato/e-efatto" src="https://img.shields.io/badge/github-sergiocorato%2Fe--efatto-lightgray.png?logo=github" /></a></p>
-<p>This module create quality control check before validation of stock picking.</p>
+<p>This module moves failed quality control check stock move to quality control location.</p>
 <p><strong>Table of contents</strong></p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
@@ -385,7 +385,7 @@ ul.auto-toc {
 </div>
 <div class="section" id="configuration">
 <h1><a class="toc-backref" href="#toc-entry-1">Configuration</a></h1>
-<p>Con questo modulo il controllo di qualità viene anticipato a prima che il trasferimento sia completato, bloccando l’utente nel caso cerchi di validare il trasferimento senza aver eseguito i controlli.</p>
+<p>Con questo modulo il controllo di qualità fallito sposta il trasferimento dell’articolo verso l’ubicazione impostata nel magazzino di Controllo di qualità.</p>
 </div>
 <div class="section" id="bug-tracker">
 <h1><a class="toc-backref" href="#toc-entry-2">Bug Tracker</a></h1>

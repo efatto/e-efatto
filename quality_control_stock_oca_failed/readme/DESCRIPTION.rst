@@ -1,1 +1,1 @@
-This module create quality control check before validation of stock picking.
+This module moves failed quality control check stock move to quality control location.
