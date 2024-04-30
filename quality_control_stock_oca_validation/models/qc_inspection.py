@@ -9,7 +9,7 @@ class QcInspection(models.Model):
         picking_id = object_ref
         if object_ref._name in ["stock.move", "stock.move.line"]:
             picking_id = object_ref.picking_id
-        inspection_ids = self.search(
+        inspection_ids = self.sudo().search(
             [
                 ("product_id", "=", object_ref.product_id.id),
                 ("picking_id", "=", picking_id.id),
