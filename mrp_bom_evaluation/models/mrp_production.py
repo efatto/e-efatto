@@ -18,7 +18,10 @@ class MrpProduction(models.Model):
             # created with bom_line_id, with order project_id created from
             # sale_order_analytic_all
             self.env['sale.order.line'].create({
-                'name': bom_line.product_id.name,
+                'name': "%s - %s" % (
+                    bom_line.product_id.name,
+                    bom_line.bom_id.product_id.name
+                ),
                 'product_id': bom_line.product_id.id,
                 'product_uom_qty': line_data['qty'],
                 'product_uom': bom_line.product_id.uom_id.id,
