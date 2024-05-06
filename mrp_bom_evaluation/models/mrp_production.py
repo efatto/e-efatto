@@ -29,6 +29,9 @@ class MrpProduction(models.Model):
                 'order_id': self.sale_id.id,
                 'bom_line_id': bom_line.id,
                 'project_id': self.sale_id.project_id.id,
+                'sequence': self.sale_id.order_line.filtered(
+                    lambda x: x.product_id == bom_line.bom_id.product_id
+                )[0].sequence,
             })
             return
         return super()._get_raw_move_data(bom_line, line_data)
