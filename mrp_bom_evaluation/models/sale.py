@@ -17,8 +17,8 @@ class SaleOrder(models.Model):
 
     def action_cancel(self):
         res = super().action_cancel()
-        sol = self.order_line.sudo().filtered(lambda x: x.bom_line_id)
-        sol.unlink()
+        lines = self.order_line.sudo().filtered(lambda x: x.bom_line_id)
+        lines.unlink()
         return res
 
     @api.multi
