@@ -28,7 +28,6 @@ class SaleOrder(models.Model):
         self.ensure_one()
         default = dict(default or {})
         res = super().copy(default)
-        for line in res.order_line:
-            if line.bom_line_id:
-                line.unlink()
+        lines = res.order_line.filtered(lambda x: x.bom_line_id)
+        lines.unlink()
         return res
