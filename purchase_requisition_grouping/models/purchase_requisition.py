@@ -6,6 +6,10 @@ class PurchaseRequisitionLine(models.Model):
 
     group_id = fields.Many2one('procurement.group')
     origin = fields.Char()
+    lead_line_id = fields.Many2one(
+        comodel_name='crm.lead.line',
+        index=True,
+    )
 
     @api.multi
     def _prepare_purchase_order_line(
@@ -40,7 +44,7 @@ class PurchaseRequisition(models.Model):
                 'origin': origin,
                 'group_id': values.get('group_id') and values['group_id'][0].id
                 or False,
-                'account_analytic_id': values.get('account_analytic_id') and
-                values['account_analytic_id'] or False,
+                'account_analytic_id': values.get('account_analytic_id', False),
+                'lead_line_id': values.get('lead_line_id', False),
             })],
         }

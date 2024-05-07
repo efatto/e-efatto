@@ -7,9 +7,11 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='line_ids']/tree/field[@name='product_uom_id']" position="after">
                 <field name="group_id"/>
+                <field name="lead_line_id"/>
             </xpath>
             <xpath expr="//field[@name='line_ids']/form/group/field[@name='product_uom_id']" position="after">
                 <field name="group_id"/>
+                <field name="lead_line_id"/>
             </xpath>
         </field>
     </record>
