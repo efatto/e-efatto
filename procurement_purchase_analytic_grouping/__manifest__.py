@@ -11,7 +11,6 @@
         'procurement_purchase_no_grouping',
         'purchase_analytic',
         'purchase_requisition_grouping',
-        'purchase_sale_mrp_link',
         'sale_order_analytic_all',
         'sale_timesheet',
     ],
