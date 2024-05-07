@@ -17,7 +17,7 @@ class MrpProduction(models.Model):
             # add SO order line to create task and/or project, excluding lines already
             # created with bom_line_id, with order project_id created from
             # sale_order_analytic_all
-            self.env['sale.order.line'].create({
+            vals = {
                 'name': "%s - %s" % (
                     bom_line.product_id.name,
                     bom_line.bom_id.product_id.name
@@ -29,9 +29,14 @@ class MrpProduction(models.Model):
                 'order_id': self.sale_id.id,
                 'bom_line_id': bom_line.id,
                 'project_id': self.sale_id.project_id.id,
-                'sequence': self.sale_id.order_line.filtered(
+            }
+            if self.sale_id.order_line:
+                line = self.sale_id.order_line.filtered(
                     lambda x: x.product_id == bom_line.bom_id.product_id
-                )[0].sequence,
-            })
+                )
+                if line:
+                    sequence = line[0].sequence
+                    vals.update(sequence=sequence)
+            self.env['sale.order.line'].create(vals)
             return
         return super()._get_raw_move_data(bom_line, line_data)
