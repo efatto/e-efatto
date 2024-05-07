@@ -60,7 +60,7 @@ class TestExcelImportExport(SingleTransactionCase):
         }
         cls.mrp_bom = cls.env['mrp.bom'].create({
             'product_tmpl_id': cls.main_product.product_tmpl_id.id,
-            'order_line': [(0, 0, product_line), (0, 0, product_line)],
+            'bom_line_ids': [(0, 0, product_line), (0, 0, product_line)],
         })
 
     @classmethod
@@ -78,7 +78,7 @@ class TestExcelImportExport(SingleTransactionCase):
         for i in range(10):
             cls.env['mrp.bom'].create({
                 'product_tmpl_id': cls.main_product.product_tmpl_id.id,
-                'order_line': [(0, 0, product_line), (0, 0, product_line)],
+                'bom_line_ids': [(0, 0, product_line), (0, 0, product_line)],
             })
 
     @classmethod
