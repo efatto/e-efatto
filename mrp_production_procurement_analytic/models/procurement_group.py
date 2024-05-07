@@ -23,6 +23,10 @@ class ProcurementGroup(models.Model):
                     values.update({
                         'account_analytic_id': mrp_id.analytic_account_id.id,
                     })
+                if mrp_id.lead_line_id:
+                    values.update({
+                        'lead_line_id': mrp_id.lead_line_id.id,
+                    })
 
         return super(ProcurementGroup, self).run(product_id, product_qty,
                                                  product_uom, location_id,
