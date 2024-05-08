@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_move_form_with_carrier" model="ir.ui.view">
+        <field name="name">delivery.account.invoice.form.carrier</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//group[@id='header_right_group']" position="inside">
+                <field name="delivery_carrier_id"
+                   groups="sale.group_delivery_invoice_address"
+                   attrs="{'readonly': [('state', '!=', 'draft')], 'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund', 'out_receipt'))]}"
+                />
+            </xpath>
+        </field>
+    </record>
+</odoo>
