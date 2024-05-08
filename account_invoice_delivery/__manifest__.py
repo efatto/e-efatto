@@ -11,6 +11,6 @@
     "license": "AGPL-3",
     "application": False,
     "installable": True,
-    "depends": ["account", "delivery_auto_refresh"],
+    "depends": ["account", "account_invoice_pricelist", "delivery_auto_refresh"],
     "data": ["views/account_move_views.xml"],
 }

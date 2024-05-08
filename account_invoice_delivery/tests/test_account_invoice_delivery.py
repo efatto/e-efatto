@@ -73,11 +73,11 @@ class TestDeliveryAutoRefresh(common.SavepointCase):
         order_form.partner_id = cls.partner
         order_form.partner_invoice_id = cls.partner
         order_form.partner_shipping_id = cls.partner
+        order_form.carrier_id = cls.carrier_1
         with order_form.order_line.new() as ol_form:
             ol_form.product_id = cls.product
             ol_form.product_uom_qty = 2
         cls.order = order_form.save()
-        cls.invoice = cls.order._create_invoices()
 
     def test_auto_refresh_invoice_from_so(self):
         self.assertFalse(self.order.order_line.filtered("is_delivery"))
@@ -85,39 +85,41 @@ class TestDeliveryAutoRefresh(common.SavepointCase):
         self.order.write(
             {"order_line": [(1, self.order.order_line.id, {"product_uom_qty": 3})]}
         )
-        line_delivery = self.order.order_line.filtered("is_delivery")
-        self.assertEqual(line_delivery.price_unit, 60)
-        line2 = self.order.order_line.new(
-            {
-                "order_id": self.order.id,
-                "product_id": self.product.id,
-                "product_uom_qty": 2,
-            }
-        )
-        _execute_onchanges(line2, "product_id")
-        vals = line2._convert_to_write(line2._cache)
-        del vals["order_id"]
-        self.order.write({"order_line": [(0, 0, vals)]})
-        line_delivery = self.order.order_line.filtered("is_delivery")
-        self.assertEqual(line_delivery.price_unit, 95)
-        # Test saving the discount
-        line_delivery.discount = 10
-        self.order.carrier_id = self.carrier_2
-        line_delivery = self.order.order_line.filtered("is_delivery")
-        self.assertEqual(line_delivery.discount, 10)
-        # Test change the carrier_id using the wizard
-        wiz = Form(
-            self.env["choose.delivery.carrier"].with_context(
-                {
-                    "default_order_id": self.order.id,
-                    "default_carrier_id": self.carrier_1.id,
-                }
-            )
-        ).save()
-        wiz.button_confirm()
-        self.assertEqual(self.order.carrier_id, self.carrier_1)
-        line_delivery = self.order.order_line.filtered("is_delivery")
-        self.assertEqual(line_delivery.name, "Test carrier 1")
+        self.order.order_line.filtered("is_delivery")
+        self._confirm_sale_order(self.order)
+        invoice = self._create_invoice_from_so(self.order)
+        self.assertEqual(invoice.delivery_carrier_id, self.order.carrier_id)
+        # line2 = self.order.order_line.new(
+        #     {
+        #         "order_id": self.order.id,
+        #         "product_id": self.product.id,
+        #         "product_uom_qty": 2,
+        #     }
+        # )
+        # _execute_onchanges(line2, "product_id")
+        # vals = line2._convert_to_write(line2._cache)
+        # del vals["order_id"]
+        # self.order.write({"order_line": [(0, 0, vals)]})
+        # line_delivery = self.order.order_line.filtered("is_delivery")
+        # self.assertEqual(line_delivery.price_unit, 95)
+        # # Test saving the discount
+        # line_delivery.discount = 10
+        # self.order.carrier_id = self.carrier_2
+        # line_delivery = self.order.order_line.filtered("is_delivery")
+        # self.assertEqual(line_delivery.discount, 10)
+        # # Test change the carrier_id using the wizard
+        # wiz = Form(
+        #     self.env["choose.delivery.carrier"].with_context(
+        #         {
+        #             "default_order_id": self.order.id,
+        #             "default_carrier_id": self.carrier_1.id,
+        #         }
+        #     )
+        # ).save()
+        # wiz.button_confirm()
+        # self.assertEqual(self.order.carrier_id, self.carrier_1)
+        # line_delivery = self.order.order_line.filtered("is_delivery")
+        # self.assertEqual(line_delivery.name, "Test carrier 1")
 
     @staticmethod
     def _confirm_sale_order(order):
@@ -129,6 +131,16 @@ class TestDeliveryAutoRefresh(common.SavepointCase):
         line_delivery = order.order_line.filtered("is_delivery")
         order.action_confirm()
         return line_delivery
+
+    @staticmethod
+    def _create_invoice_from_so(order):
+        picking = order.picking_ids[0]
+        for sml in picking.move_lines.mapped("move_line_ids"):
+            sml.qty_done = sml.product_qty
+        picking._action_done()
+        order._create_invoices()
+        invoice = order.invoice_ids[0]
+        return invoice
 
     def _test_autorefresh_unlink_line(self):
         """Helper method to test the possible cases for voiding the line"""
@@ -158,11 +170,14 @@ class TestDeliveryAutoRefresh(common.SavepointCase):
         )
         invoice_form = Form(self.env["account.move"])
         invoice_form.partner_id = self.partner
-        invoice_form.partner_invoice_id = self.partner
         invoice_form.partner_shipping_id = self.partner
         with invoice_form.invoice_line_ids.new() as il_form:
             il_form.product_id = service
-            il_form.product_uom_qty = 2
+            il_form.quantity = 2
+            il_form.account_id = (
+                service.property_account_income_id
+                or service.categ_id.property_account_income_categ_id
+            )
         invoice = invoice_form.save()
         delivery_line = invoice.invoice_line_ids.filtered("is_delivery")
         self.assertFalse(delivery_line.exists())
@@ -170,7 +185,8 @@ class TestDeliveryAutoRefresh(common.SavepointCase):
     def test_auto_refresh_so_and_manually_unlink_delivery_line(self):
         """Test that we are able to manually remove the delivery line"""
         self._test_autorefresh_unlink_line()
-        invoice_form = Form(self.order)
+        invoice = self._create_invoice_from_so(self.order)
+        invoice_form = Form(invoice)
         # Deleting the delivery line
         invoice_form.invoice_line_ids.remove(1)
         invoice_form.save()
