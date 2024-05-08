@@ -14,7 +14,6 @@ class AccountMove(models.Model):
     delivery_carrier_id = fields.Many2one(
         comodel_name="delivery.carrier",
     )
-    delivery_set = fields.Boolean(compute='_compute_delivery_state')
     is_all_service = fields.Boolean(
         "Service Product",
         compute="_compute_is_service_products")
@@ -28,39 +27,31 @@ class AccountMove(models.Model):
                 for line in invoice.invoice_line_ids.filtered(
                     lambda x: not x.display_type))
 
-    @api.depends('invoice_line_ids')
-    def _compute_delivery_state(self):
-        for invoice in self:
-            invoice.delivery_set = any(
-                line.is_delivery for line in invoice.invoice_line_ids)
-
     def _auto_refresh_delivery(self):
         self.ensure_one()
+        if self.state != "draft":
+            return
         # todo group delivery lines
         # Make sure that if you have removed the carrier, the line is gone
-        if self.state == "draft" and not self.env.context.get(
+        if not self.env.context.get(
             "deleting_delivery_line"
         ):
             # Context added to avoid the recursive calls and save the new
             # value of carrier_id
             self.with_context(
-                auto_refresh_delivery=True, skip_validation_check=True
+                auto_refresh_delivery=True,
             )._remove_delivery_line()
         if get_bool_param(
             self.env, "auto_add_delivery_line"
-        ) and self.delivery_carrier_id and self.state == "draft":
+        ) and self.delivery_carrier_id:
             price_unit = self.rate_shipment(self.delivery_carrier_id)["price"]
             if not self.is_all_service:
-                self.with_context(skip_validation_check=True)._create_delivery_line(
+                self._create_delivery_line(
                     self.delivery_carrier_id, price_unit
                 )
             self.with_context(
-                auto_refresh_delivery=True, skip_validation_check=True
+                auto_refresh_delivery=True,
             ).write({"recompute_delivery_price": False})
-            self.with_context(
-                auto_refresh_delivery=True, check_move_validity=False)._recompute_dynamic_lines(
-                recompute_all_taxes=True, recompute_tax_base_amount=True
-            )
 
     @api.model
     def create(self, vals):
@@ -74,6 +65,10 @@ class AccountMove(models.Model):
         """Create or refresh the delivery line after saving."""
         # Check if it's already deleting a delivery line to not
         # delete it again inside `_auto_refresh_delivery()`
+        if self.env.context.get(
+            "auto_refresh_delivery"
+        ):
+            return super().write(vals)
         deleting_delivery_line = vals.get("line_ids", False) and any(
             i[0] == 2 and self.env["account.move.line"].browse(i[1]).is_delivery
             for i in vals["line_ids"]
@@ -83,14 +78,17 @@ class AccountMove(models.Model):
         res = super().write(vals)
         if get_bool_param(
             self.env, "auto_add_delivery_line"
-        ) and not self.env.context.get(
-                "auto_refresh_delivery"
         ):
-            for invoice in self:
+            for invoice in self.filtered(lambda x: x.state == "draft"):
                 delivery_line = invoice.invoice_line_ids.filtered("is_delivery")
                 invoice.with_context(
                     delivery_discount=delivery_line[-1:].discount,
                 )._auto_refresh_delivery()
+                invoice.with_context(
+                    auto_refresh_delivery=True, check_move_validity=False
+                )._recompute_dynamic_lines(
+                    recompute_all_taxes=True, recompute_tax_base_amount=True
+                )
         return res
 
     def _compute_amount_total_without_delivery(self):
@@ -191,22 +189,6 @@ class AccountMove(models.Model):
         if discount and delivery_line:  #                        in values sopra?
             delivery_line.discount = discount
         return delivery_line
-
-    # def set_delivery_line(self, carrier, amount):
-    #     if self.state == "draft":
-    #         if get_bool_param(
-    #             self.env, "auto_add_delivery_line"
-    #         ):
-    #             self.delivery_carrier_id = carrier.id
-    #         else:
-    #             self._remove_delivery_line()
-    #             for invoice in self:
-    #                 invoice.delivery_carrier_id = carrier.id
-    #                 invoice._create_delivery_line(carrier, amount)
-    #                 invoice.with_context(
-    #                     check_move_validity=False)._recompute_dynamic_lines(
-    #                     recompute_all_taxes=True, recompute_tax_base_amount=True
-    #                 )
 
     def _remove_delivery_line(self):
         current_carrier = self.delivery_carrier_id
