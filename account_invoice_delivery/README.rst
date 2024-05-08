@@ -22,12 +22,11 @@ Account invoice delivery
 
 |badge1| |badge2| |badge3|
 
-This module automates the delivery price handling for the following cases:
+Questo modulo automatizza la riga di consegna in fattura.
 
-* If you change any line in your draft sales order (SO), when saving, the
-  delivery price will be adjusted without having to click on "→ Set price".
-* If specified in the system parameter, the delivery line can be also
-  auto-added when creating/saving.
+* Alla generazione della fattura da un ordine di vendita viene riportato il corriere e nelle righe viene riportato il campo È una spedizione per distinguerle dalla righe normali.
+* Se si cambia una qualsiasi riga fattura, salvando, il prezzo della consegna verrà aggiornato.
+* Se impostato nel parametro di sistema, la riga della consegna sarà auto-aggiunta alla creazione/salvataggio.
 
 **Table of contents**
 
@@ -39,23 +38,10 @@ Configuration
 
 * Activate developer mode.
 * Go to *Settings > Technical > Parameters > System Parameters*.
-* Locate the setting with key "delivery_auto_refresh.set_default_carrier"
-  or create a new one if not exists.
-  Put a non Falsy value (1, True...) if you want to have default carrier computed
-  automatically.
 * Locate the setting with key "delivery_auto_refresh.auto_add_delivery_line"
   or create a new one if not exists.
   Put a non Falsy value (1, True...) if you want to add automatically the
   delivery line on save.
-* Locate the setting with key "delivery_auto_refresh.refresh_after_picking"
-  or create a new one if not exists.
-  Put a non Falsy value (1, True...) if you want to refresh delivery price
-  after transferring.
-* Locate the setting with key "delivery_auto_refresh.auto_void_delivery_line"
-  or create a new one if it doesn't exists.
-  Put a non Falsy value (1, True...) if you want to void the delivery line
-  values (price, units ordered, units delivered) in the sale order when the
-  delivered picking is returned to refund prior to be invoiced.
 
 Bug Tracker
 ===========

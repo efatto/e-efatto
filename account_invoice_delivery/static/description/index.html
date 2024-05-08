@@ -369,12 +369,11 @@ ul.auto-toc {
 !! source digest: sha256:50657bf002731205722e34c74338488be58155f434ea473e1ded9d2c9d0c557b
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 <p><a class="reference external image-reference" href="https://odoo-community.org/page/development-status"><img alt="Beta" src="https://img.shields.io/badge/maturity-Beta-yellow.png" /></a> <a class="reference external image-reference" href="http://www.gnu.org/licenses/agpl-3.0-standalone.html"><img alt="License: AGPL-3" src="https://img.shields.io/badge/licence-AGPL--3-blue.png" /></a> <a class="reference external image-reference" href="https://github.com/sergiocorato/e-efatto/tree/14.0/account_invoice_delivery"><img alt="sergiocorato/e-efatto" src="https://img.shields.io/badge/github-sergiocorato%2Fe--efatto-lightgray.png?logo=github" /></a></p>
-<p>This module automates the delivery price handling for the following cases:</p>
+<p>Questo modulo automatizza la riga di consegna in fattura.</p>
 <ul class="simple">
-<li>If you change any line in your draft sales order (SO), when saving, the
-delivery price will be adjusted without having to click on “→ Set price”.</li>
-<li>If specified in the system parameter, the delivery line can be also
-auto-added when creating/saving.</li>
+<li>Alla generazione della fattura da un ordine di vendita viene riportato il corriere e nelle righe viene riportato il campo È una spedizione per distinguerle dalla righe normali.</li>
+<li>Se si cambia una qualsiasi riga fattura, salvando, il prezzo della consegna verrà aggiornato.</li>
+<li>Se impostato nel parametro di sistema, la riga della consegna sarà auto-aggiunta alla creazione/salvataggio.</li>
 </ul>
 <p><strong>Table of contents</strong></p>
 <div class="contents local topic" id="contents">
@@ -394,23 +393,10 @@ auto-added when creating/saving.</li>
 <ul class="simple">
 <li>Activate developer mode.</li>
 <li>Go to <em>Settings &gt; Technical &gt; Parameters &gt; System Parameters</em>.</li>
-<li>Locate the setting with key “delivery_auto_refresh.set_default_carrier”
-or create a new one if not exists.
-Put a non Falsy value (1, True…) if you want to have default carrier computed
-automatically.</li>
 <li>Locate the setting with key “delivery_auto_refresh.auto_add_delivery_line”
 or create a new one if not exists.
 Put a non Falsy value (1, True…) if you want to add automatically the
 delivery line on save.</li>
-<li>Locate the setting with key “delivery_auto_refresh.refresh_after_picking”
-or create a new one if not exists.
-Put a non Falsy value (1, True…) if you want to refresh delivery price
-after transferring.</li>
-<li>Locate the setting with key “delivery_auto_refresh.auto_void_delivery_line”
-or create a new one if it doesn’t exists.
-Put a non Falsy value (1, True…) if you want to void the delivery line
-values (price, units ordered, units delivered) in the sale order when the
-delivered picking is returned to refund prior to be invoiced.</li>
 </ul>
 </div>
 <div class="section" id="bug-tracker">
