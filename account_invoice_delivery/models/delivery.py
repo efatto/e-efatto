@@ -35,3 +35,16 @@ class ProviderGrid(models.Model):
             return super()._get_price_available(order)
 
         return self._get_price_from_picking(total, weight, volume, quantity)
+
+    def _compute_currency(self, order, price, conversion):
+        from_currency, to_currency = self._get_conversion_currencies(order, conversion)
+        if from_currency.id == to_currency.id:
+            return price
+        if hasattr(order, "invoice_date"):
+            return from_currency._convert(
+                price,
+                to_currency,
+                order.company_id,
+                order.invoice_date or fields.Date.today(),
+            )
+        return super()._compute_currency(order, price, conversion)
