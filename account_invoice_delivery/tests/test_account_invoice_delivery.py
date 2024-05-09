@@ -92,6 +92,7 @@ class TestDeliveryAutoRefresh(common.SavepointCase):
         order_form.carrier_id = cls.carrier_1
         with order_form.order_line.new() as ol_form:
             ol_form.product_id = cls.product
+            ol_form.product_uom_id = cls.product.uom_id
             ol_form.product_uom_qty = 2
         cls.order = order_form.save()
 
