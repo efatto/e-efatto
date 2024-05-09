@@ -116,37 +116,25 @@ class TestDeliveryAutoRefresh(common.SavepointCase):
         delivery_line = invoice.line_ids.filtered("is_delivery")
         self.assertTrue(delivery_line.exists())
         self.assertAlmostEqual(delivery_line.price_unit, 60)
-        # line2 = invoice.invoice_line_ids.new(
-        #     {
-        #         "order_id": self.order.id,
-        #         "product_id": self.product.id,
-        #         "product_uom_qty": 2,
-        #     }
-        # )
-        # _execute_onchanges(line2, "product_id")
-        # vals = line2._convert_to_write(line2._cache)
-        # del vals["order_id"]
-        # self.order.write({"order_line": [(0, 0, vals)]})
-        # line_delivery = self.order.order_line.filtered("is_delivery")
-        # self.assertEqual(line_delivery.price_unit, 95)
-        # # Test saving the discount
-        # line_delivery.discount = 10
-        # self.order.carrier_id = self.carrier_2
-        # line_delivery = self.order.order_line.filtered("is_delivery")
-        # self.assertEqual(line_delivery.discount, 10)
-        # # Test change the carrier_id using the wizard
-        # wiz = Form(
-        #     self.env["choose.delivery.carrier"].with_context(
-        #         {
-        #             "default_order_id": self.order.id,
-        #             "default_carrier_id": self.carrier_1.id,
-        #         }
-        #     )
-        # ).save()
-        # wiz.button_confirm()
-        # self.assertEqual(self.order.carrier_id, self.carrier_1)
-        # line_delivery = self.order.order_line.filtered("is_delivery")
-        # self.assertEqual(line_delivery.name, "Test carrier 1")
+        invoice_form = Form(invoice)
+        with invoice_form.invoice_line_ids.new() as new_il:
+            new_il.product_id = self.product
+            new_il.quantity = 2
+        invoice_form.save()
+        line_delivery = invoice.invoice_line_ids.filtered("is_delivery")
+        self.assertEqual(line_delivery.price_unit, 95)
+        # Test saving the discount
+        invoice_form = Form(invoice)
+        with invoice_form.invoice_line_ids.edit(0) as il_delivery:
+            il_delivery.discount = 10
+        with invoice_form.invoice_line_ids.edit(1) as il_delivery:
+            il_delivery.discount = 10
+        with invoice_form.invoice_line_ids.edit(2) as il_delivery:
+            il_delivery.discount = 10
+        invoice_form.save()
+        invoice.delivery_carrier_id = self.carrier_2
+        line_delivery = invoice.invoice_line_ids.filtered("is_delivery")
+        self.assertEqual(line_delivery.discount, 10)
 
     @staticmethod
     def _confirm_sale_order(order, qty):
