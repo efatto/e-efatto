@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-08 06:46+0000\n"
-"PO-Revision-Date: 2024-05-08 06:46+0000\n"
+"POT-Creation-Date: 2024-05-09 16:21+0000\n"
+"PO-Revision-Date: 2024-05-09 16:21+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -25,6 +25,7 @@ msgstr " (Costo stimato: %s )"
 #: model:ir.model.fields,field_description:account_invoice_delivery.field_account_move__assigned_attachment_ids
 #: model:ir.model.fields,field_description:account_invoice_delivery.field_account_move_line__assigned_attachment_ids
 #: model:ir.model.fields,field_description:account_invoice_delivery.field_delivery_carrier__assigned_attachment_ids
+#: model:ir.model.fields,field_description:account_invoice_delivery.field_sale_order__assigned_attachment_ids
 #: model:ir.model.fields,field_description:account_invoice_delivery.field_sale_order_line__assigned_attachment_ids
 msgid "Assigned Attachments"
 msgstr "Allegati assegnati"
@@ -35,13 +36,6 @@ msgstr "Allegati assegnati"
 #: model:ir.model.fields,field_description:account_invoice_delivery.field_account_payment__delivery_carrier_id
 msgid "Delivery Carrier"
 msgstr "Metodo di consegna"
-
-#. module: account_invoice_delivery
-#: model:ir.model.fields,field_description:account_invoice_delivery.field_account_bank_statement_line__delivery_set
-#: model:ir.model.fields,field_description:account_invoice_delivery.field_account_move__delivery_set
-#: model:ir.model.fields,field_description:account_invoice_delivery.field_account_payment__delivery_set
-msgid "Delivery Set"
-msgstr ""
 
 #. module: account_invoice_delivery
 #: model:ir.model.fields,field_description:account_invoice_delivery.field_account_bank_statement_line__recompute_delivery_price
@@ -55,6 +49,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:account_invoice_delivery.field_account_move__display_name
 #: model:ir.model.fields,field_description:account_invoice_delivery.field_account_move_line__display_name
 #: model:ir.model.fields,field_description:account_invoice_delivery.field_delivery_carrier__display_name
+#: model:ir.model.fields,field_description:account_invoice_delivery.field_sale_order__display_name
 #: model:ir.model.fields,field_description:account_invoice_delivery.field_sale_order_line__display_name
 msgid "Display Name"
 msgstr "Nome visualizzato"
@@ -69,6 +64,7 @@ msgstr "Spedizione gratuita"
 #: model:ir.model.fields,field_description:account_invoice_delivery.field_account_move__id
 #: model:ir.model.fields,field_description:account_invoice_delivery.field_account_move_line__id
 #: model:ir.model.fields,field_description:account_invoice_delivery.field_delivery_carrier__id
+#: model:ir.model.fields,field_description:account_invoice_delivery.field_sale_order__id
 #: model:ir.model.fields,field_description:account_invoice_delivery.field_sale_order_line__id
 msgid "ID"
 msgstr ""
@@ -92,9 +88,21 @@ msgstr "Movimento contabile"
 #: model:ir.model.fields,field_description:account_invoice_delivery.field_account_move____last_update
 #: model:ir.model.fields,field_description:account_invoice_delivery.field_account_move_line____last_update
 #: model:ir.model.fields,field_description:account_invoice_delivery.field_delivery_carrier____last_update
+#: model:ir.model.fields,field_description:account_invoice_delivery.field_sale_order____last_update
 #: model:ir.model.fields,field_description:account_invoice_delivery.field_sale_order_line____last_update
 msgid "Last Modified on"
 msgstr "Ultima modifica il"
+
+#. module: account_invoice_delivery
+#: code:addons/account_invoice_delivery/models/sale.py:0
+#, python-format
+msgid "Only sale orders with the same carrier can be invoiced together!"
+msgstr "Solo gli ordini con lo stesso metodo di consegna possono essere fatturati insieme!"
+
+#. module: account_invoice_delivery
+#: model:ir.model,name:account_invoice_delivery.model_sale_order
+msgid "Sales Order"
+msgstr "Ordini di vendita"
 
 #. module: account_invoice_delivery
 #: model:ir.model,name:account_invoice_delivery.model_sale_order_line
@@ -106,15 +114,15 @@ msgstr "Linea d'ordine di vendita"
 #: model:ir.model.fields,field_description:account_invoice_delivery.field_account_move__is_all_service
 #: model:ir.model.fields,field_description:account_invoice_delivery.field_account_payment__is_all_service
 msgid "Service Product"
-msgstr ""
+msgstr "Servizio"
 
 #. module: account_invoice_delivery
 #: model:ir.model,name:account_invoice_delivery.model_delivery_carrier
 msgid "Shipping Methods"
-msgstr ""
+msgstr "Metodo di consegna"
 
 #. module: account_invoice_delivery
 #: code:addons/account_invoice_delivery/models/account_move.py:0
 #, python-format
 msgid "The shipping is free since the order amount exceeds %.2f."
-msgstr ""
+msgstr "La consegna è gratuita in quanto l'importo dell'ordine eccede %.2f."
