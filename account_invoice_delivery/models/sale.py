@@ -1,4 +1,4 @@
-from odoo import models, _
+from odoo import _, models
 from odoo.exceptions import UserError
 
 
@@ -7,9 +7,9 @@ class SaleOrder(models.Model):
 
     def _create_invoices(self, grouped=False, final=False, date=None):
         if any([x.carrier_id != self[-1].carrier_id for x in self]):
-            raise UserError(_(
-                "Only sale orders with the same carrier can be invoiced together!"
-            ))
+            raise UserError(
+                _("Only sale orders with the same carrier can be invoiced together!")
+            )
         return super()._create_invoices(grouped=grouped, final=final, date=date)
 
     def _prepare_invoice(self):
