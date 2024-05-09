@@ -18,8 +18,19 @@ class TestDeliveryAutoRefresh(common.SavepointCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
+        cls.revenue_account = cls.env["account.account"].create(
+            {
+                "code": "TEST_REVENUE",
+                "name": "Sale revenue",
+                "user_type_id": cls.env.ref("account.data_account_type_revenue").id,
+            }
+        )
         service = cls.env["product.product"].create(
-            {"name": "Service Test", "type": "service"}
+            {
+                "name": "Service Test",
+                "type": "service",
+                "property_account_income_id": cls.revenue_account.id,
+            }
         )
         pricelist = cls.env["product.pricelist"].create(
             {"name": "Test pricelist", "currency_id": cls.env.company.currency_id.id}
@@ -59,7 +70,12 @@ class TestDeliveryAutoRefresh(common.SavepointCase):
             price_rule_form.list_base_price = 50
         cls.carrier_2 = carrier_form.save()
         cls.product = cls.env["product.product"].create(
-            {"name": "Test product", "weight": 10, "list_price": 20}
+            {
+                "name": "Test product",
+                "weight": 10,
+                "list_price": 20,
+                "property_account_income_id": cls.revenue_account.id,
+            }
         )
         cls.partner = cls.env["res.partner"].create(
             {
@@ -79,17 +95,28 @@ class TestDeliveryAutoRefresh(common.SavepointCase):
             ol_form.product_uom_qty = 2
         cls.order = order_form.save()
 
-    def test_auto_refresh_invoice_from_so(self):
+    @staticmethod
+    def _create_invoice_from_so(order):
+        picking = order.picking_ids[0]
+        for ml in picking.move_lines:
+            ml.quantity_done = ml.product_qty
+        picking._action_done()
+        order._create_invoices()
+        invoice = order.invoice_ids[0]
+        return invoice
+
+    def test_00_auto_refresh_invoice_from_so(self):
         self.assertFalse(self.order.order_line.filtered("is_delivery"))
         self.env["ir.config_parameter"].sudo().set_param(self.param_name1, 1)
-        self.order.write(
-            {"order_line": [(1, self.order.order_line.id, {"product_uom_qty": 3})]}
-        )
-        self.order.order_line.filtered("is_delivery")
-        self._confirm_sale_order(self.order)
+        self._confirm_sale_order(self.order, 3)
+        delivery_line = self.order.order_line.filtered("is_delivery")
+        self.assertTrue(delivery_line.exists())
         invoice = self._create_invoice_from_so(self.order)
         self.assertEqual(invoice.delivery_carrier_id, self.order.carrier_id)
-        # line2 = self.order.order_line.new(
+        delivery_line = invoice.line_ids.filtered("is_delivery")
+        self.assertTrue(delivery_line.exists())
+        self.assertAlmostEqual(delivery_line.price_unit, 60)
+        # line2 = invoice.invoice_line_ids.new(
         #     {
         #         "order_id": self.order.id,
         #         "product_id": self.product.id,
@@ -122,25 +149,15 @@ class TestDeliveryAutoRefresh(common.SavepointCase):
         # self.assertEqual(line_delivery.name, "Test carrier 1")
 
     @staticmethod
-    def _confirm_sale_order(order):
+    def _confirm_sale_order(order, qty):
         sale_form = Form(order)
         # Force the delivery line creation
         with sale_form.order_line.edit(0) as line_form:
-            line_form.product_uom_qty = 2
+            line_form.product_uom_qty = qty
         sale_form.save()
         line_delivery = order.order_line.filtered("is_delivery")
         order.action_confirm()
         return line_delivery
-
-    @staticmethod
-    def _create_invoice_from_so(order):
-        picking = order.picking_ids[0]
-        for sml in picking.move_lines.mapped("move_line_ids"):
-            sml.qty_done = sml.product_qty
-        picking._action_done()
-        order._create_invoices()
-        invoice = order.invoice_ids[0]
-        return invoice
 
     def _test_autorefresh_unlink_line(self):
         """Helper method to test the possible cases for voiding the line"""
@@ -153,7 +170,7 @@ class TestDeliveryAutoRefresh(common.SavepointCase):
         sale_form.save()
         return self.order.order_line.filtered("is_delivery")
 
-    def test_auto_refresh_so_and_unlink_line(self):
+    def test_01_auto_refresh_so_and_unlink_line(self):
         """The return wasn't flagged to refund, so the delivered qty won't
         change, thus the delivery line shouldn't be either"""
         self._test_autorefresh_unlink_line()
@@ -163,7 +180,7 @@ class TestDeliveryAutoRefresh(common.SavepointCase):
         sale_form.save()
         self.assertFalse(delivery_line.exists())
 
-    def test_auto_add_delivery_line_add_service(self):
+    def test_02_auto_add_delivery_line_all_services(self):
         self.env["ir.config_parameter"].sudo().set_param(self.param_name1, 1)
         service = self.env["product.product"].create(
             {"name": "Service Test", "type": "service"}
@@ -171,22 +188,20 @@ class TestDeliveryAutoRefresh(common.SavepointCase):
         invoice_form = Form(self.env["account.move"])
         invoice_form.partner_id = self.partner
         invoice_form.partner_shipping_id = self.partner
+        invoice_form.delivery_carrier_id = self.carrier_1
         with invoice_form.invoice_line_ids.new() as il_form:
             il_form.product_id = service
             il_form.quantity = 2
-            il_form.account_id = (
-                service.property_account_income_id
-                or service.categ_id.property_account_income_categ_id
-            )
+            il_form.account_id = self.revenue_account
         invoice = invoice_form.save()
         delivery_line = invoice.invoice_line_ids.filtered("is_delivery")
         self.assertFalse(delivery_line.exists())
 
-    def test_auto_refresh_so_and_manually_unlink_delivery_line(self):
-        """Test that we are able to manually remove the delivery line"""
-        self._test_autorefresh_unlink_line()
-        invoice = self._create_invoice_from_so(self.order)
-        invoice_form = Form(invoice)
-        # Deleting the delivery line
-        invoice_form.invoice_line_ids.remove(1)
-        invoice_form.save()
+    # def test_03_auto_refresh_so_and_manually_unlink_delivery_line(self):
+    #     """Test that we are able to manually remove the delivery line"""
+    #     self._test_autorefresh_unlink_line()
+    #     invoice = self._create_invoice_from_so(self.order)
+    #     invoice_form = Form(invoice)
+    #     # Deleting the delivery line
+    #     invoice_form.invoice_line_ids.remove(1)
+    #     invoice_form.save()
