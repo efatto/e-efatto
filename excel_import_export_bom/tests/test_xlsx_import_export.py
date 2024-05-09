@@ -14,6 +14,7 @@ class TestXLSXImportExport(TestExcelImportExport):
         self.setUpMrpBom()
         # ----------- EXPORT ---------------
         ctx = {'active_model': 'mrp.bom',
+               'active_ids': self.mrp_bom.ids,
                'active_id': self.mrp_bom.id,
                'template_domain': [('res_model', '=', 'mrp.bom'),
                                    ('fname', '=', 'mrp_bom.xlsx'),
@@ -21,9 +22,9 @@ class TestXLSXImportExport(TestExcelImportExport):
         f = Form(self.env['export.xlsx.wizard'].with_context(ctx))
         export_wizard = f.save()
         # Test whether it loads correct template
-        self.assertEqual(export_wizard.template_id,
-                         self.env.ref('excel_import_export_bom.'
-                                      'mrp_bom_xlsx_template'))
+        self.assertEqual(
+            export_wizard.template_id,
+            self.env.ref('excel_import_export_bom.mrp_bom_xlsx_template'))
         # Export excel
         export_wizard.action_export()
         self.assertTrue(export_wizard.data)
@@ -31,6 +32,7 @@ class TestXLSXImportExport(TestExcelImportExport):
 
         # ----------- IMPORT ---------------
         ctx = {'active_model': 'mrp.bom',
+               'active_ids': self.mrp_bom.ids,
                'active_id': self.mrp_bom.id,
                'template_domain': [('res_model', '=', 'mrp.bom'),
                                    ('fname', '=', 'mrp_bom.xlsx'),
@@ -44,8 +46,8 @@ class TestXLSXImportExport(TestExcelImportExport):
         import_wizard.get_import_sample()
         self.assertTrue(import_wizard.datas)
         # Test whether it loads correct template
-        self.assertEqual(import_wizard.template_id,
-                         self.env.ref('excel_import_export_bom.'
-                                      'mrp_bom_xlsx_template'))
+        self.assertEqual(
+            import_wizard.template_id,
+            self.env.ref('excel_import_export_bom.mrp_bom_xlsx_template'))
         # Import Excel
         import_wizard.action_import()
