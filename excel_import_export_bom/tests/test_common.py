@@ -91,11 +91,7 @@ class TestExcelImportExport(SingleTransactionCase):
             'type': 'product',
             'uom_id': uom_unit.id,
             'uom_po_id': uom_unit.id,
-            'invoice_policy': 'order',
-            'expense_policy': 'no',
             'default_code': 'MAIN_PROD',
-            'service_type': 'manual',
-            'taxes_id': False,
         })
         cls.product_order = cls.env['product.product'].create({
             'name': "Test Product",
@@ -104,9 +100,5 @@ class TestExcelImportExport(SingleTransactionCase):
             'type': 'consu',
             'uom_id': uom_unit.id,
             'uom_po_id': uom_unit.id,
-            'invoice_policy': 'order',
-            'expense_policy': 'no',
             'default_code': 'PROD_ORDER',
-            'service_type': 'manual',
-            'taxes_id': False,
         })
