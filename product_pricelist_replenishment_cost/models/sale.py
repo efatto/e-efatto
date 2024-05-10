@@ -8,7 +8,7 @@ class SaleOrderLine(models.Model):
 
     @api.depends("price_subtotal", "product_uom_qty", "purchase_price")
     def _compute_margin(self):
-        #todo move this logic to compute price, as in 12.0 this was used to compute it
+        # todo move this logic to compute price, as in 12.0 this was used to compute it
         for line in self:
             # find if exists a rule applicable on managed replenishment cost, then
             # compute cost accordingly
