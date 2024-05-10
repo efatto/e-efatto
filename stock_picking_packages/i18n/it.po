@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-10 07:57+0000\n"
-"PO-Revision-Date: 2024-05-10 07:57+0000\n"
+"POT-Creation-Date: 2024-05-10 09:48+0000\n"
+"PO-Revision-Date: 2024-05-10 09:48+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -51,8 +51,12 @@ msgstr "Ultima modifica il"
 
 #. module: stock_picking_packages
 #: model:ir.model,name:stock_picking_packages.model_stock_quant_package
-#: model:ir.model.fields,field_description:stock_picking_packages.field_stock_picking__stock_package_ids
 msgid "Packages"
+msgstr "Colli"
+
+#. module: stock_picking_packages
+#: model:ir.model.fields,field_description:stock_picking_packages.field_stock_picking__stock_package_ids
+msgid "Packages custom"
 msgstr "Colli"
 
 #. module: stock_picking_packages
@@ -62,5 +66,11 @@ msgstr "Trasferimento"
 
 #. module: stock_picking_packages
 #: model:ir.model.fields,field_description:stock_picking_packages.field_stock_quant_package__weight_custom
+#: model_terms:ir.ui.view,arch_db:stock_picking_packages.view_quant_package_form
 msgid "Weight custom"
 msgstr "Peso (manuale)"
+
+#. module: stock_picking_packages
+#: model:ir.model.fields,field_description:stock_picking_packages.field_stock_quant_package__weight_custom_uom_id
+msgid "Weight unit of measure"
+msgstr "Unità di misura (peso)"

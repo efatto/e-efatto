@@ -6,5 +6,5 @@ class StockPicking(models.Model):
 
     stock_package_ids = fields.Many2many(
         comodel_name="stock.quant.package",
-        string="Packages",
+        string="Packages custom",
     )

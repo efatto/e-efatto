@@ -11,6 +11,7 @@
                         <field name="display_name" />
                         <field name="dimensions" />
                         <field name="weight_custom" />
+                        <field name="weight_custom_uom_id" />
                         <field name="appearance" />
                         <field name="packaging_id" />
                         <field name="company_id" groups="base.group_multi_company" />
