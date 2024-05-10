@@ -7,10 +7,15 @@
         <field name="arch" type="xml">
             <field name="company_id" position="before">
                 <field name="dimensions" />
-                <label for="weight_custom" string="Weight custom"/>
+                <label for="weight_custom" string="Weight custom" />
                 <div>
-                    <field name="weight_custom" class="oe_inline"/>
-                    <field name="weight_custom_uom_id" nolabel="1" class="oe_inline" style="margin-left:5px"/>
+                    <field name="weight_custom" class="oe_inline" />
+                    <field
+            name="weight_custom_uom_id"
+            nolabel="1"
+            class="oe_inline"
+            style="margin-left:5px"
+          />
                 </div>
                 <field name="appearance" />
             </field>
