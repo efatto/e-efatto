@@ -7,6 +7,8 @@
         <field name="arch" type="xml">
             <field name="company_id" position="before">
                 <field name="dimensions" />
+                <field name="weight_custom" />
+                <field name="appearance" />
             </field>
         </field>
     </record>
