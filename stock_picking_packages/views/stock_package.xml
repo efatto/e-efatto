@@ -17,7 +17,7 @@
             style="margin-left:5px"
           />
                 </div>
-                <field name="appearance" />
+                <field name="goods_appearance_id" />
             </field>
         </field>
     </record>

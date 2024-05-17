@@ -9,6 +9,7 @@
     "license": "AGPL-3",
     "website": "https://github.com/sergiocorato/e-efatto",
     "depends": [
+        "l10n_it_delivery_note",
         "delivery",
         "stock",
     ],
