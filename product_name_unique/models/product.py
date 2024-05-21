@@ -17,9 +17,15 @@ class ProductTemplate(models.Model):
         for template in self.filtered(
             lambda x: not x.categ_id.bypass_product_name_unique
         ):
+            bypass_name_categs = self.env["product.category"].search([
+                ("bypass_product_name_unique", "=", True),
+            ])
             others = self.env["product.template"].search([
                 ("name", "=", template.name),
                 ("id", "!=", template.id),
+                "!", ("categ_id", "child_of", bypass_name_categs.ids),
             ])
             if others:
-                raise ValidationError(_("Name must be unique across the database!"))
+                raise ValidationError(_(
+                    "Name must be unique across the database "
+                    "for product category %s!" % others[0].categ_id.name))
