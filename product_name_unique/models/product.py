@@ -2,7 +2,8 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 
 class ProductTemplate(models.Model):
@@ -10,6 +11,15 @@ class ProductTemplate(models.Model):
 
     name = fields.Char(translate=False)
 
-    _sql_constraints = [
-        ('name_uniq', 'unique(name)',
-            'Name must be unique across the database!'), ]
+    @api.multi
+    @api.constrains("name", "categ_id")
+    def _check_name_unique(self):
+        for template in self.filtered(
+            lambda x: not x.categ_id.bypass_product_name_unique
+        ):
+            others = self.env["product.template"].search([
+                ("name", "=", template.name),
+                ("id", "!=", template.id),
+            ])
+            if others:
+                raise ValidationError(_("Name must be unique across the database!"))
