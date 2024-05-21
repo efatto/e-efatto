@@ -110,7 +110,9 @@ class MrpProduction(models.Model):
                 "done",
                 "cancel",
             ]:
-                raise UserError(_("Production %s is not sent to WHS!") % production.id)
+                raise UserError(
+                    _("Production %s has not been sent to WHS!") % production.name
+                )
             production.move_raw_ids._check_done_whs_list()
             if production.state == "progress":
                 moves_to_do = production.move_raw_ids.filtered(
@@ -143,7 +145,9 @@ class MrpProduction(models.Model):
                     ]
                 )
             ):
-                raise UserError(_("Production %s is not sent to WHS!") % production.id)
+                raise UserError(
+                    _("Production %s has not been sent to WHS!") % production.name
+                )
             (
                 production.move_raw_ids | production.move_finished_ids
             )._check_done_whs_list()
