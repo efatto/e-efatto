@@ -7,12 +7,13 @@
         <field name="arch" type="xml">
             <button name="button_mark_done" position="before">
                 <field name="sent_to_whs" invisible="1" />
+                <field name="bom_type" invisible="1" />
                 <button
           name="button_send_to_whs"
           type="object"
           string="Send to WHS"
           class="oe_highlight"
-          attrs="{'invisible': ['|', ('state', '!=', 'progress'), ('sent_to_whs', '=', True)]}"
+          attrs="{'invisible': ['|', '|', ('bom_type', '=', 'subcontract'), ('state', '!=', 'progress'), ('sent_to_whs', '=', True)]}"
         />
             </button>
             <xpath expr="//button[@name='button_mark_done']" position="before">
@@ -22,7 +23,7 @@
           type="object"
           class="oe_highlight"
           string="Consume components"
-          attrs="{'invisible': ['|', '|', '|', ('is_consumable', '=', False), ('state', '!=', 'progress'), ('qty_producing', '=', 0), ('sent_to_whs', '=', False)]}"
+          attrs="{'invisible': ['|', '|', '|', '|', ('bom_type', '=', 'subcontract'), ('is_consumable', '=', False), ('state', '!=', 'progress'), ('qty_producing', '=', 0), ('sent_to_whs', '=', False)]}"
         />
             </xpath>
             <xpath
@@ -30,9 +31,21 @@
         position="attributes"
       >
                 <attribute name="string">Produce</attribute>
-                <attribute
-          name="attrs"
-        >{'invisible': ['|', '|', '|', ('is_consumable', '=', True), ('state', 'not in', ['progress', 'consumed']), ('qty_producing', '=', 0), ('sent_to_whs', '=', False)]}</attribute>
+                <attribute name="attrs">{'invisible': [
+                    '|',
+                    '&amp;',
+                    '|',
+                    '|',
+                    ('bom_type', '=', 'subcontract'),
+                    ('is_consumable', '=', True), ('state', 'not in', ['progress', 'consumed']), ('qty_producing', '=', 0),
+                    '&amp;',
+                    '|',
+                    '|',
+                    '|',
+                    ('bom_type', '!=', 'subcontract'),
+                    ('is_consumable', '=', True), ('state', 'not in', ['progress', 'consumed']), ('qty_producing', '=', 0), ('sent_to_whs', '=', False)
+                ]}
+                </attribute>
             </xpath>
             <xpath
         expr="//button[@name='button_mark_done'][last()]"
