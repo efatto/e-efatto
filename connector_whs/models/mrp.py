@@ -40,6 +40,10 @@ class MrpProduction(models.Model):
         comodel_name="stock.move",
         string="Technical field to store moves to do in consume workflow",
     )
+    bom_type = fields.Selection(
+        related="bom_id.type",
+        string="BOM Type",
+    )
 
     @api.depends(
         "move_raw_ids.whs_list_ids",
@@ -106,10 +110,15 @@ class MrpProduction(models.Model):
     def button_consume(self):
         self._button_mark_done_sanity_checks()
         for production in self:
-            if not production.sent_to_whs and production.state not in [
-                "done",
-                "cancel",
-            ]:
+            if (
+                production.bom_id.type != "subcontract"
+                and not production.sent_to_whs
+                and production.state
+                not in [
+                    "done",
+                    "cancel",
+                ]
+            ):
                 raise UserError(
                     _("Production %s has not been sent to WHS!") % production.name
                 )
@@ -133,17 +142,15 @@ class MrpProduction(models.Model):
     def button_mark_done(self):
         for production in self:
             if (
-                not config["test_enable"]
-                or self.env.context.get("test_connector_whs")
-                and (
-                    not production.sent_to_whs
-                    and not production.bom_id.type == "subcontract"
-                    and production.state
-                    not in [
-                        "done",
-                        "cancel",
-                    ]
-                )
+                not config["test_enable"] or self.env.context.get("test_connector_whs")
+            ) and (
+                not production.sent_to_whs
+                and production.bom_id.type != "subcontract"
+                and production.state
+                not in [
+                    "done",
+                    "cancel",
+                ]
             ):
                 raise UserError(
                     _("Production %s has not been sent to WHS!") % production.name
