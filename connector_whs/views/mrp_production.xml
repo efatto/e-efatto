@@ -33,17 +33,22 @@
                 <attribute name="string">Produce</attribute>
                 <attribute name="attrs">{'invisible': [
                     '|',
-                    '&amp;',
-                    '|',
-                    '|',
-                    ('bom_type', '=', 'subcontract'),
-                    ('is_consumable', '=', True), ('state', 'not in', ['progress', 'consumed']), ('qty_producing', '=', 0),
-                    '&amp;',
-                    '|',
-                    '|',
-                    '|',
-                    ('bom_type', '!=', 'subcontract'),
-                    ('is_consumable', '=', True), ('state', 'not in', ['progress', 'consumed']), ('qty_producing', '=', 0), ('sent_to_whs', '=', False)
+                        '&amp;',
+                            ('bom_type', '=', 'subcontract'),
+                        '|',
+                            ('is_consumable', '=', True),
+                        '|',
+                            ('state', 'not in', ['progress', 'consumed']),
+                            ('qty_producing', '=', 0),
+                        '&amp;',
+                            ('bom_type', '!=', 'subcontract'),
+                        '|',
+                            ('is_consumable', '=', True),
+                        '|',
+                            ('state', 'not in', ['progress', 'consumed']),
+                        '|',
+                            ('qty_producing', '=', 0),
+                            ('sent_to_whs', '=', False)
                 ]}
                 </attribute>
             </xpath>
