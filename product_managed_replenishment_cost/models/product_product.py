@@ -16,6 +16,14 @@ class ProductTemplate(models.Model):
         search="_search_adjustment_cost",
         groups="base.group_user",
     )
+    testing_cost = fields.Float(
+        string="Testing Cost (€/pz)",
+        digits="Product Price",
+        compute="_compute_testing_cost",
+        inverse="_inverse_testing_cost",
+        search="_search_testing_cost",
+        groups="base.group_user",
+    )
     landed_cost = fields.Float(
         string="Landed cost",
         digits="Product Price",
@@ -42,6 +50,24 @@ class ProductTemplate(models.Model):
     def _search_adjustment_cost(self, operator, value):
         products = self.env["product.product"].search(
             [("adjustment_cost", operator, value)], limit=None
+        )
+        return [("id", "in", products.mapped("product_tmpl_id").ids)]
+
+    @api.depends("product_variant_ids", "product_variant_ids.testing_cost")
+    def _compute_testing_cost(self):
+        unique_variants = self.filtered(lambda tmpl: len(tmpl.product_variant_ids) == 1)
+        for template in unique_variants:
+            template.testing_cost = template.product_variant_ids.testing_cost
+        for template in self - unique_variants:
+            template.testing_cost = 0.0
+
+    def _inverse_testing_cost(self):
+        if len(self.product_variant_ids) == 1:
+            self.product_variant_ids.testing_cost = self.testing_cost
+
+    def _search_testing_cost(self, operator, value):
+        products = self.env["product.product"].search(
+            [("testing_cost", operator, value)], limit=None
         )
         return [("id", "in", products.mapped("product_tmpl_id").ids)]
 
@@ -73,6 +99,12 @@ class ProductProduct(models.Model):
     standard_price = fields.Float(string="Landed with adjustment/depreciation")
     adjustment_cost = fields.Float(
         string="Adjustment Cost (€/pz)",
+        company_dependent=True,
+        groups="base.group_user",
+        digits="Product Price",
+    )
+    testing_cost = fields.Float(
+        string="Testing Cost (€/pz)",
         company_dependent=True,
         groups="base.group_user",
         digits="Product Price",
@@ -177,6 +209,7 @@ class ProductProduct(models.Model):
             product_price += subcontract_price
             landed_price += subcontract_price
         product_price += self.adjustment_cost
+        product_price += self.testing_cost
         if self.seller_ids:
             # depreciation cost is always added
             product_price += self.seller_ids[0].depreciation_cost
@@ -223,9 +256,10 @@ class ProductProduct(models.Model):
                 price_unit = product._get_price_unit_from_seller()
                 landed_cost = price_unit
                 # add adjustment and depreciation costs
-                adjustment_cost = product.adjustment_cost
                 depreciation_cost = product.seller_ids[0].depreciation_cost
-                price_unit += adjustment_cost + depreciation_cost
+                price_unit += (
+                    product.adjustment_cost + product.testing_cost + depreciation_cost
+                )
                 if self.env.context.get("update_managed_replenishment_cost", False):
                     product.managed_replenishment_cost = price_unit
                 if self.env.context.get("update_standard_price", False):
