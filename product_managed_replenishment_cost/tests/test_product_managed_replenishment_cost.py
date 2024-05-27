@@ -306,6 +306,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
     def test_02_bom_all(self):
         self.test_all = True
         self.product_bom.adjustment_cost = 25
+        self.product_bom.testing_cost = 10
         self.product4.seller_ids[0].depreciation_cost = 20
         self._test_02()
 
@@ -320,7 +321,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         )
         repl.update_products_standard_price_only()
         if self.test_all:
-            self.assertEqual(self.product_bom.standard_price, 3 + 4 + 7 + 25 + 20)
+            self.assertEqual(self.product_bom.standard_price, 3 + 4 + 7 + 25 + 10 + 20)
         else:
             self.assertEqual(self.product_bom.standard_price, 3 + 4 + 7)
         self.assertEqual(len(self.product_bom.bom_ids), 1)
@@ -343,6 +344,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
     def test_03_bom_with_parent_all(self):
         self.test_all = True
         self.product_bom.adjustment_cost = 25
+        self.product_bom.testing_cost = 10
         self.product4.seller_ids[0].depreciation_cost = 20
         self._test_03()
 
@@ -358,7 +360,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         repl.update_products_standard_price_only()
         if self.test_all:
             self.assertEqual(
-                self.product_bom_parent.standard_price, 2 + 3 + 4 + 7 + 25 + 20
+                self.product_bom_parent.standard_price, 2 + 3 + 4 + 7 + 25 + 10 + 20
             )
         else:
             self.assertEqual(self.product_bom_parent.standard_price, 2 + 3 + 4 + 7)
@@ -385,6 +387,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
     def test_04_bom_with_nested_parent_all(self):
         self.test_all = True
         self.product_bom.adjustment_cost = 25
+        self.product_bom.testing_cost = 10
         self.product4.seller_ids[0].depreciation_cost = 20
         self._test_04()
 
@@ -402,7 +405,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         if self.test_all:
             self.assertEqual(
                 self.product_bom_parent_parent.standard_price,
-                7 + 2 + 3 + 4 + 7 + 25 + 20,
+                7 + 2 + 3 + 4 + 7 + 25 + 10 + 20,
             )
         else:
             self.assertEqual(
@@ -417,6 +420,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
     def test_05_bom_with_nested_parent_test_category_all(self):
         self.test_all = True
         self.product_bom.adjustment_cost = 25
+        self.product_bom.testing_cost = 10
         self.product4.seller_ids[0].depreciation_cost = 20
         self._test_05()
 
@@ -434,7 +438,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         if self.test_all:
             self.assertEqual(
                 self.product_bom_parent_parent.standard_price,
-                7 + 2 + 3 + 4 + 7 + 25 + 20,
+                7 + 2 + 3 + 4 + 7 + 25 + 10 + 20,
             )
         else:
             self.assertEqual(
@@ -447,6 +451,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
     def test_06_2_bom_with_subcontract_nested_parent_test_category_all(self):
         self.test_all = True
         self.product_bom.adjustment_cost = 25
+        self.product_bom.testing_cost = 10
         self.product4.seller_ids[0].depreciation_cost = 20
         self._test_06()
 
@@ -466,7 +471,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         if self.test_all:
             self.assertEqual(
                 self.product_bom_parent_parent.standard_price,
-                7 + 2 + 3 + 4 + 7 + 15 + 25 + 20,
+                7 + 2 + 3 + 4 + 7 + 15 + 25 + 10 + 20,
             )
         else:
             self.assertEqual(
@@ -491,7 +496,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         if self.test_all:
             self.assertEqual(
                 self.product_bom_parent_parent.standard_price,
-                7 + 2 + 3 + 4 + 7 + 15 + 7 + 25 + 20,
+                7 + 2 + 3 + 4 + 7 + 15 + 7 + 25 + 10 + 20,
             )
         else:
             self.assertEqual(
