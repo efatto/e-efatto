@@ -98,8 +98,8 @@ msgstr "Costo landed"
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_product_product_form
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_product_product_form_easy
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_product_template_form
-msgid "Landed with adjustment/depreciation"
-msgstr "Landed con adeguamenti/ammortamenti"
+msgid "Landed with adjustment/depreciation/testing"
+msgstr "Landed con adeguamenti/ammortamenti/collaudo"
 
 #. module: product_managed_replenishment_cost
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_product____last_update
@@ -208,10 +208,10 @@ msgstr "Costo Collaudo (€/pz)"
 #: model:ir.model.fields,help:product_managed_replenishment_cost.field_product_template__landed_cost
 msgid ""
 "The cost that you have to support in order to produce or acquire the goods "
-"without adjustment/depreciation."
+"without adjustment/depreciation/testing."
 msgstr ""
 "Il costo che si deve sostenere per produrre o acquisire le merci senza "
-"adeguamenti/ammortamenti."
+"adeguamenti/ammortamenti/collaudo."
 
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
