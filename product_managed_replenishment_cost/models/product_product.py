@@ -7,7 +7,8 @@ from odoo import api, fields, models
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
-    standard_price = fields.Float(string="Landed with adjustment/depreciation")
+    standard_price = fields.Float(
+        string="Landed with adjustment/depreciation/testing")
     adjustment_cost = fields.Float(
         string="Adjustment Cost (€/pz)",
         digits="Product Price",
@@ -32,7 +33,7 @@ class ProductTemplate(models.Model):
         search="_search_landed_cost",
         groups="base.group_user",
         help="The cost that you have to support in order to produce or "
-        "acquire the goods without adjustment/depreciation.",
+        "acquire the goods without adjustment/depreciation/testing.",
     )
 
     @api.depends("product_variant_ids", "product_variant_ids.adjustment_cost")
@@ -96,7 +97,8 @@ class ProductTemplate(models.Model):
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
-    standard_price = fields.Float(string="Landed with adjustment/depreciation")
+    standard_price = fields.Float(
+        string="Landed with adjustment/depreciation/testing")
     adjustment_cost = fields.Float(
         string="Adjustment Cost (€/pz)",
         company_dependent=True,
@@ -115,7 +117,7 @@ class ProductProduct(models.Model):
         groups="base.group_user",
         digits="Product Price",
         help="The cost that you have to support in order to produce or "
-        "acquire the goods without adjustment/depreciation.",
+        "acquire the goods without adjustment/depreciation/testing.",
     )
 
     def _update_manufactured_prices(
