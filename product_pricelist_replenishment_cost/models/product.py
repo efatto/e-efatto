@@ -1,5 +1,3 @@
-# Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import fields, models
 
 
@@ -9,7 +7,8 @@ class ProductProduct(models.Model):
     def price_compute(self, price_type, uom=False, currency=False, company=None):
         if price_type == "managed_replenishment_cost":
             prices = super().price_compute("list_price", uom, currency, company)
-            for product in self:
+            products = self.with_company(company or self.env.company).sudo()
+            for product in products:
                 price = product.managed_replenishment_cost
                 if not price:
                     continue
