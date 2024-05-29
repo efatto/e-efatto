@@ -16,5 +16,5 @@
     ],
     "summary": "This module add option 'based on managed replenishment cost' "
     "to product pricelist",
-    "installable": False,
+    "installable": True,
 }
