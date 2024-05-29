@@ -29,7 +29,9 @@
         />
             </xpath>
             <xpath expr="//label[@for='standard_price']" position="attributes">
-                <attribute name="string">Landed with adjustment/depreciation/testing</attribute>
+                <attribute
+          name="string"
+        >Landed with adjustment/depreciation/testing</attribute>
             </xpath>
         </field>
     </record>
@@ -56,7 +58,18 @@
         />
             </field>
             <field name="standard_price" position="attributes">
-                <attribute name="string">Landed with adjustment/depreciation/testing</attribute>
+                <attribute
+          name="string"
+        >Landed with adjustment/depreciation/testing</attribute>
+            </field>
+        </field>
+    </record>
+    <record id="product_product_tree_view" model="ir.ui.view">
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_product_tree_view" />
+        <field name="arch" type="xml">
+            <field name="standard_price" position="after">
+                <field name="landed_cost" optional="show" />
             </field>
         </field>
     </record>
