@@ -7,8 +7,7 @@ from odoo import api, fields, models
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
-    standard_price = fields.Float(
-        string="Landed with adjustment/depreciation/testing")
+    standard_price = fields.Float(string="Landed with adjustment/depreciation/testing")
     adjustment_cost = fields.Float(
         string="Adjustment Cost (€/pz)",
         digits="Product Price",
@@ -97,8 +96,7 @@ class ProductTemplate(models.Model):
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
-    standard_price = fields.Float(
-        string="Landed with adjustment/depreciation/testing")
+    standard_price = fields.Float(string="Landed with adjustment/depreciation/testing")
     adjustment_cost = fields.Float(
         string="Adjustment Cost (€/pz)",
         company_dependent=True,
