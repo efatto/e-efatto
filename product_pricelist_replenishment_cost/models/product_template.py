@@ -9,7 +9,8 @@ class ProductTemplate(models.Model):
     def price_compute(self, price_type, uom=False, currency=False, company=None):
         if price_type == "managed_replenishment_cost":
             prices = super().price_compute("list_price", uom, currency, company)
-            for template in self:
+            templates = self.with_company(company or self.env.company).sudo()
+            for template in templates:
                 price = template.managed_replenishment_cost
                 if not price:
                     continue

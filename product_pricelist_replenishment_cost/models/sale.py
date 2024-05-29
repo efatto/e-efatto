@@ -1,49 +1,57 @@
-# Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import api, fields, models
 
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    @api.depends("price_subtotal", "product_uom_qty", "purchase_price")
-    def _compute_margin(self):
-        # todo move this logic to compute price, as in 12.0 this was used to compute it
+    @api.depends('product_id', 'company_id', 'currency_id', 'product_uom')
+    def _compute_purchase_price(self):
+        super()._compute_purchase_price()
         for line in self:
             # find if exists a rule applicable on managed replenishment cost, then
             # compute cost accordingly
+            if not line.product_id:
+                line.purchase_price = 0.0
+                continue
+            line = line.with_company(line.company_id)
             order = line.order_id
             product = line.product_id
-            product_uom = line.product_uom
             product_context = dict(
                 self.env.context,
                 partner_id=order.partner_id.id,
-                date=order.date_order,
+                date=order.date_order or fields.Date.today(),
                 uom=line.product_uom.id,
             )
             # compute on qty 1 as qty is not available here
             fake_price, rule_id = order.pricelist_id.with_context(
                 product_context
-            ).get_product_price_rule(product, 1, order.partner_id)
+            ).get_product_price_rule(
+                product=product,
+                quantity=1,
+                partner=order.partner_id)
             rule = self.env["product.pricelist.item"].browse(rule_id)
             if rule and rule.base == "managed_replenishment_cost":
-                frm_cur = self.env.user.company_id.currency_id
-                to_cur = order.pricelist_id.currency_id
-                purchase_price = product.managed_replenishment_cost
-                if product_uom != product.uom_id:
-                    purchase_price = product.uom_id._compute_price(
-                        purchase_price, product_uom
+                product_cost = product.managed_replenishment_cost
+                if not product_cost:
+                    # If the standard_price is 0
+                    # Avoid unnecessary computations
+                    # and currency conversions
+                    if not line.purchase_price:
+                        line.purchase_price = 0.0
+                    continue
+                fro_cur = product.cost_currency_id
+                to_cur = line.currency_id or line.order_id.currency_id
+                if line.product_uom and line.product_uom != product.uom_id:
+                    product_cost = product.uom_id._compute_price(
+                        product_cost,
+                        line.product_uom,
                     )
-                price = frm_cur._convert(
-                    purchase_price,
-                    to_cur,
-                    order.company_id or self.env.user.company_id,
-                    order.date_order or fields.Date.today(),
+                line.purchase_price = fro_cur._convert(
+                    from_amount=product_cost,
+                    to_currency=to_cur,
+                    company=line.company_id or self.env.company,
+                    date=line.order_id.date_order or fields.Date.today(),
                     round=False,
-                )
-                line.margin = line.price_subtotal - (
-                    line.purchase_price * line.product_uom_qty
-                )
-                line.margin_percent = (
-                    line.price_subtotal and line.margin / line.price_subtotal
-                )
+                ) if to_cur and product_cost else product_cost
+                # The pricelist may not have been set, therefore no conversion
+                # is needed because we don't know the target currency.
