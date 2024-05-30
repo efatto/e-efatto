@@ -22,7 +22,7 @@ Glue module from product pricelist and managed replenishment cost
 
 |badge1| |badge2| |badge3|
 
-Add ability to use managed replenishment cost for price list computation.
+Replace field string.
 
 **Table of contents**
 
@@ -32,20 +32,7 @@ Add ability to use managed replenishment cost for price list computation.
 Configuration
 =============
 
-Nel listino prezzi impostare il tipo di costo su 'Costo sostituzione gestito':
-
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/product_managed_pricelist_replenishment_cost/static/description/listino.png
-    :alt: Listino
-
-Quindi a partire da un prodotto con questa situazione di costi:
-
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/product_managed_pricelist_replenishment_cost/static/description/costi.png
-    :alt: Costi
-
-Il prezzo di vendita e il margine saranno calcolati sul costo sostituzione gestito:
-
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/product_managed_pricelist_replenishment_cost/static/description/vendita.png
-    :alt: Vendita
+Questo modulo modifica i testi e le descrizioni del campo Costo sostituzione gestito in Landed con adeguamenti/ammortamenti/collaudo.
 
 Bug Tracker
 ===========
