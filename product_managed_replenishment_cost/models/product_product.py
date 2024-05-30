@@ -7,7 +7,7 @@ from odoo import api, fields, models
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
-    standard_price = fields.Float(string="Landed with adjustment/depreciation/testing")
+    standard_price = fields.Float(string="Landed with depreciation/testing")
     adjustment_cost = fields.Float(
         string="Adjustment Cost (€/pz)",
         digits="Product Price",
@@ -33,6 +33,9 @@ class ProductTemplate(models.Model):
         groups="base.group_user",
         help="The cost that you have to support in order to produce or "
         "acquire the goods without adjustment/depreciation/testing.",
+    )
+    managed_replenishment_cost = fields.Float(
+        string="Landed with adjustment/depreciation/testing"
     )
 
     @api.depends("product_variant_ids", "product_variant_ids.adjustment_cost")
@@ -96,7 +99,7 @@ class ProductTemplate(models.Model):
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
-    standard_price = fields.Float(string="Landed with adjustment/depreciation/testing")
+    standard_price = fields.Float(string="Landed with depreciation/testing")
     adjustment_cost = fields.Float(
         string="Adjustment Cost (€/pz)",
         company_dependent=True,
@@ -117,6 +120,9 @@ class ProductProduct(models.Model):
         help="The cost that you have to support in order to produce or "
         "acquire the goods without adjustment/depreciation/testing.",
     )
+    managed_replenishment_cost = fields.Float(
+        string="Landed with adjustment/depreciation/testing"
+    )
 
     def _update_manufactured_prices(
         self,
@@ -130,19 +136,24 @@ class ProductProduct(models.Model):
                     bom.bom_line_ids.filtered(lambda line: line.child_bom_id).mapped(
                         "product_id"
                     )._update_manufactured_prices()
-                produce_price, landed_price = product._compute_bom_managed_price(bom)
+                (
+                    managed_replenishment_price,
+                    managed_standard_price,
+                    landed_price,
+                ) = product._compute_bom_managed_price(bom)
                 if self.env.context.get("update_managed_replenishment_cost", False):
-                    product.managed_replenishment_cost = produce_price
+                    product.managed_replenishment_cost = managed_replenishment_price
                 if self.env.context.get("update_standard_price", False):
-                    product.standard_price = produce_price
+                    product.standard_price = managed_standard_price
                     product.landed_cost = landed_price
 
     def _compute_bom_managed_price(self, bom):
         self.ensure_one()
-        update_standard_price = self.env.context.get("update_standard_price", False)
+        self.env.context.get("update_standard_price", False)
         if not bom:
             return 0
         total = 0
+        total_standard = 0
         total_landed = 0
         for opt in bom.operation_ids:
             duration_expected = (
@@ -152,6 +163,7 @@ class ProductProduct(models.Model):
             )
             duration_cost = (duration_expected / 60) * opt.workcenter_id.costs_hour
             total += duration_cost
+            total_standard += duration_cost
             total_landed += duration_cost
         for line in bom.bom_line_ids:
             if line._skip_bom_line(self):
@@ -161,11 +173,18 @@ class ProductProduct(models.Model):
             if line.child_bom_id:
                 (
                     child_total,
+                    child_total_standard,
                     child_total_landed,
                 ) = line.product_id._compute_bom_managed_price(line.child_bom_id)
                 total += (
                     line.product_id.uom_id._compute_price(
                         child_total, line.product_uom_id
+                    )
+                    * line.product_qty
+                )
+                total_standard += (
+                    line.product_id.uom_id._compute_price(
+                        child_total_standard, line.product_uom_id
                     )
                     * line.product_qty
                 )
@@ -179,16 +198,19 @@ class ProductProduct(models.Model):
                 _products_without_seller_price = (
                     line.product_id.update_products_tobe_purchased()
                 )
-                cost = (
-                    line.product_id.standard_price
-                    if update_standard_price
-                    else line.product_id.managed_replenishment_cost
-                )
-                # landed cost is updated in the same time of standard price, so use
-                # always this
+                cost_total = line.product_id.managed_replenishment_cost
+                cost_standard = line.product_id.standard_price
                 cost_landed = line.product_id.landed_cost
                 total += (
-                    line.product_id.uom_id._compute_price(cost, line.product_uom_id)
+                    line.product_id.uom_id._compute_price(
+                        cost_total, line.product_uom_id
+                    )
+                    * line.product_qty
+                )
+                total_standard += (
+                    line.product_id.uom_id._compute_price(
+                        cost_standard, line.product_uom_id
+                    )
                     * line.product_qty
                 )
                 total_landed += (
@@ -197,8 +219,11 @@ class ProductProduct(models.Model):
                     )
                     * line.product_qty
                 )
-        product_price = bom.product_uom_id._compute_price(
+        managed_replenishment_price = bom.product_uom_id._compute_price(
             total / (bom.product_qty or 1), self.uom_id
+        )
+        managed_standard_price = bom.product_uom_id._compute_price(
+            total_standard / (bom.product_qty or 1), self.uom_id
         )
         landed_price = bom.product_uom_id._compute_price(
             total_landed / (bom.product_qty or 1), self.uom_id
@@ -206,14 +231,18 @@ class ProductProduct(models.Model):
         if bom.type == "subcontract" and self.seller_ids:
             # subcontract price is added only if bom is of subcontract type
             subcontract_price = self._get_price_unit_from_seller()
-            product_price += subcontract_price
+            managed_replenishment_price += subcontract_price
+            managed_standard_price += subcontract_price
             landed_price += subcontract_price
-        product_price += self.adjustment_cost
-        product_price += self.testing_cost
+        managed_replenishment_price += self.testing_cost
+        managed_standard_price += self.testing_cost
         if self.seller_ids:
             # depreciation cost is always added
-            product_price += self.seller_ids[0].depreciation_cost
-        return product_price, landed_price
+            managed_replenishment_price += self.seller_ids[0].depreciation_cost
+            managed_standard_price += self.seller_ids[0].depreciation_cost
+        managed_replenishment_price += self.adjustment_cost
+
+        return managed_replenishment_price, managed_standard_price, landed_price
 
     def _get_price_unit_from_seller(self):
         seller = self.seller_ids[0]
@@ -253,17 +282,19 @@ class ProductProduct(models.Model):
         products_without_seller_price = self.env["product.product"]
         for product in self:
             if product.seller_ids and product.seller_ids[0].price:
-                price_unit = product._get_price_unit_from_seller()
-                landed_cost = price_unit
+                landed_cost = product._get_price_unit_from_seller()
                 # add adjustment and depreciation costs
                 depreciation_cost = product.seller_ids[0].depreciation_cost
-                price_unit += (
-                    product.adjustment_cost + product.testing_cost + depreciation_cost
+                managed_standard_price = (
+                    landed_cost + product.testing_cost + depreciation_cost
+                )
+                managed_replenishment_price = (
+                    managed_standard_price + product.adjustment_cost
                 )
                 if self.env.context.get("update_managed_replenishment_cost", False):
-                    product.managed_replenishment_cost = price_unit
+                    product.managed_replenishment_cost = managed_replenishment_price
                 if self.env.context.get("update_standard_price", False):
-                    product.standard_price = price_unit
+                    product.standard_price = managed_standard_price
                     product.landed_cost = landed_cost
             else:
                 products_without_seller_price |= product
