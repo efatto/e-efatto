@@ -17,4 +17,5 @@
     "summary": "This module rename option 'based on managed replenishment cost' "
     "to custom one",
     "installable": True,
+    "auto_install": True,
 }
