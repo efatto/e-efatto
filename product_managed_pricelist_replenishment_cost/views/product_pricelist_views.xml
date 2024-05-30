@@ -14,7 +14,7 @@
             </xpath>
             <xpath
         expr="//group[@col='6']/div/span[@id='pricelist_managed_replenishment_cost']"
-        position="attributes"
+        position="after"
       >
                 <span
           attrs="{'invisible': [('base', '!=', 'managed_replenishment_cost')]}"
