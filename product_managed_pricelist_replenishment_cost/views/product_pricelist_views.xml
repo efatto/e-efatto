@@ -6,7 +6,10 @@
         <field name="model">product.pricelist.item</field>
         <field name="inherit_id" ref="product.product_pricelist_item_form_view" />
         <field name="arch" type="xml">
-            <xpath expr="//group[@col='6']/div/span[@id='pricelist_managed_replenishment_cost']" position="replace">
+            <xpath
+        expr="//group[@col='6']/div/span[@id='pricelist_managed_replenishment_cost']"
+        position="replace"
+      >
                 <span
           attrs="{'invisible': [('base', '!=', 'managed_replenishment_cost')]}"
         >Landed with adjustment/depreciation/testing - </span>
