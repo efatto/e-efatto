@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-27 08:44+0000\n"
-"PO-Revision-Date: 2024-05-27 08:44+0000\n"
+"POT-Creation-Date: 2024-05-30 19:07+0000\n"
+"PO-Revision-Date: 2024-05-30 19:07+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -93,13 +93,19 @@ msgid "Landed cost"
 msgstr "Costo landed"
 
 #. module: product_managed_replenishment_cost
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_product__standard_price
-#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_template__standard_price
+#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_product__managed_replenishment_cost
+#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_template__managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_product_product_form
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_product_product_form_easy
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_product_template_form
 msgid "Landed with adjustment/depreciation/testing"
 msgstr "Landed con adeguamenti/ammortamenti/collaudo"
+
+#. module: product_managed_replenishment_cost
+#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_product__standard_price
+#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_template__standard_price
+msgid "Landed with depreciation/testing"
+msgstr "Landed con ammortamenti/collaudo"
 
 #. module: product_managed_replenishment_cost
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_product____last_update
@@ -201,7 +207,7 @@ msgstr "Listino prezzi fornitore"
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_product__testing_cost
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_template__testing_cost
 msgid "Testing Cost (€/pz)"
-msgstr "Costo collaudo (€/pz)"
+msgstr "Costo Collaudo (€/pz)"
 
 #. module: product_managed_replenishment_cost
 #: model:ir.model.fields,help:product_managed_replenishment_cost.field_product_product__landed_cost
@@ -212,6 +218,13 @@ msgid ""
 msgstr ""
 "Il costo che si deve sostenere per produrre o acquisire le merci senza "
 "adeguamenti/ammortamenti/collaudo."
+
+#. module: product_managed_replenishment_cost
+#: model:ir.model.fields,help:product_managed_replenishment_cost.field_product_product__managed_replenishment_cost
+#: model:ir.model.fields,help:product_managed_replenishment_cost.field_product_template__managed_replenishment_cost
+msgid ""
+"The cost that you have to support in order to produce or acquire the goods."
+msgstr "Il costo da sostenere per produrre o acquisire la merce."
 
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
