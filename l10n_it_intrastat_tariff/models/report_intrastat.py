@@ -17,4 +17,4 @@ class ReportIntrastatTariff(models.Model):
 
     name = fields.Char()
     active = fields.Boolean(default=True)
-    tariff_percentage = fields.Float()
+    tariff_percentage = fields.Float(string="Tariff (%)")
