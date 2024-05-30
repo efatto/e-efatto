@@ -8,6 +8,7 @@
         <field name="arch" type="xml">
             <xpath expr="//group[@col='6']/div" position="inside">
                 <span
+          id="pricelist_managed_replenishment_cost"
           attrs="{'invisible': [('base', '!=', 'managed_replenishment_cost')]}"
         >Managed replenishment Cost - </span>
             </xpath>
