@@ -10,8 +10,10 @@ class PricelistItem(models.Model):
             ("list_price", "Sales Price"),
             ("standard_price", "Cost"),
             ("pricelist", "Other Pricelist"),
-            ("managed_replenishment_cost",
-             "Landed with adjustment/depreciation/testing"),
+            (
+                "managed_replenishment_cost",
+                "Landed with adjustment/depreciation/testing",
+            ),
         ],
         help="Base price for computation.\n"
         "Sales Price: The base price will be the Sales Price.\n"
