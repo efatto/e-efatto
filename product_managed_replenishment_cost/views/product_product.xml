@@ -31,7 +31,7 @@
             <xpath expr="//label[@for='standard_price']" position="attributes">
                 <attribute
           name="string"
-        >Landed with adjustment/depreciation/testing</attribute>
+        >Landed with depreciation/testing</attribute>
             </xpath>
         </field>
     </record>
@@ -60,7 +60,7 @@
             <field name="standard_price" position="attributes">
                 <attribute
           name="string"
-        >Landed with adjustment/depreciation/testing</attribute>
+        >Landed with depreciation/testing</attribute>
             </field>
         </field>
     </record>
