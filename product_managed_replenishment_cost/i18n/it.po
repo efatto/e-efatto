@@ -207,7 +207,7 @@ msgstr "Listino prezzi fornitore"
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_product__testing_cost
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_template__testing_cost
 msgid "Testing Cost (€/pz)"
-msgstr "Costo Collaudo (€/pz)"
+msgstr "Costo collaudo (€/pz)"
 
 #. module: product_managed_replenishment_cost
 #: model:ir.model.fields,help:product_managed_replenishment_cost.field_product_product__landed_cost
