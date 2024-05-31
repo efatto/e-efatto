@@ -22,7 +22,7 @@ Glue module from product pricelist and managed replenishment cost
 
 |badge1| |badge2| |badge3|
 
-Replace field string.
+Replace xml string.
 
 **Table of contents**
 
@@ -32,7 +32,7 @@ Replace field string.
 Configuration
 =============
 
-Questo modulo modifica i testi e le descrizioni del campo Costo sostituzione gestito in Landed con adeguamenti/ammortamenti/collaudo.
+Questo modulo modifica la descrizione del campo Costo sostituzione gestito in Landed con adeguamenti/ammortamenti/collaudo solo nella vista xml (non nei campi).
 
 Bug Tracker
 ===========
