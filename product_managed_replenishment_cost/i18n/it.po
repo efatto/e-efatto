@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-31 07:34+0000\n"
-"PO-Revision-Date: 2024-05-31 07:34+0000\n"
+"POT-Creation-Date: 2024-06-03 07:19+0000\n"
+"PO-Revision-Date: 2024-06-03 07:19+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -228,23 +228,23 @@ msgstr "Il costo da sostenere per produrre o acquisire la merce."
 
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
+msgid "Update All Costs"
+msgstr "Aggiorna tutti i costi"
+
+#. module: product_managed_replenishment_cost
+#: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
 msgid "Update BOM Products List Price and Weight"
 msgstr "Aggiorna prezzo e peso prodotti con Di.Ba."
 
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
-msgid "Update Landed Costs"
-msgstr "Aggiorna costi landed"
+msgid "Update Landed Cost and Landed with depreciation/testing"
+msgstr "Aggiorna Costo landed e Landed con ammortamenti/collaudo"
 
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
-msgid "Update Landed and Replenishment Costs"
-msgstr "Aggiorna costi landed e di sostituzione"
-
-#. module: product_managed_replenishment_cost
-#: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
-msgid "Update Replenishment Cost"
-msgstr "Aggiorna costo di sostituzione"
+msgid "Update Landed with adjustment/depreciation/testing"
+msgstr "Aggiorna Landed con adeguamenti/ammortamenti/collaudo"
 
 #. module: product_managed_replenishment_cost
 #: code:addons/product_managed_replenishment_cost/models/replenishment_cost.py:0
