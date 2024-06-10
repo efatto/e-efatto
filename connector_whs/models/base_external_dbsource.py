@@ -29,6 +29,9 @@ class BaseExternalDbsource(models.Model):
         default=365,
         help="Clean whs lists and db list older than this number of days.",
     )
+    active = fields.Boolean(
+        string="Active",
+        default=True)
 
     @api.depends("conn_string", "conn_string_sandbox", "password")
     def _compute_conn_string_full(self):
