@@ -1,6 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_hyddemo_mssql_log_all,hyddemo_mssql_log all,model_hyddemo_mssql_log,,1,0,0,0
-access_hyddemo_mssql_log_technic,hyddemo_mssql_log technic,model_hyddemo_mssql_log,base.group_no_one,1,1,1,0
+access_hyddemo_mssql_log_technic,hyddemo_mssql_log technic,model_hyddemo_mssql_log,base.group_no_one,1,1,1,1
 access_hyddemo_mssql_log_manager,hyddemo_mssql_log manager,model_hyddemo_mssql_log,base.group_erp_manager,1,1,1,1
 access_hyddemo_mssql_log_line_all,hyddemo_mssql_log_line all,model_hyddemo_mssql_log_line,,1,1,1,0
 access_hyddemo_mssql_log_line_technic,hyddemo_mssql_log_line technic,model_hyddemo_mssql_log_line,base.group_no_one,1,1,1,0
