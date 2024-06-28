@@ -15,6 +15,9 @@ class SaleOrder(models.Model):
         ('done', 'Locked'),
         ('cancel', 'Cancelled'),
         ])
+    commitment_date = fields.Datetime(
+        states={'approved': [('readonly', False)]},
+    )
     partner_id = fields.Many2one(
         states={'draft': [('readonly', False)], 'sent': [('readonly', False)],
                 'approved': [('readonly', False)]})
