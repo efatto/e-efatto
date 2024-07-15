@@ -333,7 +333,7 @@ class ProductProduct(models.Model):
                 if self.env.context.get("update_standard_price", False):
                     product.standard_price = managed_standard_price
                     product.landed_cost = landed_cost
-                product.direct_cost = direct_cost
+                    product.direct_cost = direct_cost
             else:
                 products_without_seller_price |= product
         return products_without_seller_price
