@@ -8,6 +8,15 @@ class ProductTemplate(models.Model):
     _inherit = "product.template"
 
     standard_price = fields.Float(string="Landed with depreciation/testing")
+    direct_cost = fields.Float(
+        string="Direct Cost",
+        help="Cost of the first supplier converted in company currency",
+        digits="Product Price",
+        compute="_compute_direct_cost",
+        inverse="_inverse_direct_cost",
+        search="_search_direct_cost",
+        groups="base.group_user",
+    )
     adjustment_cost = fields.Float(
         string="Adjustment Cost (€/pz)",
         digits="Product Price",
@@ -37,6 +46,24 @@ class ProductTemplate(models.Model):
     managed_replenishment_cost = fields.Float(
         string="Landed with adjustment/depreciation/testing"
     )
+
+    @api.depends("product_variant_ids", "product_variant_ids.direct_cost")
+    def _compute_direct_cost(self):
+        unique_variants = self.filtered(lambda tmpl: len(tmpl.product_variant_ids) == 1)
+        for template in unique_variants:
+            template.direct_cost = template.product_variant_ids.direct_cost
+        for template in self - unique_variants:
+            template.direct_cost = 0.0
+
+    def _inverse_direct_cost(self):
+        if len(self.product_variant_ids) == 1:
+            self.product_variant_ids.direct_cost = self.direct_cost
+
+    def _search_direct_cost(self, operator, value):
+        products = self.env["product.product"].search(
+            [("direct_cost", operator, value)], limit=None
+        )
+        return [("id", "in", products.mapped("product_tmpl_id").ids)]
 
     @api.depends("product_variant_ids", "product_variant_ids.adjustment_cost")
     def _compute_adjustment_cost(self):
@@ -100,6 +127,13 @@ class ProductProduct(models.Model):
     _inherit = "product.product"
 
     standard_price = fields.Float(string="Landed with depreciation/testing")
+    direct_cost = fields.Float(
+        string="Direct Cost",
+        help="Cost of the first supplier converted in company currency",
+        company_dependent=True,
+        groups="base.group_user",
+        digits="Product Price",
+    )
     adjustment_cost = fields.Float(
         string="Adjustment Cost (€/pz)",
         company_dependent=True,
@@ -244,7 +278,7 @@ class ProductProduct(models.Model):
 
         return managed_replenishment_price, managed_standard_price, landed_price
 
-    def _get_price_unit_from_seller(self):
+    def _get_price_unit_from_seller(self, direct_cost=False):
         seller = self.seller_ids[0]
         price_unit = 0.0
         margin_percentage = 0.0
@@ -265,6 +299,8 @@ class ProductProduct(models.Model):
                 )
         if seller.product_uom != self.uom_id:
             price_unit = seller.product_uom._compute_price(price_unit, self.uom_id)
+        if direct_cost:
+            return price_unit
         # add tariff cost on country group
         margin_percentage += sum(
             seller.name.country_id.mapped(
@@ -282,6 +318,7 @@ class ProductProduct(models.Model):
         products_without_seller_price = self.env["product.product"]
         for product in self:
             if product.seller_ids and product.seller_ids[0].price:
+                direct_cost = product._get_price_unit_from_seller(direct_cost=True)
                 landed_cost = product._get_price_unit_from_seller()
                 # add adjustment and depreciation costs
                 depreciation_cost = product.seller_ids[0].depreciation_cost
@@ -296,6 +333,7 @@ class ProductProduct(models.Model):
                 if self.env.context.get("update_standard_price", False):
                     product.standard_price = managed_standard_price
                     product.landed_cost = landed_cost
+                product.direct_cost = direct_cost
             else:
                 products_without_seller_price |= product
         return products_without_seller_price
