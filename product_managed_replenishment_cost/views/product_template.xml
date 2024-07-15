@@ -10,6 +10,12 @@
         position="before"
       >
                 <field
+          name="direct_cost"
+          widget="monetary"
+          options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
+          attrs="{'invisible': [('product_variant_count', '>', 1)]}"
+        />
+                <field
           name="adjustment_cost"
           widget="monetary"
           options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
@@ -38,6 +44,7 @@
         <field name="inherit_id" ref="product.product_template_tree_view" />
         <field name="arch" type="xml">
             <field name="standard_price" position="after">
+                <field name="direct_cost" optional="show" />
                 <field name="landed_cost" optional="show" />
             </field>
         </field>
