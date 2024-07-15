@@ -91,7 +91,7 @@ class ReplenishmentCost(models.Model):
                     last_update=last_update,
                     log="Updated %s %s %s for %s products in %.2f minutes."
                     % (
-                        '"standard price"'
+                        '"standard price, landed cost, direct cost"'
                         if self.env.context.get("update_standard_price")
                         else "",
                         '"replenishment cost"'
