@@ -103,7 +103,7 @@
                       date_stop="date_end"
                       default_group_by="workcenter_id"
                       event_open_popup="%(mail_activity_timeline.mail_activity_view_form_popup_timeline)s"
-                      mode="week"
+                      mode="month"
                       color_field="color_active"
                       dependency_arrow="parent_id">
                 <field name="user_id"/>
