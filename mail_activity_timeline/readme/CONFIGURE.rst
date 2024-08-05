@@ -1,4 +1,5 @@
-Questo modulo crea in automatico un'attività per ogni lavoro di progetto o operazione di produzione creato direttamente dall'utente (quindi sono esclusi quelli creati manualmente), distinta dalle altre attività tramite un flag apposito inserito nel tipo di attività:
+Questo modulo crea in automatico un'attività per ogni lavoro di progetto o operazione di produzione solo se creato direttamente dall'utente (quindi sono esclusi quelli creati automaticamente).
+Questa attività è distinta dalle altre attività tramite un flag apposito inserito nel tipo di attività:
 
 .. image:: ../static/description/abilita.png
     :alt: Abilita
@@ -22,6 +23,11 @@ Nel caso in cui l'attività venga modificata per quanto riguarda nome, utente as
 
 .. image:: ../static/description/timeline.png
     :alt: Timeline
+
+Se l'attività ha una data e ora di inizio e una data e ora di fine, è possibile allungarla/accorciarla, selezionandola prima e poi avvicinando il cursore all'inizio o alla fine dell'attività a video:
+
+.. image:: ../static/description/ritaglia.png
+    :alt: Allungamento o accorciamento attività
 
 Il colore del testo nella timeline cambia in base allo sfondo, come da indicazioni html:
 
