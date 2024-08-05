@@ -6,6 +6,12 @@
         <field name="priority">99</field>
         <field name="arch" type="xml">
             <form string="Log an Activity" create="false">
+                <header>
+                    <button name="action_done" type="object" class="oe_highlight" string="Mark as done"/>
+                    <button name="open_origin" type="object" class="oe_highlight">
+                        Open origin: <field name="res_name"/>
+                    </button>
+                </header>
                 <sheet string="Activity">
                     <div class="oe_button_box" name="button_box">
                         <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive" attrs="{'invisible': [('active', '=', True)]}">
@@ -47,12 +53,6 @@
                         </group>
                     </group>
                     <field name="note" placeholder="Log a note..."/>
-                    <group colspan="4" col="1">
-                        <button name="open_origin" type="object" class="oe_highlight">
-                            <field name="res_name"/>
-                        </button>
-                    </group>
-                    <button name="action_done" type="object" class="oe_highlight" string="Mark as done"/>
                 </sheet>
             </form>
         </field>
