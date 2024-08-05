@@ -8,9 +8,7 @@
             <form string="Log an Activity" create="false">
                 <header>
                     <button name="action_done" type="object" class="oe_highlight" string="Mark as done"/>
-                    <button name="open_origin" type="object" class="oe_highlight">
-                        Open origin: <field name="res_name"/>
-                    </button>
+                    <button name="open_origin" type="object" class="oe_highlight" string="Open origin"/>
                 </header>
                 <sheet string="Activity">
                     <div class="oe_button_box" name="button_box">
