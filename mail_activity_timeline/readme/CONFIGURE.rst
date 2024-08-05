@@ -4,13 +4,18 @@ Questa attività è distinta dalle altre attività tramite un flag apposito inse
 .. image:: ../static/description/abilita.png
     :alt: Abilita
 
-L'attività creata viene aggiornata in base alle modifiche sull'oggetto da cui origina, allineando il nome, l'utente assegnato, l'oggetto padre, la data di inizio e di fine e la data di scadenza (pari alla data di fine attività):
+L'attività creata viene aggiornata in base alle modifiche sull'oggetto da cui origina, allineando il nome, l'utente assegnato, l'oggetto padre, la data di inizio e di fine e la data di scadenza (pari alla data di fine attività), qui degli esempi basate sugli ordini di lavoro in produzione:
 
 .. image:: ../static/description/attivita.png
     :alt: Attività
 
 .. image:: ../static/description/attivita_modificata.png
     :alt: Attività sincronizzata
+
+Mentre questi sono i campi su cui si basano le date di inizio e fine attività sui lavori di progetto:
+
+.. image:: ../static/description/campi_data_lavoro.png
+    :alt: Date di inizio e fine attività su lavoro su progetto
 
 Nel caso in cui l'attività venga modificata per quanto riguarda nome, utente assegnato, oggetto padre e date di inizio e fine e data di scadenza, viene aggiornato l'oggetto da cui origina.
 
@@ -44,7 +49,7 @@ Nella produzione è disponibile una scheda in cui sono visibili le attività col
 .. image:: ../static/description/tab_attivita.png
     :alt: Scheda attività
 
-Inoltre è possibile aprire direttamente la vista delle attività (non filtrate per la produzione attiva):
+Sempre nella produzione è possibile aprire direttamente la vista delle attività (non filtrate per la produzione attiva):
 
 .. image:: ../static/description/apri_pianificatore.png
     :alt: Apri pianificatore
