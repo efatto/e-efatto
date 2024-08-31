@@ -8,10 +8,11 @@ from sqlalchemy import text as sql_text
 
 from odoo import _, fields
 from odoo.exceptions import UserError, ValidationError
-from odoo.tests.common import Form, SingleTransactionCase
+from odoo.tests.common import Form, SingleTransactionCase, tagged
 from odoo.tools import mute_logger, relativedelta
 
 
+@tagged("-standard", "test_whs")
 class TestConnectorWhs(SingleTransactionCase):
     def setUp(self):
         super().setUp()
