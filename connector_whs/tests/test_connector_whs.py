@@ -1368,7 +1368,7 @@ class TestConnectorWhs(SingleTransactionCase):
 
         # test user can receive in WHS a qty > move quantity
 
-    def test_07_1_purchase_no_backorder(self):
+    def test_07_1_purchase_no_backorder_with_less_qty(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         whs_len_records = len(self._execute_select_host_liste())
@@ -1449,6 +1449,95 @@ class TestConnectorWhs(SingleTransactionCase):
         picking_form.save().process_cancel_backorder()
         self.assertEqual(picking.state, "done")
         whs_lists = purchase.mapped("picking_ids.move_lines.whs_list_ids")
+        self.assertEqual(len(whs_lists), 1)
+        whs_lists = self.env["hyddemo.whs.liste"].search(
+            [("riferimento", "=", purchase.name)]
+        )
+        self.assertEqual(len(whs_lists), 1)
+
+    def test_07_2_purchase_with_more_qty(self):
+        with self.assertRaises(ValidationError):
+            self.dbsource.connection_test()
+        whs_len_records = len(self._execute_select_host_liste())
+        purchase_form = Form(self.env["purchase.order"])
+        purchase_form.partner_id = self.partner
+        with purchase_form.order_line.new() as po_line:
+            po_line.product_id = self.product2
+            po_line.product_qty = 20
+            po_line.product_uom = self.product2.uom_po_id
+            po_line.name = self.product2.name
+            po_line.price_unit = 100
+            po_line.date_planned = fields.Datetime.today() + relativedelta(month=1)
+        purchase = purchase_form.save()
+        purchase.button_approve()
+        self.assertEqual(
+            purchase.state, "purchase", 'Purchase state should be "Purchase"'
+        )
+        order_line = purchase.order_line
+        move_line = purchase.picking_ids.move_lines
+        self.assertEqual(order_line.product_qty, move_line.whs_list_ids.qta)
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        self.assertEqual(
+            len(self._execute_select_host_liste()),
+            whs_len_records + 1,
+        )
+        # simulate whs work: processing more qty than requested for product #2
+        whs_list = purchase.mapped("picking_ids.move_lines.whs_list_ids")
+        set_liste_elaborated_query = (
+            "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=%s WHERE "
+            "NumLista = '%s' AND NumRiga = '%s'"
+            % (
+                27,
+                whs_list.num_lista,
+                whs_list.riga,
+            )
+        )
+        self.dbsource.with_context(no_return=True).execute_mssql(
+            sqlquery=sql_text(set_liste_elaborated_query),
+            sqlparams=None,
+            metadata=None,
+        )
+
+        whs_select_query = (
+            "SELECT Qta, QtaMovimentata FROM HOST_LISTE WHERE Elaborato = 4 AND "
+            "NumLista = '%s' AND NumRiga = '%s'" % (whs_list.num_lista, whs_list.riga)
+        )
+        result_liste = self.dbsource.execute_mssql(
+            sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+        )
+        self.assertEqual(
+            str(result_liste[0]),
+            "[(Decimal('20.000'), Decimal('27.000'))]",
+        )
+        # this update Odoo from WHS
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        # check whs_list are elaborated
+        whs_select_query = (
+            "SELECT Qta, QtaMovimentata FROM HOST_LISTE WHERE Elaborato = 5 AND "
+            "NumLista = '%s' AND NumRiga = '%s'" % (whs_list.num_lista, whs_list.riga)
+        )
+        result_liste = self.dbsource.execute_mssql(
+            sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+        )
+        self.assertEqual(
+            str(result_liste[0]),
+            "[(Decimal('20.000'), Decimal('27.000'))]",
+        )
+
+        # simulate user partial validate of picking and check backorder does not exist
+        picking = purchase.picking_ids
+        picking.action_assign()
+        if all(x.state == "assigned" for x in picking.move_lines):
+            self.assertEqual(picking.state, "assigned")
+        else:
+            self.assertEqual(picking.state, "waiting")
+        picking.button_validate()
+        self.assertEqual(picking.state, "done")
+        whs_lists = purchase.mapped("picking_ids.move_lines.whs_list_ids")
+        self.assertEqual(len(whs_lists), 1)
+        whs_lists = self.env["hyddemo.whs.liste"].search(
+            [("riferimento", "=", purchase.name)]
+        )
         self.assertEqual(len(whs_lists), 1)
 
     def test_08_mrp_partial_from_sale(self):
