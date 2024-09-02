@@ -219,6 +219,13 @@ class StockMove(models.Model):
     def create_whs_list(self):
         whsliste_obj = self.env["hyddemo.whs.liste"]
         for picking in self.mapped("picking_id"):
+            if (
+                self.env.context.get("skip_backorder")
+                and self.env.context.get("picking_ids_not_to_backorder")
+                and picking.id
+                in self.env.context.get("picking_ids_not_to_backorder", [])
+            ):
+                continue
             moves = self.filtered(lambda m: m.picking_id == picking)
             list_number = False  # get existing active list_number to append new whslist
             list_numbers = list(
