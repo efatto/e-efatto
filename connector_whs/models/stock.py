@@ -213,7 +213,12 @@ class StockMove(models.Model):
         return super().write(vals)
 
     def _action_confirm(self, merge=True, merge_into=False):
-        self.create_whs_list()
+        move_to_create_whs_list = self
+        for move in self:
+            if merge and merge_into:
+                # this move will be deleted, so do not create a whs list
+                move_to_create_whs_list -= move
+        move_to_create_whs_list.create_whs_list()
         return super()._action_confirm(merge, merge_into)
 
     def create_whs_list(self):
