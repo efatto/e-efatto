@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-05 12:57+0000\n"
-"PO-Revision-Date: 2024-08-05 12:57+0000\n"
+"POT-Creation-Date: 2024-09-05 12:20+0000\n"
+"PO-Revision-Date: 2024-09-05 12:20+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -66,7 +66,7 @@ msgstr "Tipo di attività per lavori"
 
 #. module: mail_activity_timeline
 #: model:mail.activity.type,name:mail_activity_timeline.mail_activity_type_workorder
-msgid "Activity type for workorder"
+msgid "Activity type for work order"
 msgstr "Tipo attività per operazioni"
 
 #. module: mail_activity_timeline
@@ -107,6 +107,16 @@ msgid "Create activities in production work orders to view something here."
 msgstr "Crea attività negli ordini di lavoro della produzione per vedere qualcosa qui."
 
 #. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity_origin__create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity_origin__create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: mail_activity_timeline
 #: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__date_end
 msgid "Date End"
 msgstr "Data fine"
@@ -117,9 +127,19 @@ msgid "Date Start"
 msgstr "Data iniziale"
 
 #. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity_origin__display_name
+msgid "Display Name"
+msgstr "Nome da visualizzare"
+
+#. module: mail_activity_timeline
 #: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mail_activity_view_form_popup_timeline
 msgid "Duplicate"
 msgstr "Duplica"
+
+#. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity_origin__id
+msgid "ID"
+msgstr ""
 
 #. module: mail_activity_timeline
 #: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__info
@@ -133,6 +153,21 @@ msgid "Is Resource Planner"
 msgstr "Abilitato alla Pianificazione Risorse"
 
 #. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity_origin____last_update
+msgid "Last Modified on"
+msgstr "Data di ultima modifica"
+
+#. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity_origin__write_uid
+msgid "Last Updated by"
+msgstr "Ultima modifica di"
+
+#. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity_origin__write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: mail_activity_timeline
 #: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mail_activity_view_form_popup_timeline
 msgid "Log a note..."
 msgstr "Registra una nota..."
@@ -143,14 +178,34 @@ msgid "Log an Activity"
 msgstr "Registra un'attività"
 
 #. module: mail_activity_timeline
+#: model:ir.model,name:mail_activity_timeline.model_mail_activity_origin
+msgid "Mail Activity Origin"
+msgstr "Origine dell'attività"
+
+#. module: mail_activity_timeline
 #: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mail_activity_view_form_popup_timeline
 msgid "Mark as done"
 msgstr "Imposta eseguito"
 
 #. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity_origin__name
+msgid "Name"
+msgstr "Nome"
+
+#. module: mail_activity_timeline
 #: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mrp_production_form_view
 msgid "Open Planner"
 msgstr "Apri pianificatore"
+
+#. module: mail_activity_timeline
+#: model_terms:ir.ui.view,arch_db:mail_activity_timeline.mail_activity_view_form_popup_timeline
+msgid "Open origin"
+msgstr "Apri l'origine"
+
+#. module: mail_activity_timeline
+#: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__mail_activity_origin_id
+msgid "Origin"
+msgstr "Origine"
 
 #. module: mail_activity_timeline
 #: model:ir.model.fields,field_description:mail_activity_timeline.field_mail_activity__origin_res_id
@@ -178,7 +233,7 @@ msgid "Resource Planner Activities"
 msgstr "Pianificatore Attività"
 
 #. module: mail_activity_timeline
-#: code:addons/mail_activity_timeline/models/mail_activity.py:57
+#: code:addons/mail_activity_timeline/models/mail_activity.py:81
 #, python-format
 msgid "Schedule duplicated Activity"
 msgstr "Pianifica attività duplicata"
