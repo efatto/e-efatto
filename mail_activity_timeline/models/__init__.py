@@ -1,3 +1,4 @@
+from . import mail_activity_origin
 from . import mail_activity
 from . import mail_activity_type
 from . import mrp_production
