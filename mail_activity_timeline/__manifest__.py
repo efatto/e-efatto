@@ -25,6 +25,7 @@
         'static/src/xml/web_timeline.xml',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'data/mail_activity_type.xml',
         'data/mrp_workcenter.xml',
         'views/mail_activity.xml',

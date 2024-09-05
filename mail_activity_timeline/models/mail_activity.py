@@ -41,6 +41,30 @@ class MailActivity(models.Model):
         compute='_compute_planner',
         store=True,
     )
+    mail_activity_origin_id = fields.Many2one(
+        comodel_name='mail.activity.origin',
+        string='Origin',
+    )
+
+    def _get_mail_activity_origin(self):
+        self.ensure_one()
+        res_object = self.env[self.res_model].browse(self.res_id)
+        name = self.res_name
+        if self.res_model == 'mrp.workorder':
+            name = res_object.production_id.name
+        elif self.res_model == 'project.task':
+            name = res_object.project_id.sale_order_id.name
+        mail_activity_origin_ids = self.env['mail.activity.origin'].search([
+            ('name', '=', name),
+        ], limit=1)
+        if mail_activity_origin_ids:
+            return mail_activity_origin_ids[0]
+        mail_activity_origin_id = self.env['mail.activity.origin'].create(
+            [{
+                'name': name,
+            }]
+        )
+        return mail_activity_origin_id
 
     def toggle_active(self):
         res = super().toggle_active()
@@ -115,6 +139,9 @@ class MailActivity(models.Model):
                     if 'name' in vals:
                         # force recompute of res_name as it is not present in depends
                         activity._compute_res_name()
+                if not activity.mail_activity_origin_id:
+                    mail_activity_origin_id = activity._get_mail_activity_origin()
+                    activity.mail_activity_origin_id = mail_activity_origin_id
         return res
 
     @api.model
@@ -145,6 +172,9 @@ class MailActivity(models.Model):
             # Do not remove: this is requested as team is auto-assigned
         }
         res = self.create(vals)
+        if not res.mail_activity_origin_id:
+            mail_activity_origin_id = res._get_mail_activity_origin()
+            res.mail_activity_origin_id = mail_activity_origin_id
         res._compute_planner()
         return res
 
