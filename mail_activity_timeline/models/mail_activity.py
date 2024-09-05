@@ -195,42 +195,52 @@ class MailActivity(models.Model):
         # for this compute @api.depends is only partial possible, as dependants fields
         # (like dates) are not linkable directly, only res_model and res_id
         for activity in self:
+            vals = {}
             if activity.res_model and activity.res_id and activity.res_model in [
                 'mrp.workorder', 'project.task'
             ]:
                 res_object = self.env[activity.res_model].browse(activity.res_id)
                 if activity.res_model == 'mrp.workorder':
-                    activity.date_start = res_object.date_planned_start
-                    activity.date_end = res_object.date_planned_finished
-                    activity.info = "%s - %s - %s - %s" % (
-                        activity.workcenter_id.name,
-                        res_object.production_id.name,
-                        res_object.name,
-                        res_object.origin or '')
-                    activity.origin_res_id = res_object.production_id.id
+                    vals.update({
+                        'date_start': res_object.date_planned_start,
+                        'date_end': res_object.date_planned_finished,
+                        'info': "%s - %s - %s - %s" % (
+                            activity.workcenter_id.name,
+                            res_object.production_id.name,
+                            res_object.name,
+                            res_object.origin or ''),
+                        'origin_res_id': res_object.production_id.id,
+                    })
                 elif activity.res_model == 'project.task':
-                    activity.date_start = res_object.date_start
-                    activity.date_end = res_object.date_end
-                    activity.info = "%s - %s - %s - %s" % (
-                        activity.workcenter_id.name,
-                        res_object.project_id.name,
-                        res_object.name,
-                        res_object.sale_line_id.order_id.origin or '')
-                    activity.origin_res_id = res_object.project_id.id
-                if activity.date_end:
-                    activity.date_deadline = fields.Date.to_date(activity.date_end)
-                if res_object.parent_id:
-                    activity.parent_id = res_object.parent_id.activity_ids.filtered(
-                        lambda x: x.is_resource_planner
-                    )
+                    vals.update({
+                        'date_start': res_object.date_start,
+                        'date_end': res_object.date_end,
+                        'info': "%s - %s - %s - %s" % (
+                            activity.workcenter_id.name,
+                            res_object.project_id.name,
+                            res_object.name,
+                            res_object.sale_line_id.order_id.origin or ''),
+                        'origin_res_id': res_object.project_id.id,
+                    })
+                if date_end:
+                    vals.update({
+                        'date_deadline': fields.Date.to_date(date_end),
+                    })
+                if res_object.parent_id.activity_ids:
+                    vals.update({
+                        'parent_id': res_object.parent_id.activity_ids.filtered(
+                            lambda x: x.is_resource_planner)[0].id,
+                    })
                 if res_object.user_id:
-                    activity.user_id = res_object.user_id
+                    vals.update({
+                        'user_id': res_object.user_id.id,
+                    })
                 if res_object.workcenter_id:
-                    activity.workcenter_id = res_object.workcenter_id
+                    vals.update({
+                        'workcenter_id': res_object.workcenter_id.id,
+                    })
                 if res_object.color:
-                    activity.color_active = self.get_color(res_object, res_object.color)
-            else:
-                activity.date_start = False
-                activity.date_end = False
-                activity.color_active = False
-                activity.info = False
+                    vals.update({
+                        'color_active': self.get_color(res_object, res_object.color),
+                    })
+            activity.write(vals)
