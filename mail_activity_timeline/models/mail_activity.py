@@ -222,9 +222,9 @@ class MailActivity(models.Model):
                             res_object.sale_line_id.order_id.origin or ''),
                         'origin_res_id': res_object.project_id.id,
                     })
-                if date_end:
+                if vals.get('date_end'):
                     vals.update({
-                        'date_deadline': fields.Date.to_date(date_end),
+                        'date_deadline': fields.Date.to_date(vals['date_end']),
                     })
                 if res_object.parent_id.activity_ids:
                     vals.update({
