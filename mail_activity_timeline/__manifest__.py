@@ -2,12 +2,12 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     'name': 'Resource Planner Timeline',
-    'version': '12.0.1.0.2',
+    'version': '12.0.1.0.3',
     'license': 'AGPL-3',
     'category': 'Mail',
     'author': 'Sergio Corato',
     'website': 'https://github.com/sergiocorato/e-efatto',
-    'description': 'Use mail activity to plan resources.',
+    'summary': 'Use mail activity to plan resources.',
     'depends': [
         'mail_activity_board',
         'mail_activity_done',
