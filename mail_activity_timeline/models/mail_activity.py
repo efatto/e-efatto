@@ -243,4 +243,6 @@ class MailActivity(models.Model):
                     vals.update({
                         'color_active': self.get_color(res_object, res_object.color),
                     })
-            activity.write(vals)
+            for val in vals:
+                if vals[val]:
+                    activity[val] = vals[val]
