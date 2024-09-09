@@ -17,8 +17,8 @@ class ProjectTask(models.Model):
         activity_ids = task.activity_ids.filtered(
             lambda x: x.is_resource_planner
         )
-        if not activity_ids and vals_list.get("user_id", False):
-            # create only when a user directly create task
+        if not activity_ids and not vals_list.get("sale_line_id", False):
+            # do not create only when automatically created from a sale order
             self.env['mail.activity'].create_planner_activity(
                 task,
                 task.workcenter_id.user_id or
