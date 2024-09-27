@@ -33,7 +33,7 @@ class BaseExternalDbsource(models.Model):
     force_update_product_from_date = fields.Datetime(
         "Force Update Product Import From Date",
         help="Set a custom date to refresh product info. This date will be removed "
-             "after product process."
+        "after product process.",
     )
 
     @api.depends("conn_string", "conn_string_sandbox", "password")
