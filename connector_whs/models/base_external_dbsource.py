@@ -30,6 +30,11 @@ class BaseExternalDbsource(models.Model):
         help="Clean whs lists and db list older than this number of days.",
     )
     active = fields.Boolean(string="Active", default=True)
+    force_update_product_from_date = fields.Datetime(
+        "Force Update Product Import From Date",
+        help="Set a custom date to refresh product info. This date will be removed "
+             "after product process."
+    )
 
     @api.depends("conn_string", "conn_string_sandbox", "password")
     def _compute_conn_string_full(self):
