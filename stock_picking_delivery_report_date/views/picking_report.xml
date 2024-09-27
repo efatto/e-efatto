@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template
+    id="report_picking_default_date_format"
+    name="Stock Picking Report Default Date Format"
+    inherit_id="stock.report_delivery_document"
+  >
+        <xpath expr="//p[@t-field='o.date_done']" position="attributes">
+            <attribute
+        name="t-options"
+      >{'widget': 'date', 'format': 'dd/MM/y'}</attribute>
+        </xpath>
+        <xpath expr="//p[@t-field='o.scheduled_date']" position="attributes">
+            <attribute
+        name="t-options"
+      >{'widget': 'date', 'format': 'dd/MM/y'}</attribute>
+        </xpath>
+    </template>
+</odoo>
