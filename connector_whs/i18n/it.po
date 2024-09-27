@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 14.0+e\n"
+"Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-26 12:41+0000\n"
-"PO-Revision-Date: 2024-04-26 12:41+0000\n"
+"POT-Creation-Date: 2024-09-27 13:54+0000\n"
+"PO-Revision-Date: 2024-09-27 13:54+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -66,7 +66,12 @@ msgstr ""
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__message_needaction
 msgid "Action Needed"
-msgstr ""
+msgstr "Azione necessaria"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_base_external_dbsource__active
+msgid "Active"
+msgstr "Attivo"
 
 #. module: connector_whs
 #: code:addons/connector_whs/models/stock.py:0
@@ -80,9 +85,31 @@ msgid "Apply"
 msgstr "Salva"
 
 #. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_base_external_dbsource__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_mrp_production__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_product_template__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_purchase_order__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_repair_order__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_sale_order__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_sale_order_line__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_stock_move__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_stock_picking__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_whs.field_wizard_sync_stock_whs_mssql__assigned_attachment_ids
+msgid "Assigned Attachments"
+msgstr "Allegati assegnati"
+
+#. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__message_attachment_count
 msgid "Attachment Count"
-msgstr ""
+msgstr "Numero allegati"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_mrp_production__bom_type
+msgid "BOM Type"
+msgstr "Tipo DiBa"
 
 #. module: connector_whs
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_wizard_sync_stock_whs_mssql
@@ -261,6 +288,11 @@ msgid "External Database Sources"
 msgstr "Sorgenti Database Esterne"
 
 #. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__failed_message_ids
+msgid "Failed Messages"
+msgstr "Messaggi falliti"
+
+#. module: connector_whs
 #: code:addons/connector_whs/models/hyddemo_mssql_log.py:0
 #: code:addons/connector_whs/models/hyddemo_mssql_log.py:0
 #: code:addons/connector_whs/models/hyddemo_mssql_log.py:0
@@ -292,6 +324,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__message_partner_ids
 msgid "Followers (Partners)"
 msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_base_external_dbsource__force_update_product_from_date
+msgid "Force Update Product Import From Date"
+msgstr "Forza l'aggiornamento prodotti dalla data"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__hyddemo_mssql_log_id
@@ -457,8 +494,18 @@ msgid "Main Attachment"
 msgstr ""
 
 #. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__message_content
+msgid "Message Content"
+msgstr ""
+
+#. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__message_has_error
 msgid "Message Delivery error"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,help:connector_whs.field_hyddemo_whs_liste__message_content
+msgid "Message content, to be used only in searches"
 msgstr ""
 
 #. module: connector_whs
@@ -597,7 +644,7 @@ msgstr "Codice Prodotto Cliente"
 
 #. module: connector_whs
 #: model:ir.model,name:connector_whs.model_product_template
-msgid "Product Template"
+msgid "Product Template (Multi-Company)"
 msgstr "Modello prodotto"
 
 #. module: connector_whs
@@ -609,7 +656,7 @@ msgstr "Prodotto da sincronizzare"
 #: code:addons/connector_whs/models/mrp.py:0
 #: code:addons/connector_whs/models/mrp.py:0
 #, python-format
-msgid "Production %s is not sent to WHS!"
+msgid "Production %s has not been sent to WHS!"
 msgstr "L'ordine di produzione %s non è stato inviato a WHS!"
 
 #. module: connector_whs
@@ -705,6 +752,15 @@ msgstr "Inviato a WHS"
 #: model:ir.model.fields.selection,name:connector_whs.selection__hyddemo_mssql_log_line__type__service
 msgid "Service"
 msgstr "Servizio"
+
+#. module: connector_whs
+#: model:ir.model.fields,help:connector_whs.field_base_external_dbsource__force_update_product_from_date
+msgid ""
+"Set a custom date to refresh product info. This date will be removed after "
+"product process."
+msgstr ""
+"Imposta una data personalizzata per aggiornare i prodotti. Questa data verrà "
+"cancellata dopo il processo di aggiornamento."
 
 #. module: connector_whs
 #: code:addons/connector_whs/models/mrp.py:0
