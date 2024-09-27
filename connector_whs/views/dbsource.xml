@@ -51,6 +51,7 @@
                     <field name="location_id" />
                     <field name="warehouse_id" />
                     <field name="clean_days_limit" />
+                    <field name="force_update_product_from_date" />
                 </group>
             </xpath>
         </field>

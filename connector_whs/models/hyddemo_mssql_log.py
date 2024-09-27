@@ -159,8 +159,11 @@ class HyddemoMssqlLog(models.Model):
         )
         log_data = self.search([], order="ultimo_invio desc", limit=1)
         last_id = log_data and log_data.ultimo_id or 0
-        last_date_dt = log_data and log_data.ultimo_invio or fields.Datetime.now()
-        last_date = fields.Datetime.to_string(last_date_dt)
+        if dbsource.force_update_product_from_date:
+            last_date = dbsource.force_update_product_from_date
+            dbsource.force_update_product_from_date = False
+        else:
+            last_date = log_data and log_data.ultimo_invio or fields.Datetime.now()
         _logger.info("WHS update products (last update: %s)" % last_date)
         products = self.env["product.product"].search(
             [
