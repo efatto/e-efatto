@@ -13,7 +13,12 @@
         <field name="inherit_id" ref="product.product_template_form_view" />
         <field name="arch" type="xml">
             <field name="standard_price" class="oe_inline" position="after">
-                <button name="show_product_price_history" class="oe_inline oe_link" type="object" string="Show History" context="{'active_id': active_id}"/>
+                <button name="show_product_price_history"
+                        class="oe_inline oe_link"
+                        type="object"
+                        icon="fa-clock-o"
+                        help="Show history"
+                        context="{'active_id': active_id}"/>
             </field>
         </field>
     </record>
