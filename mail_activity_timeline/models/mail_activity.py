@@ -53,7 +53,13 @@ class MailActivity(models.Model):
         if self.res_model == 'mrp.workorder':
             name = res_object.production_id.name
         elif self.res_model == 'project.task':
-            name = res_object.project_id.sale_order_id.name
+            if res_object.project_id.sale_order_id:
+                name = res_object.project_id.sale_order_id.name
+            else:
+                if ':' in res_object.project_id.name:
+                    name = res_object.project_id.name.split(':')[0]
+                else:
+                    name = res_object.project_id.name
         mail_activity_origin_ids = self.env['mail.activity.origin'].search([
             ('name', '=', name),
         ], limit=1)
