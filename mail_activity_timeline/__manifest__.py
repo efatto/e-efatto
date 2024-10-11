@@ -32,6 +32,7 @@
         'views/mrp_workcenter.xml',
         'views/mrp_workorder.xml',
         'views/mrp.xml',
+        'views/project.xml',
         'views/task.xml',
         'views/web.xml',
     ],

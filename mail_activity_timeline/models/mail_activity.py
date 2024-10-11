@@ -106,7 +106,8 @@ class MailActivity(models.Model):
                     'user_id',
                     'parent_id',
                     'summary',
-                    'workcenter_id'
+                    'workcenter_id',
+                    'done',
                 ]):
                     res_object = self.env[activity.res_model].browse(
                         activity.res_id)
@@ -139,6 +140,12 @@ class MailActivity(models.Model):
                             vals.update({
                                 'date_end': values['date_end']
                             })
+                        if 'done' in values:
+                            # updata current write values
+                            activity.color_active = self.get_color(
+                                    activity,
+                                    res_object.project_id.activity_color,
+                            )
                     res_object.with_context(
                         bypass_resource_planner=True
                     ).write(vals)
@@ -190,8 +197,12 @@ class MailActivity(models.Model):
             if res_object.state in ['done', 'cancel']:
                 color = colorscale.colorscale(color, .5)
         elif res_object._name == 'project.task':
-            color = hex(color)
+            # color = hex(color)  # perché c'era questo?
+            # per trasformare da colore numerico a testo, ma non va
             if res_object.stage_id.state in ['done', 'cancelled']:
+                color = colorscale.colorscale(color, .5)
+        elif res_object._name == "mail.activity":
+            if res_object.done:
                 color = colorscale.colorscale(color, .5)
         return color
 
@@ -246,9 +257,16 @@ class MailActivity(models.Model):
                         'workcenter_id': res_object.workcenter_id.id,
                     })
                 if res_object.color:
-                    vals.update({
-                        'color_active': self.get_color(res_object, res_object.color),
-                    })
+                    if res_object.project_id and res_object.project_id.activity_color:
+                        vals.update({
+                            'color_active': self.get_color(
+                                activity,
+                                res_object.project_id.activity_color),
+                        })
+                    else:
+                        vals.update({
+                            'color_active': self.get_color(res_object, res_object.color),
+                        })
             for val in vals:
                 if vals[val]:
                     activity[val] = vals[val]
