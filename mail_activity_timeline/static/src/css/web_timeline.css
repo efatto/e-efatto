@@ -8,6 +8,8 @@
     padding: 0 5px;
     cursor: pointer;
     line-height: 16px;
+    color: #7C7BAD;
+    background-color: #ffffff;
 }
 .oe_timeline_view .vis-item .oe_timeline_info {
     display: block;
@@ -20,8 +22,14 @@
     padding: 0 5px;
     cursor: pointer;
     line-height: 16px;
+    color: #7C7BAD;
+    background-color: #ffffff;
 }
 .oe_timeline_view .vis-item .oe_timeline_info:hover {
     color: #437dee;
-    background-color: #ffffff;
+    background-color: #211313;
+}
+.oe_timeline_view .vis-item .oe_timeline_duplicate_button:hover {
+    color: #437dee;
+    background-color: #211313;
 }
