@@ -23,6 +23,7 @@
     ],
     'qweb': [
         'static/src/xml/web_timeline.xml',
+        'static/src/xml/web_kanban_activity.xml',
     ],
     'data': [
         'security/ir.model.access.csv',
