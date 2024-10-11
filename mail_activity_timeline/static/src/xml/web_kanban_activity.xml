@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+  <t t-extend="mail.KanbanActivityDropdown">
+      <t t-jquery="div[class='o_activity_title_entry mt-1']" t-operation="before">
+          <div class="o_activity_title_entry mt-1" t-if="log.note">
+            <small><t t-raw="log.note" /></small>
+          </div>
+      </t>
+  </t>
+</templates>
