@@ -131,6 +131,13 @@ class MailActivity(models.Model):
                             vals.update({
                                 'date_planned_finished': values['date_end']
                             })
+                        # if 'state' in values:  # TODO questo campo c'è ma potrebbe non
+                        #     # essere interessante
+                        #     # updata current write values
+                        #     activity.color_active = self.get_color(
+                        #         res_object,
+                        #         res_object.color,
+                        #     )
                     elif activity.res_model == 'project.task':
                         if 'date_start' in values:
                             vals.update({
