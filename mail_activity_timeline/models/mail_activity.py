@@ -147,12 +147,11 @@ class MailActivity(models.Model):
                             vals.update({
                                 'date_end': values['date_end']
                             })
-                        if 'done' in values:
-                            # updata current write values
-                            activity.color_active = self.get_color(
-                                    activity,
-                                    res_object.project_id.activity_color,
-                            )
+                        # always update current write values for color
+                        activity.color_active = self.get_color(
+                                activity,
+                                res_object.project_id.activity_color,
+                        )
                     res_object.with_context(
                         bypass_resource_planner=True
                     ).write(vals)
