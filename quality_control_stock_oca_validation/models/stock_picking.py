@@ -39,7 +39,7 @@ class StockPicking(models.Model):
                     inspection = inspection_model._make_inspection(
                         operation, trigger_line
                     )
-                    if inspection and inspection not in picking.qc_inspections_ids:
+                    if inspection:
                         # force save of the new inspection, otherwise it will be deleted
                         inspection.env.cr.commit()
             for inspection in picking.qc_inspections_ids:
