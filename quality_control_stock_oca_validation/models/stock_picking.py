@@ -54,7 +54,7 @@ class StockPicking(models.Model):
                             "The stock picking cannot be validated as the following "
                             "quality control check are not completed: %s"
                             "\n(Refresh the page if quality control is not visible, as "
-                            "it may have been created now.)"
+                            "it may have been created now)"
                         )
                         % inspection.name
                     )
