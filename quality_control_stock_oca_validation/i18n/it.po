@@ -59,11 +59,11 @@ msgstr "Movimento di magazzino"
 msgid ""
 "The stock picking cannot be validated as the following quality control check"
 " are not completed: %s\n(Refresh the page if quality control is not visible, "
-"as it may have been created now.)"
+"as it may have been created now)"
 msgstr ""
 "Il trasferimento non può essere validato perchè il seguente controllo di "
 "qualità non è stato completato: %s\n(Aggiorna la pagina se il controllo di "
-"qualità non è visibile, potrebbe essere stato appena creato.)"
+"qualità non è visibile, potrebbe essere stato appena creato)"
 
 #. module: quality_control_stock_oca_validation
 #: model:ir.model,name:quality_control_stock_oca_validation.model_stock_picking
