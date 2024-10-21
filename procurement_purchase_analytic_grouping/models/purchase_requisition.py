@@ -10,6 +10,7 @@ class PurchaseRequisition(models.Model):
         ctx = {'default_requisition_id': self.id}
         po = self.env['purchase.order']
         purchase_order_found = False
+        # find purchase orders linked with lead line and the same seller
         for lead_line in self.mapped('line_ids.lead_line_id'):
             lead_purchase_orders = self.env['purchase.order'].search([
                 ('partner_id', '=', seller_id),
@@ -24,6 +25,7 @@ class PurchaseRequisition(models.Model):
                 purchase_order_found = True
                 break
         if not purchase_order_found:
+            # find purchase orders linked with analytic account and the same seller
             for account_analytic in self.mapped('line_ids.account_analytic_id'):
                 purchase_orders = self.env['purchase.order'].search([
                     ('partner_id', '=', seller_id),
