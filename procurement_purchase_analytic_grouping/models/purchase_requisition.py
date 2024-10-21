@@ -40,6 +40,15 @@ class PurchaseRequisition(models.Model):
                     po |= purchase_order
                     break
         if po:
+            # todo set move_dest_ids in linked po lines (or other fields missing as not
+            #  created from purchase requisition)
+            for po_line in po.order_line:
+                pr_line = self.line_ids.filtered(
+                    lambda pr_l: pr_l.product_id == po_line.product_id
+                )
+                if pr_line:
+                    #'move_dest_id': values.get('move_dest_ids') and values['move_dest_ids'][0].id or False,
+                    pass
             return po
         po = self.env['purchase.order'].with_context(**ctx).create(vals)
         po._onchange_requisition_id()
