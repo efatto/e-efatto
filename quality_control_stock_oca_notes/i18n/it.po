@@ -1,0 +1,58 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* quality_control_stock_oca_notes
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-10-21 15:22+0000\n"
+"PO-Revision-Date: 2024-10-21 15:22+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: quality_control_stock_oca_notes
+#: model:ir.model,name:quality_control_stock_oca_notes.model_qc_trigger_line
+msgid "Abstract line for defining triggers"
+msgstr "Riga base per la definizione delle attivazioni"
+
+#. module: quality_control_stock_oca_notes
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_inspection__assigned_attachment_ids
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_trigger_line__assigned_attachment_ids
+msgid "Assigned Attachments"
+msgstr "Allegati assegnati"
+
+#. module: quality_control_stock_oca_notes
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_inspection__display_name
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_trigger_line__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
+
+#. module: quality_control_stock_oca_notes
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_inspection__id
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_trigger_line__id
+msgid "ID"
+msgstr ""
+
+#. module: quality_control_stock_oca_notes
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_trigger_line__note
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_trigger_product_category_line__note
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_trigger_product_line__note
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_trigger_product_template_line__note
+msgid "Internal note"
+msgstr "Nota interna"
+
+#. module: quality_control_stock_oca_notes
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_inspection____last_update
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_trigger_line____last_update
+msgid "Last Modified on"
+msgstr "Ultima modifica il"
+
+#. module: quality_control_stock_oca_notes
+#: model:ir.model,name:quality_control_stock_oca_notes.model_qc_inspection
+msgid "Quality control inspection"
+msgstr "Ispezione controllo di qualità"
