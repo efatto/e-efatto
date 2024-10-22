@@ -40,15 +40,32 @@ class PurchaseRequisition(models.Model):
                     po |= purchase_order
                     break
         if po:
-            # todo set move_dest_ids in linked po lines (or other fields missing as not
-            #  created from purchase requisition)
-            for po_line in po.order_line:
-                pr_line = self.line_ids.filtered(
-                    lambda pr_l: pr_l.product_id == po_line.product_id
+            # move from every pr_line.move_dest_id the created_purchase_line_id
+            # from the created purchase line to the existing one
+            for pr_line in self.line_ids:
+                # get the old po_lines (created from user) and new po_lines (created
+                # from purchase requisition) to remove the latter one
+                new_po_lines = po.order_line.filtered(
+                    lambda pol: pol.product_id == pr_line.product_id
+                    and pr_line.move_dest_id in pol.move_dest_ids
                 )
-                if pr_line:
-                    #'move_dest_id': values.get('move_dest_ids') and values['move_dest_ids'][0].id or False,
-                    pass
+                old_po_lines = po.order_line.filtered(
+                    lambda pol: pol.product_id == pr_line.product_id
+                    and not pol.move_dest_ids
+                )
+                if old_po_lines and new_po_lines:
+                    old_po_lines.ensure_one()
+                    new_po_lines.ensure_one()
+                    # write created_purchase_line_id to set move_dest_ids as it is a m2o
+                    pr_line.move_dest_id.write(
+                        {"created_purchase_line_id": old_po_lines.id}
+                    )
+                    old_po_lines.write({
+                        "procurement_group_id": pr_line.group_id.id,
+                        # scrivere nelle note qualcosa se la quantità è diversa?
+                    })
+                    # only 1 po line can be the created_purchase_line_id!
+                    new_po_lines.unlink()
             return po
         po = self.env['purchase.order'].with_context(**ctx).create(vals)
         po._onchange_requisition_id()
