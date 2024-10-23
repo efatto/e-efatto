@@ -42,10 +42,11 @@ class PurchaseRequisition(models.Model):
         if po:
             # move from every pr_line.move_dest_id the created_purchase_line_id
             # from the created purchase line to the existing one
+            po_lines_to_delete = self.env["purchase.order.line"]
             for pr_line in self.line_ids:
                 # get the old po_lines (created from user) and new po_lines (created
                 # from purchase requisition) to remove the latter one
-                new_po_lines = po.order_line.filtered(
+                new_po_lines = (po.order_line - po_lines_to_delete).filtered(
                     lambda pol: pol.product_id == pr_line.product_id
                     and pr_line.move_dest_id in pol.move_dest_ids
                 )
@@ -65,7 +66,8 @@ class PurchaseRequisition(models.Model):
                         # scrivere nelle note qualcosa se la quantità è diversa?
                     })
                     # only 1 po line can be the created_purchase_line_id!
-                    new_po_lines.unlink()
+                    po_lines_to_delete |= new_po_lines
+            po_lines_to_delete.unlink()
             return po
         po = self.env['purchase.order'].with_context(**ctx).create(vals)
         po._onchange_requisition_id()
