@@ -25,6 +25,39 @@ class MrpProduction(models.Model):
         return res
 
     @api.multi
+    def _get_whslist_component_data(self, num_lista, riga, move):
+        # overridable method
+        return dict(
+            num_lista=num_lista,
+            riga=riga,
+            stato='1',
+            data_lista=fields.Datetime.now(),
+            riferimento=self.name,
+            tipo='1',
+            product_id=move.product_id.id,
+            parent_product_id=self.product_id.id,
+            qta=move.quantity_done,
+            move_id=move.id,
+            tipo_mov='mrpout',
+        )
+
+    @api.multi
+    def _get_whslist_finished_data(self, num_lista, riga, move):
+        # overridable method
+        return dict(
+            stato = '1',
+            tipo = '2',
+            num_lista = num_lista,
+            data_lista = fields.Datetime.now(),
+            riferimento = self.name,
+            product_id = move.product_id.id,
+            qta = move.quantity_done,
+            move_id = move.id,
+            tipo_mov = 'mrpin',
+            riga = riga,
+        )
+
+    @api.multi
     def _generate_whs(self):
         # FIXME: this works only for complete production, add support for partial
         #  production
@@ -51,18 +84,8 @@ class MrpProduction(models.Model):
                                 'hyddemo.whs.liste')
                             riga = 0
                         riga += 1
-                        whsliste_data = dict(
-                            num_lista=num_lista,
-                            riga=riga,
-                            stato='1',
-                            data_lista=fields.Datetime.now(),
-                            riferimento=production.name,
-                            tipo='1',
-                            product_id=move.product_id.id,
-                            parent_product_id=production.product_id.id,
-                            qta=move.quantity_done,
-                            move_id=move.id,
-                            tipo_mov='mrpout',
+                        whsliste_data = production._get_whslist_component_data(
+                            num_lista, riga, move
                         )
                         whsliste_obj.create(whsliste_data)
 
@@ -101,17 +124,8 @@ class MrpProduction(models.Model):
                                 'hyddemo.whs.liste')
                             riga = 0
                         riga += 1
-                        whsliste_data = dict(
-                            stato='1',
-                            tipo='2',
-                            num_lista=num_lista,
-                            data_lista=fields.Datetime.now(),
-                            riferimento=production.name,
-                            product_id=move.product_id.id,
-                            qta=move.quantity_done,
-                            move_id=move.id,
-                            tipo_mov='mrpin',
-                            riga=riga,
+                        whsliste_data = production._get_whslist_finished_data(
+                            num_lista, riga, move
                         )
                         whsliste_obj.create(whsliste_data)
 
