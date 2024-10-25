@@ -28,16 +28,16 @@ class MrpProduction(models.Model):
     def _get_whslist_component_data(self, num_lista, riga, move):
         # overridable method
         return dict(
+            data_lista=fields.Datetime.now(),
+            move_id=move.id,
             num_lista=num_lista,
+            parent_product_id=self.product_id.id,
+            product_id=move.product_id.id,
+            qta=move.quantity_done,
+            riferimento=self.name,
             riga=riga,
             stato='1',
-            data_lista=fields.Datetime.now(),
-            riferimento=self.name,
             tipo='1',
-            product_id=move.product_id.id,
-            parent_product_id=self.product_id.id,
-            qta=move.quantity_done,
-            move_id=move.id,
             tipo_mov='mrpout',
         )
 
@@ -45,16 +45,16 @@ class MrpProduction(models.Model):
     def _get_whslist_finished_data(self, num_lista, riga, move):
         # overridable method
         return dict(
-            stato = '1',
-            tipo = '2',
-            num_lista = num_lista,
             data_lista = fields.Datetime.now(),
-            riferimento = self.name,
+            move_id = move.id,
+            num_lista = num_lista,
             product_id = move.product_id.id,
             qta = move.quantity_done,
-            move_id = move.id,
-            tipo_mov = 'mrpin',
+            riferimento = self.name,
             riga = riga,
+            stato = '1',
+            tipo = '2',
+            tipo_mov = 'mrpin',
         )
 
     @api.multi
