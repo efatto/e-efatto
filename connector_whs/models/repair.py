@@ -9,6 +9,7 @@ class RepairOrder(models.Model):
 
     @api.multi
     def _get_whs_repair_operation(self, num_lista, move, riga, tipo, tipo_mov):
+        # overridable method
         return dict(
             data_lista=fields.Datetime.now(),
             move_id=move.id,
