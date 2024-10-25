@@ -82,8 +82,24 @@ class HyddemoWhsListe(models.Model):
     whs_list_absent = fields.Boolean()
     whs_list_log = fields.Text()
 
+    def whs_unlink_lists(self, dbsource):
+        # overridable method
+        delete_lists_query = \
+            "DELETE FROM HOST_LISTE WHERE NumLista = '%s' AND NumRiga = '%s'" % (
+                self.num_lista,
+                self.riga,
+            )
+        dbsource.with_context(no_return=True).execute_mssql(
+            sqlquery=delete_lists_query.replace('\n', ' '),
+            sqlparams=None,
+            metadata=None)
+        _logger.info('WHS LOG: unlink Lista %s Riga %s' % (
+            self.num_lista, self.riga
+        ))
+        self.unlink()
+
     @api.multi
-    def whs_unlink_lists(self, datasource_id):
+    def unlink_lists(self, datasource_id):
         """
         Delete lists on mssql
         """
@@ -94,23 +110,24 @@ class HyddemoWhsListe(models.Model):
             raise UserError(_('Failed to open connection!'))
         self.check_lists(dbsource)
         for lista in self:
-            delete_lists_query = \
-                "DELETE FROM HOST_LISTE WHERE NumLista = '%s' AND NumRiga = '%s'" % (
-                    lista.num_lista,
-                    lista.riga,
-                )
-            dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=delete_lists_query.replace('\n', ' '),
-                sqlparams=None,
-                metadata=None)
-            _logger.info('WHS LOG: unlink Lista %s Riga %s' % (
-                lista.num_lista, lista.riga
-            ))
-            lista.unlink()
+            lista.unlink_lists(dbsource)
         return True
 
+    def whs_cancel_lists(self, dbsource):
+        # overridable method
+        set_to_not_elaborate_query = \
+            "UPDATE HOST_LISTE SET Elaborato=1, Qta=0 WHERE " \
+            "NumLista='%s' AND NumRiga='%s'" % (self.num_lista, self.riga)
+        dbsource.with_context(no_return=True).execute_mssql(
+            sqlquery=set_to_not_elaborate_query, sqlparams=None,
+            metadata=None)
+        _logger.info('WHS LOG: cancel Lista %s Riga %s' % (
+            self.num_lista, self.riga
+        ))
+        self.write({'stato': '3'})
+
     @api.multi
-    def whs_cancel_lists(self, datasource_id):
+    def cancel_lists(self, datasource_id):
         """
         Set lists processed on mssql and not processable in Odoo
         """
@@ -121,17 +138,36 @@ class HyddemoWhsListe(models.Model):
             raise UserError(_('Failed to open connection!'))
         self.check_lists(dbsource)
         for lista in self:
-            set_to_not_elaborate_query = \
-                "UPDATE HOST_LISTE SET Elaborato=1, Qta=0 WHERE " \
-                "NumLista='%s' AND NumRiga='%s'" % (lista.num_lista, lista.riga)
-            dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=set_to_not_elaborate_query, sqlparams=None,
-                metadata=None)
-            _logger.info('WHS LOG: cancel Lista %s Riga %s' % (
-                lista.num_lista, lista.riga
-            ))
-            lista.write({'stato': '3'})
+            lista.whs_cancel_lists(dbsource)
         return True
+
+    @api.model
+    def whs_check_lists(self, num_lista, dbsource):
+        # overridable method
+        check_elaborated_lists_query = \
+            "SELECT * FROM HOST_LISTE WHERE NumLista = '%s' " \
+            "AND Elaborato = 4 AND QtaMovimentata > 0" % (
+                num_lista,
+            )
+        elaborated_lists = dbsource.execute_mssql(
+            sqlquery=check_elaborated_lists_query, sqlparams=None, metadata=None)
+        if elaborated_lists[0]:
+            raise UserError(_(
+                "Trying to cancel lists elaborated from WHS, "
+                "please wait for cron synchronization or force it."
+            ))
+        check_elaborating_lists_query = \
+            "SELECT * FROM HOST_LISTE WHERE NumLista = '%s' " \
+            "AND Elaborato = 3" % (
+                num_lista,
+            )
+        elaborating_lists = dbsource.execute_mssql(
+            sqlquery=check_elaborating_lists_query, sqlparams=None, metadata=None)
+        if elaborating_lists[0]:
+            raise UserError(_(
+                "Trying to cancel lists launched in processing from user in WHS, "
+                "please wait for order end processing."
+            ))
 
     @api.multi
     def check_lists(self, dbsource):
@@ -140,33 +176,11 @@ class HyddemoWhsListe(models.Model):
         # could be obsolete
         num_liste = set(self.mapped('num_lista'))
         for num_lista in num_liste:
-            check_elaborated_lists_query = \
-                "SELECT * FROM HOST_LISTE WHERE NumLista = '%s' " \
-                "AND Elaborato = 4 AND QtaMovimentata > 0" % (
-                    num_lista,
-                )
-            elaborated_lists = dbsource.execute_mssql(
-                sqlquery=check_elaborated_lists_query, sqlparams=None, metadata=None)
-            if elaborated_lists[0]:
-                raise UserError(_(
-                    "Trying to cancel lists elaborated from WHS, "
-                    "please wait for cron synchronization or force it."
-                ))
-            check_elaborating_lists_query = \
-                "SELECT * FROM HOST_LISTE WHERE NumLista = '%s' " \
-                "AND Elaborato = 3" % (
-                    num_lista,
-                )
-            elaborating_lists = dbsource.execute_mssql(
-                sqlquery=check_elaborating_lists_query, sqlparams=None, metadata=None)
-            if elaborating_lists[0]:
-                raise UserError(_(
-                    "Trying to cancel lists launched in processing from user in WHS, "
-                    "please wait for order end processing."
-                ))
+            self.whs_check_lists(num_lista, dbsource)
 
     @api.multi
     def whs_check_list_state(self):
+        # overridable method
         """
         Funzione lanciabile manualmente per marcare la lista in Odoo che non è più
         presenti in WHS in quanto cancellate, per verifiche
@@ -231,3 +245,13 @@ class HyddemoWhsListe(models.Model):
                         'whs_list_absent': False,
                         'whs_list_log': 'Ok',
                     })
+
+    @api.multi
+    def check_list_state(self):
+        """
+        Funzione lanciabile manualmente per marcare la lista in Odoo che non è più
+        presenti in WHS in quanto cancellate, per verifiche
+        :return:
+        """
+        for whs_list in self:
+            whs_list.whs_check_list_state()

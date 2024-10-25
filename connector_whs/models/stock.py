@@ -71,7 +71,7 @@ class Picking(models.Model):
                             continue
                         _logger.info('WHS LOG: unlink whs list in backorder process of '
                                      'move %s' % move.name)
-                        whs_list.whs_unlink_lists(dbsource.id)
+                        whs_list.unlink_lists(dbsource.id)
         super(Picking, self).action_done()
         return True
 
@@ -126,9 +126,9 @@ class Picking(models.Model):
                     continue
                 if unlink:
                     _logger.info('WHS LOG: unlink lists for picking %s' % pick.name)
-                    whs_list_ids.whs_unlink_lists(dbsource.id)
+                    whs_list_ids.unlink_lists(dbsource.id)
                 else:
-                    whs_list_ids.whs_cancel_lists(dbsource.id)
+                    whs_list_ids.cancel_lists(dbsource.id)
         return True
 
 
