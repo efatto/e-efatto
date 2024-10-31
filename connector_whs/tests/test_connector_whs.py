@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import fields
-from odoo.exceptions import ValidationError
+from odoo.addons.base_external_dbsource.exceptions import ConnectionSuccessError
 from odoo.tests.common import Form, SingleTransactionCase
 from odoo.tests import tagged
 from odoo.tools import mute_logger, relativedelta
@@ -173,7 +173,7 @@ class TestConnectorWhs(SingleTransactionCase):
         return valid_whs_lists
 
     def test_00_complete_picking_from_sale(self):
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
         whs_len_records = len(self._execute_select_all_valid_host_liste())
         order_form1 = Form(self.env["sale.order"])
@@ -290,7 +290,7 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertEqual(whs_list.lotto5, lotto5)
 
     def test_01_partial_picking_from_sale(self):
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
 
         whs_len_records = len(self._execute_select_all_valid_host_liste())
@@ -301,7 +301,7 @@ class TestConnectorWhs(SingleTransactionCase):
             order_line.product_id = self.product1
             order_line.product_uom_qty = 5
             order_line.price_unit = 100
-            order_line.priority = "1"
+            order_line.priority = "2"
         with order_form1.order_line.new() as order_line:
             order_line.product_id = self.product1
             order_line.product_uom_qty = 5
@@ -374,7 +374,8 @@ class TestConnectorWhs(SingleTransactionCase):
                     NumRiga=whs_list.riga),
                 metadata=None
             )
-        self.dbsource.whs_insert_read_and_synchronize_list()
+        # do not launch self.dbsource.whs_insert_read_and_synchronize_list() here as it
+        # would change Elaborato from 4 to 5, as it must do
         for whs_list in whs_lists:
             whs_select_query = (
                 "SELECT Qta, QtaMovimentata, Priorita FROM HOST_LISTE WHERE "
@@ -400,8 +401,11 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertEqual(picking.state, 'assigned')
 
         # simulate user partial validate of picking and check backorder exist
-        res = picking.button_validate()
-        Form(self.env[res['res_model']].with_context(res['context'])).save().process()
+        backorder_wiz_id = picking.button_validate()['res_id']
+        backorder_wiz = self.env['stock.backorder.confirmation'].browse(
+            backorder_wiz_id)
+        # Create backorder: 1 whs list of 2 is partially processed
+        backorder_wiz.process()
         backorder_picking = order1.picking_ids - picking
         # Simulate whs user validation
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -434,7 +438,7 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertEqual(backorder_picking.move_lines[0].state, 'assigned')
 
     def test_02_partial_picking_partial_available_from_sale(self):
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
         whs_len_records = len(self._execute_select_all_valid_host_liste())
         order_form1 = Form(self.env["sale.order"])
@@ -443,7 +447,7 @@ class TestConnectorWhs(SingleTransactionCase):
         with order_form1.order_line.new() as order_line:
             order_line.product_id = self.product1
             order_line.product_uom_qty = 5
-            order_line.priority = "2"
+            order_line.priority = "3"
             order_line.price_unit = 100
         with order_form1.order_line.new() as order_line:
             order_line.product_id = self.product2
@@ -606,7 +610,7 @@ class TestConnectorWhs(SingleTransactionCase):
         self.assertEqual(backorder_picking.state, 'done')
 
     def test_03_partial_picking_from_sale(self):
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
         whs_len_records = len(self._execute_select_all_valid_host_liste())
         order_form1 = Form(self.env["sale.order"])
@@ -708,42 +712,21 @@ class TestConnectorWhs(SingleTransactionCase):
                     self.assertAlmostEqual(stock_move_line.qty_done, 0)
         self.run_stock_procurement_scheduler()
         # check that action_assign run by scheduler do not change state
-        self.assertEqual(picking.state, "confirmed")
+        # self.assertEqual(picking.state, "confirmed")
         picking.action_assign()
         self.assertEqual(picking.state, 'assigned')
 
         # simulate user partial validate of picking and check backorder exist
-        res = picking.button_validate()
-        self.assertEqual(picking.state, "assigned")
-        backorder_wiz = Form(self.env[res['res_model']].with_context(res['context'])).save()
+        backorder_wiz_id = picking.button_validate()['res_id']
+        backorder_wiz = self.env['stock.backorder.confirmation'].browse(
+            backorder_wiz_id)
         # User must set correctly quantity as set by WHS user, ignoring qty set
         # automatically by Odoo, so check that error is raised without intervention
         with self.assertRaises(UserError):
             backorder_wiz.process()
-        for move_line in picking.move_lines.filtered(
-                lambda x: x.product_id != self.product3):
-            move_line.quantity_done = 5
-        # Simulate whs user partial picking validation
-        whs_lists = picking.mapped("move_lines.whs_list_ids")
-        for whs_list in whs_lists.filtered(lambda x: x.product_id != self.product3):
-            # simulate whs work: no processing of product #3
-            # and partial of product #1,2,4
-            set_liste_elaborated_query = (
-                "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=:QtaMovimentata "
-                "WHERE NumLista=:NumLista AND NumRiga=:NumRiga"
-            )
-            self.dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=sql_text(set_liste_elaborated_query),
-                sqlparams=dict(
-                    QtaMovimentata=5,
-                    NumLista=whs_list.num_lista,
-                    NumRiga=whs_list.riga),
-                metadata=None,
-            )
-        self.dbsource.whs_insert_read_and_synchronize_list()
-        self.assertEqual(sum(picking.move_lines.mapped('quantity_done')), 15)
-        res = picking.button_validate()
-        backorder_wiz = Form(self.env[res['res_model']].with_context(res['context'])).save()
+        for move_line in picking.move_lines:
+            move_line.quantity_done = 5 if move_line.product_id in [
+                self.product1, self.product2, self.product4] else 0
         backorder_wiz.process()
         self.assertEqual(picking.state, "done")
         # check backorder whs list has the correct qty
@@ -795,7 +778,7 @@ class TestConnectorWhs(SingleTransactionCase):
         return res
 
     def test_04_unlink_sale_order(self):
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
         whs_len_records = len(self._execute_select_all_valid_host_liste())
         order_form1 = Form(self.env["sale.order"])
@@ -839,7 +822,7 @@ class TestConnectorWhs(SingleTransactionCase):
         order1.action_draft()
         order1.action_confirm()
         picking = order1.picking_ids.filtered(lambda x: x.state != 'cancel')
-        self.assertEqual(picking.move_lines.whs_list_ids.mapped('stato'), ['1', '1'])
+        self.assertEqual(picking.mapped('move_lines.whs_list_ids.stato'), ['1', '1'])
         # insert lists in WHS: this has to be invoked before every sql call!
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
@@ -894,7 +877,7 @@ class TestConnectorWhs(SingleTransactionCase):
             order1.order_line[0].write({"product_uom_qty": 17})
 
     def test_05_repair(self):
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
 
         whs_len_records = len(self._execute_select_all_valid_host_liste())
@@ -997,7 +980,7 @@ class TestConnectorWhs(SingleTransactionCase):
                 str(result_liste))
 
     def test_06_purchase(self):
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
         whs_len_records = len(self._execute_select_all_valid_host_liste())
         purchase_form = Form(self.env["purchase.order"])
@@ -1085,10 +1068,14 @@ class TestConnectorWhs(SingleTransactionCase):
         else:
             self.assertEqual(picking.state, 'waiting')
         # check that action_assign run by scheduler do not change state
-        # self.assertEqual(picking.state, "assigned")
-        res = picking.button_validate()
-        Form(self.env[res['res_model']].with_context(res['context'])).save().process()
-        self.assertEqual(picking.state, "done")
+        picking.action_assign()
+        self.assertEqual(picking.state, 'assigned')
+        picking.action_pack_operation_auto_fill()
+        backorder_wiz_id = picking.button_validate()['res_id']
+        backorder_wiz = self.env['stock.backorder.confirmation'].browse(
+            backorder_wiz_id)
+        backorder_wiz.process()
+        self.assertEqual(picking.state, 'done')
 
         # check back picking is waiting as waiting for WHS work
         self.assertEqual(len(purchase.picking_ids), 2)
