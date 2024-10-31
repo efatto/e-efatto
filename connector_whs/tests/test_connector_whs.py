@@ -11,7 +11,7 @@ import os
 import time
 
 
-@tagged('post_install', '-at_install', "-standard", "test_whs")
+@tagged("-standard", "test_whs")
 class TestConnectorWhs(TransactionCase):
 
     def _create_sale_order_line(self, order, product, qty, priority='0'):
