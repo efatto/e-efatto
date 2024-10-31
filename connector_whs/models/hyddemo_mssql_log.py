@@ -137,6 +137,21 @@ class HyddemoMssqlLog(models.Model):
         'Log lines'
     )
 
+    @staticmethod
+    def _get_clean_product_query():
+        # overridable method
+        clean_product_query = \
+            "DELETE FROM HOST_ARTICOLI WHERE Elaborato = 2 OR Elaborato = 0"
+        return clean_product_query
+
+    @staticmethod
+    def _get_update_product_query():
+        # overridable method
+        # Set record from Elaborato=0 to Elaborato=1 to be processable from WHS
+        update_product_query = \
+            "UPDATE HOST_ARTICOLI SET Elaborato = 1 WHERE Elaborato = 0"
+        return update_product_query
+
     @api.model
     def whs_update_products(self, datasource_id):
         """
@@ -150,10 +165,10 @@ class HyddemoMssqlLog(models.Model):
             raise UserError(_('Failed to open connection!'))
         # delete from HOST_ARTICOLI if already processed from WHS (Elaborato=2)
         # or interrupted (bad) records (Elaborato=0)
-        clean_product_query = \
-            "DELETE FROM HOST_ARTICOLI WHERE Elaborato = 2 OR Elaborato = 0"
-        dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=clean_product_query, sqlparams=None, metadata=None)
+        clean_product_query = self._get_clean_product_query()
+        if clean_product_query:
+            dbsource.with_context(no_return=True).execute_mssql(
+                sqlquery=clean_product_query, sqlparams=None, metadata=None)
         log_data = self.search_read(
             [], ['ultimo_invio', 'ultimo_id'], order='ultimo_id desc', limit=1)
         _logger.info(log_data)
@@ -175,16 +190,15 @@ class HyddemoMssqlLog(models.Model):
                 sqlparams=insert_product_params,
                 metadata=None)
 
-        # Set record from Elaborato=0 to Elaborato=1 to be processable from WHS
-        update_product_query = \
-            "UPDATE HOST_ARTICOLI SET Elaborato = 1 WHERE Elaborato = 0"
-        dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=update_product_query, sqlparams=None, metadata=None)
-        res = self.env['hyddemo.mssql.log'].create({
+        update_product_query = self._get_update_product_query()
+        if update_product_query:
+            dbsource.with_context(no_return=True).execute_mssql(
+                sqlquery=update_product_query, sqlparams=None, metadata=None)
+        res = self.env['hyddemo.mssql.log'].create([{
             'ultimo_invio': new_last_update,
             'errori': 'Added %s products' % len(products),
             'dbsource_id': datasource_id,
-        })
+        }])
         _logger.info(res)
         dbsource.connection_close_mssql(connection)
         return True
@@ -193,6 +207,7 @@ class HyddemoMssqlLog(models.Model):
     def _prepare_host_articoli_values(
             self, product, warehouse_id, location_id, last_id):
         """
+        Carica/aggiorna l'anagrafica articoli verso il WMS
         Elaborato:
             ('0', 'In elaborazione da host'),
             ('1', 'Elaborabile da whs'),
