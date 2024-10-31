@@ -13,6 +13,16 @@ class WizardSyncStockWhsMssql(models.TransientModel):
     do_sync = fields.Boolean(
         string='Synchronize stock inventory')
 
+    @staticmethod
+    def _prepare_giacenze_query(i):
+        # overridable method
+        # respect order of fields retrieved!
+        query = "SELECT * FROM (SELECT row_number() OVER (ORDER BY Articolo) " \
+            "AS rownum, Articolo, Qta, Peso FROM HOST_GIACENZE) as A " \
+            "WHERE A.rownum BETWEEN %s AND %s" % (i, i + 2000)
+        # removed as unused: Lotto, Lotto2, Lotto3, Lotto4, Lotto5, dataora,
+        return query
+
     @api.multi
     def apply(self):
         for wizard in self:
@@ -38,11 +48,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
             stock_product_dict = dict()
             # get and aggregate stock data from whs
             while True:
-                giacenze_query = \
-                    "SELECT * FROM (SELECT row_number() OVER (ORDER BY Articolo) " \
-                    "AS rownum, Articolo, Lotto, Lotto2, Lotto3, Lotto4, Lotto5, " \
-                    "dataora, Qta, Peso FROM HOST_GIACENZE) as A " \
-                    "WHERE A.rownum BETWEEN %s AND %s" % (i, i + 2000)
+                giacenze_query = self._prepare_giacenze_query(i)
                 i += 2000
                 esiti_liste = dbsource.execute_mssql(
                     sqlquery=giacenze_query, sqlparams=None, metadata=None)
@@ -51,9 +57,8 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     break
                 for esito_lista in esiti_liste[0]:
                     articolo = esito_lista[1]
-                    # dataora = esito_lista[7]
                     try:
-                        qty = float(esito_lista[8])
+                        qty = float(esito_lista[2])
                     except ValueError:
                         qty = False
                         pass
@@ -61,7 +66,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         qty = False
                         pass
                     try:
-                        weight = float(esito_lista[9]) / 1000.0
+                        weight = float(esito_lista[3]) / 1000.0
                     except ValueError:
                         weight = False
                         pass
