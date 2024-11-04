@@ -7,7 +7,6 @@
         <field name="arch" type="xml">
             <search string="Liste prelievo, deposito e inventario">
                 <field name="num_lista"/>
-                <field name="priorita"/>
                 <field name="stato"/>
                 <field name="data_lista"/>
                 <field name="riferimento"/>
@@ -34,7 +33,6 @@
         <field name="arch" type="xml">
             <tree string="Liste prelievo, deposito e inventario">
                 <field name="whs_list_absent"/>
-                <field name="priorita"/>
                 <field name="num_lista"/>
                 <field name="stato"/>
                 <field name="data_lista"/>
@@ -91,7 +89,6 @@
                             <field name="product_customer_code"/>
                             <field name="parent_product_id"/>
                             <field name="tipo"/>
-                            <field name="priorita"/>
                         </group>
                         <group>
                             <field name="vettore"/>

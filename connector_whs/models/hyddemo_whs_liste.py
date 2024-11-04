@@ -47,7 +47,6 @@ class HyddemoWhsListe(models.Model):
         ('2', 'Deposito'),
         ('3', 'Inventario')  # 5 su WHS, 6 trasferimento
     ], string='Tipo lista')
-    priorita = fields.Integer('Priorita', default=0)  # 0=Bassa; 1=Media; 2=Urgente
     vettore = fields.Text('Vettore', size=30)
     cliente = fields.Text('Codice cliente', size=30,
                           help='Used as unique code in outher db, so spaces are '

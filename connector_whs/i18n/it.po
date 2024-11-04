@@ -347,11 +347,6 @@ msgid "Prelievo"
 msgstr ""
 
 #. module: connector_whs
-#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__priorita
-msgid "Priorita"
-msgstr "Priorità"
-
-#. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__product_id
 msgid "Prodotto"
 msgstr ""
