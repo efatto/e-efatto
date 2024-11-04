@@ -1,13 +1,12 @@
-# Copyright 2024 Sergio Corato <https://github.com/sergiocorato>
+# Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 {
-    'name': 'Connector Modula WMS',
+    'name': 'Connector WHS WMS',
     'version': '12.0.1.0.0',
-    'category': 'Sales Management',
+    'category': 'Warehouse Management',
     'license': 'AGPL-3',
     'summary': """
-    Add a field with days to first sale of crm lead, computed on date_sent added on
-    sale order.
+    Add custom method to connect to WhSystem WMS.
     """,
     'author': "Sergio Corato",
     'website': 'https://github.com/sergiocorato/e-efatto',
