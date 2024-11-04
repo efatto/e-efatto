@@ -164,9 +164,10 @@ class StockMove(models.Model):
         self.create_whs_list()
         return super()._action_confirm(merge, merge_into)
 
-    # def _action_assign(self):
-    #     self.create_whs_list()
-    #     return super()._action_assign()
+    @staticmethod
+    def _set_priority(move, whsliste_data):
+        # overridable method
+        return whsliste_data
 
     def create_whs_list(self):
         whsliste_obj = self.env["hyddemo.whs.liste"]
@@ -289,9 +290,7 @@ class StockMove(models.Model):
                     if pick.origin:
                         whsliste_data['riferimento'] = pick.origin[:50]
 
-                    if move.picking_id.priority:
-                        whsliste_data['priorita'] = max(
-                            [int(move.picking_id.priority), 1]) - 1
+                    whsliste_data = self._set_priority(move, whsliste_data)
 
                     if ragsoc:
                         whsliste_data['ragsoc'] = ragsoc[0:100]

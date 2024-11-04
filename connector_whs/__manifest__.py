@@ -14,7 +14,6 @@
         'purchase_stock',
         'repair',
         'sale_delivery_split_date',
-        'sale_order_priority',
         'stock_move_line_auto_fill',
         'stock_inventory_preparation_filter',
         'stock_picking_back2draft',

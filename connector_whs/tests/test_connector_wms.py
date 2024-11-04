@@ -13,14 +13,21 @@ import time
 from sqlalchemy import text as sql_text
 
 
-@tagged("-standard", "test_whs")
-class TestConnectorWhs(SingleTransactionCase):
+@tagged("-standard", "test_wms")
+class TestConnectorWMS(SingleTransactionCase):
+    @staticmethod
+    def _get_connection_string():
+        return ""
+
     def setUp(self):
         super().setUp()
         dbsource_model = self.env["base.external.dbsource"]
         dbsource = dbsource_model.search([("name", "=", "Odoo WHS local server")])
         if not dbsource:
-            conn_file = os.path.join(os.path.expanduser('~'), 'connection_string.txt')
+            conn_file = os.path.join(
+                os.path.expanduser('~'),
+                self._get_connection_string()
+            )
             if not os.path.isfile(conn_file):
                 raise UserError("Missing connection string!")
             with open(conn_file, 'r') as file:
