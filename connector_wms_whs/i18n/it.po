@@ -1,0 +1,48 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* crm_lead_first_sale
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-04-14 09:06+0000\n"
+"PO-Revision-Date: 2023-04-14 09:06+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: crm_lead_first_sale
+#: model:ir.model.fields,field_description:crm_lead_first_sale.field_sale_order__date_sent
+msgid "Date Sent"
+msgstr "Data invio"
+
+#. module: crm_lead_first_sale
+#: model:ir.model.fields,field_description:crm_lead_first_sale.field_sale_order__date_sent_calculated
+msgid "Date Sent Calculated"
+msgstr "Data invio calcolata"
+
+#. module: crm_lead_first_sale
+#: model:ir.model.fields,field_description:crm_lead_first_sale.field_crm_lead__first_sale_days
+msgid "First Sale Days"
+msgstr "Giorni al primo preventivo"
+
+#. module: crm_lead_first_sale
+#: model:ir.model,name:crm_lead_first_sale.model_crm_lead
+msgid "Lead/Opportunity"
+msgstr "Contatto/Opportunità"
+
+#. module: crm_lead_first_sale
+#: code:addons/crm_lead_first_sale/models/sale.py:35
+#, python-format
+msgid "Quotation"
+msgstr "Preventivo"
+
+#. module: crm_lead_first_sale
+#: model:ir.model,name:crm_lead_first_sale.model_sale_order
+msgid "Sale Order"
+msgstr "Ordine di vendita"
+
