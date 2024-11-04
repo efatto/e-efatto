@@ -1,6 +1,6 @@
 import logging
 
-from odoo import api, models, _
+from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
 from sqlalchemy import text as sql_text
@@ -11,6 +11,7 @@ _logger = logging.getLogger(__name__)
 class HyddemoWhsListe(models.Model):
     _inherit = "hyddemo.whs.liste"
 
+    priorita = fields.Integer('Priorita', default=0)  # 0=Bassa; 1=Media; 2=Urgente
 
     def whs_unlink_lists(self, dbsource):
         # do no call super() and put specific code
