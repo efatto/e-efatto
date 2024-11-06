@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_whs_liste_search" model="ir.ui.view">
+        <field name="name">view.whsliste.search</field>
+        <field name="model">hyddemo.whs.liste</field>
+        <field name="inherit_id" ref="connector_whs.view_whs_liste_search"/>
+        <field name="arch" type="xml">
+            <field name="num_lista" position="after">
+                <field name="priorita"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_whs_liste_tree" model="ir.ui.view">
+        <field name="name">view.whsliste.tree</field>
+        <field name="model">hyddemo.whs.liste</field>
+        <field name="inherit_id" ref="connector_whs.view_whs_liste_tree"/>
+        <field name="arch" type="xml">
+            <field name="num_lista" position="before">
+                <field name="priorita"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_whs_liste_form" model="ir.ui.view">
+        <field name="name">view.whsliste.form</field>
+        <field name="model">hyddemo.whs.liste</field>
+        <field name="inherit_id" ref="connector_whs.view_whs_liste_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet//field[@name='tipo']" position="after">
+                <field name="priorita"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
