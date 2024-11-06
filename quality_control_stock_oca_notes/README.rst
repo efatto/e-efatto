@@ -32,10 +32,12 @@ Auto-set internal notes on qc inspection from qc trigger line.
 Configuration
 =============
 
-Nel prodotto o nel template si può indicare una nota che verrà riportata nella nota interna dell'ispezione:
+Nel prodotto o nel template si può indicare una nota:
 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/quality_control_stock_oca_notes/static/description/nota.png
     :alt: Nota sul prodotto
+
+che verrà riportata nella nota interna dell'ispezione:
 
 .. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/quality_control_stock_oca_notes/static/description/nota_interna.png
     :alt: Nota interna sull'ispezione
