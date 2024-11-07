@@ -11,6 +11,7 @@
     "creation selecting a subcontractor.",
     "depends": [
         "mrp_production_demo",
+        "mrp_subcontracting_purchase",
         "mrp_subcontracting_purchase_link",
         "procurement_purchase_no_grouping",
         "purchase_line_procurement_group",
