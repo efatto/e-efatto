@@ -1,4 +1,4 @@
-from odoo import api, models
+from odoo import models
 
 
 class StockRule(models.Model):
@@ -6,7 +6,7 @@ class StockRule(models.Model):
 
     def _run_buy(self, procurements):
         super()._run_buy(procurements)
-        for procurement, rule in procurements:
+        for procurement, _rule in procurements:
             # if procurement.values.get('supplierinfo_id'):
             #     supplier = procurement.values['supplierinfo_id']
             if procurement.product_id.seller_ids.filtered(lambda x: x.is_subcontractor):
@@ -19,8 +19,8 @@ class StockRule(models.Model):
                 )
                 for purchase_order in purchase_orders:
                     if (
-                        purchase_order.partner_id in
-                        procurement.product_id.seller_ids.filtered(
+                        purchase_order.partner_id
+                        in procurement.product_id.seller_ids.filtered(
                             lambda x: x.is_subcontractor
                         ).mapped("name")
                     ):
