@@ -32,7 +32,6 @@ class MrpProductionProcureSubcontractor(models.TransientModel):
             raise UserError(_("Production cannot be set without subcontracted bom!"))
         return defaults
 
-    @api.multi
     def action_done(self):
         self.ensure_one()
         buy_route = self.env.ref("purchase_stock.route_warehouse0_buy")
