@@ -9,7 +9,6 @@ class MrpProduction(models.Model):
     )
     proceed_to_production = fields.Boolean(copy=False)
 
-    @api.multi
     @api.depends(
         "move_raw_ids.state",
         "product_id.route_ids",
@@ -39,7 +38,6 @@ class MrpProduction(models.Model):
             )
             production.is_subcontractable = is_subcontractable
 
-    @api.multi
     def button_proceed_to_production(self):
         self.ensure_one()
         self.write({"proceed_to_production": True})
