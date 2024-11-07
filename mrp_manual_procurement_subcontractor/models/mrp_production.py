@@ -2,19 +2,22 @@ from odoo import api, fields, models
 
 
 class MrpProduction(models.Model):
-    _inherit = 'mrp.production'
+    _inherit = "mrp.production"
 
     is_subcontractable = fields.Boolean(
-        compute='_compute_is_subcontractable',
-        store=True,
-        copy=False)
-    proceed_to_production = fields.Boolean(
-        copy=False)
+        compute="_compute_is_subcontractable", store=True, copy=False
+    )
+    proceed_to_production = fields.Boolean(copy=False)
 
     @api.multi
-    @api.depends('move_raw_ids.state', 'product_id.route_ids', 'state',
-                 'product_id.seller_ids', 'proceed_to_production',
-                 'purchase_order_id')
+    @api.depends(
+        "move_raw_ids.state",
+        "product_id.route_ids",
+        "state",
+        "product_id.seller_ids",
+        "proceed_to_production",
+        "purchase_order_id",
+    )
     def _compute_is_subcontractable(self):
         # stop procurement for all production order which product has a
         # purchase route and at least 2 subcontractor
@@ -27,7 +30,8 @@ class MrpProduction(models.Model):
                     production.mapped("product_id.seller_ids").filtered(
                         lambda x: x.is_subcontractor
                     )
-                ) >= 2
+                )
+                >= 2
                 and buy_route in production.product_id.route_ids
                 and not production.purchase_order_id
                 and not production.proceed_to_production
