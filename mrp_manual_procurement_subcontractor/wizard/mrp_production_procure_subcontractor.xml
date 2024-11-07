@@ -35,12 +35,11 @@
             </form>
         </field>
     </record>
-    <act_window
-    id="action_procure_subcontractor"
-    name="Procure from subcontractor"
-    res_model="mrp.production.procure.subcontractor"
-    view_mode="form"
-    target="new"
-  />
+    <record model="ir.actions.act_window" id="action_procure_subcontractor">
+        <field name="name">Procure from subcontractor</field>
+        <field name="res_model">mrp.production.procure.subcontractor</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
 
 </odoo>
