@@ -1,6 +1,6 @@
 # Copyright 2023 Sergio Corato
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
-from odoo import models, _
+from odoo import _, models
 from odoo.exceptions import UserError
 from odoo.tools.misc import clean_context
 
@@ -17,17 +17,21 @@ class ProductReplenish(models.TransientModel):
         try:
             self.env["procurement.group"].with_context(
                 clean_context(self.env.context)
-            ).run([
-                self.env['procurement.group'].Procurement(
-                    self.product_id,
-                    self.quantity,
-                    uom_reference,
-                    self.warehouse_id.lot_stock_id,  # Location
-                    _("Manual Replenishment"),  # Name
-                    self.env.context.get("origin", _("Manual Replenishment")),  # Origin
-                    self.warehouse_id.company_id,
-                    self._prepare_run_values(),  # Values
-                )
-            ])
+            ).run(
+                [
+                    self.env["procurement.group"].Procurement(
+                        self.product_id,
+                        self.quantity,
+                        uom_reference,
+                        self.warehouse_id.lot_stock_id,  # Location
+                        _("Manual Replenishment"),  # Name
+                        self.env.context.get(
+                            "origin", _("Manual Replenishment")
+                        ),  # Origin
+                        self.warehouse_id.company_id,
+                        self._prepare_run_values(),  # Values
+                    )
+                ]
+            )
         except UserError as error:
             raise UserError(error)
