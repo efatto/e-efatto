@@ -13,5 +13,6 @@ class ProductProduct(models.Model):
         res = super()._select_seller(partner_id, quantity, date, uom_id, params)
         sellers = self._prepare_sellers()
         if sellers:
-            res = sellers[0]
+            if res.name != sellers[0].name:
+                res = sellers[0]
         return res

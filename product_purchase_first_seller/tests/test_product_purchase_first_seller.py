@@ -17,6 +17,7 @@ class ProductPurchaseFirstSeller(SavepointCase):
                 "name": cls.vendor.id,
                 "sequence": 1,
                 "min_qty": 500,
+                "price": 10,
             }
         )
         cls.vendor1 = cls.env.ref("base.res_partner_4")
@@ -30,8 +31,16 @@ class ProductPurchaseFirstSeller(SavepointCase):
         cls.vendor2 = cls.env.ref("base.res_partner_1")
         supplierinfo2 = cls.env["product.supplierinfo"].create(
             {
-                "name": cls.vendor2.id,
+                "name": cls.vendor.id,
                 "sequence": 3,
+                "min_qty": 50,
+                "price": 15,
+            }
+        )
+        supplierinfo3 = cls.env["product.supplierinfo"].create(
+            {
+                "name": cls.vendor2.id,
+                "sequence": 4,
                 "min_qty": 0,
             }
         )
@@ -43,7 +52,8 @@ class ProductPurchaseFirstSeller(SavepointCase):
                 "standard_price": 50.0,
                 "list_price": 123.0,
                 "seller_ids": [
-                    (6, 0, [supplierinfo.id, supplierinfo1.id, supplierinfo2.id]),
+                    (6, 0, [supplierinfo.id, supplierinfo1.id, supplierinfo2.id,
+                            supplierinfo3.id]),
                 ],
                 "route_ids": [(6, 0, [buy.id, mto.id])],
             }
@@ -69,3 +79,22 @@ class ProductPurchaseFirstSeller(SavepointCase):
             len(purchase_order.order_line), 1, msg="Order line was not created"
         )
         self.assertEqual(purchase_order.partner_id, self.vendor)
+        self.assertEqual(
+            purchase_order.order_line.price_unit, 10
+        )
+
+    def test_01_purchase_order_55_qty(self):
+        self._product_replenish(self.product, 55)
+        purchase_order = self.env["purchase.order"].search(
+            [
+                ("order_line.product_id", "=", self.product.id),
+            ]
+        )
+        purchase_order.button_confirm()
+        self.assertEqual(
+            len(purchase_order.order_line), 1, msg="Order line was not created"
+        )
+        self.assertEqual(purchase_order.partner_id, self.vendor)
+        self.assertEqual(
+            purchase_order.order_line.price_unit, 15
+        )
