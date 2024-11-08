@@ -23,6 +23,7 @@ Product Purchase select first seller UNUSED
 |badge1| |badge2| |badge3|
 
 With this module will be selected always the first active seller to create purchase quotation.
+If the seller has more lines, it will be selected the valid one (in term of min quantity and date validity).
 
 **Table of contents**
 

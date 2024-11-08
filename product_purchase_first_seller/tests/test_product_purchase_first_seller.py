@@ -52,8 +52,16 @@ class ProductPurchaseFirstSeller(SavepointCase):
                 "standard_price": 50.0,
                 "list_price": 123.0,
                 "seller_ids": [
-                    (6, 0, [supplierinfo.id, supplierinfo1.id, supplierinfo2.id,
-                            supplierinfo3.id]),
+                    (
+                        6,
+                        0,
+                        [
+                            supplierinfo.id,
+                            supplierinfo1.id,
+                            supplierinfo2.id,
+                            supplierinfo3.id,
+                        ],
+                    ),
                 ],
                 "route_ids": [(6, 0, [buy.id, mto.id])],
             }
@@ -79,9 +87,7 @@ class ProductPurchaseFirstSeller(SavepointCase):
             len(purchase_order.order_line), 1, msg="Order line was not created"
         )
         self.assertEqual(purchase_order.partner_id, self.vendor)
-        self.assertEqual(
-            purchase_order.order_line.price_unit, 10
-        )
+        self.assertEqual(purchase_order.order_line.price_unit, 10)
 
     def test_01_purchase_order_55_qty(self):
         self._product_replenish(self.product, 55)
@@ -95,6 +101,4 @@ class ProductPurchaseFirstSeller(SavepointCase):
             len(purchase_order.order_line), 1, msg="Order line was not created"
         )
         self.assertEqual(purchase_order.partner_id, self.vendor)
-        self.assertEqual(
-            purchase_order.order_line.price_unit, 15
-        )
+        self.assertEqual(purchase_order.order_line.price_unit, 15)
