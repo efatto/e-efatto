@@ -2,25 +2,24 @@ from datetime import timedelta
 
 from odoo import fields
 from odoo.exceptions import ValidationError
-from odoo.tests.common import Form, SavepointCase
+from odoo.tests.common import Form, SingleTransactionCase
 
 
-class QualityControlStockOcaFailed(SavepointCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
-        cls.user_model = cls.env["res.users"].with_context(no_reset_password=True)
-        cls.vendor = cls.env.ref("base.res_partner_3")
-        cls.product = cls.env.ref("product.product_delivery_01")
-        cls.product2 = cls.env.ref("product.product_delivery_02")
-        cls.picking_type_in = cls.env.ref("stock.picking_type_in")
-        cls.in_trigger = cls.env["qc.trigger"].search(
+class QualityControlStockOcaFailed(SingleTransactionCase):
+    def setUp(self):
+        super().setUp()
+        self.env = self.env(context=dict(self.env.context, tracking_disable=True))
+        self.user_model = self.env["res.users"].with_context(no_reset_password=True)
+        self.vendor = self.env.ref("base.res_partner_3")
+        self.product = self.env.ref("product.product_delivery_01")
+        self.product2 = self.env.ref("product.product_delivery_02")
+        self.picking_type_in = self.env.ref("stock.picking_type_in")
+        self.in_trigger = self.env["qc.trigger"].search(
             [
-                ("picking_type_id", "=", cls.picking_type_in.id),
+                ("picking_type_id", "=", self.picking_type_in.id),
             ]
         )
-        qc_test_form = Form(cls.env["qc.test"])
+        qc_test_form = Form(self.env["qc.test"])
         qc_test_form.name = "Quality check"
         qc_test_form.type = "generic"
         with qc_test_form.test_lines.new() as test_line:
@@ -31,7 +30,7 @@ class QualityControlStockOcaFailed(SavepointCase):
                 test_question.ok = True
             with test_line.ql_values.new() as test_question:
                 test_question.name = "Is Not OK"
-        cls.qc_test = qc_test_form.save()
+        self.qc_test = qc_test_form.save()
 
     def _create_purchase_order(self, qty, qty1, ref):
         purchase_form = Form(self.env["purchase.order"])
