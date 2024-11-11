@@ -12,6 +12,10 @@ class TestMrpProductionManualProcurement(TestProductionData):
         super().setUpClass()
         cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
         cls.warehouse = cls.env["stock.warehouse"].search([], limit=1)
+        cls.product_categ_order_grouping = cls.env["product.category"].create({
+            "name": "Product Categ with order",
+            "procured_purchase_grouping": "order",
+        })
         cls.resupply_sub_on_order_route = cls.env["stock.location.route"].search(
             [("name", "=", "Resupply Subcontractor on Order")]
         )
@@ -83,7 +87,7 @@ class TestMrpProductionManualProcurement(TestProductionData):
                 "name": cls.subcontractor_partner3.id,
             }
         )
-        # ADD to top_product buy and (resupply route is necessary?)
+        # ADD to top_product buy route
         cls.top_product.write(
             {
                 "purchase_ok": True,
@@ -108,6 +112,7 @@ class TestMrpProductionManualProcurement(TestProductionData):
                     )
                 ],
                 "seller_ids": [(6, 0, [supplierinfo_3.id])],
+                "categ_id": cls.product_categ_order_grouping.id,
             }
         )
         cls.sub_bom3 = cls.env["mrp.bom"].create(
@@ -194,10 +199,10 @@ class TestMrpProductionManualProcurement(TestProductionData):
         # do nothing anyway)
         with mute_logger("odoo.addons.stock.models.procurement"):
             self.procurement_model.run_scheduler()
-        self.production = self.env["mrp.production"].search(
+        production = self.env["mrp.production"].search(
             [("product_id", "=", self.top_product.id)]
         )
-        self.assertTrue(self.production.is_subcontractable)
+        self.assertTrue(production.is_subcontractable)
         po_ids = self.env["purchase.order"].search(
             [
                 ("state", "=", "draft"),
@@ -208,14 +213,14 @@ class TestMrpProductionManualProcurement(TestProductionData):
         # continue production with subcontrator
         procure_form = Form(
             self.env["mrp.production.procure.subcontractor"].with_context(
-                active_id=self.production.id,
-                active_ids=[self.production.id],
+                active_id=production.id,
+                active_ids=[production.id],
             )
         )
         procure_form.subcontractor_id = self.subcontractor_partner2
         wizard = procure_form.save()
         wizard.action_done()
-        self.assertEqual(self.production.state, "cancel")
+        self.assertEqual(production.state, "cancel")
         new_production = self.env["mrp.production"].search(
             [("product_id", "=", self.top_product.id), ("state", "!=", "cancel")]
         )
@@ -253,10 +258,10 @@ class TestMrpProductionManualProcurement(TestProductionData):
         # do nothing anyway)
         with mute_logger("odoo.addons.stock.models.procurement"):
             self.procurement_model.run_scheduler()
-        self.production = self.env["mrp.production"].search(
+        production = self.env["mrp.production"].search(
             [("product_id", "=", self.top_product.id)]
         )
-        self.assertTrue(self.production.is_subcontractable)
+        self.assertTrue(production.is_subcontractable)
         po_ids = self.env["purchase.order"].search(
             [
                 ("state", "=", "draft"),
@@ -265,7 +270,7 @@ class TestMrpProductionManualProcurement(TestProductionData):
         )
         self.assertFalse(po_ids)
         # continue with normal production
-        self.production.button_proceed_to_production()
+        production.button_proceed_to_production()
         # run scheduler to start orderpoint rule to check RDP are not created
         # for top product
         with mute_logger("odoo.addons.stock.models.procurement"):
@@ -316,11 +321,11 @@ class TestMrpProductionManualProcurement(TestProductionData):
         # (which will do nothing anyway)
         with mute_logger("odoo.addons.stock.models.procurement"):
             self.procurement_model.run_scheduler()
-        self.production = self.env["mrp.production"].search(
+        production = self.env["mrp.production"].search(
             [("product_id", "=", self.top_product.id), ("state", "!=", "cancel")]
         )
-        self.assertTrue(self.production)
-        self.assertTrue(self.production.is_subcontractable)
+        self.assertTrue(production)
+        self.assertTrue(production.is_subcontractable)
         po_ids = self.env["purchase.order"].search(
             [
                 ("state", "=", "draft"),
@@ -331,8 +336,8 @@ class TestMrpProductionManualProcurement(TestProductionData):
         # continue production with subcontrator
         procure_form = Form(
             self.env["mrp.production.procure.subcontractor"].with_context(
-                active_id=self.production.id,
-                active_ids=[self.production.id],
+                active_id=production.id,
+                active_ids=[production.id],
             )
         )
         procure_form.subcontractor_id = self.subcontractor_partner2
@@ -352,16 +357,19 @@ class TestMrpProductionManualProcurement(TestProductionData):
         with mute_logger("odoo.addons.stock.models.procurement"):
             self.procurement_model.run_scheduler()
         # check purchase order for manufactured product is in purchase state
-        # subproduct3_po_ids = self.env["purchase.order"].search(
-        #     [
-        #         ("order_line.product_id", "in", self.subproduct3.ids),
-        #     ]
-        # )
-        # self.assertEqual(len(subproduct3_po_ids), 1)
-        # self.assertEqual(subproduct3_po_ids.state, "purchase")
-        # self.assertEqual(
-        #     subproduct3_po_ids.origin, self.subproduct3.orderpoint_ids.name
-        # )
+        subproduct3_po_ids = self.env["purchase.order"].search(
+            [
+                ("order_line.product_id", "in", self.subproduct3.ids),
+            ]
+        )
+        self.assertEqual(len(subproduct3_po_ids), 1)
+        self.assertEqual(subproduct3_po_ids.state, "purchase")
+        self.assertIn(
+            self.subproduct3.orderpoint_ids.name, subproduct3_po_ids.origin
+        )
+        self.assertIn(
+            new_po_ids.picking_ids.name, subproduct3_po_ids.origin
+        )
 
     def test_04_normal_mo_from_sale_with_orderpoint(self):
         self._remove_mto_and_create_orderpoint()
@@ -376,10 +384,10 @@ class TestMrpProductionManualProcurement(TestProductionData):
         # (which will do nothing anyway)
         with mute_logger("odoo.addons.stock.models.procurement"):
             self.procurement_model.run_scheduler()
-        self.production = self.env["mrp.production"].search(
+        production = self.env["mrp.production"].search(
             [("product_id", "=", self.top_product.id)]
         )
-        self.assertTrue(self.production.is_subcontractable)
+        self.assertTrue(production.is_subcontractable)
         po_ids = self.env["purchase.order"].search(
             [
                 ("state", "=", "draft"),
@@ -388,7 +396,8 @@ class TestMrpProductionManualProcurement(TestProductionData):
         )
         self.assertFalse(po_ids)
         # continue with normal production
-        self.production.button_proceed_to_production()
+        production.button_proceed_to_production()
+        self.assertFalse(production.is_subcontractable)
         # run scheduler to start orderpoint rule to check RDP are not created
         # for top product
         with mute_logger("odoo.addons.stock.models.procurement"):

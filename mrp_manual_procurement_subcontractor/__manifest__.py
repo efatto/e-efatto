@@ -18,6 +18,7 @@
         "sale",  # for test purposes
     ],
     "data": [
+        "security/ir.model.access.csv",
         "wizard/mrp_production_procure_subcontractor.xml",
         "views/mrp.xml",
         "views/purchase.xml",
