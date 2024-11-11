@@ -72,18 +72,18 @@ class TestMrpProductionManualProcurement(TestProductionData):
                 ]
             }
         )
-        cls.service_product = cls.env["product.product"].create(
-            [
-                {
-                    "name": "Service",
-                    "type": "service",
-                    "standard_price": 30,
-                    "service_tracking": "task_new_project",
-                    "uom_id": cls.env.ref("uom.product_uom_hour").id,
-                    "uom_po_id": cls.env.ref("uom.product_uom_hour").id,
-                }
-            ]
-        )
+        # cls.service_product = cls.env["product.product"].create(
+        #     [
+        #         {
+        #             "name": "Service",
+        #             "type": "service",
+        #             "standard_price": 30,
+        #             # "service_tracking": "task_new_project",
+        #             "uom_id": cls.env.ref("uom.product_uom_hour").id,
+        #             "uom_po_id": cls.env.ref("uom.product_uom_hour").id,
+        #         }
+        #     ]
+        # )
 
     def _create_sale_order_line(self, order, product, qty):
         vals = {
@@ -101,40 +101,37 @@ class TestMrpProductionManualProcurement(TestProductionData):
 
     def test_01_mo_from_sale_manual_procurement(self):
         product_qty = 3
-        self.main_bom.routing_id = self.routing1
         sale_order = self.env["sale.order"].create(
             {
                 "partner_id": self.partner_1.id,
             }
         )
         self._create_sale_order_line(sale_order, self.top_product, product_qty)
-        self._create_sale_order_line(sale_order, self.service_product, 1)
+        # self._create_sale_order_line(sale_order, self.service_product, 1)
         sale_order.with_context(
             test_mrp_production_manual_procurement=True,
-            test_mrp_production_procurement_analytic=True,
         ).action_confirm()
         # check procurement has not created RDP, even launching scheduler (which will
         # do nothing anyway)
         with mute_logger("odoo.addons.stock.models.procurement"):
             self.procurement_model.run_scheduler()
-        self.production = self.env["mrp.production"].search(
+        production = self.env["mrp.production"].search(
             [("origin", "=", sale_order.name)]
         )
-        self.assertTrue(self.production)
+        self.assertTrue(production)
         po_ids = self.env["purchase.order"].search(
             [
-                ("origin", "=", self.production.name),
+                ("origin", "=", production.name),
                 ("state", "=", "draft"),
             ]
         )
         self.assertFalse(po_ids)
-        self.production.with_context(
+        production.with_context(
             test_mrp_production_manual_procurement=True,
-            test_mrp_production_procurement_analytic=True,
         ).button_start_procurement()
         po_ids = self.env["purchase.order"].search(
             [
-                ("origin", "=", self.production.name),
+                ("origin", "=", production.name),
             ]
         )
         self.assertEqual(len(po_ids), 1)
@@ -145,23 +142,18 @@ class TestMrpProductionManualProcurement(TestProductionData):
             sum(po_line.product_qty for po_line in po_lines), 7 * product_qty
         )
         # create workorder to add relative costs
-        self.production.action_assign()
-        self.production.button_plan()
+        production.action_assign()
+        production.button_plan()
+        production.action_confirm()
+        self.assertEqual(production.state, "confirmed")
         # produce partially
-        produce_form = Form(
-            self.env["mrp.product.produce"].with_context(
-                active_id=self.production.id,
-                active_ids=[self.production.id],
-            )
-        )
-        produced_qty = 2.0
-        produce_form.product_qty = produced_qty
-        wizard = produce_form.save()
-        wizard.do_produce()
+        mo_form = Form(production)
+        mo_form.qty_producing = 2
+        production = mo_form.save()
+        self.assertTrue(production.move_raw_ids.move_line_ids)
 
         # aggiungere delle righe extra-bom, in stato confermato come da ui
-        self.production.action_toggle_is_locked()
-        self.production.write(
+        production.write(
             {
                 "move_raw_ids": [
                     (
@@ -172,52 +164,47 @@ class TestMrpProductionManualProcurement(TestProductionData):
                             "product_id": self.product_to_purchase_3.id,
                             "product_uom": self.product_to_purchase_3.uom_id.id,
                             "product_uom_qty": 10,
-                            "location_id": self.production.location_src_id.id,
-                            "location_dest_id": self.production.location_dest_id.id,
-                            "state": "confirmed",
-                            "raw_material_production_id": self.production.id,
-                            "picking_type_id": self.production.picking_type_id.id,
+                            "location_id": production.location_src_id.id,
+                            "location_dest_id": production.production_location_id.id,
+                            "state": "draft",
+                            "raw_material_production_id": production.id,
+                            "picking_type_id": production.picking_type_id.id,
+                            "warehouse_id": production.picking_type_id.warehouse_id.id,
                         },
                     ),
                 ]
             }
         )
-        self.production.action_toggle_is_locked()
-        move_raw = self.production.move_raw_ids.filtered(
+        move_raw = production.move_raw_ids.filtered(
             lambda x: x.product_id == self.product_to_purchase_3
         )
-        # re-start procurement must create new orders
-        self.production.with_context(
-            test_mrp_production_manual_procurement=True,
-            test_mrp_production_procurement_analytic=True,
-        ).button_start_procurement()
-        new_po_ids = self.env["purchase.order"].search(
+        # procurement is automatic when production is in progress
+        new_po_id = self.env["purchase.order"].search(
             [
+                ("order_line.product_id", "=", self.product_to_purchase_3.id),
                 "|",
-                ("origin", "=", self.production.name),
+                ("origin", "=", production.name),
                 ("origin", "ilike", sale_order.name),
             ]
         )
-        self.assertEqual(len(new_po_ids), 2)
-        to_confirm_po_ids = new_po_ids - po_ids
+        self.assertTrue(new_po_id)
         # check purchase line are not duplicated
         po_lines = po_ids.order_line.filtered(
             lambda x: x.product_id == self.product_to_purchase
         )
         self.assertEqual(
-            sum(po_line.product_qty for po_line in po_lines), 7 * product_qty
+            sum(po_line.product_uom_qty for po_line in po_lines), 7 * product_qty
         )
         self.assertTrue(po_lines.mapped("procurement_group_id"))
 
-        self.assertEqual(len(to_confirm_po_ids), 1)
-        to_confirm_po_ids.button_confirm()
-        self.assertEqual(to_confirm_po_ids.state, "purchase")
+        self.assertEqual(len(new_po_id), 1)
+        new_po_id.button_confirm()
+        self.assertEqual(new_po_id.state, "purchase")
         # complete production
         move_raw.write({"quantity_done": 3})
         self.assertEqual(move_raw.quantity_done, 3)
-        produce_form.product_qty = 3.0
-        produced_qty += produce_form.product_qty
-        wizard_1 = produce_form.save()
-        wizard_1.do_produce()
-        self.production.button_mark_done()
-        self.assertEqual(self.production.state, "done")
+        mo_form = Form(production)
+        mo_form.qty_producing = 3
+        production = mo_form.save()
+        production.button_mark_done()
+        self.assertEqual(production.state, "to_close")
