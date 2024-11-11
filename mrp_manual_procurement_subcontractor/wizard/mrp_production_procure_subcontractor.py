@@ -9,8 +9,12 @@ class MrpProductionProcureSubcontractor(models.TransientModel):
     _name = "mrp.production.procure.subcontractor"
     _description = "Procure from subcontractor"
 
-    subcontractor_ids = fields.Many2many(string="Subcontractors", comodel_name="res.partner")
-    subcontractor_id = fields.Many2one(string="Subcontractor", comodel_name="res.partner")
+    subcontractor_ids = fields.Many2many(
+        string="Subcontractors", comodel_name="res.partner"
+    )
+    subcontractor_id = fields.Many2one(
+        string="Subcontractor", comodel_name="res.partner"
+    )
     route_id = fields.Many2one(comodel_name="stock.location.route")
 
     @api.model

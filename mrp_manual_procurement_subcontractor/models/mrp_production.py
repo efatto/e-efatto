@@ -41,12 +41,13 @@ class MrpProduction(models.Model):
                             lambda x: x.is_subcontractor
                         )
                         and len(
-                                set(
-                                    production.product_id.bom_ids.filtered(
-                                        lambda x: x.type in ["normal", "subcontract"]
-                                    ).mapped("type")
-                                )
-                        ) >= 2
+                            set(
+                                production.product_id.bom_ids.filtered(
+                                    lambda x: x.type in ["normal", "subcontract"]
+                                ).mapped("type")
+                            )
+                        )
+                        >= 2
                     )
                 )
             )
