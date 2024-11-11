@@ -20,8 +20,9 @@ class MrpProduction(models.Model):
                 is_procurement_stopped = True
             production.is_procurement_stopped = is_procurement_stopped
 
-    def _generate_moves(self):
+    def action_confirm(self):
         # Overloaded to pass the context to block procurement run
+        self._check_company()
         for prod in self:
             if not config["test_enable"] or self.env.context.get(
                 "test_mrp_production_manual_procurement"
@@ -29,7 +30,7 @@ class MrpProduction(models.Model):
                 prod = prod.with_context(
                     is_procurement_stopped=prod.is_procurement_stopped
                 )
-            super(MrpProduction, prod)._generate_moves()
+            super(MrpProduction, prod).action_confirm()
             if not config["test_enable"] or self.env.context.get(
                 "test_mrp_production_manual_procurement"
             ):
@@ -40,13 +41,10 @@ class MrpProduction(models.Model):
                 for move in prod.move_raw_ids:
                     if move.move_orig_ids:
                         move_waiting |= move
-                    else:
-                        if move.procure_method == "make_to_order":
-                            move_create_proc |= move
+                    elif move.procure_method == "make_to_order":
+                        move_create_proc |= move
                 (move_waiting | move_create_proc).write({"state": "draft"})
         return True
 
     def button_start_procurement(self):
-        self.ensure_one()
-        self._adjust_procure_method()
-        self.move_raw_ids.filtered(lambda x: x.state == "draft")._action_confirm()
+        self._autoconfirm_production()
