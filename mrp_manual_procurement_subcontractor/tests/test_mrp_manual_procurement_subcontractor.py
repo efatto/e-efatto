@@ -12,10 +12,12 @@ class TestMrpProductionManualProcurement(TestProductionData):
         super().setUpClass()
         cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
         cls.warehouse = cls.env["stock.warehouse"].search([], limit=1)
-        cls.product_categ_order_grouping = cls.env["product.category"].create({
-            "name": "Product Categ with order",
-            "procured_purchase_grouping": "order",
-        })
+        cls.product_categ_order_grouping = cls.env["product.category"].create(
+            {
+                "name": "Product Categ with order",
+                "procured_purchase_grouping": "order",
+            }
+        )
         cls.resupply_sub_on_order_route = cls.env["stock.location.route"].search(
             [("name", "=", "Resupply Subcontractor on Order")]
         )
@@ -393,12 +395,8 @@ class TestMrpProductionManualProcurement(TestProductionData):
         )
         self.assertEqual(len(subproduct3_po_ids), 1)
         self.assertEqual(subproduct3_po_ids.state, "purchase")
-        self.assertIn(
-            self.subproduct3.orderpoint_ids.name, subproduct3_po_ids.origin
-        )
-        self.assertIn(
-            new_po_ids.picking_ids.name, subproduct3_po_ids.origin
-        )
+        self.assertIn(self.subproduct3.orderpoint_ids.name, subproduct3_po_ids.origin)
+        self.assertIn(new_po_ids.picking_ids.name, subproduct3_po_ids.origin)
 
     def test_04_normal_mo_from_sale_with_orderpoint(self):
         self._remove_mto_and_create_orderpoint()
@@ -447,9 +445,7 @@ class TestMrpProductionManualProcurement(TestProductionData):
         )
         self.assertEqual(len(subproduct3_po_ids), 1)
         self.assertEqual(subproduct3_po_ids.state, "purchase")
-        self.assertIn(
-            self.subproduct3.orderpoint_ids.name, subproduct3_po_ids.origin
-        )
+        self.assertIn(self.subproduct3.orderpoint_ids.name, subproduct3_po_ids.origin)
         # self.assertIn(
         #     new_po_ids.picking_ids.name, subproduct3_po_ids.origin
         # )
