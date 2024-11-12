@@ -40,6 +40,7 @@ Con questo modulo, alla creazione della produzione non vengono più avviati gli 
 Se vengono aggiunti dei componenti, viene riavviato in automatico l'approvvigionamento.
 
 Nella v. 12.0 il comportamento era invece che il bottone ritornava visibile ed era necessario cliccarlo per avviarlo.
+Per ripristinare il comportamento originale, se necessario, sovrascrivere la funzione `_autoconfirm_production()`.
 
 Bug Tracker
 ===========
