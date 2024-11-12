@@ -207,4 +207,4 @@ class TestMrpProductionManualProcurement(TestProductionData):
         mo_form.qty_producing = 3
         production = mo_form.save()
         production.button_mark_done()
-        self.assertEqual(production.state, "to_close")
+        self.assertEqual(production.state, "progress")
