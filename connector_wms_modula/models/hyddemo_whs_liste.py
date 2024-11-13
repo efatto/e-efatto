@@ -32,6 +32,20 @@ class HyddemoWhsListe(models.Model):
 
     @api.multi
     def whs_prepare_host_liste_values(self):
-        res = super().whs_prepare_host_liste_values()
-        return res
+        # do no call super() and put specific code
+        tipo_operazione_dict = {
+            '1': 'P',
+            '2': 'V',
+            '3': 'I',
+            '4': 'E',
+        }
+        execute_params = {
+            'ORD_OPERAZIONE': 'I',
+            'ORD_ORDINE': self.num_lista[:20],
+            'ORD_DES': self.riferimento[:50] if self.riferimento else '',
+            'ORD_PRIOHOST': self.priorita,
+            'ORD_TIPOOP': tipo_operazione_dict[self.tipo],
+            'ORD_CLIENTE': self.ragsoc[:50],
+        }
+        return execute_params
 

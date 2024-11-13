@@ -1,7 +1,22 @@
 from odoo import models, api
 
 
-insert_product_query = """
+class HyddemoMssqlLog(models.Model):
+    _inherit = "hyddemo.mssql.log"
+
+    # @staticmethod
+    # def _get_clean_product_query():
+    #     clean_product_query = ""
+    #     return clean_product_query
+    #
+    # @staticmethod
+    # def _get_update_product_query():
+    #     update_product_query = ""
+    #     return update_product_query
+
+    @staticmethod
+    def _get_insert_product_query():
+        return """
 INSERT INTO IMP_ARTICOLI (
 ART_OPERAZIONE,
 ART_ARTICOLO,
@@ -12,29 +27,20 @@ ART_UMI,
 ART_SOTTOSCO
 )
 VALUES (
-%(ART_OPERAZIONE)s,
-%(ART_ARTICOLO)s,
-%(ART_DES)s,
-%(ART_PMU)s,
-%(ART_CREA_UMI)s,
-%(ART_UMI)s,
-%(ART_SOTTOSCO)s
+:ART_OPERAZIONE,
+:ART_ARTICOLO,
+:ART_DES,
+:ART_PMU,
+:ART_CREA_UMI,
+:ART_UMI,
+:ART_SOTTOSCO
 )
 """
 
-
-class HyddemoMssqlLog(models.Model):
-    _inherit = "hyddemo.mssql.log"
-
-    @staticmethod
-    def _get_clean_product_query():
-        res = super()._get_clean_product_query()
-        return res
-
-    @staticmethod
-    def _get_update_product_query():
-        res = super()._get_update_product_query()
-        return res
+    # @staticmethod
+    # def _get_insert_host_liste_query():
+    #     # overridable method
+    #     return ""
 
     @api.multi
     def _prepare_host_articoli_values(
@@ -60,8 +66,9 @@ class HyddemoMssqlLog(models.Model):
             'ART_OPERAZIONE': 'I',  # ('I', 'insert/update'), ('D', 'delete'),
             # ('A', 'add'),
             'ART_ARTICOLO': product.default_code[:50] if product.default_code
-            else 'articolo %(id)s senza codice' % product.id,
-            'ART_DES': product.name[:100],
+            else 'articolo %s senza codice' % product.id,
+            'ART_DES': product.name[:100] if product.name
+            else "articolo %s senza nome" % product.id,
             'ART_PMU': product.weight * 1000 if product.weight else 0.0,
             # digits=(11, 4)
             'ART_CREA_UMI': 1,  # crea l'unità di misura automaticamente
@@ -83,8 +90,3 @@ class HyddemoMssqlLog(models.Model):
             # (se importazione con cancellazione mettere valore 1)
         }
         return execute_params
-
-    @staticmethod
-    def _prepare_host_liste_values(hyddemo_whs_list):
-        # overridable method
-        return {}
