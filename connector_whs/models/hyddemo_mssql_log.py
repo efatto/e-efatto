@@ -5,13 +5,11 @@ import time
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
+from odoo.tools.date_utils import relativedelta
 
 from sqlalchemy import text as sql_text
 
 _logger = logging.getLogger(__name__)
-
-insert_product_query = ""
-insert_host_liste_query = ""
 
 
 class HyddemoMssqlLog(models.Model):
@@ -44,7 +42,17 @@ class HyddemoMssqlLog(models.Model):
     @staticmethod
     def _get_update_product_query():
         # overridable method
-       return ""
+        return ""
+
+    @staticmethod
+    def _get_insert_product_query():
+        # overridable method
+        return ""
+
+    @staticmethod
+    def _get_insert_host_liste_query():
+        # overridable method
+        return ""
 
     @api.model
     def whs_update_products(self, datasource_id):
@@ -67,8 +75,9 @@ class HyddemoMssqlLog(models.Model):
         log_data = self.search_read(
             [], ['ultimo_invio', 'ultimo_id'], order='ultimo_id desc', limit=1)
         _logger.info(log_data)
-        last_id = log_data[0]['ultimo_id']
-        last_date_dt = log_data[0]['ultimo_invio']
+        last_id = log_data and log_data[0]['ultimo_id'] or 0
+        last_date_dt = log_data and log_data[0]['ultimo_invio'] or (
+            fields.Datetime.now() + relativedelta(years=-10))
         last_date = fields.Datetime.to_string(last_date_dt)
         products = self.env['product.product'].search([
             '|', ('write_date', '>', last_date),
@@ -80,6 +89,7 @@ class HyddemoMssqlLog(models.Model):
         for product in products:
             insert_product_params = self._prepare_host_articoli_values(
                 product, dbsource.warehouse_id.id, dbsource.location_id.id, last_id)
+            insert_product_query = self._get_insert_product_query()
             dbsource.with_context(no_return=True).execute_mssql(
                 sqlquery=sql_text(insert_product_query.replace("\n", " ")),
                 sqlparams=insert_product_params,
@@ -99,7 +109,7 @@ class HyddemoMssqlLog(models.Model):
                     }
                 ]
             )
-        _logger.info(res)
+            _logger.info(res)
         dbsource.connection_close_mssql(connection)
         return True
 
