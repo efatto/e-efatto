@@ -324,15 +324,14 @@ class HyddemoMssqlLog(models.Model):
         # Update lists on mssql from 0 to 1 to be elaborated from WHS all in the same
         # time
         if hyddemo_whs_lists:
-            set_liste_to_elaborate_query = \
-                "UPDATE HOST_LISTE SET Elaborato=1 WHERE Elaborato=0 " \
-                "AND %s" % (
-                    " OR ".join(
-                        "(NumLista='%s' AND NumRiga='%s')" % (
-                            y.num_lista, y.riga) for y in hyddemo_whs_lists))
-            dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=sql_text(set_liste_to_elaborate_query), sqlparams=None, metadata=None
-            )
+            set_liste_to_elaborate_query = (
+                hyddemo_whs_lists._get_set_liste_to_elaborate_query())
+            if set_liste_to_elaborate_query:
+                dbsource.with_context(no_return=True).execute_mssql(
+                    sqlquery=sql_text(set_liste_to_elaborate_query),
+                    sqlparams=None, metadata=None
+                )
+            # set state to Elaborato even if query is not created
             hyddemo_whs_lists.write({"stato": "2"})
         # commit to exclude rollback as mssql wouldn't be rollbacked too
         self._cr.commit()  # pylint: disable=E8102
@@ -353,11 +352,6 @@ class HyddemoMssqlLog(models.Model):
             time.sleep(1)
             self.execute_query(dbsource, insert_query, insert_esiti_liste_params)
         return res
-
-    @staticmethod
-    def _prepare_host_liste_values(hyddemo_whs_list):
-        # overridable method
-        return {}
 
 
 class HyddemoMssqlLogLine(models.Model):

@@ -44,8 +44,9 @@ class HyddemoWhsListe(models.Model):
     riferimento = fields.Text('Riferimento', size=50)
     tipo = fields.Selection([
         ('1', 'Prelievo'),
-        ('2', 'Deposito'),
-        ('3', 'Inventario')  # 5 su WHS, 6 trasferimento
+        ('2', 'Deposito/Versamento'),
+        ('3', 'Inventario'),  # 5 su WHS, 6 trasferimento
+        ('4', 'E...'),  # Per Modula, informarsi a che serve
     ], string='Tipo lista')
     vettore = fields.Text('Vettore', size=30)
     cliente = fields.Text('Codice cliente', size=30,
@@ -82,6 +83,8 @@ class HyddemoWhsListe(models.Model):
     product_customer_code = fields.Char(size=250)
     whs_list_absent = fields.Boolean()
     whs_list_log = fields.Text()
+    priorita = fields.Integer('Priorita', default=0)  # 0=Bassa; 1=Media; 2=Urgente
+
 
     def whs_unlink_lists(self, dbsource):
         # overridable method
@@ -166,3 +169,14 @@ class HyddemoWhsListe(models.Model):
     @api.multi
     def _prepare_host_liste_values(self):
         return self.whs_prepare_host_liste_values()
+
+    @api.multi
+    def _get_set_liste_to_elaborate_query(self):
+        # overridable method
+        set_liste_to_elaborate_query = \
+            "UPDATE HOST_LISTE SET Elaborato=1 WHERE Elaborato=0 " \
+            "AND %s" % (
+                " OR ".join(
+                    "(NumLista='%s' AND NumRiga='%s')" % (
+                        y.num_lista, y.riga) for y in self))
+        return set_liste_to_elaborate_query
