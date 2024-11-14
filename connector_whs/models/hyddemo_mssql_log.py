@@ -324,8 +324,8 @@ class HyddemoMssqlLog(models.Model):
         # Update lists on mssql from 0 to 1 to be elaborated from WHS all in the same
         # time
         if hyddemo_whs_lists:
-            set_liste_to_elaborate_query = (
-                hyddemo_whs_lists._get_set_liste_to_elaborate_query())
+            set_liste_to_elaborate_query = \
+                hyddemo_whs_lists._get_set_liste_to_elaborate_query()
             if set_liste_to_elaborate_query:
                 dbsource.with_context(no_return=True).execute_mssql(
                     sqlquery=sql_text(set_liste_to_elaborate_query),
