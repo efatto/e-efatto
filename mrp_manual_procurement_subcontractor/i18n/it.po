@@ -1,14 +1,14 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* mrp_manual_procurement_subcontractor
+# 	* mrp_manual_procurement_subcontractor
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 12.0\n"
+"Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-01 07:34+0000\n"
-"PO-Revision-Date: 2023-09-01 07:34+0000\n"
-"Last-Translator: <>\n"
+"POT-Creation-Date: 2024-11-14 14:15+0000\n"
+"PO-Revision-Date: 2024-11-14 14:15+0000\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,6 +19,17 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:mrp_manual_procurement_subcontractor.mrp_production_procure_subcontractor
 msgid "Are you sure you want to procure from this subcontractor?"
 msgstr "Si è sicuri di voler approvvigionarsi da questo subappaltatore?"
+
+#. module: mrp_manual_procurement_subcontractor
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production__assigned_attachment_ids
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production_procure_subcontractor__assigned_attachment_ids
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_product_replenish__assigned_attachment_ids
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_product_template__assigned_attachment_ids
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_purchase_order__assigned_attachment_ids
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_stock_rule__assigned_attachment_ids
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_stock_warehouse_orderpoint__assigned_attachment_ids
+msgid "Assigned Attachments"
+msgstr "Allegati assegnati"
 
 #. module: mrp_manual_procurement_subcontractor
 #: model_terms:ir.ui.view,arch_db:mrp_manual_procurement_subcontractor.mrp_production_procure_subcontractor
@@ -46,12 +57,24 @@ msgid "Discard"
 msgstr "Annulla"
 
 #. module: mrp_manual_procurement_subcontractor
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production__display_name
 #: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production_procure_subcontractor__display_name
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_product_replenish__display_name
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_product_template__display_name
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_purchase_order__display_name
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_stock_rule__display_name
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_stock_warehouse_orderpoint__display_name
 msgid "Display Name"
-msgstr "Nome Visualizzato"
+msgstr "Nome visualizzato"
 
 #. module: mrp_manual_procurement_subcontractor
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production__id
 #: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production_procure_subcontractor__id
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_product_replenish__id
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_product_template__id
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_purchase_order__id
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_stock_rule__id
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_stock_warehouse_orderpoint__id
 msgid "ID"
 msgstr ""
 
@@ -61,7 +84,13 @@ msgid "Is Subcontractable"
 msgstr "È subappaltabile"
 
 #. module: mrp_manual_procurement_subcontractor
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production____last_update
 #: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production_procure_subcontractor____last_update
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_product_replenish____last_update
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_product_template____last_update
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_purchase_order____last_update
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_stock_rule____last_update
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_stock_warehouse_orderpoint____last_update
 msgid "Last Modified on"
 msgstr "Ultima modifica il"
 
@@ -76,10 +105,16 @@ msgid "Last Updated on"
 msgstr "Ultima modifica il"
 
 #. module: mrp_manual_procurement_subcontractor
-#: code:addons/mrp_manual_procurement_subcontractor/wizard/mrp_production_procure_subcontractor.py:83
+#: code:addons/mrp_manual_procurement_subcontractor/models/product_replenish.py:0
+#: code:addons/mrp_manual_procurement_subcontractor/models/product_replenish.py:0
 #, python-format
-msgid "Multiple purchase order found: %s"
-msgstr "Trovati più ordini di acquisto: %s"
+msgid "Manual Replenishment"
+msgstr "Approvvigionamento manuale"
+
+#. module: mrp_manual_procurement_subcontractor
+#: model:ir.model,name:mrp_manual_procurement_subcontractor.model_stock_warehouse_orderpoint
+msgid "Minimum Inventory Rule"
+msgstr "Regola di inventario minimo"
 
 #. module: mrp_manual_procurement_subcontractor
 #: model_terms:ir.ui.view,arch_db:mrp_manual_procurement_subcontractor.purchase_order_form
@@ -93,14 +128,10 @@ msgid "Proceed To Production"
 msgstr "Prosegui con la produzione"
 
 #. module: mrp_manual_procurement_subcontractor
-#: model_terms:ir.ui.view,arch_db:mrp_manual_procurement_subcontractor.mrp_production_form_view
-msgid "Procure by subcontractor"
-msgstr "Acquista da subappaltatore"
-
-#. module: mrp_manual_procurement_subcontractor
 #: model:ir.actions.act_window,name:mrp_manual_procurement_subcontractor.action_procure_subcontractor
 #: model:ir.model,name:mrp_manual_procurement_subcontractor.model_mrp_production_procure_subcontractor
 #: model_terms:ir.ui.view,arch_db:mrp_manual_procurement_subcontractor.mrp_production_procure_subcontractor
+#: model_terms:ir.ui.view,arch_db:mrp_manual_procurement_subcontractor.mrp_production_form_view
 msgid "Procure from subcontractor"
 msgstr "Acquista da subappaltatore"
 
@@ -112,27 +143,42 @@ msgstr "Gruppo di Approvvigionamento"
 #. module: mrp_manual_procurement_subcontractor
 #: model:ir.model,name:mrp_manual_procurement_subcontractor.model_product_replenish
 msgid "Product Replenish"
-msgstr "Rifornimento del prodotto"
+msgstr "Rifornimento prodotto"
+
+#. module: mrp_manual_procurement_subcontractor
+#: model:ir.model,name:mrp_manual_procurement_subcontractor.model_product_template
+msgid "Product Template (Multi-Company)"
+msgstr ""
+
+#. module: mrp_manual_procurement_subcontractor
+#: code:addons/mrp_manual_procurement_subcontractor/models/product.py:0
+#, python-format
+msgid ""
+"Product with subcontractor must have \"No order grouping\" group in product "
+"category."
+msgstr ""
+"Prodotti con subappalto devono avere Raggruppamento acquisti: \"No order grouping\" "
+"nella categoria prodotto."
 
 #. module: mrp_manual_procurement_subcontractor
 #: model:ir.model,name:mrp_manual_procurement_subcontractor.model_mrp_production
 msgid "Production Order"
-msgstr "Ordine di Produzione"
+msgstr "Ordine di produzione"
 
 #. module: mrp_manual_procurement_subcontractor
-#: code:addons/mrp_manual_procurement_subcontractor/wizard/mrp_production_procure_subcontractor.py:31
+#: code:addons/mrp_manual_procurement_subcontractor/wizard/mrp_production_procure_subcontractor.py:0
 #, python-format
 msgid "Production cannot be set without subcontracted bom!"
 msgstr "La produzione non può essere impostata senza una bom di subappalto!"
 
 #. module: mrp_manual_procurement_subcontractor
-#: code:addons/mrp_manual_procurement_subcontractor/wizard/mrp_production_procure_subcontractor.py:29
+#: code:addons/mrp_manual_procurement_subcontractor/wizard/mrp_production_procure_subcontractor.py:0
 #, python-format
 msgid "Production cannot be set without subcontractors!"
 msgstr "La produzione non può essere impostata senza subappaltatori!"
 
 #. module: mrp_manual_procurement_subcontractor
-#: code:addons/mrp_manual_procurement_subcontractor/wizard/mrp_production_procure_subcontractor.py:22
+#: code:addons/mrp_manual_procurement_subcontractor/wizard/mrp_production_procure_subcontractor.py:0
 #, python-format
 msgid "Production in state 'done' cannot be changed!"
 msgstr "La produzione in stato 'completato' non può essere cambiata!"
@@ -140,7 +186,7 @@ msgstr "La produzione in stato 'completato' non può essere cambiata!"
 #. module: mrp_manual_procurement_subcontractor
 #: model:ir.model,name:mrp_manual_procurement_subcontractor.model_purchase_order
 msgid "Purchase Order"
-msgstr "Ordine di Acquisto"
+msgstr "Ordine di acquisto"
 
 #. module: mrp_manual_procurement_subcontractor
 #: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production_procure_subcontractor__route_id
@@ -148,14 +194,9 @@ msgid "Route"
 msgstr "Rotta"
 
 #. module: mrp_manual_procurement_subcontractor
-#: model:ir.model,name:mrp_manual_procurement_subcontractor.model_stock_move
-msgid "Stock Move"
-msgstr "Movimento di magazzino"
-
-#. module: mrp_manual_procurement_subcontractor
 #: model:ir.model,name:mrp_manual_procurement_subcontractor.model_stock_rule
 msgid "Stock Rule"
-msgstr "Regola di Magazzino"
+msgstr "Regola di giacenza"
 
 #. module: mrp_manual_procurement_subcontractor
 #: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_purchase_order__subcontract_production_picking_ids
@@ -169,7 +210,10 @@ msgstr "Conteggio trasferimenti subappaltatore"
 
 #. module: mrp_manual_procurement_subcontractor
 #: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production_procure_subcontractor__subcontractor_id
-#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production_procure_subcontractor__subcontractor_ids
 msgid "Subcontractor"
 msgstr "Subappaltatore"
 
+#. module: mrp_manual_procurement_subcontractor
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production_procure_subcontractor__subcontractor_ids
+msgid "Subcontractors"
+msgstr "Subappaltatori"
