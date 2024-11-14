@@ -19,7 +19,7 @@
                 <button
           name="%(action_procure_subcontractor)d"
           type="action"
-          string="Procure by subcontractor"
+          string="Procure from subcontractor"
           attrs="{'invisible': [('is_subcontractable', '!=', True)]}"
         />
             </xpath>

@@ -276,7 +276,6 @@ class TestMrpProductionManualProcurement(TestProductionData):
             "A procurement scheduler run should not create new purchase orders!",
         )
         self.assertEqual(subproduct3_po_ids.state, "purchase")
-        # self.assertEqual(subproduct3_po_ids.origin, production.name)
 
     def test_02_normal_mo_from_sale_with_mto(self):
         order_form = Form(self.env["sale.order"])
