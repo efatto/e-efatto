@@ -1,6 +1,3 @@
-# Copyright 2023 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
@@ -37,9 +34,11 @@ class MrpProductionProcureSubcontractor(models.TransientModel):
         return defaults
 
     def action_done(self):
+        # cancel current mo and create a new mo for subcontractor with buy route
         self.ensure_one()
         buy_route = self.env.ref("purchase_stock.route_warehouse0_buy")
         mo = self.env["mrp.production"].browse(self.env.context["active_id"])
+        mo.action_cancel()
         replenish_wizard = (
             self.env["product.replenish"]
             .with_context(
@@ -58,41 +57,51 @@ class MrpProductionProcureSubcontractor(models.TransientModel):
             )
         )
         replenish_wizard.launch_replenishment_with_origin()
-        mo.action_cancel()
-        purchase_orders = self.env["purchase.order"].search(
+        po_ids = self.env["purchase.order"].search(
             [
+                ("origin", "=ilike", mo.name),
                 ("order_line.product_id", "=", mo.product_id.id),
-                ("state", "=", "purchase"),
             ]
         )
-        if purchase_orders:
-            purchase_orders = purchase_orders.filtered(lambda x: mo.name in x.origin)
-            if len(purchase_orders) == 1:
-                purchase_order = purchase_orders[0]
-                purchase_order.button_confirm()
-                mo_ids = purchase_order.subcontract_production_ids
-                if len(mo_ids) == 1:
-                    return {
-                        "type": "ir.actions.act_window",
-                        "name": "Mrp production",
-                        "view_mode": "form",
-                        "view_type": "form",
-                        "res_id": mo_ids[0].id,
-                        "views": [(False, "form")],
-                        "res_model": "mrp.production",
-                    }
-                else:
-                    return {
-                        "type": "ir.actions.act_window",
-                        "name": "Mrp production",
-                        "domain": [("id", "in", mo_ids.ids)],
-                        "view_mode": "form",
-                        "view_type": "tree",
-                        "views": [(False, "tree")],
-                        "res_model": "mrp.production",
-                    }
-            else:
-                raise UserError(
-                    _("Multiple purchase order found: %s")
-                    % ", ".join(purchase_orders.mapped("name"))
+        mo_ids = self.env["mrp.production"].search(
+            [
+                ("origin", "=", mo.name),
+            ]
+        )
+        if po_ids and not mo_ids:
+            mo_ids = po_ids.mapped("subcontract_production_ids")
+        if not mo_ids:
+            purchase_orders = self.env["purchase.order"].search(
+                [
+                    ("order_line.product_id", "=", mo.product_id.id),
+                    ("state", "=", "purchase"),
+                ]
+            )
+            if purchase_orders:
+                purchase_orders = purchase_orders.filtered(
+                    lambda x: mo.name in x.origin
                 )
+                if len(purchase_orders) == 1:
+                    purchase_order = purchase_orders[0]
+                    purchase_order.button_confirm()
+                    mo_ids = purchase_order.subcontract_production_ids
+        if len(mo_ids) == 1:
+            return {
+                "type": "ir.actions.act_window",
+                "name": "Mrp production",
+                "view_mode": "form",
+                "view_type": "form",
+                "res_id": mo_ids[0].id,
+                "views": [(False, "form")],
+                "res_model": "mrp.production",
+            }
+        else:
+            return {
+                "type": "ir.actions.act_window",
+                "name": "Mrp production",
+                "domain": [("id", "in", mo_ids.ids)],
+                "view_mode": "form",
+                "view_type": "tree",
+                "views": [(False, "tree")],
+                "res_model": "mrp.production",
+            }
