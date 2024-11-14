@@ -193,4 +193,10 @@ class HyddemoWhsListe(models.Model):
     @api.multi
     def _get_set_liste_to_elaborate_query(self):
         # overridable method
-        return ""
+        set_liste_to_elaborate_query = \
+            "UPDATE HOST_LISTE SET Elaborato=1 WHERE Elaborato=0 " \
+            "AND %s" % (
+                " OR ".join(
+                    "(NumLista='%s' AND NumRiga='%s')" % (
+                        y.num_lista, y.riga) for y in self))
+        return set_liste_to_elaborate_query
