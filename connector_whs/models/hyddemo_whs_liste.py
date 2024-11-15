@@ -163,12 +163,8 @@ class HyddemoWhsListe(models.Model):
     @api.multi
     def whs_prepare_host_liste_values(self):
         # overridable method
-        execute_params = {}
-        return execute_params
-
-    @api.multi
-    def _prepare_host_liste_values(self):
-        return self.whs_prepare_host_liste_values()
+        execute_params_order, execute_params_order_line = {}, {}
+        return execute_params_order, execute_params_order_line
 
     @api.multi
     def _get_set_liste_to_elaborate_query(self):

@@ -144,7 +144,7 @@ class HyddemoWhsListe(models.Model):
         # do no call super() and put specific code
         product = self.product_id
         parent_product_id = self.parent_product_id if self.parent_product_id else False
-        execute_params = {
+        execute_params_order = {
             'NumLista': self.num_lista[:50],  # char 50
             'NumRiga': self.riga,  # char 50 but is an integer
             'DataLista': self.data_lista.strftime("%Y.%m.%d"),
@@ -185,10 +185,11 @@ class HyddemoWhsListe(models.Model):
             ) if parent_product_id else '',  # char 250
         }
         if self.cliente:  # char 30
-            execute_params.update({'idCliente': self.cliente[:30]})
+            execute_params_order.update({'idCliente': self.cliente[:30]})
         if self.ragsoc:  # char 100
-            execute_params.update({'RagioneSociale': self.ragsoc[:100]})
-        return execute_params
+            execute_params_order.update({'RagioneSociale': self.ragsoc[:100]})
+        execute_params_order_line = {}
+        return execute_params_order, execute_params_order_line
 
     @api.multi
     def _get_set_liste_to_elaborate_query(self):

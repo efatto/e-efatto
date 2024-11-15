@@ -317,10 +317,17 @@ class HyddemoMssqlLog(models.Model):
             ('stato', '=', '1'),
         ])
         for lista in hyddemo_whs_lists:
-            insert_esiti_liste_params = lista._prepare_host_liste_values()
-            insert_query = self.get_insert_query(insert_esiti_liste_params)
-            if insert_esiti_liste_params:
-                self.execute_query(dbsource, sql_text(insert_query), insert_esiti_liste_params)
+            insert_order_params, insert_order_line_params = (
+                lista.whs_prepare_host_liste_values()
+            )
+            if insert_order_params:
+                insert_query = self.get_insert_query(insert_order_params)
+                self.execute_query(
+                    dbsource, sql_text(insert_query), insert_order_params)
+            if insert_order_line_params:
+                insert_query = self.get_insert_query(insert_order_line_params)
+                self.execute_query(
+                    dbsource, sql_text(insert_query), insert_order_line_params)
         # Update lists on mssql from 0 to 1 to be elaborated from WHS all in the same
         # time
         if hyddemo_whs_lists:
