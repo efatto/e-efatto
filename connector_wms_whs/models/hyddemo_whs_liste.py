@@ -142,52 +142,60 @@ class HyddemoWhsListe(models.Model):
     @api.multi
     def whs_prepare_host_liste_values(self):
         # do no call super() and put specific code
-        product = self.product_id
-        parent_product_id = self.parent_product_id if self.parent_product_id else False
-        execute_params_order = {
-            'NumLista': self.num_lista[:50],  # char 50
-            'NumRiga': self.riga,  # char 50 but is an integer
-            'DataLista': self.data_lista.strftime("%Y.%m.%d"),
-            # formato aaaa.mm.gg datalista
-            'Riferimento': self.riferimento[:50] if self.riferimento else '',  # char 50
-            'TipoOrdine': self.tipo,  # int
-            'Causale': 10 if self.tipo == '1' else 20,  # int
-            'Priorita': self.priorita,  # int
-            'RichiestoEsito': 1,  # int
-            'Stato': 0,  # int
-            'ControlloEvadibilita': 0,  # int
-            'Vettore': self.vettore[:30] if self.vettore else '',  # char 30
-            'Indirizzo': self.indirizzo[:50] if self.indirizzo else '',  # char 50
-            'Cap': self.cap[:10] if self.cap else '',  # char 10
-            'Localita': self.localita[:50] if self.localita else '',  # char 50
-            'Provincia': self.provincia[:2] if self.provincia else '',  # char 2
-            'Nazione': self.nazione[:50] if self.nazione else '',  # char 50
-            'Articolo': product.default_code[:30] if product.default_code
-            else 'prodotto senza codice',  # char 30
-            'DescrizioneArticolo': product.name[:70] if product.name
-            else product.default_code[:70] if product.default_code
-            else 'prodotto senza nome',  # char 70
-            'Qta': self.qta,  # numeric(18,3)
-            'PesoArticolo': product.weight * 1000 if product.weight else 0,  # int
-            'UMArticolo': 'PZ' if product.uom_id.name == 'Unit(s)'
-            else product.uom_id.name[:10],  # char 10
-            'IdTipoArticolo': 0,  # int
-            'Elaborato': 0,  # 0 per poi scrivere 1 tutte insieme  # int
-            'AuxTesto1': self.client_order_ref[:50] if
-            self.client_order_ref else '',  # char 50
-            'AuxTestoRiga1': self.product_customer_code[:250] if
-            self.product_customer_code else '',  # char 250
-            'AuxTestoRiga2': self.product_customer_code[:250] if
-            self.product_customer_code else '',  # char 250
-            'AuxTestoRiga3': (
-                parent_product_id.default_code[:250] if
-                parent_product_id.default_code else parent_product_id.name[:250]
-            ) if parent_product_id else '',  # char 250
-        }
-        if self.cliente:  # char 30
-            execute_params_order.update({'idCliente': self.cliente[:30]})
-        if self.ragsoc:  # char 100
-            execute_params_order.update({'RagioneSociale': self.ragsoc[:100]})
+        execute_params_order = {}
+        for lista in self:
+            if not execute_params_order.get(lista.num_lista):
+                execute_params_order[lista.num_lista] = {}
+            product = lista.product_id
+            parent_product_id = lista.parent_product_id if lista.parent_product_id else False
+            execute_params_order[lista.num_lista][lista.riga] = {
+                'NumLista': lista.num_lista[:50],  # char 50
+                'NumRiga': lista.riga,  # char 50 but is an integer
+                'DataLista': lista.data_lista.strftime("%Y.%m.%d"),
+                # formato aaaa.mm.gg datalista
+                'Riferimento': lista.riferimento[:50] if lista.riferimento else '',  # char 50
+                'TipoOrdine': lista.tipo,  # int
+                'Causale': 10 if lista.tipo == '1' else 20,  # int
+                'Priorita': lista.priorita,  # int
+                'RichiestoEsito': 1,  # int
+                'Stato': 0,  # int
+                'ControlloEvadibilita': 0,  # int
+                'Vettore': lista.vettore[:30] if lista.vettore else '',  # char 30
+                'Indirizzo': lista.indirizzo[:50] if lista.indirizzo else '',  # char 50
+                'Cap': lista.cap[:10] if lista.cap else '',  # char 10
+                'Localita': lista.localita[:50] if lista.localita else '',  # char 50
+                'Provincia': lista.provincia[:2] if lista.provincia else '',  # char 2
+                'Nazione': lista.nazione[:50] if lista.nazione else '',  # char 50
+                'Articolo': product.default_code[:30] if product.default_code
+                else 'prodotto senza codice',  # char 30
+                'DescrizioneArticolo': product.name[:70] if product.name
+                else product.default_code[:70] if product.default_code
+                else 'prodotto senza nome',  # char 70
+                'Qta': lista.qta,  # numeric(18,3)
+                'PesoArticolo': product.weight * 1000 if product.weight else 0,  # int
+                'UMArticolo': 'PZ' if product.uom_id.name == 'Unit(s)'
+                else product.uom_id.name[:10],  # char 10
+                'IdTipoArticolo': 0,  # int
+                'Elaborato': 0,  # 0 per poi scrivere 1 tutte insieme  # int
+                'AuxTesto1': lista.client_order_ref[:50] if
+                lista.client_order_ref else '',  # char 50
+                'AuxTestoRiga1': lista.product_customer_code[:250] if
+                lista.product_customer_code else '',  # char 250
+                'AuxTestoRiga2': lista.product_customer_code[:250] if
+                lista.product_customer_code else '',  # char 250
+                'AuxTestoRiga3': (
+                    parent_product_id.default_code[:250] if
+                    parent_product_id.default_code else parent_product_id.name[:250]
+                ) if parent_product_id else '',  # char 250
+            }
+            if lista.cliente:  # char 30
+                execute_params_order[lista.num_lista][lista.riga].update({
+                    'idCliente': lista.cliente[:30],
+                })
+            if lista.ragsoc:  # char 100
+                execute_params_order[lista.num_lista][lista.riga].update({
+                    'RagioneSociale': lista.ragsoc[:100],
+                })
         execute_params_order_line = {}
         return execute_params_order, execute_params_order_line
 
