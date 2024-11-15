@@ -50,11 +50,11 @@ class HyddemoWhsListe(models.Model):
             'ORD_CLIENTE': self.ragsoc[:50],  # char 50
         }
         execute_params_order_line = {
-            'RIG_ORDINE': 'mettere ordine creato sopra',  # char 20
+            'RIG_ORDINE': self.num_lista[:20],  # char 20
             'RIG_ARTICOLO': product.default_code[:50] if product.default_code
             else 'prodotto %s senza codice' % product.id,  # char 50
             'RIG_QTAR': self.qta,  # decimal(11,3)
-            # RIG_PRIO int
+            # RIG_PRIO int serve?
         }
         return execute_params_order, execute_params_order_line
 

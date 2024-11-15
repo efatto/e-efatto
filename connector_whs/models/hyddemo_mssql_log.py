@@ -316,18 +316,27 @@ class HyddemoMssqlLog(models.Model):
         hyddemo_whs_lists = self.env['hyddemo.whs.liste'].search([
             ('stato', '=', '1'),
         ])
-        for lista in hyddemo_whs_lists:
+        # group and insert lists by num_lista
+        for num_lista in set(hyddemo_whs_lists.mapped("num_lista")):
             insert_order_params, insert_order_line_params = (
-                lista.whs_prepare_host_liste_values()
+                hyddemo_whs_lists.filtered(
+                    lambda x: x.num_lista == num_lista
+                ).whs_prepare_host_liste_values()
             )
             if insert_order_params:
-                insert_query = self.get_insert_query(insert_order_params)
-                self.execute_query(
-                    dbsource, sql_text(insert_query), insert_order_params)
-            if insert_order_line_params:
-                insert_query = self.get_insert_query(insert_order_line_params)
-                self.execute_query(
-                    dbsource, sql_text(insert_query), insert_order_line_params)
+                if not insert_order_line_params:
+                    # there is a unique table for order and order line
+                    for riga in insert_order_params[num_lista]:
+                        insert_query = self.get_insert_query(
+                            insert_order_params[num_lista][riga])
+                        self.execute_query(
+                            dbsource, sql_text(insert_query),
+                            insert_order_params[num_lista][riga])
+                else:
+                    # there are separated tables for order and order line # todo
+                    insert_query = self.get_insert_query(insert_order_line_params)
+                    self.execute_query(
+                        dbsource, sql_text(insert_query), insert_order_line_params)
         # Update lists on mssql from 0 to 1 to be elaborated from WHS all in the same
         # time
         if hyddemo_whs_lists:
