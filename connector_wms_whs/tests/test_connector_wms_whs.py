@@ -13,7 +13,7 @@ from sqlalchemy import text as sql_text
 class TestConnectorWmsWhs(CommonConnectorWMS):
     def setUp(self):
         super().setUp()
-        dbsource = self.dbsource_model.search([("name", "=", "Odoo WHS local server")])
+        dbsource = self.dbsource_model.search([("name", "=", "Odoo WMS local server")])
         if not dbsource:
             conn_file = os.path.join(
                 os.path.expanduser('~'),
@@ -49,8 +49,6 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                 sqlparams=None,
                 metadata=None,
             )
-
-
 
     def _check_cancel_workflow(self, picking, list_len):
         """
