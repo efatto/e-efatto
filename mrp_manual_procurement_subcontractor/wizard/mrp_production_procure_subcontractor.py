@@ -44,6 +44,7 @@ class MrpProductionProcureSubcontractor(models.TransientModel):
             .with_context(
                 subcontractor_id=self.subcontractor_id,
                 origin=mo.name,
+                proceed_to_production=True,
             )
             .create(
                 {

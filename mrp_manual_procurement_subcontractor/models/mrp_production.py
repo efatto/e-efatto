@@ -61,19 +61,23 @@ class MrpProduction(models.Model):
         ):
             self = self.filtered(lambda x: not x.is_subcontractable)
         if self:
-            lot_stock_id = self[0].picking_type_id.warehouse_id.lot_stock_id
+            # do only when subproduction is not confirmed
+            proceed_to_production = self.env.context.get("proceed_to_production")
+            changed_move = self.env["stock.move"]
             partner_location_id = self.env["stock.location"].search(
                 [("name", "ilike", "Subcontracting")], limit=1
             )
-            changed_move = self.env["stock.move"]
-            for move in self.mapped("move_raw_ids").filtered(
-                lambda x: x.location_id == partner_location_id
-            ):
-                changed_move |= move
-                move.location_id = lot_stock_id
+            if not proceed_to_production:
+                lot_stock_id = self[0].picking_type_id.warehouse_id.lot_stock_id
+                for move in self.mapped("move_raw_ids").filtered(
+                    lambda x: x.location_id == partner_location_id
+                ):
+                    changed_move |= move
+                    move.location_id = lot_stock_id
             super(MrpProduction, self).action_confirm()
-            for move in changed_move:
-                move.location_id = partner_location_id
+            if not proceed_to_production:
+                for move in changed_move:
+                    move.location_id = partner_location_id
         return True
 
     def button_proceed_to_production(self):
