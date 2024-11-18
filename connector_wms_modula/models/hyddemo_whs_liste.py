@@ -33,28 +33,34 @@ class HyddemoWhsListe(models.Model):
     @api.multi
     def whs_prepare_host_liste_values(self):
         # do no call super() and put specific code
-        product = self.product_id
         tipo_operazione_dict = {
             '1': 'P',
             '2': 'V',
             '3': 'I',
             '4': 'E',
         }
-        execute_params_order = {
-            'ORD_OPERAZIONE': 'I',  # I=Insert/Update; D=Delete; A=Add if row not exists
-            # H=Add if header not exists; Q=Always add in queue; R=Replace
-            'ORD_ORDINE': self.num_lista[:20],  # char 20
-            'ORD_DES': self.riferimento[:50] if self.riferimento else '',  # char 50
-            'ORD_PRIOHOST': self.priorita,  # decimal(16,0)
-            'ORD_TIPOOP': tipo_operazione_dict[self.tipo],  # char 5: P,V,I,E
-            'ORD_CLIENTE': self.ragsoc[:50],  # char 50
-        }
-        execute_params_order_line = {
-            'RIG_ORDINE': self.num_lista[:20],  # char 20
-            'RIG_ARTICOLO': product.default_code[:50] if product.default_code
-            else 'prodotto %s senza codice' % product.id,  # char 50
-            'RIG_QTAR': self.qta,  # decimal(11,3)
-            # RIG_PRIO int serve?
-        }
+        execute_params_order = {}
+        execute_params_order_line = {}
+        for lista in self:
+            if not execute_params_order.get(lista.num_lista):
+                execute_params_order[lista.num_lista] = {
+                    'ORD_OPERAZIONE': 'A',  # I=Insert/Update; D=Delete; A=Add if row not exists
+                    # H=Add if header not exists; Q=Always add in queue; R=Replace
+                    'ORD_ORDINE': self.num_lista[:20],  # char 20
+                    'ORD_DES': self.riferimento[:50] if self.riferimento else '',  # char 50
+                    'ORD_PRIOHOST': self.priorita,  # decimal(16,0)
+                    'ORD_TIPOOP': tipo_operazione_dict[self.tipo],  # char 5: P,V,I,E
+                    'ORD_CLIENTE': self.ragsoc[:50],  # char 50
+                }
+            product = lista.product_id
+            if not execute_params_order_line.get(lista.num_lista):
+                execute_params_order_line[lista.num_lista] = {}
+            execute_params_order_line[lista.num_lista][lista.riga] = {
+                'RIG_ORDINE': self.num_lista[:20],  # char 20
+                'RIG_HOSTINF': self.riga,  # char 100
+                'RIG_ARTICOLO': product.default_code[:50] if product.default_code
+                else 'prodotto %s senza codice' % product.id,  # char 50
+                'RIG_QTAR': self.qta,  # decimal(11,3)
+                # RIG_PRIO int serve?
+            }
         return execute_params_order, execute_params_order_line
-
