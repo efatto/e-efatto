@@ -806,8 +806,8 @@ class TestConnectorWMS(SingleTransactionCase):
             sqlquery=sql_text("SELECT * FROM HOST_LISTE WHERE Qta!=:Qta"),
             sqlparams=dict(Qta=0),
             metadata=None,
-        )[0]
-        return res
+        )
+        return res and res[0] or []
 
     def test_04_unlink_sale_order(self):
         with self.assertRaises(ConnectionSuccessError):
