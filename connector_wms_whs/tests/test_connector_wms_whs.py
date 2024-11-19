@@ -13,7 +13,8 @@ from sqlalchemy import text as sql_text
 class TestConnectorWmsWhs(CommonConnectorWMS):
     def setUp(self):
         super().setUp()
-        dbsource = self.dbsource_model.search([("name", "=", "Odoo WMS local server")])
+        dbsource_name = "Odoo WMS local server"
+        dbsource = self.dbsource_model.search([("name", "=", dbsource_name)])
         if not dbsource:
             conn_file = os.path.join(
                 os.path.expanduser('~'),
@@ -24,7 +25,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             with open(conn_file, 'r') as file:
                 conn_string = file.read().replace('\n', '')
             dbsource = self.dbsource_model.create({
-                'name': 'Odoo WHS local server',
+                'name': dbsource_name,
                 'conn_string_sandbox': conn_string,
                 'connector': 'mssql',
                 'location_id': self.env.ref('stock.stock_location_stock').id,
@@ -118,6 +119,16 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             # WHS cron change Elaborato to 2 in an un-controllable time
             self.assertIn(Elaborato, {5, 1, 2})
         return valid_whs_lists
+
+    def _execute_select_all_valid_host_liste(self):
+        # insert lists in WHS: this has to be invoked before every sql call!
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        res = self.dbsource.execute_mssql(
+            sqlquery=sql_text("SELECT * FROM HOST_LISTE WHERE Qta!=:Qta"),
+            sqlparams=dict(Qta=0),
+            metadata=None,
+        )
+        return res and res[0] or []
 
     def test_00_complete_picking_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
@@ -738,16 +749,6 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         self.assertEqual(len(res), whs_len_records + 6)
         # self.run_stock_procurement_scheduler()
         backorder_picking.action_assign()
-
-    def _execute_select_all_valid_host_liste(self):
-        # insert lists in WHS: this has to be invoked before every sql call!
-        self.dbsource.whs_insert_read_and_synchronize_list()
-        res = self.dbsource.execute_mssql(
-            sqlquery=sql_text("SELECT * FROM HOST_LISTE WHERE Qta!=:Qta"),
-            sqlparams=dict(Qta=0),
-            metadata=None,
-        )
-        return res and res[0] or []
 
     def test_04_unlink_sale_order(self):
         with self.assertRaises(ConnectionSuccessError):
