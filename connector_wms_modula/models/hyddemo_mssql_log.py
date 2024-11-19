@@ -199,17 +199,18 @@ VALUES (
                     # FIXME action_assign must assign on qty_done and not on available
                     pickings_to_assign |= move.picking_id
 
-                # Set mssql list done from host, to be deleted from HOST after the
-                # complete execution of this job
-                set_liste_to_done_query = \
-                    "UPDATE EXP_ORDINI_RIGHE SET Elaborato=5 WHERE RIG_ORDINE='%s' AND "\
-                    "RIG_HOSTINF='%s'" % (num_lista, num_riga)
+                # EXP_ORDINI_RIGHE have to be deleted from HOST
+                # todo after the complete execution of this job?
                 dbsource.with_context(no_return=True).execute_mssql(
-                    sqlquery=sql_text(set_liste_to_done_query), sqlparams=None, metadata=None
+                    sqlquery=sql_text(
+                        "DELETE FROM EXP_ORDINI_RIGHE WHERE "
+                        "RIG_ORDINE=:RIG_ORDINE AND RIG_HOSTINF=:RIG_HOSTINF"
+                    ), sqlparams=dict(RIG_ORDINE=num_lista, RIG_HOSTINF=num_riga),
+                    metadata=None
                 )
         if pickings_to_assign:
             pickings_to_assign.filtered(
                 lambda x: x.mapped('move_lines').filtered(
-                    lambda move: move.state not in ('draft', 'cancel', 'done')
+                    lambda m: m.state not in ('draft', 'cancel', 'done')
                 )
             ).action_assign()

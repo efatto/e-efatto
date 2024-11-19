@@ -4,6 +4,7 @@ from odoo.addons.base_external_dbsource.exceptions import ConnectionSuccessError
 from odoo.tests import tagged
 from odoo.tests.common import Form
 from odoo.addons.connector_whs.tests.test_connector_wms import CommonConnectorWMS
+from ..models.hyddemo_whs_liste import tipo_operazione_dict
 from odoo.exceptions import UserError
 from odoo.tools import relativedelta
 from sqlalchemy import text as sql_text
@@ -103,8 +104,9 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             self.assertEqual(picking1.state, 'waiting')
         picking1.action_cancel()
         self.assertEqual(picking1.state, 'cancel')
-        # check whs lists are in stato '3' -> 'Da NON elaborare'
-        self.assertEqual(picking1.move_lines.mapped('whs_list_ids.stato'), ['3'])
+        # check whs lists are unlinked (only with a working WMS software they could be
+        # in stato '3' -> 'Da NON elaborare' after elaboration)
+        self.assertFalse(picking1.move_lines.mapped('whs_list_ids'))
         # restore picking to assigned state
         picking1.action_back_to_draft()
         picking1.action_confirm()
@@ -119,53 +121,49 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self._execute_select_all_valid_host_liste()
         self.assertEqual(len(whs_records), whs_len_records + 1)
-        # simulate whs work
-        lotto = '55A1'
-        lotto2 = '55A2'
-        lotto3 = '55A3'
-        lotto4 = '55A4'
-        lotto5 = '55A5'
-        set_liste_elaborated_query = \
-            "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=%s, " \
-            "Lotto='%s', Lotto2='%s', Lotto3='%s', Lotto4='%s', Lotto5='%s' WHERE " \
-            "NumLista = '%s' AND NumRiga = '%s'" % (
-                whs_list.qta, lotto, lotto2, lotto3, lotto4, lotto5, whs_list.num_lista,
-                whs_list.riga
-            )
+        # simulate WMS work
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=sql_text(set_liste_elaborated_query), sqlparams=None, metadata=None
+            sqlquery=sql_text(
+                "INSERT INTO EXP_ORDINI "
+                "(ORD_ORDINE, ORD_TIPOOP) VALUES "
+                "(:ORD_ORDINE, :ORD_TIPOOP)"),
+            sqlparams=dict(
+                ORD_ORDINE=whs_list.num_lista,
+                ORD_TIPOOP=tipo_operazione_dict[whs_list.tipo],
+            ), metadata=None
+        )
+        self.dbsource.with_context(no_return=True).execute_mssql(
+            sqlquery=sql_text(
+                "INSERT INTO EXP_ORDINI_RIGHE "
+                "(RIG_ORDINE, RIG_HOSTINF, RIG_ARTICOLO, RIG_QTAR, RIG_QTAE) VALUES "
+                "(:RIG_ORDINE, :RIG_HOSTINF, :RIG_ARTICOLO, :RIG_QTAR, :RIG_QTAE)"),
+            sqlparams=dict(
+                RIG_ORDINE=whs_list.num_lista,
+                RIG_HOSTINF=whs_list.riga,
+                RIG_ARTICOLO=whs_list.product_id.default_code[:50] if
+                whs_list.product_id.default_code
+                else 'prodotto %s senza codice' % whs_list.product_id.id,
+                RIG_QTAR=whs_list.qta,
+                RIG_QTAE=whs_list.qta,
+            ), metadata=None
         )
 
-        whs_select_query = \
-            "SELECT Qta, QtaMovimentata, Lotto, Lotto3, Lotto3, Lotto4, Lotto5 " \
-            "FROM HOST_LISTE WHERE Elaborato = 4 AND " \
-            "NumLista = '%s' AND NumRiga = '%s'" % (
-                whs_list.num_lista, whs_list.riga
-            )
         result_liste = self.dbsource.execute_mssql(
-            sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+            sqlquery=sql_text(
+                "SELECT RIG_QTAR, RIG_QTAE "
+                "FROM EXP_ORDINI_RIGHE WHERE "
+                "RIG_ORDINE=:RIG_ORDINE AND RIG_HOSTINF=:RIG_HOSTINF"
+            ), sqlparams=dict(
+                RIG_ORDINE=whs_list.num_lista,
+                RIG_HOSTINF=whs_list.riga,
+            ), metadata=None
         )
         self.assertEqual(
             str(result_liste[0]),
-            "[(Decimal('5.000'), Decimal('5.000'), '55A1', '55A3', '55A3', '55A4', "
-            "'55A5')]")
+            "[(Decimal('5.000'), Decimal('5.000'))]")
 
         self.dbsource.whs_insert_read_and_synchronize_list()
 
         # check move and picking linked to sale order have changed state to done
         self.assertEqual(picking1.move_lines[0].state, 'assigned')
-        if all(x.state == 'assigned' for x in picking1.move_lines):
-            self.assertEqual(picking1.state, 'assigned')
-        else:
-            self.assertEqual(picking1.state, 'waiting')
-        picking1.action_assign()
-        if all(x.state == 'assigned' for x in picking1.move_lines):
-            self.assertEqual(picking1.state, 'assigned')
-        else:
-            self.assertEqual(picking1.state, 'waiting')
-        # check lot info
-        self.assertEqual(whs_list.lotto, lotto)
-        self.assertEqual(whs_list.lotto2, lotto2)
-        self.assertEqual(whs_list.lotto3, lotto3)
-        self.assertEqual(whs_list.lotto4, lotto4)
-        self.assertEqual(whs_list.lotto5, lotto5)
+        self.assertEqual(picking1.state, 'assigned')

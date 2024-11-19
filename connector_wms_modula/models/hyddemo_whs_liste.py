@@ -7,6 +7,13 @@ from sqlalchemy import text as sql_text
 
 _logger = logging.getLogger(__name__)
 
+tipo_operazione_dict = {
+    '1': 'P',
+    '2': 'V',
+    '3': 'I',
+    '4': 'E',
+}
+
 
 class HyddemoWhsListe(models.Model):
     _inherit = "hyddemo.whs.liste"
@@ -14,11 +21,48 @@ class HyddemoWhsListe(models.Model):
 
     def whs_unlink_lists(self, dbsource):
         # do no call super() and put specific code
-        pass
+        dbsource.with_context(no_return=True).execute_mssql(
+            sqlquery=sql_text(
+                "DELETE FROM IMP_ORDINI WHERE ORD_ORDINE=:ORD_ORDINE"),
+            sqlparams=dict(ORD_ORDINE=self.num_lista),
+            metadata=None)
+        dbsource.with_context(no_return=True).execute_mssql(
+            sqlquery=sql_text(
+                "DELETE FROM IMP_ORDINI_RIGHE WHERE RIG_ORDINE=:RIG_ORDINE"),
+            sqlparams=dict(RIG_ORDINE=self.num_lista),
+            metadata=None)
+        _logger.info('WHS LOG: unlink order and rows: %s' % self.num_lista)
+        self.unlink()
 
     def whs_cancel_lists(self, dbsource):
         # do no call super() and put specific code
-        pass
+        # update lists to WMS, as they are possibly not elaborated
+        dbsource.whs_insert_read_and_synchronize_list()
+        # check if the lists exist, to unlink or add an order to delete
+        res = dbsource.execute_mssql(
+            sqlquery=sql_text(
+                "SELECT ORD_ORDINE FROM IMP_ORDINI WHERE ORD_OPERAZIONE='I' "
+                "AND ORD_ORDINE=:ORD_ORDINE"),
+            sqlparams=dict(ORD_ORDINE=self.num_lista),
+            metadata=None,
+        )
+        if res and res[0]:
+            # lista exists, so it's not elaborated from WMS, so unlink it directly
+            # (this will unlink its rows too)
+            self.whs_unlink_lists(dbsource)
+        else:
+            # lista does not exist, so order to WMS to unlink it
+            # (this will unlink its rows too)
+            dbsource.with_context(no_return=True).execute_mssql(
+                sqlquery=sql_text(
+                    "INSERT INTO IMP_ORDINI (ORD_OPERAZIONE, ORD_ORDINE) VALUES "
+                    "('D', :ORD_ORDINE)"),
+                    sqlparams=dict(ORD_ORDINE=self.num_lista),
+                    metadata=None)
+            _logger.info('WMS Modula LOG: delete Lista %s' % (
+                self.num_lista
+            ))
+            self.write({'stato': '3'})
 
     @api.model
     def whs_check_lists(self, num_lista, dbsource):
@@ -71,18 +115,12 @@ VALUES (
     @api.multi
     def whs_prepare_host_liste_values(self):
         # do no call super() and put specific code
-        tipo_operazione_dict = {
-            '1': 'P',
-            '2': 'V',
-            '3': 'I',
-            '4': 'E',
-        }
         execute_params_order = {}
         execute_params_order_line = {}
         for lista in self:
             if not execute_params_order.get(lista.num_lista):
                 execute_params_order[lista.num_lista] = {
-                    'ORD_OPERAZIONE': 'A',  # I=Insert/Update; D=Delete; A=Add if row not exists
+                    'ORD_OPERAZIONE': 'I',  # I=Insert/Update; D=Delete; A=Add if row not exists
                     # H=Add if header not exists; Q=Always add in queue; R=Replace
                     'ORD_ORDINE': self.num_lista[:20],  # char 20
                     'ORD_DES': self.riferimento[:50] if self.riferimento else '',  # char 50
