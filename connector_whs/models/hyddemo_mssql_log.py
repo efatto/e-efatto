@@ -49,11 +49,6 @@ class HyddemoMssqlLog(models.Model):
         # overridable method
         return ""
 
-    @staticmethod
-    def _get_insert_host_liste_query():
-        # overridable method
-        return ""
-
     @api.model
     def whs_update_products(self, datasource_id):
         """
@@ -327,24 +322,28 @@ class HyddemoMssqlLog(models.Model):
                 if not insert_order_line_params:
                     # there is a unique table for order and order line
                     for riga in insert_order_params[num_lista]:
-                        insert_query = self.get_insert_query(
-                            insert_order_params[num_lista][riga])
+                        insert_query = self.env[
+                            "hyddemo.whs.liste"
+                        ]._get_insert_host_liste_query(insert_order_params[num_lista])
                         self.execute_query(
                             dbsource, sql_text(insert_query),
                             insert_order_params[num_lista][riga])
                 else:
                     # there are separated tables for order and order line
-                    for order in insert_order_params[num_lista]:
-                        insert_query = self.get_insert_query(
-                            insert_order_params[order])
-                        self.execute_query(
-                            dbsource, sql_text(insert_query),
-                            insert_order_params[order])
+                    insert_order_query = self.env[
+                        "hyddemo.whs.liste"
+                    ]._get_insert_host_liste_query(insert_order_params[num_lista])
+                    self.execute_query(
+                        dbsource, sql_text(insert_order_query),
+                        insert_order_params[num_lista])
                     for riga in insert_order_line_params[num_lista]:
-                        insert_query = self.get_insert_query(
-                            insert_order_line_params[num_lista][riga])
+                        insert_line_query = self.env[
+                            "hyddemo.whs.liste"
+                        ]._get_insert_order_line_query(
+                            insert_order_line_params[num_lista]
+                        )
                         self.execute_query(
-                            dbsource, sql_text(insert_query),
+                            dbsource, sql_text(insert_line_query),
                             insert_order_line_params[num_lista][riga])
         # Update lists on mssql from 0 to 1 to be elaborated from WHS all in the same
         # time
@@ -361,14 +360,6 @@ class HyddemoMssqlLog(models.Model):
             # commit to exclude rollback as mssql wouldn't be rollbacked too
             self._cr.commit()  # pylint: disable=E8102
         self.whs_read_and_synchronize_list(datasource_id)
-
-    @api.multi
-    def get_insert_query(self, insert_esiti_liste_params):
-        # overridable method
-        insert_host_liste_query = self._get_insert_host_liste_query()
-        insert_query = insert_host_liste_query
-        insert_query = insert_query.replace("\n", " ")
-        return insert_query
 
     def execute_query(self, dbsource, insert_query, insert_esiti_liste_params):
         res = dbsource.with_context(no_return=True).execute_mssql(

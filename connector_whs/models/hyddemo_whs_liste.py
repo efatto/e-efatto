@@ -158,6 +158,16 @@ class HyddemoWhsListe(models.Model):
         for whs_list in self:
             whs_list.whs_check_list_state()
 
+    @staticmethod
+    def _get_insert_order_line_query(params):
+        # overridable method
+        return "".replace("\n", " ")
+
+    @staticmethod
+    def _get_insert_host_liste_query(params):
+        # overridable method
+        return "".replace("\n", " ")
+
     @api.multi
     def whs_prepare_host_liste_values(self):
         # overridable method
