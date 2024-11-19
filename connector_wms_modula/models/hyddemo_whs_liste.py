@@ -30,6 +30,44 @@ class HyddemoWhsListe(models.Model):
         # do no call super() and put specific code
         pass
 
+    @staticmethod
+    def _get_insert_order_line_query(params):
+        insert_order_line_query = """
+INSERT INTO IMP_ORDINI_RIGHE (
+RIG_ORDINE,
+RIG_HOSTINF,
+RIG_ARTICOLO,
+RIG_QTAR
+)
+VALUES (
+:RIG_ORDINE,
+:RIG_HOSTINF,
+:RIG_ARTICOLO,
+:RIG_QTAR
+)
+"""
+        return insert_order_line_query.replace("\n", " ")
+
+    @staticmethod
+    def _get_insert_host_liste_query(params):
+        insert_host_liste_query = """
+INSERT INTO IMP_ORDINI (
+ORD_OPERAZIONE,
+ORD_ORDINE,
+ORD_DES,
+ORD_PRIOHOST,
+ORD_TIPOOP
+)
+VALUES (
+:ORD_OPERAZIONE,
+:ORD_ORDINE,
+:ORD_DES,
+:ORD_PRIOHOST,
+:ORD_TIPOOP
+)
+"""
+        return insert_host_liste_query.replace("\n", " ")
+
     @api.multi
     def whs_prepare_host_liste_values(self):
         # do no call super() and put specific code

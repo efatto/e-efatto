@@ -43,28 +43,6 @@ VALUES (
 )
 """
 
-    @staticmethod
-    def _get_insert_host_liste_query():
-        insert_host_liste_query = """
-INSERT INTO IMP_ORDINI (
-ORD_OPERAZIONE,
-ORD_ORDINE,
-ORD_DES,
-ORD_PRIOHOST,
-ORD_TIPOOP,
-ORD_CLIENTE
-)
-VALUES (
-:ORD_OPERAZIONE,
-:ORD_ORDINE,
-:ORD_DES,
-:ORD_PRIOHOST,
-:ORD_TIPOOP,
-:ORD_CLIENTE
-)
-"""
-        return insert_host_liste_query
-
     @api.multi
     def _prepare_host_articoli_values(
         self, product, warehouse_id, location_id, last_id
