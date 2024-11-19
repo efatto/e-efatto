@@ -139,6 +139,103 @@ class HyddemoWhsListe(models.Model):
                         'whs_list_log': 'Ok',
                     })
 
+    @staticmethod
+    def _get_insert_host_liste_query(params):
+        insert_host_liste_query = """
+INSERT INTO HOST_LISTE (
+NumLista,
+NumRiga,
+DataLista,
+Riferimento,
+TipoOrdine,
+Causale,
+Priorita,
+RichiestoEsito,
+Stato,
+ControlloEvadibilita,
+Vettore,
+{idCliente}
+{RagioneSociale}
+Indirizzo,
+Cap,
+Localita,
+Provincia,
+Nazione,
+Articolo,
+DescrizioneArticolo,
+Qta,
+PesoArticolo,
+UMArticolo,
+IdTipoArticolo,
+Elaborato,
+AuxTesto1,
+AuxTestoRiga1,
+AuxTestoRiga2,
+AuxTestoRiga3
+)
+VALUES (
+:NumLista,
+:NumRiga,
+:DataLista,
+:Riferimento,
+:TipoOrdine,
+:Causale,
+:Priorita,
+:RichiestoEsito,
+:Stato,
+:ControlloEvadibilita,
+:Vettore,
+{idClientes}
+{RagioneSociales}
+:Indirizzo,
+:Cap,
+:Localita,
+:Provincia,
+:Nazione,
+:Articolo,
+:DescrizioneArticolo,
+:Qta,
+:PesoArticolo,
+:UMArticolo,
+:IdTipoArticolo,
+:Elaborato,
+:AuxTesto1,
+:AuxTestoRiga1,
+:AuxTestoRiga2,
+:AuxTestoRiga3
+)
+"""
+        if 'idCliente' in params:
+            if 'RagioneSociale' in params:
+                insert_query = insert_host_liste_query.format(
+                    idCliente='idCliente,',
+                    idClientes=':idCliente,',
+                    RagioneSociale='RagioneSociale,',
+                    RagioneSociales=':RagioneSociale,'
+                )
+            else:
+                insert_query = insert_host_liste_query.format(
+                    idCliente='idCliente,',
+                    idClientes=':idCliente,',
+                    RagioneSociale='',
+                    RagioneSociales=''
+                )
+        elif 'RagioneSociale' in params:
+            insert_query = insert_host_liste_query.format(
+                RagioneSociale='RagioneSociale,',
+                RagioneSociales=':RagioneSociale,',
+                idCliente='',
+                idClientes=''
+            )
+        else:
+            insert_query = insert_host_liste_query.format(
+                RagioneSociale='',
+                RagioneSociales='',
+                idCliente='',
+                idClientes=''
+            )
+        return insert_query.replace("\n", " ")
+
     @api.multi
     def whs_prepare_host_liste_values(self):
         # do no call super() and put specific code
