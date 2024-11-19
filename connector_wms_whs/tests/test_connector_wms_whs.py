@@ -231,15 +231,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
 
         # check move and picking linked to sale order have changed state to done
         self.assertEqual(picking1.move_lines[0].state, 'assigned')
-        if all(x.state == 'assigned' for x in picking1.move_lines):
-            self.assertEqual(picking1.state, 'assigned')
-        else:
-            self.assertEqual(picking1.state, 'waiting')
-        picking1.action_assign()
-        if all(x.state == 'assigned' for x in picking1.move_lines):
-            self.assertEqual(picking1.state, 'assigned')
-        else:
-            self.assertEqual(picking1.state, 'waiting')
+        self.assertEqual(picking1.state, 'assigned')
         # check lot info
         self.assertEqual(whs_list.lotto, lotto)
         self.assertEqual(whs_list.lotto2, lotto2)
@@ -259,8 +251,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             order_line.product_id = self.product1
             order_line.product_uom_qty = 5
             order_line.price_unit = 100
-            if hasattr(order_line, "priority"):
-                order_line.priority = "2"
+            order_line.priority = "2"
         with order_form1.order_line.new() as order_line:
             order_line.product_id = self.product1
             order_line.product_uom_qty = 5
@@ -268,8 +259,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         order1 = order_form1.save()
         order1.action_confirm()
         self.assertEqual(order1.state, 'sale')
-        if hasattr(order1, "priority"):
-            self.assertEqual(order1.priority, '2')
+        self.assertEqual(order1.priority, '2')
         for picking in order1.picking_ids:
             if all(x.state == 'assigned' for x in picking.move_lines):
                 self.assertEqual(picking.state, 'assigned')
@@ -338,8 +328,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         # would change Elaborato from 4 to 5, as it must do
         for whs_list in whs_lists:
             whs_select_query = (
-                "SELECT Qta, QtaMovimentata "
-                f"{', Priorita ' if hasattr(order1, 'priority') else ''}"
+                "SELECT Qta, QtaMovimentata, Priorita "
                 "FROM HOST_LISTE WHERE "
                 "Elaborato=:Elaborato AND NumLista=:NumLista AND NumRiga=:NumRiga"
             )
@@ -349,12 +338,8 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                     Elaborato=4, NumLista=whs_list.num_lista, NumRiga=whs_list.riga),
                 metadata=None
             )
-            if hasattr(order1, 'priority'):
-                self.assertIn("[(Decimal('5.000'), Decimal('3.000'), 1)]",
-                              str(result_liste))
-            else:
-                self.assertIn("[(Decimal('5.000'), Decimal('3.000'))]",
-                              str(result_liste))
+            self.assertIn("[(Decimal('5.000'), Decimal('3.000'), 1)]",
+                          str(result_liste))
 
         self.dbsource.whs_insert_read_and_synchronize_list()
 
@@ -414,8 +399,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         with order_form1.order_line.new() as order_line:
             order_line.product_id = self.product1
             order_line.product_uom_qty = 5
-            if hasattr(order_line, "priority"):
-                order_line.priority = "3"
+            order_line.priority = "3"
             order_line.price_unit = 100
         with order_form1.order_line.new() as order_line:
             order_line.product_id = self.product2
@@ -424,8 +408,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         order1 = order_form1.save()
         order1.action_confirm()
         self.assertEqual(order1.state, 'sale')
-        if hasattr(order1, "priority"):
-            self.assertEqual(order1.priority, '3')
+        self.assertEqual(order1.priority, '3')
         picking = order1.picking_ids[0]
         self.assertEqual(len(picking.mapped('move_lines.whs_list_ids')), 2)
         self.assertEqual(picking.state, 'assigned')
@@ -485,8 +468,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         # check whs work is done correctly
         for whs_list in whs_lists:
             whs_select_query = (
-                "SELECT Qta, QtaMovimentata "
-                f"{', Priorita ' if hasattr(order1, 'priority') else ''}"
+                "SELECT Qta, QtaMovimentata, Priorita "
                 "FROM HOST_LISTE WHERE Elaborato "
                 "= 4 AND NumLista = '%s' AND NumRiga = '%s'" % (
                     whs_list.num_lista, whs_list.riga
@@ -495,18 +477,11 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             result_liste = self.dbsource.execute_mssql(
                 sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
             )
-            if hasattr(order1, 'priority'):
-                self.assertEqual(
-                    str(result_liste[0]),
-                    "[(Decimal('5.000'), Decimal('3.000'), 2)]"
-                    if whs_list.product_id == self.product1 else
-                    "[(Decimal('20.000'), Decimal('20.000'), 2)]")
-            else:
-                self.assertEqual(
-                    str(result_liste[0]),
-                    "[(Decimal('5.000'), Decimal('3.000'))]"
-                    if whs_list.product_id == self.product1 else
-                    "[(Decimal('20.000'), Decimal('20.000'))]")
+            self.assertEqual(
+                str(result_liste[0]),
+                "[(Decimal('5.000'), Decimal('3.000'), 2)]"
+                if whs_list.product_id == self.product1 else
+                "[(Decimal('20.000'), Decimal('20.000'), 2)]")
 
         self.dbsource.whs_insert_read_and_synchronize_list()
 
@@ -607,8 +582,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             order_line.product_id = self.product3
             order_line.product_uom_qty = 20  # 250
             order_line.price_unit = 100
-            if hasattr(order_line, "priority"):
-                order_line.priority = "0"
+            order_line.priority = "0"
         with order_form1.order_line.new() as order_line:
             order_line.product_id = self.product4
             order_line.product_uom_qty = 20  # 0
@@ -657,8 +631,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
 
         for whs_l in whs_lists:
             whs_select_query = (
-                "SELECT Qta, QtaMovimentata "
-                f"{', Priorita ' if hasattr(order1, 'priority') else ''}"
+                "SELECT Qta, QtaMovimentata, Priorita "
                 "FROM HOST_LISTE WHERE Elaborato "
                 "= 4 AND NumLista = '%s' AND NumRiga = '%s'" % (
                     whs_l.num_lista, whs_l.riga
@@ -667,26 +640,15 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             result_liste = self.dbsource.execute_mssql(
                 sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
             )
-            if hasattr(order1, 'priority'):
-                self.assertEqual(
-                    str(result_liste[0]),
-                    "[(Decimal('5.000'), Decimal('5.000'), 0)]"
-                    if whs_l.product_id == self.product1 else
-                    "[(Decimal('10.000'), Decimal('5.000'), 0)]"
-                    if whs_l.product_id == self.product2 else
-                    "[(Decimal('20.000'), Decimal('0.000'), 0)]"
-                    if whs_l.product_id == self.product3 else
-                    "[(Decimal('20.000'), Decimal('5.000'), 0)]")
-            else:
-                self.assertEqual(
-                    str(result_liste[0]),
-                    "[(Decimal('5.000'), Decimal('5.000'))]"
-                    if whs_l.product_id == self.product1 else
-                    "[(Decimal('10.000'), Decimal('5.000'))]"
-                    if whs_l.product_id == self.product2 else
-                    "[(Decimal('20.000'), Decimal('0.000'))]"
-                    if whs_l.product_id == self.product3 else
-                    "[(Decimal('20.000'), Decimal('5.000'))]")
+            self.assertEqual(
+                str(result_liste[0]),
+                "[(Decimal('5.000'), Decimal('5.000'), 0)]"
+                if whs_l.product_id == self.product1 else
+                "[(Decimal('10.000'), Decimal('5.000'), 0)]"
+                if whs_l.product_id == self.product2 else
+                "[(Decimal('20.000'), Decimal('0.000'), 0)]"
+                if whs_l.product_id == self.product3 else
+                "[(Decimal('20.000'), Decimal('5.000'), 0)]")
 
         self.dbsource.whs_insert_read_and_synchronize_list()
 
