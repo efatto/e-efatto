@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-21 15:22+0000\n"
-"PO-Revision-Date: 2024-10-21 15:22+0000\n"
+"POT-Creation-Date: 2024-11-21 10:09+0000\n"
+"PO-Revision-Date: 2024-11-21 10:09+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -39,6 +39,15 @@ msgid "ID"
 msgstr ""
 
 #. module: quality_control_stock_oca_notes
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_inspection__lot_internal
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_trigger_line__lot_internal
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_trigger_product_category_line__lot_internal
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_trigger_product_line__lot_internal
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_trigger_product_template_line__lot_internal
+msgid "Internal lot"
+msgstr "Lotto interno"
+
+#. module: quality_control_stock_oca_notes
 #: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_trigger_line__note
 #: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_trigger_product_category_line__note
 #: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_trigger_product_line__note
@@ -56,3 +65,12 @@ msgstr "Ultima modifica il"
 #: model:ir.model,name:quality_control_stock_oca_notes.model_qc_inspection
 msgid "Quality control inspection"
 msgstr "Ispezione controllo di qualità"
+
+#. module: quality_control_stock_oca_notes
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_inspection__lot_supplier
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_trigger_line__lot_supplier
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_trigger_product_category_line__lot_supplier
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_trigger_product_line__lot_supplier
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_trigger_product_template_line__lot_supplier
+msgid "Supplier lot"
+msgstr "Lotto fornitore"
