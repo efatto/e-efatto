@@ -11,6 +11,10 @@
       >
                 <field name="notes" />
             </xpath>
+            <field name="product_id" position="after">
+                <field name="lot_internal" />
+                <field name="lot_supplier" />
+            </field>
         </field>
     </record>
 </odoo>
