@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-21 10:09+0000\n"
-"PO-Revision-Date: 2024-11-21 10:09+0000\n"
+"POT-Creation-Date: 2024-11-21 10:24+0000\n"
+"PO-Revision-Date: 2024-11-21 10:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -60,6 +60,16 @@ msgstr "Nota interna"
 #: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_trigger_line____last_update
 msgid "Last Modified on"
 msgstr "Ultima modifica il"
+
+#. module: quality_control_stock_oca_notes
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_inspection__qty_inspected
+msgid "Qty inspected"
+msgstr "Quantità controllata"
+
+#. module: quality_control_stock_oca_notes
+#: model:ir.model.fields,field_description:quality_control_stock_oca_notes.field_qc_inspection__qty_not_conform
+msgid "Qty not conform"
+msgstr "Quantità non conforme"
 
 #. module: quality_control_stock_oca_notes
 #: model:ir.model,name:quality_control_stock_oca_notes.model_qc_inspection

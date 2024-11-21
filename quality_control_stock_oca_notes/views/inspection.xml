@@ -11,6 +11,10 @@
       >
                 <field name="notes" />
             </xpath>
+            <field name="qty" position="after">
+                <field name="qty_inspected" />
+                <field name="qty_not_conform" />
+            </field>
             <field name="product_id" position="after">
                 <field name="lot_internal" />
                 <field name="lot_supplier" />
