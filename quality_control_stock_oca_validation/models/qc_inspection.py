@@ -9,12 +9,13 @@ class QcInspection(models.Model):
         picking_id = object_ref
         if object_ref._name in ["stock.move", "stock.move.line"]:
             picking_id = object_ref.picking_id
-        inspection_ids = self.sudo().search(
-            [
-                ("product_id", "=", object_ref.product_id.id),
-                ("picking_id", "=", picking_id.id),
-            ]
-        )
+        domain = [
+            ("product_id", "=", object_ref.product_id.id),
+            ("picking_id", "=", picking_id.id),
+        ]
+        if object_ref.production_id:
+            domain += [("production_id", "=", object_ref.production_id.id)]
+        inspection_ids = self.sudo().search(domain)
         if inspection_ids:
             for inspection in inspection_ids:
                 if (
