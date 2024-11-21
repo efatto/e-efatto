@@ -106,6 +106,7 @@ VALUES (
             raise UserError(_('Failed to open connection!'))
         i = 0
         pickings_to_assign = self.env['stock.picking']
+        hyddemo_whs_list_to_unlink = self.env["hyddemo.whs.liste"]
         while True:
             esiti_liste_query = (
                 "SELECT * FROM (SELECT row_number() OVER "
@@ -159,6 +160,7 @@ VALUES (
                         hyddemo_whs_list.riga,
                     ))
                     continue
+                hyddemo_whs_list_to_unlink |= hyddemo_whs_list
                 move = hyddemo_whs_list.move_id
 
                 try:
@@ -199,15 +201,11 @@ VALUES (
                     # FIXME action_assign must assign on qty_done and not on available
                     pickings_to_assign |= move.picking_id
 
-                # EXP_ORDINI_RIGHE have to be deleted from HOST
-                # todo after the complete execution of this job?
-                dbsource.with_context(no_return=True).execute_mssql(
-                    sqlquery=sql_text(
-                        "DELETE FROM EXP_ORDINI_RIGHE WHERE "
-                        "RIG_ORDINE=:RIG_ORDINE AND RIG_HOSTINF=:RIG_HOSTINF"
-                    ), sqlparams=dict(RIG_ORDINE=num_lista, RIG_HOSTINF=num_riga),
-                    metadata=None
-                )
+        # EXP_ORDINI_RIGHE and EXP_ORDINI have to be deleted from HOST
+        # we clean them after the complete execution of the sync job
+        if hyddemo_whs_list_to_unlink:
+            hyddemo_whs_list_to_unlink.whs_unlink_lists(dbsource, db_type="EXP")
+
         if pickings_to_assign:
             pickings_to_assign.filtered(
                 lambda x: x.mapped('move_lines').filtered(
