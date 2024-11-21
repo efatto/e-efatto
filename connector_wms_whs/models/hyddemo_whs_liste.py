@@ -11,34 +11,37 @@ _logger = logging.getLogger(__name__)
 class HyddemoWhsListe(models.Model):
     _inherit = "hyddemo.whs.liste"
 
+    @api.multi
     def whs_unlink_lists(self, dbsource):
         # do no call super() and put specific code
-        delete_lists_query = \
-            "DELETE FROM HOST_LISTE WHERE NumLista = '%s' AND NumRiga = '%s'" % (
-                self.num_lista,
-                self.riga,
-            )
-        dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=sql_text(delete_lists_query.replace('\n', ' ')),
-            sqlparams=None,
-            metadata=None)
-        _logger.info('WHS LOG: unlink Lista %s Riga %s' % (
-            self.num_lista, self.riga
-        ))
-        self.unlink()
+        for whs_list in self:
+            delete_lists_query = \
+                "DELETE FROM HOST_LISTE WHERE NumLista = '%s' AND NumRiga = '%s'" % (
+                    whs_list.num_lista,
+                    whs_list.riga,
+                )
+            dbsource.with_context(no_return=True).execute_mssql(
+                sqlquery=sql_text(delete_lists_query.replace('\n', ' ')),
+                sqlparams=None,
+                metadata=None)
+            _logger.info('WHS LOG: unlink Lista %s Riga %s' % (
+                whs_list.num_lista, whs_list.riga
+            ))
+            whs_list.unlink()
 
     def whs_cancel_lists(self, dbsource):
         # do no call super() and put specific code
-        set_to_not_elaborate_query = \
-            "UPDATE HOST_LISTE SET Elaborato=1, Qta=0 WHERE " \
-            "NumLista='%s' AND NumRiga='%s'" % (self.num_lista, self.riga)
-        dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=sql_text(set_to_not_elaborate_query), sqlparams=None,
-            metadata=None)
-        _logger.info('WHS LOG: cancel Lista %s Riga %s' % (
-            self.num_lista, self.riga
-        ))
-        self.write({'stato': '3'})
+        for whs_list in self:
+            set_to_not_elaborate_query = \
+                "UPDATE HOST_LISTE SET Elaborato=1, Qta=0 WHERE " \
+                "NumLista='%s' AND NumRiga='%s'" % (whs_list.num_lista, whs_list.riga)
+            dbsource.with_context(no_return=True).execute_mssql(
+                sqlquery=sql_text(set_to_not_elaborate_query), sqlparams=None,
+                metadata=None)
+            _logger.info('WHS LOG: cancel Lista %s Riga %s' % (
+                whs_list.num_lista, whs_list.riga
+            ))
+            whs_list.write({'stato': '3'})
 
     @api.model
     def whs_check_lists(self, num_lista, dbsource):
