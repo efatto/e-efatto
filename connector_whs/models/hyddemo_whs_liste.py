@@ -83,7 +83,7 @@ class HyddemoWhsListe(models.Model):
     whs_list_log = fields.Text()
     priorita = fields.Integer('Priorita', default=0)  # 0=Bassa; 1=Media; 2=Urgente
 
-
+    @api.multi
     def whs_unlink_lists(self, dbsource):
         # overridable method
         pass
@@ -99,8 +99,7 @@ class HyddemoWhsListe(models.Model):
         if not connection:
             raise UserError(_('Failed to open connection!'))
         self.check_lists(dbsource)
-        for lista in self:
-            lista.whs_unlink_lists(dbsource)
+        self.whs_unlink_lists(dbsource)
         return True
 
     def whs_cancel_lists(self, dbsource):
@@ -119,8 +118,7 @@ class HyddemoWhsListe(models.Model):
         if not connection:
             raise UserError(_('Failed to open connection!'))
         self.check_lists(dbsource)
-        for lista in self:
-            lista.whs_cancel_lists(dbsource)
+        self.whs_cancel_lists(dbsource)
         return True
 
     @api.model
