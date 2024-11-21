@@ -106,14 +106,16 @@ ORD_OPERAZIONE,
 ORD_ORDINE,
 ORD_DES,
 ORD_PRIOHOST,
-ORD_TIPOOP
+ORD_TIPOOP,
+ORD_CLIENTE
 )
 VALUES (
 :ORD_OPERAZIONE,
 :ORD_ORDINE,
 :ORD_DES,
 :ORD_PRIOHOST,
-:ORD_TIPOOP
+:ORD_TIPOOP,
+:ORD_CLIENTE
 )
 """
         return insert_host_liste_query.replace("\n", " ")
@@ -143,6 +145,5 @@ VALUES (
                 'RIG_ARTICOLO': product.default_code[:50] if product.default_code
                 else 'prodotto %s senza codice' % product.id,  # char 50
                 'RIG_QTAR': lista.qta,  # decimal(11,3)
-                # RIG_PRIO int serve?
             }
         return execute_params_order, execute_params_order_line
