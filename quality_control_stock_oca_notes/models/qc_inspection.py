@@ -6,6 +6,8 @@ class QcInspection(models.Model):
 
     lot_internal = fields.Text(string="Internal lot")
     lot_supplier = fields.Char(string="Supplier lot")
+    qty_inspected = fields.Float(string="Qty inspected")
+    qty_not_conform = fields.Float(string="Qty not conform")
 
     def _prepare_inspection_header(self, object_ref, trigger_line):
         res = super()._prepare_inspection_header(object_ref, trigger_line)
