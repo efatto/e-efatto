@@ -351,3 +351,142 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertEqual(len(order1.picking_ids), 2)
         self.assertEqual(backorder_picking.state, 'assigned')
         self.assertEqual(backorder_picking.move_lines[0].state, 'assigned')
+
+    def test_02_partial_picking_partial_available_from_sale(self):
+        with self.assertRaises(ConnectionSuccessError):
+            self.dbsource.connection_test()
+        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        order_form1 = Form(self.env["sale.order"])
+        order_form1.partner_id = self.partner
+        order_form1.client_order_ref = "Rif. SO customer 2"
+        with order_form1.order_line.new() as order_line:
+            order_line.product_id = self.product1
+            order_line.product_uom_qty = 5
+            order_line.price_unit = 100
+        with order_form1.order_line.new() as order_line:
+            order_line.product_id = self.product2
+            order_line.product_uom_qty = 20
+            order_line.price_unit = 100
+        order1 = order_form1.save()
+        order1.action_confirm()
+        self.assertEqual(order1.state, 'sale')
+        picking = order1.picking_ids[0]
+        self.assertEqual(len(picking.mapped('move_lines.whs_list_ids')), 2)
+        self.assertEqual(picking.state, 'assigned')
+
+        # check whs list is added
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        # self.simulate_wms_cron(
+        #     {x: x.qta for x in picking.mapped('move_lines.whs_list_ids')})
+        whs_records = self.dbsource.execute_mssql(
+            sqlquery=sql_text(
+                "SELECT RIG_ORDINE, RIG_HOSTINF, RIG_ARTICOLO, RIG_QTAR "
+                "FROM IMP_ORDINI_RIGHE WHERE RIG_QTAR!=:RIG_QTAR"),
+            sqlparams=dict(RIG_QTAR=0),
+            metadata=None,
+        )[0]
+        self.assertEqual(len(whs_records), 2)
+        # check backorder is not created without whs list validation
+        res = picking.button_validate()
+        Form(self.env[res['res_model']].with_context(res['context'])).save().process()
+        # User cannot create backorder if whs list is not processed on whs system
+        # TODO: check backorder is created for residual
+        self.assertNotEqual(picking.state, 'done')
+        self.assertEqual(len(order1.picking_ids), 1)
+
+        whs_lists = picking.mapped("move_lines.whs_list_ids")
+        # simulate whs work: partial processing (3 of 5) of product #1
+        # and total (20 of 20) of product #2 so it is -4 on warehouse
+        self.simulate_wms_cron({
+            x: 3 if x.product_id == self.product1 else 20 for x in whs_lists})
+        # check whs work is done correctly
+        for whs_list in whs_lists:
+            result_liste = self.dbsource.execute_mssql(
+                sqlquery=sql_text(
+                    "SELECT RIG_QTAR, RIG_QTAE "
+                    "FROM EXP_ORDINI_RIGHE WHERE "
+                    "RIG_ORDINE=:RIG_ORDINE AND RIG_HOSTINF=:RIG_HOSTINF"
+                ),
+                sqlparams=dict(
+                    RIG_ORDINE=whs_list.num_lista, RIG_HOSTINF=whs_list.riga),
+                metadata=None
+            )
+            self.assertEqual(
+                str(result_liste[0]),
+                "[(Decimal('5.000'), Decimal('3.000'))]"
+                if whs_list.product_id == self.product1 else
+                "[(Decimal('20.000'), Decimal('20.000'))]")
+
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        self.simulate_wms_cron(
+            {x: x.qta for x in picking.mapped('move_lines.whs_list_ids')})
+        # check move and picking linked to sale order have changed state to done
+        self.assertEqual(picking.move_lines[0].state, 'assigned')
+        self.assertAlmostEqual(picking.move_lines[0].move_line_ids[0].qty_done, 3.0)
+        picking.action_assign()
+        if all(x.state == 'assigned' for x in picking.move_lines):
+            self.assertEqual(picking.state, 'assigned')
+        else:
+            self.assertEqual(picking.state, 'waiting')
+        # check that action_assign run by scheduler do not change state
+        self.run_stock_procurement_scheduler()
+        picking.action_assign()
+        self.assertEqual(picking.state, 'assigned')
+
+        # simulate user partial validate of picking and check backorder exist
+        backorder_wiz_id = picking.button_validate()['res_id']
+        backorder_wiz = self.env['stock.backorder.confirmation'].browse(
+            backorder_wiz_id)
+        # User cannot create backorder if whs list is not processed on whs system
+        # with self.assertRaises(UserError):
+        # TODO: check backorder is created for residual
+        backorder_wiz.process()
+
+        # Simulate whs user validation
+        whs_lists = picking.mapped('move_lines.whs_list_ids')
+        # this function do the action_assign() too
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        # simulate whs work: total process
+        self.simulate_wms_cron({
+            x: 2 if x.product_id == self.product2 else 3 for x in whs_lists
+        })
+        # picking.action_pack_operation_auto_fill()
+        backorder_wiz.process()
+        self.assertEqual(picking.state, 'done')
+
+        # check back picking is waiting as Odoo qty is not considered
+        self.assertEqual(len(order1.picking_ids), 2)
+        backorder_picking = order1.picking_ids - picking
+        back_whs_list = backorder_picking.mapped('move_lines.whs_list_ids')
+        self.assertEqual(backorder_picking.move_lines.mapped('state'), ['assigned'])
+        # todo check also a 'partially_available'
+        self.assertEqual(backorder_picking.state, 'assigned')
+
+        # todo check whs_list for backorder is created
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        result_liste = self.dbsource.execute_mssql(
+            sqlquery=sql_text(
+                "SELECT RIG_QTAR "
+                "FROM IMP_ORDINI_RIGHE WHERE "
+                "RIG_ORDINE=:RIG_ORDINE AND RIG_HOSTINF=:RIG_HOSTINF"
+            ), sqlparams=dict(
+                RIG_ORDINE=back_whs_list.num_lista,
+                RIG_HOSTINF=back_whs_list.riga),
+                metadata=None,
+        )
+        self.assertEqual(str(result_liste[0]), "[(Decimal('2.000'),)]")
+        self.simulate_wms_cron({x: 2 for x in back_whs_list})
+        result_liste = self.dbsource.execute_mssql(
+            sqlquery=sql_text(
+                "SELECT RIG_QTAR, RIG_QTAE "
+                "FROM EXP_ORDINI_RIGHE WHERE "
+                "RIG_ORDINE=:RIG_ORDINE AND RIG_HOSTINF=:RIG_HOSTINF"
+            ), sqlparams=dict(
+                RIG_ORDINE=back_whs_list.num_lista,
+                RIG_HOSTINF=back_whs_list.riga),
+                metadata=None,
+        )
+        self.assertEqual(str(result_liste[0]), "[(Decimal('2.000'), Decimal('2.000'))]")
+        # simulate whs work set done to rest of backorder
+        backorder_picking.button_validate()
+        self.assertEqual(backorder_picking.state, 'done')
