@@ -198,20 +198,12 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # RIG_ORDINE, RIG_HOSTINF, RIG_ARTICOLO, RIG_QTAR
         for whs_record in whs_records:
             lista = whs_record[0]
-            riga = whs_record[1]
             default_code = whs_record[2]
             qty = whs_record[3]
             self.assertEqual(default_code, order1.order_line.product_id.default_code)
-            # if self.product1.default_code == default_code:
-            #     self.assertEqual(
-            #         self.product1.customer_ids[0].product_code,
-            #         product_code
-            #     )
-            # else:
-            #     self.assertEqual(  # FIXME era notEqual
-            #         self.product1.customer_ids[0].product_code,
-            #         product_code
-            #     )
+            self.assertEqual(qty, order1.order_line.product_uom_qty)
+            self.assertEqual(qty, picking1.move_lines.whs_list_ids.qta)
+            self.assertEqual(lista, picking1.move_lines.whs_list_ids.num_lista)
         # check cancel workflow
         whs_lists = picking1.move_lines.whs_list_ids
         self.assertEqual(len(whs_lists), 1)
@@ -302,22 +294,6 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         )[0]
         self.assertEqual(len(whs_records), 2)  # number is exactly record to read
         self.assertEqual(set(picking.mapped('move_lines.whs_list_ids.stato')), {'2'})
-        for whs_record in whs_records:
-            # client_order_ref = whs_record[11+3]
-            # default_code = whs_record[2]
-            product_code = whs_record[2]
-            # self.assertEqual(client_order_ref, order1.client_order_ref)
-            # if self.product1.default_code == default_code:
-            #     self.assertEqual(
-            #         self.product1.customer_ids[0].product_code,
-            #         product_code
-            #     )
-            # else:
-            #     self.assertNotEqual(
-            #         self.product1.customer_ids[0].product_code,
-            #         product_code
-            #     )
-
         whs_lists = self._check_cancel_workflow(picking, 2)
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self.dbsource.execute_mssql(
