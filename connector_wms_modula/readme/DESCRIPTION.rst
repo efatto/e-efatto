@@ -1,1 +1,1 @@
-This module add a computed field with days to first sale offer of a crm lead.
+This is an extension to module connector_whs to connect WMS Modula.
