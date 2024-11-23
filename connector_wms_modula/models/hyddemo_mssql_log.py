@@ -93,10 +93,12 @@ VALUES (
         return execute_params
 
     @api.model
-    def whs_read_and_synchronize_list(self, datasource_id):
+    def whs_read_and_synchronize_list(self, datasource_id, whs_lists=False):
         """
-        Funzione lanciabile tramite cron per importare i movimenti da Modula verso Odoo
-        :param datasource_id:
+        Funzione lanciabile tramite cron per importare i movimenti da Modula, dalle
+        tabelle EXP_ORDINI*, verso Odoo
+        :param datasource_id: integer
+        :param whs_lists: instance of hyddemo.whs.liste
         :return: None
         """
         dbsource_obj = self.env['base.external.dbsource']
@@ -106,25 +108,49 @@ VALUES (
             raise UserError(_('Failed to open connection!'))
         i = 0
         pickings_to_assign = self.env['stock.picking']
+        db_fields = [
+            "RIG_ORDINE", "RIG_HOSTINF", "RIG_QTAR", "RIG_QTAE", "RIG_ARTICOLO"]
         hyddemo_whs_list_to_unlink = self.env["hyddemo.whs.liste"]
         while True:
-            esiti_liste_query = (
-                "SELECT * FROM (SELECT row_number() OVER "
-                "(ORDER BY RIG_ORDINE, RIG_HOSTINF) "
-                "AS rownum, RIG_ORDINE, RIG_HOSTINF, RIG_QTAR, RIG_QTAE, "
-                "RIG_ARTICOLO FROM EXP_ORDINI_RIGHE) AS A "
-                "WHERE A.rownum BETWEEN %s AND %s" % (i, i + 1000)
-            )
-            i += 1000
-            esiti_liste = dbsource.execute_mssql(
-                sqlquery=sql_text(esiti_liste_query), sqlparams=None, metadata=None
-            )
+            pos = 0
+            if whs_lists:
+                esiti_liste = dbsource.execute_mssql(
+                    sqlquery=sql_text(
+                        "SELECT RIG_ORDINE, RIG_HOSTINF, RIG_QTAR, RIG_QTAE, "
+                        "RIG_ARTICOLO FROM EXP_ORDINI_RIGHE WHERE RIG_ORDINE IN "
+                        ":NUM_LISTE ORDER BY RIG_ORDINE, RIG_HOSTINF"
+                    ),
+                    sqlparams=dict(
+                        NUM_LISTE=whs_lists.mapped('num_lista'),
+                    ),
+                    metadata=None
+                )
+            else:
+                esiti_liste = dbsource.execute_mssql(
+                    sqlquery=sql_text(
+                        "SELECT * FROM (SELECT row_number() OVER "
+                        "(ORDER BY RIG_ORDINE, RIG_HOSTINF) "
+                        "AS rownum, RIG_ORDINE, RIG_HOSTINF, RIG_QTAR, RIG_QTAE, "
+                        "RIG_ARTICOLO FROM EXP_ORDINI_RIGHE) AS A "
+                        "WHERE A.rownum BETWEEN :I_FROM AND :I_TO"
+                    ),
+                    sqlparams=dict(
+                        I_FROM=i,
+                        I_TO=i + 1000,
+                    ),
+                    metadata=None
+                )
+                pos = 1
+                i += 1000
             # esiti_liste[0] contain result
             if not esiti_liste[0]:
                 break
+            esiti_pos = {
+                db_field: i_pos + pos for i_pos, db_field in enumerate(db_fields)
+            }
             for esito_lista in esiti_liste[0]:
-                num_lista = esito_lista[1]
-                num_riga = int(esito_lista[2])
+                num_lista = esito_lista[esiti_pos["RIG_ORDINE"]]
+                num_riga = int(esito_lista[esiti_pos["RIG_HOSTINF"]])
                 if not num_riga or not num_lista:
                     _logger.info(
                         "WHS LOG: list %s in db without NumLista or NumRiga"
@@ -164,7 +190,7 @@ VALUES (
                 move = hyddemo_whs_list.move_id
 
                 try:
-                    qty_moved = float(esito_lista[4])
+                    qty_moved = float(esito_lista[esiti_pos["RIG_QTAE"]])
                 except ValueError:
                     qty_moved = False
                     pass
