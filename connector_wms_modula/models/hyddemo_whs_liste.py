@@ -37,11 +37,13 @@ class HyddemoWhsListe(models.Model):
             if db_type == "IMP":
                 current_whs_lists.unlink()
 
+    @api.multi
     def whs_cancel_lists(self, dbsource):
         # do no call super() and put specific code
-        # update lists to WMS, as they are possibly not elaborated
-        # todo this call will use current situation of whs lists, so valid!
-        #  dbsource.whs_insert_read_and_synchronize_list()
+        # update lists to WMS, as they are possibly already elaborated from Modula user
+        # sync EXP_ORDINI* tables, if they exist it means they are already processed by
+        # Modula user
+        # todo sincronizzare solo le tabelle EXP_*
         # check if the lists exist, to unlink or add an order to delete
         for num_lista in set(self.mapped("num_lista")):
             current_whs_lists = self.filtered(lambda x: x.num_lista == num_lista)
