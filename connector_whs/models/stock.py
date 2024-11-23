@@ -108,26 +108,28 @@ class Picking(models.Model):
     @api.multi
     def cancel_whs_list(self, unlink=False):
         for pick in self:
-            whs_list_ids = pick.mapped('move_lines.whs_list_ids')
-            if whs_list_ids:
-                if any([x.stato != '1' and x.qtamov != 0 for x in whs_list_ids]):
+            whs_lists = pick.mapped('move_lines.whs_list_ids')
+            location = pick.location_id
+            if pick.picking_type_id.code == 'incoming':
+                location = pick.location_dest_id
+            dbsource = self.env['base.external.dbsource'].search([
+                ('location_id', '=', location.id)
+            ])
+            if not dbsource:
+                _logger.info('WHS LOG: Location %s is not linked to WHS System' %
+                             location.name)
+                continue
+            # sync lists before cancel to make sure they are aligned
+            self.env["hyddemo.mssql.log"].whs_read_and_synchronize_list(
+                dbsource.id, whs_lists)
+            if whs_lists:
+                if any([x.stato != '1' and x.qtamov != 0 for x in whs_lists]):
                     raise UserError(_('Some moves already elaborated from WHS!'))
-
-                location = pick.location_id
-                if pick.picking_type_id.code == 'incoming':
-                    location = pick.location_dest_id
-                dbsource = self.env['base.external.dbsource'].search([
-                    ('location_id', '=', location.id)
-                ])
-                if not dbsource:
-                    _logger.info('WHS LOG: Location %s is not linked to WHS System' %
-                                 location.name)
-                    continue
                 if unlink:
                     _logger.info('WHS LOG: unlink lists for picking %s' % pick.name)
-                    whs_list_ids.unlink_lists(dbsource.id)
+                    whs_lists.unlink_lists(dbsource.id)
                 else:
-                    whs_list_ids.cancel_lists(dbsource.id)
+                    whs_lists.cancel_lists(dbsource.id)
         return True
 
 

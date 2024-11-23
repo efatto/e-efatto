@@ -158,12 +158,13 @@ class HyddemoMssqlLog(models.Model):
                 step += 1
 
     @api.model
-    def whs_read_and_synchronize_list(self, datasource_id):
+    def whs_read_and_synchronize_list(self, datasource_id, whs_lists=False):
         """
         Funzione lanciabile tramite cron per aggiornare i movimenti dalle liste create
         per WHS da Odoo nei vari moduli collegati (mrp, stock, ecc.)
-        :param datasource_id:
-        :return:
+        :param datasource_id: integer
+        :param whs_lists: instance of hyddemo.whs.liste
+        :return: None
         """
         dbsource_obj = self.env['base.external.dbsource']
         dbsource = dbsource_obj.browse(datasource_id)
@@ -172,27 +173,52 @@ class HyddemoMssqlLog(models.Model):
             raise UserError(_('Failed to open connection!'))
         i = 0
         pickings_to_assign = self.env['stock.picking']
+        db_fields = ["NumLista", "NumRiga", "Qta", "QtaMovimentata", "Lotto", "Lotto2",
+                     "Lotto3", "Lotto4", "Lotto5", "Articolo", "DescrizioneArticolo"]
         while True:
             # read 1000 record instead of 100 as in the past version
             # for test use Elaborato=1 instead of 4 and manually change qty_moved in
             # debug
-            esiti_liste_query = (
-                "SELECT * FROM (SELECT row_number() OVER (ORDER BY NumLista, NumRiga) "
-                "AS rownum, NumLista, NumRiga, Qta, QtaMovimentata, Lotto, Lotto2, "
-                "Lotto3, Lotto4, Lotto5, Articolo, DescrizioneArticolo FROM HOST_LISTE "
-                "WHERE Elaborato=4) AS A "
-                "WHERE A.rownum BETWEEN %s AND %s" % (i, i + 1000)
-            )
-            i += 1000
-            esiti_liste = dbsource.execute_mssql(
-                sqlquery=sql_text(esiti_liste_query), sqlparams=None, metadata=None
-            )
+            pos = 0
+            if whs_lists:
+                esiti_liste = dbsource.execute_mssql(
+                    sqlquery=sql_text(
+                        "SELECT NumLista, NumRiga, Qta, QtaMovimentata, Lotto, Lotto2, "
+                        "Lotto3, Lotto4, Lotto5, Articolo, DescrizioneArticolo "
+                        "FROM HOST_LISTE WHERE Elaborato=4 "
+                        "AND NumLista IN :NUM_LISTE ORDER BY NumLista, NumRiga"
+                    ),
+                    sqlparams = dict(
+                        NUM_LISTE=whs_lists.mapped('num_lista'),
+                    ),
+                    metadata = None,
+                )
+            else:
+                esiti_liste = dbsource.execute_mssql(
+                    sqlquery=sql_text(
+                        "SELECT * FROM (SELECT row_number() OVER (ORDER BY NumLista, NumRiga) "
+                        "AS rownum, NumLista, NumRiga, Qta, QtaMovimentata, Lotto, Lotto2, "
+                        "Lotto3, Lotto4, Lotto5, Articolo, DescrizioneArticolo FROM HOST_LISTE "
+                        "WHERE Elaborato=4) AS A "
+                        "WHERE A.rownum BETWEEN :I_FROM AND :I_TO"
+                    ),
+                    sqlparams=dict(
+                        I_FROM=i,
+                        I_TO=i + 1000,
+                    ),
+                    metadata=None
+                )
+                pos = 1
+                i += 1000
             # esiti_liste[0] contain result
             if not esiti_liste[0]:
                 break
+            esiti_pos = {
+                db_field: i_pos + pos for i_pos, db_field in enumerate(db_fields)
+            }
             for esito_lista in esiti_liste[0]:
-                num_lista = esito_lista[1]
-                num_riga = int(esito_lista[2])
+                num_lista = esito_lista[esiti_pos["NumLista"]]
+                num_riga = int(esito_lista[esiti_pos["NumRiga"]])
                 if not num_riga or not num_lista:
                     _logger.info(
                         "WHS LOG: list %s in db without NumLista or NumRiga"
@@ -231,7 +257,7 @@ class HyddemoMssqlLog(models.Model):
                 move = hyddemo_whs_list.move_id
 
                 try:
-                    qty_moved = float(esito_lista[4])
+                    qty_moved = float(esito_lista[esiti_pos["QtaMovimentata"]])
                 except ValueError:
                     qty_moved = False
                     pass
@@ -241,11 +267,16 @@ class HyddemoMssqlLog(models.Model):
                     # nothing to-do as not moved
                     continue
 
-                lotto = esito_lista[5].strip() if esito_lista[5] else False
-                lotto2 = esito_lista[6].strip() if esito_lista[6] else False
-                lotto3 = esito_lista[7].strip() if esito_lista[7] else False
-                lotto4 = esito_lista[8].strip() if esito_lista[8] else False
-                lotto5 = esito_lista[9].strip() if esito_lista[9] else False
+                lotto = esito_lista[esiti_pos["Lotto"]].strip()\
+                    if esito_lista[esiti_pos["Lotto"]] else False
+                lotto2 = esito_lista[esiti_pos["Lotto2"]].strip()\
+                    if esito_lista[esiti_pos["Lotto2"]] else False
+                lotto3 = esito_lista[esiti_pos["Lotto3"]].strip()\
+                    if esito_lista[esiti_pos["Lotto3"]] else False
+                lotto4 = esito_lista[esiti_pos["Lotto4"]].strip()\
+                    if esito_lista[esiti_pos["Lotto4"]] else False
+                lotto5 = esito_lista[esiti_pos["Lotto5"]].strip()\
+                    if esito_lista[esiti_pos["Lotto5"]] else False
 
                 if qty_moved != hyddemo_whs_list.qta:
                     # in or out differs from total qty
