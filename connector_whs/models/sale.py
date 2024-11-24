@@ -21,10 +21,3 @@ class SaleOrder(models.Model):
                 or all(x.stato == "3" for x in move_line.whs_list_ids)
             ).create_whs_list()
         return res
-
-    @api.multi
-    def action_cancel(self):
-        res = super(SaleOrder, self).action_cancel()
-        for order in self:
-            order.picking_ids.cancel_whs_list()
-        return res
