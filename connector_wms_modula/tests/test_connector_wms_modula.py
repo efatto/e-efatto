@@ -668,3 +668,72 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # test change qty of sale order line is forbidden
         with self.assertRaises(UserError):
             order1.order_line[0].write({"product_uom_qty": 17})
+
+    def test_05_repair(self):
+        with self.assertRaises(ConnectionSuccessError):
+            self.dbsource.connection_test()
+
+        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        repair_form = Form(self.env["repair.order"])
+        repair_form.product_id = self.product1
+        repair_form.product_uom = self.product1.uom_id
+        repair_form.partner_id = self.partner
+        repair_form.product_qty = 1
+        repair_form.location_id = self.env.ref("stock.stock_location_stock")
+        with repair_form.operations.new() as repair_line_form:
+            repair_line_form.product_id = self.product2
+            repair_line_form.name = "Add product"
+            repair_line_form.type = "add"
+            repair_line_form.product_uom_qty = 5
+            repair_line_form.product_uom = self.product2.uom_id
+            repair_line_form.price_unit = 5
+            repair_line_form.location_id = self.env.ref("stock.stock_location_stock")
+            repair_line_form.location_dest_id = self.manufacture_location
+        with repair_form.operations.new() as repair_line_form:
+            repair_line_form.product_id = self.product3
+            repair_line_form.name = "Add product"
+            repair_line_form.type = "add"
+            repair_line_form.product_uom_qty = 3
+            repair_line_form.product_uom = self.product3.uom_id
+            repair_line_form.price_unit = 5
+            repair_line_form.location_id = self.env.ref("stock.stock_location_stock")
+            repair_line_form.location_dest_id = self.manufacture_location
+        repair = repair_form.save()
+        repair.action_repair_confirm()
+        self.assertEqual(repair.state, "confirmed",
+                         'Repair order should be in "Confirmed" state.')
+        repair.action_repair_start()
+        self.assertEqual(repair.state, "under_repair",
+                         'Repair order should be in "Under_repair" state.')
+        repair.action_repair_end()
+        self.assertEqual(repair.state, "done",
+                         'Repair order should be in "Done" state.')
+        # check whs list is added
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        self.assertEqual(
+            len(self._execute_select_all_valid_host_liste()),
+            2,
+        )
+
+        # simulate whs work: partial processing of product #2
+        # and total of product #3
+        whs_lists = repair.mapped('operations.move_id.whs_list_ids')
+        self.simulate_wms_cron({
+            x: 2 if x.product_id == self.product2 else 3 for x in whs_lists
+        })
+        for whs_list in whs_lists:
+            result_liste = self.dbsource.execute_mssql(
+                sqlquery=sql_text(
+                    "SELECT RIG_QTAR, RIG_QTAE "
+                    "FROM EXP_ORDINI_RIGHE WHERE "
+                    "RIG_ORDINE=:RIG_ORDINE AND RIG_HOSTINF=:RIG_HOSTINF"
+                ),
+                sqlparams=dict(
+                    RIG_ORDINE=whs_list.num_lista, RIG_HOSTINF=whs_list.riga),
+                metadata=None
+            )
+            self.assertEqual(
+                str(result_liste[0]),
+                "[(Decimal('5.000'), Decimal('2.000'))]"
+                if whs_list.product_id == self.product2 else
+                "[(Decimal('3.000'), Decimal('3.000'))]")
