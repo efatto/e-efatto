@@ -4,7 +4,6 @@ from . import (
     hyddemo_mssql_log,
     mrp,
     product,
-    purchase,
     repair,
     sale,
     stock
