@@ -75,7 +75,30 @@ class HyddemoWhsListe(models.Model):
     @api.model
     def whs_check_lists(self, num_lista, dbsource):
         # do no call super() and put specific code
-        pass
+        elaborated_lists = dbsource.execute_mssql(
+            sqlquery=sql_text(
+                "SELECT * FROM EXP_ORDINI_RIGHE WHERE RIG_ORDINE=:NUM_LISTA "
+                "AND RIG_QTAE > 0"
+            ),
+            sqlparams=dict(NUM_LISTA=num_lista), metadata=None
+        )
+        if elaborated_lists[0]:
+            raise UserError(_(
+                "Trying to cancel lists elaborated from WMS, "
+                "please wait for cron synchronization or force it."
+            ))
+        deleting_lists = dbsource.execute_mssql(
+            sqlquery=sql_text(
+                "SELECT * FROM IMP_ORDINI WHERE ORD_ORDINE=:NUM_LISTA "
+                "AND ORD_OPERAZIONE='D'"
+            ),
+            sqlparams=dict(NUM_LISTA=num_lista), metadata=None
+        )
+        if deleting_lists[0]:
+            raise UserError(_(
+                "Trying to cancel lists already marked to be deleted in Odoo, "
+                "please wait for WMS cron synchronization or force it."
+            ))
 
     @api.multi
     def whs_check_list_state(self):
@@ -136,7 +159,7 @@ VALUES (
                     'ORD_DES': lista.riferimento[:50] if lista.riferimento else '',  # char 50
                     'ORD_PRIOHOST': lista.priorita,  # decimal(16,0)
                     'ORD_TIPOOP': tipo_operazione_dict[lista.tipo],  # char 5: P,V,I,E
-                    'ORD_CLIENTE': lista.ragsoc[:50],  # char 50
+                    'ORD_CLIENTE': lista.ragsoc[:50] if lista.ragsoc else "",  # char 50
                 }
             product = lista.product_id
             if not execute_params_order_line.get(lista.num_lista):
