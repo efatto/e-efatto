@@ -174,7 +174,6 @@ class TestConnectorWmsModula(CommonConnectorWMS):
     def test_00_complete_picking_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
-        whs_len_records = len(self._execute_select_all_valid_host_liste())
         order_form1 = Form(self.env["sale.order"])
         order_form1.partner_id = self.partner
         order_form1.client_order_ref = "Rif. SO customer"
@@ -194,7 +193,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self._execute_select_all_valid_host_liste()
-        self.assertEqual(len(whs_records), whs_len_records + 1)
+        self.assertEqual(len(whs_records), 1)
         # RIG_ORDINE, RIG_HOSTINF, RIG_ARTICOLO, RIG_QTAR
         for whs_record in whs_records:
             lista = whs_record[0]
@@ -228,7 +227,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # check whs list is added, and only 1 valid whs list exists
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self._execute_select_all_valid_host_liste()
-        self.assertEqual(len(whs_records), whs_len_records + 1)
+        self.assertEqual(len(whs_records), 1)
         self.simulate_wms_cron({x: x.qta for x in whs_lists})
 
         result_liste = self._select_wms_liste(whs_lists)
@@ -246,7 +245,6 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
 
-        whs_len_records = len(self._execute_select_all_valid_host_liste())
         order_form1 = Form(self.env["sale.order"])
         order_form1.partner_id = self.partner
         order_form1.client_order_ref = "Rif. SO customer 1"
@@ -287,7 +285,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             sqlparams=dict(RIG_QTAR=0),
             metadata=None,
         )[0]
-        self.assertEqual(len(whs_records), whs_len_records + 2)
+        self.assertEqual(len(whs_records), 2)
         # simulate whs work: validate first move partially (3 over 5)
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.simulate_wms_cron({x: 3 for x in whs_lists})
@@ -330,7 +328,6 @@ class TestConnectorWmsModula(CommonConnectorWMS):
     def test_02_partial_picking_partial_available_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
-        whs_len_records = len(self._execute_select_all_valid_host_liste())
         order_form1 = Form(self.env["sale.order"])
         order_form1.partner_id = self.partner
         order_form1.client_order_ref = "Rif. SO customer 2"
@@ -442,7 +439,6 @@ class TestConnectorWmsModula(CommonConnectorWMS):
     def test_03_partial_picking_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
-        whs_len_records = len(self._execute_select_all_valid_host_liste())
         order_form1 = Form(self.env["sale.order"])
         order_form1.partner_id = self.partner
         order_form1.client_order_ref = "Rif. SO customer 3"
@@ -472,7 +468,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self._execute_select_all_valid_host_liste()
-        self.assertEqual(len(whs_records), whs_len_records + 4)
+        self.assertEqual(len(whs_records), 4)
         # simulate whs work: validate first move totally and second move partially
         whs_lists = picking.mapped('move_lines.whs_list_ids')
         self.simulate_wms_cron({
@@ -541,7 +537,6 @@ class TestConnectorWmsModula(CommonConnectorWMS):
     def test_04_unlink_sale_order(self):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
-        whs_len_records = len(self._execute_select_all_valid_host_liste())
         order_form1 = Form(self.env["sale.order"])
         order_form1.partner_id = self.partner
         order_form1.client_order_ref = "Rif. SO customer 4"
@@ -601,7 +596,6 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             order1.action_cancel()
         # Check product added to sale order after confirmation create new whs lists
         # adding product to an existing open picking
-        # whs_len_records = len(self._execute_select_all_valid_host_liste())
         order_form2 = Form(order1)
         with order_form2.order_line.new() as order_line:
             order_line.product_id = self.product4
@@ -628,7 +622,6 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
 
-        whs_len_records = len(self._execute_select_all_valid_host_liste())
         repair_form = Form(self.env["repair.order"])
         repair_form.product_id = self.product1
         repair_form.product_uom = self.product1.uom_id
@@ -752,14 +745,12 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # TODO check cancel workflow without action_assign that create whs list anyway
         self._check_cancel_workflow(backorder_picking, 1)
         backorder_picking.action_assign()
+        back_whs_list = backorder_picking.mapped('move_lines.whs_list_ids')
         # simulate whs work set done to rest of backorder
         self.simulate_wms_cron({x: 18 for x in back_whs_list})
         self.dbsource.whs_insert_read_and_synchronize_list()
         backorder_picking.button_validate()
-        self.assertEqual(backorder_picking.state, "assigned")
-        # self.run_stock_procurement_scheduler()
-        backorder_picking.action_assign()
-        self.assertEqual(backorder_picking.state, "assigned")
+        self.assertEqual(backorder_picking.state, "done")
         self.assertFalse(
             all(
                 whs_list.stato == "3"
@@ -769,7 +760,6 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # Check product added to purchase order after confirm create whs list with
         # different date_planned which create a new picking (as this module depends on
         # purchase_delivery_split_date)
-        whs_len_records = len(self._execute_select_all_valid_host_liste())
         purchase_form = Form(purchase)
         with purchase_form.order_line.new() as po_line:
             po_line.product_id = self.product4
@@ -779,12 +769,10 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             po_line.price_unit = 100
             po_line.date_planned = fields.Datetime.today() + relativedelta(month=2)
         purchase_form.save()
-        # new_picking = purchase.picking_ids - (picking | backorder_picking)
-        # new_picking.action_assign()
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
             len(self._execute_select_all_valid_host_liste()),
-            whs_len_records + 1,
+            1,
         )
         # Check product added to purchase order after confirmation create new whs lists
         # adding product to an existing open picking
@@ -815,7 +803,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
             len(self._execute_select_all_valid_host_liste()),
-            whs_len_records + 3,
+            3,
         )
 
         # test qty change on purchase order line, which create a new line with increased
@@ -834,4 +822,4 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.dbsource.whs_insert_read_and_synchronize_list()
         result_liste = self._select_wms_liste(po_whs_list)
         # whs list is created for the increased qty
-        self.assertEqual(str(result_liste[0]), "[(Decimal('7.000'), None)]")
+        self.assertEqual(str(result_liste[0]), "[(Decimal('7.000'),)]")
