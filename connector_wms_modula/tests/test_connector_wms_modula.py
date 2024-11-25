@@ -746,11 +746,11 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self._check_cancel_workflow(backorder_picking, 1)
         backorder_picking.action_assign()
         back_whs_list = backorder_picking.mapped('move_lines.whs_list_ids')
-        # simulate whs work set done to rest of backorder
-        self.simulate_wms_cron({x: 18 for x in back_whs_list})
+        # DO NOT simulate whs work set done to rest of backorder
+        # self.simulate_wms_cron({x: 18 for x in back_whs_list})
         self.dbsource.whs_insert_read_and_synchronize_list()
         backorder_picking.button_validate()
-        self.assertEqual(backorder_picking.state, "done")
+        self.assertEqual(backorder_picking.state, "assigned")
         self.assertFalse(
             all(
                 whs_list.stato == "3"
@@ -772,7 +772,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
             len(self._execute_select_all_valid_host_liste()),
-            1,
+            2,
         )
         # Check product added to purchase order after confirmation create new whs lists
         # adding product to an existing open picking
@@ -803,7 +803,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
             len(self._execute_select_all_valid_host_liste()),
-            3,
+            4,
         )
 
         # test qty change on purchase order line, which create a new line with increased
@@ -820,6 +820,6 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             lambda x: x.qta == 7
         )
         self.dbsource.whs_insert_read_and_synchronize_list()
-        result_liste = self._select_wms_liste(po_whs_list)
+        result_liste = self._select_wms_liste(po_whs_list, db_type="IMP")
         # whs list is created for the increased qty
         self.assertEqual(str(result_liste[0]), "[(Decimal('7.000'),)]")
