@@ -47,6 +47,18 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             sqlquery=sql_text("DELETE FROM EXP_ORDINI"), sqlparams=None, metadata=None
         )
 
+    def _select_wms_liste(self, wms_list, db_type="EXP"):
+        return self.dbsource.execute_mssql(
+            sqlquery=sql_text(
+                f"SELECT RIG_QTAR {', RIG_QTAE' if db_type == 'EXP' else ''} "
+                f"FROM {db_type}_ORDINI_RIGHE WHERE "
+                "RIG_ORDINE=:RIG_ORDINE AND RIG_HOSTINF=:RIG_HOSTINF"
+            ),
+            sqlparams=dict(
+                RIG_ORDINE=wms_list.num_lista, RIG_HOSTINF=wms_list.riga),
+            metadata=None
+        )
+
     def _check_cancel_workflow(self, picking, list_len):
         """
         This method is used to check the re-use of the same whs list linked to the
@@ -218,16 +230,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertEqual(len(whs_records), whs_len_records + 1)
         self.simulate_wms_cron({x: x.qta for x in whs_lists})
 
-        result_liste = self.dbsource.execute_mssql(
-            sqlquery=sql_text(
-                "SELECT RIG_QTAR, RIG_QTAE "
-                "FROM EXP_ORDINI_RIGHE WHERE "
-                "RIG_ORDINE=:RIG_ORDINE AND RIG_HOSTINF=:RIG_HOSTINF"
-            ), sqlparams=dict(
-                RIG_ORDINE=whs_lists.num_lista,
-                RIG_HOSTINF=whs_lists.riga,
-            ), metadata=None
-        )
+        result_liste = self._select_wms_liste(whs_lists)
         self.assertEqual(
             str(result_liste[0]),
             "[(Decimal('5.000'), Decimal('5.000'))]")
@@ -288,16 +291,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.simulate_wms_cron({x: 3 for x in whs_lists})
         for whs_list in whs_lists:
-            result_liste = self.dbsource.execute_mssql(
-                sqlquery=sql_text(
-                    "SELECT RIG_QTAR, RIG_QTAE "
-                    "FROM EXP_ORDINI_RIGHE WHERE "
-                    "RIG_ORDINE=:RIG_ORDINE AND RIG_HOSTINF=:RIG_HOSTINF"
-                ),
-                sqlparams=dict(
-                    RIG_ORDINE=whs_list.num_lista, RIG_HOSTINF=whs_list.riga),
-                metadata=None
-            )
+            result_liste = self._select_wms_liste(whs_list)
             self.assertIn("[(Decimal('5.000'), Decimal('3.000'))]",
                           str(result_liste))
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -381,16 +375,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             x: 3 if x.product_id == self.product1 else 20 for x in whs_lists})
         # check whs work is done correctly
         for whs_list in whs_lists:
-            result_liste = self.dbsource.execute_mssql(
-                sqlquery=sql_text(
-                    "SELECT RIG_QTAR, RIG_QTAE "
-                    "FROM EXP_ORDINI_RIGHE WHERE "
-                    "RIG_ORDINE=:RIG_ORDINE AND RIG_HOSTINF=:RIG_HOSTINF"
-                ),
-                sqlparams=dict(
-                    RIG_ORDINE=whs_list.num_lista, RIG_HOSTINF=whs_list.riga),
-                metadata=None
-            )
+            result_liste = self._select_wms_liste(whs_list)
             self.assertEqual(
                 str(result_liste[0]),
                 "[(Decimal('5.000'), Decimal('3.000'))]"
@@ -444,29 +429,11 @@ class TestConnectorWmsModula(CommonConnectorWMS):
 
         # todo check whs_list for backorder is created
         self.dbsource.whs_insert_read_and_synchronize_list()
-        result_liste = self.dbsource.execute_mssql(
-            sqlquery=sql_text(
-                "SELECT RIG_QTAR "
-                "FROM IMP_ORDINI_RIGHE WHERE "
-                "RIG_ORDINE=:RIG_ORDINE AND RIG_HOSTINF=:RIG_HOSTINF"
-            ), sqlparams=dict(
-                RIG_ORDINE=back_whs_list.num_lista,
-                RIG_HOSTINF=back_whs_list.riga),
-                metadata=None,
-        )
-        self.assertEqual(str(result_liste[0]), "[(Decimal('2.000'),)]")
+        result_liste = self._select_wms_liste(back_whs_list)
+        self.assertFalse(result_liste[0])
         # simulate whs work set done to rest of backorder
         self.simulate_wms_cron({x: 2 for x in back_whs_list})
-        result_liste = self.dbsource.execute_mssql(
-            sqlquery=sql_text(
-                "SELECT RIG_QTAR, RIG_QTAE "
-                "FROM EXP_ORDINI_RIGHE WHERE "
-                "RIG_ORDINE=:RIG_ORDINE AND RIG_HOSTINF=:RIG_HOSTINF"
-            ), sqlparams=dict(
-                RIG_ORDINE=back_whs_list.num_lista,
-                RIG_HOSTINF=back_whs_list.riga),
-                metadata=None,
-        )
+        result_liste = self._select_wms_liste(back_whs_list)
         self.assertEqual(str(result_liste[0]), "[(Decimal('2.000'), Decimal('2.000'))]")
         self.dbsource.whs_insert_read_and_synchronize_list()
         backorder_picking.button_validate()
@@ -511,16 +478,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.simulate_wms_cron({
             x: 0 if x.product_id == self.product3 else 5 for x in whs_lists})
         for whs_list in whs_lists:
-            result_liste = self.dbsource.execute_mssql(
-                sqlquery=sql_text(
-                    "SELECT RIG_QTAR, RIG_QTAE "
-                    "FROM EXP_ORDINI_RIGHE WHERE "
-                    "RIG_ORDINE=:RIG_ORDINE AND RIG_HOSTINF=:RIG_HOSTINF"
-                ),
-                sqlparams=dict(
-                    RIG_ORDINE=whs_list.num_lista, RIG_HOSTINF=whs_list.riga),
-                metadata=None
-            )
+            result_liste = self._select_wms_liste(whs_list)
             self.assertEqual(
                 str(result_liste[0]),
                 "[(Decimal('5.000'), Decimal('5.000'))]"
