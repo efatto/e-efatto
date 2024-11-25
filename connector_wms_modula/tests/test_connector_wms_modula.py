@@ -103,7 +103,8 @@ class TestConnectorWmsModula(CommonConnectorWMS):
                 RIG_ORDINE=valid_whs_lists.mapped("num_lista")),
             metadata=None,
         )[0]
-        self.assertEqual(len(whs_records2), 2, "There must exist 2 valid WMS records!")
+        self.assertEqual(len(whs_records2), list_len,
+                         "There must exist 2 valid WMS records!")
         return valid_whs_lists
 
     def _execute_select_all_valid_host_liste(self):
@@ -415,7 +416,6 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.simulate_wms_cron({
             x: 2 if x.product_id == self.product2 else 3 for x in whs_lists
         })
-        # picking.action_pack_operation_auto_fill()
         backorder_wiz.process()
         self.assertEqual(picking.state, 'done')
 
@@ -590,10 +590,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         )
         # self.run_stock_procurement_scheduler()
         picking.action_assign()
-        if all(x.state == "assigned" for x in picking.move_lines):
-            self.assertEqual(picking.state, "assigned")
-        else:
-            self.assertEqual(picking.state, "cancel")
+        self.assertEqual(picking.state, "assigned")
         whs_lists = picking.mapped("move_lines.whs_list_ids")
         # todo it's not possibile to simulate a work in progress from WHS user, as there
         #  are only done lists in EXP_ORDINI* tables afaik (check it)
@@ -680,18 +677,161 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             x: 2 if x.product_id == self.product2 else 3 for x in whs_lists
         })
         for whs_list in whs_lists:
-            result_liste = self.dbsource.execute_mssql(
-                sqlquery=sql_text(
-                    "SELECT RIG_QTAR, RIG_QTAE "
-                    "FROM EXP_ORDINI_RIGHE WHERE "
-                    "RIG_ORDINE=:RIG_ORDINE AND RIG_HOSTINF=:RIG_HOSTINF"
-                ),
-                sqlparams=dict(
-                    RIG_ORDINE=whs_list.num_lista, RIG_HOSTINF=whs_list.riga),
-                metadata=None
-            )
+            result_liste = self._select_wms_liste(whs_list)
             self.assertEqual(
                 str(result_liste[0]),
                 "[(Decimal('5.000'), Decimal('2.000'))]"
                 if whs_list.product_id == self.product2 else
                 "[(Decimal('3.000'), Decimal('3.000'))]")
+
+    def test_06_purchase(self):
+        with self.assertRaises(ConnectionSuccessError):
+            self.dbsource.connection_test()
+        purchase_form = Form(self.env["purchase.order"])
+        purchase_form.partner_id = self.partner
+        with purchase_form.order_line.new() as po_line:
+            po_line.product_id = self.product2
+            po_line.product_qty = 20
+            po_line.product_uom = self.product2.uom_po_id
+            po_line.name = self.product2.name
+            po_line.price_unit = 100
+            po_line.date_planned = fields.Datetime.today() + relativedelta(month=1)
+        with purchase_form.order_line.new() as po_line:
+            po_line.product_id = self.product3
+            po_line.product_qty = 3
+            po_line.product_uom = self.product3.uom_po_id
+            po_line.name = self.product3.name
+            po_line.price_unit = 100
+            po_line.date_planned = fields.Datetime.today() + relativedelta(month=1)
+        purchase = purchase_form.save()
+        purchase.button_approve()
+        self.assertEqual(
+            purchase.state, 'purchase', 'Purchase state should be "Purchase"')
+        # check whs list is added
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        self.assertEqual(
+            len(self._execute_select_all_valid_host_liste()),
+            2,
+        )
+
+        # simulate whs work: partial processing of product #2
+        # and total of product #3
+        whs_lists = purchase.mapped('picking_ids.move_lines.whs_list_ids')
+        self.simulate_wms_cron({
+            x: 2 if x.product_id == self.product2 else 3 for x in whs_lists})
+        for whs_list in whs_lists:
+            result_liste = self._select_wms_liste(whs_list)
+            self.assertEqual(
+                str(result_liste[0]),
+                "[(Decimal('20.000'), Decimal('2.000'))]"
+                if whs_list.product_id == self.product2 else
+                "[(Decimal('3.000'), Decimal('3.000'))]")
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        # simulate user partial validate of picking and check backorder exist
+        picking = purchase.picking_ids[0]
+        picking.action_assign()
+        self.assertEqual(picking.state, 'assigned')
+        backorder_wiz_id = picking.button_validate()['res_id']
+        backorder_wiz = self.env['stock.backorder.confirmation'].browse(
+            backorder_wiz_id)
+        backorder_wiz.process()
+        self.assertEqual(picking.state, 'done')
+
+        # check back picking is waiting as waiting for WHS work
+        self.assertEqual(len(purchase.picking_ids), 2)
+        backorder_picking = purchase.picking_ids - picking
+        # self.run_stock_procurement_scheduler()
+        backorder_picking.action_assign()
+        self.assertEqual(backorder_picking.state, "assigned")
+
+        # check whs_list for backorder is created
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        back_whs_list = backorder_picking.mapped('move_lines.whs_list_ids')
+        result_liste = self._select_wms_liste(back_whs_list, "IMP")
+        self.assertEqual(str(result_liste[0]), "[(Decimal('18.000'),)]")
+        # TODO check cancel workflow without action_assign that create whs list anyway
+        self._check_cancel_workflow(backorder_picking, 1)
+        backorder_picking.action_assign()
+        # simulate whs work set done to rest of backorder
+        self.simulate_wms_cron({x: 18 for x in back_whs_list})
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        backorder_picking.button_validate()
+        self.assertEqual(backorder_picking.state, "assigned")
+        # self.run_stock_procurement_scheduler()
+        backorder_picking.action_assign()
+        self.assertEqual(backorder_picking.state, "assigned")
+        self.assertFalse(
+            all(
+                whs_list.stato == "3"
+                for whs_list in backorder_picking.move_lines.whs_list_ids
+            )
+        )
+        # Check product added to purchase order after confirm create whs list with
+        # different date_planned which create a new picking (as this module depends on
+        # purchase_delivery_split_date)
+        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        purchase_form = Form(purchase)
+        with purchase_form.order_line.new() as po_line:
+            po_line.product_id = self.product4
+            po_line.product_qty = 20
+            po_line.product_uom = self.product4.uom_po_id
+            po_line.name = self.product4.name
+            po_line.price_unit = 100
+            po_line.date_planned = fields.Datetime.today() + relativedelta(month=2)
+        purchase_form.save()
+        # new_picking = purchase.picking_ids - (picking | backorder_picking)
+        # new_picking.action_assign()
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        self.assertEqual(
+            len(self._execute_select_all_valid_host_liste()),
+            whs_len_records + 1,
+        )
+        # Check product added to purchase order after confirmation create new whs lists
+        # adding product to an existing open picking
+        purchase_form = Form(purchase)
+        with purchase_form.order_line.new() as po_line:
+            po_line.product_id = self.product5
+            po_line.product_qty = 20
+            po_line.product_uom = self.product5.uom_po_id
+            po_line.name = self.product5.name
+            po_line.price_unit = 100
+            po_line.date_planned = fields.Datetime.today() + relativedelta(month=2)
+        with purchase_form.order_line.new() as po_line:
+            po_line.product_id = self.product5
+            po_line.product_qty = 20
+            po_line.product_uom = self.product5.uom_po_id
+            po_line.name = self.product5.name
+            po_line.price_unit = 100
+            po_line.date_planned = fields.Datetime.today() + relativedelta(month=2)
+        purchase_form.save()
+        # pickings linked to purchase order change state to assigned when a product is
+        # added o changed
+        pickings = purchase.picking_ids.filtered(lambda x: x.state == "assigned")
+        pickings.action_assign()  # aka "Controlla disponibilità"
+        new_product_move_line_ids = purchase.picking_ids.mapped('move_lines').filtered(
+            lambda x: x.product_id == self.product5
+        )
+        self.assertTrue(new_product_move_line_ids.mapped("whs_list_ids"))
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        self.assertEqual(
+            len(self._execute_select_all_valid_host_liste()),
+            whs_len_records + 3,
+        )
+
+        # test qty change on purchase order line, which create a new line with increased
+        # qty on picking
+        po_line_to_change = purchase.order_line.filtered(
+            lambda x: x.product_id == self.product5
+        )[-1]
+        po_line_to_change.write({"product_qty": 27})
+        pickings = purchase.picking_ids.filtered(
+            lambda x: x.state == "assigned"
+        )
+        pickings.action_assign()
+        po_whs_list = po_line_to_change.mapped("move_ids.whs_list_ids").filtered(
+            lambda x: x.qta == 7
+        )
+        self.dbsource.whs_insert_read_and_synchronize_list()
+        result_liste = self._select_wms_liste(po_whs_list)
+        # whs list is created for the increased qty
+        self.assertEqual(str(result_liste[0]), "[(Decimal('7.000'), None)]")
