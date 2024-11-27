@@ -25,7 +25,7 @@ class PurchaseOrder(models.Model):
         if len(pickings) > 1:
             action["domain"] = [("id", "in", pickings.ids)]
         elif len(pickings) == 1:
-            action["views"] = [(self.env.ref("stock.action_picking_form").id, "form")]
+            action["views"] = [(self.env.ref("stock.view_picking_form").id, "form")]
             action["res_id"] = pickings[0].id
         else:
             action = {"type": "ir.actions.act_window_close"}
