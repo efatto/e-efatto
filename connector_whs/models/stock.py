@@ -231,7 +231,13 @@ class StockMove(models.Model):
                 in self.env.context.get("picking_ids_not_to_backorder", [])
             ):
                 continue
-            moves = self.filtered(lambda m: m.picking_id == picking)
+            moves = self.filtered(
+                lambda m: m.picking_id == picking
+                and m.product_type == "product"
+                and not m.product_id.exclude_from_whs
+            )
+            if not moves:
+                continue
             list_number = False  # get existing active list_number to append new whslist
             list_numbers = list(
                 set(
