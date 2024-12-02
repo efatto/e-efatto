@@ -21,7 +21,7 @@ class TestConnectorWhs(SingleTransactionCase):
         if not dbsource:
             # connection string is something like:
             # mssql+pymssql://<user>:<password>@<ip>/<database>
-            conn_file = os.path.join(os.path.expanduser("~"), "connection_string.txt")
+            conn_file = os.path.join(os.path.expanduser("~"), "connection_wms_whs.txt")
             if not os.path.isfile(conn_file):
                 raise UserError(_("Missing connection string!"))
             with open(conn_file, "r") as file:
