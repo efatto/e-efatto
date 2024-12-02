@@ -134,8 +134,12 @@ class TestConnectorWmsModula(CommonConnectorWMS):
                 sqlparams=dict(
                     ORD_ORDINE=num_lista,
                     ORD_TIPOOP=tipo_operazione_dict[current_whs_lists[0].tipo],
-                    ORD_DES=current_whs_lists[0].riferimento[:50]
-                    if current_whs_lists[0].riferimento else '',
+                    ORD_DES="%s - %s"[:50] % (
+                        current_whs_lists[0].riferimento
+                        if current_whs_lists[0].riferimento else '',
+                        current_whs_lists[0].ragsoc
+                        if current_whs_lists[0].ragsoc else "",
+                    ),
                 ), metadata=None
             )
             for whs_list in current_whs_lists:
