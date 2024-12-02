@@ -150,7 +150,10 @@ VALUES (
             }
             for esito_lista in esiti_liste[0]:
                 num_lista = esito_lista[esiti_pos["RIG_ORDINE"]]
-                num_riga = int(esito_lista[esiti_pos["RIG_HOSTINF"]])
+                try:
+                    num_riga = int(esito_lista[esiti_pos["RIG_HOSTINF"]])
+                except ValueError:
+                    num_riga = 0
                 if not num_riga or not num_lista:
                     _logger.info(
                         "WHS LOG: list %s in db without NumLista or NumRiga"
