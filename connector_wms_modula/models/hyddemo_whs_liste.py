@@ -131,16 +131,14 @@ ORD_OPERAZIONE,
 ORD_ORDINE,
 ORD_DES,
 ORD_PRIOHOST,
-ORD_TIPOOP,
-ORD_CLIENTE
+ORD_TIPOOP
 )
 VALUES (
 :ORD_OPERAZIONE,
 :ORD_ORDINE,
 :ORD_DES,
 :ORD_PRIOHOST,
-:ORD_TIPOOP,
-:ORD_CLIENTE
+:ORD_TIPOOP
 )
 """
         return insert_host_liste_query.replace("\n", " ")
@@ -156,10 +154,12 @@ VALUES (
                     'ORD_OPERAZIONE': 'I',  # I=Insert/Update; D=Delete; A=Add if row not exists
                     # H=Add if header not exists; Q=Always add in queue; R=Replace
                     'ORD_ORDINE': lista.num_lista[:20],  # char 20
-                    'ORD_DES': lista.riferimento[:50] if lista.riferimento else '',  # char 50
+                    'ORD_DES': "%s - %s"[:50] % (
+                        lista.riferimento if lista.riferimento else '',
+                        lista.ragsoc if lista.ragsoc else "",
+                    ),  # char 50
                     'ORD_PRIOHOST': lista.priorita,  # decimal(16,0)
                     'ORD_TIPOOP': tipo_operazione_dict[lista.tipo],  # char 5: P,V,I,E
-                    'ORD_CLIENTE': lista.ragsoc[:50] if lista.ragsoc else "",  # char 50
                 }
             product = lista.product_id
             if not execute_params_order_line.get(lista.num_lista):
