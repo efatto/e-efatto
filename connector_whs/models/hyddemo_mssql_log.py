@@ -188,18 +188,19 @@ class HyddemoMssqlLog(models.Model):
                         "FROM HOST_LISTE WHERE Elaborato=4 "
                         "AND NumLista IN :NUM_LISTE ORDER BY NumLista, NumRiga"
                     ),
-                    sqlparams = dict(
+                    sqlparams=dict(
                         NUM_LISTE=whs_lists.mapped('num_lista'),
                     ),
-                    metadata = None,
+                    metadata=None,
                 )
             else:
                 esiti_liste = dbsource.execute_mssql(
                     sqlquery=sql_text(
-                        "SELECT * FROM (SELECT row_number() OVER (ORDER BY NumLista, NumRiga) "
-                        "AS rownum, NumLista, NumRiga, Qta, QtaMovimentata, Lotto, Lotto2, "
-                        "Lotto3, Lotto4, Lotto5, Articolo, DescrizioneArticolo FROM HOST_LISTE "
-                        "WHERE Elaborato=4) AS A "
+                        "SELECT * FROM (SELECT row_number() OVER "
+                        "(ORDER BY NumLista, NumRiga) "
+                        "AS rownum, NumLista, NumRiga, Qta, QtaMovimentata, Lotto, "
+                        "Lotto2, Lotto3, Lotto4, Lotto5, Articolo, DescrizioneArticolo "
+                        "FROM HOST_LISTE WHERE Elaborato=4) AS A "
                         "WHERE A.rownum BETWEEN :I_FROM AND :I_TO"
                     ),
                     sqlparams=dict(

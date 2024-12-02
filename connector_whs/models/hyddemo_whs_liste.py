@@ -126,7 +126,6 @@ class HyddemoWhsListe(models.Model):
         # overridable method
         pass
 
-
     @api.multi
     def check_lists(self, dbsource):
         # Check if whs list are in Elaborato=3 or 4 before unlinking/

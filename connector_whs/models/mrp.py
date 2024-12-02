@@ -45,16 +45,16 @@ class MrpProduction(models.Model):
     def _get_whslist_finished_data(self, num_lista, riga, move):
         # overridable method
         return dict(
-            data_lista = fields.Datetime.now(),
-            move_id = move.id,
-            num_lista = num_lista,
-            product_id = move.product_id.id,
-            qta = move.quantity_done,
-            riferimento = self.name,
-            riga = riga,
-            stato = '1',
-            tipo = '2',
-            tipo_mov = 'mrpin',
+            data_lista=fields.Datetime.now(),
+            move_id=move.id,
+            num_lista=num_lista,
+            product_id=move.product_id.id,
+            qta=move.quantity_done,
+            riferimento=self.name,
+            riga=riga,
+            stato='1',
+            tipo='2',
+            tipo_mov='mrpin',
         )
 
     @api.multi
