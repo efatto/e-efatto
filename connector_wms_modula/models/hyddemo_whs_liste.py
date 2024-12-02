@@ -1,6 +1,6 @@
 import logging
 
-from odoo import api, fields, models, _
+from odoo import api, models, _
 from odoo.exceptions import UserError
 
 from sqlalchemy import text as sql_text
@@ -65,8 +65,8 @@ class HyddemoWhsListe(models.Model):
                     sqlquery=sql_text(
                         "INSERT INTO IMP_ORDINI (ORD_OPERAZIONE, ORD_ORDINE) VALUES "
                         "('D', :ORD_ORDINE)"),
-                        sqlparams=dict(ORD_ORDINE=num_lista),
-                        metadata=None)
+                    sqlparams=dict(ORD_ORDINE=num_lista),
+                    metadata=None)
                 _logger.info('WMS Modula LOG: delete Lista %s' % (
                     num_lista
                 ))
@@ -151,7 +151,8 @@ VALUES (
         for lista in self:
             if not execute_params_order.get(lista.num_lista):
                 execute_params_order[lista.num_lista] = {
-                    'ORD_OPERAZIONE': 'I',  # I=Insert/Update; D=Delete; A=Add if row not exists
+                    'ORD_OPERAZIONE': 'I',
+                    # I=Insert/Update; D=Delete; A=Add if row not exists
                     # H=Add if header not exists; Q=Always add in queue; R=Replace
                     'ORD_ORDINE': lista.num_lista[:20],  # char 20
                     'ORD_DES': "%s - %s"[:50] % (
