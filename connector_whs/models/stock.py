@@ -187,7 +187,7 @@ class StockMove(models.Model):
             if len(list_numbers) == 0:
                 list_number = list_numbers[0]
         riga = 0
-        for move in self:
+        for move in self.filtered(lambda x: not x.product_id.exclude_from_whs):
             pick = move.picking_id
             tipo = False
             location_id = pick.location_id.id
