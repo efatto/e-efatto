@@ -23,12 +23,14 @@ class RepairOrder(models.Model):
                 and x.move_id.state == "done"
                 and x.move_id.product_id.type == "product"
                 and x.move_id.location_id == location_id
+                and not x.move_id.product_id.exclude_from_whs
             )
             remove_operations = repair.operations.filtered(
                 lambda x: x.move_id
                 and x.move_id.state == "done"
                 and x.move_id.product_id.type == "product"
                 and x.move_id.location_dest_id == location_id
+                and not x.move_id.product_id.exclude_from_whs
             )
             if add_operations:
                 num_lista = self.env["ir.sequence"].next_by_code("hyddemo.whs.liste")

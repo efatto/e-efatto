@@ -218,6 +218,7 @@ class MrpProduction(models.Model):
                         continue
                     if (
                         move.product_id.type == "product"
+                        and not move.product_id.exclude_from_whs
                         and move.location_id == production.location_src_id
                     ):
                         if not num_lista:
