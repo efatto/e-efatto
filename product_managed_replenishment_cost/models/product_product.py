@@ -134,6 +134,8 @@ class ProductProduct(models.Model):
         company_dependent=True,
         groups="base.group_user",
         digits="Product Price",
+        compute="_compute_product_direct_cost",
+        store=True,
     )
     adjustment_cost = fields.Float(
         string="Adjustment Cost (€/pz)",
@@ -159,6 +161,11 @@ class ProductProduct(models.Model):
     managed_replenishment_cost = fields.Float(
         string="Landed with adjustment/depreciation/testing"
     )
+
+    @api.depends("seller_ids", "seller_ids.price", "seller_ids.discount")
+    def _compute_product_direct_cost(self):
+        for product in self:
+            product.direct_cost = product._get_price_unit_from_seller(direct_cost=True)
 
     def _update_manufactured_prices(
         self,
