@@ -308,7 +308,11 @@ class ProductProduct(models.Model):
             )
         )
         margin_percentage += seller.currency_id.change_charge_percentage
-        if self.intrastat_code_id.tariff_id:
+        europe_country_group = self.env.ref("base.europe")
+        if (
+            self.intrastat_code_id.tariff_id
+            and seller.name.country_id not in europe_country_group.country_ids
+        ):
             margin_percentage += self.intrastat_code_id.tariff_id.tariff_percentage
         if margin_percentage:
             price_unit *= 1 + margin_percentage / 100.0
