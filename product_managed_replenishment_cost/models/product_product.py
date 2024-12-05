@@ -13,7 +13,6 @@ class ProductTemplate(models.Model):
         help="Cost of the first supplier converted in company currency",
         digits="Product Price",
         compute="_compute_direct_cost",
-        inverse="_inverse_direct_cost",
         search="_search_direct_cost",
         groups="base.group_user",
     )
@@ -48,17 +47,13 @@ class ProductTemplate(models.Model):
         string="Landed with adjustment/depreciation/testing"
     )
 
-    @api.depends("product_variant_ids", "product_variant_ids.direct_cost")
     def _compute_direct_cost(self):
         unique_variants = self.filtered(lambda tmpl: len(tmpl.product_variant_ids) == 1)
         for template in unique_variants:
+            template.product_variant_ids._compute_direct_cost()
             template.direct_cost = template.product_variant_ids.direct_cost
         for template in self - unique_variants:
             template.direct_cost = 0.0
-
-    def _inverse_direct_cost(self):
-        if len(self.product_variant_ids) == 1:
-            self.product_variant_ids.direct_cost = self.direct_cost
 
     def _search_direct_cost(self, operator, value):
         products = self.env["product.product"].search(
@@ -134,7 +129,7 @@ class ProductProduct(models.Model):
         company_dependent=True,
         groups="base.group_user",
         digits="Product Price",
-        compute="_compute_product_direct_cost",
+        compute="_compute_direct_cost",
         store=True,
     )
     adjustment_cost = fields.Float(
@@ -162,9 +157,18 @@ class ProductProduct(models.Model):
         string="Landed with adjustment/depreciation/testing"
     )
 
-    @api.depends("seller_ids", "seller_ids.price", "seller_ids.discount")
-    def _compute_product_direct_cost(self):
+    @api.depends_context("company_id")
+    @api.depends(
+        "seller_ids",
+        "seller_ids.price",
+        "seller_ids.discount",
+        "variant_seller_ids",
+        "variant_seller_ids.price",
+        "variant_seller_ids.discount",
+    )
+    def _compute_direct_cost(self):
         for product in self:
+            product = product.with_company(product.company_id)
             product.direct_cost = product._get_price_unit_from_seller(direct_cost=True)
 
     def _update_manufactured_prices(
