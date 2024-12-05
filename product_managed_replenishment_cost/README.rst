@@ -50,10 +50,16 @@ I prodotti che hanno una distinta di produzione verranno ricalcolati sulla base 
 La formula applicata è:
  #. costo del primo fornitore nel tab acquisti del prodotto
  #. * il margine di logistica indicato nel gruppo di paesi del fornitore sopra
- #. * il dazio doganale indicato nel codice doganale prodotto
+ #. * il dazio doganale indicato nel codice doganale prodotto (se è un fornitore extra europeo)
  #. fa la conversione in € dalla valuta del fornitore al tasso più recente disponibile
  #. somma il Costo Adeguamento (€/pz)
+ #. somma il Costo Collaudo (€/pz)
  #. somma il Costo Ammortamento (€/pz)
+
+È possibile impostare il costo collaudo nella categoria del prodotto, se impostato nel prodotto verrà automaticamente scritto sulla categoria del prodotto:
+
+.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/product_managed_replenishment_cost/static/description/costo_collaudo_categoria.png
+    :alt: Categoria prodotto con costo collaudo
 
 I prodotti che non hanno né fornitori né una distinta di produzione non verranno modificati.
 
