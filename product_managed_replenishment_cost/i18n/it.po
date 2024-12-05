@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-15 08:41+0000\n"
-"PO-Revision-Date: 2024-07-15 08:41+0000\n"
+"POT-Creation-Date: 2024-12-05 09:13+0000\n"
+"PO-Revision-Date: 2024-12-05 09:13+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -22,6 +22,7 @@ msgid "Adjustment Cost (€/pz)"
 msgstr "Costo adeguamento (€/pz)"
 
 #. module: product_managed_replenishment_cost
+#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_category__assigned_attachment_ids
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_product__assigned_attachment_ids
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_supplierinfo__assigned_attachment_ids
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_template__assigned_attachment_ids
@@ -69,6 +70,7 @@ msgid "Direct Cost"
 msgstr "Costo diretto"
 
 #. module: product_managed_replenishment_cost
+#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_category__display_name
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_product__display_name
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_supplierinfo__display_name
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_template__display_name
@@ -77,6 +79,7 @@ msgid "Display Name"
 msgstr "Nome visualizzato"
 
 #. module: product_managed_replenishment_cost
+#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_category__id
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_product__id
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_supplierinfo__id
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_template__id
@@ -120,6 +123,7 @@ msgid "Landed with depreciation/testing"
 msgstr "Landed con ammortamenti/collaudo"
 
 #. module: product_managed_replenishment_cost
+#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_category____last_update
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_product____last_update
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_supplierinfo____last_update
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_template____last_update
@@ -162,6 +166,11 @@ msgstr "Prodotto"
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__product_ctg_ids
 msgid "Product Categories"
 msgstr "Categorie prodotto"
+
+#. module: product_managed_replenishment_cost
+#: model:ir.model,name:product_managed_replenishment_cost.model_product_category
+msgid "Product Category"
+msgstr "Categoria prodotto"
 
 #. module: product_managed_replenishment_cost
 #: model:ir.actions.act_window,name:product_managed_replenishment_cost.action_replenishment_cost
@@ -216,6 +225,7 @@ msgid "Supplier Pricelist"
 msgstr "Listino prezzi fornitore"
 
 #. module: product_managed_replenishment_cost
+#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_category__testing_cost
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_product__testing_cost
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_template__testing_cost
 msgid "Testing Cost (€/pz)"
