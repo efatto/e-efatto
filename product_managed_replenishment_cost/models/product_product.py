@@ -31,7 +31,6 @@ class ProductTemplate(models.Model):
         inverse="_inverse_testing_cost",
         search="_search_testing_cost",
         groups="base.group_user",
-        default=5,
     )
     landed_cost = fields.Float(
         string="Landed cost",
@@ -143,7 +142,6 @@ class ProductProduct(models.Model):
         company_dependent=True,
         groups="base.group_user",
         digits="Product Price",
-        default=5,
     )
     landed_cost = fields.Float(
         string="Landed cost",
