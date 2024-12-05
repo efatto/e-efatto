@@ -413,15 +413,18 @@ In other cases (without BOM and sellers) it isn’t recomputed.</p>
 </ul>
 </li>
 <li><ul class="first">
-<li>il dazio doganale indicato nel codice doganale prodotto</li>
+<li>il dazio doganale indicato nel codice doganale prodotto (se è un fornitore extra europeo)</li>
 </ul>
 </li>
 <li>fa la conversione in € dalla valuta del fornitore al tasso più recente disponibile</li>
 <li>somma il Costo Adeguamento (€/pz)</li>
+<li>somma il Costo Collaudo (€/pz)</li>
 <li>somma il Costo Ammortamento (€/pz)</li>
 </ol>
 </dd>
 </dl>
+<p>È possibile impostare il costo collaudo nella categoria del prodotto, se impostato nel prodotto verrà automaticamente scritto sulla categoria del prodotto:</p>
+<img alt="Categoria prodotto con costo collaudo" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/product_managed_replenishment_cost/static/description/costo_collaudo_categoria.png" />
 <p>I prodotti che non hanno né fornitori né una distinta di produzione non verranno modificati.</p>
 <p>Questo calcolo è possibile farlo in maniera indipendente dal menu:</p>
 <img alt="Menu in impostazioni Magazzino" src="https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/product_managed_replenishment_cost/static/description/menu.png" />
