@@ -49,7 +49,6 @@ class ProductTemplate(models.Model):
     def _compute_direct_cost(self):
         unique_variants = self.filtered(lambda tmpl: len(tmpl.product_variant_ids) == 1)
         for template in unique_variants:
-            template.product_variant_ids._compute_direct_cost()
             template.direct_cost = template.product_variant_ids.direct_cost
         for template in self - unique_variants:
             template.direct_cost = 0.0
@@ -125,7 +124,6 @@ class ProductProduct(models.Model):
     direct_cost = fields.Float(
         string="Direct Cost",
         help="Cost of the first supplier converted in company currency",
-        company_dependent=True,
         groups="base.group_user",
         digits="Product Price",
         compute="_compute_direct_cost",
@@ -155,19 +153,17 @@ class ProductProduct(models.Model):
         string="Landed with adjustment/depreciation/testing"
     )
 
-    @api.depends_context("company_id")
     @api.depends(
         "seller_ids",
         "seller_ids.price",
         "seller_ids.discount",
-        "variant_seller_ids",
-        "variant_seller_ids.price",
-        "variant_seller_ids.discount",
     )
     def _compute_direct_cost(self):
         for product in self:
-            product = product.with_company(product.company_id)
-            product.direct_cost = product._get_price_unit_from_seller(direct_cost=True)
+            if product.seller_ids:
+                product.direct_cost = product._get_price_unit_from_seller(direct_cost=True)
+            else:
+                product.direct_cost = 0
 
     def _update_manufactured_prices(
         self,
