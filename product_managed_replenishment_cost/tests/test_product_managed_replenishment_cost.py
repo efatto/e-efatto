@@ -14,10 +14,12 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         cls.vendor = cls.env.ref("base.res_partner_3")
         cls.vendor.country_id = cls.env.ref("base.cn")
         # todo add an european vendor to test intrastat tariff is not added
-        cls.env["res.country.group"].create({
-            "name": "East Asia",
-            "country_ids": [(6, 0, cls.vendor.country_id.ids)],
-        })
+        cls.env["res.country.group"].create(
+            {
+                "name": "East Asia",
+                "country_ids": [(6, 0, cls.vendor.country_id.ids)],
+            }
+        )
         cls.default_category = cls.env.ref("product.product_category_1")
         cls.test_categ = cls.env["product.category"].create(
             {

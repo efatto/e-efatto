@@ -161,7 +161,9 @@ class ProductProduct(models.Model):
     def _compute_direct_cost(self):
         for product in self:
             if product.seller_ids:
-                product.direct_cost = product._get_price_unit_from_seller(direct_cost=True)
+                product.direct_cost = product._get_price_unit_from_seller(
+                    direct_cost=True
+                )
             else:
                 product.direct_cost = 0
 
@@ -318,6 +320,7 @@ class ProductProduct(models.Model):
         europe_country_group = self.env.ref("base.europe")
         if (
             self.intrastat_code_id.tariff_id
+            and self.intrastat_type
             and seller.name.country_id not in europe_country_group.country_ids
         ):
             margin_percentage += self.intrastat_code_id.tariff_id.tariff_percentage
