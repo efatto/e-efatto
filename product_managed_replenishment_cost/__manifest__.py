@@ -22,6 +22,7 @@
         "security/replenishment_cost_security.xml",
         "views/product_supplierinfo.xml",
         "views/replenishment_menu.xml",
+        "views/product_category.xml",
         "views/product_product.xml",
         "views/product_template.xml",
     ],
