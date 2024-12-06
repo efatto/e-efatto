@@ -43,6 +43,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 "seller_ids": [(6, 0, [supplierinfo.id])],
                 "route_ids": [(6, 0, [buy.id, mto.id])],
                 "intrastat_code_id": cls.intrastat.id,
+                "intrastat_type": "good",
                 "categ_id": cls.default_category.id,
             }
         )
