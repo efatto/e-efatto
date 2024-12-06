@@ -247,13 +247,15 @@ VALUES (
             if not execute_params_order.get(lista.num_lista):
                 execute_params_order[lista.num_lista] = {}
             product = lista.product_id
-            parent_product_id = lista.parent_product_id if lista.parent_product_id else False
+            parent_product_id = lista.parent_product_id \
+                if lista.parent_product_id else False
             execute_params_order[lista.num_lista][lista.riga] = {
                 'NumLista': lista.num_lista[:50],  # char 50
                 'NumRiga': lista.riga,  # char 50 but is an integer
                 'DataLista': lista.data_lista.strftime("%Y.%m.%d"),
                 # formato aaaa.mm.gg datalista
-                'Riferimento': lista.riferimento[:50] if lista.riferimento else '',  # char 50
+                'Riferimento': lista.riferimento[:50] if lista.riferimento else '',
+                # char 50
                 'TipoOrdine': lista.tipo,  # int
                 'Causale': 10 if lista.tipo == '1' else 20,  # int
                 'Priorita': lista.priorita,  # int
