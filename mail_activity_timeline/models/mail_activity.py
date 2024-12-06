@@ -149,8 +149,8 @@ class MailActivity(models.Model):
                             })
                         # always update current write values for color
                         activity.color_active = self.get_color(
-                                activity,
-                                res_object.project_id.activity_color,
+                            activity,
+                            res_object.project_id.activity_color,
                         )
                     res_object.with_context(
                         bypass_resource_planner=True
@@ -271,7 +271,9 @@ class MailActivity(models.Model):
                         })
                     else:
                         vals.update({
-                            'color_active': self.get_color(res_object, res_object.color),
+                            'color_active': self.get_color(
+                                res_object, res_object.color
+                            ),
                         })
             for val in vals:
                 if vals[val]:
