@@ -317,7 +317,8 @@ class HyddemoMssqlLog(models.Model):
                     "UPDATE HOST_LISTE SET Elaborato=5 WHERE NumLista='%s' AND "\
                     "NumRiga='%s'" % (num_lista, num_riga)
                 dbsource.with_context(no_return=True).execute_mssql(
-                    sqlquery=sql_text(set_liste_to_done_query), sqlparams=None, metadata=None
+                    sqlquery=sql_text(set_liste_to_done_query),
+                    sqlparams=None, metadata=None
                 )
         if pickings_to_assign:
             pickings_to_assign.filtered(
