@@ -17,4 +17,5 @@
     'data': [
     ],
     'installable': True,
+    "external_dependencies": {"python": ["sqlalchemy"]},
 }
