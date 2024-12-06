@@ -17,5 +17,5 @@
     'data': [
     ],
     'installable': True,
-    "external_dependencies": {"python": ["sqlalchemy"]},
+    "external_dependencies": {"python": ["sqlalchemy"]},  # "sqlalchemy==1.3.24"
 }
