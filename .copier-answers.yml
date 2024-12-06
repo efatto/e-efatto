@@ -18,7 +18,7 @@ org_slug: sergiocorato
 rebel_module_groups:
 - mrp_bom_evaluation
 - mrp_bom_evaluation_simple
-- mrp_production_demo,mrp_manual_procurement_subcontractor
+- mrp_production_demo
 repo_description: Tools for Italian companies
 repo_name: Extra Efatto tools
 repo_slug: e-efatto
