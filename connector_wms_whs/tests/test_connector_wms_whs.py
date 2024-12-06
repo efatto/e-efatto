@@ -73,7 +73,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         if all(x.state == "assigned" for x in picking.move_lines):
             self.assertEqual(picking.state, "assigned")
         else:
-            self.assertEqual(picking.state, "confirmed")  # TODO controllare era waiting, non rilevante
+            self.assertEqual(picking.state, "confirmed")
         picking.action_cancel()
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(picking.state, 'cancel')
