@@ -164,9 +164,9 @@ class MailActivity(models.Model):
         return res
 
     @api.model
-    def create_planner_activity(self, object, user_id):
+    def create_planner_activity(self, res_object, user_id):
         res_model = self.env['ir.model'].search([
-            ('model', '=', object._name)
+            ('model', '=', res_object._name)
         ])
         activity_type = self.env['mail.activity.type'].search([
             ('is_resource_planner', '=', True),
@@ -175,15 +175,16 @@ class MailActivity(models.Model):
         vals = {
             'activity_type_id': activity_type.id,
             'res_model_id': res_model.id,
-            'res_id': object.id,
-            'summary': object.name,
-            'partner_id': object.partner_id.id,
-            'commercial_partner_id': object.partner_id.commercial_partner_id.id,
-            'parent_id': object.parent_id.id,
+            'res_id': res_object.id,
+            'summary': res_object.name,
+            'partner_id': res_object.partner_id.id,
+            'commercial_partner_id': res_object.partner_id.commercial_partner_id.id,
+            'parent_id': res_object.parent_id.id,
             'user_id': user_id.id,
             'is_resource_planner': True,
-            'color_active': object.color,
-            'workcenter_id': object.workcenter_id.id if object._name == 'mrp.workorder'
+            'color_active': res_object.color,
+            'workcenter_id': res_object.workcenter_id.id
+            if res_object._name == 'mrp.workorder'
             else self.env.ref(
                 'mail_activity_timeline.mail_activity_project_mrp_workcenter').id,
             'team_id': False,  # to excludes problem of users not part of the team
