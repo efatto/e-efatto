@@ -44,11 +44,7 @@ jobs:
             name: test with OCB
             makepot: "false"
           - container: ghcr.io/oca/oca-ci/py3.6-ocb12.0:latest
-            include: "mrp_production_demo,mrp_manual_procurement_subcontractor"
-            name: test with OCB
-            makepot: "false"
-          - container: ghcr.io/oca/oca-ci/py3.6-ocb12.0:latest
-            exclude: "mrp_bom_evaluation,mrp_bom_evaluation_simple,mrp_production_demo,mrp_manual_procurement_subcontractor"
+            exclude: "mrp_bom_evaluation,mrp_bom_evaluation_simple,mrp_production_demo"
             name: test with OCB
             makepot: "false"
     services:
