@@ -407,19 +407,10 @@ In other cases (without BOM and sellers) it isn’t recomputed.</p>
 <dl class="docutils">
 <dt>La formula applicata è:</dt>
 <dd><ol class="first last arabic simple">
-<li>costo del primo fornitore nel tab acquisti del prodotto</li>
-<li><ul class="first">
-<li>il margine di logistica indicato nel gruppo di paesi del fornitore sopra</li>
-</ul>
-</li>
-<li><ul class="first">
-<li>il dazio doganale indicato nel codice doganale prodotto (se è un fornitore extra europeo)</li>
-</ul>
-</li>
-<li>fa la conversione in € dalla valuta del fornitore al tasso più recente disponibile</li>
-<li>somma il Costo Adeguamento (€/pz)</li>
-<li>somma il Costo Collaudo (€/pz)</li>
-<li>somma il Costo Ammortamento (€/pz)</li>
+<li>costo del primo fornitore nel tab acquisti del prodotto convertito in € dalla valuta del fornitore al tasso più recente disponibile =&gt; Costo Diretto</li>
+<li>somma il totale delle maggiorazioni per: Maggiorazione cambio (indicato nella valuta del fornitore), Margine di logistica (indicato nel gruppo di paesi del fornitore) e Tariffa dazio doganale (indicato nel codice doganale prodotto) e le aggiunge al Costo Diretto (se è un fornitore extra europeo e se il Tipo intrastat del prodotto è indicato) =&gt; Costo Landed</li>
+<li>somma il Costo Collaudo (€/pz) e il Costo Ammortamento (€/pz) al Costo Landed =&gt; Costo Landed con Ammortamento e Collaudo</li>
+<li>somma il Costo Adeguamento (€/pz) al Costo Landed con Ammortamento e Collaudo =&gt; Costo Landed con Ammortamento, Collaudo e Adeguamento</li>
 </ol>
 </dd>
 </dl>
