@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="view_order_product_search" model="ir.ui.view">
+        <field name="model">sale.report</field>
+        <field name="inherit_id" ref="sale.view_order_product_search" />
+        <field name="arch" type="xml">
+            <xpath expr="/search/filter[@name='year']" position="after">
+                <field name="generic_date" />
+                <field name="generic_confirmation_date" />
+            </xpath>
+            <xpath expr="/search/group/filter[@name='date']" position="after">
+                <filter
+          string="Order Date (with current year)"
+          name="generic_date"
+          context="{'group_by': 'generic_date'}"
+        />
+                <filter
+          string="Confirmation Date (with current year)"
+          name="generic_confirmation_date"
+          context="{'group_by': 'generic_confirmation_date'}"
+        />
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
