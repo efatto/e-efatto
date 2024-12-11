@@ -57,6 +57,8 @@ jobs:
         run: pip3 install -e "git+https://github.com/sergiocorato/server-backend@14.0-mig-base_external_dbsource_mssql#egg=odoo14-addon-base_external_dbsource_mssql&subdirectory=setup/base_external_dbsource_mssql"
       - name: Install purchase_line_procurement_group module not yet merged
         run: pip3 install -e "git+https://github.com/decgroupe/purchase-workflow@14.0-mig-purchase_line_procurement_group#egg=odoo14-addon-purchase_line_procurement_group&subdirectory=setup/purchase_line_procurement_group"
+      - name: Install sale_order_confirmation_date module from e-account repo
+        run: pip3 install -e "git+https://github.com/efatto/e-account@14.0#egg=odoo14-addon-sale_order_confirmation_date&subdirectory=setup/sale_order_confirmation_date"
       - name: Install addons and dependencies
         run: oca_install_addons
       - name: Check licenses
