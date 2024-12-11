@@ -11,12 +11,12 @@
             </xpath>
             <xpath expr="/search/group/filter[@name='date']" position="after">
                 <filter
-          string="Order Date (without year)"
+          string="Order Date (with current year)"
           name="generic_date"
           context="{'group_by': 'generic_date'}"
         />
                 <filter
-          string="Confirmation Date (without year)"
+          string="Confirmation Date (with current year)"
           name="generic_confirmation_date"
           context="{'group_by': 'generic_confirmation_date'}"
         />
