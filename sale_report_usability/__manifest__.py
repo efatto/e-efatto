@@ -13,6 +13,6 @@
     "data": [
         "report/sale_report.xml",
     ],
-    "description": "Add generic date to compare",
+    "summary": "Add generic date to compare",
     "installable": True,
 }
