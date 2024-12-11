@@ -9,9 +9,10 @@
     "category": "other",
     "depends": [
         "sale",
+        "sale_order_confirmation_date",
     ],
     "data": [
-        "report/sale_report.xml",
+        "views/sale_report.xml",
     ],
     "summary": "Add generic date to compare",
     "installable": True,
