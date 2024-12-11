@@ -1,5 +1,3 @@
-# Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import fields, models
 
 
@@ -23,4 +21,4 @@ class SaleReport(models.Model):
             "date_part('month', confirmation_date)::int, "
             "date_part('day', confirmation_date)::int) as generic_confirmation_date"
         )
-        return super(SaleReport, self)._query(with_clause, fields, groupby, from_clause)
+        return super()._query(with_clause, fields, groupby, from_clause)
