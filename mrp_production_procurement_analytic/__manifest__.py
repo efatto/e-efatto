@@ -12,7 +12,6 @@
                    'account.',
     'depends': [
         'mrp_analytic',
-        'purchase_sale_mrp_link',
         'procurement_mto_analytic',
         'purchase_stock',
     ],
