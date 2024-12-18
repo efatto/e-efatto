@@ -16,9 +16,9 @@ MRP Manual Procurement Subcontractor
 .. |badge2| image:: https://img.shields.io/badge/licence-AGPL--3-blue.png
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
-.. |badge3| image:: https://img.shields.io/badge/github-sergiocorato%2Fe--efatto-lightgray.png?logo=github
-    :target: https://github.com/sergiocorato/e-efatto/tree/14.0/mrp_manual_procurement_subcontractor
-    :alt: sergiocorato/e-efatto
+.. |badge3| image:: https://img.shields.io/badge/github-efatto%2Fe--efatto-lightgray.png?logo=github
+    :target: https://github.com/efatto/e-efatto/tree/14.0/mrp_manual_procurement_subcontractor
+    :alt: efatto/e-efatto
 
 |badge1| |badge2| |badge3|
 
@@ -40,56 +40,56 @@ Vengono quindi resi visibili due bottoni, che permettono, in alternativa, di pro
 
 Il primo bottone permette di proseguire normalmente la produzione:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/prosegui_la_produzione.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/prosegui_la_produzione.png
     :alt: Prosegui la produzione
 
 Il secondo bottone permette di scegliere un subappaltatore a cui ordinare il prodotto, chiudendo contemporaneamente questa produzione:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/acquista_da_subappaltatore.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/acquista_da_subappaltatore.png
     :alt: Acquista da subappaltatore
 
 Si apre quindi una procedura che permette di scegliere tra i possibili subappaltatori. Alla conferma, la presente produzione sarà chiusa e sarà generato un ordine d'acquisto e una produzione verso il subappaltatore selezionato.
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/scelta_subappaltatore.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/scelta_subappaltatore.png
     :alt: Scelta subappaltatore
 
 Nel caso ci siano prodotti subappaltati presso un singolo subappaltore, l'ordine di acquisto generato viene automaticamente confermato, sia che sia generato dalla rotta `Procura su Ordine` che da una regola di riordino.
 
 È stato aggiunto un bottone per aprire i trasferimenti da fare verso il subappaltatore direttamente dall'ordine di acquisto:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/bottone_trasferimenti_subappaltatore.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/bottone_trasferimenti_subappaltatore.png
     :alt: Bottone trasferimenti subappaltatore
 
 La tipica procedura da seguire per modificare un prodotto da produrre internamente ad un prodotto che può avere entrambe le opzioni è:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/1_duplicare_bom.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/1_duplicare_bom.png
     :alt: 1_duplicare_bom
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/2_inserire_percorsi_acquisto.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/2_inserire_percorsi_acquisto.png
     :alt: 2_inserire_percorsi_acquisto
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/3_aggiungere_acquistabile.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/3_aggiungere_acquistabile.png
     :alt: 3_aggiungere_acquistabile
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/4_forzare_ricalcolo.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/4_forzare_ricalcolo.png
     :alt: 4_forzare_ricalcolo
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/5_bottone_subappalto.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/5_bottone_subappalto.png
     :alt: 5_bottone_subappalto
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/6_acquisto_subappalto.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/6_acquisto_subappalto.png
     :alt: 6_acquisto_subappalto
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/7_produzione_subappalto.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/7_produzione_subappalto.png
     :alt: 7_produzione_subappalto
 
 Bug Tracker
 ===========
 
-Bugs are tracked on `GitHub Issues <https://github.com/sergiocorato/e-efatto/issues>`_.
+Bugs are tracked on `GitHub Issues <https://github.com/efatto/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/sergiocorato/e-efatto/issues/new?body=module:%20mrp_manual_procurement_subcontractor%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20mrp_manual_procurement_subcontractor%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -109,6 +109,6 @@ Contributors
 Maintainers
 ~~~~~~~~~~~
 
-This module is part of the `sergiocorato/e-efatto <https://github.com/sergiocorato/e-efatto/tree/14.0/mrp_manual_procurement_subcontractor>`_ project on GitHub.
+This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/14.0/mrp_manual_procurement_subcontractor>`_ project on GitHub.
 
 You are welcome to contribute.

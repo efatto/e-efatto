@@ -4,7 +4,7 @@
     "name": "Product Managed Replenishment Cost",
     "version": "14.0.1.0.2",
     "author": "Sergio Corato",
-    "website": "https://github.com/sergiocorato/e-efatto",
+    "website": "https://github.com/efatto/e-efatto",
     "category": "Products",
     "license": "AGPL-3",
     "depends": [

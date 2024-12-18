@@ -7,7 +7,7 @@
     "summary": "Show note after origin instead in dedicated tab",
     "author": "Sergio Corato",
     "license": "AGPL-3",
-    "website": "https://github.com/sergiocorato/e-efatto",
+    "website": "https://github.com/efatto/e-efatto",
     "depends": [
         "stock",
     ],

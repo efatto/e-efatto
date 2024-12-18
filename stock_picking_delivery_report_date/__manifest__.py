@@ -5,7 +5,7 @@
     "summary": "Set date in EU format for delivery to every partner",
     "version": "14.0.1.0.0",
     "category": "Stock",
-    "website": "https://github.com/sergiocorato/e-efatto",
+    "website": "https://github.com/efatto/e-efatto",
     "author": "Sergio Corato",
     "license": "AGPL-3",
     "depends": [
