@@ -7,7 +7,7 @@
     "license": "AGPL-3",
     "category": "Manufacturing",
     "author": "Sergio Corato",
-    "website": "https://github.com/sergiocorato/e-efatto",
+    "website": "https://github.com/efatto/e-efatto",
     "summary": "Add ability to create procurement after production order " "creation.",
     "depends": [
         "mrp_production_demo",

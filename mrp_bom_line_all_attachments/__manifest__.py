@@ -7,7 +7,7 @@
     "version": "14.0.1.0.0",
     "category": "MRP",
     "author": "Sergio Corato",
-    "website": "https://github.com/sergiocorato/e-efatto",
+    "website": "https://github.com/efatto/e-efatto",
     "license": "AGPL-3",
     "maintainers": ["sergiocorato"],
     "depends": ["mrp"],

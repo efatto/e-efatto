@@ -16,9 +16,9 @@ Sale report usability
 .. |badge2| image:: https://img.shields.io/badge/licence-AGPL--3-blue.png
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
-.. |badge3| image:: https://img.shields.io/badge/github-sergiocorato%2Fe--efatto-lightgray.png?logo=github
-    :target: https://github.com/sergiocorato/e-efatto/tree/14.0/sale_report_usability
-    :alt: sergiocorato/e-efatto
+.. |badge3| image:: https://img.shields.io/badge/github-efatto%2Fe--efatto-lightgray.png?logo=github
+    :target: https://github.com/efatto/e-efatto/tree/14.0/sale_report_usability
+    :alt: efatto/e-efatto
 
 |badge1| |badge2| |badge3|
 
@@ -34,26 +34,26 @@ Configuration
 
 Questo modulo aggiunge dei campi data senza anno per permettere il confronto per lo stesso periodo in diversi anni. Per farlo è necessario andare nel menu Vendite > Rendicontazione > Vendite [modalità pivot] e selezionare per le righe uno dei campi data con la dicitura (senza anno) aggiunti:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/sale_report_usability/static/description/selezione_date_valori.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/sale_report_usability/static/description/selezione_date_valori.png
     :alt: Selezione date valori
 
 Questa selezione comporterà che a video risulteranno solo le date (mesi, giorni, settimane, ecc.) con la dicitura dell'anno in corso, anche se i dati non sono filtrati per l'anno in corso (ATTENZIONE!) in quanto il filtro per date sarà basato sull'intervallo temporale:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/sale_report_usability/static/description/selezione_confronto.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/sale_report_usability/static/description/selezione_confronto.png
     :alt: Selezione confronto
 
 Alla fine si ottiene quindi una statistica che confronta i valori in maniera logica, invece di vedere diverse righe separate per ogni anno e non confrontate:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/sale_report_usability/static/description/statistica.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/sale_report_usability/static/description/statistica.png
     :alt: Statistica
 
 Bug Tracker
 ===========
 
-Bugs are tracked on `GitHub Issues <https://github.com/sergiocorato/e-efatto/issues>`_.
+Bugs are tracked on `GitHub Issues <https://github.com/efatto/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/sergiocorato/e-efatto/issues/new?body=module:%20sale_report_usability%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20sale_report_usability%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -73,6 +73,6 @@ Contributors
 Maintainers
 ~~~~~~~~~~~
 
-This module is part of the `sergiocorato/e-efatto <https://github.com/sergiocorato/e-efatto/tree/14.0/sale_report_usability>`_ project on GitHub.
+This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/14.0/sale_report_usability>`_ project on GitHub.
 
 You are welcome to contribute.

@@ -16,9 +16,9 @@ Invoice purchase autocomplete no reference
 .. |badge2| image:: https://img.shields.io/badge/licence-AGPL--3-blue.png
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
-.. |badge3| image:: https://img.shields.io/badge/github-sergiocorato%2Fe--efatto-lightgray.png?logo=github
-    :target: https://github.com/sergiocorato/e-efatto/tree/14.0/purchase_autocomplete_no_reference
-    :alt: sergiocorato/e-efatto
+.. |badge3| image:: https://img.shields.io/badge/github-efatto%2Fe--efatto-lightgray.png?logo=github
+    :target: https://github.com/efatto/e-efatto/tree/14.0/purchase_autocomplete_no_reference
+    :alt: efatto/e-efatto
 
 |badge1| |badge2| |badge3|
 
@@ -36,21 +36,21 @@ Non è necessaria alcuna configurazione.
 
 Quando viene usato il campo autocompletamento per inserire degli ordini di acquisto nella fattura del fornitore:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/purchase_autocomplete_no_reference/static/description/autocompletamento.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/purchase_autocomplete_no_reference/static/description/autocompletamento.png
     :alt: Autocompletamento
 
 il campo riferimento, usato per inserire il numero della fattura assegnato dal fornitore, resterà invariato:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/purchase_autocomplete_no_reference/static/description/riferimento.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/purchase_autocomplete_no_reference/static/description/riferimento.png
     :alt: Riferimento
 
 Bug Tracker
 ===========
 
-Bugs are tracked on `GitHub Issues <https://github.com/sergiocorato/e-efatto/issues>`_.
+Bugs are tracked on `GitHub Issues <https://github.com/efatto/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/sergiocorato/e-efatto/issues/new?body=module:%20purchase_autocomplete_no_reference%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20purchase_autocomplete_no_reference%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -70,6 +70,6 @@ Contributors
 Maintainers
 ~~~~~~~~~~~
 
-This module is part of the `sergiocorato/e-efatto <https://github.com/sergiocorato/e-efatto/tree/14.0/purchase_autocomplete_no_reference>`_ project on GitHub.
+This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/14.0/purchase_autocomplete_no_reference>`_ project on GitHub.
 
 You are welcome to contribute.

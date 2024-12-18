@@ -5,7 +5,7 @@
     "summary": "Replase print RfQ button with print Order.",
     "version": "14.0.1.0.0",
     "category": "Purchases",
-    "website": "https://github.com/sergiocorato/e-efatto",
+    "website": "https://github.com/efatto/e-efatto",
     "author": "Sergio Corato",
     "license": "AGPL-3",
     "application": False,

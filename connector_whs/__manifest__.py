@@ -4,7 +4,7 @@
     "name": "Connector WHS MSSQL",
     "version": "14.0.1.0.9",
     "author": "Sergio Corato",
-    "website": "https://github.com/sergiocorato/e-efatto",
+    "website": "https://github.com/efatto/e-efatto",
     "category": "other",
     "summary": "Connect Odoo stock with external warehouse management system",
     "depends": [
