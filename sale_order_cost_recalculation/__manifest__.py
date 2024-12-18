@@ -7,7 +7,7 @@
     "author": "Sergio Corato",
     "license": "AGPL-3",
     "summary": "Add recalculation of cost when recalculating prices on sale order.",
-    "website": "https://github.com/sergiocorato/e-efatto",
+    "website": "https://github.com/efatto/e-efatto",
     "depends": [
         "sale_margin",
         "sale_margin_security",
