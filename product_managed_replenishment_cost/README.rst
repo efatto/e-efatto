@@ -16,9 +16,9 @@ Product Managed Replenishment Cost
 .. |badge2| image:: https://img.shields.io/badge/licence-AGPL--3-blue.png
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
-.. |badge3| image:: https://img.shields.io/badge/github-sergiocorato%2Fe--efatto-lightgray.png?logo=github
-    :target: https://github.com/sergiocorato/e-efatto/tree/14.0/product_managed_replenishment_cost
-    :alt: sergiocorato/e-efatto
+.. |badge3| image:: https://img.shields.io/badge/github-efatto%2Fe--efatto-lightgray.png?logo=github
+    :target: https://github.com/efatto/e-efatto/tree/14.0/product_managed_replenishment_cost
+    :alt: efatto/e-efatto
 
 |badge1| |badge2| |badge3|
 
@@ -55,50 +55,50 @@ La formula applicata è:
 
 È possibile impostare il costo collaudo nella categoria del prodotto, se impostato nel prodotto verrà automaticamente scritto sulla categoria del prodotto:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/product_managed_replenishment_cost/static/description/costo_collaudo_categoria.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_replenishment_cost/static/description/costo_collaudo_categoria.png
     :alt: Categoria prodotto con costo collaudo
 
 I prodotti che non hanno né fornitori né una distinta di produzione non verranno modificati.
 
 Questo calcolo è possibile farlo in maniera indipendente dal menu:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/product_managed_replenishment_cost/static/description/menu.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_replenishment_cost/static/description/menu.png
     :alt: Menu in impostazioni Magazzino
 
 tramite quattro azioni: la prima esegue l'aggiornamento del costo di sostituzione solamente:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/product_managed_replenishment_cost/static/description/aggiorna_sostituzione.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_replenishment_cost/static/description/aggiorna_sostituzione.png
     :alt: Aggiorna il costo di sostituzione
 
 la seconda esegue l'aggiornamento dei soli costi landed (con o senza costi di adeguamento/ammortamento):
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/product_managed_replenishment_cost/static/description/aggiorna_costi_landed.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_replenishment_cost/static/description/aggiorna_costi_landed.png
     :alt: Aggiorna costi landed
 
 la terza esegue l'aggiornamento dei costi landed (con o senza costi di adeguamento/ammortamento) e del costo di sostituzione:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/product_managed_replenishment_cost/static/description/aggiorna_costi_landed_e_sostituzione.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_replenishment_cost/static/description/aggiorna_costi_landed_e_sostituzione.png
     :alt: Aggiorna costi landed e di sostituzione
 
 La quarta esegue l'aggiornamento del prezzo di vendita dei prodotti con distinta base.
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/product_managed_replenishment_cost/static/description/aggiorna_prezzi_da_diba.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_replenishment_cost/static/description/aggiorna_prezzi_da_diba.png
     :alt: Aggiorna il prezzo e il peso di prodotto con distinta base
 
 Nota bene: non è possibile ripristinare nessuna di queste operazioni, in quanto vanno a sovrascrivere i campi citati. Tenere conto inoltre che i campi del prezzo di vendita e del costo landed senza adeguamento/ammortamento (costo standard rinominato) potrebbero essere modificati in maniera automatica dal sistema in base alla configurazione.
 
 In seguito è utile creare un listino a partire dal costo per generare un'esportazione (reimportabile) per effettuare un cambio di listino di vendita programmato:
 
-.. image:: https://raw.githubusercontent.com/sergiocorato/e-efatto/14.0/product_managed_replenishment_cost/static/description/listino.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_replenishment_cost/static/description/listino.png
     :alt: Esporta un listino
 
 Bug Tracker
 ===========
 
-Bugs are tracked on `GitHub Issues <https://github.com/sergiocorato/e-efatto/issues>`_.
+Bugs are tracked on `GitHub Issues <https://github.com/efatto/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/sergiocorato/e-efatto/issues/new?body=module:%20product_managed_replenishment_cost%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20product_managed_replenishment_cost%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -118,6 +118,6 @@ Contributors
 Maintainers
 ~~~~~~~~~~~
 
-This module is part of the `sergiocorato/e-efatto <https://github.com/sergiocorato/e-efatto/tree/14.0/product_managed_replenishment_cost>`_ project on GitHub.
+This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/14.0/product_managed_replenishment_cost>`_ project on GitHub.
 
 You are welcome to contribute.
