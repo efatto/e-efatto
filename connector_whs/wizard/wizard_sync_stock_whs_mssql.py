@@ -10,10 +10,11 @@ from sqlalchemy import text as sql_text
 
 class WizardSyncStockWhsMssql(models.TransientModel):
     _name = "wizard.sync.stock.whs.mssql"
-    _description = "Synchronize stock inventory with Remote Mssql DB"
+    _description = "Synchronize stock inventory from the Remote Mssql DB to Odoo"
 
     do_sync = fields.Boolean(
-        string='Synchronize stock inventory')
+        string='Synchronize stock inventory',
+        help='Valid quantities are those found in the remote database.')
 
     @staticmethod
     def _prepare_giacenze_query(i):
