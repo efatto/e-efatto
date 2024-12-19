@@ -7,4 +7,6 @@ from odoo import fields, models
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    exclude_from_whs = fields.Boolean()
+    exclude_from_whs = fields.Boolean(
+        string="Exclude from WMS sync"
+    )
