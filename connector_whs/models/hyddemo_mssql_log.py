@@ -36,17 +36,19 @@ class HyddemoMssqlLog(models.Model):
 
     @staticmethod
     def _get_clean_product_query():
-        # overridable method
-        return ""
-
-    @staticmethod
-    def _get_update_product_query():
-        # overridable method
+        # overridable method to delete record if requested, executed before other
+        # methods, in the WMS database
         return ""
 
     @staticmethod
     def _get_insert_product_query():
-        # overridable method
+        # overridable method done to insert products in the WMS database, executed after
+        # _get_clean_product_query method
+        return ""
+
+    @staticmethod
+    def _get_update_product_query():
+        # overridable method done after _get_insert_product_query in the WMS database
         return ""
 
     @api.model
