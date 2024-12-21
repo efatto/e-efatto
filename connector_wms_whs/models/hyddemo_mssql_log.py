@@ -5,13 +5,13 @@ class HyddemoMssqlLog(models.Model):
     _inherit = "hyddemo.mssql.log"
 
     @staticmethod
-    def _get_clean_product_query():
+    def _get_pre_insert_product_query():
         clean_product_query = \
             "DELETE FROM HOST_ARTICOLI WHERE Elaborato = 2 OR Elaborato = 0"
         return clean_product_query
 
     @staticmethod
-    def _get_update_product_query():
+    def _get_post_insert_product_query():
         # Set record from Elaborato=0 to Elaborato=1 to be processable from WHS
         update_product_query = \
             "UPDATE HOST_ARTICOLI SET Elaborato = 1 WHERE Elaborato = 0"

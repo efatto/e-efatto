@@ -35,7 +35,7 @@ class HyddemoMssqlLog(models.Model):
     )
 
     @staticmethod
-    def _get_clean_product_query():
+    def _get_pre_insert_product_query():
         # overridable method to delete record if requested, executed before other
         # methods, in the WMS database
         return ""
@@ -43,11 +43,11 @@ class HyddemoMssqlLog(models.Model):
     @staticmethod
     def _get_insert_product_query():
         # overridable method done to insert products in the WMS database, executed after
-        # _get_clean_product_query method
+        # _get_pre_insert_product_query method
         return ""
 
     @staticmethod
-    def _get_update_product_query():
+    def _get_post_insert_product_query():
         # overridable method done after _get_insert_product_query in the WMS database
         return ""
 
@@ -64,7 +64,7 @@ class HyddemoMssqlLog(models.Model):
             raise UserError(_('Failed to open connection!'))
         # delete from HOST_ARTICOLI if already processed from WHS (Elaborato=2)
         # or interrupted (bad) records (Elaborato=0)
-        clean_product_query = self._get_clean_product_query()
+        clean_product_query = self._get_pre_insert_product_query()
         if clean_product_query:
             dbsource.with_context(no_return=True).execute_mssql(
                 sqlquery=sql_text(clean_product_query), sqlparams=None, metadata=None
@@ -92,7 +92,7 @@ class HyddemoMssqlLog(models.Model):
                 sqlparams=insert_product_params,
                 metadata=None)
 
-        update_product_query = self._get_update_product_query()
+        update_product_query = self._get_post_insert_product_query()
         if update_product_query:
             dbsource.with_context(no_return=True).execute_mssql(
                 sqlquery=sql_text(update_product_query), sqlparams=None, metadata=None
