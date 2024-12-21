@@ -11,12 +11,12 @@ class HyddemoMssqlLog(models.Model):
     _inherit = "hyddemo.mssql.log"
 
     # @staticmethod
-    # def _get_clean_product_query():
+    # def _get_pre_insert_product_query():
     #     clean_product_query = ""
     #     return clean_product_query
     #
     # @staticmethod
-    # def _get_update_product_query():
+    # def _get_post_insert_product_query():
     #     update_product_query = ""
     #     return update_product_query
 
