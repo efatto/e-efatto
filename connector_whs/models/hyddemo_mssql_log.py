@@ -64,10 +64,11 @@ class HyddemoMssqlLog(models.Model):
             raise UserError(_('Failed to open connection!'))
         # delete from HOST_ARTICOLI if already processed from WHS (Elaborato=2)
         # or interrupted (bad) records (Elaborato=0)
-        clean_product_query = self._get_pre_insert_product_query()
-        if clean_product_query:
+        pre_insert_product_query = self._get_pre_insert_product_query()
+        if pre_insert_product_query:
             dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=sql_text(clean_product_query), sqlparams=None, metadata=None
+                sqlquery=sql_text(pre_insert_product_query),
+                sqlparams=None, metadata=None
             )
         log_data = self.search_read(
             [], ['ultimo_invio', 'ultimo_id'], order='ultimo_id desc', limit=1)
@@ -92,10 +93,10 @@ class HyddemoMssqlLog(models.Model):
                 sqlparams=insert_product_params,
                 metadata=None)
 
-        update_product_query = self._get_post_insert_product_query()
-        if update_product_query:
+        post_insert_product_query = self._get_post_insert_product_query()
+        if post_insert_product_query:
             dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=sql_text(update_product_query), sqlparams=None, metadata=None
+                sqlquery=sql_text(post_insert_product_query), sqlparams=None, metadata=None
             )
         res = self.env["hyddemo.mssql.log"].create(
             [
