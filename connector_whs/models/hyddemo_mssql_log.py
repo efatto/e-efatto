@@ -1,14 +1,6 @@
 # Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
-import logging
-import time
-
-from odoo import models, fields, api, _
-from odoo.exceptions import UserError
-
-from sqlalchemy import text as sql_text
-
-_logger = logging.getLogger(__name__)
+from odoo import models, fields
 
 
 class HyddemoMssqlLog(models.Model):
