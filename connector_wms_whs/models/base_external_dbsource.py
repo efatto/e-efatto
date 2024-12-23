@@ -1,24 +1,24 @@
 from odoo import models, api
 
 
-class HyddemoMssqlLog(models.Model):
-    _inherit = "hyddemo.mssql.log"
+class BaseExternalDbsource(models.Model):
+    _inherit = "base.external.dbsource"
 
-    @staticmethod
-    def _get_pre_insert_product_query():
+    @api.multi
+    def _get_pre_insert_product_query(self):
         clean_product_query = \
             "DELETE FROM HOST_ARTICOLI WHERE Elaborato = 2 OR Elaborato = 0"
         return clean_product_query
 
-    @staticmethod
-    def _get_post_insert_product_query():
+    @api.multi
+    def _get_post_insert_product_query(self):
         # Set record from Elaborato=0 to Elaborato=1 to be processable from WHS
         update_product_query = \
             "UPDATE HOST_ARTICOLI SET Elaborato = 1 WHERE Elaborato = 0"
         return update_product_query
 
-    @staticmethod
-    def _get_insert_product_query():
+    @api.multi
+    def _get_insert_product_query(self):
         insert_product_query = """
         INSERT INTO HOST_ARTICOLI (
         Elaborato,
