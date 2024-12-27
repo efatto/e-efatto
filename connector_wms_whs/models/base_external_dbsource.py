@@ -1,21 +1,32 @@
 from odoo import models, api
 
+from sqlalchemy import text as sql_text
+
 
 class BaseExternalDbsource(models.Model):
     _inherit = "base.external.dbsource"
 
     @api.multi
-    def _get_pre_insert_product_query(self):
-        clean_product_query = \
+    def _pre_insert_product_query(self):
+        pre_insert_product_query = \
             "DELETE FROM HOST_ARTICOLI WHERE Elaborato = 2 OR Elaborato = 0"
-        return clean_product_query
+        self.with_context(no_return=True).execute_mssql(
+            sqlquery=sql_text(pre_insert_product_query),
+            sqlparams=None, metadata=None
+        )
+        return True
 
     @api.multi
-    def _get_post_insert_product_query(self):
+    def _post_insert_product_query(self):
         # Set record from Elaborato=0 to Elaborato=1 to be processable from WHS
+        self.ensure_one()
         update_product_query = \
             "UPDATE HOST_ARTICOLI SET Elaborato = 1 WHERE Elaborato = 0"
-        return update_product_query
+        self.with_context(no_return=True).execute_mssql(
+            sqlquery=sql_text(update_product_query),
+            sqlparams=None, metadata=None
+        )
+        return True
 
     @api.multi
     def _get_insert_product_query(self):

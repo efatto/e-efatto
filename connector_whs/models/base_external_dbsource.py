@@ -66,7 +66,7 @@ class BaseExternalDbsource(models.Model):
         return ""
 
     @api.multi
-    def _get_pre_insert_product_query(self):
+    def _pre_insert_product_query(self):
         # overridable method to delete record if requested, executed before other
         # methods, in the WMS database
         return ""
@@ -74,11 +74,11 @@ class BaseExternalDbsource(models.Model):
     @api.multi
     def _get_insert_product_query(self):
         # overridable method done to insert products in the WMS database, executed after
-        # _get_pre_insert_product_query method
+        # _pre_insert_product_query method
         return ""
 
     @api.multi
-    def _get_post_insert_product_query(self):
+    def _post_insert_product_query(self):
         # overridable method done after _get_insert_product_query in the WMS database
         return ""
 
@@ -94,12 +94,7 @@ class BaseExternalDbsource(models.Model):
                 raise UserError(_('Failed to open connection!'))
             # delete from HOST_ARTICOLI if already processed from WHS (Elaborato=2)
             # or interrupted (bad) records (Elaborato=0)
-            pre_insert_product_query = dbsource._get_pre_insert_product_query()
-            if pre_insert_product_query:
-                dbsource.with_context(no_return=True).execute_mssql(
-                    sqlquery=sql_text(pre_insert_product_query),
-                    sqlparams=None, metadata=None
-                )
+            dbsource._pre_insert_product_query()
             log_data = self.env['hyddemo.mssql.log'].search_read(
                 [], ['ultimo_invio', 'ultimo_id'], order='ultimo_id desc', limit=1)
             _logger.info(log_data)
@@ -123,12 +118,7 @@ class BaseExternalDbsource(models.Model):
                     sqlparams=insert_product_params,
                     metadata=None)
 
-            post_insert_product_query = dbsource._get_post_insert_product_query()
-            if post_insert_product_query:
-                dbsource.with_context(no_return=True).execute_mssql(
-                    sqlquery=sql_text(post_insert_product_query),
-                    sqlparams=None, metadata=None
-                )
+            dbsource._post_insert_product_query()
             res = self.env["hyddemo.mssql.log"].create(
                 [
                     {
@@ -309,7 +299,7 @@ class BaseExternalDbsource(models.Model):
             if pickings_to_assign:
                 pickings_to_assign.filtered(
                     lambda x: x.mapped('move_lines').filtered(
-                        lambda move: move.state not in ('draft', 'cancel', 'done')
+                        lambda m: m.state not in ('draft', 'cancel', 'done')
                     )
                 ).action_assign()
 
