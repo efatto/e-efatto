@@ -159,8 +159,8 @@ class BaseExternalDbsource(models.Model):
                     esiti_liste = dbsource.execute_mssql(
                         sqlquery=sql_text(
                             "SELECT NumLista, NumRiga, Qta, QtaMovimentata, Lotto, "
-                            "Lotto2, Lotto3, Lotto4, Lotto5, Articolo, DescrizioneArticolo "
-                            "FROM HOST_LISTE WHERE Elaborato=4 "
+                            "Lotto2, Lotto3, Lotto4, Lotto5, Articolo, "
+                            "DescrizioneArticolo FROM HOST_LISTE WHERE Elaborato=4 "
                             "AND NumLista IN :NUM_LISTE ORDER BY NumLista, NumRiga"
                         ),
                         sqlparams=dict(
@@ -282,10 +282,12 @@ class BaseExternalDbsource(models.Model):
                     if move.move_line_ids:
                         move.move_line_ids[0].qty_done = qty_moved
                     else:
-                        _logger.info('WMS LOG: Missing move lines in move %s' % move.name)
+                        _logger.info(
+                            'WMS LOG: Missing move lines in move %s' % move.name)
                     if move.picking_id.mapped('move_lines').filtered(
                         lambda m: m.state not in ('draft', 'cancel', 'done')):
-                        # FIXME action_assign must assign on qty_done and not on available
+                        # FIXME action_assign must assign on qty_done and not on
+                        #  available
                         pickings_to_assign |= move.picking_id
 
                     # Set mssql list done from host, they are not deleted from HOST to
@@ -366,8 +368,8 @@ class BaseExternalDbsource(models.Model):
                             self.execute_query(
                                 dbsource, sql_text(insert_line_query),
                                 insert_order_line_params[num_lista][riga])
-            # Update lists on mssql from 0 to 1 to be elaborated from WMS all in the same
-            # time
+            # Update lists on mssql from 0 to 1 to be elaborated from WMS all in the
+            # same time
             if hyddemo_whs_lists:
                 set_liste_to_elaborate_query = \
                     hyddemo_whs_lists._get_set_liste_to_elaborate_query()
