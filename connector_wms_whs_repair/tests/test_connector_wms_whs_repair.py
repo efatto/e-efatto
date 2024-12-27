@@ -1,7 +1,8 @@
 from odoo.addons.base_external_dbsource.exceptions import ConnectionSuccessError
 from odoo.tests import tagged
 from odoo.tests.common import Form
-from odoo.addons.connector_wms_whs.tests.test_connector_wms_whs import TestConnectorWmsWhs
+from odoo.addons.connector_wms_whs.tests.test_connector_wms_whs import (
+    TestConnectorWmsWhs)
 from sqlalchemy import text as sql_text
 
 
