@@ -14,6 +14,7 @@
         'connector_whs',
     ],
     'data': [
+        'views/product_template.xml',
     ],
     'installable': True,
     "external_dependencies": {"python": ["sqlalchemy"]},  # "sqlalchemy==1.3.24"
