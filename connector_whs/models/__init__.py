@@ -5,7 +5,6 @@ from . import (
     mrp,
     product,
     purchase,
-    repair,
     sale,
     stock
 )
