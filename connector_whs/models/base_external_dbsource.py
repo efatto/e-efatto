@@ -285,7 +285,8 @@ class BaseExternalDbsource(models.Model):
                         _logger.info(
                             'WMS LOG: Missing move lines in move %s' % move.name)
                     if move.picking_id.mapped('move_lines').filtered(
-                        lambda m: m.state not in ('draft', 'cancel', 'done')):
+                        lambda m: m.state not in ('draft', 'cancel', 'done')
+                    ):
                         # FIXME action_assign must assign on qty_done and not on
                         #  available
                         pickings_to_assign |= move.picking_id
