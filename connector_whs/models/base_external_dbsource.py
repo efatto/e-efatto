@@ -27,12 +27,13 @@ class BaseExternalDbsource(models.Model):
                     dbsource.warehouse_id = warehouse[0]
 
     location_id = fields.Many2one(
-        'stock.location', 'Location linked to WHS')
+        'stock.location', 'Location linked to WMS')
     warehouse_id = fields.Many2one(
         compute=_compute_warehouse,
         comodel_name='stock.warehouse',
-        string='Warehouse linked to WHS')
+        string='Warehouse linked to WMS')
     conn_string_sandbox = fields.Text('Connection string sandbox')
+    active = fields.Boolean('Active', default=True)
 
     @api.multi
     @api.depends('conn_string', 'conn_string_sandbox', 'password')
@@ -86,13 +87,13 @@ class BaseExternalDbsource(models.Model):
     def whs_update_products(self):
         """
         Send to HOST_ARTICOLI table only the products changed from the last execution,
-        which will be picked up by WHS software.
+        which will be picked up by WMS software.
         """
         for dbsource in self:
             connection = dbsource.connection_open_mssql()
             if not connection:
                 raise UserError(_('Failed to open connection!'))
-            # delete from HOST_ARTICOLI if already processed from WHS (Elaborato=2)
+            # delete from HOST_ARTICOLI if already processed from WMS (Elaborato=2)
             # or interrupted (bad) records (Elaborato=0)
             dbsource._pre_insert_product_query()
             log_data = self.env['hyddemo.mssql.log'].search_read(
@@ -136,7 +137,7 @@ class BaseExternalDbsource(models.Model):
     def whs_read_and_synchronize_list(self, whs_lists=False):
         """
         Funzione lanciabile tramite cron per aggiornare i movimenti dalle liste create
-        per WHS da Odoo nei vari moduli collegati (mrp, stock, ecc.)
+        per WMS da Odoo nei vari moduli collegati (mrp, stock, ecc.)
         :param whs_lists: instance of hyddemo.whs.liste
         :return: None
         """
@@ -196,7 +197,7 @@ class BaseExternalDbsource(models.Model):
                     num_riga = int(esito_lista[esiti_pos["NumRiga"]])
                     if not num_riga or not num_lista:
                         _logger.info(
-                            "WHS LOG: list %s in db without NumLista or NumRiga"
+                            "WMS LOG: list %s in db without NumLista or NumRiga"
                             % esito_lista
                         )
                         continue
@@ -205,10 +206,10 @@ class BaseExternalDbsource(models.Model):
                         ('riga', '=', num_riga)
                     ])
                     if not hyddemo_whs_lists:
-                        # ROADMAP: if the user want to create the list directly in WHS,
+                        # ROADMAP: if the user want to create the list directly in WMS,
                         # do the reverse synchronization (not requested so far)
                         _logger.info(
-                            "WHS LOG: list num_riga %s num_lista %s not found in "
+                            "WMS LOG: list num_riga %s num_lista %s not found in "
                             "lists (found list %s but not row)"
                             % (
                                 num_riga,
@@ -220,11 +221,11 @@ class BaseExternalDbsource(models.Model):
                         continue
                     if len(hyddemo_whs_lists) > 1:
                         _logger.info(
-                            'WHS LOG: More than 1 list found for lista %s' %
+                            'WMS LOG: More than 1 list found for lista %s' %
                             hyddemo_whs_lists)
                     hyddemo_whs_list = hyddemo_whs_lists[0]
                     if hyddemo_whs_list.stato == '3':
-                        _logger.debug('WHS LOG: list not processable: %s-%s' % (
+                        _logger.debug('WMS LOG: list not processable: %s-%s' % (
                             hyddemo_whs_list.num_lista,
                             hyddemo_whs_list.riga,
                         ))
@@ -257,14 +258,14 @@ class BaseExternalDbsource(models.Model):
                         # in or out differs from total qty
                         if qty_moved > hyddemo_whs_list.qta:
                             _logger.info(
-                                'WHS LOG: list %s: qty moved %s is bigger than '
+                                'WMS LOG: list %s: qty moved %s is bigger than '
                                 'initial qty %s!' % (
                                     hyddemo_whs_list.id, qty_moved,
                                     hyddemo_whs_list.qta)
                             )
 
                     # set reserved availability on qty_moved if != 0.0 and with max of
-                    # whs list qta
+                    # wms list qta
                     move.reserved_availability = min(qty_moved, hyddemo_whs_list.qta)
 
                     # Set move qty_moved user can create a backorder
@@ -281,7 +282,7 @@ class BaseExternalDbsource(models.Model):
                     if move.move_line_ids:
                         move.move_line_ids[0].qty_done = qty_moved
                     else:
-                        _logger.info('WHS LOG: Missing move lines in move %s' % move.name)
+                        _logger.info('WMS LOG: Missing move lines in move %s' % move.name)
                     if move.picking_id.mapped('move_lines').filtered(
                         lambda m: m.state not in ('draft', 'cancel', 'done')):
                         # FIXME action_assign must assign on qty_done and not on available
@@ -318,7 +319,7 @@ class BaseExternalDbsource(models.Model):
         for dbsource in self:
             """
             Write on mssql the lists in stato 1 created from stock and repair in
-            hyddemo.whs.liste to be elaborated from WHS
+            hyddemo.whs.liste to be elaborated from WMS
             :param datasource_id:
             :return:
             """
@@ -365,7 +366,7 @@ class BaseExternalDbsource(models.Model):
                             self.execute_query(
                                 dbsource, sql_text(insert_line_query),
                                 insert_order_line_params[num_lista][riga])
-            # Update lists on mssql from 0 to 1 to be elaborated from WHS all in the same
+            # Update lists on mssql from 0 to 1 to be elaborated from WMS all in the same
             # time
             if hyddemo_whs_lists:
                 set_liste_to_elaborate_query = \
@@ -388,7 +389,7 @@ class BaseExternalDbsource(models.Model):
         for dbsource in self:
             """
             Funzione lanciabile manualmente per marcare le liste in Odoo che non sono
-            più presenti in WHS in quanto cancellate, per verifiche
+            più presenti in WMS in quanto cancellate, per verifiche
             :return: True
             """
             connection = dbsource.connection_open_mssql()
@@ -417,7 +418,7 @@ class BaseExternalDbsource(models.Model):
                 i += 1
                 if i * 100.0 / imax > step:
                     _logger.info(
-                        'WHS LOG: Execution {0}% '.format(
+                        'WMS LOG: Execution {0}% '.format(
                             int(i * 100.0 / imax)))
                     step += 1
         return True

@@ -22,13 +22,13 @@ class Picking(models.Model):
     @api.multi
     def action_done(self):
         # Set whs_list.qta equal to move quantity_done, to stop any possible error
-        # from whs user, if not elaborated from whs, else raise an error
+        # from wms user, if not elaborated from wms, else raise an error
         for pick in self:
-            # Check whs lists are not in Elaborato=3 as WHS is working on them? no
+            # Check wms lists are not in Elaborato=3 as WMS is working on them? no
             # as only stato=4 is processed
-            # Synchronize whs lists? no as only stato=4 is processed, which is no
-            # more workable from WHS
-            # stato == '3' the whs list is no more processable, so ignored
+            # Synchronize wms lists? no as only stato=4 is processed, which is no
+            # more workable from WMS
+            # stato == '3' the wms list is no more processable, so ignored
             if any(x.stato == '4' and x.qtamov != x.move_id.quantity_done
                    for x in pick.mapped('move_lines.whs_list_ids')):
                 raise UserError(_('Trying to validate picking %s which is '
@@ -53,9 +53,9 @@ class Picking(models.Model):
                         # When transfer is completed, the rows that have 0 qty are
                         # deleted, so they are re-created where the system create the
                         # backorder.
-                        # In WHS the rows are registered with Elaborato=4 when they
+                        # In WMS the rows are registered with Elaborato=4 when they
                         # are terminated, even for the total, partial or 0.
-                        # In WHS the lists are all in Elaborato=3 when the user is
+                        # In WMS the lists are all in Elaborato=3 when the user is
                         # working on the order, so it is not possible that them are
                         # presents here as only stato=4 is processable on Odoo,
                         # that equals to Elaborato=4
@@ -67,9 +67,9 @@ class Picking(models.Model):
                             ('location_id', '=', location_id)
                         ])
                         if not dbsource:
-                            # This location is not linked to WHS System
+                            # This location is not linked to WMS System
                             continue
-                        _logger.info('WHS LOG: unlink whs list in backorder process of '
+                        _logger.info('WMS LOG: unlink wms list in backorder process of '
                                      'move %s' % move.name)
                         whs_list.unlink_lists(dbsource.id)
         super(Picking, self).action_done()
@@ -117,13 +117,13 @@ class Picking(models.Model):
                     ('location_id', '=', location.id)
                 ])
                 if not dbsource:
-                    _logger.info('WHS LOG: Location %s is not linked to WHS System' %
+                    _logger.info('WMS LOG: Location %s is not linked to WMS System' %
                                  location.name)
                     continue
                 if any([x.stato != '1' and x.qtamov != 0 for x in whs_lists]):
-                    raise UserError(_('Some moves already elaborated from WHS!'))
+                    raise UserError(_('Some moves already elaborated from WMS!'))
                 if unlink:
-                    _logger.info('WHS LOG: unlink lists for picking %s' % pick.name)
+                    _logger.info('WMS LOG: unlink lists for picking %s' % pick.name)
                     whs_lists.unlink_lists(dbsource.id)
                 else:
                     whs_lists.cancel_lists(dbsource.id)
@@ -207,7 +207,7 @@ class StockMove(models.Model):
                     for x in move.product_id.route_ids
                 ]
             ):
-                # Never create whs list for OUT or IN related to manufactured products,
+                # Never create wms list for OUT or IN related to manufactured products,
                 # only create MO.
                 # The IN will be without whs_list_ids so freely validatable
                 # as production is done.
@@ -221,7 +221,7 @@ class StockMove(models.Model):
                 ('location_id', '=', location_id)
             ])
             if not dbsource:
-                # This location is not linked to WHS System
+                # This location is not linked to WMS System
                 continue
             if pick.partner_id:
                 ragsoc = pick.partner_id.name
@@ -249,7 +249,7 @@ class StockMove(models.Model):
                     if move.whs_list_ids and any(
                             x.stato != '3' for x in move.whs_list_ids):
                         _logger.info(
-                            'WHS LOG: Ignored creation of WHS list %s as it '
+                            'WMS LOG: Ignored creation of WMS list %s as it '
                             'already exists and is processable!'
                             % str(
                                 ['%s-%s' % (x.riga, x.num_lista)
@@ -306,7 +306,7 @@ class StockMove(models.Model):
                     if nazione:
                         whsliste_data['nazione'] = nazione[0:50]
                     whsliste_obj.create(whsliste_data)
-                    _logger.info('WHS LOG: create list with data:\n %s' % (
+                    _logger.info('WMS LOG: create list with data:\n %s' % (
                         str(whsliste_data)
                     ))
         return True

@@ -20,7 +20,7 @@ class MrpProduction(models.Model):
         if any(
                 x.stato != '4' and x.qta
                 for x in self.move_raw_ids.mapped('whs_list_ids')):
-            raise UserError(_('Almost a WHS list is not in state "Ricevuto Esito"!'))
+            raise UserError(_('Almost a WMS list is not in state "Ricevuto Esito"!'))
         res = super().post_inventory()
         return res
 
@@ -63,13 +63,13 @@ class MrpProduction(models.Model):
         #  production
         whsliste_obj = self.env['hyddemo.whs.liste']
         for production in self:
-            # Create WHS list for raw materials
+            # Create WMS list for raw materials
             raw_dbsource = self.env['base.external.dbsource'].search([
                 ('location_id', '=', production.location_src_id.id)
             ])
             if raw_dbsource:
                 num_lista = False
-                # Location of raw material is linked to WHS
+                # Location of raw material is linked to WMS
                 for move in production.move_raw_ids:
                     if move.scrapped:
                         continue
@@ -92,12 +92,12 @@ class MrpProduction(models.Model):
                         )
                         whsliste_obj.create(whsliste_data)
 
-            # Create WHS list for finished products
+            # Create WMS list for finished products
             finished_dbsource = self.env['base.external.dbsource'].search([
                 ('location_id', '=', production.location_dest_id.id)
             ])
             if finished_dbsource:
-                # Location of finished material is linked to WHS
+                # Location of finished material is linked to WMS
                 num_lista = False
                 for move in production.move_finished_ids:
                     if move.scrapped or (
@@ -113,7 +113,7 @@ class MrpProduction(models.Model):
                             self.env.ref('stock.route_warehouse0_mto')
                         ]
                                 for x in move.product_id.route_ids]):
-                            # Never create whs list for OUT or IN related to
+                            # Never create wms list for OUT or IN related to
                             # manufactured products, only create MO.
                             # The IN will be without whs_list_ids so freely validatable
                             # as production is done.

@@ -33,7 +33,7 @@ class RepairOrder(models.Model):
                 ('location_id', '=', location_id.id)
             ])
             if not dbsource:
-                # This location is not linked to WHS System
+                # This location is not linked to WMS System
                 continue
             add_operations = repair.operations.filtered(
                 lambda x: x.move_id

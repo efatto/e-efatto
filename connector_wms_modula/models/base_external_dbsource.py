@@ -13,6 +13,7 @@ class BaseExternalDbsource(models.Model):
     @api.multi
     def _pre_insert_product_query(self):
         # get from EXP_UBICAZIONI products configured (with or without availabitity)
+        #  and set not managed from WMS to all the others
         self.ensure_one()
         pre_insert_product_query = """
 SELECT DISTINCT UBI_ARTICOLO FROM EXP_UBICAZIONI

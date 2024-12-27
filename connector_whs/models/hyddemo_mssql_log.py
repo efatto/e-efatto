@@ -8,7 +8,7 @@ class HyddemoMssqlLog(models.Model):
     _description = "Synchronization with Remote Mssql DB"
     _order = 'ultimo_invio desc'
 
-    ultimo_id = fields.Integer('Last ID in WHS', default=1)
+    ultimo_id = fields.Integer('Last ID in WMS', default=1)
     ultimo_invio = fields.Datetime('Last Processing', readonly=True)
     errori = fields.Text('Log Processing', readonly=True)
     dbsource_id = fields.Many2one(

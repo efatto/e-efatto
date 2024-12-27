@@ -40,7 +40,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 inventory_obj = self.env['stock.inventory']
                 inventory_line_obj = self.env['stock.inventory.line']
                 inventory = inventory_obj.create({
-                    'name': 'WHS sync inventory ' + new_last_update.strftime(
+                    'name': 'WMS sync inventory ' + new_last_update.strftime(
                         "%Y-%m-%d"),
                     'location_id': dbsource.location_id.id,
                     'filter': 'products',
@@ -49,7 +49,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
             i = 0
             whs_log_lines = []
             stock_product_dict = dict()
-            # get and aggregate stock data from whs
+            # get and aggregate stock data from wms
             while True:
                 giacenze_query = self._prepare_giacenze_query(i)
                 i += 2000
@@ -154,7 +154,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                                 'location_id': dbsource.location_id.id,
                                 'product_id': product.id,
                                 'product_uom_id': product.uom_id.id,
-                                'reason': 'WHS synchronize',
+                                'reason': 'WMS synchronize',
                                 }
                             inventory_line_obj.create(line_data)
                     else:

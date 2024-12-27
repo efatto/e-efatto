@@ -1,5 +1,5 @@
 ===================
-Connector WHS MSSQL
+Connector WMS MSSQL
 ===================
 
 .. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -17,9 +17,9 @@ Connector WHS MSSQL
     :target: https://github.com/sergiocorato/e-efatto/tree/12.0/connector_whs
     :alt: sergiocorato/e-efatto
 
-|badge1| |badge2| |badge3| 
+|badge1| |badge2| |badge3|
 
-This module add a bi-directional connection from Odoo to WHS software.
+This module add a bi-directional connection from Odoo to WMS software.
 
 
 

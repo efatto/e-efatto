@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class HyddemoWhsListe(models.Model):
     _name = "hyddemo.whs.liste"
-    _description = "Lists to synchronize with WHS"
+    _description = "Lists to synchronize with WMS"
     _order = 'id desc'
 
     num_lista = fields.Text('Numero Lista', size=50)
@@ -25,16 +25,16 @@ class HyddemoWhsListe(models.Model):
     ], string='stato')
     # Equivale al campo 'Elaborato' nel database
     # campo   campo
-    # Odoo:   WHS:
+    # Odoo:   WMS:
     # stato   Elaborato                                Note
     # -       -1 =Ordine scartato perché già iniziato  -
     # (0)      0 = In elaborazione da host;            Odoo crea l'in/out
     # 1        0 = In elaborazione da host;            Odoo crea la lista
-    # 2        1 = Elaborabile da whs;                 Il cron di Odoo inserisce la li-
+    # 2        1 = Elaborabile da wms;                 Il cron di Odoo inserisce la li-
     #                                                  sta e la marca come elaborabile
-    # 2        2 = Elaborato da whs;                   WHS importa la lista
-    # 2        3 = In elaborazione da whs;             L'utente di WHS lancia in esecuz.
-    # 2        4 = Elaborabile da host;                L'utente di WHS termina la lista
+    # 2        2 = Elaborato da wms;                   WMS importa la lista
+    # 2        3 = In elaborazione da wms;             L'utente di WMS lancia in esecuz.
+    # 2        4 = Elaborabile da host;                L'utente di WMS termina la lista
     # [3]      [5 = Elaborato da host]                 Nel caso in cui l'utente in Odoo
     #                                                  annulla un trasferimento
     # 4        5 = Elaborato da host                   Il cron di Odoo importa gli esiti
@@ -43,7 +43,7 @@ class HyddemoWhsListe(models.Model):
     tipo = fields.Selection([
         ('1', 'Prelievo'),
         ('2', 'Deposito/Versamento'),
-        ('3', 'Inventario'),  # 5 su WHS, 6 trasferimento
+        ('3', 'Inventario'),  # 5 su WMS, 6 trasferimento
         ('4', 'E...'),  # Per Modula, informarsi a che serve
     ], string='Tipo lista')
     vettore = fields.Text('Vettore', size=30)
@@ -128,7 +128,7 @@ class HyddemoWhsListe(models.Model):
 
     @api.multi
     def check_lists(self, dbsource):
-        # Check if whs list are in Elaborato=3 or 4 before unlinking/
+        # Check if wms list are in Elaborato=3 or 4 before unlinking/
         # cancelling them, as cron pass only on x minutes and information
         # could be obsolete
         num_liste = set(self.mapped('num_lista'))
@@ -140,7 +140,7 @@ class HyddemoWhsListe(models.Model):
         # overridable method
         """
         Funzione lanciabile manualmente per marcare la lista in Odoo che non è più
-        presenti in WHS in quanto cancellate, per verifiche
+        presenti in WMS in quanto cancellate, per verifiche
         :return: None
         """
         pass
@@ -149,7 +149,7 @@ class HyddemoWhsListe(models.Model):
     def check_list_state(self):
         """
         Funzione lanciabile manualmente per marcare la lista in Odoo che non è più
-        presenti in WHS in quanto cancellate, per verifiche
+        presenti in WMS in quanto cancellate, per verifiche
         :return:
         """
         for whs_list in self:

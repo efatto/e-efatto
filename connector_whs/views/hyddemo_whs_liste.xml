@@ -59,7 +59,7 @@
                 <header>
                     <button name="whs_check_list_state" string="Check list state" type="object"/>
                 </header>
-                <sheet string="WHS liste">
+                <sheet string="WMS liste">
                     <group>
                         <group>
                             <field name="product_id"/>
