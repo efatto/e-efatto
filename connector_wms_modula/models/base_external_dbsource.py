@@ -11,18 +11,29 @@ class BaseExternalDbsource(models.Model):
     _inherit = "base.external.dbsource"
 
     @api.multi
-    def _get_pre_insert_product_query(self):
+    def _pre_insert_product_query(self):
         # get from EXP_UBICAZIONI products configured (with or without availabitity)
+        self.ensure_one()
         pre_insert_product_query = """
 SELECT DISTINCT UBI_ARTICOLO FROM EXP_UBICAZIONI
 WHERE UBI_ARTICOLO IS NOT NULL AND UBI_ARTICOLO <> ' '
         """
-        return pre_insert_product_query
-
-    # @api.multi
-    # def _get_post_insert_product_query(self):
-    #     update_product_query = ""
-    #     return update_product_query
+        results = self.execute_mssql(
+            sqlquery=sql_text(pre_insert_product_query),
+            sqlparams=None, metadata=None
+        )
+        if not results[0]:
+            return False
+        products = []
+        for result in results[0]:
+            product = result[0]
+            if product not in products:
+                products.append(product)
+        not_used_in_wms_product_ids = self.env["product.product"].search([
+            ("default_code", "not in", products),
+        ])
+        not_used_in_wms_product_ids.write({"exclude_from_whs": True})
+        return True
 
     @api.multi
     def _get_insert_product_query(self):
