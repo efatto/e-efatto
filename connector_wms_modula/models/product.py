@@ -1,3 +1,5 @@
+from odoo.exceptions import UserError
+
 from odoo import api, fields, models, _
 
 
@@ -33,3 +35,9 @@ class ProductTemplate(models.Model):
                 ) % product_tmpl.id
             product_tmpl.name_wms_modula = name_wms_modula
             product_tmpl.is_name_too_long = is_name_too_long
+
+    def action_name_is_too_long(self):
+        raise UserError(_(
+            "Product name is too long!"
+            )
+        )
