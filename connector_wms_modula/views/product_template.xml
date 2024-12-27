@@ -9,6 +9,13 @@
                 <attribute name="class">oe_inline</attribute>
             </xpath>
             <xpath expr="//label[@for='exclude_from_whs']" position="after">
+                <field name="is_name_too_long" invisible="1"/>
+                <button
+                    attrs="{'invisible': [('is_name_too_long', '=', False)]}"
+                    name="action_name_is_too_long"
+                    type="object"
+                    icon="fa-exclamation-triangle"
+                />
                 <span attrs="{'invisible': [('exclude_from_whs', '=', True)]}">
                     ( <field name="name_wms_modula" class="oe_inline"/> )
                 </span>
