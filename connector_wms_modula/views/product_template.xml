@@ -11,7 +11,7 @@
             <xpath expr="//label[@for='exclude_from_whs']" position="after">
                 <field name="is_name_too_long" invisible="1"/>
                 <button
-                    attrs="{'invisible': [('is_name_too_long', '=', False)]}"
+                    attrs="{'invisible': ['|', ('exclude_from_whs', '=', True), ('is_name_too_long', '=', False)]}"
                     name="action_name_is_too_long"
                     type="object"
                     icon="fa-exclamation-triangle"
