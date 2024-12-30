@@ -29,8 +29,8 @@ msgstr "Apertura connessione fallita!"
 
 #. module: connector_wms_modula
 #: model:ir.model,name:connector_wms_modula.model_hyddemo_whs_liste
-msgid "Lists to synchronize with WHS"
-msgstr "Liste da sincronizzare con WHS"
+msgid "Lists to synchronize with WMS"
+msgstr "Liste da sincronizzare con WMS"
 
 #. module: connector_wms_modula
 #: code:addons/connector_wms_modula/tests/test_connector_wms_modula.py:25

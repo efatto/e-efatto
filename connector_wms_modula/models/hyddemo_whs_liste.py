@@ -33,7 +33,7 @@ class HyddemoWhsListe(models.Model):
                     f"DELETE FROM {db_type}_ORDINI_RIGHE WHERE RIG_ORDINE=:RIG_ORDINE"),
                 sqlparams=dict(RIG_ORDINE=num_lista),
                 metadata=None)
-            _logger.info('WHS LOG: unlink order and rows: %s' % num_lista)
+            _logger.info('WMS LOG: unlink order and rows: %s' % num_lista)
             if db_type == "IMP":
                 current_whs_lists.unlink()
 
