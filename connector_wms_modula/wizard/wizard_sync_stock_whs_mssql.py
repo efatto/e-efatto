@@ -133,7 +133,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
 
             if wizard.do_sync:
                 res = inventory.action_validate()
-                if res is not True:
+                if isinstance(res, dict):
                     raise UserError(_('Inventory validation failed! Error is: %s') % (
                         res.get("name", "")
                     ))
