@@ -95,6 +95,12 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 # different and do_sync is True
                 else:
                     product_qty = stock_product_dict[stock_product]
+                    # it product is traceable, inventory cannot be done without lot info
+                    if product.tracking != "none":
+                        whs_log_line.update({
+                            'type': 'tracking',
+                        })
+                        continue
                     if float_compare(
                         product_qty,
                         product.qty_available,
