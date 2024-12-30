@@ -132,7 +132,11 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     whs_log_lines.append(whs_log_line)
 
             if wizard.do_sync:
-                inventory.action_validate()
+                res = inventory.action_validate()
+                if res is not True:
+                    raise UserError(_('Inventory validation failed! Error is: %s') % (
+                        res.get("name", "")
+                    ))
 
             hyddemo_mssql_log = hyddemo_mssql_log_obj.create([{
                 'errori': 'Stock inventory %s' % (
