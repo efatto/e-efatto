@@ -319,13 +319,12 @@ class BaseExternalDbsource(models.Model):
 
     @api.multi
     def whs_insert_read_and_synchronize_list(self):
+        """
+        Write on mssql the lists in stato 1 created from stock and repair in
+        hyddemo.whs.liste to be elaborated from WMS
+        :return: True
+        """
         for dbsource in self:
-            """
-            Write on mssql the lists in stato 1 created from stock and repair in
-            hyddemo.whs.liste to be elaborated from WMS
-            :param datasource_id:
-            :return:
-            """
             connection = dbsource.connection_open_mssql()
             if not connection:
                 raise UserError(_('Failed to open connection!'))
@@ -389,12 +388,12 @@ class BaseExternalDbsource(models.Model):
 
     @api.multi
     def whs_check_lists(self):
+        """
+        Funzione lanciabile manualmente per marcare le liste in Odoo che non sono
+        più presenti in WMS in quanto cancellate, per verifiche
+        :return: True
+        """
         for dbsource in self:
-            """
-            Funzione lanciabile manualmente per marcare le liste in Odoo che non sono
-            più presenti in WMS in quanto cancellate, per verifiche
-            :return: True
-            """
             connection = dbsource.connection_open_mssql()
             if not connection:
                 raise UserError(_('Failed to open connection!'))
