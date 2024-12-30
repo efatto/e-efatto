@@ -170,7 +170,7 @@ VALUES (
                         num_riga = 0
                     if not num_riga or not num_lista:
                         _logger.info(
-                            "WHS LOG: list %s in db without NumLista or NumRiga"
+                            "WMS LOG: list %s in db without NumLista or NumRiga"
                             % esito_lista
                         )
                         continue
@@ -179,10 +179,10 @@ VALUES (
                         ('riga', '=', num_riga)
                     ])
                     if not hyddemo_whs_lists:
-                        # ROADMAP: if the user want to create the list directly in WHS,
+                        # ROADMAP: if the user want to create the list directly in WMS,
                         # do the reverse synchronization (not requested so far)
                         _logger.info(
-                            "WHS LOG: list num_riga %s num_lista %s not found in "
+                            "WMS LOG: list num_riga %s num_lista %s not found in "
                             "lists (found list %s but not row)"
                             % (
                                 num_riga,
@@ -194,11 +194,11 @@ VALUES (
                         continue
                     if len(hyddemo_whs_lists) > 1:
                         _logger.info(
-                            'WHS LOG: More than 1 list found for lista %s' %
+                            'WMS LOG: More than 1 list found for lista %s' %
                             hyddemo_whs_lists)
                     hyddemo_whs_list = hyddemo_whs_lists[0]
                     if hyddemo_whs_list.stato == '3':
-                        _logger.debug('WHS LOG: list not processable: %s-%s' % (
+                        _logger.debug('WMS LOG: list not processable: %s-%s' % (
                             hyddemo_whs_list.num_lista,
                             hyddemo_whs_list.riga,
                         ))
@@ -220,13 +220,13 @@ VALUES (
                     if qty_moved != hyddemo_whs_list.qta:
                         # in or out differs from total qty
                         if qty_moved > hyddemo_whs_list.qta:
-                            _logger.info('WHS LOG: list %s: qty moved %s is bigger than'
+                            _logger.info('WMS LOG: list %s: qty moved %s is bigger than'
                                          ' initial qty %s!'
                                          % (hyddemo_whs_list.id, qty_moved,
                                             hyddemo_whs_list.qta))
 
                     # set reserved availability on qty_moved if != 0.0 and with max of
-                    # whs list qta
+                    # WMS list qta
                     move.reserved_availability = min(qty_moved, hyddemo_whs_list.qta)
 
                     # Set move qty_moved user can create a backorder
@@ -239,7 +239,7 @@ VALUES (
                         move.move_line_ids[0].qty_done = qty_moved
                     else:
                         _logger.info(
-                            'WHS LOG: Missing move lines in move %s' % move.name)
+                            'WMS LOG: Missing move lines in move %s' % move.name)
                     if move.picking_id.mapped('move_lines').filtered(
                             lambda m: m.state not in ('draft', 'cancel', 'done')):
                         # FIXME action_assign must assign on qty_done and not on
