@@ -72,7 +72,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 }
                 product = product_obj.search([
                     ('default_code', '=', stock_product),
-                    ('type', 'in', ['product', 'consu']),
+                    ('type', '=', 'product'),
                     ('exclude_from_whs', '!=', True)])
                 # if it is a service, only log but do not create inventory line
                 if not product:
