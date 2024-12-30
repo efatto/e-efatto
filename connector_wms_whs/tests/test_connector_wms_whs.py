@@ -1,5 +1,5 @@
 import os
-from odoo import fields
+from odoo import fields, _
 from odoo.addons.base_external_dbsource.exceptions import ConnectionSuccessError
 from odoo.tests import tagged
 from odoo.tests.common import Form
@@ -21,7 +21,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                 "connection_wms_whs.txt"
             )
             if not os.path.isfile(conn_file):
-                raise UserError("Missing connection string!")
+                raise UserError(_("Missing connection string!"))
             with open(conn_file, 'r') as file:
                 conn_string = file.read().replace('\n', '')
             dbsource = self.dbsource_model.create({
