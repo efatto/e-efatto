@@ -107,7 +107,7 @@
     </record>
 
     <record id="action_whs_liste" model="ir.actions.act_window">
-        <field name="name">Whs Liste</field>
+        <field name="name">WMS Liste</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">hyddemo.whs.liste</field>
         <field name="view_type">form</field>

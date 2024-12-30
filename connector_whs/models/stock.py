@@ -32,19 +32,19 @@ class Picking(models.Model):
             if any(x.stato == '4' and x.qtamov != x.move_id.quantity_done
                    for x in pick.mapped('move_lines.whs_list_ids')):
                 raise UserError(_('Trying to validate picking %s which is '
-                                  'already elaborated on Whs with different qty.') %
+                                  'already elaborated on WMS with different qty.') %
                                 pick.name)
             # stato == '3' is ok when qtamov is 0, as is no more processable (n.b. qty
             # in move is obviously moved as it is the same move linked to correct list)
             if any(x.stato == '3' and x.qtamov != 0
                    for x in pick.mapped('move_lines.whs_list_ids')):
                 raise UserError(_('Trying to validate picking %s which is '
-                                  'not processable in Odoo but elaborated on Whs.'
+                                  'not processable in Odoo but elaborated on WMS.'
                                   ) % pick.name)
             if any(x.stato not in ('3', '4') and x.move_id.quantity_done != 0
                    for x in pick.mapped('move_lines.whs_list_ids')):
                 raise UserError(_('Trying to validate picking %s which is '
-                                  'not elaborated on Whs.') % pick.name)
+                                  'not elaborated on WMS.') % pick.name)
             for move in pick.move_lines:
                 for whs_list in move.whs_list_ids:
                     if whs_list.qtamov != move.quantity_done != 0:
@@ -136,7 +136,7 @@ class StockMove(models.Model):
     whs_list_ids = fields.One2many(
         comodel_name='hyddemo.whs.liste',
         inverse_name='move_id',
-        string='Whs Lists')
+        string='WMS Lists')
 
     @api.multi
     def _check_valid_whs_list(self):
@@ -144,7 +144,7 @@ class StockMove(models.Model):
             valid_whs_list = move.whs_list_ids.filtered(lambda x: x.stato != '3')
             if valid_whs_list and not move.state == 'done':
                 if move.product_uom_qty != valid_whs_list.qta:
-                    raise UserError(_("Whs valid list exists and qty cannot be "
+                    raise UserError(_("WMS valid list exists and qty cannot be "
                                       "modified!"))
 
     def write(self, vals):

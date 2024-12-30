@@ -84,7 +84,7 @@ msgstr "Connettore WMS - Sincronizza"
 #: model:ir.actions.server,name:connector_whs.ir_cron_connector_whs_sync_stock_ir_actions_server
 #: model:ir.cron,cron_name:connector_whs.ir_cron_connector_whs_sync_stock
 #: model:ir.cron,name:connector_whs.ir_cron_connector_whs_sync_stock
-msgid "Connector WMS - synchronize stock (pass True to do inventory sync, else it will create only WHS log)"
+msgid "Connector WMS - synchronize stock (pass True to do inventory sync, else it will create only WMS log)"
 msgstr "Connettore WMS - sincronizza il magazzino (passare la variabile True per sincronizzare il magazzino, altrimenti verrà solo creato il log WMS)"
 
 #. module: connector_whs
