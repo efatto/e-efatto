@@ -36,9 +36,9 @@ class WizardSyncStockWhsMssql(models.TransientModel):
             if not connection:
                 raise UserError(_('Failed to open connection!'))
             new_last_update = fields.Datetime.now()
+            inventory_obj = self.env['stock.inventory']
+            inventory_line_obj = self.env['stock.inventory.line']
             if wizard.do_sync:
-                inventory_obj = self.env['stock.inventory']
-                inventory_line_obj = self.env['stock.inventory.line']
                 inventory = inventory_obj.create({
                     'name': 'WMS sync inventory ' + new_last_update.strftime(
                         "%Y-%m-%d"),

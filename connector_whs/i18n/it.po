@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-08 15:46+0000\n"
-"PO-Revision-Date: 2023-03-08 15:46+0000\n"
+"POT-Creation-Date: 2024-12-30 10:57+0000\n"
+"PO-Revision-Date: 2024-12-30 10:57+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,9 +18,14 @@ msgstr ""
 #. module: connector_whs
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_wizard_sync_stock_whs_mssql
 msgid "<span>Synchronize stock inventory. </span>\n"
-"                        <span>If 'do_sync' is not set, it create and show only a log saved in Whslog.</span>"
+"                        <span>If 'Synchronize stock inventory' is not set, it creates and shows only a log saved in Whslog.</span>"
 msgstr "<span>Sincronizza inventario. </span>\n"
-"                        <span>Se 'do_sync' non è impostato, crea e mostra solo un log salvato in Whslog.</span>"
+"                        <span>Se 'Sincronizza inventario' non è impostato, crea e mostra solo un log salvato in Whslog.</span>"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_base_external_dbsource__active
+msgid "Active"
+msgstr "Attivo"
 
 #. module: connector_whs
 #: code:addons/connector_whs/models/mrp.py:23
@@ -32,11 +37,6 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_wizard_sync_stock_whs_mssql
 msgid "Apply"
 msgstr "Salva"
-
-#. module: connector_whs
-#: model:ir.model,name:connector_whs.model_stock_backorder_confirmation
-msgid "Backorder Confirmation"
-msgstr "Conferma ordine residuo"
 
 #. module: connector_whs
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_wizard_sync_stock_whs_mssql
@@ -61,7 +61,7 @@ msgstr "Controlla liste mancanti"
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__client_order_ref
 msgid "Client Order Ref"
-msgstr "Rif. Ordine Cliente"
+msgstr "Rif. Cliente"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__cliente
@@ -84,7 +84,7 @@ msgstr "Connettore WMS - Sincronizza"
 #: model:ir.actions.server,name:connector_whs.ir_cron_connector_whs_sync_stock_ir_actions_server
 #: model:ir.cron,cron_name:connector_whs.ir_cron_connector_whs_sync_stock
 #: model:ir.cron,name:connector_whs.ir_cron_connector_whs_sync_stock
-msgid "Connector WMS - synchronize stock (pass True to do inventory sync, else it will create only wms log)"
+msgid "Connector WMS - synchronize stock (pass True to do inventory sync, else it will create only WHS log)"
 msgstr "Connettore WMS - sincronizza il magazzino (passare la variabile True per sincronizzare il magazzino, altrimenti verrà solo creato il log WMS)"
 
 #. module: connector_whs
@@ -126,11 +126,11 @@ msgstr ""
 #. module: connector_whs
 #: model:ir.ui.menu,name:connector_whs.menu_dbsource_stock
 msgid "Database Sources"
-msgstr "Sorgenti Database"
+msgstr "Origini database"
 
 #. module: connector_whs
 #: selection:hyddemo.whs.liste,tipo:0
-msgid "Deposito"
+msgid "Deposito/Versamento"
 msgstr ""
 
 #. module: connector_whs
@@ -139,7 +139,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__display_name
 #: model:ir.model.fields,field_description:connector_whs.field_wizard_sync_stock_whs_mssql__display_name
 msgid "Display Name"
-msgstr "Nome Visualizzato"
+msgstr "Nome da visualizzare"
 
 #. module: connector_whs
 #: selection:hyddemo.whs.liste,stato:0
@@ -149,8 +149,8 @@ msgstr ""
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_product_product__exclude_from_whs
 #: model:ir.model.fields,field_description:connector_whs.field_product_template__exclude_from_whs
-msgid "Exclude From Whs"
-msgstr "Escluso da WMS"
+msgid "Exclude from WMS sync"
+msgstr ""
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__dbsource_id
@@ -160,17 +160,16 @@ msgstr "Sorgente Database Esterna"
 #. module: connector_whs
 #: model:ir.model,name:connector_whs.model_base_external_dbsource
 msgid "External Database Sources"
-msgstr "Sorgenti Database Esterne"
+msgstr "Origini database esterne"
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/hyddemo_mssql_log.py:150
-#: code:addons/connector_whs/models/hyddemo_mssql_log.py:246
-#: code:addons/connector_whs/models/hyddemo_mssql_log.py:285
-#: code:addons/connector_whs/models/hyddemo_mssql_log.py:414
-#: code:addons/connector_whs/models/hyddemo_whs_liste.py:94
-#: code:addons/connector_whs/models/hyddemo_whs_liste.py:121
-#: code:addons/connector_whs/models/hyddemo_whs_liste.py:186
-#: code:addons/connector_whs/wizard/wizard_sync_stock_whs_mssql.py:24
+#: code:addons/connector_whs/models/base_external_dbsource.py:95
+#: code:addons/connector_whs/models/base_external_dbsource.py:147
+#: code:addons/connector_whs/models/base_external_dbsource.py:330
+#: code:addons/connector_whs/models/base_external_dbsource.py:399
+#: code:addons/connector_whs/models/hyddemo_whs_liste.py:100
+#: code:addons/connector_whs/models/hyddemo_whs_liste.py:119
+#: code:addons/connector_whs/wizard/wizard_sync_stock_whs_mssql.py:37
 #, python-format
 msgid "Failed to open connection!"
 msgstr "Apertura connessione al DB fallita!"
@@ -199,11 +198,6 @@ msgid "Inventario"
 msgstr ""
 
 #. module: connector_whs
-#: model:ir.model,name:connector_whs.model_stock_location
-msgid "Inventory Locations"
-msgstr "Ubicazioni di magazzino"
-
-#. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__ultimo_id
 msgid "Last ID in WMS"
 msgstr "Ultimo ID in WMS"
@@ -214,7 +208,7 @@ msgstr "Ultimo ID in WMS"
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste____last_update
 #: model:ir.model.fields,field_description:connector_whs.field_wizard_sync_stock_whs_mssql____last_update
 msgid "Last Modified on"
-msgstr "Ultima modifica il"
+msgstr "Data di ultima modifica"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__ultimo_invio
@@ -307,6 +301,12 @@ msgid "Mismatch"
 msgstr "Squadrato"
 
 #. module: connector_whs
+#: code:addons/connector_whs/models/stock.py:184
+#, python-format
+msgid "More than one list number found for picking %s:%s"
+msgstr "Più di un numero di lista trovato per trasferimento %s:%s"
+
+#. module: connector_whs
 #: model:ir.model,name:connector_whs.model_hyddemo_mssql_log_line
 msgid "Mssql Log Line"
 msgstr "Linea Log Mssql"
@@ -337,6 +337,16 @@ msgid "Numero riga"
 msgstr ""
 
 #. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__qty_wrong
+msgid "Odoo Q.ty (wrong)"
+msgstr "Q.tà Odoo (errata)"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__weight_wrong
+msgid "Odoo Weight (wrong)"
+msgstr "Peso Odoo (errato)"
+
+#. module: connector_whs
 #: selection:hyddemo.mssql.log.line,type:0
 msgid "Ok"
 msgstr ""
@@ -344,6 +354,11 @@ msgstr ""
 #. module: connector_whs
 #: selection:hyddemo.whs.liste,tipo:0
 msgid "Prelievo"
+msgstr ""
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__priorita
+msgid "Priorita"
 msgstr ""
 
 #. module: connector_whs
@@ -368,8 +383,8 @@ msgstr "Codice Prodotto Cliente"
 
 #. module: connector_whs
 #: model:ir.model,name:connector_whs.model_product_template
-msgid "Product Template (Multi-Company)"
-msgstr ""
+msgid "Product Template"
+msgstr "Modello prodotto"
 
 #. module: connector_whs
 #: model:ir.model,name:connector_whs.model_mrp_production
@@ -385,16 +400,6 @@ msgstr ""
 #: model:ir.model,name:connector_whs.model_purchase_order
 msgid "Purchase Order"
 msgstr "Ordine di Acquisto"
-
-#. module: connector_whs
-#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__qty
-msgid "Qty"
-msgstr "Qtà"
-
-#. module: connector_whs
-#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__qty_wrong
-msgid "Qty Wrong"
-msgstr "Qtà Errata"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__qta
@@ -414,7 +419,7 @@ msgstr ""
 #. module: connector_whs
 #: model:ir.model,name:connector_whs.model_mrp_product_produce
 msgid "Record Production"
-msgstr "Registrare la Produzione"
+msgstr "Registrare la produzione"
 
 #. module: connector_whs
 #: model:ir.model,name:connector_whs.model_repair_order
@@ -442,7 +447,7 @@ msgid "Service"
 msgstr "Servizio"
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/stock.py:114
+#: code:addons/connector_whs/models/stock.py:124
 #, python-format
 msgid "Some moves already elaborated from WMS!"
 msgstr "Alcuni movimenti già elaborati da WMS!"
@@ -480,8 +485,18 @@ msgstr "Sincronizza inventario"
 
 #. module: connector_whs
 #: model:ir.model,name:connector_whs.model_wizard_sync_stock_whs_mssql
-msgid "Synchronize stock inventory with Remote Mssql DB"
-msgstr "Sincronizza inventario con Database remoto Mssql"
+msgid "Synchronize stock inventory from the Remote Mssql DB to Odoo"
+msgstr "Sincronizza inventario dal Database remoto Mssql verso Odoo"
+
+#. module: connector_whs
+#: model:ir.model.fields,help:connector_whs.field_hyddemo_mssql_log_line__qty_wrong
+msgid "This quantity is assumed as wrong and overriden by WMS quantity if 'Synchronize stock inventory' is set."
+msgstr "Questa quantità è considerata come errata e sovrascritta dalla quantità nel WMS se 'Sincronizza inventario' è impostato."
+
+#. module: connector_whs
+#: model:ir.model.fields,help:connector_whs.field_hyddemo_mssql_log_line__weight_wrong
+msgid "This weight is assumed as wrong and overriden by WMS weight if 'Synchronize stock inventory' is set."
+msgstr "Questo peso è considerato come errato e sovrascritto dal peso nel WMS se 'Sincronizza inventario' è impostato."
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__tipo
@@ -494,33 +509,21 @@ msgid "Transfer"
 msgstr "Trasferimento"
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/hyddemo_whs_liste.py:151
-#, python-format
-msgid "Trying to cancel lists elaborated from WMS, please wait for cron synchronization or force it."
-msgstr "Tentativo di annullare liste elaborate da WMS, si prega di attendere o forzare la sincronizzazione."
-
-#. module: connector_whs
-#: code:addons/connector_whs/models/hyddemo_whs_liste.py:163
-#, python-format
-msgid "Trying to cancel lists launched in processing from user in WMS, please wait for order end processing."
-msgstr "Tentativo di annullare liste lanciate in elaborazione dall'utente in WMS, si prega di attendere il completamento dell'operazione."
-
-#. module: connector_whs
 #: code:addons/connector_whs/models/stock.py:34
 #, python-format
-msgid "Trying to validate picking %s which is already elaborated on Whs with different qty."
-msgstr "Tentativo di validare il picking %s che è già stato elaborato in Whs con una quantità diversa."
+msgid "Trying to validate picking %s which is already elaborated on WMS with different qty."
+msgstr "Tentativo di validare il picking %s che è già stato elaborato in WMS con una quantità diversa."
 
 #. module: connector_whs
 #: code:addons/connector_whs/models/stock.py:46
 #, python-format
-msgid "Trying to validate picking %s which is not elaborated on Whs."
-msgstr "Tentativo di validare picking %s che non è stato elaborato in Whs."
+msgid "Trying to validate picking %s which is not elaborated on WMS."
+msgstr "Tentativo di validare picking %s che non è stato elaborato in WMS."
 
 #. module: connector_whs
 #: code:addons/connector_whs/models/stock.py:41
 #, python-format
-msgid "Trying to validate picking %s which is not processable in Odoo but elaborated on Whs."
+msgid "Trying to validate picking %s which is not processable in Odoo but elaborated on WMS."
 msgstr "Tentativo di validare il trasferimento %s che non è processabile in Odoo ma elaborato in WMS."
 
 #. module: connector_whs
@@ -539,55 +542,60 @@ msgid "Used as unique code in outher db, so spaces are not admitted."
 msgstr "Usato come codice unico in database esterno, perciò gli spazi non sono ammessi."
 
 #. module: connector_whs
+#: model:ir.model.fields,help:connector_whs.field_wizard_sync_stock_whs_mssql__do_sync
+msgid "Valid quantities are those found in the remote database."
+msgstr "Le quantità valide sono quelle trovate nel database remoto."
+
+#. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__vettore
 msgid "Vettore"
 msgstr ""
 
 #. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__qty
+msgid "WMS Q.ty"
+msgstr "Q.tà WMS"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__weight
+msgid "WMS Weight"
+msgstr "Peso WMS"
+
+#. module: connector_whs
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_whs_liste_form
 msgid "WMS liste"
-msgstr "Liste Whs"
+msgstr "Liste WMS"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_base_external_dbsource__warehouse_id
 msgid "Warehouse linked to WMS"
-msgstr "Magazzino collegato a WMS"
-
-#. module: connector_whs
-#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__weight
-msgid "Weight"
-msgstr "Peso"
-
-#. module: connector_whs
-#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__weight_wrong
-msgid "Weight Wrong"
-msgstr ""
+msgstr "Magazzino collegato al WMS"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__whs_list_absent
-msgid "Whs List Absent"
-msgstr "Lista Whs Mancante"
+msgid "WMS List Absent"
+msgstr "Lista WMS Mancante"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__whs_list_log
-msgid "Whs List Log"
+msgid "WMS List Log"
 msgstr "Log Lista WMS"
 
 #. module: connector_whs
 #: model:ir.actions.act_window,name:connector_whs.action_whs_liste
 #: model:ir.ui.menu,name:connector_whs.menu_whsliste
-msgid "Whs Liste"
-msgstr "Liste Whs"
+msgid "WMS Liste"
+msgstr "Liste WMS"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_stock_move__whs_list_ids
-msgid "Whs Lists"
-msgstr "Liste Whs"
+msgid "WMS Lists"
+msgstr "Liste WMS"
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/stock.py:148
+#: code:addons/connector_whs/models/stock.py:147
 #, python-format
-msgid "Whs valid list exists and qty cannot be modified!"
+msgid "WMS valid list exists and qty cannot be modified!"
 msgstr "Esiste una lista WMS valida e la quantità non può essere modificata!"
 
 #. module: connector_whs
@@ -599,7 +607,7 @@ msgstr "Log WMS"
 #. module: connector_whs
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_wizard_sync_stock_whs_mssql
 msgid "or"
-msgstr "oppure"
+msgstr "o"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__stato
