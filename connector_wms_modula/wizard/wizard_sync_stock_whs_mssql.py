@@ -126,6 +126,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         whs_log_line.update({
                             'product_id': product.id,
                             'qty': product_qty,
+                            'qty_wrong': product_qty,
                             'type': 'ok',
                         })
                 if whs_log_line.get('type'):
