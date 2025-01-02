@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-27 15:37+0000\n"
-"PO-Revision-Date: 2024-12-27 15:37+0000\n"
+"POT-Creation-Date: 2025-01-02 11:49+0000\n"
+"PO-Revision-Date: 2025-01-02 11:49+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -22,15 +22,26 @@ msgstr "Origini database esterne"
 
 #. module: connector_wms_modula
 #: code:addons/connector_wms_modula/models/base_external_dbsource.py:122
-#: code:addons/connector_wms_modula/wizard/wizard_sync_stock_whs_mssql.py:28
+#: code:addons/connector_wms_modula/wizard/wizard_sync_stock_whs_mssql.py:30
 #, python-format
 msgid "Failed to open connection!"
 msgstr "Apertura connessione fallita!"
 
 #. module: connector_wms_modula
+#: code:addons/connector_wms_modula/wizard/wizard_sync_stock_whs_mssql.py:138
+#, python-format
+msgid "Inventory validation failed! Error is: %s"
+msgstr "Validazione inventario fallita! Errore: %s"
+
+#. module: connector_wms_modula
 #: model:ir.model,name:connector_wms_modula.model_hyddemo_whs_liste
 msgid "Lists to synchronize with WMS"
 msgstr "Liste da sincronizzare con WMS"
+
+#. module: connector_wms_modula
+#: selection:hyddemo.mssql.log.line,type:0
+msgid "Mismatch"
+msgstr "Squadrato"
 
 #. module: connector_wms_modula
 #: code:addons/connector_wms_modula/tests/test_connector_wms_modula.py:25
@@ -39,9 +50,57 @@ msgid "Missing connection string!"
 msgstr "Stringa di connessione mancante!"
 
 #. module: connector_wms_modula
-#: model:ir.model,name:connector_wms_modula.model_hyddemo_mssql_log
-msgid "Synchronization with Remote Mssql DB"
-msgstr "Sincronizzazione con DB Mssql Remoto"
+#: code:addons/connector_wms_modula/models/product.py:33
+#, python-format
+msgid "Missing product template ID: %s name"
+msgstr "Modello prodotto mancancte ID: %s name"
+
+#. module: connector_wms_modula
+#: model:ir.model,name:connector_wms_modula.model_hyddemo_mssql_log_line
+msgid "Mssql Log Line"
+msgstr "Linea Log Mssql"
+
+#. module: connector_wms_modula
+#: model:ir.model.fields,field_description:connector_wms_modula.field_product_product__is_name_too_long
+#: model:ir.model.fields,field_description:connector_wms_modula.field_product_template__is_name_too_long
+msgid "Name is too long"
+msgstr "Nome troppo lungo"
+
+#. module: connector_wms_modula
+#: selection:hyddemo.mssql.log.line,type:0
+msgid "Not found"
+msgstr "Non trovato"
+
+#. module: connector_wms_modula
+#: selection:hyddemo.mssql.log.line,type:0
+msgid "Ok"
+msgstr ""
+
+#. module: connector_wms_modula
+#: model:ir.model,name:connector_wms_modula.model_product_template
+msgid "Product Template"
+msgstr "Modello prodotto"
+
+#. module: connector_wms_modula
+#: code:addons/connector_wms_modula/models/product.py:40
+#, python-format
+msgid "Product name is too long!"
+msgstr "Il nome del prodotto è troppo lungo!"
+
+#. module: connector_wms_modula
+#: selection:hyddemo.mssql.log.line,type:0
+msgid "Service"
+msgstr "Servizio"
+
+#. module: connector_wms_modula
+#: model:ir.model,name:connector_wms_modula.model_wizard_sync_stock_whs_mssql
+msgid "Synchronize stock inventory from the Remote Mssql DB to Odoo"
+msgstr "Sincronizza inventario dal Database remoto Mssql verso Odoo"
+
+#. module: connector_wms_modula
+#: selection:hyddemo.mssql.log.line,type:0
+msgid "Tracking"
+msgstr "Tracciabile"
 
 #. module: connector_wms_modula
 #: code:addons/connector_wms_modula/models/hyddemo_whs_liste.py:98
@@ -55,3 +114,13 @@ msgstr "Tentativo di annullare liste già marcate da eliminare in Odoo, si prega
 msgid "Trying to cancel lists elaborated from WMS, please wait for cron synchronization or force it."
 msgstr "Tentativo di annullare liste elaborate da WMS, si prega di attendere il cron di sincronizzazione o di forzarne l'avvio."
 
+#. module: connector_wms_modula
+#: model:ir.model.fields,field_description:connector_wms_modula.field_hyddemo_mssql_log_line__type
+msgid "Type"
+msgstr "Tipo"
+
+#. module: connector_wms_modula
+#: model:ir.model.fields,field_description:connector_wms_modula.field_product_product__name_wms_modula
+#: model:ir.model.fields,field_description:connector_wms_modula.field_product_template__name_wms_modula
+msgid "WMS Modula Name"
+msgstr "Nome in WMS Modula"
