@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-30 11:18+0000\n"
-"PO-Revision-Date: 2024-12-30 11:18+0000\n"
+"POT-Creation-Date: 2025-01-02 11:48+0000\n"
+"PO-Revision-Date: 2025-01-02 11:48+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -422,11 +422,6 @@ msgid "Record Production"
 msgstr "Registrare la produzione"
 
 #. module: connector_whs
-#: model:ir.model,name:connector_whs.model_repair_order
-msgid "Repair Order"
-msgstr "Ordine di riparazione"
-
-#. module: connector_whs
 #: selection:hyddemo.whs.liste,stato:0
 msgid "Ricevuto esito"
 msgstr ""
@@ -504,6 +499,11 @@ msgid "Tipo lista"
 msgstr ""
 
 #. module: connector_whs
+#: selection:hyddemo.mssql.log.line,type:0
+msgid "Tracking"
+msgstr "Tracciabile"
+
+#. module: connector_whs
 #: model:ir.model,name:connector_whs.model_stock_picking
 msgid "Transfer"
 msgstr "Trasferimento"
@@ -553,8 +553,9 @@ msgstr ""
 
 #. module: connector_whs
 #: model:ir.actions.act_window,name:connector_whs.action_whs_liste
-#: model:ir.ui.menu,name:connector_whs.menu_whsliste
 #: model:ir.model.fields,field_description:connector_whs.field_stock_move__whs_list_ids
+#: model:ir.ui.menu,name:connector_whs.menu_whsliste
+#: model_terms:ir.ui.view,arch_db:connector_whs.view_whs_liste_form
 msgid "WMS Lists"
 msgstr "Liste WMS"
 
@@ -567,11 +568,6 @@ msgstr "Q.tà WMS"
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__weight
 msgid "WMS Weight"
 msgstr "Peso WMS"
-
-#. module: connector_whs
-#: model_terms:ir.ui.view,arch_db:connector_whs.view_whs_liste_form
-msgid "WMS liste"
-msgstr "Liste WMS"
 
 #. module: connector_whs
 #: code:addons/connector_whs/models/stock.py:147
