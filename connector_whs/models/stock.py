@@ -69,6 +69,11 @@ class Picking(models.Model):
                         if not dbsource:
                             # This location is not linked to WMS System
                             continue
+                        if (
+                            pick.picking_type_id
+                            not in dbsource.stock_picking_type_ids
+                        ):
+                            continue
                         _logger.info('WMS LOG: unlink wms list in backorder process of '
                                      'move %s' % move.name)
                         whs_list.unlink_lists(dbsource.id)
@@ -119,6 +124,11 @@ class Picking(models.Model):
                 if not dbsource:
                     _logger.info('WMS LOG: Location %s is not linked to WMS System' %
                                  location.name)
+                    continue
+                if (
+                    pick.picking_type_id
+                    not in dbsource.stock_picking_type_ids
+                ):
                     continue
                 if any([x.stato != '1' and x.qtamov != 0 for x in whs_lists]):
                     raise UserError(_('Some moves already elaborated from WMS!'))
@@ -222,6 +232,11 @@ class StockMove(models.Model):
             ])
             if not dbsource:
                 # This location is not linked to WMS System
+                continue
+            if (
+                pick.picking_type_id
+                not in dbsource.stock_picking_type_ids
+            ):
                 continue
             if pick.partner_id:
                 ragsoc = pick.partner_id.name

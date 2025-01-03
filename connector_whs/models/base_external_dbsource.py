@@ -34,6 +34,10 @@ class BaseExternalDbsource(models.Model):
         string='Warehouse linked to WMS')
     conn_string_sandbox = fields.Text('Connection string sandbox')
     active = fields.Boolean('Active', default=True)
+    stock_picking_type_ids = fields.Many2many(
+        comodel_name='stock.picking.type',
+        string='Stock picking types enabled',
+    )
 
     @api.multi
     @api.depends('conn_string', 'conn_string_sandbox', 'password')

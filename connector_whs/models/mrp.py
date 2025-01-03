@@ -67,7 +67,7 @@ class MrpProduction(models.Model):
             raw_dbsource = self.env['base.external.dbsource'].search([
                 ('location_id', '=', production.location_src_id.id)
             ])
-            if raw_dbsource:
+            if raw_dbsource and production.picking_type_id in raw_dbsource.stock_picking_type_ids:
                 num_lista = False
                 # Location of raw material is linked to WMS
                 for move in production.move_raw_ids:
@@ -96,7 +96,7 @@ class MrpProduction(models.Model):
             finished_dbsource = self.env['base.external.dbsource'].search([
                 ('location_id', '=', production.location_dest_id.id)
             ])
-            if finished_dbsource:
+            if finished_dbsource and production.picking_type_id in finished_dbsource.stock_picking_type_ids:
                 # Location of finished material is linked to WMS
                 num_lista = False
                 for move in production.move_finished_ids:
