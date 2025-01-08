@@ -30,7 +30,8 @@ class RepairOrder(models.Model):
         for repair in self:
             location_id = repair.location_id
             dbsource = self.env['base.external.dbsource'].search([
-                ('location_id', '=', location_id.id)
+                ('location_id', '=', location_id.id),
+                ('company_id', '=', repair.company_id.id),
             ])
             if not dbsource:
                 # This location is not linked to WMS System
