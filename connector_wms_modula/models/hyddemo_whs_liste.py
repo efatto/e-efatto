@@ -101,9 +101,9 @@ class HyddemoWhsListe(models.Model):
             ))
 
     @api.multi
-    def whs_check_list_state(self):
-        # do no call super() and put specific code
-        pass
+    def check_list_state(self):
+        res = super().check_list_state()
+        return res
 
     @staticmethod
     def _get_insert_order_line_query(params):

@@ -17,5 +17,6 @@
         'views/product_template.xml',
     ],
     'installable': True,
+    "excludes": "connector_wms_whs",
     "external_dependencies": {"python": ["sqlalchemy"]},  # "sqlalchemy==1.3.24"
 }
