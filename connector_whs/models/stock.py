@@ -64,7 +64,8 @@ class Picking(models.Model):
                         if pick.picking_type_id.code == 'incoming':
                             location_id = pick.location_dest_id.id
                         dbsource = self.env['base.external.dbsource'].search([
-                            ('location_id', '=', location_id)
+                            ('location_id', '=', location_id),
+                            ('company_id', '=', pick.company_id.id),
                         ])
                         if not dbsource:
                             # This location is not linked to WMS System
@@ -119,7 +120,8 @@ class Picking(models.Model):
                 if pick.picking_type_id.code == 'incoming':
                     location = pick.location_dest_id
                 dbsource = self.env['base.external.dbsource'].search([
-                    ('location_id', '=', location.id)
+                    ('location_id', '=', location.id),
+                    ('company_id', '=', pick.company_id.id),
                 ])
                 if not dbsource:
                     _logger.info('WMS LOG: Location %s is not linked to WMS System' %
@@ -228,7 +230,8 @@ class StockMove(models.Model):
             #
 
             dbsource = self.env['base.external.dbsource'].search([
-                ('location_id', '=', location_id)
+                ('location_id', '=', location_id),
+                ('company_id', '=', pick.company_id.id),
             ])
             if not dbsource:
                 # This location is not linked to WMS System

@@ -57,7 +57,7 @@
         <field name="arch" type="xml">
             <form string="Liste prelievo, deposito e inventario">
                 <header>
-                    <button name="whs_check_list_state" string="Check list state" type="object"/>
+                    <button name="check_list_state" string="Check list state" type="object"/>
                 </header>
                 <sheet string="WMS Lists">
                     <group>

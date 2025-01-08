@@ -65,7 +65,8 @@ class MrpProduction(models.Model):
         for production in self:
             # Create WMS list for raw materials
             raw_dbsource = self.env['base.external.dbsource'].search([
-                ('location_id', '=', production.location_src_id.id)
+                ('location_id', '=', production.location_src_id.id),
+                ('company_id', '=', production.company_id.id),
             ])
             if raw_dbsource and production.picking_type_id in raw_dbsource.stock_picking_type_ids:
                 num_lista = False
@@ -94,7 +95,8 @@ class MrpProduction(models.Model):
 
             # Create WMS list for finished products
             finished_dbsource = self.env['base.external.dbsource'].search([
-                ('location_id', '=', production.location_dest_id.id)
+                ('location_id', '=', production.location_dest_id.id),
+                ('company_id', '=', production.company_id.id),
             ])
             if finished_dbsource and production.picking_type_id in finished_dbsource.stock_picking_type_ids:
                 # Location of finished material is linked to WMS

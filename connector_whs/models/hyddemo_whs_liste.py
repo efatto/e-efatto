@@ -136,24 +136,13 @@ class HyddemoWhsListe(models.Model):
             self.whs_check_lists(num_lista, dbsource)
 
     @api.multi
-    def whs_check_list_state(self):
-        # overridable method
-        """
-        Funzione lanciabile manualmente per marcare la lista in Odoo che non è più
-        presenti in WMS in quanto cancellate, per verifiche
-        :return: None
-        """
-        pass
-
-    @api.multi
     def check_list_state(self):
         """
         Funzione lanciabile manualmente per marcare la lista in Odoo che non è più
         presenti in WMS in quanto cancellate, per verifiche
         :return:
         """
-        for whs_list in self:
-            whs_list.whs_check_list_state()
+        return True
 
     @staticmethod
     def _get_insert_order_line_query(params):
