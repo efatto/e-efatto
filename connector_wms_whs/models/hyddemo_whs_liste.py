@@ -76,16 +76,18 @@ class HyddemoWhsListe(models.Model):
             ))
 
     @api.multi
-    def whs_check_list_state(self):
-        # do no call super() and put specific code
+    def check_list_state(self):
+        res = super().check_list_state()
         for whs_list in self:
             if whs_list.move_id:
                 dbsource = self.env['base.external.dbsource'].search([
-                    ('location_id', '=', whs_list.move_id.location_id.id)
+                    ('location_id', '=', whs_list.move_id.location_id.id),
+                    ('company_id', '=', whs_list.move_id.company_id.id),
                 ])
                 if not dbsource:
                     dbsource = self.env['base.external.dbsource'].search([
-                        ('location_id', '=', whs_list.move_id.location_dest_id.id)
+                        ('location_id', '=', whs_list.move_id.location_dest_id.id),
+                        ('company_id', '=', whs_list.move_id.company_id.id),
                     ])
                 connection = dbsource.connection_open_mssql()
                 if not connection:
@@ -141,6 +143,7 @@ class HyddemoWhsListe(models.Model):
                         'whs_list_absent': False,
                         'whs_list_log': 'Ok',
                     })
+        return res
 
     @staticmethod
     def _get_insert_host_liste_query(params):

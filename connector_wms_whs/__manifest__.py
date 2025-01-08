@@ -17,5 +17,6 @@
     'data': [
     ],
     'installable': True,
+    "excludes": "connector_wms_modula",
     "external_dependencies": {"python": ["sqlalchemy"]},  # "sqlalchemy==1.3.24"
 }

@@ -29,6 +29,9 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                 'conn_string_sandbox': conn_string,
                 'connector': 'mssql',
                 'location_id': self.env.ref('stock.stock_location_stock').id,
+                'stock_picking_type_ids': [
+                    (6, 0, self.env['stock.picking.type'].search([]).ids)
+                ]
             })
         self.dbsource = dbsource
         self.dbsource.with_context(no_return=True).execute_mssql(
