@@ -9,8 +9,12 @@ class ProductTemplate(models.Model):
     name_wms_modula = fields.Char(
         string="WMS Modula Name",
         compute="_compute_name_wms_modula",
+        inverse="_inverse_name_wms_modula",
         store=True,
         index=True,
+    )
+    custom_name_wms_modula = fields.Char(
+        string="Technical field to store WMS Modula name",
     )
     is_name_too_long = fields.Boolean(
         string="Name is too long",
@@ -19,11 +23,30 @@ class ProductTemplate(models.Model):
         index=True,
     )
 
-    @api.depends("name")
+    @api.multi
+    @api.constrains("custom_name_wms_modula")
+    def _constrains_custom_name_wms_modula(self):
+        for rec in self:
+            if rec.custom_name_wms_modula:
+                if len(rec.custom_name_wms_modula) > 100:
+                    raise UserError(
+                        _("Product name for WMS Modula max lenght is 100 char!")
+                    )
+
+    @api.multi
+    def _inverse_name_wms_modula(self):
+        for rec in self:
+            if rec.name_wms_modula:
+                rec.custom_name_wms_modula = rec.name_wms_modula
+
+    @api.multi
+    @api.depends("name", "custom_name_wms_modula")
     def _compute_name_wms_modula(self):
         for product_tmpl in self:
             is_name_too_long = False
-            if product_tmpl.name:
+            if product_tmpl.custom_name_wms_modula:
+                name_wms_modula = product_tmpl.custom_name_wms_modula
+            elif product_tmpl.name:
                 if len(product_tmpl.name) > 100:
                     name_wms_modula = product_tmpl.name[:94] + " [...]"
                     is_name_too_long = True
