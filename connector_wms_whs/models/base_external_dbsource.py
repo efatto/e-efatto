@@ -126,12 +126,12 @@ class BaseExternalDbsource(models.Model):
 
     @api.multi
     def whs_check_lists(self):
-        res = super().whs_check_lists()
         """
         Funzione lanciabile manualmente per marcare le liste in Odoo che non sono
         più presenti in WMS in quanto cancellate, per verifiche
         :return: True
         """
+        res = super().whs_check_lists()
         for dbsource in self:
             connection = dbsource.connection_open_mssql()
             if not connection:
