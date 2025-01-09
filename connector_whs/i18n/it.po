@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-02 11:48+0000\n"
-"PO-Revision-Date: 2025-01-02 11:48+0000\n"
+"POT-Creation-Date: 2025-01-09 17:40+0000\n"
+"PO-Revision-Date: 2025-01-09 17:40+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -163,10 +163,9 @@ msgid "External Database Sources"
 msgstr "Origini database esterne"
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/base_external_dbsource.py:95
-#: code:addons/connector_whs/models/base_external_dbsource.py:147
-#: code:addons/connector_whs/models/base_external_dbsource.py:330
-#: code:addons/connector_whs/models/base_external_dbsource.py:399
+#: code:addons/connector_whs/models/base_external_dbsource.py:99
+#: code:addons/connector_whs/models/base_external_dbsource.py:151
+#: code:addons/connector_whs/models/base_external_dbsource.py:334
 #: code:addons/connector_whs/models/hyddemo_whs_liste.py:100
 #: code:addons/connector_whs/models/hyddemo_whs_liste.py:119
 #: code:addons/connector_whs/wizard/wizard_sync_stock_whs_mssql.py:37
@@ -301,7 +300,7 @@ msgid "Mismatch"
 msgstr "Squadrato"
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/stock.py:184
+#: code:addons/connector_whs/models/stock.py:196
 #, python-format
 msgid "More than one list number found for picking %s:%s"
 msgstr "Più di un numero di lista trovato per trasferimento %s:%s"
@@ -442,7 +441,7 @@ msgid "Service"
 msgstr "Servizio"
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/stock.py:124
+#: code:addons/connector_whs/models/stock.py:136
 #, python-format
 msgid "Some moves already elaborated from WMS!"
 msgstr "Alcuni movimenti già elaborati da WMS!"
@@ -452,6 +451,11 @@ msgstr "Alcuni movimenti già elaborati da WMS!"
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__move_id
 msgid "Stock Move"
 msgstr "Movimento di magazzino"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_base_external_dbsource__stock_picking_type_ids
+msgid "Stock picking types enabled"
+msgstr "Tipi di trasferimento abilitati"
 
 #. module: connector_whs
 #: model:ir.model,name:connector_whs.model_hyddemo_mssql_log
@@ -570,7 +574,7 @@ msgid "WMS Weight"
 msgstr "Peso WMS"
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/stock.py:147
+#: code:addons/connector_whs/models/stock.py:159
 #, python-format
 msgid "WMS valid list exists and qty cannot be modified!"
 msgstr "Esiste una lista WMS valida e la quantità non può essere modificata!"

@@ -13,7 +13,7 @@
     </record>
 
     <record id="ir_cron_connector_whs_sync_stock" model="ir.cron">
-        <field name="name">Connector WMS - synchronize stock (pass True to do inventory sync, else it will create only wms log)</field>
+        <field name="name">Connector WMS - synchronize stock (pass True to do inventory sync, else it will create only WMS log)</field>
         <field name="interval_number">1</field>
         <field name="interval_type">days</field>
         <field name="numbercall">-1</field>
