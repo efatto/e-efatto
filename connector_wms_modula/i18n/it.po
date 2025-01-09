@@ -26,23 +26,23 @@ msgstr "Connettore WMS Modula - controllo errori nell'importazione"
 #: code:addons/connector_wms_modula/models/product.py:82
 #, python-format
 msgid "Error importing product on WMS Modula: %s"
-msgstr "Errore importazione prodotti su WMS Modula: %s"
+msgstr "Errore importazione prodotto nel WMS Modula: %s"
 
 #. module: connector_wms_modula
 #: model:ir.model.fields,field_description:connector_wms_modula.field_hyddemo_whs_liste__wms_modula_error
 msgid "Error importing the list on WMS Modula"
-msgstr "Errore impostazione lista in WMS Modula"
+msgstr "Errore importazione lista nel WMS"
 
 #. module: connector_wms_modula
 #: model:ir.model.fields,field_description:connector_wms_modula.field_product_product__wms_modula_error
 #: model:ir.model.fields,field_description:connector_wms_modula.field_product_template__wms_modula_error
 msgid "Error importing the product on WMS Modula"
-msgstr "Errore importazione prodotto in WMS Modula"
+msgstr "Errore importazione prodotto nel WMS"
 
 #. module: connector_wms_modula
 #: model:ir.model.fields,field_description:connector_wms_modula.field_hyddemo_whs_liste__wms_modula_riga_error
 msgid "Error importing the row on WMS Modula"
-msgstr "Errore importazione riga in WMS Modula"
+msgstr "Errore importazione riga nel WMS"
 
 #. module: connector_wms_modula
 #: model:ir.model,name:connector_wms_modula.model_base_external_dbsource
@@ -138,7 +138,7 @@ msgstr "La lunghezza massima del riferimento interno del prodotto è di 50 carat
 #: code:addons/connector_wms_modula/models/product.py:36
 #, python-format
 msgid "Product name for WMS Modula max lenght is 100 char!"
-msgstr "La lunghezza massima del nome prodotto WMS Modula è di 100 caratteri!"
+msgstr "La lunghezza massima del nome prodotto per il WMS è di 100 caratteri!"
 
 #. module: connector_wms_modula
 #: code:addons/connector_wms_modula/models/product.py:76
@@ -188,5 +188,5 @@ msgstr "Tipo"
 #: model:ir.model.fields,field_description:connector_wms_modula.field_product_product__name_wms_modula
 #: model:ir.model.fields,field_description:connector_wms_modula.field_product_template__name_wms_modula
 msgid "WMS Modula Name"
-msgstr "Nome in WMS Modula"
+msgstr "Nome nel WMS"
 
