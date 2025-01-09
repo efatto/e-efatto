@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-02 11:49+0000\n"
-"PO-Revision-Date: 2025-01-02 11:49+0000\n"
+"POT-Creation-Date: 2025-01-09 17:29+0000\n"
+"PO-Revision-Date: 2025-01-09 17:29+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,12 +16,41 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: connector_wms_modula
+#: model:ir.actions.server,name:connector_wms_modula.ir_cron_connector_wms_modula_error_ir_actions_server
+#: model:ir.cron,cron_name:connector_wms_modula.ir_cron_connector_wms_modula_error
+#: model:ir.cron,name:connector_wms_modula.ir_cron_connector_wms_modula_error
+msgid "Connector WMS Modula - check errors on import"
+msgstr "Connettore WMS Modula - controllo errori nell'importazione"
+
+#. module: connector_wms_modula
+#: code:addons/connector_wms_modula/models/product.py:82
+#, python-format
+msgid "Error importing product on WMS Modula: %s"
+msgstr "Errore importazione prodotti su WMS Modula: %s"
+
+#. module: connector_wms_modula
+#: model:ir.model.fields,field_description:connector_wms_modula.field_hyddemo_whs_liste__wms_modula_error
+msgid "Error importing the list on WMS Modula"
+msgstr "Errore impostazione lista in WMS Modula"
+
+#. module: connector_wms_modula
+#: model:ir.model.fields,field_description:connector_wms_modula.field_product_product__wms_modula_error
+#: model:ir.model.fields,field_description:connector_wms_modula.field_product_template__wms_modula_error
+msgid "Error importing the product on WMS Modula"
+msgstr "Errore importazione prodotto in WMS Modula"
+
+#. module: connector_wms_modula
+#: model:ir.model.fields,field_description:connector_wms_modula.field_hyddemo_whs_liste__wms_modula_riga_error
+msgid "Error importing the row on WMS Modula"
+msgstr "Errore importazione riga in WMS Modula"
+
+#. module: connector_wms_modula
 #: model:ir.model,name:connector_wms_modula.model_base_external_dbsource
 msgid "External Database Sources"
 msgstr "Origini database esterne"
 
 #. module: connector_wms_modula
-#: code:addons/connector_wms_modula/models/base_external_dbsource.py:122
+#: code:addons/connector_wms_modula/models/base_external_dbsource.py:198
 #: code:addons/connector_wms_modula/wizard/wizard_sync_stock_whs_mssql.py:30
 #, python-format
 msgid "Failed to open connection!"
@@ -50,7 +79,7 @@ msgid "Missing connection string!"
 msgstr "Stringa di connessione mancante!"
 
 #. module: connector_wms_modula
-#: code:addons/connector_wms_modula/models/product.py:33
+#: code:addons/connector_wms_modula/models/product.py:69
 #, python-format
 msgid "Missing product template ID: %s name"
 msgstr "Modello prodotto mancancte ID: %s name"
@@ -77,12 +106,42 @@ msgid "Ok"
 msgstr ""
 
 #. module: connector_wms_modula
+#: code:addons/connector_wms_modula/models/base_external_dbsource.py:82
+#, python-format
+msgid "Operation %s importing the list failed with error: '%s'"
+msgstr "Operazione %s di importazione della lista fallita con errore: '%s'"
+
+#. module: connector_wms_modula
+#: code:addons/connector_wms_modula/models/base_external_dbsource.py:48
+#, python-format
+msgid "Operation %s importing the product failed with error: '%s'"
+msgstr "Operazione %s di importazione del prodotto fallita con errore: '%s'"
+
+#. module: connector_wms_modula
+#: code:addons/connector_wms_modula/models/base_external_dbsource.py:86
+#, python-format
+msgid "Operation %s importing the row failed with error: '%s'"
+msgstr "Operazione %s di importazione della riga fallita con errore: '%s'"
+
+#. module: connector_wms_modula
 #: model:ir.model,name:connector_wms_modula.model_product_template
 msgid "Product Template"
 msgstr "Modello prodotto"
 
 #. module: connector_wms_modula
-#: code:addons/connector_wms_modula/models/product.py:40
+#: code:addons/connector_wms_modula/models/product.py:46
+#, python-format
+msgid "Product default code max length is 50 char!"
+msgstr "La lunghezza massima del riferimento interno del prodotto è di 50 caratteri!"
+
+#. module: connector_wms_modula
+#: code:addons/connector_wms_modula/models/product.py:36
+#, python-format
+msgid "Product name for WMS Modula max lenght is 100 char!"
+msgstr "La lunghezza massima del nome prodotto WMS Modula è di 100 caratteri!"
+
+#. module: connector_wms_modula
+#: code:addons/connector_wms_modula/models/product.py:76
 #, python-format
 msgid "Product name is too long!"
 msgstr "Il nome del prodotto è troppo lungo!"
@@ -98,18 +157,24 @@ msgid "Synchronize stock inventory from the Remote Mssql DB to Odoo"
 msgstr "Sincronizza inventario dal Database remoto Mssql verso Odoo"
 
 #. module: connector_wms_modula
+#: model:ir.model.fields,field_description:connector_wms_modula.field_product_product__custom_name_wms_modula
+#: model:ir.model.fields,field_description:connector_wms_modula.field_product_template__custom_name_wms_modula
+msgid "Technical field to store WMS Modula name"
+msgstr "Campo tecnico per salvare il nome prodotto WMS Modula"
+
+#. module: connector_wms_modula
 #: selection:hyddemo.mssql.log.line,type:0
 msgid "Tracking"
 msgstr "Tracciabile"
 
 #. module: connector_wms_modula
-#: code:addons/connector_wms_modula/models/hyddemo_whs_liste.py:98
+#: code:addons/connector_wms_modula/models/hyddemo_whs_liste.py:113
 #, python-format
 msgid "Trying to cancel lists already marked to be deleted in Odoo, please wait for WMS cron synchronization or force it."
 msgstr "Tentativo di annullare liste già marcate da eliminare in Odoo, si prega di attendere il cron di sincronizzazione WMS o di forzarne l'avvio."
 
 #. module: connector_wms_modula
-#: code:addons/connector_wms_modula/models/hyddemo_whs_liste.py:86
+#: code:addons/connector_wms_modula/models/hyddemo_whs_liste.py:101
 #, python-format
 msgid "Trying to cancel lists elaborated from WMS, please wait for cron synchronization or force it."
 msgstr "Tentativo di annullare liste elaborate da WMS, si prega di attendere il cron di sincronizzazione o di forzarne l'avvio."
@@ -124,3 +189,4 @@ msgstr "Tipo"
 #: model:ir.model.fields,field_description:connector_wms_modula.field_product_template__name_wms_modula
 msgid "WMS Modula Name"
 msgstr "Nome in WMS Modula"
+
