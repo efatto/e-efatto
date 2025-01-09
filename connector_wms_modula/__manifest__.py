@@ -14,6 +14,7 @@
         'connector_whs',
     ],
     'data': [
+        'data/cron.xml',
         'views/product_template.xml',
     ],
     'installable': True,

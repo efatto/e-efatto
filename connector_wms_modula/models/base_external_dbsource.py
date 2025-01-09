@@ -6,9 +6,47 @@ from sqlalchemy import text as sql_text
 
 _logger = logging.getLogger(__name__)
 
+OPERATIONS = {
+    'I': 'insert/update',
+    'D': 'delete',
+    'A': 'add',
+}
+
 
 class BaseExternalDbsource(models.Model):
     _inherit = "base.external.dbsource"
+
+    @api.model
+    def _check_wms_modula_import_error(self):
+        for dbsource in self.search([]):
+            dbsource._check_import_product()
+            # todo check on IMP_ORDINI and on IMP_ORDINI_RIGHE
+
+    @api.multi
+    def _check_import_product(self):
+        self.ensure_one()
+        product_error_query = """
+SELECT ART_OPERAZIONE, ART_ARTICOLO, ART_ERRORE
+FROM IMP_ARTICOLI
+WHERE ART_ERRORE IS NOT NULL AND ART_ERRORE <> ' '
+        """
+        results = self.execute_mssql(
+            sqlquery=sql_text(product_error_query),
+            sqlparams=None, metadata=None
+        )
+        if not results[0]:
+            return False
+        for result in results[0]:
+            operation = result[0]
+            product = result[1]
+            error = result[2]
+            product_id = self.env["product.product"].search([
+                ("default_code", "=", product),
+            ])
+            if product_id:
+                product_id.wms_modula_error = _(
+                    "Operation %s importing the product failed with error: '%s'"
+                ) % (OPERATIONS[operation], error)
 
     @api.multi
     def _pre_insert_product_query(self):
@@ -80,11 +118,10 @@ VALUES (
             pass
         product_min_qty = ops[0].product_min_qty if ops else 0
         execute_params = {
-            'ART_OPERAZIONE': 'I',  # ('I', 'insert/update'), ('D', 'delete'),
-            # ('A', 'add'),
+            'ART_OPERAZIONE': 'I',
             'ART_ARTICOLO': product.default_code[:50] if product.default_code
             else 'articolo %s senza codice' % product.id,
-            'ART_DES': product.name[:100] if product.name
+            'ART_DES': product.name_wms_modula if product.name_wms_modula
             else "articolo %s senza nome" % product.id,
             'ART_PMU': product.weight * 1000 if product.weight else 0.0,
             # digits=(11, 4)

@@ -22,6 +22,9 @@ class ProductTemplate(models.Model):
         store=True,
         index=True,
     )
+    wms_modula_error = fields.Char(
+        string="Error importing the product on WMS Modula",
+    )
 
     @api.multi
     @api.constrains("custom_name_wms_modula")
@@ -31,6 +34,16 @@ class ProductTemplate(models.Model):
                 if len(rec.custom_name_wms_modula) > 100:
                     raise UserError(
                         _("Product name for WMS Modula max lenght is 100 char!")
+                    )
+
+    @api.multi
+    @api.constrains("default_code")
+    def _constrains_default_code(self):
+        for rec in self:
+            if rec.default_code:
+                if len(rec.default_code) > 50:
+                    raise UserError(
+                        _("Product default code max length is 50 char!")
                     )
 
     @api.multi
@@ -64,3 +77,8 @@ class ProductTemplate(models.Model):
             "Product name is too long!"
             )
         )
+
+    def action_wms_modula_error(self):
+        raise UserError(_(
+            "Error importing product on WMS Modula: %s" % self.wms_modula_error
+        ))
