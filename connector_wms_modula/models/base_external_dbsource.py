@@ -11,6 +11,7 @@ OPERATIONS = {
     'D': 'delete',
     'A': 'add',
 }
+from .hyddemo_whs_liste import LISTE_OPERATIONS
 
 
 class BaseExternalDbsource(models.Model):
@@ -20,7 +21,7 @@ class BaseExternalDbsource(models.Model):
     def _check_wms_modula_import_error(self):
         for dbsource in self.search([]):
             dbsource._check_import_product()
-            # todo check on IMP_ORDINI and on IMP_ORDINI_RIGHE
+            dbsource._check_import_list()
 
     @api.multi
     def _check_import_product(self):
@@ -47,6 +48,44 @@ WHERE ART_ERRORE IS NOT NULL AND ART_ERRORE <> ' '
                 product_id.wms_modula_error = _(
                     "Operation %s importing the product failed with error: '%s'"
                 ) % (OPERATIONS[operation], error)
+
+    @api.multi
+    def _check_import_list(self):
+        self.ensure_one()
+        list_error_query = """
+SELECT IMP_O.ORD_OPERAZIONE, IMP_O.ORD_ORDINE, IMP_OR.RIG_HOSTINF, IMP_O.ORD_ERRORE,
+IMP_OR.RIG_ERRORE
+FROM IMP_ORDINI_RIGHE IMP_OR
+LEFT JOIN IMP_ORDINI IMP_O
+ON IMP_O.ORD_ORDINE = IMP_OR.RIG_ORDINE
+WHERE (IMP_O.ORD_ERRORE IS NOT NULL AND IMP_O.ORD_ERRORE <> ' ')
+OR (IMP_OR.RIG_ERRORE IS NOT NULL AND IMP_OR.RIG_ERRORE <> ' ')
+        """
+        results = self.execute_mssql(
+            sqlquery=sql_text(list_error_query),
+            sqlparams=None, metadata=None
+        )
+        if not results[0]:
+            return False
+        for result in results[0]:
+            operation = result[0]
+            num_lista = result[1]
+            riga = result[2]
+            lista_error = result[3]
+            riga_error = result[4]
+            lista_id = self.env["hyddemo.whs.liste"].search([
+                ("num_lista", "=", num_lista),
+                ("riga", "=", riga),
+            ])
+            if lista_id:
+                if lista_error:
+                    lista_id.wms_modula_error = _(
+                            "Operation %s importing the list failed with error: '%s'"
+                        ) % (LISTE_OPERATIONS[operation], lista_error)
+                if riga_error:
+                    lista_id.wms_modula_riga_error = _(
+                        "Operation %s importing the row failed with error: '%s'"
+                    ) % (LISTE_OPERATIONS[operation], riga_error)
 
     @api.multi
     def _pre_insert_product_query(self):

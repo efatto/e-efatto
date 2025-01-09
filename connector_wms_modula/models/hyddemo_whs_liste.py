@@ -1,6 +1,6 @@
 import logging
 
-from odoo import api, models, _
+from odoo import api, models, _, fields
 from odoo.exceptions import UserError
 
 from sqlalchemy import text as sql_text
@@ -13,10 +13,25 @@ tipo_operazione_dict = {
     '3': 'I',
     '4': 'E',
 }
+LISTE_OPERATIONS = {
+    'I': 'Insert/Update',
+    'D': 'Delete',
+    'A': 'Add if row not exists',
+    'H': 'Add if header not exists',
+    'Q': 'Always add in queue',
+    'R': 'Replace',
+}
 
 
 class HyddemoWhsListe(models.Model):
     _inherit = "hyddemo.whs.liste"
+
+    wms_modula_error = fields.Char(
+        string="Error importing the list on WMS Modula",
+    )
+    wms_modula_riga_error = fields.Char(
+        string="Error importing the row on WMS Modula",
+    )
 
     @api.multi
     def whs_unlink_lists(self, dbsource, db_type="IMP"):

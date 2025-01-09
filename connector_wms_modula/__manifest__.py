@@ -16,6 +16,7 @@
     'data': [
         'data/cron.xml',
         'views/product_template.xml',
+        'views/hyddemo_whs_liste.xml',
     ],
     'installable': True,
     "excludes": "connector_wms_whs",
