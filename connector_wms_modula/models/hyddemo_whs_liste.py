@@ -167,12 +167,11 @@ VALUES (
             if not execute_params_order.get(lista.num_lista):
                 execute_params_order[lista.num_lista] = {
                     'ORD_OPERAZIONE': 'I',
-                    # I=Insert/Update; D=Delete; A=Add if row not exists
-                    # H=Add if header not exists; Q=Always add in queue; R=Replace
                     'ORD_ORDINE': lista.num_lista[:20],  # char 20
-                    'ORD_DES': "%s - %s"[:50] % (
+                    'ORD_DES': "%s - %s" % (
                         lista.riferimento if lista.riferimento else '',
-                        lista.ragsoc if lista.ragsoc else "",
+                        lista.ragsoc[:47 - len(lista.riferimento) or 47]
+                        if lista.ragsoc else "",
                     ),  # char 50
                     'ORD_PRIOHOST': lista.priorita,  # decimal(16,0)
                     'ORD_TIPOOP': tipo_operazione_dict[lista.tipo],  # char 5: P,V,I,E
