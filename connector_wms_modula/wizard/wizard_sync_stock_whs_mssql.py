@@ -14,8 +14,8 @@ class WizardSyncStockWhsMssql(models.TransientModel):
         query = (
             "SELECT * FROM (SELECT row_number() OVER (ORDER BY GIA_ARTICOLO) "
             "AS rownum, GIA_ARTICOLO, GIA_GIAC, GIA_DATAORAS1 FROM EXP_GIACENZE) as A "
-            "WHERE A.rownum BETWEEN %s AND %s AND LEFT(A.GIA_DATAORAS1, 10) = "
-            "(SELECT LEFT(MAX(GIA_DATAORAS1), 10) FROM EXP_GIACENZE)" % (i, i + 2000)
+            "WHERE A.rownum BETWEEN %s AND %s AND A.GIA_DATAORAS1 = "
+            "(SELECT MAX(GIA_DATAORAS1) FROM EXP_GIACENZE)" % (i, i + 2000)
         )
         return query
 
