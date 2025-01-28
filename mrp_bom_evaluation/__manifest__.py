@@ -21,6 +21,7 @@
         'purchase_discount',
         'purchase_seller_evaluation',
         'sale_order_analytic_all',
+        'sale_margin_security',
         'sale_timesheet',
     ],
     'excludes': [
@@ -32,6 +33,7 @@
         'views/mrp.xml',
         'views/product_template.xml',
         'views/project.xml',
+        'views/sale_order.xml',
         'report/report_view.xml',
         'report/mrp_report_bom.xml',
     ],

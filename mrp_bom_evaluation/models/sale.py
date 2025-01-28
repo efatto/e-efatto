@@ -31,3 +31,13 @@ class SaleOrder(models.Model):
         lines = res.order_line.filtered(lambda x: x.bom_line_id)
         lines.unlink()
         return res
+
+    @api.multi
+    def recalculate_bom_costs(self):
+        for order in self:
+            lines = order.order_line.filtered(
+                lambda x: x.product_id and x.product_id.bom_count > 0
+            )
+            lines.mapped('product_id').action_bom_cost()
+            for line in lines:
+                line.purchase_price = line.product_id.standard_price
