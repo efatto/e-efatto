@@ -10,6 +10,7 @@
     'depends': [
         'account',
         'hr_timesheet',
+        'mrp_bom_cost',
         'mrp_bom_operation_estimate',
         'mrp_production_demo',
         'mrp_sale_info',

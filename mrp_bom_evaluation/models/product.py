@@ -11,3 +11,14 @@ class ProductTemplate(models.Model):
         help="Used to exclude products that will be used outside manufacturing "
              "process, e.g. during the assembly on site, but included in bom for "
              "evaluation purpose.")
+
+
+class ProductProduct(models.Model):
+    _inherit = 'product.product'
+
+    def _compute_bom_price(self, bom, boms_to_recompute=False):
+        res = super()._compute_bom_price(bom, boms_to_recompute)
+        if bom.total_amount:
+            return bom.product_uom_id._compute_price(
+                bom.total_amount / bom.product_qty, self.uom_id)
+        return res
