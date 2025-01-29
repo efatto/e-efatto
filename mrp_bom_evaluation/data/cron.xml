@@ -6,7 +6,7 @@
         <field name="interval_number">1</field>
         <field name="interval_type">days</field>
         <field name="numbercall">-1</field>
-        <field name="active" eval="False"/>
+        <field name="active" eval="True"/>
         <field name="model_id" ref="model_sale_order"/>
         <field name="code">model._cron_recalculate_bom_costs()</field>
         <field name="doall" eval="False"/>
