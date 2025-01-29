@@ -60,10 +60,14 @@ class SaleOrder(models.Model):
             if bom_to_recomputes:
                 sale_order_to_recomputes |= sale_order
         _logger.info(
-            "Recalculate bom costs for #%s sale orders." %
+            "Start recalculate bom costs job for #%s sale orders." %
             len(sale_order_to_recomputes)
         )
         sale_order_to_recomputes.recalculate_bom_costs()
+        _logger.info(
+            "End recalculate bom costs job for #%s sale orders." %
+            len(sale_order_to_recomputes)
+        )
 
     @api.multi
     def recalculate_bom_costs(self):
