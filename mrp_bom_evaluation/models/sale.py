@@ -1,7 +1,8 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-
+import logging
 from odoo import api, fields, models
+_logger = logging.getLogger(__name__)
 
 
 class SaleOrderLine(models.Model):
@@ -31,6 +32,34 @@ class SaleOrder(models.Model):
         lines = res.order_line.filtered(lambda x: x.bom_line_id)
         lines.unlink()
         return res
+
+    @api.multi
+    def write(self, values):
+        res = super().write(values)
+        # recalculate bom cost at every change of a sale order
+        res.recalculate_bom_costs()
+        return res
+
+    @api.model
+    def _cron_recalculate_bom_costs(self):
+        # this cron ensure that bom costs are aligned when a bom is changed and the
+        # sale orders with that product are not
+        sale_orders = self.env["sale.order"].search([
+            ('order_line.product_id.bom_ids', '!=', False),
+        ])
+        sale_order_to_recomputes = self.env["sale.order"].browse()
+        for sale_order in sale_orders:
+            # consider only the boms updated/created after the last write on sale order
+            bom_to_recomputes = self.env["mrp.bom"].search([
+                ("write_date", ">=", sale_order.write_date),
+            ])
+            if sale_order.mapped("order_line.product_id.bom_ids") in bom_to_recomputes:
+                sale_order_to_recomputes |= sale_order
+        _logger.info(
+            "Recalculate bom costs for #%s sale orders." %
+            len(sale_order_to_recomputes)
+        )
+        sale_order_to_recomputes.recalculate_bom_costs()
 
     @api.multi
     def recalculate_bom_costs(self):

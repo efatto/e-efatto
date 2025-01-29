@@ -36,6 +36,7 @@
         'views/sale_order.xml',
         'report/report_view.xml',
         'report/mrp_report_bom.xml',
+        'data/cron.xml',
     ],
     'installable': True,
 }
