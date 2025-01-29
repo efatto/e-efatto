@@ -54,7 +54,8 @@ class SaleOrder(models.Model):
                 ("write_date", ">", sale_order.write_date),
                 "|",
                 ("product_id", "in", sale_order.mapped("order_line.product_id.id")),
-                ("product_tmpl_id", "in", sale_order.mapped("order_line.product_id.product_tmpl_id.id")),
+                ("product_tmpl_id", "in", sale_order.mapped(
+                    "order_line.product_id.product_tmpl_id.id")),
             ])
             if bom_to_recomputes:
                 sale_order_to_recomputes |= sale_order
