@@ -51,9 +51,12 @@ class SaleOrder(models.Model):
         for sale_order in sale_orders:
             # consider only the boms updated/created after the last write on sale order
             bom_to_recomputes = self.env["mrp.bom"].search([
-                ("write_date", ">=", sale_order.write_date),
+                ("write_date", ">", sale_order.write_date),
+                "|",
+                ("product_id", "in", sale_order.mapped("order_line.product_id.id")),
+                ("product_tmpl_id", "in", sale_order.mapped("order_line.product_id.product_tmpl_id.id")),
             ])
-            if sale_order.mapped("order_line.product_id.bom_ids") in bom_to_recomputes:
+            if bom_to_recomputes:
                 sale_order_to_recomputes |= sale_order
         _logger.info(
             "Recalculate bom costs for #%s sale orders." %
