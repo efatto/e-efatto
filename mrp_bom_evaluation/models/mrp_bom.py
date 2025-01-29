@@ -129,3 +129,31 @@ class MrpBom(models.Model):
                         'bom_id': self.id,
                     })
                     self.env['mrp.bom.line'].create(values)
+
+    @api.model
+    def _bom_find(self, product_tmpl=None, product=None, picking_type=None, company_id=False):
+        """ Finds BoM for particular product, picking and company """
+        super()._bom_find(product_tmpl, product, picking_type, company_id)
+        if product:
+            if not product_tmpl:
+                product_tmpl = product.product_tmpl_id
+            domain = ['|', ('product_id', '=', product.id), '&',
+                      ('product_id', '=', False),
+                      ('product_tmpl_id', '=', product_tmpl.id)]
+        elif product_tmpl:
+            domain = [('product_tmpl_id', '=', product_tmpl.id)]
+        else:
+            # neither product nor template, makes no sense to search
+            return False
+        if picking_type:
+            domain += ['|', ('picking_type_id', '=', picking_type.id),
+                       ('picking_type_id', '=', False)]
+        if company_id or self.env.context.get('company_id'):
+            domain = domain + [
+                ('company_id', '=', company_id or self.env.context.get('company_id'))]
+        # order to prioritize bom with product_id over the one without
+        # prioritize bom with upper bom revision (1 is upper then 0)
+        res = self.search(
+            domain, order='bom_revision DESC, sequence, product_id', limit=1)
+
+        return res
