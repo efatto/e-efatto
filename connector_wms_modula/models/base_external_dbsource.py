@@ -102,13 +102,13 @@ WHERE UBI_ARTICOLO IS NOT NULL AND UBI_ARTICOLO <> ' '
         )
         if not results[0]:
             return False
-        products = []
+        product_default_codes = []
         for result in results[0]:
             product = result[0]
-            if product not in products:
-                products.append(product)
+            if product not in product_default_codes:
+                product_default_codes.append(product)
         not_used_in_wms_product_ids = self.env["product.product"].search([
-            ("default_code", "not in", products),
+            ("default_code", "not in", product_default_codes),
         ])
         not_used_in_wms_product_ids.write({"exclude_from_whs": True})
         return True
