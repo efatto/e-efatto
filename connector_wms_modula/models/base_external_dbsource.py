@@ -1,3 +1,5 @@
+from .hyddemo_whs_liste import LISTE_OPERATIONS
+
 import logging
 from odoo import models, api, _
 from odoo.exceptions import UserError
@@ -11,7 +13,6 @@ OPERATIONS = {
     'D': 'delete',
     'A': 'add',
 }
-from .hyddemo_whs_liste import LISTE_OPERATIONS
 
 
 class BaseExternalDbsource(models.Model):
