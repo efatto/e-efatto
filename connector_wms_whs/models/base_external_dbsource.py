@@ -21,7 +21,7 @@ class BaseExternalDbsource(models.Model):
         return True
 
     @api.multi
-    def _post_insert_product_query(self):
+    def _post_insert_product_query(self, last_id):
         # Set record from Elaborato=0 to Elaborato=1 to be processable from WHS
         self.ensure_one()
         update_product_query = \
@@ -78,7 +78,7 @@ class BaseExternalDbsource(models.Model):
 
     @api.multi
     def _prepare_host_articoli_values(
-        self, product, warehouse_id, location_id, last_id
+        self, product, warehouse_id, location_id, last_id, operation="A"
     ):
         """
         Carica/aggiorna l'anagrafica articoli verso il WMS
@@ -91,7 +91,7 @@ class BaseExternalDbsource(models.Model):
             ('C', 'rimuovi il codice dal database WHS solo se non utilizzato'),
         """
         super()._prepare_host_articoli_values(
-            product, warehouse_id, location_id, last_id
+            product, warehouse_id, location_id, last_id, operation=operation
         )
         ops = self.env['stock.warehouse.orderpoint'].search([
             ('warehouse_id', '=', warehouse_id),
@@ -103,7 +103,7 @@ class BaseExternalDbsource(models.Model):
         product_min_qty = ops[0].product_min_qty if ops else 0
         execute_params = {
             'Elaborato': 0,
-            'TipoOperazione': 'A',
+            'TipoOperazione': operation,
             'Codice': product.default_code[:75] if product.default_code
             else 'articolo senza codice',
             'Descrizione': product.name[:70],
