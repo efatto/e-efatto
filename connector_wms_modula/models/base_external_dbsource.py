@@ -89,6 +89,12 @@ OR (IMP_OR.RIG_ERRORE IS NOT NULL AND IMP_OR.RIG_ERRORE <> ' ')
 
     @api.multi
     def _pre_insert_product_query(self):
+        # ensure exported items data do not exist, they usually don't with the option
+        # set in importation query
+        self.with_context(no_return=True).execute_mssql(
+            sqlquery=sql_text("DELETE FROM IMP_ARTICOLI"),
+            sqlparams=None, metadata=None
+        )
         # get from EXP_UBICAZIONI products configured (with or without availabitity)
         #  and set not managed from WMS to all the others
         self.ensure_one()
@@ -168,17 +174,17 @@ VALUES (
             'ART_UMI': 'PZ' if product.uom_id.name == 'Unit(s)'
             else product.uom_id.name[:5],
             'ART_SOTTOSCO': product_min_qty,  # digits=(18, 3)
-            # 'ART_GESTSERIALE': product.tracking in ["lot", "seria"]
+            # 'ART_GESTSERIALE': product.tracking in ["lot", "serial"]
             # and product.tracking[:5] or "", # todo ? nvarchar(5)
-            # 'ART_UPDATE _IMPORTED' bit Importazione senza cancellazione (se 0 cancella
-            # alla fine dell'importazione del record, se 1 e protocollo ODBC
-            # imposta il record come importato)
-            # 'ART_IMPORTED' nvarchar(MAX) Nome del campo della tabella
+            'ART_UPDATE_IMPORTED': 0,  # bit Importazione senza cancellazione
+            # (se 0 cancella alla fine dell'importazione del record, se 1 e protocollo
+            # ODBC imposta il record come importato)
+            'ART_IMPORTED': 0,  # nvarchar(MAX) Nome del campo della tabella
             # host da utilizzare per impostare il record come importato
             # (se importazione con cancellazione mettere valore 0, se importazione
             # senza cancellazione mettere il nome campo della tabella host
             # usato per contrassegnare il record come importato)
-            # ART_IMPORTED_VALUE_TRUE nvarchar(MAX) Valore Vero del campo della
+            'ART_IMPORTED_VALUE_TRUE': 1,  # nvarchar(MAX) Valore Vero del campo della
             # tabella host da utilizzare per impostare il record come importato
             # (se importazione con cancellazione mettere valore 1)
         }
