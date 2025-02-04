@@ -118,7 +118,21 @@ WHERE UBI_ARTICOLO IS NOT NULL AND UBI_ARTICOLO <> ' '
             ("default_code", "not in", product_default_codes),
         ])
         not_used_in_wms_product_ids.write({"exclude_from_whs": True})
+        # products existing in Modula can't be deactivated, so ensure they are active
+        archived_used_in_wms_product_ids = self.env["product.product"].with_context(
+            active_test=False
+        ).search([
+            ("default_code", "in", product_default_codes),
+            ("active", "=", False),
+        ])
+        archived_used_in_wms_product_ids.write({"active": True})
         return True
+
+    @api.multi
+    def _post_insert_product_query(self):
+        # overridable method done after _get_insert_product_query in the WMS database
+        # TODO remove products deactivated in Odoo
+        return ""
 
     @api.multi
     def _get_insert_product_query(self):
