@@ -107,12 +107,7 @@ class BaseExternalDbsource(models.Model):
             last_date_dt = log_data and log_data[0]['ultimo_invio'] or (
                 fields.Datetime.now() + relativedelta(years=-10))
             last_date = fields.Datetime.to_string(last_date_dt)
-            products = self.env['product.product'].search([
-                '|', ('write_date', '>', last_date),
-                ('product_tmpl_id.write_date', '>', last_date),
-                ('type', '=', 'product'),
-                ('exclude_from_whs', '!=', True),
-            ])
+            products = self.env['product.product']._get_product_to_sync(last_date)
             new_last_update = fields.Datetime.now()
             for product in products:
                 insert_product_params = self._prepare_host_articoli_values(
