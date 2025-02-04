@@ -82,3 +82,16 @@ class ProductTemplate(models.Model):
         raise UserError(_(
             "Error importing product on WMS Modula: %s" % self.wms_modula_error
         ))
+
+
+class ProductProduct(models.Model):
+    _inherit = 'product.product'
+
+    @api.model
+    def _get_product_to_sync(self, last_date):
+        return self.search([
+            '|',
+            ('write_date', '>', last_date),
+            ('product_tmpl_id.write_date', '>', last_date),
+            ('type', '=', 'product'),
+        ])
