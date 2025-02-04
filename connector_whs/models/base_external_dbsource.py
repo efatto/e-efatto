@@ -63,7 +63,7 @@ class BaseExternalDbsource(models.Model):
 
     @api.multi
     def _prepare_host_articoli_values(
-            self, product, warehouse_id, location_id, last_id):
+            self, product, warehouse_id, location_id, last_id, operation=False):
         """
         Overridable method
         Carica/aggiorna l'anagrafica articoli verso il WMS
@@ -83,7 +83,7 @@ class BaseExternalDbsource(models.Model):
         return ""
 
     @api.multi
-    def _post_insert_product_query(self):
+    def _post_insert_product_query(self, last_id):
         # overridable method done after _get_insert_product_query in the WMS database
         return ""
 
@@ -118,7 +118,7 @@ class BaseExternalDbsource(models.Model):
                     sqlparams=insert_product_params,
                     metadata=None)
 
-            dbsource._post_insert_product_query()
+            dbsource._post_insert_product_query(last_id)
             res = self.env["hyddemo.mssql.log"].create(
                 [
                     {
