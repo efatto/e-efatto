@@ -1,7 +1,7 @@
 from .hyddemo_whs_liste import LISTE_OPERATIONS
 
 import logging
-from odoo import models, api, _
+from odoo import models, api, _, fields
 from odoo.exceptions import UserError
 
 from sqlalchemy import text as sql_text
@@ -129,10 +129,51 @@ WHERE UBI_ARTICOLO IS NOT NULL AND UBI_ARTICOLO <> ' '
         return True
 
     @api.multi
-    def _post_insert_product_query(self):
+    def _post_insert_product_query(self, last_id):
         # overridable method done after _get_insert_product_query in the WMS database
-        # TODO remove products deactivated in Odoo
-        return ""
+        # remove products deactivated in Odoo and without ubication in Modula
+        to_delete_product_query = """
+SELECT DISTINCT UBI_ARTICOLO FROM EXP_UBICAZIONI
+WHERE UBI_ARTICOLO IS NULL OR UBI_ARTICOLO = ' '
+        """
+        results = self.execute_mssql(
+            sqlquery=sql_text(to_delete_product_query),
+            sqlparams=None, metadata=None
+        )
+        if not results[0]:
+            return
+        product_default_codes = []
+        for result in results[0]:
+            product = result[0]
+            if product not in product_default_codes:
+                product_default_codes.append(product)
+        archived_used_in_wms_product_ids = self.env["product.product"].with_context(
+            active_test=False
+        ).search([
+            ("default_code", "in", product_default_codes),
+            ("active", "=", False),
+        ])
+        new_last_update = fields.Datetime.now()
+        for product in archived_used_in_wms_product_ids:
+            insert_product_params = self._prepare_host_articoli_values(
+                product, self.warehouse_id.id, self.location_id.id, last_id,
+                operation="D")
+            insert_product_query = self._get_insert_product_query()
+            self.with_context(no_return=True).execute_mssql(
+                sqlquery=sql_text(insert_product_query.replace("\n", " ")),
+                sqlparams=insert_product_params,
+                metadata=None)
+        res = self.env["hyddemo.mssql.log"].create(
+            [
+                {
+                    "ultimo_invio": new_last_update,
+                    "errori": "Deleted %s products" % len(
+                        archived_used_in_wms_product_ids),
+                    "dbsource_id": self.id,
+                }
+            ]
+        )
+        _logger.info(res)
 
     @api.multi
     def _get_insert_product_query(self):
@@ -159,7 +200,7 @@ VALUES (
 
     @api.multi
     def _prepare_host_articoli_values(
-        self, product, warehouse_id, location_id, last_id
+        self, product, warehouse_id, location_id, last_id, operation="I"
     ):
         """
         Carica/aggiorna l'anagrafica articoli verso il WMS
@@ -167,7 +208,7 @@ VALUES (
         campi: vedi sotto
         """
         super()._prepare_host_articoli_values(
-            product, warehouse_id, location_id, last_id
+            product, warehouse_id, location_id, last_id, operation=operation
         )
         ops = self.env['stock.warehouse.orderpoint'].search([
             ('warehouse_id', '=', warehouse_id),
@@ -178,7 +219,7 @@ VALUES (
             pass
         product_min_qty = ops[0].product_min_qty if ops else 0
         execute_params = {
-            'ART_OPERAZIONE': 'I',
+            'ART_OPERAZIONE': operation,
             'ART_ARTICOLO': product.default_code[:50] if product.default_code
             else 'articolo %s senza codice' % product.id,
             'ART_DES': product.name_wms_modula if product.name_wms_modula
