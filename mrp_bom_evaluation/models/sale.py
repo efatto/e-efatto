@@ -37,7 +37,7 @@ class SaleOrder(models.Model):
     def write(self, values):
         res = super().write(values)
         # recalculate bom cost at every change of a sale order
-        res.recalculate_bom_costs()
+        self.recalculate_bom_costs()
         return res
 
     @api.model
