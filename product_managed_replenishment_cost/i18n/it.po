@@ -111,7 +111,7 @@ msgstr "Costo landed"
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_product__managed_replenishment_cost
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_template__managed_replenishment_cost
 msgid "Landed with adjustment/depreciation/testing"
-msgstr "Landed con adeguamenti/ammortamenti/collaudo"
+msgstr "Landed con adeguamenti/ammortamenti/collaudo (base listino)"
 
 #. module: product_managed_replenishment_cost
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_product__standard_price
