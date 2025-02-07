@@ -9,9 +9,9 @@
                 <field name="depreciation_cost" />
                 <field name="depreciation_cost_note" />
             </field>
-            <field name="delay" position="after">
+            <xpath expr="//field[@name='delay']/.." position="after">
                 <field name="note" />
-            </field>
+            </xpath>
         </field>
     </record>
     <record id="product_supplierinfo_tree_view" model="ir.ui.view">
