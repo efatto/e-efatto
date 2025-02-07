@@ -9,6 +9,9 @@
                 <field name="depreciation_cost" />
                 <field name="depreciation_cost_note" />
             </field>
+            <field name="delay" position="after">
+                <field name="note" />
+            </field>
         </field>
     </record>
     <record id="product_supplierinfo_tree_view" model="ir.ui.view">
@@ -19,6 +22,9 @@
             <field name="discount" position="after">
                 <field name="depreciation_cost" />
                 <field name="depreciation_cost_note" />
+            </field>
+            <field name="name" position="after">
+                <field name="note" />
             </field>
         </field>
     </record>
