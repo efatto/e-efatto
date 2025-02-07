@@ -87,7 +87,7 @@ class ProductTemplate(models.Model):
 
     def _inverse_testing_cost(self):
         if len(self.product_variant_ids) == 1:
-            self.product_variant_ids.categ_id.testing_cost = self.testing_cost
+            self.product_variant_ids.custom_testing_cost = self.testing_cost
 
     def _search_testing_cost(self, operator, value):
         products = self.env["product.product"].search(
@@ -143,6 +143,10 @@ class ProductProduct(models.Model):
         store=True,
         readonly=False,
     )
+    custom_testing_cost = fields.Float(
+        string="Custom testing cost (€/pz)",
+        digits="Product Price",
+    )
     landed_cost = fields.Float(
         string="Landed cost",
         company_dependent=True,
@@ -155,13 +159,16 @@ class ProductProduct(models.Model):
         string="Landed with adjustment/depreciation/testing"
     )
 
-    @api.depends("categ_id.testing_cost")
+    @api.depends("categ_id.testing_cost", "custom_testing_cost")
     def _compute_testing_cost(self):
         for product in self:
-            product.testing_cost = product.categ_id.testing_cost
+            testing_cost = product.categ_id.testing_cost
+            if product.custom_testing_cost:
+                testing_cost = product.custom_testing_cost
+            product.testing_cost = testing_cost
 
     def _inverse_testing_cost(self):
-        self.categ_id.testing_cost = self.testing_cost
+        self.custom_testing_cost = self.testing_cost
 
     @api.depends(
         "seller_ids",
