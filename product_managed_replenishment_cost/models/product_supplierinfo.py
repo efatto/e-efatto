@@ -12,4 +12,4 @@ class ProductSupplierinfo(models.Model):
         digits="Product Price",
     )
     depreciation_cost_note = fields.Char()
-    note = fields.Char()
+    note = fields.Char(string="Pricelist note")
