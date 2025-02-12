@@ -193,7 +193,10 @@ class BaseExternalDbsource(models.Model):
                 }
                 for esito_lista in esiti_liste[0]:
                     num_lista = esito_lista[esiti_pos["NumLista"]]
-                    num_riga = int(esito_lista[esiti_pos["NumRiga"]])
+                    try:
+                        num_riga = int(esito_lista[esiti_pos["NumRiga"]])
+                    except ValueError:
+                        num_riga = 0
                     if not num_riga or not num_lista:
                         _logger.info(
                             "WMS LOG: list %s in db without NumLista or NumRiga"
@@ -278,11 +281,21 @@ class BaseExternalDbsource(models.Model):
                         'lotto4': lotto4,
                         'lotto5': lotto5,
                     })
-                    if move.move_line_ids:
-                        move.move_line_ids[0].qty_done = qty_moved
-                    else:
+                    if len(move.move_line_ids) > 1:
                         _logger.info(
-                            'WMS LOG: Missing move lines in move %s' % move.name)
+                            "WHS LOG: many stock move line found for Whs list %s-%s of "
+                            "move %s, impossible to set qty done!"
+                            % (num_lista, num_riga, move.name)
+                        )
+                    else:
+                        if move.state != "cancel":
+                            try:
+                                move.quantity_done = qty_moved
+                            except UserError as error:
+                                _logger.info(
+                                    "WHS LOG: move id %s is not writeable for %s"
+                                    % (move.id, error)
+                                )
                     if move.picking_id.mapped('move_lines').filtered(
                         lambda m: m.state not in ('draft', 'cancel', 'done')
                     ):

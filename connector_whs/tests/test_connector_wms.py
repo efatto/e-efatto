@@ -1,14 +1,14 @@
 # Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo.tests.common import SingleTransactionCase
+from odoo.tests.common import TransactionCase
 from odoo.tests import tagged
 from odoo.tools import mute_logger
 import time
 
 
 @tagged("-standard", "test_wms")
-class CommonConnectorWMS(SingleTransactionCase):
+class CommonConnectorWMS(TransactionCase):
     def setUp(self):
         super().setUp()
         self.dbsource_model = self.env["base.external.dbsource"]
