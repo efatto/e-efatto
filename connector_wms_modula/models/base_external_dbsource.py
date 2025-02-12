@@ -275,7 +275,7 @@ VALUES (
                         sqlparams=dict(
                             NUM_LISTE=whs_lists.mapped('num_lista'),
                         ),
-                        metadata=None
+                        metadata=None,
                     )
                 else:
                     esiti_liste = dbsource.execute_mssql(
@@ -376,6 +376,7 @@ VALUES (
                     if move.move_line_ids:
                         move.move_line_ids[0].qty_done = qty_moved
                     else:
+                        move.quantity_done = qty_moved
                         _logger.info(
                             'WMS LOG: Missing move lines in move %s' % move.name)
                     if move.picking_id.mapped('move_lines').filtered(
