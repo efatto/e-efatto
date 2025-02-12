@@ -373,12 +373,21 @@ VALUES (
                         'stato': '4',
                         'qtamov': qty_moved,
                     })
-                    if move.move_line_ids:
-                        move.move_line_ids[0].qty_done = qty_moved
-                    else:
-                        move.quantity_done = qty_moved
+                    if len(move.move_line_ids) > 1:
                         _logger.info(
-                            'WMS LOG: Missing move lines in move %s' % move.name)
+                            "WHS LOG: many stock move line found for Whs list %s-%s of "
+                            "move %s, impossible to set qty done!"
+                            % (num_lista, num_riga, move.name)
+                        )
+                    else:
+                        if move.state != "cancel":
+                            try:
+                                move.quantity_done = qty_moved
+                            except UserError as error:
+                                _logger.info(
+                                    "WHS LOG: move id %s is not writeable for %s"
+                                    % (move.id, error)
+                                )
                     if move.picking_id.mapped('move_lines').filtered(
                             lambda m: m.state not in ('draft', 'cancel', 'done')):
                         # FIXME action_assign must assign on qty_done and not on
