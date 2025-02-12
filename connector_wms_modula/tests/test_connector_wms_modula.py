@@ -35,6 +35,9 @@ class TestConnectorWmsModula(CommonConnectorWMS):
                 ]
             })
         self.dbsource = dbsource
+        self._clean_all()
+
+    def _clean_all(self):
         self.dbsource.with_context(no_return=True).execute_mssql(
             sqlquery=sql_text("DELETE FROM IMP_ORDINI_RIGHE"),
             sqlparams=None, metadata=None
@@ -181,6 +184,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
     def test_00_complete_picking_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
+        self._clean_all()
         order_form1 = Form(self.env["sale.order"])
         order_form1.partner_id = self.partner
         order_form1.client_order_ref = "Rif. SO customer"
@@ -251,7 +255,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
     def test_01_partial_picking_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
-
+        self._clean_all()
         order_form1 = Form(self.env["sale.order"])
         order_form1.partner_id = self.partner
         order_form1.client_order_ref = "Rif. SO customer 1"
@@ -335,6 +339,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
     def test_02_partial_picking_partial_available_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
+        self._clean_all()
         order_form1 = Form(self.env["sale.order"])
         order_form1.partner_id = self.partner
         order_form1.client_order_ref = "Rif. SO customer 2"
@@ -446,6 +451,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
     def test_03_partial_picking_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
+        self._clean_all()
         order_form1 = Form(self.env["sale.order"])
         order_form1.partner_id = self.partner
         order_form1.client_order_ref = "Rif. SO customer 3"
@@ -512,8 +518,12 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         backorder_wiz_id = picking.button_validate()['res_id']
         backorder_wiz = self.env['stock.backorder.confirmation'].browse(
             backorder_wiz_id)
-        # User must set correctly quantity as set by WMS user, ignoring qty set
-        # automatically by Odoo, so check that error is raised without intervention
+        # User must set correctly quantity as set by WHS user, ignoring qty set
+        # different by Odoo or a user, so set a qty different and check that error is
+        # raised without intervent
+        for move_line in picking.move_lines:
+            if move_line.product_id == self.product1:
+                move_line.quantity_done = 0
         with self.assertRaises(UserError):
             backorder_wiz.process()
         for move_line in picking.move_lines:
@@ -544,6 +554,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
     def test_04_unlink_sale_order(self):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
+        self._clean_all()
         order_form1 = Form(self.env["sale.order"])
         order_form1.partner_id = self.partner
         order_form1.client_order_ref = "Rif. SO customer 4"
@@ -628,6 +639,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
     def test_06_purchase(self):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
+        self._clean_all()
         purchase_form = Form(self.env["purchase.order"])
         purchase_form.partner_id = self.partner
         with purchase_form.order_line.new() as po_line:
