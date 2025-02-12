@@ -674,7 +674,11 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         backorder_wiz = self.env['stock.backorder.confirmation'].browse(
             backorder_wiz_id)
         # User must set correctly quantity as set by WHS user, ignoring qty set
-        # automatically by Odoo, so check that error is raised without intervention
+        # different by Odoo or a user, so set a qty different and check that error is
+        # raised without intervent
+        for move_line in picking.move_lines:
+            if move_line.product_id == self.product1:
+                move_line.quantity_done = 0
         with self.assertRaises(UserError):
             backorder_wiz.process()
         for move_line in picking.move_lines:
