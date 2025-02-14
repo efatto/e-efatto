@@ -94,4 +94,6 @@ class ProductProduct(models.Model):
             ('write_date', '>', last_date),
             ('product_tmpl_id.write_date', '>', last_date),
             ('type', '=', 'product'),
+            ('default_code', '!=', False),
+            ('default_code', '!=', ' '),
         ])
