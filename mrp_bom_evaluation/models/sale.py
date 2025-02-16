@@ -85,9 +85,13 @@ class SaleOrder(models.Model):
                 order_revision="ASC"
             ).action_bom_cost()
             for line in lines:
-                line.estimated_purchase_price = line.product_id.standard_price
+                line.estimated_purchase_price = line._compute_margin(
+                    order, line.product_id, line.product_uom
+                )
             lines.mapped('product_id').with_context(
                 order_revision="DESC"
             ).action_bom_cost()
             for line in lines:
-                line.purchase_price = line.product_id.standard_price
+                line.purchase_price = line._compute_margin(
+                    order, line.product_id, line.product_uom
+                )
