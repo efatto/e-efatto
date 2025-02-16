@@ -2,6 +2,8 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 import logging
 from odoo import api, fields, models
+from odoo.addons import decimal_precision as dp
+
 _logger = logging.getLogger(__name__)
 
 
@@ -10,6 +12,10 @@ class SaleOrderLine(models.Model):
 
     bom_line_id = fields.Many2one(
         comodel_name='mrp.bom.line',
+    )
+    estimated_purchase_price = fields.Float(
+        string='Estimated Cost',
+        digits=dp.get_precision('Product Price')
     )
 
 
@@ -75,6 +81,13 @@ class SaleOrder(models.Model):
             lines = order.order_line.filtered(
                 lambda x: x.product_id and x.product_id.bom_count > 0
             )
-            lines.mapped('product_id').action_bom_cost()
+            lines.mapped('product_id').with_context(
+                order_revision="ASC"
+            ).action_bom_cost()
+            for line in lines:
+                line.estimated_purchase_price = line.product_id.standard_price
+            lines.mapped('product_id').with_context(
+                order_revision="DESC"
+            ).action_bom_cost()
             for line in lines:
                 line.purchase_price = line.product_id.standard_price

@@ -133,7 +133,7 @@ class MrpBom(models.Model):
     @api.model
     def _bom_find(self, product_tmpl=None, product=None, picking_type=None, company_id=False):
         """ Finds BoM for particular product, picking and company """
-        super()._bom_find(product_tmpl, product, picking_type, company_id)
+        res = super()._bom_find(product_tmpl, product, picking_type, company_id)
         if product:
             if not product_tmpl:
                 product_tmpl = product.product_tmpl_id
@@ -151,9 +151,13 @@ class MrpBom(models.Model):
         if company_id or self.env.context.get('company_id'):
             domain = domain + [
                 ('company_id', '=', company_id or self.env.context.get('company_id'))]
-        # order to prioritize bom with product_id over the one without
-        # prioritize bom with upper bom revision (1 is upper then 0)
-        res = self.search(
-            domain, order='bom_revision DESC, sequence, product_id', limit=1)
+        if self.env.context.get("order_revision"):
+            # order to prioritize bom with product_id over the one without
+            # prioritize bom with upper bom revision (1 is upper then 0)
+            order = (
+                f'bom_revision {self.env.context["order_revision"]}, sequence, '
+                'product_id'
+            )
+            res = self.search(domain, order=order, limit=1)
 
         return res
