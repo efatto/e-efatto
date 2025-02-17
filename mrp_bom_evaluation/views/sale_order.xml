@@ -19,6 +19,9 @@
             <xpath expr="//field[@name='order_line']/form//field[@name='price_unit']" position="after">
                 <field name="estimated_purchase_price" groups="base.group_user"/>
             </xpath>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='price_unit']" position="after">
+                <field name="lead_line_id" groups="base.group_system"/>
+            </xpath>
         </field>
     </record>
 

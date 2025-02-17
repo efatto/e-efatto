@@ -1,11 +1,16 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import models
+from odoo import models, fields
 
 
 class MrpProduction(models.Model):
     _inherit = 'mrp.production'
+
+    lead_line_id = fields.Many2one(
+        comodel_name='crm.lead.line',
+        index=True,
+    )
 
     def _get_raw_move_data(self, bom_line, line_data):
         if bom_line.product_id.exclude_from_mo:

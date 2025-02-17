@@ -9,6 +9,7 @@
     'website': 'https://github.com/sergiocorato/e-efatto',
     'depends': [
         'account',
+        'crm_lead_product',
         'hr_timesheet',
         'mrp_bom_cost',
         'mrp_bom_operation_estimate',

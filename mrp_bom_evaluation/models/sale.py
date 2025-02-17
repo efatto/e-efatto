@@ -15,8 +15,30 @@ class SaleOrderLine(models.Model):
     )
     estimated_purchase_price = fields.Float(
         string='Estimated Cost',
-        digits=dp.get_precision('Product Price')
+        digits=dp.get_precision('Product Price'),
     )
+    final_purchase_price = fields.Float(
+        string='Final Cost',
+        help='Direct costs plus a proportion of analytic costs',
+        digits=dp.get_precision('Product Price'),
+    )
+    lead_line_id = fields.Many2one(
+        comodel_name='crm.lead.line',
+        compute="_compute_lead_line_id",
+        store=True,
+        index=True,
+    )
+    mrp_production_ids = fields.One2many(
+        comodel_name='mrp.production',
+        inverse_name='lead_line_id',
+    )
+
+    @api.depends("order_id.opportunity_id")
+    def _compute_lead_line_id(self):
+        for line in self:
+            line.lead_line_id = line.order_id.opportunity_id.lead_line_ids.filtered(
+                lambda x: x.product_id == line.product_id
+            )[:1]
 
 
 class SaleOrder(models.Model):
