@@ -28,17 +28,37 @@ class SaleOrderLine(models.Model):
         store=True,
         index=True,
     )
-    mrp_production_ids = fields.One2many(
+    mrp_production_ids = fields.Many2many(
         comodel_name='mrp.production',
-        inverse_name='lead_line_id',
+        compute_sudo='_compute_mrp_production_ids',
+        store=True,
+        index=True,
     )
 
     @api.depends("order_id.opportunity_id")
     def _compute_lead_line_id(self):
         for line in self:
-            line.lead_line_id = line.order_id.opportunity_id.lead_line_ids.filtered(
-                lambda x: x.product_id == line.product_id
-            )[:1]
+            lead_line_id = self.env["crm.lead.line"].browse()
+            lead_line_ids = line.order_id.opportunity_id.lead_line_ids
+            if lead_line_ids:
+                lead_line_id = line.order_id.opportunity_id.lead_line_ids.filtered(
+                    lambda x: x.product_id == line.product_id
+                )[:1]
+            line.lead_line_id = lead_line_id
+
+    @api.depends("lead_line_id", "product_id")
+    def _compute_mrp_production_ids(self):
+        for line in self:
+            if line.lead_line_id:
+                mrp_production_ids = self.env['mrp.production'].search([
+                    ("lead_line_id", "=", line.lead_line_id.id),
+                ])
+            else:
+                mrp_production_ids = self.env['mrp.production'].search([
+                    ("sale_id", "=", line.order_id.id),
+                    ("product_id", "=", line.product_id.id),
+                ])
+            line.mrp_production_ids = mrp_production_ids
 
 
 class SaleOrder(models.Model):
