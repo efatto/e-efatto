@@ -30,10 +30,21 @@ class SaleOrderLine(models.Model):
     )
     mrp_production_ids = fields.Many2many(
         comodel_name='mrp.production',
-        compute_sudo='_compute_mrp_production_ids',
+        compute='_compute_mrp_production_ids',
+        compute_sudo=True,
         store=True,
         index=True,
     )
+    mrp_production_total_amount = fields.Float(
+        compute='_compute_mrp_production_total_amount',
+        store=True,
+    )
+
+    @api.depends('mrp_production_ids.total_amount')
+    def _compute_mrp_production_total_amount(self):
+        for line in self:
+            line.mrp_production_total_amount = sum(
+                mrp.total_amount for mrp in line.mrp_production_ids)
 
     @api.depends("order_id.opportunity_id")
     def _compute_lead_line_id(self):
@@ -52,11 +63,13 @@ class SaleOrderLine(models.Model):
             if line.lead_line_id:
                 mrp_production_ids = self.env['mrp.production'].search([
                     ("lead_line_id", "=", line.lead_line_id.id),
+                    ("state", "!=", "cancel"),
                 ])
             else:
                 mrp_production_ids = self.env['mrp.production'].search([
                     ("sale_id", "=", line.order_id.id),
                     ("product_id", "=", line.product_id.id),
+                    ("state", "!=", "cancel"),
                 ])
             line.mrp_production_ids = mrp_production_ids
 

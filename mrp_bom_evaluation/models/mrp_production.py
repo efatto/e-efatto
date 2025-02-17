@@ -1,7 +1,10 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import models, fields
+from odoo import models, fields, api
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class MrpProduction(models.Model):
@@ -11,6 +14,57 @@ class MrpProduction(models.Model):
         comodel_name='crm.lead.line',
         index=True,
     )
+    workorder_price_subtotal = fields.Float(
+        compute='_compute_workorder_price_subtotal',
+        store=True,
+        groups='account.group_account_user',
+    )
+    move_raw_price_subtotal = fields.Float(
+        compute='_compute_move_raw_price_subtotal',
+        store=True,
+        groups='account.group_account_user',
+    )
+    total_amount = fields.Float(
+        compute='_compute_total_amount',
+        store=True)
+
+    @api.multi
+    @api.depends(
+        'workorder_price_subtotal',
+        'move_raw_price_subtotal')
+    def _compute_total_amount(self):
+        for production in self:
+            production.total_amount = (
+                production.workorder_price_subtotal
+                + production.move_raw_price_subtotal
+            )
+
+    @api.depends(
+        'workorder_ids.time_ids.duration',
+        'workorder_ids.time_ids.loss_type',
+        'workorder_ids.time_ids.workcenter_id.costs_hour',
+    )
+    def _compute_workorder_price_subtotal(self):
+        for production in self:
+            production.workorder_price_subtotal = sum(
+                time.workcenter_id.costs_hour / 60.0 *
+                time.duration
+                for time in
+                production.mapped("workorder_ids.time_ids").filtered(
+                    lambda x: x.loss_type == 'productive'
+                )
+            )
+
+    @api.depends('move_raw_ids.price_unit', 'move_raw_ids.quantity_done')
+    def _compute_move_raw_price_subtotal(self):
+        for production in self:
+            if any(x.price_unit > 0 for x in production.move_raw_ids):
+                _logger.info("Some positive stock move price unit in production %s"
+                             % production.name)
+            production.move_raw_price_subtotal = sum(
+                - move.price_unit * move.quantity_done
+                for move in production.move_raw_ids
+            )
 
     def _get_raw_move_data(self, bom_line, line_data):
         if bom_line.product_id.exclude_from_mo:
