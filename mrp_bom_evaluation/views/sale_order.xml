@@ -22,6 +22,8 @@
             <xpath expr="//field[@name='order_line']/tree//field[@name='price_unit']" position="after">
                 <field name="lead_line_id" groups="base.group_system"/>
                 <field name="mrp_production_ids" widget="many2many_tags" groups="base.group_system"/>
+                <field name="workorder_price_subtotal" groups="base.group_system"/>
+                <field name="move_raw_price_subtotal" groups="base.group_system"/>
                 <field name="mrp_production_total_amount" groups="base.group_system"/>
             </xpath>
         </field>

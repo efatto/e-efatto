@@ -39,12 +39,30 @@ class SaleOrderLine(models.Model):
         compute='_compute_mrp_production_total_amount',
         store=True,
     )
+    workorder_price_subtotal = fields.Float(
+        string='Workorder Price Subtotal',
+        compute='_compute_mrp_production_total_amount',
+        store=True,
+    )
+    move_raw_price_subtotal = fields.Float(
+        string='MRP Move Price Subtotal',
+        compute='_compute_mrp_production_total_amount',
+        store=True,
+    )
 
-    @api.depends('mrp_production_ids.total_amount')
+    @api.depends(
+        'mrp_production_ids.total_amount',
+        'mrp_production_ids.workorder_price_subtotal',
+        'mrp_production_ids.move_raw_price_subtotal',
+    )
     def _compute_mrp_production_total_amount(self):
         for line in self:
             line.mrp_production_total_amount = sum(
                 mrp.total_amount for mrp in line.mrp_production_ids)
+            line.workorder_price_subtotal = sum(
+                mrp.workorder_price_subtotal for mrp in line.mrp_production_ids)
+            line.move_raw_price_subtotal = sum(
+                mrp.move_raw_price_subtotal for mrp in line.mrp_production_ids)
 
     @api.depends("order_id.opportunity_id")
     def _compute_lead_line_id(self):
