@@ -49,11 +49,41 @@ class SaleOrderLine(models.Model):
         compute='_compute_mrp_production_total_amount',
         store=True,
     )
+    analytic_cost = fields.Float(
+        string='Analytic Cost',
+        compute='_compute_analytic_cost',
+        store=True,
+    )
+    total_cost = fields.Float(
+        string='Total Cost',
+        compute='_compute_analytic_cost',
+        store=True,
+    )
+    unit_cost = fields.Float(
+        string='Unit Cost',
+        compute='_compute_analytic_cost',
+        store=True,
+    )
+
+    @api.depends(
+        'order_id.extra_cost',
+        'order_id.internal_timesheet_cost',
+        'order_id.amount_untaxed',
+        'price_subtotal',
+    )
+    def _compute_analytic_cost(self):
+        for line in self:
+            line.analytic_cost = (
+                line.order_id.extra_cost + line.order_id.internal_timesheet_cost
+            ) * line.price_subtotal / (line.order_id.amount_untaxed or 1.0)
 
     @api.depends(
         'mrp_production_ids.total_amount',
         'mrp_production_ids.workorder_price_subtotal',
         'mrp_production_ids.move_raw_price_subtotal',
+        'analytic_cost',
+        'total_cost',
+        'qty_delivered',
     )
     def _compute_mrp_production_total_amount(self):
         for line in self:
@@ -63,6 +93,10 @@ class SaleOrderLine(models.Model):
                 mrp.workorder_price_subtotal for mrp in line.mrp_production_ids)
             line.move_raw_price_subtotal = sum(
                 mrp.move_raw_price_subtotal for mrp in line.mrp_production_ids)
+            line.total_cost = (
+                line.analytic_cost + line.move_raw_price_subtotal
+                + line.workorder_price_subtotal)
+            line.unit_cost = line.total_cost / (line.qty_delivered or 1.0)
 
     @api.depends("order_id.opportunity_id")
     def _compute_lead_line_id(self):
@@ -94,6 +128,34 @@ class SaleOrderLine(models.Model):
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
+
+    extra_cost = fields.Float(
+        string="Analytic Extra Cost",
+        compute="_compute_analytic_cost",
+        store=True,
+    )
+    internal_timesheet_cost = fields.Float(
+        string="Analytic Internal Timesheet Cost",
+        compute="_compute_analytic_cost",
+        store=True,
+    )
+
+    def _compute_analytic_cost(self):
+        for sale in self:
+            extra_costs = self.env["account.analytic.line"].search([
+                ('project_id', '=', False),
+                ('account_id', '=', sale.analytic_account_id.id),
+                ('move_id.invoice_id.type', 'in', ['in_invoice', 'in_refund'])
+            ])
+            internal_timesheet_costs = self.env['account.analytic.line'].search([
+                ('employee_id', '!=', False),
+                ('account_id', '=', sale.analytic_account_id.id),
+                ('project_id.name', '!=', 'Internal Project'),
+                ('so_line.product_id.categ_id.id', '=', '27'),
+            ])
+            sale.extra_cost = - sum(extra_costs.mapped('extra_cost') or [0])
+            sale.internal_timesheet_cost = - sum(
+                internal_timesheet_costs.mapped('amount') or [0])
 
     def action_cancel(self):
         res = super().action_cancel()

@@ -13,6 +13,10 @@
                         type="object"
                         groups="sale_margin_security.group_sale_margin_security"/>
             </button>
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="extra_cost" groups="base.group_system"/>
+                <field name="internal_timesheet_cost" groups="base.group_system"/>
+            </xpath>
             <xpath expr="//field[@name='order_line']/tree//field[@name='price_unit']" position="after">
                 <field name="estimated_purchase_price" groups="base.group_user"/>
             </xpath>
@@ -25,6 +29,9 @@
                 <field name="workorder_price_subtotal" groups="base.group_system"/>
                 <field name="move_raw_price_subtotal" groups="base.group_system"/>
                 <field name="mrp_production_total_amount" groups="base.group_system"/>
+                <field name="analytic_cost" groups="base.group_system"/>
+                <field name="total_cost" groups="base.group_system"/>
+                <field name="unit_cost" groups="base.group_user"/>
             </xpath>
         </field>
     </record>
