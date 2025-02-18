@@ -62,7 +62,7 @@ class MrpProduction(models.Model):
                 _logger.info("Some positive stock move price unit in production %s"
                              % production.name)
             production.move_raw_price_subtotal = sum(
-                - move.price_unit * move.quantity_done
+                abs(move.price_unit) * move.quantity_done
                 for move in production.move_raw_ids
             )
 

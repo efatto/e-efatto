@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <button name="action_unlock" position="after">
-                <button name="recalculate_bom_costs" class="ml-2 btn btn-default"
+                <button name="recalculate_all_costs" class="ml-2 btn btn-default"
                         string="Recalculate bom costs"
                         Help="Update only cost of produced products"
                         type="object"
@@ -19,9 +19,11 @@
             </xpath>
             <xpath expr="//field[@name='order_line']/tree//field[@name='price_unit']" position="after">
                 <field name="estimated_purchase_price" groups="base.group_user"/>
+                <field name="final_purchase_price" groups="base.group_user"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/form//field[@name='price_unit']" position="after">
                 <field name="estimated_purchase_price" groups="base.group_user"/>
+                <field name="final_purchase_price" groups="base.group_user"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree//field[@name='price_unit']" position="after">
                 <field name="lead_line_id" groups="base.group_system"/>
@@ -31,7 +33,6 @@
                 <field name="mrp_production_total_amount" groups="base.group_system"/>
                 <field name="analytic_cost" groups="base.group_system"/>
                 <field name="total_cost" groups="base.group_system"/>
-                <field name="unit_cost" groups="base.group_user"/>
             </xpath>
         </field>
     </record>

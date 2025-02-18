@@ -17,11 +17,6 @@ class SaleOrderLine(models.Model):
         string='Estimated Cost',
         digits=dp.get_precision('Product Price'),
     )
-    final_purchase_price = fields.Float(
-        string='Final Cost',
-        help='Direct costs plus a proportion of analytic costs',
-        digits=dp.get_precision('Product Price'),
-    )
     lead_line_id = fields.Many2one(
         comodel_name='crm.lead.line',
         compute="_compute_lead_line_id",
@@ -59,22 +54,14 @@ class SaleOrderLine(models.Model):
         compute='_compute_mrp_production_total_amount',
         store=True,
     )
-    unit_cost = fields.Float(
-        string='Unit Cost',
+    final_purchase_price = fields.Float(
+        string='Final Cost',
         compute='_compute_mrp_production_total_amount',
         store=True,
+        help='Direct costs plus a proportion of analytic costs',
+        digits=dp.get_precision('Product Price'),
     )
 
-    @api.depends(
-        'order_id.extra_cost',
-        'order_id.internal_timesheet_cost',
-        'order_id.amount_untaxed',
-        'price_subtotal',
-        'mrp_production_ids.total_amount',
-        'mrp_production_ids.workorder_price_subtotal',
-        'mrp_production_ids.move_raw_price_subtotal',
-        'qty_delivered',
-    )
     def _compute_mrp_production_total_amount(self):
         for line in self:
             line.analytic_cost = (
@@ -89,7 +76,7 @@ class SaleOrderLine(models.Model):
             line.total_cost = (
                 line.analytic_cost + line.move_raw_price_subtotal
                 + line.workorder_price_subtotal)
-            line.unit_cost = line.total_cost / (line.qty_delivered or 1.0)
+            line.final_purchase_price = line.total_cost / (line.qty_delivered or 1.0)
 
     @api.depends("order_id.opportunity_id")
     def _compute_lead_line_id(self):
@@ -170,14 +157,21 @@ class SaleOrder(models.Model):
     @api.multi
     def write(self, values):
         res = super().write(values)
+        if not self.env.context.get('recompute_costs'):
+            # add context to recompute only once
+            self.with_context(recompute_costs=True).recalculate_all_costs()
+        return res
+
+    @api.multi
+    def recalculate_all_costs(self):
         # Recalculate bom, mrp and analytic cost at every change of a sale order.
         # The same methods are called from the cron when modifications are done only
         # on the mrp, move or analytic objects.
-        self.recalculate_bom_costs()
+        self._recalculate_bom_costs()
         self.production_ids._compute_workorder_price_subtotal()
         self.production_ids._compute_move_raw_price_subtotal()
         self._compute_analytic_cost()
-        return res
+        self.order_line._compute_mrp_production_total_amount()
 
     @api.model
     def _cron_recalculate_bom_costs(self):
@@ -202,7 +196,7 @@ class SaleOrder(models.Model):
             "Start recalculate bom costs job for #%s sale orders." %
             len(sale_order_to_recomputes)
         )
-        sale_order_to_recomputes.recalculate_bom_costs()
+        sale_order_to_recomputes._recalculate_bom_costs()
         _logger.info(
             "End recalculate bom costs job for #%s sale orders." %
             len(sale_order_to_recomputes)
@@ -253,7 +247,7 @@ class SaleOrder(models.Model):
         )
 
     @api.multi
-    def recalculate_bom_costs(self):
+    def _recalculate_bom_costs(self):
         for order in self:
             lines = order.order_line.filtered(
                 lambda x: x.product_id and x.product_id.bom_count > 0
