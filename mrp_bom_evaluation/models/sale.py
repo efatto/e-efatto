@@ -170,8 +170,13 @@ class SaleOrder(models.Model):
     @api.multi
     def write(self, values):
         res = super().write(values)
-        # recalculate bom cost at every change of a sale order
+        # Recalculate bom, mrp and analytic cost at every change of a sale order.
+        # The same methods are called from the cron when modifications are done only
+        # on the mrp, move or analytic objects.
         self.recalculate_bom_costs()
+        self.production_ids._compute_workorder_price_subtotal()
+        self.production_ids._compute_move_raw_price_subtotal()
+        self._compute_analytic_cost()
         return res
 
     @api.model
@@ -201,6 +206,50 @@ class SaleOrder(models.Model):
         _logger.info(
             "End recalculate bom costs job for #%s sale orders." %
             len(sale_order_to_recomputes)
+        )
+        # recalculate costs only for sale order with a production changed in something
+        # after last write in sale order
+        sale_mrp_order_to_recomputes = self.env["sale.order"].browse()
+        for sale_order in sale_orders:
+            mrp_to_recomputes = sale_order.production_ids.filtered(
+                lambda mrp:
+                mrp.write_date > sale_order.write_date
+                or mrp.workorder_ids.write_date > sale_order.write_date
+                or mrp.move_raw_ids.write_date > sale_order.write_date
+            )
+            if mrp_to_recomputes:
+                sale_mrp_order_to_recomputes |= sale_order
+        _logger.info(
+            "Start recalculate mrp costs job for #%s sale orders." %
+            len(sale_mrp_order_to_recomputes)
+        )
+        sale_mrp_order_to_recomputes.production_ids._compute_workorder_price_subtotal()
+        sale_mrp_order_to_recomputes.production_ids._compute_move_raw_price_subtotal()
+        _logger.info(
+            "End recalculate mrp costs job for #%s sale orders." %
+            len(sale_mrp_order_to_recomputes)
+        )
+
+        # recompute extra cost and timesheet cost whenever any account.analytic.line
+        # is added or changed for this sale order
+        sale_analytic_order_to_recomputes = self.env["sale.order"].browse()
+        for sale_order in sale_orders:
+            # consider only the boms updated/created after the last write on sale order
+            analytic_to_recomputes = self.env["account.analytic.line"].search([
+                ("account_id", "=", sale_order.analytic_account_id.id),
+                ("write_date", ">", sale_order.write_date),
+            ])
+            if analytic_to_recomputes:
+                sale_analytic_order_to_recomputes |= sale_order
+
+        _logger.info(
+            "Start recalculate analytic costs job for #%s sale orders." %
+            len(sale_analytic_order_to_recomputes)
+        )
+        sale_analytic_order_to_recomputes._compute_analytic_cost()
+        _logger.info(
+            "End recalculate analytic costs job for #%s sale orders." %
+            len(sale_analytic_order_to_recomputes)
         )
 
     @api.multi
