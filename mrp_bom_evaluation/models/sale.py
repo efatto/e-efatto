@@ -133,9 +133,18 @@ class SaleOrder(models.Model):
                 ('project_id.name', '!=', 'Internal Project'),
                 ('so_line.product_id.categ_id.id', '=', '27'),
             ])
-            sale.extra_cost = - sum(extra_costs.mapped('extra_cost') or [0])
+            analytic_sale_lines = self.env['sale.order.line'].search([
+                ('order_id.analytic_account_id', '=', sale.analytic_account_id.id),
+            ])
+            analytic_sale_revenue = sum(
+                analytic_sale_lines.mapped('price_subtotal') or [0])
+            sale.extra_cost = - sum(extra_costs.mapped('extra_cost') or [0]) * (
+                sale.amount_untaxed / analytic_sale_revenue
+            )
             sale.internal_timesheet_cost = - sum(
-                internal_timesheet_costs.mapped('amount') or [0])
+                internal_timesheet_costs.mapped('amount') or [0]) * (
+                sale.amount_untaxed / analytic_sale_revenue
+            )
 
     def action_cancel(self):
         res = super().action_cancel()
@@ -154,13 +163,14 @@ class SaleOrder(models.Model):
         lines.unlink()
         return res
 
-    @api.multi
-    def write(self, values):
-        res = super().write(values)
-        if not self.env.context.get('recompute_costs'):
-            # add context to recompute only once
-            self.with_context(recompute_costs=True).recalculate_all_costs()
-        return res
+    # removed as it's too heavy
+    # @api.multi
+    # def write(self, values):
+    #     res = super().write(values)
+    #     if not self.env.context.get('recompute_costs'):
+    #         # add context to recompute only once
+    #         self.with_context(recompute_costs=True).recalculate_all_costs()
+    #     return res
 
     @api.multi
     def recalculate_all_costs(self):

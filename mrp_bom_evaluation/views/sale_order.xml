@@ -8,8 +8,8 @@
         <field name="arch" type="xml">
             <button name="action_unlock" position="after">
                 <button name="recalculate_all_costs" class="ml-2 btn btn-default"
-                        string="Recalculate bom costs"
-                        Help="Update only cost of produced products"
+                        string="Recalculate all costs"
+                        Help="Update cost of produced products"
                         type="object"
                         groups="sale_margin_security.group_sale_margin_security"/>
             </button>
