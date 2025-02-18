@@ -8,7 +8,9 @@ class SaleReport(models.Model):
     purchase_price = fields.Float('Cost')
     estimated_purchase_price = fields.Float('Estimated Cost')
 
-    def _query(self, with_clause='', fields={}, groupby='', from_clause=''):
+    def _query(self, with_clause='', fields=None, groupby='', from_clause=''):
+        if fields is None:
+            fields = {}
         fields['purchase_price'] = """
 , SUM(l.purchase_price / CASE COALESCE(s.currency_rate, 0) WHEN 0 THEN 1.0 ELSE
 s.currency_rate END) AS purchase_price"""
