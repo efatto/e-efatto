@@ -51,17 +51,17 @@ class SaleOrderLine(models.Model):
     )
     analytic_cost = fields.Float(
         string='Analytic Cost',
-        compute='_compute_analytic_cost',
+        compute='_compute_mrp_production_total_amount',
         store=True,
     )
     total_cost = fields.Float(
         string='Total Cost',
-        compute='_compute_analytic_cost',
+        compute='_compute_mrp_production_total_amount',
         store=True,
     )
     unit_cost = fields.Float(
         string='Unit Cost',
-        compute='_compute_analytic_cost',
+        compute='_compute_mrp_production_total_amount',
         store=True,
     )
 
@@ -70,23 +70,16 @@ class SaleOrderLine(models.Model):
         'order_id.internal_timesheet_cost',
         'order_id.amount_untaxed',
         'price_subtotal',
-    )
-    def _compute_analytic_cost(self):
-        for line in self:
-            line.analytic_cost = (
-                line.order_id.extra_cost + line.order_id.internal_timesheet_cost
-            ) * line.price_subtotal / (line.order_id.amount_untaxed or 1.0)
-
-    @api.depends(
         'mrp_production_ids.total_amount',
         'mrp_production_ids.workorder_price_subtotal',
         'mrp_production_ids.move_raw_price_subtotal',
-        'analytic_cost',
-        'total_cost',
         'qty_delivered',
     )
     def _compute_mrp_production_total_amount(self):
         for line in self:
+            line.analytic_cost = (
+                line.order_id.extra_cost + line.order_id.internal_timesheet_cost
+            ) * line.price_subtotal / (line.order_id.amount_untaxed or 1.0)
             line.mrp_production_total_amount = sum(
                 mrp.total_amount for mrp in line.mrp_production_ids)
             line.workorder_price_subtotal = sum(
