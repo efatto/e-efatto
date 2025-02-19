@@ -163,15 +163,6 @@ class SaleOrder(models.Model):
         lines.unlink()
         return res
 
-    # removed as it's too heavy
-    # @api.multi
-    # def write(self, values):
-    #     res = super().write(values)
-    #     if not self.env.context.get('recompute_costs'):
-    #         # add context to recompute only once
-    #         self.with_context(recompute_costs=True).recalculate_all_costs()
-    #     return res
-
     @api.multi
     def recalculate_all_costs(self):
         # Recalculate bom, mrp and analytic cost at every change of a sale order.
