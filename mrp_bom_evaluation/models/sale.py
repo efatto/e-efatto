@@ -14,7 +14,7 @@ class SaleOrderLine(models.Model):
         comodel_name='mrp.bom.line',
     )
     estimated_purchase_price = fields.Float(
-        string='Estimated Cost',
+        string='Cost in Sale Offer',
         digits=dp.get_precision('Product Price'),
     )
     lead_line_id = fields.Many2one(
