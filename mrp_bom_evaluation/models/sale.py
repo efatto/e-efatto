@@ -168,12 +168,12 @@ class SaleOrder(models.Model):
         # Recalculate bom, mrp and analytic cost at every change of a sale order.
         # The same methods are called from the cron when modifications are done only
         # on the mrp, move or analytic objects.
-        self.order_line._compute_mrp_production_ids()
+        self.mapped('order_line')._compute_mrp_production_ids()
         self._recalculate_bom_costs()
-        self.production_ids._compute_workorder_price_subtotal()
-        self.production_ids._compute_move_raw_price_subtotal()
+        self.mapped('production_ids')._compute_workorder_price_subtotal()
+        self.mapped('production_ids')._compute_move_raw_price_subtotal()
         self._compute_analytic_cost()
-        self.order_line._compute_mrp_production_total_amount()
+        self.mapped('order_line')._compute_mrp_production_total_amount()
 
     @api.model
     def _cron_recalculate_bom_costs(self):
@@ -220,8 +220,10 @@ class SaleOrder(models.Model):
             len(sale_mrp_order_to_recomputes)
         )
         sale_mrp_order_to_recomputes.mapped('order_line')._compute_mrp_production_ids()
-        sale_mrp_order_to_recomputes.production_ids._compute_workorder_price_subtotal()
-        sale_mrp_order_to_recomputes.production_ids._compute_move_raw_price_subtotal()
+        sale_mrp_order_to_recomputes.mapped(
+            'production_ids')._compute_workorder_price_subtotal()
+        sale_mrp_order_to_recomputes.mapped(
+            'production_ids')._compute_move_raw_price_subtotal()
         _logger.info(
             "End recalculate mrp costs job for #%s sale orders." %
             len(sale_mrp_order_to_recomputes)
