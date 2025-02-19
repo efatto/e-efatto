@@ -6,7 +6,7 @@ class SaleReport(models.Model):
     _inherit = 'sale.report'
 
     purchase_price = fields.Float('Cost')
-    estimated_purchase_price = fields.Float('Estimated Cost')
+    estimated_purchase_price = fields.Float('Cost in Sale Offer')
     final_purchase_price = fields.Float('Final Cost')
 
     def _query(self, with_clause='', fields=None, groupby='', from_clause=''):

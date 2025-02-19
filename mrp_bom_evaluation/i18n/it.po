@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-02 09:33+0000\n"
-"PO-Revision-Date: 2022-09-02 09:33+0000\n"
+"POT-Creation-Date: 2025-02-19 08:52+0000\n"
+"PO-Revision-Date: 2025-02-19 08:52+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -51,9 +51,31 @@ msgid "Amount avg/kg"
 msgstr "Importo medio €/kg"
 
 #. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_order_line__analytic_cost
+msgid "Analytic Cost"
+msgstr "Costo analitico"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_order__extra_cost
+msgid "Analytic Extra Cost"
+msgstr "Costo analitico extra"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_order__internal_timesheet_cost
+msgid "Analytic Internal Timesheet Cost"
+msgstr "Costo tempi lavorazione interni"
+
+#. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.view_mrp_bom_purchase_link
 msgid "Are you sure you want to link bom to this purchase order?"
 msgstr "Si è sicuri di voler collegare la DiBa con questo ordine di acquisto?"
+
+#. module: mrp_bom_evaluation
+#: model:ir.actions.server,name:mrp_bom_evaluation.ir_cron_mrp_bom_evaluation_update_cost_sale_order_ir_actions_server
+#: model:ir.cron,cron_name:mrp_bom_evaluation.ir_cron_mrp_bom_evaluation_update_cost_sale_order
+#: model:ir.cron,name:mrp_bom_evaluation.ir_cron_mrp_bom_evaluation_update_cost_sale_order
+msgid "BOM evaluation - compute product costs and update in sale orders"
+msgstr "Valutazione DiBa - calcola i costi dei prodotti e aggiorna gli ordini di vendita"
 
 #. module: mrp_bom_evaluation
 #: model:ir.model,name:mrp_bom_evaluation.model_mrp_bom
@@ -76,9 +98,30 @@ msgid "BoM Estimate"
 msgstr "Preventivo BoM"
 
 #. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_order_line__bom_line_id
+msgid "Bom Line"
+msgstr "Riga DiBa"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_stock_move__bom_line_price_unit
+msgid "Bom Line Price Unit"
+msgstr "Prezzo unitario riga DiBa"
+
+#. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.view_mrp_bom_purchase_link
 msgid "Confirm"
 msgstr "Conferma"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_report__purchase_price
+msgid "Cost"
+msgstr "Costo"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_order_line__estimated_purchase_price
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_report__estimated_purchase_price
+msgid "Cost in Sale Offer"
+msgstr "Costo nel preventivo"
 
 #. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_purchase_link__create_uid
@@ -91,6 +134,11 @@ msgid "Created on"
 msgstr "Creato il"
 
 #. module: mrp_bom_evaluation
+#: model:ir.model.fields,help:mrp_bom_evaluation.field_sale_order_line__final_purchase_price
+msgid "Direct costs plus a proportion of analytic costs"
+msgstr "Costi diretti più la ripartizione dei costi analitici"
+
+#. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.view_mrp_bom_purchase_link
 msgid "Discard"
 msgstr "Abbandona"
@@ -101,10 +149,21 @@ msgid "Display Name"
 msgstr "Nome visualizzato"
 
 #. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.mrp_bom_form_view
+msgid "Estimated Operations"
+msgstr "Operazioni previste"
+
+#. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_product_product__exclude_from_mo
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_product_template__exclude_from_mo
 msgid "Exclude From Mo"
-msgstr "Escludi Dalla Produzione"
+msgstr "Escludi dalla produzione"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_order_line__final_purchase_price
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_report__final_purchase_price
+msgid "Final Cost"
+msgstr "Costo finale"
 
 #. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
@@ -124,7 +183,7 @@ msgstr ""
 #. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_purchase_link____last_update
 msgid "Last Modified on"
-msgstr "Ultima Modifica il"
+msgstr "Ultima modifica il"
 
 #. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_purchase_link__write_uid
@@ -134,7 +193,7 @@ msgstr "Ultimo aggiornamento di"
 #. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_purchase_link__write_date
 msgid "Last Updated on"
-msgstr "Ultima modifica il"
+msgstr "Ultimo aggiornamento il"
 
 #. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_line__price_write_date
@@ -145,6 +204,12 @@ msgstr "Data aggiornamento prezzo"
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
 msgid "Last write:"
 msgstr "Ultima modifica:"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_production__lead_line_id
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_order_line__lead_line_id
+msgid "Lead Line"
+msgstr "Riga Opportunità"
 
 #. module: mrp_bom_evaluation
 #: model:ir.actions.act_window,name:mrp_bom_evaluation.action_mrp_bom_purchase_link
@@ -168,10 +233,30 @@ msgid "Linked RDP/PO line"
 msgstr "Riga ordine fornitore"
 
 #. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_order_line__move_raw_price_subtotal
+msgid "MRP Move Price Subtotal"
+msgstr "Subtotale costo movimenti produzione"
+
+#. module: mrp_bom_evaluation
 #: code:addons/mrp_bom_evaluation/models/mrp_bom.py:106
 #, python-format
 msgid "Missing finishing product for category %s"
 msgstr "Prodotto di finitura mancante per la categoria %s"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_production__move_raw_price_subtotal
+msgid "Move Raw Price Subtotal"
+msgstr "Subtotale costo movimenti grezzi"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_order_line__mrp_production_ids
+msgid "Mrp Production"
+msgstr "Produzione"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_order_line__mrp_production_total_amount
+msgid "Mrp Production Total Amount"
+msgstr "Totale costo produzione"
 
 #. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_line__note
@@ -195,6 +280,8 @@ msgid "Price Validated"
 msgstr "Prezzo Validato"
 
 #. module: mrp_bom_evaluation
+#: model:ir.model,name:mrp_bom_evaluation.model_product_product
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_project_task__bom_product_id
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
 msgid "Product"
 msgstr "Prodotto"
@@ -230,6 +317,11 @@ msgid "Quantity"
 msgstr "Quantità"
 
 #. module: mrp_bom_evaluation
+#: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.view_order_form
+msgid "Recalculate all costs"
+msgstr "Ricalcola tutti i costi"
+
+#. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
 msgid "Reference:"
 msgstr "Riferimento:"
@@ -245,9 +337,24 @@ msgid "Sale Order"
 msgstr "Ordine di vendita"
 
 #. module: mrp_bom_evaluation
+#: model:ir.model,name:mrp_bom_evaluation.model_sale_report
+msgid "Sales Analysis Report"
+msgstr "Resoconto analisi vendite"
+
+#. module: mrp_bom_evaluation
 #: model:ir.model,name:mrp_bom_evaluation.model_sale_order_line
 msgid "Sales Order Line"
 msgstr "Linea d'ordine di vendita"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model,name:mrp_bom_evaluation.model_stock_move
+msgid "Stock Move"
+msgstr "Movimento di magazzino"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model,name:mrp_bom_evaluation.model_project_task
+msgid "Task"
+msgstr "Lavoro"
 
 #. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.mrp_bom_form_view
@@ -256,8 +363,14 @@ msgstr "Totale"
 
 #. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom__total_amount
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_production__total_amount
 msgid "Total Amount"
 msgstr "Importo Totale"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_order_line__total_cost
+msgid "Total Cost"
+msgstr "Costo totale"
 
 #. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_bom_line__weight_total
@@ -299,6 +412,17 @@ msgstr "Peso Totale"
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
 msgid "Weights (kg)"
 msgstr "Pesi (kg)"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model,name:mrp_bom_evaluation.model_mrp_workorder
+msgid "Work Order"
+msgstr "Ordine di Lavoro"
+
+#. module: mrp_bom_evaluation
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_mrp_production__workorder_price_subtotal
+#: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_order_line__workorder_price_subtotal
+msgid "Workorder Price Subtotal"
+msgstr "Costo ordine di lavoro"
 
 #. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
