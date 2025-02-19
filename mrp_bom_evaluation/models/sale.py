@@ -168,6 +168,7 @@ class SaleOrder(models.Model):
         # Recalculate bom, mrp and analytic cost at every change of a sale order.
         # The same methods are called from the cron when modifications are done only
         # on the mrp, move or analytic objects.
+        self.order_line._compute_mrp_production_ids()
         self._recalculate_bom_costs()
         self.production_ids._compute_workorder_price_subtotal()
         self.production_ids._compute_move_raw_price_subtotal()

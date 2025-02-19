@@ -2,6 +2,8 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import _, fields, models
 from odoo.exceptions import ValidationError
+import logging
+_logger = logging.getLogger(__name__)
 
 
 class ProductTemplate(models.Model):
@@ -48,11 +50,17 @@ class ProductProduct(models.Model):
             listprice_categ_id = self._get_listprice_categ_id(
                 opt.product_id.categ_id)
             if not opt.price_unit:
-                raise ValidationError(_('Missing cost in bom operation for product %s!'
-                                        ) % opt.product_id.name)
+                _logger.info(
+                    'Missing cost in bom %s operation for product %s!' % (
+                        bom.product_id.display_name, opt.product_id.display_name
+                    )
+                )
             if not opt.time:
-                raise ValidationError(_('Missing time in bom operation for product %s!'
-                                        ) % opt.product_id.name)
+                _logger.info(
+                    'Missing time in bom %s operation for product %s!' % (
+                        bom.product_id.display_name, opt.product_id.display_name
+                    )
+                )
             if opt not in operation_prices[listprice_categ_id]:
                 operation_prices[listprice_categ_id].update({
                     opt: opt.time
@@ -157,13 +165,16 @@ class ProductProduct(models.Model):
                 if line._skip_bom_line(self):
                     continue
                 if not line.price_unit:
-                    raise ValidationError(_('Missing cost in bom line for product %s!'
-                                            ) % line.product_id.name)
+                    _logger.info(
+                        'Missing cost in bom %s line for product %s!' % (
+                            bom.product_id.display_name, line.product_id.display_name
+                        )
+                    )
                 # Compute recursive if line has `child_line_ids`
                 if line.child_bom_id and line.child_bom_id in boms_to_recompute:
                     # check all component of child bom are in the same listprice
                     # category FIXME questo non va più visto che usiamo le ctg padri
-                    if any([x.listprice_categ_id != listprice_categ_id for x in
+                    if any([x != listprice_categ_id for x in
                             line.child_bom_id.mapped(
                                 'bom_line_ids.product_id.categ_id.listprice_categ_id')]
                            ):
