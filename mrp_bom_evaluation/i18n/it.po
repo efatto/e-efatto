@@ -74,8 +74,8 @@ msgstr "Si è sicuri di voler collegare la DiBa con questo ordine di acquisto?"
 #: model:ir.actions.server,name:mrp_bom_evaluation.ir_cron_mrp_bom_evaluation_update_cost_sale_order_ir_actions_server
 #: model:ir.cron,cron_name:mrp_bom_evaluation.ir_cron_mrp_bom_evaluation_update_cost_sale_order
 #: model:ir.cron,name:mrp_bom_evaluation.ir_cron_mrp_bom_evaluation_update_cost_sale_order
-msgid "BOM evaluation - compute product costs and update in sale orders"
-msgstr "Valutazione DiBa - calcola i costi dei prodotti e aggiorna gli ordini di vendita"
+msgid "BOM and MRP evaluation - compute product costs and update in sale orders"
+msgstr "Valutazione DiBa e Produzioni - calcola i costi dei prodotti e aggiorna gli ordini di vendita"
 
 #. module: mrp_bom_evaluation
 #: model:ir.model,name:mrp_bom_evaluation.model_mrp_bom
