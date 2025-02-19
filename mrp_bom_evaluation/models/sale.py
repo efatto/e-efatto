@@ -210,8 +210,8 @@ class SaleOrder(models.Model):
             mrp_to_recomputes = sale_order.production_ids.filtered(
                 lambda mrp:
                 mrp.write_date > sale_order.write_date
-                or mrp.workorder_ids.write_date > sale_order.write_date
-                or mrp.move_raw_ids.write_date > sale_order.write_date
+                or any(x.write_date > sale_order.write_date for x in mrp.workorder_ids)
+                or any(y.write_date > sale_order.write_date for y in mrp.move_raw_ids)
             )
             if mrp_to_recomputes:
                 sale_mrp_order_to_recomputes |= sale_order
@@ -219,6 +219,7 @@ class SaleOrder(models.Model):
             "Start recalculate mrp costs job for #%s sale orders." %
             len(sale_mrp_order_to_recomputes)
         )
+        sale_mrp_order_to_recomputes.mapped('order_line')._compute_mrp_production_ids()
         sale_mrp_order_to_recomputes.production_ids._compute_workorder_price_subtotal()
         sale_mrp_order_to_recomputes.production_ids._compute_move_raw_price_subtotal()
         _logger.info(
@@ -242,11 +243,18 @@ class SaleOrder(models.Model):
             "Start recalculate analytic costs job for #%s sale orders." %
             len(sale_analytic_order_to_recomputes)
         )
+        (sale_analytic_order_to_recomputes - sale_mrp_order_to_recomputes
+         ).mapped('order_line')._compute_mrp_production_ids()
         sale_analytic_order_to_recomputes._compute_analytic_cost()
         _logger.info(
             "End recalculate analytic costs job for #%s sale orders." %
             len(sale_analytic_order_to_recomputes)
         )
+        (
+            sale_order_to_recomputes
+            | sale_analytic_order_to_recomputes
+            | sale_mrp_order_to_recomputes
+         ).mapped('order_line')._compute_mrp_production_total_amount()
 
     @api.multi
     def _recalculate_bom_costs(self):
