@@ -139,11 +139,11 @@ class SaleOrder(models.Model):
             analytic_sale_revenue = sum(
                 analytic_sale_lines.mapped('price_subtotal') or [0])
             sale.extra_cost = - sum(extra_costs.mapped('extra_cost') or [0]) * (
-                sale.amount_untaxed / analytic_sale_revenue
+                sale.amount_untaxed / (analytic_sale_revenue or 1.0)
             )
             sale.internal_timesheet_cost = - sum(
                 internal_timesheet_costs.mapped('amount') or [0]) * (
-                sale.amount_untaxed / analytic_sale_revenue
+                sale.amount_untaxed / (analytic_sale_revenue or 1.0)
             )
 
     def action_cancel(self):
