@@ -18,7 +18,7 @@ s.currency_rate END) AS purchase_price"""
         fields['estimated_purchase_price'] = """
 , SUM(l.estimated_purchase_price / CASE COALESCE(s.currency_rate, 0) WHEN 0 THEN 1.0
 ELSE s.currency_rate END) AS estimated_purchase_price"""
-        fields['estimated_purchase_price'] = """
+        fields['final_purchase_price'] = """
 , SUM(l.final_purchase_price / CASE COALESCE(s.currency_rate, 0) WHEN 0 THEN 1.0
 ELSE s.currency_rate END) AS final_purchase_price"""
         return super()._query(with_clause, fields, groupby, from_clause)
