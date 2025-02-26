@@ -90,7 +90,7 @@ class HyddemoWhsListe(models.Model):
     whs_not_passed = fields.Boolean(
         string="WHS state mismatch",
         help="Waiting for WHS cron execution to be elaborated to state '2' is normal. "
-        "Other differencies are not, to be debugged.",
+             "Other differencies are not, to be debugged."
     )
     whs_list_log = fields.Text()
 
