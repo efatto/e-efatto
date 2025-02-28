@@ -68,7 +68,10 @@ class MrpProduction(models.Model):
                 ('location_id', '=', production.location_src_id.id),
                 ('company_id', '=', production.company_id.id),
             ])
-            if raw_dbsource and production.picking_type_id in raw_dbsource.stock_picking_type_ids:
+            if (
+                raw_dbsource and production.picking_type_id
+                in raw_dbsource.stock_picking_type_ids
+            ):
                 num_lista = False
                 # Location of raw material is linked to WMS
                 for move in production.move_raw_ids:

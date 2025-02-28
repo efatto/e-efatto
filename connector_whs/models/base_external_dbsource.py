@@ -20,9 +20,7 @@ class BaseExternalDbsource(models.Model):
     def _compute_warehouse(self):
         for dbsource in self:
             if dbsource.location_id:
-                warehouse = self.env['stock.warehouse'].search([
-                    ('lot_stock_id', '=', dbsource.location_id.id)
-                ])
+                warehouse = dbsource.location_id.get_warehouse()
                 if warehouse:
                     dbsource.warehouse_id = warehouse[0]
 
@@ -31,7 +29,9 @@ class BaseExternalDbsource(models.Model):
     warehouse_id = fields.Many2one(
         compute=_compute_warehouse,
         comodel_name='stock.warehouse',
-        string='Warehouse linked to WMS')
+        string='Warehouse linked to WMS',
+        store=True,
+    )
     conn_string_sandbox = fields.Text('Connection string sandbox')
     active = fields.Boolean('Active', default=True)
     stock_picking_type_ids = fields.Many2many(
