@@ -156,7 +156,7 @@ WHERE UBI_ARTICOLO IS NULL OR UBI_ARTICOLO = ' '
         new_last_update = fields.Datetime.now()
         for product in archived_used_in_wms_product_ids:
             insert_product_params = self._prepare_host_articoli_values(
-                product, self.warehouse_id.id, self.location_id.id, last_id,
+                product, self.location_id.id, last_id,
                 operation="D")
             insert_product_query = self._get_insert_product_query()
             self.with_context(no_return=True).execute_mssql(
@@ -200,7 +200,7 @@ VALUES (
 
     @api.multi
     def _prepare_host_articoli_values(
-        self, product, warehouse_id, location_id, last_id, operation="I"
+        self, product, location_id, last_id, operation="I"
     ):
         """
         Carica/aggiorna l'anagrafica articoli verso il WMS
@@ -208,10 +208,9 @@ VALUES (
         campi: vedi sotto
         """
         super()._prepare_host_articoli_values(
-            product, warehouse_id, location_id, last_id, operation=operation
+            product, location_id, last_id, operation=operation
         )
         ops = self.env['stock.warehouse.orderpoint'].search([
-            ('warehouse_id', '=', warehouse_id),
             ('location_id', '=', location_id),
             ('product_id', '=', product.id),
         ])
@@ -341,6 +340,8 @@ VALUES (
                             hyddemo_whs_list.riga,
                         ))
                         continue
+                    # TODO manca la cancellazione nel caso in cui la lista sia rifiutata
+                    #  capita quando la richiesta non è evadibile
                     hyddemo_whs_list_to_unlink |= hyddemo_whs_list
                     move = hyddemo_whs_list.move_id
 

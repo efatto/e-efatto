@@ -15,23 +15,8 @@ _logger = logging.getLogger(__name__)
 class BaseExternalDbsource(models.Model):
     _inherit = "base.external.dbsource"
 
-    @api.multi
-    @api.depends('location_id')
-    def _compute_warehouse(self):
-        for dbsource in self:
-            if dbsource.location_id:
-                warehouse = dbsource.location_id.get_warehouse()
-                if warehouse:
-                    dbsource.warehouse_id = warehouse[0]
-
     location_id = fields.Many2one(
         'stock.location', 'Location linked to WMS')
-    warehouse_id = fields.Many2one(
-        compute=_compute_warehouse,
-        comodel_name='stock.warehouse',
-        string='Warehouse linked to WMS',
-        store=True,
-    )
     conn_string_sandbox = fields.Text('Connection string sandbox')
     active = fields.Boolean('Active', default=True)
     stock_picking_type_ids = fields.Many2many(
@@ -63,7 +48,7 @@ class BaseExternalDbsource(models.Model):
 
     @api.multi
     def _prepare_host_articoli_values(
-            self, product, warehouse_id, location_id, last_id, operation=False):
+            self, product, location_id, last_id, operation=False):
         """
         Overridable method
         Carica/aggiorna l'anagrafica articoli verso il WMS
@@ -111,7 +96,7 @@ class BaseExternalDbsource(models.Model):
             new_last_update = fields.Datetime.now()
             for product in products:
                 insert_product_params = self._prepare_host_articoli_values(
-                    product, dbsource.warehouse_id.id, dbsource.location_id.id, last_id)
+                    product, dbsource.location_id.id, last_id)
                 insert_product_query = dbsource._get_insert_product_query()
                 dbsource.with_context(no_return=True).execute_mssql(
                     sqlquery=sql_text(insert_product_query.replace("\n", " ")),
