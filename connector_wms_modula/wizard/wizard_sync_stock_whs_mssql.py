@@ -1,7 +1,9 @@
 
-from odoo import api, fields, models, _
-from odoo.exceptions import UserError
 from odoo.tools import float_compare
+from odoo import api, fields, models
+
+import logging
+_logger = logging.getLogger(__name__)
 
 
 class WizardSyncStockWhsMssql(models.TransientModel):
@@ -27,7 +29,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
             hyddemo_mssql_log_obj = self.env['hyddemo.mssql.log']
             connection = dbsource.connection_open_mssql()
             if not connection:
-                raise UserError(_('Failed to open connection!'))
+                _logger.info('Failed to open connection!')
             new_last_update = fields.Datetime.now()
             inventory_obj = self.env['stock.inventory']
             inventory_line_obj = self.env['stock.inventory.line']
@@ -135,9 +137,9 @@ class WizardSyncStockWhsMssql(models.TransientModel):
             if wizard.do_sync:
                 res = inventory.action_validate()
                 if isinstance(res, dict):
-                    raise UserError(_('Inventory validation failed! Error is: %s') % (
-                        res.get("name", "")
-                    ))
+                    _logger.info(
+                        'WMS Modula inventory validation failed! Error is: %s'
+                    ) % res.get("name", "")
 
             hyddemo_mssql_log = hyddemo_mssql_log_obj.create([{
                 'errori': 'Stock inventory %s' % (
