@@ -60,20 +60,14 @@ class Picking(models.Model):
                         # presents here as only stato=4 is processable on Odoo,
                         # that equals to Elaborato=4
                         # Lists with stato=3 and quantity_done=0 are deleted here
-                        location_id = pick.location_id.id
-                        if pick.picking_type_id.code == 'incoming':
-                            location_id = pick.location_dest_id.id
                         dbsource = self.env['base.external.dbsource'].search([
-                            ('location_id', '=', location_id),
+                            ('stock_picking_type_ids', 'in', pick.picking_type_id.ids),
                             ('company_id', '=', pick.company_id.id),
                         ])
                         if not dbsource:
-                            # This location is not linked to WMS System
-                            continue
-                        if (
-                            pick.picking_type_id
-                            not in dbsource.stock_picking_type_ids
-                        ):
+                            _logger.info(
+                                'WMS LOG: Picking type %s not linked to WMS System' %
+                                pick.picking_type_id.name)
                             continue
                         _logger.info('WMS LOG: unlink wms list in backorder process of '
                                      'move %s' % move.name)
@@ -116,21 +110,14 @@ class Picking(models.Model):
         for pick in self:
             whs_lists = pick.mapped('move_lines.whs_list_ids')
             if whs_lists:
-                location = pick.location_id
-                if pick.picking_type_id.code == 'incoming':
-                    location = pick.location_dest_id
                 dbsource = self.env['base.external.dbsource'].search([
-                    ('location_id', '=', location.id),
+                    ('stock_picking_type_ids', 'in', pick.picking_type_id.ids),
                     ('company_id', '=', pick.company_id.id),
                 ])
                 if not dbsource:
-                    _logger.info('WMS LOG: Location %s is not linked to WMS System' %
-                                 location.name)
-                    continue
-                if (
-                    pick.picking_type_id
-                    not in dbsource.stock_picking_type_ids
-                ):
+                    _logger.info(
+                        'WMS LOG: Picking type %s not linked to WMS System' %
+                        pick.picking_type_id.name)
                     continue
                 if any([x.stato != '1' and x.qtamov != 0 for x in whs_lists]):
                     raise UserError(_('Some moves already elaborated from WMS!'))
@@ -202,12 +189,6 @@ class StockMove(models.Model):
         for move in self.filtered(lambda x: not x.product_id.exclude_from_whs):
             pick = move.picking_id
             tipo = False
-            location_id = pick.location_id.id
-            if pick.picking_type_id.code == 'incoming':
-                tipo = '2'
-                location_id = pick.location_dest_id.id
-            elif pick.picking_type_id.code == 'outgoing':
-                tipo = '1'
             # ROADMAP check this part as it is duplicated in mrp.py and an MO creates
             # whs_list with that function
             if all(
@@ -230,17 +211,22 @@ class StockMove(models.Model):
             #
 
             dbsource = self.env['base.external.dbsource'].search([
-                ('location_id', '=', location_id),
+                ('stock_picking_type_ids', 'in', pick.picking_type_id.ids),
                 ('company_id', '=', pick.company_id.id),
             ])
             if not dbsource:
-                # This location is not linked to WMS System
+                _logger.info(
+                    'WMS LOG: Picking type %s not linked to WMS System' %
+                    pick.picking_type_id.name)
                 continue
-            if (
-                pick.picking_type_id
-                not in dbsource.stock_picking_type_ids
-            ):
-                continue
+            if pick.picking_type_id.code == 'incoming':
+                tipo = '2'
+                # set Modula dest location if it's an incoming transfer
+                move.location_dest_id = dbsource.location_id
+            elif pick.picking_type_id.code == 'outgoing':
+                tipo = '1'
+                # set Modula source location if it's an outgoing transfer
+                move.location_id = dbsource.location_id
             if pick.partner_id:
                 ragsoc = pick.partner_id.name
                 cliente = pick.partner_id.ref if pick.partner_id.ref else \
@@ -259,10 +245,10 @@ class StockMove(models.Model):
                 if move.state != 'cancel' and move.product_id.type == 'product' \
                     and (
                         (pick.picking_type_id.code == 'incoming'
-                         and move.location_dest_id.id == location_id)
+                         and move.location_dest_id == dbsource.location_id)
                         or
                         (pick.picking_type_id.code == 'outgoing'
-                         and move.location_id.id == location_id)
+                         and move.location_id == dbsource.location_id)
                         ):
                     if move.whs_list_ids and any(
                             x.stato != '3' for x in move.whs_list_ids):
