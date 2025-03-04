@@ -78,7 +78,7 @@ class BaseExternalDbsource(models.Model):
 
     @api.multi
     def _prepare_host_articoli_values(
-        self, product, warehouse_id, location_id, last_id, operation="A"
+        self, product, location_id, last_id, operation="A"
     ):
         """
         Carica/aggiorna l'anagrafica articoli verso il WMS
@@ -91,10 +91,9 @@ class BaseExternalDbsource(models.Model):
             ('C', 'rimuovi il codice dal database WHS solo se non utilizzato'),
         """
         super()._prepare_host_articoli_values(
-            product, warehouse_id, location_id, last_id, operation=operation
+            product, location_id, last_id, operation=operation
         )
         ops = self.env['stock.warehouse.orderpoint'].search([
-            ('warehouse_id', '=', warehouse_id),
             ('location_id', '=', location_id),
             ('product_id', '=', product.id),
         ])
