@@ -34,8 +34,7 @@
             <xpath expr="//group" position="after">
                 <group>
                     <field name="location_id"/>
-                    <field name="warehouse_id"/>
-                    <field name="stock_picking_type_ids" domain="[('warehouse_id', '=', warehouse_id)]" />
+                    <field name="stock_picking_type_ids" />
                 </group>
             </xpath>
         </field>

@@ -580,11 +580,6 @@ msgid "WMS valid list exists and qty cannot be modified!"
 msgstr "Esiste una lista WMS valida e la quantità non può essere modificata!"
 
 #. module: connector_whs
-#: model:ir.model.fields,field_description:connector_whs.field_base_external_dbsource__warehouse_id
-msgid "Warehouse linked to WMS"
-msgstr "Magazzino collegato al WMS"
-
-#. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__whs_list_absent
 msgid "WMS List Absent"
 msgstr "Lista WMS Mancante"
