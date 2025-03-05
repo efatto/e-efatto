@@ -23,6 +23,7 @@ class BaseExternalDbsource(models.Model):
         for dbsource in self.search([]):
             dbsource._check_import_product()
             dbsource._check_import_list()
+            dbsource._check_export_list()
 
     @api.multi
     def _check_import_product(self):
@@ -87,6 +88,38 @@ OR (IMP_OR.RIG_ERRORE IS NOT NULL AND IMP_OR.RIG_ERRORE <> ' ')
                     lista_id.wms_modula_riga_error = _(
                         "Operation %s importing the row failed with error: '%s'"
                     ) % (LISTE_OPERATIONS[operation], riga_error)
+
+    @api.multi
+    def _check_export_list(self):
+        """
+        Check 'Incomplete' lists from Modula, as not executable for quantity limits.
+        """
+        self.ensure_one()
+        list_incomplete_query = """
+SELECT EOR.RIG_ORDINE, EOR.RIG_HOSTINF, EOR.RIG_QTAR
+FROM EXP_ORDINI_RIGHE EOR
+WHERE EOR.RIG_STARIORD = 'I'
+        """
+        results = self.execute_mssql(
+            sqlquery=sql_text(list_incomplete_query),
+            sqlparams=None, metadata=None
+        )
+        if not results[0]:
+            return False
+        for result in results[0]:
+            num_lista = result[0]
+            riga = result[1]
+            qta = result[2]
+            lista_id = self.env["hyddemo.whs.liste"].search([
+                ("num_lista", "=", num_lista),
+                ("riga", "=", riga),
+            ])
+            if lista_id:
+                lista_id.wms_modula_error = _(
+                    "Lista marked as 'To NOT elaborate' as refused from WMS Modula "
+                    "connector for excessive quantity: %s"
+                ) % qta
+                lista_id.stato = "3"
 
     @api.multi
     def _pre_insert_product_query(self):
