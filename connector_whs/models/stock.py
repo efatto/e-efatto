@@ -66,7 +66,7 @@ class Picking(models.Model):
                         ])
                         if not dbsource:
                             _logger.info(
-                                'WMS LOG: Picking type %s not linked to WMS System' %
+                                'WMS LOG: Picking type %s not linked to WMS System in action_done' %
                                 pick.picking_type_id.name)
                             continue
                         _logger.info('WMS LOG: unlink wms list in backorder process of '
@@ -116,7 +116,7 @@ class Picking(models.Model):
                 ])
                 if not dbsource:
                     _logger.info(
-                        'WMS LOG: Picking type %s not linked to WMS System' %
+                        'WMS LOG: Picking type %s not linked to WMS System in cancel_whs_list' %
                         pick.picking_type_id.name)
                     continue
                 if any([x.stato != '1' and x.qtamov != 0 for x in whs_lists]):
@@ -215,9 +215,7 @@ class StockMove(models.Model):
                 ('company_id', '=', pick.company_id.id),
             ])
             if not dbsource:
-                _logger.info(
-                    'WMS LOG: Picking type %s not linked to WMS System' %
-                    pick.picking_type_id.name)
+                # Picking type is not linked to WMS System
                 continue
             if pick.picking_type_id.code == 'incoming':
                 tipo = '2'
