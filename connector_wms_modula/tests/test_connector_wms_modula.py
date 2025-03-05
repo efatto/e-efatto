@@ -25,13 +25,16 @@ class TestConnectorWmsModula(CommonConnectorWMS):
                 raise UserError(_("Missing connection string!"))
             with open(conn_file, 'r') as file:
                 conn_string = file.read().replace('\n', '')
+            # Enable WMS on picking types of Your Company only
             dbsource = self.dbsource_model.create({
                 'name': dbsource_name,
                 'conn_string_sandbox': conn_string,
                 'connector': 'mssql',
                 'location_id': self.env.ref('stock.stock_location_stock').id,
                 'stock_picking_type_ids': [
-                    (6, 0, self.env['stock.picking.type'].search([]).ids)
+                    (6, 0, self.env['stock.picking.type'].search([
+                        ('warehouse_id.company_id', '=', self.env.user.company_id.id)
+                    ]).ids)
                 ]
             })
         self.dbsource = dbsource
@@ -192,11 +195,15 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             order_line.product_id = self.product1
             order_line.product_uom_qty = 5
             order_line.price_unit = 100
+        with order_form1.order_line.new() as order_line:
+            order_line.product_id = self.product_excluded
+            order_line.product_uom_qty = 5
+            order_line.price_unit = 100
         order1 = order_form1.save()
         order1.action_confirm()
         self.assertEqual(order1.state, 'sale')
         picking1 = order1.picking_ids[0]
-        self.assertEqual(len(picking1.move_lines.whs_list_ids), 1)
+        self.assertEqual(len(picking1.mapped('move_lines.whs_list_ids')), 1)
         if all(x.state == 'assigned' for x in picking1.move_lines):
             self.assertEqual(picking1.state, 'assigned')
         else:
@@ -210,12 +217,18 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             lista = whs_record[0]
             default_code = whs_record[2]
             qty = whs_record[3]
-            self.assertEqual(default_code, order1.order_line.product_id.default_code)
-            self.assertEqual(qty, order1.order_line.product_uom_qty)
-            self.assertEqual(qty, picking1.move_lines.whs_list_ids.qta)
-            self.assertEqual(lista, picking1.move_lines.whs_list_ids.num_lista)
+            line = order1.order_line.filtered(
+                lambda x: not x.product_id.exclude_from_whs
+            )
+            move_line = picking1.move_lines.filtered(
+                lambda x: not x.product_id.exclude_from_whs
+            )
+            self.assertEqual(default_code, line.product_id.default_code)
+            self.assertEqual(qty, line.product_uom_qty)
+            self.assertEqual(qty, move_line.whs_list_ids.qta)
+            self.assertEqual(lista, move_line.whs_list_ids.num_lista)
         # check cancel workflow
-        whs_lists = picking1.move_lines.whs_list_ids
+        whs_lists = picking1.mapped('move_lines.whs_list_ids')
         self.assertEqual(len(whs_lists), 1)
         self.assertEqual(whs_lists.stato, '2')
         if all(x.state == 'assigned' for x in picking1.move_lines):
@@ -231,7 +244,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         picking1.action_back_to_draft()
         picking1.action_confirm()
         picking1.action_assign()
-        whs_lists = picking1.move_lines.whs_list_ids.filtered(
+        whs_lists = picking1.mapped('move_lines.whs_list_ids').filtered(
             lambda x: x.stato != '3'
         )
         self.assertEqual(len(whs_lists), 1)
@@ -249,7 +262,9 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.dbsource.whs_insert_read_and_synchronize_list()
 
         # check move and picking linked to sale order have changed state to done
-        self.assertEqual(picking1.move_lines[0].state, 'assigned')
+        self.assertEqual(picking1.move_lines.filtered(
+            lambda x: not x.product_id.exclude_from_whs
+        ).state, 'assigned')
         self.assertEqual(picking1.state, 'assigned')
 
     def test_01_partial_picking_from_sale(self):
@@ -270,11 +285,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         order1 = order_form1.save()
         order1.action_confirm()
         self.assertEqual(order1.state, 'sale')
-        for picking in order1.picking_ids:
-            if all(x.state == 'assigned' for x in picking.move_lines):
-                self.assertEqual(picking.state, 'assigned')
-            else:
-                self.assertEqual(picking.state, 'waiting')
+        self.assertEqual(order1.picking_ids.state, 'assigned')
         picking = order1.picking_ids[0]
         self.assertEqual(len(picking.mapped('move_lines.whs_list_ids')), 2)
         self.assertEqual(
@@ -399,10 +410,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertEqual(picking.move_lines[0].state, 'assigned')
         self.assertAlmostEqual(picking.move_lines[0].move_line_ids[0].qty_done, 3.0)
         picking.action_assign()
-        if all(x.state == 'assigned' for x in picking.move_lines):
-            self.assertEqual(picking.state, 'assigned')
-        else:
-            self.assertEqual(picking.state, 'waiting')
+        self.assertEqual(picking.state, 'assigned')
         # check that action_assign run by scheduler do not change state
         self.run_stock_procurement_scheduler()
         picking.action_assign()
