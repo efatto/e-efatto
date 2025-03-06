@@ -48,6 +48,7 @@
                 name="update_products_replenishment_cost_only"
                 string="Update Landed with adjustment/depreciation/testing"
                 type="object"
+                confirm="WARNING: UPDATE ONLY WHEN LAUNCHING GROSS PRICELIST"
               />
                         </group>
                         <group />
@@ -64,6 +65,7 @@
                 name="update_products_standard_price_and_replenishment_cost"
                 string="Update All Costs"
                 type="object"
+                confirm="WARNING: UPDATE ONLY WHEN LAUNCHING GROSS PRICELIST"
               />
                         </group>
                         <group />

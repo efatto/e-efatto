@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-07 14:04+0000\n"
-"PO-Revision-Date: 2025-02-07 14:04+0000\n"
+"POT-Creation-Date: 2025-03-06 10:27+0000\n"
+"PO-Revision-Date: 2025-03-06 10:27+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -50,6 +50,11 @@ msgstr "Creato da"
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_replenishment_cost__create_date
 msgid "Created on"
 msgstr "Creato il"
+
+#. module: product_managed_replenishment_cost
+#: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_product__custom_testing_cost
+msgid "Custom testing cost (€/pz)"
+msgstr "Costo collaudo manuale (€/pz)"
 
 #. module: product_managed_replenishment_cost
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_customerinfo__depreciation_cost
@@ -267,7 +272,9 @@ msgstr "Aggiorna prezzo e peso prodotti con Di.Ba."
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
 msgid "Update Landed Cost and Landed with depreciation/testing"
-msgstr "Aggiorna Landed senza ammortamenti/collaudo e Landed con ammortamenti/collaudo"
+msgstr ""
+"Aggiorna Landed senza ammortamenti/collaudo e Landed con "
+"ammortamenti/collaudo"
 
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
@@ -279,3 +286,8 @@ msgstr "Aggiorna Landed con adeguamenti/ammortamenti/collaudo"
 #, python-format
 msgid "Update of %s"
 msgstr "Aggiornamento di %s"
+
+#. module: product_managed_replenishment_cost
+#: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
+msgid "WARNING: UPDATE ONLY WHEN LAUNCHING GROSS PRICELIST"
+msgstr "ATTENZIONE: AGGIORNARE SOLAMENTE IN FASE DI LANCIO LISTINO DI VENDITA LORDO"
