@@ -55,7 +55,7 @@
                         <group>
                             <button
                 name="update_products_standard_price_only"
-                string="Update Landed Cost and Landed with depreciation/testing"
+                string="Update Direct Cost, Landed Cost and Landed with depreciation/testing"
                 type="object"
               />
                         </group>
