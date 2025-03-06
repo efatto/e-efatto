@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-06 10:48+0000\n"
-"PO-Revision-Date: 2025-03-06 10:48+0000\n"
+"POT-Creation-Date: 2025-03-06 11:13+0000\n"
+"PO-Revision-Date: 2025-03-06 11:13+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -271,9 +271,9 @@ msgstr "Aggiorna prezzo e peso prodotti con Di.Ba."
 
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
-msgid "Update Landed Cost and Landed with depreciation/testing"
+msgid "Update Direct Cost, Landed Cost and Landed with depreciation/testing"
 msgstr ""
-"Aggiorna Landed senza ammortamenti/collaudo e Landed con "
+"Aggiorna Costo diretto, Landed senza ammortamenti/collaudo e Landed con "
 "ammortamenti/collaudo"
 
 #. module: product_managed_replenishment_cost
@@ -290,14 +290,20 @@ msgstr "Aggiornamento di %s"
 #. module: product_managed_replenishment_cost
 #: code:addons/product_managed_replenishment_cost/models/replenishment_cost.py:0
 #, python-format
-msgid "Updated %s %s %s for %s products in %.2f minutes."
-msgstr "Aggiornati %s %s %s for %s prodotti in %.2f minuti."
+msgid "Updated %s %s %s %s for %s products in %.2f minutes."
+msgstr "Aggiornati %s %s %s %s for %s prodotti in %.2f minuti."
 
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
 msgid "WARNING: UPDATE ONLY WHEN LAUNCHING GROSS PRICELIST"
 msgstr ""
 "ATTENZIONE: AGGIORNARE SOLAMENTE IN FASE DI LANCIO LISTINO DI VENDITA LORDO"
+
+#. module: product_managed_replenishment_cost
+#: code:addons/product_managed_replenishment_cost/models/replenishment_cost.py:0
+#, python-format
+msgid "and"
+msgstr "e"
 
 #. module: product_managed_replenishment_cost
 #: code:addons/product_managed_replenishment_cost/models/replenishment_cost.py:0
@@ -315,4 +321,6 @@ msgstr "Landed con adeguamenti/ammortamenti/collaudo (base listino)"
 #: code:addons/product_managed_replenishment_cost/models/replenishment_cost.py:0
 #, python-format
 msgid "standard price, landed cost, direct cost"
-msgstr "Landed con ammortamenti/collaudo, Landed senza ammortamenti/collaudo, Costo diretto"
+msgstr ""
+"Landed con ammortamenti/collaudo, Landed senza ammortamenti/collaudo, Costo "
+"diretto"
