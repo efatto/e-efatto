@@ -15,10 +15,13 @@ La formula applicata è:
  #. somma il Costo Collaudo (€/pz) e il Costo Ammortamento (€/pz) al Landed senza ammortamenti/collaudo => Landed con Ammortamento e Collaudo
  #. somma il Costo Adeguamento (€/pz) al Landed con Ammortamento e Collaudo => Landed con Ammortamento, Collaudo e Adeguamento
 
-È possibile impostare il costo collaudo nella categoria del prodotto, se impostato nel prodotto verrà automaticamente scritto sulla categoria del prodotto:
+È possibile impostare il costo collaudo nella categoria del prodotto, oppure direttamente nel prodotto nel caso serva un valore specifico per quel prodotto. Il costo collaudo nel prodotto prevale su quello impostato nella categoria, è sufficiente impostarlo a 0 per far riprendere al prodotto il costo collaudo della categoria.
 
 .. image:: ../static/description/costo_collaudo_categoria.png
-    :alt: Categoria prodotto con costo collaudo
+    :alt: Costo collaudo nella categoria
+
+.. image:: ../static/description/costo_collaudo_prodotto.png
+    :alt: Costo collaudo nel prodotto
 
 I prodotti che non hanno né fornitori né una distinta di produzione non verranno modificati.
 
@@ -27,25 +30,28 @@ Questo calcolo è possibile farlo in maniera indipendente dal menu:
 .. image:: ../static/description/menu.png
     :alt: Menu in impostazioni Magazzino
 
-tramite quattro azioni: la prima esegue l'aggiornamento del costo di sostituzione solamente:
+tramite quattro azioni: la prima esegue l'aggiornamento del *Landed con adeguamenti/ammortamenti/collaudo* solamente:
 
 .. image:: ../static/description/aggiorna_sostituzione.png
-    :alt: Aggiorna il costo di sostituzione
+    :alt: Aggiorna il Landed con adeguamenti/ammortamenti/collaudo
 
-la seconda esegue l'aggiornamento dei soli costi landed (con o senza costi di adeguamento/ammortamento):
+la seconda esegue l'aggiornamento di 3 campi: *Costo diretto*, *Landed senza ammortamenti/collaudo* e *Landed con ammortamenti/collaudo*:
 
 .. image:: ../static/description/aggiorna_costi_landed.png
-    :alt: Aggiorna costi landed
+    :alt: Aggiorna Costo diretto, Landed senza ammortamenti/collaudo e Landed con ammortamenti/collaudo
 
-la terza esegue l'aggiornamento dei costi landed (con o senza costi di adeguamento/ammortamento) e del costo di sostituzione:
+la terza esegue l'aggiornamento di tutti i costi:
 
-.. image:: ../static/description/aggiorna_costi_landed_e_sostituzione.png
-    :alt: Aggiorna costi landed e di sostituzione
+.. image:: ../static/description/aggiorna_tutti.png
+    :alt: Aggiorna tutti i costi
 
+#### TODO: ATTUALMENTE DISABILITATA
 La quarta esegue l'aggiornamento del prezzo di vendita dei prodotti con distinta base.
 
 .. image:: ../static/description/aggiorna_prezzi_da_diba.png
     :alt: Aggiorna il prezzo e il peso di prodotto con distinta base
+
+####
 
 Nota bene: non è possibile ripristinare nessuna di queste operazioni, in quanto vanno a sovrascrivere i campi citati. Tenere conto inoltre che i campi del prezzo di vendita e del costo landed senza adeguamento/ammortamento (costo standard rinominato) potrebbero essere modificati in maniera automatica dal sistema in base alla configurazione.
 
