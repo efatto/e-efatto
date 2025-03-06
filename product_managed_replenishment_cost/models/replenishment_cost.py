@@ -89,15 +89,15 @@ class ReplenishmentCost(models.Model):
             repl.write(
                 dict(
                     last_update=last_update,
-                    log="Updated %s %s %s for %s products in %.2f minutes."
+                    log=_("Updated %s %s %s for %s products in %.2f minutes.")
                     % (
-                        '"standard price, landed cost, direct cost"'
+                        _("standard price, landed cost, direct cost")
                         if self.env.context.get("update_standard_price")
                         else "",
-                        '"replenishment cost"'
+                        _("managed replenishment cost")
                         if self.env.context.get("update_managed_replenishment_cost")
                         else "",
-                        '"list price and weight"'
+                        _("bom products list price and weight")
                         if self.env.context.get("update_bom_products_list_price_weight")
                         else "",
                         len(products),
