@@ -105,7 +105,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_product__landed_cost
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_template__landed_cost
 msgid "Landed cost"
-msgstr "Costo landed"
+msgstr "Landed senza ammortamenti/collaudo"
 
 #. module: product_managed_replenishment_cost
 #: model:ir.model.fields,field_description:product_managed_replenishment_cost.field_product_product__managed_replenishment_cost
@@ -267,7 +267,7 @@ msgstr "Aggiorna prezzo e peso prodotti con Di.Ba."
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
 msgid "Update Landed Cost and Landed with depreciation/testing"
-msgstr "Aggiorna Costo landed e Landed con ammortamenti/collaudo"
+msgstr "Aggiorna Landed senza ammortamenti/collaudo e Landed con ammortamenti/collaudo"
 
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form

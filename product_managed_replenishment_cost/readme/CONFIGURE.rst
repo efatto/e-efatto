@@ -11,8 +11,8 @@ I prodotti che hanno una distinta di produzione verranno ricalcolati sulla base 
 
 La formula applicata è:
  #. costo del primo fornitore nel tab acquisti del prodotto convertito in € dalla valuta del fornitore al tasso più recente disponibile => Costo Diretto
- #. somma il totale delle maggiorazioni per: Maggiorazione cambio (indicato nella valuta del fornitore), Margine di logistica (indicato nel gruppo di paesi del fornitore) e Tariffa dazio doganale (indicato nel codice doganale prodotto) e le aggiunge al Costo Diretto (se è un fornitore extra europeo e se il Tipo intrastat del prodotto è indicato) => Costo Landed
- #. somma il Costo Collaudo (€/pz) e il Costo Ammortamento (€/pz) al Costo Landed => Costo Landed con Ammortamento e Collaudo
+ #. somma il totale delle maggiorazioni per: Maggiorazione cambio (indicato nella valuta del fornitore), Margine di logistica (indicato nel gruppo di paesi del fornitore) e Tariffa dazio doganale (indicato nel codice doganale prodotto) e le aggiunge al Costo Diretto (se è un fornitore extra europeo e se il Tipo intrastat del prodotto è indicato) => Landed senza ammortamenti/collaudo
+ #. somma il Costo Collaudo (€/pz) e il Costo Ammortamento (€/pz) al Landed senza ammortamenti/collaudo => Costo Landed con Ammortamento e Collaudo
  #. somma il Costo Adeguamento (€/pz) al Costo Landed con Ammortamento e Collaudo => Costo Landed con Ammortamento, Collaudo e Adeguamento
 
 È possibile impostare il costo collaudo nella categoria del prodotto, se impostato nel prodotto verrà automaticamente scritto sulla categoria del prodotto:
