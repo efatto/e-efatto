@@ -155,6 +155,12 @@ WHERE UBI_ARTICOLO IS NOT NULL AND UBI_ARTICOLO <> ' '
             ("exclude_from_whs", "=", False),
         ])
         not_used_in_wms_product_ids.write({"exclude_from_whs": True})
+        # remove exclusion for products re-enabled in Modula or new
+        used_in_wms_product_ids = product_obj.search([
+            ("default_code", "in", product_default_codes),
+            ("exclude_from_whs", "=", True),
+        ])
+        used_in_wms_product_ids.write({"exclude_from_whs": False})
         # products existing in Modula can't be deactivated, so ensure they are active
         archived_used_in_wms_product_ids = product_obj.search([
             ("default_code", "in", product_default_codes),
