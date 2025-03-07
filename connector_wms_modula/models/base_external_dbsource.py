@@ -123,6 +123,9 @@ WHERE EOR.RIG_STARIORD = 'I'
 
     @api.multi
     def _pre_insert_product_query(self):
+        product_obj = self.env["product.product"].with_context(
+            active_test=False
+        )
         # ensure exported items data do not exist, they usually don't with the option
         # set in importation query
         self.with_context(no_return=True).execute_mssql(
@@ -147,15 +150,13 @@ WHERE UBI_ARTICOLO IS NOT NULL AND UBI_ARTICOLO <> ' '
             product = result[0]
             if product not in product_default_codes:
                 product_default_codes.append(product)
-        not_used_in_wms_product_ids = self.env["product.product"].search([
+        not_used_in_wms_product_ids = product_obj.search([
             ("default_code", "not in", product_default_codes),
             ("exclude_from_whs", "=", False),
         ])
         not_used_in_wms_product_ids.write({"exclude_from_whs": True})
         # products existing in Modula can't be deactivated, so ensure they are active
-        archived_used_in_wms_product_ids = self.env["product.product"].with_context(
-            active_test=False
-        ).search([
+        archived_used_in_wms_product_ids = product_obj.search([
             ("default_code", "in", product_default_codes),
             ("active", "=", False),
         ])
