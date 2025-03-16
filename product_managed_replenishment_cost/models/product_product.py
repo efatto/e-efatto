@@ -378,7 +378,7 @@ class ProductProduct(models.Model):
             "update_bom_products_list_price_weight", False
         )
         products_with_bom = (
-            self.filtered(lambda product: product.bom_count)
+            self.filtered(lambda p: p.bom_count)
             if update_bom_products_list_price_weight
             else self.env["product.product"]
         )
