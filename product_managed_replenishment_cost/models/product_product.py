@@ -416,14 +416,24 @@ class ProductProduct(models.Model):
 
     def get_bom_price_weight_from_first_child_components(self):
         bom_id = self.bom_ids[0]
-        component_list_price = self.uom_id._compute_quantity(
+        component_list_price = bom_id.product_uom_id._compute_price(
             sum(
                 (x.product_id.list_price * x.product_qty for x in bom_id.bom_line_ids)
                 or [0]
             )
             / (bom_id.product_qty or 1),
-            bom_id.product_uom_id,
+            self.uom_id,
         )
+        operation_cost = 0
+        # for opt in bom_id.operation_ids:
+        #     duration_expected = (
+        #         opt.workcenter_id.time_start
+        #         + opt.workcenter_id.time_stop
+        #         + opt.time_cycle * 100 / opt.workcenter_id.time_efficiency
+        #     )
+        #     operation_cost += (duration_expected / 60) * opt.workcenter_id.costs_hour
+        component_list_price += bom_id.product_uom_id._compute_price(
+            operation_cost / (bom_id.product_qty or 1), self.uom_id)
         component_weight = self.uom_id._compute_quantity(
             sum(
                 (

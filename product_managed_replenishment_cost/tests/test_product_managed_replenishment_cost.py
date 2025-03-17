@@ -409,9 +409,14 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         repl.update_bom_products_list_price_weight()
         self.assertAlmostEqual(
             self.product_bom.list_price,
-            sum(
-                x.product_id.list_price
-                for x in self.product_bom.bom_ids[0].bom_line_ids
+            self.product_bom.bom_ids[0].product_uom_id._compute_price(
+                (
+                    sum(
+                        x.product_id.list_price * x.product_qty
+                        for x in self.product_bom.bom_ids[0].bom_line_ids
+                    )
+                ) / self.product_bom.bom_ids[0].product_qty,
+                self.product_bom.uom_id
             ),
         )
         self.assertAlmostEqual(
