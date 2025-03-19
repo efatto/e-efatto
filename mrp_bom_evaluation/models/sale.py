@@ -55,7 +55,7 @@ class SaleOrderLine(models.Model):
         store=True,
     )
     final_purchase_price = fields.Float(
-        string='Final Cost',
+        string='Total Cost Unit',
         compute='_compute_mrp_production_total_amount',
         store=True,
         help='Direct costs plus a proportion of analytic costs',

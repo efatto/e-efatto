@@ -162,8 +162,8 @@ msgstr "Escludi dalla produzione"
 #. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_order_line__final_purchase_price
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_report__final_purchase_price
-msgid "Final Cost"
-msgstr "Costo finale"
+msgid "Total Cost Unit"
+msgstr "Costo finale unitario"
 
 #. module: mrp_bom_evaluation
 #: model_terms:ir.ui.view,arch_db:mrp_bom_evaluation.report_mrp_bom_estimate
