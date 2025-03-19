@@ -45,13 +45,10 @@ la terza esegue l'aggiornamento di tutti i costi:
 .. image:: ../static/description/aggiorna_tutti.png
     :alt: Aggiorna tutti i costi
 
-#### TODO: ATTUALMENTE DISABILITATA
-La quarta esegue l'aggiornamento del prezzo di vendita dei prodotti con distinta base.
+La quarta esegue l'aggiornamento del prezzo di vendita e del peso dei prodotti con distinta base, calcolando i valori solo sulla distinta base direttamente collegata al prodotto (senza quindi ricorsività). Se si desidera aggiornare i valori delle distinte figlie prima di aggiornare questo valore, assicurarsi di avviare un aggiornamento con i metodi precedenti e poi di avviare questo aggiornamento su tutte le distinte base. Per come è stato richiesto questo metodo, non assicura comunque un aggiornamento ricorsivo completo.
 
 .. image:: ../static/description/aggiorna_prezzi_da_diba.png
-    :alt: Aggiorna il prezzo e il peso di prodotto con distinta base
-
-####
+    :alt: Aggiorna il prezzo e il peso di prodotti con distinta base
 
 Nota bene: non è possibile ripristinare nessuna di queste operazioni, in quanto vanno a sovrascrivere i campi citati. Tenere conto inoltre che i campi del prezzo di vendita e del costo landed senza adeguamento/ammortamento (costo standard rinominato) potrebbero essere modificati in maniera automatica dal sistema in base alla configurazione.
 
