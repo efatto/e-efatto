@@ -10,7 +10,7 @@ class HyddemoMssqlLog(models.Model):
 
     ultimo_id = fields.Integer('Last ID in WMS', default=1)
     ultimo_invio = fields.Datetime('Last Processing', readonly=True)
-    errori = fields.Text('Log Processing', readonly=True)
+    errori = fields.Text('Log WMS', readonly=True)
     dbsource_id = fields.Many2one(
         'base.external.dbsource',
         'External DB Source Origin',

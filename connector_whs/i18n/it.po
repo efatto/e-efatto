@@ -18,9 +18,9 @@ msgstr ""
 #. module: connector_whs
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_wizard_sync_stock_whs_mssql
 msgid "<span>Synchronize stock inventory. </span>\n"
-"                        <span>If 'Synchronize stock inventory' is not set, it creates and shows only a log saved in Whslog.</span>"
+"                        <span>If 'Synchronize stock inventory' is not set, it creates and shows only a log saved in Log WMS.</span>"
 msgstr "<span>Sincronizza inventario. </span>\n"
-"                        <span>Se 'Sincronizza inventario' non è impostato, crea e mostra solo un log salvato in Whslog.</span>"
+"                        <span>Se 'Sincronizza inventario' non è impostato, crea e mostra solo un log salvato in Log WMS.</span>"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_base_external_dbsource__active
@@ -256,8 +256,8 @@ msgstr "Punto di Stoccaggio collegato a WMS"
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__errori
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_whslog_form
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_whslog_tree
-msgid "Log Processing"
-msgstr "Log Elaborazione"
+msgid "Log WMS"
+msgstr ""
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__hyddemo_mssql_log_line_ids
@@ -592,7 +592,7 @@ msgstr "Log Lista WMS"
 #. module: connector_whs
 #: model:ir.actions.act_window,name:connector_whs.action_whslog
 #: model:ir.ui.menu,name:connector_whs.menu_whslog
-msgid "Whslog"
+msgid "Log WMS"
 msgstr "Log WMS"
 
 #. module: connector_whs
