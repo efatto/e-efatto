@@ -152,15 +152,20 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         bom_component_values = [
             {
                 "product_id": x.id,
-                "product_qty":
-                    10 if x == cls.product2 else 12 if x == cls.product3 else 6,
+                "product_qty": 10
+                if x == cls.product2
+                else 12
+                if x == cls.product3
+                else 6,
             }
             for x in cls.product2 | cls.product3 | cls.product4
         ]
-        cls.workcenter = cls.env["mrp.workcenter"].create({
-            "name": "Managed workcenter",
-            "costs_hour": 27.0,
-        })
+        cls.workcenter = cls.env["mrp.workcenter"].create(
+            {
+                "name": "Managed workcenter",
+                "costs_hour": 27.0,
+            }
+        )
         bom_operation_values = [
             {
                 "name": "operation 1",
@@ -415,16 +420,12 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 + (45 + 25) * 27 / 60 / 12  # operation cost
                 + self.testing_cost
             )
-            self.assertAlmostEqual(
-                self.product_bom.standard_price,
-                standard_price,
-                1
-            )
+            self.assertAlmostEqual(self.product_bom.standard_price, standard_price, 1)
             repl.update_products_replenishment_cost_only()
             self.assertAlmostEqual(
                 self.product_bom.managed_replenishment_cost,
                 standard_price + self.adjustment_cost,
-                1
+                1,
             )
         else:
             self.assertAlmostEqual(
@@ -434,7 +435,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 + self.product4_vendor_price * 6 / 12  # 9 * 6 / 12 = 4.5 -> 14
                 + self.product4.seller_ids[0].depreciation_cost * 6 / 12  # 20*6/12=10
                 + (45 + 25) * 27 / 60 / 12,  # operation cost
-                1
+                1,
             )
         self.assertEqual(len(self.product_bom.bom_ids), 1)
         repl.update_bom_products_list_price_weight()
@@ -445,22 +446,29 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                     sum(
                         x.product_id.list_price * x.product_qty
                         for x in self.product_bom.bom_ids[0].bom_line_ids
-                    ) + (45 + 25) * 27 / 60  # operation cost
-                ) / self.product_bom.bom_ids[0].product_qty,
-                self.product_bom.uom_id
+                    )
+                    + (45 + 25) * 27 / 60  # operation cost
+                )
+                / self.product_bom.bom_ids[0].product_qty,
+                self.product_bom.uom_id,
             ),
-            1
+            1,
         )
         self.assertAlmostEqual(
             self.product_bom.weight,
             sum(
-                x.product_id.weight * (
-                    10 if x.product_id == self.product2
-                    else 12 if x.product_id == self.product3
+                x.product_id.weight
+                * (
+                    10
+                    if x.product_id == self.product2
+                    else 12
+                    if x.product_id == self.product3
                     else 6
                 )
-                for x in self.product_bom.bom_ids[0].bom_line_ids) / 12,
-            2
+                for x in self.product_bom.bom_ids[0].bom_line_ids
+            )
+            / 12,
+            2,
         )
 
     def test_03_bom_with_parent(self):
@@ -494,15 +502,13 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 + self.testing_cost
             )
             self.assertAlmostEqual(
-                self.product_bom_parent.standard_price,
-                standard_price,
-                1
+                self.product_bom_parent.standard_price, standard_price, 1
             )
             repl.update_products_replenishment_cost_only()
             self.assertAlmostEqual(
                 self.product_bom_parent.managed_replenishment_cost,
                 standard_price + self.adjustment_cost,
-                1
+                1,
             )
         else:
             self.assertAlmostEqual(
@@ -513,7 +519,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 + self.product4_vendor_price * 6 / 12  # 9 * 6 / 12 = 4.5 -> 14
                 + self.product4.seller_ids[0].depreciation_cost * 6 / 12  # 20*6/12=10
                 + (45 + 25) * 27 / 60 / 12,  # operation cost
-                2
+                2,
             )
         self.assertEqual(len(self.product_bom_parent.bom_ids), 1)
         repl.update_bom_products_list_price_weight()
@@ -527,14 +533,19 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         self.assertAlmostEqual(
             self.product_bom_parent.weight,
             sum(
-                x.product_id.weight * (
-                    10 / 12 if x.product_id == self.product2
-                    else 12 / 12 if x.product_id == self.product3
-                    else 6 / 12 if x.product_id == self.product4
+                x.product_id.weight
+                * (
+                    10 / 12
+                    if x.product_id == self.product2
+                    else 12 / 12
+                    if x.product_id == self.product3
+                    else 6 / 12
+                    if x.product_id == self.product4
                     else 1
                 )
-                for x in self.product_bom_parent.bom_ids[0].bom_line_ids),
-            2
+                for x in self.product_bom_parent.bom_ids[0].bom_line_ids
+            ),
+            2,
         )
 
     def test_04_bom_with_nested_parent(self):
@@ -570,15 +581,13 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 + self.testing_cost
             )
             self.assertAlmostEqual(
-                self.product_bom_parent_parent.standard_price,
-                standard_price,
-                1
+                self.product_bom_parent_parent.standard_price, standard_price, 1
             )
             repl.update_products_replenishment_cost_only()
             self.assertAlmostEqual(
                 self.product_bom_parent_parent.managed_replenishment_cost,
                 standard_price + self.adjustment_cost,
-                1
+                1,
             )
         else:
             self.assertAlmostEqual(
@@ -590,7 +599,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 + self.product4_vendor_price * 6 / 12  # 9 * 6 / 12 = 4.5 -> 14
                 + self.product4.seller_ids[0].depreciation_cost * 6 / 12  # 20*6/12=10
                 + (45 + 25) * 27 / 60 / 12,  # operation cost
-                2
+                2,
             )
         # Do not test update_bom_products_list_price_weight() as this functionality is
         # not requested for nested BOM
@@ -628,15 +637,13 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 + self.testing_cost
             )
             self.assertAlmostEqual(
-                self.product_bom_parent_parent.standard_price,
-                standard_price,
-                1
+                self.product_bom_parent_parent.standard_price, standard_price, 1
             )
             repl.update_products_replenishment_cost_only()
             self.assertAlmostEqual(
                 self.product_bom_parent_parent.managed_replenishment_cost,
                 standard_price + self.adjustment_cost,
-                1
+                1,
             )
         else:
             self.assertAlmostEqual(
@@ -648,7 +655,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 + self.product4_vendor_price * 6 / 12  # 9 * 6 / 12 = 4.5 -> 14
                 + self.product4.seller_ids[0].depreciation_cost * 6 / 12  # 20*6/12=10
                 + (45 + 25) * 27 / 60 / 12,  # operation cost
-                2
+                2,
             )
 
     def test_06_1_bom_with_subcontract_nested_parent_test_category(self):
@@ -687,15 +694,13 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 + self.testing_cost
             )
             self.assertAlmostEqual(
-                self.product_bom_parent_parent.standard_price,
-                standard_price,
-                1
+                self.product_bom_parent_parent.standard_price, standard_price, 1
             )
             repl.update_products_replenishment_cost_only()
             self.assertAlmostEqual(
                 self.product_bom_parent_parent.managed_replenishment_cost,
                 standard_price + self.adjustment_cost,
-                1
+                1,
             )
         else:
             self.assertAlmostEqual(
@@ -708,7 +713,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 + self.product4.seller_ids[0].depreciation_cost * 6 / 12  # 20*6/12=10
                 + (45 + 25) * 27 / 60 / 12  # operation cost
                 + self.product_bom_parent_vendor_price,
-                1
+                1,
             )
         # test with seller in parent_parent product
         product_bom_parent_parent_vendor_price = 7
@@ -741,15 +746,13 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 + self.testing_cost
             )
             self.assertAlmostEqual(
-                self.product_bom_parent_parent.standard_price,
-                standard_price,
-                1
+                self.product_bom_parent_parent.standard_price, standard_price, 1
             )
             repl.update_products_replenishment_cost_only()
             self.assertAlmostEqual(
                 self.product_bom_parent_parent.managed_replenishment_cost,
                 standard_price + self.adjustment_cost,
-                1
+                1,
             )
         else:
             self.assertAlmostEqual(
@@ -762,5 +765,5 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 + (45 + 25) * 27 / 60 / 12  # operation cost
                 + self.product_bom_parent_vendor_price
                 + product_bom_parent_parent_vendor_price,
-                1
+                1,
             )

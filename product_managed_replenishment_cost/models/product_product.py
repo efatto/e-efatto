@@ -433,7 +433,8 @@ class ProductProduct(models.Model):
             )
             operation_cost += (duration_expected / 60) * opt.workcenter_id.costs_hour
         component_list_price += bom_id.product_uom_id._compute_price(
-            operation_cost / (bom_id.product_qty or 1), self.uom_id)
+            operation_cost / (bom_id.product_qty or 1), self.uom_id
+        )
         component_weight = self.uom_id._compute_quantity(
             sum(
                 (
