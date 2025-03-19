@@ -426,10 +426,8 @@ In other cases (without BOM and sellers) it isn’t recomputed.</p>
 <img alt="Aggiorna Costo diretto, Landed senza ammortamenti/collaudo e Landed con ammortamenti/collaudo" src="https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_replenishment_cost/static/description/aggiorna_costi_landed.png" />
 <p>la terza esegue l’aggiornamento di tutti i costi:</p>
 <img alt="Aggiorna tutti i costi" src="https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_replenishment_cost/static/description/aggiorna_tutti.png" />
-<p>#### TODO: ATTUALMENTE DISABILITATA
-La quarta esegue l’aggiornamento del prezzo di vendita dei prodotti con distinta base.</p>
-<img alt="Aggiorna il prezzo e il peso di prodotto con distinta base" src="https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_replenishment_cost/static/description/aggiorna_prezzi_da_diba.png" />
-<hr class="docutils" />
+<p>La quarta esegue l’aggiornamento del prezzo di vendita e del peso dei prodotti con distinta base, calcolando i valori solo sulla distinta base direttamente collegata al prodotto (senza quindi ricorsività). Se si desidera aggiornare i valori delle distinte figlie prima di aggiornare questo valore, assicurarsi di avviare un aggiornamento con i metodi precedenti e poi di avviare questo aggiornamento su tutte le distinte base. Per come è stato richiesto questo metodo, non assicura comunque un aggiornamento ricorsivo completo.</p>
+<img alt="Aggiorna il prezzo e il peso di prodotti con distinta base" src="https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_replenishment_cost/static/description/aggiorna_prezzi_da_diba.png" />
 <p>Nota bene: non è possibile ripristinare nessuna di queste operazioni, in quanto vanno a sovrascrivere i campi citati. Tenere conto inoltre che i campi del prezzo di vendita e del costo landed senza adeguamento/ammortamento (costo standard rinominato) potrebbero essere modificati in maniera automatica dal sistema in base alla configurazione.</p>
 <p>In seguito è utile creare un listino a partire dal costo per generare un’esportazione (reimportabile) per effettuare un cambio di listino di vendita programmato:</p>
 <img alt="Esporta un listino" src="https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_replenishment_cost/static/description/listino.png" />
