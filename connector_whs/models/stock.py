@@ -136,6 +136,9 @@ class StockMove(models.Model):
         comodel_name='hyddemo.whs.liste',
         inverse_name='move_id',
         string='WMS Lists')
+    exclude_from_wms = fields.Boolean(
+        string='Eclude from WMS',
+    )
 
     @api.multi
     def _check_valid_whs_list(self):
@@ -168,6 +171,9 @@ class StockMove(models.Model):
         return whsliste_data
 
     def create_whs_list(self):
+        if self.env.context.get("bypass_wms"):
+            return True
+        self = self.filtered(lambda x: not x.exclude_from_wms)
         whsliste_obj = self.env["hyddemo.whs.liste"]
         list_number = False  # get existing active list_number to append new whslist
         list_numbers = list(
