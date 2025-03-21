@@ -60,8 +60,11 @@ class HyddemoWhsListe(models.Model):
         # Modula user
         # todo sincronizzare solo le tabelle EXP_*
         # check if the lists exist, to unlink or add an order to delete
-        for num_lista in set(self.mapped("num_lista")):
-            current_whs_lists = self.filtered(lambda x: x.num_lista == num_lista)
+        num_lista_list = set(self.mapped("num_lista"))
+        todo_lists = self
+        for num_lista in num_lista_list:
+            current_whs_lists = todo_lists.filtered(lambda x: x.num_lista == num_lista)
+            todo_lists -= current_whs_lists
             res = dbsource.execute_mssql(
                 sqlquery=sql_text(
                     "SELECT ORD_ORDINE FROM IMP_ORDINI WHERE ORD_OPERAZIONE='I' "
