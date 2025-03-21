@@ -12,7 +12,8 @@ class StockBackorderConfirmation(models.TransientModel):
             backorder_pick = self.env['stock.picking'].search([
                 ('backorder_id', '=', pick_id.id)])
             for move in backorder_pick.mapped("move_lines"):
-                move.exclude_from_wms = True
+                if self.env.context.get("bypass_wms"):
+                    move.exclude_from_wms = True
                 if move.picking_id.picking_type_id.code == 'incoming':
                     move.location_dest_id = (
                         move.picking_id.picking_type_id.default_location_dest_id)

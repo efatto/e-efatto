@@ -173,12 +173,12 @@ class StockMove(models.Model):
     def create_whs_list(self):
         if self.env.context.get("bypass_wms"):
             return True
-        self = self.filtered(lambda x: not x.exclude_from_wms)
+        moves_todo = self.filtered(lambda x: not x.exclude_from_wms)
         whsliste_obj = self.env["hyddemo.whs.liste"]
         list_number = False  # get existing active list_number to append new whslist
         list_numbers = list(
             set(
-                self.mapped("whs_list_ids")
+                moves_todo.mapped("whs_list_ids")
                 .filtered(lambda x: x.stato != "3")
                 .mapped("num_lista")
             )
@@ -187,14 +187,20 @@ class StockMove(models.Model):
             if len(list_numbers) > 1:
                 raise UserError(
                     _("More than one list number found for picking %s:" "%s")
-                    % (self.mapped("picking_id").name, "|".join(list_numbers))
+                    % (moves_todo.mapped("picking_id").name, "|".join(list_numbers))
                 )
             if len(list_numbers) == 0:
                 list_number = list_numbers[0]
         riga = 0
-        for move in self.filtered(lambda x: not x.product_id.exclude_from_whs):
-            pick = move.picking_id
+        for move in moves_todo.filtered(lambda x: not x.product_id.exclude_from_whs):
             tipo = False
+            ragsoc = False
+            indirizzo = False
+            cliente = False
+            cap = False
+            localita = False
+            provincia = False
+            nazione = False
             # ROADMAP check this part as it is duplicated in mrp.py and an MO creates
             # whs_list with that function
             if all(
@@ -217,42 +223,45 @@ class StockMove(models.Model):
             #
 
             dbsource = self.env['base.external.dbsource'].search([
-                ('stock_picking_type_ids', 'in', pick.picking_type_id.ids),
-                ('company_id', '=', pick.company_id.id),
+                ('stock_picking_type_ids', 'in', move.picking_type_id.ids),
+                ('company_id', '=', move.company_id.id),
             ])
             if not dbsource:
                 # Picking type is not linked to WMS System
                 continue
-            if pick.picking_type_id.code == 'incoming':
+            if (
+                move.location_id != move.picking_type_id.warehouse_id.lot_stock_id and
+                move.location_dest_id == move.picking_type_id.warehouse_id.lot_stock_id
+            ) or move.picking_type_id.code == 'incoming':
                 tipo = '2'
                 # set Modula dest location if it's an incoming transfer
                 move.location_dest_id = dbsource.location_id
-            elif pick.picking_type_id.code == 'outgoing':
+            elif (
+                move.location_id == move.picking_type_id.warehouse_id.lot_stock_id and
+                move.location_dest_id != move.picking_type_id.warehouse_id.lot_stock_id
+            ) or move.picking_type_id.code == 'outgoing':
                 tipo = '1'
                 # set Modula source location if it's an outgoing transfer
                 move.location_id = dbsource.location_id
-            if pick.partner_id:
-                ragsoc = pick.partner_id.name
-                cliente = pick.partner_id.ref if pick.partner_id.ref else \
-                    pick.partner_id.parent_id.ref if pick.partner_id.parent_id.ref \
+            partner_id = move.partner_id or move.move_orig_ids.picking_id.partner_id
+            if partner_id:
+                ragsoc = partner_id.name
+                cliente = partner_id.ref if partner_id.ref else \
+                    partner_id.parent_id.ref if partner_id.parent_id.ref \
                     else False
-                indirizzo = pick.partner_id.street if pick.partner_id.street else False
-                cap = pick.partner_id.zip if pick.partner_id.zip else False
-                localita = pick.partner_id.city if pick.partner_id.city else False
-                provincia = pick.partner_id.state_id.code if pick.partner_id.state_id \
-                    else False
-                nazione = pick.partner_id.country_id.name if pick.partner_id.country_id\
-                    else False
+                indirizzo = partner_id.street if partner_id.street else False
+                cap = partner_id.zip if partner_id.zip else False
+                localita = partner_id.city if partner_id.city else False
+                provincia = partner_id.state_id.code if partner_id.state_id else False
+                nazione = partner_id.country_id.name if partner_id.country_id else False
 
             if tipo:
                 # ROADMAP check phantom products that generates only out moves
                 if move.state != 'cancel' and move.product_id.type == 'product' \
                     and (
-                        (pick.picking_type_id.code == 'incoming'
-                         and move.location_dest_id == dbsource.location_id)
+                        (tipo == '2' and move.location_dest_id == dbsource.location_id)
                         or
-                        (pick.picking_type_id.code == 'outgoing'
-                         and move.location_id == dbsource.location_id)
+                        (tipo == '1' and move.location_id == dbsource.location_id)
                         ):
                     if move.whs_list_ids and any(
                             x.stato != '3' for x in move.whs_list_ids):
@@ -271,9 +280,9 @@ class StockMove(models.Model):
                             'hyddemo.whs.liste')
                         riga = 0
                     riga += 1
-                    customer = move.product_id.customer_ids.filtered(
-                        lambda x: x.name == pick.partner_id.commercial_partner_id
-                    )
+                    customer = partner_id and move.product_id.customer_ids.filtered(
+                        lambda x: x.name == partner_id.commercial_partner_id
+                    ) or False
                     whsliste_data = {
                         'stato': '1',
                         'tipo': tipo,
@@ -294,10 +303,10 @@ class StockMove(models.Model):
                         whsliste_data.update({
                             'product_customer_code': customer[0].product_code,
                         })
-                    if pick.origin:
-                        whsliste_data['riferimento'] = pick.origin[:50]
+                    if move.origin:
+                        whsliste_data['riferimento'] = move.origin[:50]
 
-                    whsliste_data = self._set_priority(move, whsliste_data)
+                    whsliste_data = moves_todo._set_priority(move, whsliste_data)
 
                     if ragsoc:
                         whsliste_data['ragsoc'] = ragsoc[0:100]
