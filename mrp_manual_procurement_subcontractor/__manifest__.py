@@ -22,6 +22,7 @@
         "wizard/mrp_production_procure_subcontractor.xml",
         "views/mrp.xml",
         "views/purchase.xml",
+        "views/supplier_info_views.xml",
     ],
     "installable": True,
 }

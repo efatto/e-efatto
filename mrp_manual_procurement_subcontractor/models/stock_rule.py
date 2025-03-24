@@ -7,7 +7,10 @@ class StockRule(models.Model):
     def _run_buy(self, procurements):
         super()._run_buy(procurements)
         for procurement, _rule in procurements:
-            if procurement.product_id.seller_ids.filtered(lambda x: x.is_subcontractor):
+            subcontractors = procurement.product_id.seller_ids.filtered(
+                lambda x: x.is_subcontractor and x.autoconfirm_purchase
+            )
+            if subcontractors:
                 purchase_orders = self.env["purchase.order"].search(
                     [
                         ("order_line.product_id", "=", procurement.product_id.id),
