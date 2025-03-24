@@ -1,14 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="product_supplierinfo_subcontractor_tree_view" model="ir.ui.view">
-        <field name="name">product.supplierinfo.subcontractor.tree.view.autoconfirm</field>
+        <field
+      name="name"
+    >product.supplierinfo.subcontractor.tree.view.autoconfirm</field>
         <field name="model">product.supplierinfo</field>
-        <field name="inherit_id" ref="mrp_subcontracting.product_supplierinfo_subcontractor_tree_view"/>
+        <field
+      name="inherit_id"
+      ref="mrp_subcontracting.product_supplierinfo_subcontractor_tree_view"
+    />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='is_subcontractor']" position="after">
-                <field name="autoconfirm_purchase" attrs="{'readonly': [('is_subcontractor', '!=', True)]}"/>
+                <field
+          name="autoconfirm_purchase"
+          attrs="{'readonly': [('is_subcontractor', '!=', True)]}"
+        />
             </xpath>
         </field>
     </record>
 </odoo>
-
