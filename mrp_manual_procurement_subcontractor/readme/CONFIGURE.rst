@@ -26,6 +26,11 @@ Nel caso ci siano prodotti subappaltati presso un singolo subappaltore, l'ordine
 .. image:: ../static/description/bottone_trasferimenti_subappaltatore.png
     :alt: Bottone trasferimenti subappaltatore
 
+È stato inoltre aggiunto nel fornitore di un prodotto da acquistare tramite subappalto la possibilità di decidere se l'RdP generato debba essere o meno confermato automaticamente:
+
+.. image:: ../static/description/autoconferma_po_subappalto.png
+    :alt: Autoconferma acquisto da subappaltatore
+
 La tipica procedura da seguire per modificare un prodotto da produrre internamente ad un prodotto che può avere entrambe le opzioni è:
 
 .. image:: ../static/description/1_duplicare_bom.png
