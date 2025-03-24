@@ -4,3 +4,4 @@ from . import product
 from . import product_replenish
 from . import purchase_order
 from . import stock_rule
+from . import supplierinfo
