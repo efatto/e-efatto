@@ -229,17 +229,30 @@ class StockMove(models.Model):
             if not dbsource:
                 # Picking type is not linked to WMS System
                 continue
+            warehouse = move.picking_type_id.warehouse_id
+            reception_steps = warehouse.reception_steps
+            delivery_steps = warehouse.delivery_steps
+            manufacture_steps = warehouse.manufacture_steps
             if (
-                move.location_id != move.picking_type_id.warehouse_id.lot_stock_id and
-                move.location_dest_id == move.picking_type_id.warehouse_id.lot_stock_id
-            ) or move.picking_type_id.code == 'incoming':
+                reception_steps == "two_steps" and
+                move.location_id != warehouse.lot_stock_id and
+                move.location_dest_id == warehouse.lot_stock_id
+            ) or (
+                reception_steps == "one_step" and
+                move.picking_type_id.code == 'incoming'
+            ):
                 tipo = '2'
-                # set Modula dest location if it's an incoming transfer
+                # set Modula dest location if it's an incoming transfer or a move from
+                # input location to internal location (2 steps case)
                 move.location_dest_id = dbsource.location_id
             elif (
-                move.location_id == move.picking_type_id.warehouse_id.lot_stock_id and
-                move.location_dest_id != move.picking_type_id.warehouse_id.lot_stock_id
-            ) or move.picking_type_id.code == 'outgoing':
+                delivery_steps == "pick_ship" and
+                move.location_id == warehouse.lot_stock_id and
+                move.location_dest_id != warehouse.lot_stock_id
+            ) or (
+                delivery_steps == "ship_only" and
+                move.picking_type_id.code == 'outgoing'
+            ):
                 tipo = '1'
                 # set Modula source location if it's an outgoing transfer
                 move.location_id = dbsource.location_id
