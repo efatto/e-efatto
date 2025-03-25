@@ -59,6 +59,13 @@
             </xpath>
             <group name="qc" position="after">
                 <field name="has_inactive_triggers" invisible="1"/>
+                <button
+          name="%(action_qc_trigger_product_template_line_all)d"
+          type="action"
+          string="Show inactive triggers"
+          class="oe_highlight"
+          attrs="{'invisible': [('has_inactive_triggers', '=', False)]}"
+        />
             </group>
         </field>
     </record>
