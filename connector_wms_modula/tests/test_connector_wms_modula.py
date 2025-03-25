@@ -36,8 +36,8 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.warehouse = self.env["stock.warehouse"].search([
             ("company_id", "=", self.env.user.company_id.id),
         ])
+        self.step_delivery = ""
         self._configure_1_step_delivery()
-        self.step_delivery = 'one'
         self._clean_all()
 
     def _configure_1_step_delivery(self):
@@ -49,6 +49,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
                 ]).ids)
             ]
         })
+        self.step_delivery = 'one'
 
     def _configure_2_steps_delivery(self):
         self.warehouse.delivery_steps = "pick_ship"
@@ -207,6 +208,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             )
 
     def test_00_complete_picking_from_sale(self):
+        self._configure_1_step_delivery()
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
         self._clean_all()
@@ -296,6 +298,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertEqual(picking1.state, 'assigned')
 
     def test_01_partial_picking_from_sale(self):
+        self._configure_1_step_delivery()
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
         self._clean_all()
@@ -376,6 +379,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertEqual(backorder_picking.move_lines[0].state, 'assigned')
 
     def test_02_partial_picking_partial_available_from_sale(self):
+        self._configure_1_step_delivery()
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
         self._clean_all()
@@ -485,6 +489,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertEqual(backorder_picking.state, 'done')
 
     def test_03_partial_picking_from_sale(self):
+        self._configure_1_step_delivery()
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
         self._clean_all()
@@ -588,6 +593,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         backorder_picking.action_assign()
 
     def test_04_unlink_sale_order(self):
+        self._configure_1_step_delivery()
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
         self._clean_all()
@@ -673,6 +679,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             order1.order_line[0].write({"product_uom_qty": 17})
 
     def test_06_purchase(self):
+        self._configure_1_step_delivery()
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
         self._clean_all()
@@ -820,6 +827,26 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # WMS list is created for the increased qty
         self.assertEqual(str(result_liste[0]), "[(Decimal('7.000'),)]")
 
-    def test0_complete_picking_from_sale_2steps(self):
+    def test_00a_complete_picking_from_sale_2steps(self):
         self._configure_2_steps_delivery()
         self.test_00_complete_picking_from_sale()
+
+    def test_01a_partial_picking_from_sale_2steps(self):
+        self._configure_2_steps_delivery()
+        self.test_01_partial_picking_from_sale()
+
+    def test_02a_partial_picking_partial_available_from_sale_2steps(self):
+        self._configure_2_steps_delivery()
+        self.test_02_partial_picking_partial_available_from_sale()
+
+    def test_03a_partial_picking_from_sale_2steps(self):
+        self._configure_2_steps_delivery()
+        self.test_03_partial_picking_from_sale()
+
+    def test_04a_unlink_sale_order_2steps(self):
+        self._configure_2_steps_delivery()
+        self.test_04_unlink_sale_order()
+
+    def test_06a_purchase_2steps(self):
+        self._configure_2_steps_delivery()
+        self.test_06_purchase()
