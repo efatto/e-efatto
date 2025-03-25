@@ -31,14 +31,36 @@ class TestConnectorWmsModula(CommonConnectorWMS):
                 'conn_string_sandbox': conn_string,
                 'connector': 'mssql',
                 'location_id': self.env.ref('stock.stock_location_stock').id,
-                'stock_picking_type_ids': [
-                    (6, 0, self.env['stock.picking.type'].search([
-                        ('warehouse_id.company_id', '=', self.env.user.company_id.id)
-                    ]).ids)
-                ]
             })
         self.dbsource = dbsource
+        self.warehouse = self.env["stock.warehouse"].search([
+            ("company_id", "=", self.env.user.company_id.id),
+        ])
+        self._configure_1_step_delivery()
+        self.step_delivery = 'one'
         self._clean_all()
+
+    def _configure_1_step_delivery(self):
+        self.warehouse.delivery_steps = "ship_only"
+        self.dbsource.write({
+            'stock_picking_type_ids': [
+                (6, 0, self.env['stock.picking.type'].search([
+                    ('warehouse_id.company_id', '=', self.env.user.company_id.id),
+                ]).ids)
+            ]
+        })
+
+    def _configure_2_steps_delivery(self):
+        self.warehouse.delivery_steps = "pick_ship"
+        self.dbsource.write({
+            'stock_picking_type_ids': [
+                (6, 0, self.env['stock.picking.type'].search([
+                    ('warehouse_id.company_id', '=', self.env.user.company_id.id),
+                    ('id', '!=', self.warehouse.out_type_id.id),
+                ]).ids)
+            ]
+        })
+        self.step_delivery = 'two'
 
     def _clean_all(self):
         self.dbsource.with_context(no_return=True).execute_mssql(
@@ -202,7 +224,13 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         order1 = order_form1.save()
         order1.action_confirm()
         self.assertEqual(order1.state, 'sale')
-        picking1 = order1.picking_ids[0]
+        picking1 = order1.picking_ids.filtered(
+            lambda x: x.picking_type_id == (
+                self.warehouse.out_type_id
+                if self.step_delivery == "one" else
+                self.warehouse.pick_type_id
+            )
+        )
         self.assertEqual(len(picking1.mapped('move_lines.whs_list_ids')), 1)
         if all(x.state == 'assigned' for x in picking1.move_lines):
             self.assertEqual(picking1.state, 'assigned')
@@ -791,3 +819,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         result_liste = self._select_wms_liste(po_whs_list, db_type="IMP")
         # WMS list is created for the increased qty
         self.assertEqual(str(result_liste[0]), "[(Decimal('7.000'),)]")
+
+    def test0_complete_picking_from_sale_2steps(self):
+        self._configure_2_steps_delivery()
+        self.test_00_complete_picking_from_sale()
