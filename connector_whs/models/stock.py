@@ -144,8 +144,14 @@ class StockMove(models.Model):
     def _check_valid_whs_list(self):
         for move in self:
             valid_whs_list = move.whs_list_ids.filtered(lambda x: x.stato != '3')
-            if valid_whs_list and not move.state == 'done':
-                if move.product_uom_qty != valid_whs_list.qta:
+            origin_moves_whs_list = move.mapped(
+                "move_orig_ids.whs_list_ids"
+            ).filtered(lambda x: x.stato != '3')
+            if (valid_whs_list or origin_moves_whs_list) and not move.state == 'done':
+                if (
+                    move.product_uom_qty != valid_whs_list.qta
+                    or move.product_uom_qty != origin_moves_whs_list.qta
+                ):
                     raise UserError(_("WMS valid list exists and qty cannot be "
                                       "modified!"))
 
@@ -162,7 +168,13 @@ class StockMove(models.Model):
 
     @api.multi
     def _action_confirm(self, merge=True, merge_into=False):
-        self.create_whs_list()
+        whs_lists = self.create_whs_list()
+        origin_whs_lists = self.mapped("move_orig_ids.whs_list_ids")
+        if (
+            (whs_lists or origin_whs_lists)
+            and "pick_ship" in self.mapped('warehouse_id.delivery_steps')
+        ):
+            merge = False
         return super()._action_confirm(merge, merge_into)
 
     @staticmethod
@@ -175,6 +187,7 @@ class StockMove(models.Model):
             return True
         moves_todo = self.filtered(lambda x: not x.exclude_from_wms)
         whsliste_obj = self.env["hyddemo.whs.liste"]
+        whs_lists = whsliste_obj.browse()
         list_number = False  # get existing active list_number to append new whslist
         list_numbers = list(
             set(
@@ -335,8 +348,8 @@ class StockMove(models.Model):
                         whsliste_data['provincia'] = provincia[0:2]
                     if nazione:
                         whsliste_data['nazione'] = nazione[0:50]
-                    whsliste_obj.create(whsliste_data)
+                    whs_lists = whsliste_obj.create(whsliste_data)
                     _logger.info('WMS LOG: create list with data:\n %s' % (
                         str(whsliste_data)
                     ))
-        return True
+        return whs_lists
