@@ -24,6 +24,15 @@ class BaseExternalDbsource(models.Model):
         string='Stock picking types enabled',
     )
 
+    @api.constrains("location_id")
+    def check_location_id(self):
+        for rec in self:
+            if rec.location_id in self.search([
+                ("location_id", "=", rec.location_id.id),
+                ("id", "!=", rec.id),
+            ]):
+                raise UserError(_("A location can be linked to only one Db Source!"))
+
     @api.multi
     @api.depends('conn_string', 'conn_string_sandbox', 'password')
     def _compute_conn_string_full(self):

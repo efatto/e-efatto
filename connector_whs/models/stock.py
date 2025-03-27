@@ -66,7 +66,8 @@ class Picking(models.Model):
                         ])
                         if not dbsource:
                             _logger.info(
-                                'WMS LOG: Picking type %s not linked to WMS System in action_done' %
+                                'WMS LOG: Picking type %s not linked to WMS System in '
+                                'action_done' %
                                 pick.picking_type_id.name)
                             continue
                         _logger.info('WMS LOG: unlink wms list in backorder process of '
@@ -116,7 +117,8 @@ class Picking(models.Model):
                 ])
                 if not dbsource:
                     _logger.info(
-                        'WMS LOG: Picking type %s not linked to WMS System in cancel_whs_list' %
+                        'WMS LOG: Picking type %s not linked to WMS System in '
+                        'cancel_whs_list' %
                         pick.picking_type_id.name)
                     continue
                 if any([x.stato != '1' and x.qtamov != 0 for x in whs_lists]):
@@ -158,24 +160,27 @@ class StockMove(models.Model):
     def write(self, vals):
         res = super().write(vals=vals)
         if (
-            not self._context.get("do_not_propagate", False)
-            and not self._context.get("do_not_unreserve", False)
-            and not self._context.get("skip_overprocessed_check", False)
-            and (vals.get("product_uom_qty") or vals.get("product_qty"))
+            not self._context.get("do_not_propagate")
+            and not self._context.get("do_not_unreserve")
+            and not self._context.get("skip_overprocessed_check")
+            and (vals.get("product_uom_qty") or vals.get("product_qty")
+                 or self._context.get("previous_product_uom_qty"))
         ):
             self._check_valid_whs_list()
         return res
 
     @api.multi
     def _action_confirm(self, merge=True, merge_into=False):
-        whs_lists = self.create_whs_list()
-        origin_whs_lists = self.mapped("move_orig_ids.whs_list_ids")
-        if (
-            (whs_lists or origin_whs_lists)
-            and "pick_ship" in self.mapped('warehouse_id.delivery_steps')
-        ):
+        if self.env["base.external.dbsource"].search([
+            ('location_id', 'in', (
+                self.mapped("location_dest_id") | self.mapped("location_id")
+            ).ids),
+        ]):
+            # never merge stock moves linked to WMS lists
             merge = False
-        return super()._action_confirm(merge, merge_into)
+        res = super()._action_confirm(merge, merge_into)
+        self.create_whs_list()
+        return res
 
     @staticmethod
     def _set_priority(move, whsliste_data):
@@ -187,25 +192,25 @@ class StockMove(models.Model):
             return True
         moves_todo = self.filtered(lambda x: not x.exclude_from_wms)
         whsliste_obj = self.env["hyddemo.whs.liste"]
-        whs_lists = whsliste_obj.browse()
-        list_number = False  # get existing active list_number to append new whslist
-        list_numbers = list(
-            set(
-                moves_todo.mapped("whs_list_ids")
-                .filtered(lambda x: x.stato != "3")
-                .mapped("num_lista")
-            )
-        )
-        if list_numbers:
-            if len(list_numbers) > 1:
-                raise UserError(
-                    _("More than one list number found for picking %s:" "%s")
-                    % (moves_todo.mapped("picking_id").name, "|".join(list_numbers))
-                )
-            if len(list_numbers) == 0:
-                list_number = list_numbers[0]
         riga = 0
+        list_number = False
         for move in moves_todo.filtered(lambda x: not x.product_id.exclude_from_whs):
+            # get existing active list_number to append new whslist
+            list_numbers = list(
+                set(
+                    move.picking_id.move_lines.mapped("whs_list_ids")
+                    .filtered(lambda x: x.stato != "3")
+                    .mapped("num_lista")
+                )
+            )
+            if list_numbers:
+                if len(list_numbers) > 1:
+                    raise UserError(
+                        _("More than one list number found for picking %s:" "%s")
+                        % (move.picking_id.name, "|".join(list_numbers))
+                    )
+                if len(list_numbers) == 1:
+                    list_number = list_numbers[0]
             tipo = False
             ragsoc = False
             indirizzo = False
@@ -305,6 +310,10 @@ class StockMove(models.Model):
                         list_number = self.env['ir.sequence'].next_by_code(
                             'hyddemo.whs.liste')
                         riga = 0
+                    else:
+                        riga = max(whsliste_obj.search([
+                            ("num_lista", "=", list_number),
+                        ]).mapped('riga'))
                     riga += 1
                     customer = partner_id and move.product_id.customer_ids.filtered(
                         lambda x: x.name == partner_id.commercial_partner_id
@@ -348,8 +357,8 @@ class StockMove(models.Model):
                         whsliste_data['provincia'] = provincia[0:2]
                     if nazione:
                         whsliste_data['nazione'] = nazione[0:50]
-                    whs_lists = whsliste_obj.create(whsliste_data)
+                    whsliste_obj.create(whsliste_data)
                     _logger.info('WMS LOG: create list with data:\n %s' % (
                         str(whsliste_data)
                     ))
-        return whs_lists
+        return True
