@@ -82,8 +82,8 @@ OR (IMP_OR.RIG_ERRORE IS NOT NULL AND IMP_OR.RIG_ERRORE <> ' ')
             if lista_id:
                 if lista_error:
                     lista_id.wms_modula_error = _(
-                            "Operation %s importing the list failed with error: '%s'"
-                        ) % (LISTE_OPERATIONS[operation], lista_error)
+                        "Operation %s importing the list failed with error: '%s'"
+                    ) % (LISTE_OPERATIONS[operation], lista_error)
                 if riga_error:
                     lista_id.wms_modula_riga_error = _(
                         "Operation %s importing the row failed with error: '%s'"
