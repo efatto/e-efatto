@@ -24,10 +24,11 @@ class BaseExternalDbsource(models.Model):
         string='Stock picking types enabled',
     )
 
+    @api.multi
     @api.constrains("location_id")
-    def check_location_id(self):
+    def _check_location_id(self):
         for rec in self:
-            if rec.location_id in self.search([
+            if self.search([
                 ("location_id", "=", rec.location_id.id),
                 ("id", "!=", rec.id),
             ]):
