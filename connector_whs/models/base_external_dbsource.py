@@ -359,13 +359,23 @@ class BaseExternalDbsource(models.Model):
                                 insert_order_params[num_lista][riga])
                     else:
                         # there are separated tables for order and order line
-                        insert_order_query = self.env[
-                            "hyddemo.whs.liste"
-                        ]._get_insert_host_liste_query(
-                            insert_order_params[num_lista])
-                        self.execute_query(
-                            dbsource, sql_text(insert_order_query),
-                            insert_order_params[num_lista])
+                        res = dbsource.execute_mssql(
+                            sqlquery=sql_text(
+                                "SELECT ORD_ORDINE FROM IMP_ORDINI WHERE "
+                                "ORD_OPERAZIONE='I' "
+                                "AND ORD_ORDINE=:ORD_ORDINE"),
+                            sqlparams=dict(ORD_ORDINE=num_lista),
+                            metadata=None,
+                        )
+                        if res and not res[0]:
+                            # order is not already present
+                            insert_order_query = self.env[
+                                "hyddemo.whs.liste"
+                            ]._get_insert_host_liste_query(
+                                insert_order_params[num_lista])
+                            self.execute_query(
+                                dbsource, sql_text(insert_order_query),
+                                insert_order_params[num_lista])
                         for riga in insert_order_line_params[num_lista]:
                             insert_line_query = self.env[
                                 "hyddemo.whs.liste"
