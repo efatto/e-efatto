@@ -362,10 +362,15 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             backorder_wiz_id)
         # Create backorder: 1 WMS list of 2 is partially processed
         backorder_wiz.process()
-        backorder_picking = order1.picking_ids.filtered(
-            lambda x: not x.state == "cancel"
-            and x.picking_type_id == self.warehouse.pick_type_id
-        ) - picking
+        if self.step_delivery == "one":
+            backorder_picking = order1.picking_ids.filtered(
+                lambda x: not x.state == "cancel"
+            ) - picking
+        else:
+            backorder_picking = order1.picking_ids.filtered(
+                lambda x: not x.state == "cancel"
+                and x.picking_type_id == self.warehouse.pick_type_id
+            ) - picking
         # Simulate WMS user validation
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_lists = backorder_picking.mapped("move_lines.whs_list_ids").filtered(
@@ -385,8 +390,8 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             self.assertEqual(len(order1.picking_ids), 2)
         else:
             self.assertEqual(len(order1.picking_ids), 3)
-        # self.assertEqual(backorder_picking.state, 'assigned')  # fixme
-        # self.assertEqual(backorder_picking.move_lines[0].state, 'assigned')  # fixme
+        self.assertEqual(backorder_picking.state, 'assigned')
+        self.assertEqual(backorder_picking.move_lines[0].state, 'assigned')
 
     def _test_02_partial_picking_partial_available_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
