@@ -380,10 +380,10 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.simulate_wms_cron({x: x.qta for x in whs_lists})
 
         self.dbsource.whs_insert_read_and_synchronize_list()
-        # self.assertFalse(  # todo restore
-        #     self._execute_select_all_valid_host_liste(),
-        #     "Imported lists are not deleted!",
-        # )
+        self.assertFalse(
+            self._execute_select_all_valid_host_liste(),
+            "Imported lists are not deleted!",
+        )
 
         # check backorder picking is waiting for WMS process
         if self.step_delivery == "one":
