@@ -80,6 +80,88 @@ class CommonConnectorWMS(TransactionCase):
             ]
         })
         self.product2.invoice_policy = 'order'
+        # MRP data
+        self.top_product = self.env.ref(
+            "mrp_production_demo.product_product_manufacture_1"
+        )
+        self.warehouse = self.env["stock.warehouse"].search(
+            [("company_id", "=", self.env.user.company_id.id)],
+            limit=1,
+        )
+        self.warehouse.mto_pull_id.route_id.active = True
+        self.top_product.write(
+            dict(
+                route_ids=[
+                    (
+                        6,
+                        0,
+                        [
+                            self.warehouse.mto_pull_id.route_id.id,
+                            self.warehouse.manufacture_pull_id.route_id.id,
+                        ],
+                    ),
+                ]
+            )
+        )
+        self.subproduct1 = self.env.ref(
+            "mrp_production_demo.product_product_manufacture_1_1"
+        )
+        self.subproduct2 = self.env.ref(
+            "mrp_production_demo.product_product_manufacture_1_2"
+        )
+        self.subproduct_1_1 = self.env.ref(
+            "mrp_production_demo.product_product_manufacture_1_1_1"
+        )
+        self.subproduct_1_1.write(
+            dict(
+                route_ids=[
+                    (
+                        6,
+                        0,
+                        [
+                            self.warehouse.mto_pull_id.route_id.id,
+                            self.env.ref("purchase_stock.route_warehouse0_buy").id,
+                        ],
+                    ),
+                ]
+            )
+        )
+        self.subproduct_2_1 = self.env.ref(
+            "mrp_production_demo.product_product_manufacture_1_2_1"
+        )
+        self.main_bom = self.env.ref("mrp_production_demo.mrp_bom_manuf_1")
+        self.sub_bom_phantom_1 = self.env.ref("mrp_production_demo.mrp_bom_manuf_1_1")
+        self.sub_bom_phantom_2 = self.env.ref("mrp_production_demo.mrp_bom_manuf_1_2")
+        self.sub_bom_normal_1 = self.env.ref("mrp_production_demo.mrp_bom_manuf_1_3")
+        self.routing1 = self.env["mrp.routing"].create({
+            "name": "Simple routing",
+        })
+        self.workcenter1 = self.env["mrp.workcenter"].create(
+            {
+                "name": "Base Workcenter",
+                "capacity": 1,
+                "time_start": 10,
+                "time_stop": 5,
+                "time_efficiency": 80,
+                "costs_hour": 23.0,
+            }
+        )
+        self.operation1 = self.env["mrp.routing.workcenter"].create(
+            {
+                "name": "Operation 1",
+                "workcenter_id": self.workcenter1.id,
+                "routing_id": self.routing1.id,
+                "time_mode": "manual",
+                "time_cycle_manual": 90,
+                "sequence": 1,
+            }
+        )
+        self.mrp_user = self.env.ref("base.user_demo")
+        self.mrp_user.write(
+            {
+                "groups_id": [(4, self.env.ref("mrp.group_mrp_user").id)],
+            }
+        )
 
     def run_stock_procurement_scheduler(self):
         with mute_logger('odoo.addons.stock.models.procurement'):
