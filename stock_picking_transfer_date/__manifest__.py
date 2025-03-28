@@ -8,7 +8,7 @@
     'license': 'AGPL-3',
     'summary': 'Add field to put transfer date on picking, instead of default current '
                'date.',
-    'website': 'https://github.com/sergiocorato/e-efatto',
+    'website': 'https://github.com/efatto/e-efatto',
     'depends': [
         'stock',
     ],
