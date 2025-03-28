@@ -5,7 +5,7 @@
     "summary": "Restrict cancellation of dest moves according to origin.",
     "version": "12.0.1.0.1",
     "category": "Warehouse",
-    "website": "https://github.com/sergiocorato/e-efatto",
+    "website": "https://github.com/efatto/e-efatto",
     "author": "Sergio Corato",
     "license": "AGPL-3",
     "installable": True,
