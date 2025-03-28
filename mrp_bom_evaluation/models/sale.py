@@ -32,31 +32,37 @@ class SaleOrderLine(models.Model):
     )
     mrp_production_total_amount = fields.Float(
         compute='_compute_mrp_production_total_amount',
+        compute_sudo=True,
         store=True,
     )
     workorder_price_subtotal = fields.Float(
         string='Workorder Price Subtotal',
         compute='_compute_mrp_production_total_amount',
+        compute_sudo=True,
         store=True,
     )
     move_raw_price_subtotal = fields.Float(
         string='MRP Move Price Subtotal',
         compute='_compute_mrp_production_total_amount',
+        compute_sudo=True,
         store=True,
     )
     analytic_cost = fields.Float(
         string='Analytic Cost',
         compute='_compute_mrp_production_total_amount',
+        compute_sudo=True,
         store=True,
     )
     total_cost = fields.Float(
         string='Total Cost',
         compute='_compute_mrp_production_total_amount',
+        compute_sudo=True,
         store=True,
     )
     final_purchase_price = fields.Float(
         string='Total Cost Unit',
         compute='_compute_mrp_production_total_amount',
+        compute_sudo=True,
         store=True,
         help='Direct costs plus a proportion of analytic costs',
         digits=dp.get_precision('Product Price'),
