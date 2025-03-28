@@ -5,7 +5,7 @@
     "version": "12.0.1.0.0",
     "category": "Web",
     "author": "Sergio Corato",
-    "website": "https://github.com/sergiocorato/e-efatto",
+    "website": "https://github.com/efatto/e-efatto",
     "summary": "Ability to hide sale lines inside a section in a sale order",
     "license": "AGPL-3",
     "depends": [
