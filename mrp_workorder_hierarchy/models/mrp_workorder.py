@@ -7,7 +7,11 @@ class MrpWorkorder(models.Model):
     _parent_store = True
     _parent_name = "parent_id"
 
-    complete_name = fields.Char(compute="_compute_complete_name", store=True, )
+    complete_name = fields.Char(
+        compute="_compute_complete_name",
+        compute_sudo=True,
+        store=True,
+    )
     parent_id = fields.Many2one(
         comodel_name="mrp.workorder",
         string="Parent Workorder",
