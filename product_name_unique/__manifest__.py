@@ -10,7 +10,7 @@
     "author": "Open Source Integrators, Odoo Community Association (OCA), "
               "Sergio Corato",
     "category": "Product",
-    "website": "https://github.com/sergiocorato/e-efatto",
+    "website": "https://github.com/efatto/e-efatto",
     "depends": ["product"],
     "data": ["views/product.xml"],
     "pre_init_hook": 'pre_init_product_name',
