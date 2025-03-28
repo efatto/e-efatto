@@ -131,7 +131,9 @@ class MrpBom(models.Model):
                     self.env['mrp.bom.line'].create(values)
 
     @api.model
-    def _bom_find(self, product_tmpl=None, product=None, picking_type=None, company_id=False):
+    def _bom_find(
+        self, product_tmpl=None, product=None, picking_type=None, company_id=False
+    ):
         """ Finds BoM for particular product, picking and company """
         res = super()._bom_find(product_tmpl, product, picking_type, company_id)
         if product:

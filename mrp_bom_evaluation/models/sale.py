@@ -256,7 +256,7 @@ class SaleOrder(models.Model):
             sale_order_to_recomputes
             | sale_analytic_order_to_recomputes
             | sale_mrp_order_to_recomputes
-         ).mapped('order_line')._compute_mrp_production_total_amount()
+        ).mapped('order_line')._compute_mrp_production_total_amount()
 
     @api.multi
     def _recalculate_bom_costs(self):

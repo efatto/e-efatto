@@ -101,7 +101,11 @@ class MrpProduction(models.Model):
                 ('location_id', '=', production.location_dest_id.id),
                 ('company_id', '=', production.company_id.id),
             ])
-            if finished_dbsource and production.picking_type_id in finished_dbsource.stock_picking_type_ids:
+            if (
+                finished_dbsource
+                and production.picking_type_id
+                in finished_dbsource.stock_picking_type_ids
+            ):
                 # Location of finished material is linked to WMS
                 num_lista = False
                 for move in production.move_finished_ids:

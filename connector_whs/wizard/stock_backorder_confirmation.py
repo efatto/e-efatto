@@ -14,7 +14,7 @@ class StockBackorderConfirmation(models.TransientModel):
             warehouse = backorder_pick.picking_type_id.warehouse_id
             reception_steps = warehouse.reception_steps
             delivery_steps = warehouse.delivery_steps
-            manufacture_steps = warehouse.manufacture_steps
+            # manufacture_steps = warehouse.manufacture_steps
             if (
                 backorder_pick.location_dest_id !=
                 backorder_pick.picking_type_id.default_location_dest_id

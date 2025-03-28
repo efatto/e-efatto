@@ -250,7 +250,7 @@ class StockMove(models.Model):
             warehouse = move.picking_type_id.warehouse_id
             reception_steps = warehouse.reception_steps
             delivery_steps = warehouse.delivery_steps
-            manufacture_steps = warehouse.manufacture_steps
+            # manufacture_steps = warehouse.manufacture_steps
             if (
                 reception_steps == "two_steps" and
                 move.location_id != warehouse.lot_stock_id and
