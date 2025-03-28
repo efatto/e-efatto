@@ -9,7 +9,7 @@
     Download zip of attachment of components from production order or bom.
     """,
     'author': 'Sergio Corato',
-    'website': 'https://github.com/sergiocorato/e-efatto',
+    'website': 'https://github.com/efatto/e-efatto',
     'depends': [
         'attachment_category',
         'mrp',
