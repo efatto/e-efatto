@@ -88,6 +88,8 @@ OR (IMP_OR.RIG_ERRORE IS NOT NULL AND IMP_OR.RIG_ERRORE <> ' ')
                     lista_id.wms_modula_riga_error = _(
                         "Operation %s importing the row failed with error: '%s'"
                     ) % (LISTE_OPERATIONS[operation], riga_error)
+                # delete this record from Modula db - TODO WAIT CONFIRM!
+                # lista_id.whs_unlink_lists(self)
 
     @api.multi
     def _check_export_list(self):
