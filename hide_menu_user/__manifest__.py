@@ -25,7 +25,7 @@
     'summary': 'Hide or Show Any Menu Item User Wise',
     'description': 'Hide Any Menu Item User Wise, Hide Menu Items, Hide Menu',
     'author': 'Cybrosys Techno Solutions, Sergio Corato',
-    "website": "https://github.com/sergiocorato/e-efatto",
+    "website": "https://github.com/efatto/e-efatto",
     'depends': ['base'],
     'data': [
         'views/res_users.xml',

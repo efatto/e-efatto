@@ -4,7 +4,7 @@
     'name': 'Connector WMS MSSQL',
     'version': '12.0.1.2.1',
     'author': 'Sergio Corato',
-    'website': 'https://github.com/sergiocorato/e-efatto',
+    'website': 'https://github.com/efatto/e-efatto',
     'category': 'other',
     'depends': [
         'base_external_dbsource_mssql',

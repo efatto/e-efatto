@@ -6,7 +6,7 @@
     'category': 'Manufacture',
     'license': 'AGPL-3',
     'author': "Sergio Corato",
-    'website': 'https://github.com/sergiocorato/e-efatto',
+    'website': 'https://github.com/efatto/e-efatto',
     'depends': [
         'mrp_bom_operation_estimate',
     ],

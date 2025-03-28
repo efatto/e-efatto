@@ -11,7 +11,7 @@
     kit bom cycle work order, but is not really it. This module fix this.
     """,
     'author': "Sergio Corato",
-    'website': 'https://github.com/sergiocorato/e-efatto',
+    'website': 'https://github.com/efatto/e-efatto',
     'depends': [
         'mrp_workorder_sequence',
     ],

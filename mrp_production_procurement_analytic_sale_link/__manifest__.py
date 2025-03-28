@@ -7,7 +7,7 @@
     'license': 'AGPL-3',
     'category': 'Manufacturing',
     'author': 'Sergio Corato',
-    'website': 'https://github.com/sergiocorato/e-efatto',
+    'website': 'https://github.com/efatto/e-efatto',
     'summary': 'Glue module with mrp_production_procurement_analytic and '
                'purchase_sale_mrp_link.',
     'depends': [

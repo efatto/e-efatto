@@ -5,7 +5,7 @@
     "version": "12.0.1.0.1",
     "category": "other",
     "author": "Sergio Corato",
-    "website": "https://github.com/sergiocorato/e-efatto",
+    "website": "https://github.com/efatto/e-efatto",
     "license": "AGPL-3",
     "depends": [
         "purchase_stock",

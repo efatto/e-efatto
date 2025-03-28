@@ -9,7 +9,7 @@
     Add option to compute prices for product with bom by their components.
     """,
     'author': "Sergio Corato",
-    'website': 'https://github.com/sergiocorato/e-efatto',
+    'website': 'https://github.com/efatto/e-efatto',
     'depends': [
         'product_pricelist_bom_cost',
         'mrp_bom_evaluation',

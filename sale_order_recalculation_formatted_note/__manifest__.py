@@ -7,7 +7,7 @@
     'license': 'AGPL-3',
     'author': 'Sergio Corato',
     'summary': 'Add recalculation to formatted note in sale order.',
-    'website': 'https://github.com/sergiocorato/e-efatto',
+    'website': 'https://github.com/efatto/e-efatto',
     'depends': [
         'sale_comment_template',
         'sale_comment_product',

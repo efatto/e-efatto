@@ -9,7 +9,7 @@
 This module add:
 ----------------
 * decimal precision to volume and create key with default 6 digits.''',
-    'website': 'https://github.com/sergiocorato/e-efatto',
+    'website': 'https://github.com/efatto/e-efatto',
     'license': 'AGPL-3',
     'depends': [
         'l10n_it_ddt',

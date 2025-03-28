@@ -6,7 +6,7 @@
     "license": "AGPL-3",
     "category": "Sales",
     "author": "Sergio Corato",
-    "website": "https://github.com/sergiocorato/e-efatto",
+    "website": "https://github.com/efatto/e-efatto",
     "depends": [
         "sale_timesheet_existing_project",
     ],
