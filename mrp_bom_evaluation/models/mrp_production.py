@@ -16,16 +16,19 @@ class MrpProduction(models.Model):
     )
     workorder_price_subtotal = fields.Float(
         compute='_compute_workorder_price_subtotal',
+        compute_sudo=True,
         store=True,
         groups='account.group_account_user',
     )
     move_raw_price_subtotal = fields.Float(
         compute='_compute_move_raw_price_subtotal',
+        compute_sudo=True,
         store=True,
         groups='account.group_account_user',
     )
     total_amount = fields.Float(
         compute='_compute_total_amount',
+        compute_sudo=True,
         store=True)
 
     @api.multi
