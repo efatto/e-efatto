@@ -14,7 +14,7 @@ github_enforce_dev_status_compatibility: true
 include_wkhtmltopdf: false
 odoo_test_flavor: OCB
 odoo_version: 12.0
-org_name: Efatto.it
+org_name: Sergio Corato
 org_slug: efatto
 rebel_module_groups:
 - mrp_bom_evaluation
