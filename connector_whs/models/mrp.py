@@ -20,13 +20,11 @@ class MrpProduction(models.Model):
         store=True,
     )
     state = fields.Selection(
-        selection_add=[("consumed", "Consumed"), ("done",)],
-        ondelete={"consumed": lambda r: r.write({"state": "progress"})},
-        help=" * Draft: The MO is not confirmed yet.\n"
-        " * Confirmed: The MO is confirmed, the stock rules and the reordering of "
+        selection_add=[("consumed", "Consumed"), ("done", "Done")],
+        help=" * Confirmed: The MO is confirmed, the stock rules and the reordering of "
         "the components are trigerred.\n"
+        " * Planned: The production is planned.\n"
         " * In Progress: The production has started (on the MO or on the WO).\n"
-        " * To Close: The production is done, the MO has to be closed.\n"
         " * Consumed: The production is in progress, raw components has been "
         "moved from stock to production area.\n"
         " * Done: The MO is closed, the stock moves are posted. \n"
@@ -72,7 +70,7 @@ class MrpProduction(models.Model):
     def _compute_is_consumable(self):
         for production in self:
             production.is_consumable = bool(
-                production.product_qty == production.qty_producing
+                production.product_qty == production.qty_produced  # qty_producing
                 and not production.state == "consumed"
             )
 
