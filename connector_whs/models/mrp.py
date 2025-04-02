@@ -1,34 +1,16 @@
 # Copyright 2013 Maryam Noorbakhsh creativiquadrati snc
 # Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
-# flake8: noqa: C901
 import logging
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
-from odoo.tools import config
 
 _logger = logging.getLogger(__name__)
 
 
 class MrpProduction(models.Model):
     _inherit = "mrp.production"
-
-    # state = fields.Selection(
-    #     selection_add=[("consumed", "Consumed"), ("done", "Done")],
-    #     help=" * Confirmed: The MO is confirmed, the stock rules and the reordering of "
-    #     "the components are trigerred.\n"
-    #     " * Planned: The production is planned.\n"
-    #     " * In Progress: The production has started (on the MO or on the WO).\n"
-    #     " * Consumed: The production is in progress, raw components has been "
-    #     "moved from stock to production area.\n"
-    #     " * Done: The MO is closed, the stock moves are posted. \n"
-    #     " * Cancelled: The MO has been cancelled, can't be confirmed anymore.",
-    # )
-    moves_to_do_ids = fields.Many2many(
-        comodel_name="stock.move",
-        string="Technical field to store moves to do in consume workflow",
-    )
 
     def action_cancel(self):
         res = super().action_cancel()
@@ -60,75 +42,6 @@ class MrpProduction(models.Model):
                 whs_list_id.whs_unlink_lists(dbsource.id)
         return res
 
-    # def button_consume(self):
-    #     # self._button_mark_done_sanity_checks()
-    #     for production in self:
-    #         if (
-    #             # production.bom_id.type != "subcontract" and
-    #             not production.sent_to_wms
-    #             and production.state
-    #             not in [
-    #                 "done",
-    #                 "cancel",
-    #             ]
-    #         ):
-    #             raise UserError(
-    #                 _("Production %s has not been sent to WMS!") % production.name
-    #             )
-    #         production.move_raw_ids._check_done_whs_list()
-    #         if production.state == "progress":
-    #             moves_to_do = production.move_raw_ids.filtered(
-    #                 lambda x: x.state not in ("done", "cancel")
-    #             )
-    #             for move in moves_to_do.filtered(
-    #                 lambda m: m.product_qty == 0.0 and m.quantity_done > 0
-    #             ):
-    #                 move.product_uom_qty = move.quantity_done
-    #             # MRP do not merge move, catch the result of _action_done in order
-    #             # to get extra moves.
-    #             moves_to_do = moves_to_do._action_done()
-    #             production._cal_price(moves_to_do)
-    #             production.action_assign()
-    #             production.moves_to_do_ids = [(6, 0, moves_to_do.ids)]
-
-    # @api.multi
-    # def button_mark_done(self):
-    #     for production in self:
-    #         # check bom type only to exclude subcontract if installed, without adding
-    #         # a dependency
-    #         # if (
-    #         #     not config["test_enable"] or self.env.context.get("test_connector_whs")
-    #         # ) and (
-    #         #     # not production.sent_to_wms
-    #         #     # and
-    #         #     production.bom_id.type in ["normal", "phantom"]
-    #         #     and production.state
-    #         #     not in [
-    #         #         "done",
-    #         #         "cancel",
-    #         #     ]
-    #         # ):
-    #         #     raise UserError(
-    #         #         _("Production %s has not been sent to WMS!") % production.name
-    #         #     )
-    #         (
-    #             production.move_raw_ids | production.move_finished_ids
-    #         )._check_done_whs_list()
-    #         if production.state == "consumed":
-    #             production.write({"state": "progress"})
-    #     res = super().button_mark_done()
-    #     for production in self:
-    #         if not production.move_finished_ids.move_line_ids.consume_line_ids:
-    #             production.move_finished_ids.move_line_ids.consume_line_ids = [
-    #                 (6, 0, production.moves_to_do_ids.mapped("move_line_ids").ids)
-    #             ]
-    #             production.moves_to_do_ids = [(5,)]
-    #     return res
-
-    # def button_send_to_wms(self):
-    #     self._generate_wms()
-    #     self._compute_sent_to_wms()
-
     @api.multi
     def post_inventory(self):
         (self.move_raw_ids | self.move_finished_ids)._check_done_whs_list()
@@ -140,39 +53,6 @@ class MrpProduction(models.Model):
         # end check
         res = super().post_inventory()
         return res
-
-    # @api.multi
-    # def _get_whslist_component_data(self, num_lista, riga, move):
-    #     # overridable method
-    #     return dict(
-    #         data_lista=fields.Datetime.now(),
-    #         move_id=move.id,
-    #         num_lista=num_lista,
-    #         parent_product_id=self.product_id.id,
-    #         product_id=move.product_id.id,
-    #         qta=move.quantity_done,
-    #         riferimento=self.name,
-    #         riga=riga,
-    #         stato="1",
-    #         tipo="1",
-    #         tipo_mov="mrpout",
-    #     )
-    #
-    # @api.multi
-    # def _get_whslist_finished_data(self, num_lista, riga, move):
-    #     # overridable method
-    #     return dict(
-    #         data_lista=fields.Datetime.now(),
-    #         move_id=move.id,
-    #         num_lista=num_lista,
-    #         product_id=move.product_id.id,
-    #         qta=move.quantity_done,
-    #         riferimento=self.name,
-    #         riga=riga,
-    #         stato="1",
-    #         tipo="2",
-    #         tipo_mov="mrpin",
-    #     )
 
     @api.multi
     def _generate_wms(self):
