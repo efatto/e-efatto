@@ -38,12 +38,14 @@ class WizardSyncStockWhsMssql(models.TransientModel):
             new_last_update = fields.Datetime.now()
             inventory_obj = self.env['stock.inventory']
             inventory_line_obj = self.env['stock.inventory.line']
+            inventory = inventory_obj.browse()
+            weight = 0
             if wizard.do_sync:
                 inventory = inventory_obj.create({
                     'name': 'WMS sync inventory ' + new_last_update.strftime(
                         "%Y-%m-%d"),
                     'location_id': dbsource.location_id.id,
-                    'filter': 'products',
+                    'filter': 'products',  # noqa
                 })
             product_obj = self.env['product.product']
             i = 0

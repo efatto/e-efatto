@@ -13,7 +13,7 @@ class CommonConnectorWMS(TransactionCase):
         super().setUp()
         self.dbsource_model = self.env["base.external.dbsource"]
         self.dest_location = self.env.ref('stock.stock_location_customers')
-        self.src_location = self.env.ref('stock.stock_location_stock')
+        self.src_location = self.env.ref('stock.stock_location_stock')  # noqa
         self.wms_location = self.env["stock.location"].create({
             "name": "WMS Location (child of default internal location)",
             "location_id": self.src_location.id,
