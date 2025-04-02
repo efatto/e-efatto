@@ -145,7 +145,7 @@ class StockMove(models.Model):
     @api.multi
     def _check_done_whs_list(self):
         if any(x.stato != "4" and x.qta for x in self.mapped("whs_list_ids")):
-            raise UserError(_('Almost a WHS list is not in state "Ricevuto Esito"!'))
+            raise UserError(_('Almost a WMS list is not in state "Ricevuto Esito"!'))
 
     @api.multi
     def _check_valid_whs_list(self):
@@ -197,7 +197,6 @@ class StockMove(models.Model):
             return True
         moves_todo = self.filtered(lambda x: not x.exclude_from_wms)
         whsliste_obj = self.env["hyddemo.whs.liste"]
-        riga = 0
         list_number = False
         for move in moves_todo.filtered(lambda x: not x.product_id.exclude_from_whs):
             # get existing active list_number to append new whslist
@@ -255,30 +254,63 @@ class StockMove(models.Model):
             warehouse = move.picking_type_id.warehouse_id
             reception_steps = warehouse.reception_steps
             delivery_steps = warehouse.delivery_steps
-            # manufacture_steps = warehouse.manufacture_steps
+            manufacture_steps = warehouse.manufacture_steps
             if (
+                # reception two steps
                 reception_steps == "two_steps" and
                 move.location_id != warehouse.lot_stock_id and
                 move.location_dest_id == warehouse.lot_stock_id
             ) or (
+                # incoming product from production two steps
+                manufacture_steps == "pbm" and
+                move.location_id != warehouse.lot_stock_id and
+                move.location_dest_id == warehouse.lot_stock_id
+            ) or (
+                # reception one step
                 reception_steps == "one_step" and
                 move.picking_type_id.code == 'incoming'
+            ) or (
+                # incoming product from production one step
+                manufacture_steps == "mrp_one_step" and
+                move.picking_type_id.code == 'mrp_operation'
             ):
                 tipo = '2'
                 # set Modula dest location if it's an incoming transfer or a move from
                 # input location to internal location (2 steps case)
                 move.location_dest_id = dbsource.location_id
             elif (
+                # delivery two steps
                 delivery_steps == "pick_ship" and
-                move.location_id == warehouse.lot_stock_id and
+                move.location_id in [warehouse.lot_stock_id, dbsource.location_id] and
                 move.location_dest_id != warehouse.lot_stock_id
             ) or (
+                # consumption of components two steps
+                manufacture_steps == "pbm" and
+                move.location_id in [warehouse.lot_stock_id, dbsource.location_id] and
+                move.location_dest_id != warehouse.lot_stock_id
+            ) or (
+                # delivery one step
                 delivery_steps == "ship_only" and
                 move.picking_type_id.code == 'outgoing'
+            ) or (
+                # consumption of components one step
+                manufacture_steps == "mrp_one_step" and
+                move.location_id in [warehouse.lot_stock_id, dbsource.location_id] and
+                move.picking_type_id.code == 'mrp_operation'
             ):
                 tipo = '1'
-                # set Modula source location if it's an outgoing transfer
+                # set Modula source location if it's an outgoing or consuming transfer
                 move.location_id = dbsource.location_id
+            if not tipo:
+                # todo actively exclude moves not managed by WMS, except for production?
+                if move.picking_type_id not in dbsource.stock_picking_type_ids:
+                    continue
+                if all(
+                    x != dbsource.location_id for x in (
+                        move.location_id | move.location_dest_id)
+                ):
+                    # none of move locations are enabled in WMS
+                    continue
             partner_id = move.partner_id or move.move_orig_ids.picking_id.partner_id
             if partner_id:
                 ragsoc = partner_id.name
@@ -366,4 +398,7 @@ class StockMove(models.Model):
                     _logger.info('WMS LOG: create list with data:\n %s' % (
                         str(whsliste_data)
                     ))
+            else:
+                raise UserError(
+                    _("WMS LOG: list tipo not found for stock move ID %s") % move.id)
         return True

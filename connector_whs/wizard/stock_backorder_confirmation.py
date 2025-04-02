@@ -14,7 +14,7 @@ class StockBackorderConfirmation(models.TransientModel):
             warehouse = backorder_pick.picking_type_id.warehouse_id
             reception_steps = warehouse.reception_steps
             delivery_steps = warehouse.delivery_steps
-            # manufacture_steps = warehouse.manufacture_steps
+            manufacture_steps = warehouse.manufacture_steps
             if (
                 backorder_pick.location_dest_id !=
                 backorder_pick.picking_type_id.default_location_dest_id
@@ -40,15 +40,23 @@ class StockBackorderConfirmation(models.TransientModel):
                     delivery_steps == "pick_ship" and
                     backorder_pick.location_dest_id == warehouse.wh_output_stock_loc_id
                 ) or (
+                    manufacture_steps == "pbm" and
+                    backorder_pick.location_dest_id == warehouse.pbm_loc_id
+                ) or (
                     delivery_steps == "ship_only" and
                     backorder_pick.picking_type_id.code == 'outgoing'
+                ) or (
+                    manufacture_steps == "mrp_one_step" and
+                    backorder_pick.picking_type_id.code == 'mrp_operation'  # fixme internal? outgoing?
                 )
             ):
                 # restore the default location if it was set to WMS one
                 # in the 2 steps option we have:
                 # 1. the move from stock to output location * (this must be resetted if
                 #   bypass_wms is true)
+                # 1.a production: from stock to pre-production location
                 # 2. the move from output location to customer (this is never changed)
+                # 2.a production: from pre-production to production
                 # * only this one is usually managed in WMS
                 if self.env.context.get("bypass_wms"):
                     backorder_pick.location_id = warehouse.lot_stock_id
