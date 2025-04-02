@@ -192,7 +192,7 @@ class BaseExternalDbsource(models.Model):
                         num_riga = int(esito_lista[esiti_pos["NumRiga"]])
                     except ValueError:
                         num_riga = 0
-                    if not num_riga or not num_lista:
+                    if not (num_riga and num_lista):
                         _logger.info(
                             "WMS LOG: list %s in db without NumLista or NumRiga"
                             % esito_lista
