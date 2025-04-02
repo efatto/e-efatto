@@ -1,3 +1,5 @@
+from odoo.tests import Form
+
 from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
 from odoo.tools import mute_logger
 
@@ -26,23 +28,14 @@ class TestMrpBomEvaluation(TestProductionData):
             ]
         })
 
-    def _create_sale_order_line(self, order, product, qty):
-        vals = {
-            'order_id': order.id,
-            'product_id': product.id,
-            'product_uom_qty': qty,
-            'price_unit': 100,
-            }
-        line = self.env['sale.order.line'].create(vals)
-        line.product_id_change()
-        line._convert_to_write(line._cache)
-        return line
-
     def test_01_create_task_from_mo(self):
-        order1 = self.env['sale.order'].create({
-            'partner_id': self.partner.id,
-        })
-        self._create_sale_order_line(order1, self.top_product, 1)
+        order_form = Form(self.env['sale.order'])
+        order_form.partner_id = self.partner
+        with order_form.order_line.new() as order_line:
+            order_line.product_id = self.top_product
+            order_line.product_uom_qty = 1
+            order_line.price_unit = 100
+        order1 = order_form.save()
         order1.action_confirm()
         if self.env["ir.module.module"].search([
                 ("name", "=", "sale_order_approved_customer"),
