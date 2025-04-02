@@ -419,7 +419,7 @@ VALUES (
                     })
                     if len(move.move_line_ids) > 1:
                         _logger.info(
-                            "WHS LOG: many stock move line found for Whs list %s-%s of "
+                            "WMS LOG: many stock move line found for Whs list %s-%s of "
                             "move %s, impossible to set qty done!"
                             % (num_lista, num_riga, move.name)
                         )
@@ -429,7 +429,7 @@ VALUES (
                                 move.quantity_done = qty_moved
                             except UserError as error:
                                 _logger.info(
-                                    "WHS LOG: move id %s is not writeable for %s"
+                                    "WMS LOG: move id %s is not writeable for %s"
                                     % (move.id, error)
                                 )
                     if move.picking_id.mapped('move_lines').filtered(
