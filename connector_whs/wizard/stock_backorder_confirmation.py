@@ -47,7 +47,7 @@ class StockBackorderConfirmation(models.TransientModel):
                     backorder_pick.picking_type_id.code == 'outgoing'
                 ) or (
                     manufacture_steps == "mrp_one_step" and
-                    backorder_pick.picking_type_id.code == 'mrp_operation'  # fixme internal? outgoing?
+                    backorder_pick.picking_type_id.code == 'mrp_operation'
                 )
             ):
                 # restore the default location if it was set to WMS one
