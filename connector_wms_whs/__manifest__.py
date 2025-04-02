@@ -15,6 +15,8 @@
         'sale_order_priority',
     ],
     'data': [
+        'views/hyddemo_whs_liste.xml',
+        'wizard/view_wizard_sync_stock_whs_mssql.xml'
     ],
     'installable': True,
     "excludes": "connector_wms_modula",
