@@ -29,8 +29,8 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             dbsource = self.dbsource_model.create({
                 'name': dbsource_name,
                 'conn_string_sandbox': conn_string,
-                'connector': 'mssql',
-                'location_id': self.env.ref('stock.stock_location_stock').id,
+                'connector': 'mssql',  # noqa
+                'location_id': self.env.ref('stock.stock_location_stock').id,  # noqa
             })
         self.dbsource = dbsource
         self.warehouse = self.env["stock.warehouse"].search([
@@ -453,7 +453,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
 
         whs_lists = picking.mapped("move_lines.whs_list_ids")
         # simulate WMS work: partial processing (3 of 5) of product #1
-        # and total (20 of 20) of product #2 so it is -4 on warehouse
+        # and total (20 of 20) of product #2, so it is -4 on warehouse
         self.simulate_wms_cron({
             x: 3 if x.product_id == self.product1 else 20 for x in whs_lists})
         # check WMS work is done correctly
@@ -855,7 +855,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             po_line.price_unit = 100
             po_line.date_planned = fields.Datetime.today() + relativedelta(month=2)
         purchase_form.save()
-        # pickings linked to purchase order change state to assigned when a product is
+        # pickings linked to purchase order change state to "assigned" when a product is
         # added o changed
         pickings = purchase.picking_ids.filtered(lambda x: x.state == "assigned")
         pickings.action_assign()  # aka "Controlla disponibilità"
