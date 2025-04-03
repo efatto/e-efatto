@@ -63,8 +63,8 @@ class HyddemoWhsListe(models.Model):
         num_lista_list = set(self.mapped("num_lista"))
         todo_lists = self
         for num_lista in num_lista_list:
-            current_whs_lists = todo_lists.filtered(lambda x: x.num_lista == num_lista)
-            todo_lists -= current_whs_lists
+            to_cancel_lists = todo_lists.filtered(lambda x: x.num_lista == num_lista)
+            todo_lists -= to_cancel_lists
             res = dbsource.execute_mssql(
                 sqlquery=sql_text(
                     "SELECT ORD_ORDINE FROM IMP_ORDINI WHERE ORD_OPERAZIONE='I' "
@@ -72,10 +72,12 @@ class HyddemoWhsListe(models.Model):
                 sqlparams=dict(ORD_ORDINE=num_lista),
                 metadata=None,
             )
-            if res and res[0]:
+            if all(x.stato == '1' for x in to_cancel_lists):
+                to_cancel_lists.whs_unlink_lists(dbsource)
+            elif res and res[0]:
                 # lista exists, so it's not elaborated from WMS, so unlink it directly
                 # (this will unlink its rows too)
-                current_whs_lists.whs_unlink_lists(dbsource)
+                to_cancel_lists.whs_unlink_lists(dbsource)
             else:
                 # lista does not exist, so order to WMS to unlink it
                 # (this will unlink its rows too)
@@ -88,7 +90,7 @@ class HyddemoWhsListe(models.Model):
                 _logger.info('WMS Modula LOG: delete Lista %s' % (
                     num_lista
                 ))
-                current_whs_lists.write({'stato': '3'})
+                to_cancel_lists.write({'stato': '3'})
 
     @api.model
     def whs_check_lists(self, num_lista, dbsource):
