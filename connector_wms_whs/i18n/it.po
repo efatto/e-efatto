@@ -14,3 +14,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_liste__priorita
+msgid "Priorita"
+msgstr "Priorità"
