@@ -1,6 +1,9 @@
-from odoo import _, api, fields, models
+# flake8: noqa: C901
+from odoo import _, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import float_compare
+
+from sqlalchemy import text as sql_text
 
 
 class WizardSyncStockWhsMssql(models.TransientModel):
@@ -19,6 +22,10 @@ class WizardSyncStockWhsMssql(models.TransientModel):
         return query
 
     def apply(self):
+        weight = 0
+        inventory_obj = self.env["stock.inventory"]
+        inventory = inventory_obj.browse()
+        inventory_lines_data = []
         for wizard in self:
             dbsource_obj = self.env["base.external.dbsource"]
             dbsource = dbsource_obj.browse(self._context["active_ids"])
@@ -27,29 +34,22 @@ class WizardSyncStockWhsMssql(models.TransientModel):
             if not connection:
                 raise UserError(_("Failed to open connection!"))
             new_last_update = fields.Datetime.now()
-            inventory_obj = self.env["stock.inventory"]
-            inventory_line_obj = self.env["stock.inventory.line"]
-            if wizard.do_sync:
-                inventory = inventory_obj.create(
-                    [
-                        {
-                            "name": "WHS sync inventory "
-                            + new_last_update.strftime("%Y-%m-%d"),
-                            "location_id": dbsource.location_id.id,
-                            "filter": "products",
-                        }
-                    ]
-                )
             product_obj = self.env["product.product"]
             i = 0
             whs_log_lines = []
             stock_product_dict = dict()
-            # get and aggregate stock data from whs
+            # get and aggregate stock data from wms
             while True:
                 giacenze_query = self._prepare_giacenze_query(i)
+                if wizard.product_id:
+                    giacenze_query = giacenze_query.replace(
+                        "HOST_GIACENZE",
+                        "HOST_GIACENZE WHERE Articolo = '%s'"
+                        % wizard.product_id.default_code,
+                    )
                 i += 2000
                 esiti_liste = dbsource.execute_mssql(
-                    sqlquery=giacenze_query, sqlparams=None, metadata=None
+                    sqlquery=sql_text(giacenze_query), sqlparams=None, metadata=None
                 )
                 # esiti_liste[0] contain result
                 if not esiti_liste[0]:
@@ -60,14 +60,18 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         qty = float(esito_lista[2])
                     except ValueError:
                         qty = False
+                        pass
                     except TypeError:
                         qty = False
+                        pass
                     try:
                         weight = float(esito_lista[3]) / 1000.0
                     except ValueError:
                         weight = False
+                        pass
                     except TypeError:
                         weight = False
+                        pass
                     lot_unique_ref = " ".join(
                         [
                             esito_lista[k + 2].strip() if esito_lista[k + 2] else ""
@@ -76,9 +80,9 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         ]
                     )[:20]
                     if articolo not in stock_product_dict:
-                        stock_product_dict.update(
-                            {articolo: {lot_unique_ref: qty, "weight": weight}}
-                        )
+                        stock_product_dict.update({
+                            articolo: {lot_unique_ref: qty, "weight": weight}
+                        })
                     else:
                         stock_product_dict[articolo].update({"weight": weight})
                         if lot_unique_ref not in stock_product_dict[articolo].keys():
@@ -145,6 +149,17 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                             if x != "weight"
                         ]
                     )
+                    # Remove from product_qty stock.move which whs lists
+                    # are on stato 'ricevuto esito' but not done in Odoo
+                    open_whs_list_ids = self.env["hyddemo.whs.liste"].search(
+                        [
+                            ("product_id", "=", product.id),
+                            ("stato", "=", "4"),
+                            ("move_id.state", "!=", "done"),
+                        ]
+                    )
+                    if open_whs_list_ids:
+                        product_qty += sum(open_whs_list_ids.mapped("qtamov"))
                     if float_compare(
                         product_qty,
                         product.qty_available,
@@ -166,15 +181,15 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                             }
                         )
                         if wizard.do_sync:
-                            line_data = {
-                                "inventory_id": inventory.id,
-                                "product_qty": product_qty,
-                                "location_id": dbsource.location_id.id,
-                                "product_id": product.id,
-                                "product_uom_id": product.uom_id.id,
-                                "reason": "WHS synchronize",
-                            }
-                            inventory_line_obj.create(line_data)
+                            inventory_lines_data.append(
+                                {
+                                    "product_qty": product_qty,
+                                    "location_id": dbsource.location_id.id,
+                                    "product_id": product.id,
+                                    "product_uom_id": product.uom_id.id,
+                                    "reason": "WMS synchronize",
+                                }
+                            )
                     else:
                         whs_log_line.update(
                             {
@@ -231,17 +246,27 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 if whs_log_line.get("type"):
                     whs_log_lines.append(whs_log_line)
 
-            if wizard.do_sync:
+            if wizard.do_sync and inventory_lines_data:
+                inventory = inventory_obj.create(
+                    {
+                        "name": "WMS sync inventory "
+                                + new_last_update.strftime("%Y-%m-%d"),
+                        "location_ids": [(6, 0, dbsource.location_id.ids)],
+                        "company_id": dbsource.company_id.id,
+                        "line_ids": [(0, 0, x) for x in inventory_lines_data],
+                    }
+                )
+                inventory.action_start()
                 inventory.action_validate()
 
             hyddemo_mssql_log = hyddemo_mssql_log_obj.create(
                 [
                     {
                         "errori": "Stock inventory %s"
-                        % ("sync" if wizard.do_sync else "check"),
+                                  % ("sync" if wizard.do_sync else "check"),
                         "ultimo_invio": new_last_update,
                         "dbsource_id": dbsource.id,
-                        "inventory_id": inventory.id if wizard.do_sync else False,
+                        "inventory_id": inventory.id,
                         "hyddemo_mssql_log_line_ids": [
                             (0, 0, x) for x in whs_log_lines
                         ],
