@@ -81,7 +81,6 @@ class HyddemoWhsListe(models.Model):
     product_customer_code = fields.Char(size=250)
     whs_list_absent = fields.Boolean(string="WMS List Absent")
     whs_list_log = fields.Text(string="WMS List Log")
-    priorita = fields.Integer("Priorita", default=0)  # 0=Bassa; 1=Media; 2=Urgente
 
     @api.multi
     def whs_unlink_lists(self, dbsource):
