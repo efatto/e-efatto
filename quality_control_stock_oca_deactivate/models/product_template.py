@@ -2,7 +2,7 @@ from odoo import api, fields, models
 
 
 class ProductTemplate(models.Model):
-    _inherit = 'product.template'
+    _inherit = "product.template"
 
     has_inactive_triggers = fields.Boolean(
         compute="_compute_has_inactive_triggers",
@@ -15,8 +15,10 @@ class ProductTemplate(models.Model):
             record.has_inactive_triggers = bool(
                 self.env["qc.trigger.product_template_line"]
                 .with_context(active_test=False)
-                .search([
-                    ("active", "=", False),
-                    ("product_template", "=", record.id),
-                ])
+                .search(
+                    [
+                        ("active", "=", False),
+                        ("product_template", "=", record.id),
+                    ]
+                )
             )

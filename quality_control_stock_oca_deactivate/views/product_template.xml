@@ -23,7 +23,7 @@
         <field name="model">qc.trigger.product_template_line</field>
         <field name="arch" type="xml">
             <search string="Inactive QC Trigger Lines">
-                <field name="product_template"/>
+                <field name="product_template" />
                 <filter
           string="Inactive"
           name="inactive"
@@ -58,7 +58,7 @@
                 <field name="trigger_activation_days" />
             </xpath>
             <group name="qc" position="after">
-                <field name="has_inactive_triggers" invisible="1"/>
+                <field name="has_inactive_triggers" invisible="1" />
                 <button
           name="%(action_qc_trigger_product_template_line_all)d"
           type="action"
