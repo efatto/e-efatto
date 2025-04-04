@@ -2,25 +2,37 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 # flake8: noqa: C901
 
-from sqlalchemy import text as sql_text
-
-from odoo import _, fields, models
+from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 from odoo.tools import float_compare
+
+from sqlalchemy import text as sql_text
 
 
 class WizardSyncStockWhsMssql(models.TransientModel):
     _name = "wizard.sync.stock.whs.mssql"
-    _description = "Synchronize stock inventory with Remote Mssql DB"
+    _description = "Synchronize stock inventory from the Remote Mssql DB to Odoo"
 
-    do_sync = fields.Boolean(string="Synchronize stock inventory")
+    do_sync = fields.Boolean(
+        string="Synchronize stock inventory",
+        help="Valid quantities are those found in the remote database.")
     product_id = fields.Many2one("product.product", string="Product to sync")
 
+    @staticmethod
+    def _prepare_giacenze_query(i):
+        # overridable method
+        # respect order of fields retrieved!
+        query = "SELECT * FROM (SELECT row_number() OVER (ORDER BY Articolo) " \
+            "AS rownum, Articolo, Qta, Peso FROM HOST_GIACENZE) as A " \
+            "WHERE A.rownum BETWEEN %s AND %s" % (i, i + 2000)
+        # removed as unused: Lotto, Lotto2, Lotto3, Lotto4, Lotto5, dataora,
+        return query
+
     def apply(self):
-        weight = False
-        inventory = False
-        inventory_lines_data = []
+        weight = 0
         inventory_obj = self.env["stock.inventory"]
+        inventory = inventory_obj.browse()
+        inventory_lines_data = []
         for wizard in self:
             dbsource_obj = self.env["base.external.dbsource"]
             dbsource = dbsource_obj.browse(self._context["active_ids"])
@@ -33,14 +45,15 @@ class WizardSyncStockWhsMssql(models.TransientModel):
             i = 0
             whs_log_lines = []
             stock_product_dict = dict()
-            # get and aggregate stock data from whs
+            # get and aggregate stock data from wms
             while True:
-                giacenze_query = (
-                    "SELECT * FROM (SELECT row_number() OVER (ORDER BY Articolo) "
-                    "AS rownum, Articolo, Lotto, Lotto2, Lotto3, Lotto4, Lotto5, "
-                    "dataora, Qta, Peso FROM HOST_GIACENZE) as A "
-                    "WHERE A.rownum BETWEEN %s AND %s" % (i, i + 2000)
-                )
+                giacenze_query = self._prepare_giacenze_query(i)
+                # giacenze_query = (
+                #     "SELECT * FROM (SELECT row_number() OVER (ORDER BY Articolo) "
+                #     "AS rownum, Articolo, Lotto, Lotto2, Lotto3, Lotto4, Lotto5, "
+                #     "dataora, Qta, Peso FROM HOST_GIACENZE) as A "
+                #     "WHERE A.rownum BETWEEN %s AND %s" % (i, i + 2000)
+                # )
                 if wizard.product_id:
                     giacenze_query = giacenze_query.replace(
                         "HOST_GIACENZE",
@@ -56,19 +69,22 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     break
                 for esito_lista in esiti_liste[0]:
                     articolo = esito_lista[1]
-                    # dataora = esito_lista[7]
                     try:
-                        qty = float(esito_lista[8])
+                        qty = float(esito_lista[2])
                     except ValueError:
                         qty = False
+                        pass
                     except TypeError:
                         qty = False
+                        pass
                     try:
-                        weight = float(esito_lista[9]) / 1000.0
+                        weight = float(esito_lista[3]) / 1000.0
                     except ValueError:
                         weight = False
+                        pass
                     except TypeError:
                         weight = False
+                        pass
                     lot_unique_ref = " ".join(
                         [
                             esito_lista[k + 2].strip() if esito_lista[k + 2] else ""
@@ -77,9 +93,9 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         ]
                     )[:20]
                     if articolo not in stock_product_dict:
-                        stock_product_dict.update(
-                            {articolo: {lot_unique_ref: qty, "weight": weight}}
-                        )
+                        stock_product_dict.update({
+                            articolo: {lot_unique_ref: qty, "weight": weight}
+                        })
                     else:
                         stock_product_dict[articolo].update({"weight": weight})
                         if lot_unique_ref not in stock_product_dict[articolo].keys():
@@ -184,7 +200,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                                     "location_id": dbsource.location_id.id,
                                     "product_id": product.id,
                                     "product_uom_id": product.uom_id.id,
-                                    "reason": "WHS synchronize",
+                                    "reason": "WMS synchronize",
                                 }
                             )
                     else:
@@ -246,7 +262,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
             if wizard.do_sync and inventory_lines_data:
                 inventory = inventory_obj.create(
                     {
-                        "name": "WHS sync inventory "
+                        "name": "WMS sync inventory "
                         + new_last_update.strftime("%Y-%m-%d"),
                         "location_ids": [(6, 0, dbsource.location_id.ids)],
                         "company_id": dbsource.company_id.id,
@@ -263,7 +279,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         % ("sync" if wizard.do_sync else "check"),
                         "ultimo_invio": new_last_update,
                         "dbsource_id": dbsource.id,
-                        "inventory_id": inventory.id if inventory else False,
+                        "inventory_id": inventory.id,
                         "hyddemo_mssql_log_line_ids": [
                             (0, 0, x) for x in whs_log_lines
                         ],

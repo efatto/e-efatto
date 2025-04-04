@@ -5,8 +5,14 @@
         <field name="model">base.external.dbsource</field>
         <field name="inherit_id" ref="base_external_dbsource.view_dbsource_form" />
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='password']" position="before">
-                <field name="active" widget="boolean_toggle" />
+            <xpath expr="//form/sheet/group" position="before">
+                <div class="oe_button_box" name="button_box">
+                    <button name="toggle_active" type="object"
+                            class="oe_stat_button" icon="fa-archive">
+                        <field name="active" widget="boolean"
+                            options='{"terminology": "archive"}'/>
+                    </button>
+                </div>
             </xpath>
             <xpath expr="//field[@name='conn_string']/.." position="attributes">
                 <attribute name="col">2</attribute>
@@ -21,22 +27,22 @@
                 <header>
                     <button
             name="whs_update_products"
-            string="Update Products in WHS"
+            string="Update Products in WMS"
             type="object"
           />
                     <button
             name="whs_insert_read_and_synchronize_list"
-            string="Synchronize WHS lists"
+            string="Synchronize WMS lists"
             type="object"
           />
                     <button
             name="whs_sync_stock"
-            string="Synchronize Stock from WHS"
+            string="Synchronize Stock from WMS"
             type="object"
           />
                     <button
             name="whs_check_lists"
-            string="Check lists status"
+            string="Check missing lists"
             type="object"
           />
                     <button
@@ -49,9 +55,9 @@
             <xpath expr="//group" position="after">
                 <group>
                     <field name="location_id" />
-                    <field name="warehouse_id" />
                     <field name="clean_days_limit" />
                     <field name="force_update_product_from_date" />
+                    <field name="stock_picking_type_ids" />
                 </group>
             </xpath>
         </field>
