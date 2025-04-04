@@ -3,7 +3,7 @@ from sqlalchemy import text as sql_text
 from odoo.tests import tagged
 from odoo.tests.common import Form
 
-from odoo.addons.base_external_dbsource.exceptions import ConnectionSuccessError
+from odoo.exceptions import ValidationError
 from odoo.addons.connector_wms_whs.tests.test_connector_wms_whs import (
     TestConnectorWmsWhs,
 )
@@ -15,7 +15,7 @@ class TestConnectorWmsModula(TestConnectorWmsWhs):
         super().setUp()
 
     def test_05_repair(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
 
         whs_len_records = len(self._execute_select_all_valid_host_liste())
