@@ -7,7 +7,6 @@
         <field name="arch" type="xml">
             <search string="Liste prelievo, deposito e inventario">
                 <field name="num_lista" />
-                <field name="priorita" />
                 <field name="stato" />
                 <field name="data_lista" />
                 <field name="riferimento" />
@@ -37,7 +36,6 @@
                 <field name="whs_list_absent" />
                 <field name="whs_list_multiple" />
                 <field name="whs_not_passed" />
-                <field name="priorita" />
                 <field name="num_lista" />
                 <field name="stato" />
                 <field name="data_lista" />
@@ -63,7 +61,7 @@
             <form string="Liste prelievo, deposito e inventario">
                 <header>
                     <button
-            name="whs_check_list_state"
+            name="check_list_state"
             string="Check list state"
             type="object"
           />
@@ -79,7 +77,7 @@
           />
                     <button name="whs_list_sync" string="Sync list" type="object" />
                 </header>
-                <sheet string="WHS liste">
+                <sheet string="WMS Lists">
                     <group>
                         <group>
                             <field name="product_id" />
@@ -111,7 +109,6 @@
                             <field name="product_customer_code" />
                             <field name="parent_product_id" />
                             <field name="tipo" />
-                            <field name="priorita" />
                         </group>
                         <group>
                             <field name="vettore" />
@@ -134,7 +131,7 @@
     </record>
 
     <record id="action_whs_liste" model="ir.actions.act_window">
-        <field name="name">Whs Liste</field>
+        <field name="name">WMS Lists</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">hyddemo.whs.liste</field>
         <field name="view_mode">tree,form</field>

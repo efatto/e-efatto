@@ -36,7 +36,7 @@
         </field>
     </record>
     <record id="action_whslog" model="ir.actions.act_window">
-        <field name="name">Whslog</field>
+        <field name="name">Log WMS</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">hyddemo.mssql.log</field>
         <field name="view_mode">tree,form</field>

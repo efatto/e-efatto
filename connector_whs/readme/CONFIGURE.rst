@@ -8,7 +8,7 @@ In questa maschera vanno indicati i dati per la connessione con la stringa e l'e
 .. image:: ../static/description/configurazione_sorgente_dati.png
     :alt: Configurazione sorgente dati
 
-Dalla sorgente dati sono disponibile alcune azioni. La seguente va a caricare nella tabella di scambio HOST_ARTICOLI i prodotti modificati dall'ultima esecuzione, che verranno prelevati e aggiornati nel software collegato:
+Dalla sorgente dati sono disponibile alcune azioni. La seguente va a caricare nella tabella di scambio i prodotti modificati dall'ultima esecuzione, che verranno prelevati e aggiornati nel software collegato:
 
 .. image:: ../static/description/aggiorna_prodotti.png
     :alt: Aggiorna prodotti
@@ -23,4 +23,4 @@ Quest'ultima l'inventario dei prodotti:
 .. image:: ../static/description/sincronizza_magazzino.png
     :alt: Sincronizza magazzino
 
-Per tecnici: il collegamento alla sorgente dati è configurata nella VM nel file whsHost.INI nella cartella C:\whsDemo2\, in cui viene inserito il DB: OpenERP-WHS_test e l'IP della stessa VM: 192.168.1.141 (valori che possono cambiare in base alla configurazione locale).
+Nella sorgente dati è necessario configurare quali tipi di movimento sono gestiti tramite il WMS. In caso di configurazione tramite 2 step, vanno solitamente esclusi i trasferimenti dalle posizioni di Output e Input, per evitare un doppio scarico/carico dal WMS.
