@@ -14,9 +14,10 @@ class SaleOrder(models.Model):
     def action_confirm(self):
         res = super(SaleOrder, self).action_confirm()
         for order in self:
-            # create_whs_list method is a redundant call as already called by
-            # stock.picking action_confirm(), to cover the cases in which stock.picking
-            # is not confirmed
+            # This method is executed after the creation of whs lists from picking
+            # confirmation, generally automatically done.
+            # This is used only to ensure some residual cases (some cron?) do not
+            # confirm the pickings.
             order.picking_ids.filtered(lambda x: x.state != "cancel").mapped(
                 "move_lines"
             ).filtered(

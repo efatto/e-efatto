@@ -1,123 +1,6 @@
 # Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
-# flake8: noqa: C901
-
-import logging
-import time
-
-from sqlalchemy import text as sql_text
-
-from odoo import _, api, fields, models
-from odoo.exceptions import UserError
-from odoo.tools.date_utils import relativedelta
-
-_logger = logging.getLogger(__name__)
-
-insert_product_query = """
-INSERT INTO HOST_ARTICOLI (
-Elaborato,
-TipoOperazione,
-Codice,
-Descrizione,
-Peso,
-Barcode,
-UM,
-TipoConfezione,
-CategoriaMerc,
-MantieniDinamici,
-Ubicazione,
-Altezza,
-Larghezza,
-Profondita,
-DescrizioneBreve,
-ScortaMin,
-Id
-)
-VALUES (
-:Elaborato,
-:TipoOperazione,
-:Codice,
-:Descrizione,
-:Peso,
-:Barcode,
-:UM,
-:TipoConfezione,
-:CategoriaMerc,
-:MantieniDinamici,
-:Ubicazione,
-:Altezza,
-:Larghezza,
-:Profondita,
-:DescrizioneBreve,
-:ScortaMin,
-:Id
-)
-"""
-
-insert_host_liste_query = """
-INSERT INTO HOST_LISTE (
-NumLista,
-NumRiga,
-DataLista,
-Riferimento,
-TipoOrdine,
-Causale,
-Priorita,
-RichiestoEsito,
-Stato,
-ControlloEvadibilita,
-Vettore,
-{idCliente}
-{RagioneSociale}
-Indirizzo,
-Cap,
-Localita,
-Provincia,
-Nazione,
-Articolo,
-DescrizioneArticolo,
-Qta,
-PesoArticolo,
-UMArticolo,
-IdTipoArticolo,
-Elaborato,
-AuxTesto1,
-AuxTestoRiga1,
-AuxTestoRiga2,
-AuxTestoRiga3
-)
-VALUES (
-:NumLista,
-:NumRiga,
-:DataLista,
-:Riferimento,
-:TipoOrdine,
-:Causale,
-:Priorita,
-:RichiestoEsito,
-:Stato,
-:ControlloEvadibilita,
-:Vettore,
-{idClientes}
-{RagioneSociales}
-:Indirizzo,
-:Cap,
-:Localita,
-:Provincia,
-:Nazione,
-:Articolo,
-:DescrizioneArticolo,
-:Qta,
-:PesoArticolo,
-:UMArticolo,
-:IdTipoArticolo,
-:Elaborato,
-:AuxTesto1,
-:AuxTestoRiga1,
-:AuxTestoRiga2,
-:AuxTestoRiga3
-)
-"""
+from odoo import models, fields
 
 
 class HyddemoMssqlLog(models.Model):
@@ -125,9 +8,9 @@ class HyddemoMssqlLog(models.Model):
     _description = "Synchronization with Remote Mssql DB"
     _order = "ultimo_invio desc"
 
-    ultimo_id = fields.Integer("Last ID in WHS", default=1)
+    ultimo_id = fields.Integer("Last ID in WMS", default=1)
     ultimo_invio = fields.Datetime("Last Processing", readonly=True)
-    errori = fields.Text("Log Processing", readonly=True)
+    errori = fields.Text("Log WMS", readonly=True)
     dbsource_id = fields.Many2one(
         "base.external.dbsource", "External DB Source Origin", readonly=True
     )
@@ -138,6 +21,7 @@ class HyddemoMssqlLog(models.Model):
         "hyddemo.mssql.log.line", "hyddemo_mssql_log_id", "Log lines"
     )
 
+# DA QUI SPOSTATE
     @api.model
     def whs_update_products(self, datasource_id):
         """
@@ -820,17 +704,23 @@ class HyddemoMssqlLog(models.Model):
         if hyddemo_whs_list.ragsoc:  # char 100
             execute_params.update({"RagioneSociale": hyddemo_whs_list.ragsoc[:100]})
         return execute_params
-
+# FIN QUI SPOSTATE!
 
 class HyddemoMssqlLogLine(models.Model):
     _name = "hyddemo.mssql.log.line"
     _description = "Mssql Log Line"
 
     name = fields.Text()
-    qty_wrong = fields.Float()
-    qty = fields.Float()
-    weight = fields.Float()
-    weight_wrong = fields.Float()
+    qty_wrong = fields.Float(
+        string="Odoo Q.ty (wrong)",
+        help="This quantity is assumed as wrong and overriden by WMS quantity if "
+             "'Synchronize stock inventory' is set.")
+    qty = fields.Float(string="WMS Q.ty")
+    weight = fields.Float(string="WMS Weight")
+    weight_wrong = fields.Float(
+        string="Odoo Weight (wrong)",
+        help="This weight is assumed as wrong and overriden by WMS weight if "
+             "'Synchronize stock inventory' is set.")
     product_id = fields.Many2one("product.product")
     type = fields.Selection(
         [

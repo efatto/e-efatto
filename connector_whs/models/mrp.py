@@ -84,7 +84,7 @@ class MrpProduction(models.Model):
                 production.move_raw_ids | production.move_finished_ids
             ).mapped("whs_list_ids")
             if any([x.stato != "1" and x.qtamov != 0 for x in whs_list_ids]):
-                raise UserError(_("Some moves already elaborated from WHS!"))
+                raise UserError(_("Some moves already elaborated from WMS!"))
             for whs_list_id in whs_list_ids:
                 location = (
                     whs_list_id.move_id.location_dest_id
@@ -96,12 +96,12 @@ class MrpProduction(models.Model):
                 )
                 if not dbsource:
                     _logger.info(
-                        "WHS LOG: Location %s is not linked to WHS System"
+                        "WMS LOG: Location %s is not linked to WMS System"
                         % location.name
                     )
                     continue
                 _logger.info(
-                    "WHS LOG: unlink lists for product %s of production %s"
+                    "WMS LOG: unlink lists for product %s of production %s"
                     % (whs_list_id.move_id.product_id.name, production.name)
                 )
                 whs_list_id.whs_unlink_lists(dbsource.id)
@@ -197,14 +197,17 @@ class MrpProduction(models.Model):
     def _generate_whs(self):
         whsliste_obj = self.env["hyddemo.whs.liste"]
         for production in self:
-            # Create WHS list for raw materials
+            # Create WMS list for raw materials
             raw_dbsource = self.env["base.external.dbsource"].search(
                 [("location_id", "=", production.location_src_id.id)]
             )
-            if raw_dbsource:
+            if (
+                raw_dbsource and production.picking_type_id
+                in raw_dbsource.stock_picking_type_ids
+            ):
                 num_lista = False
                 riga = 0
-                # Location of raw material is linked to WHS
+                # Location of raw material is linked to WMS
                 for move in production.move_raw_ids:
                     if move.whs_list_ids and not all(
                         x.stato == "3" for x in move.whs_list_ids
@@ -242,18 +245,23 @@ class MrpProduction(models.Model):
                         )
                         whsliste_obj.create(whsliste_data)
 
-            # Create WHS list for finished products
+            # Create WMS list for finished products
             finished_dbsource = self.env["base.external.dbsource"].search(
                 [("location_id", "=", production.location_dest_id.id)]
             )
-            if finished_dbsource and not (
-                production.picking_type_id.warehouse_id.mto_pull_id.route_id
-                in production.product_id.route_ids
-                and production.product_id.categ_id.name == "CUSTOM"
+            if (
+                finished_dbsource
+                and production.picking_type_id
+                in finished_dbsource.stock_picking_type_ids
+                and not (
+                    production.picking_type_id.warehouse_id.mto_pull_id.route_id
+                    in production.product_id.route_ids
+                    and production.product_id.categ_id.name == "CUSTOM"
+                )
             ):
                 # Do not create WHS lists for finished products that have an MTO route
-                # and with category name equal to CUSTOM
-                # Location of finished material is linked to WHS
+                # and with category name equal to CUSTOM  # todo move to wms_whs
+                # Location of finished material is linked to WMS
                 num_lista = False
                 riga = 0
                 for move in production.move_finished_ids:
