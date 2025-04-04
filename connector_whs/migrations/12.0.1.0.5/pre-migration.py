@@ -2,8 +2,8 @@
 from openupgradelib import openupgrade
 
 _column_renames = {
-    'hyddemo_whs_liste': [
-        ('picking', None),
+    "hyddemo_whs_liste": [
+        ("picking", None),
     ],
 }
 
@@ -11,5 +11,5 @@ _column_renames = {
 @openupgrade.migrate()
 def migrate(env, version):
     cr = env.cr
-    if openupgrade.column_exists(cr, 'hyddemo_whs_liste', 'picking'):
+    if openupgrade.column_exists(cr, "hyddemo_whs_liste", "picking"):
         openupgrade.rename_columns(cr, _column_renames)

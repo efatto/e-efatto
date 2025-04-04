@@ -3,14 +3,14 @@ from odoo import api, models
 
 
 class StockBackorderConfirmation(models.TransientModel):
-    _inherit = 'stock.backorder.confirmation'
+    _inherit = "stock.backorder.confirmation"
 
     @api.one
     def _process(self, cancel_backorder=False):
         super()._process(cancel_backorder=cancel_backorder)
         for pick_id in self.pick_ids:
-            backorder_pick = self.env['stock.picking'].search([
-                ('backorder_id', '=', pick_id.id)])
+            backorder_pick = self.env["stock.picking"].search([
+                ("backorder_id", "=", pick_id.id)])
             warehouse = backorder_pick.picking_type_id.warehouse_id
             reception_steps = warehouse.reception_steps
             delivery_steps = warehouse.delivery_steps
@@ -25,7 +25,7 @@ class StockBackorderConfirmation(models.TransientModel):
                     and backorder_pick.location_dest_id.usage == "internal"
                 ) or (
                     reception_steps == "one_step"
-                    and backorder_pick.picking_type_id.code == 'incoming'
+                    and backorder_pick.picking_type_id.code == "incoming"
                 )
             ):
                 # restore the default location if it was set to WMS one
@@ -44,10 +44,10 @@ class StockBackorderConfirmation(models.TransientModel):
                     backorder_pick.location_dest_id == warehouse.pbm_loc_id
                 ) or (
                     delivery_steps == "ship_only" and
-                    backorder_pick.picking_type_id.code == 'outgoing'
+                    backorder_pick.picking_type_id.code == "outgoing"
                 ) or (
                     manufacture_steps == "mrp_one_step" and
-                    backorder_pick.picking_type_id.code == 'mrp_operation'
+                    backorder_pick.picking_type_id.code == "mrp_operation"
                 )
             ):
                 # restore the default location if it was set to WMS one

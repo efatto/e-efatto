@@ -6,23 +6,23 @@ from odoo import models, fields
 class HyddemoMssqlLog(models.Model):
     _name = "hyddemo.mssql.log"
     _description = "Synchronization with Remote Mssql DB"
-    _order = 'ultimo_invio desc'
+    _order = "ultimo_invio desc"
 
-    ultimo_id = fields.Integer('Last ID in WMS', default=1)
-    ultimo_invio = fields.Datetime('Last Processing', readonly=True)
-    errori = fields.Text('Log WMS', readonly=True)
+    ultimo_id = fields.Integer("Last ID in WMS", default=1)
+    ultimo_invio = fields.Datetime("Last Processing", readonly=True)
+    errori = fields.Text("Log WMS", readonly=True)
     dbsource_id = fields.Many2one(
-        'base.external.dbsource',
-        'External DB Source Origin',
+        "base.external.dbsource",
+        "External DB Source Origin",
         readonly=True)
     inventory_id = fields.Many2one(
-        'stock.inventory',
-        'Created inventory',
+        "stock.inventory",
+        "Created inventory",
         readonly=True)
     hyddemo_mssql_log_line_ids = fields.One2many(
-        'hyddemo.mssql.log.line',
-        'hyddemo_mssql_log_id',
-        'Log lines'
+        "hyddemo.mssql.log.line",
+        "hyddemo_mssql_log_id",
+        "Log lines"
     )
 
 
@@ -42,13 +42,13 @@ class HyddemoMssqlLogLine(models.Model):
         help="This weight is assumed as wrong and overriden by WMS weight if "
              "'Synchronize stock inventory' is set.")
     product_id = fields.Many2one(
-        'product.product')
+        "product.product")
     type = fields.Selection([
-        ('not_found', 'Not found'),
-        ('ok', 'Ok'),
-        ('mismatch', 'Mismatch'),
-        ('service', 'Service'),
-    ], 'Type')
+        ("not_found", "Not found"),
+        ("ok", "Ok"),
+        ("mismatch", "Mismatch"),
+        ("service", "Service"),
+    ], "Type")
     lot = fields.Text()
     hyddemo_mssql_log_id = fields.Many2one(
-        'hyddemo.mssql.log')
+        "hyddemo.mssql.log")

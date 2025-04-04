@@ -16,12 +16,12 @@ class BaseExternalDbsource(models.Model):
     _inherit = "base.external.dbsource"
 
     location_id = fields.Many2one(
-        'stock.location', 'Location linked to WMS')
-    conn_string_sandbox = fields.Text('Connection string sandbox')
-    active = fields.Boolean('Active', default=True)
+        "stock.location", "Location linked to WMS")
+    conn_string_sandbox = fields.Text("Connection string sandbox")
+    active = fields.Boolean("Active", default=True)
     stock_picking_type_ids = fields.Many2many(
-        comodel_name='stock.picking.type',
-        string='Stock picking types enabled',
+        comodel_name="stock.picking.type",
+        string="Stock picking types enabled",
     )
 
     @api.multi
@@ -35,7 +35,7 @@ class BaseExternalDbsource(models.Model):
                 raise UserError(_("A location can be linked to only one Db Source!"))
 
     @api.multi
-    @api.depends('conn_string', 'conn_string_sandbox', 'password')
+    @api.depends("conn_string", "conn_string_sandbox", "password")
     def _compute_conn_string_full(self):
         if not system_base_config.get("running_env"):
             system_base_config["running_env"] = "test"
@@ -45,10 +45,10 @@ class BaseExternalDbsource(models.Model):
             if server_running_state != "prod":
                 conn_string = record.conn_string_sandbox
             if record.password:
-                if '%s' not in conn_string:
+                if "%s" not in conn_string:
                     pwd_string = getattr(
                         record,
-                        'PWD_STRING_%s' % record.connector.upper(),
+                        "PWD_STRING_%s" % record.connector.upper(),
                         record.PWD_STRING,
                     )
                     conn_string += pwd_string
@@ -61,7 +61,7 @@ class BaseExternalDbsource(models.Model):
             self, product, location_id, last_id, operation=False):
         """
         Overridable method
-        Carica/aggiorna l'anagrafica articoli verso il WMS
+        Carica/aggiorna l"anagrafica articoli verso il WMS
         """
         return ""
 
@@ -91,18 +91,18 @@ class BaseExternalDbsource(models.Model):
         for dbsource in self:
             connection = dbsource.connection_open_mssql()
             if not connection:
-                raise UserError(_('Failed to open connection!'))
+                raise UserError(_("Failed to open connection!"))
             # delete from HOST_ARTICOLI if already processed from WMS (Elaborato=2)
             # or interrupted (bad) records (Elaborato=0)
             dbsource._pre_insert_product_query()
-            log_data = self.env['hyddemo.mssql.log'].search_read(
-                [], ['ultimo_invio', 'ultimo_id'], order='ultimo_id desc', limit=1)
+            log_data = self.env["hyddemo.mssql.log"].search_read(
+                [], ["ultimo_invio", "ultimo_id"], order="ultimo_id desc", limit=1)
             _logger.info(log_data)
-            last_id = log_data and log_data[0]['ultimo_id'] or 0
-            last_date_dt = log_data and log_data[0]['ultimo_invio'] or (
+            last_id = log_data and log_data[0]["ultimo_id"] or 0
+            last_date_dt = log_data and log_data[0]["ultimo_invio"] or (
                 fields.Datetime.now() + relativedelta(years=-10))
             last_date = fields.Datetime.to_string(last_date_dt)
-            products = self.env['product.product']._get_product_to_sync(last_date)
+            products = self.env["product.product"]._get_product_to_sync(last_date)
             new_last_update = fields.Datetime.now()
             for product in products:
                 insert_product_params = self._prepare_host_articoli_values(
@@ -138,9 +138,9 @@ class BaseExternalDbsource(models.Model):
         for dbsource in self:
             connection = self.connection_open_mssql()
             if not connection:
-                raise UserError(_('Failed to open connection!'))
+                raise UserError(_("Failed to open connection!"))
             i = 0
-            pickings_to_assign = self.env['stock.picking']
+            pickings_to_assign = self.env["stock.picking"]
             db_fields = [
                 "NumLista", "NumRiga", "Qta", "QtaMovimentata", "Lotto", "Lotto2",
                 "Lotto3", "Lotto4", "Lotto5", "Articolo", "DescrizioneArticolo"]
@@ -158,7 +158,7 @@ class BaseExternalDbsource(models.Model):
                             "AND NumLista IN :NUM_LISTE ORDER BY NumLista, NumRiga"
                         ),
                         sqlparams=dict(
-                            NUM_LISTE=whs_lists.mapped('num_lista'),
+                            NUM_LISTE=whs_lists.mapped("num_lista"),
                         ),
                         metadata=None,
                     )
@@ -198,9 +198,9 @@ class BaseExternalDbsource(models.Model):
                             % esito_lista
                         )
                         continue
-                    hyddemo_whs_lists = self.env['hyddemo.whs.liste'].search([
-                        ('num_lista', '=', num_lista),
-                        ('riga', '=', num_riga)
+                    hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search([
+                        ("num_lista", "=", num_lista),
+                        ("riga", "=", num_riga)
                     ])
                     if not hyddemo_whs_lists:
                         # ROADMAP: if the user want to create the list directly in WMS,
@@ -211,18 +211,18 @@ class BaseExternalDbsource(models.Model):
                             % (
                                 num_riga,
                                 num_lista,
-                                self.env['hyddemo.whs.liste'].search([
-                                    ('num_lista', '=', num_lista)]),
+                                self.env["hyddemo.whs.liste"].search([
+                                    ("num_lista", "=", num_lista)]),
                             )
                         )
                         continue
                     if len(hyddemo_whs_lists) > 1:
                         _logger.info(
-                            'WMS LOG: More than 1 list found for lista %s' %
+                            "WMS LOG: More than 1 list found for lista %s" %
                             hyddemo_whs_lists)
                     hyddemo_whs_list = hyddemo_whs_lists[0]
-                    if hyddemo_whs_list.stato == '3':
-                        _logger.debug('WMS LOG: list not processable: %s-%s' % (
+                    if hyddemo_whs_list.stato == "3":
+                        _logger.debug("WMS LOG: list not processable: %s-%s" % (
                             hyddemo_whs_list.num_lista,
                             hyddemo_whs_list.riga,
                         ))
@@ -255,8 +255,8 @@ class BaseExternalDbsource(models.Model):
                         # in or out differs from total qty
                         if qty_moved > hyddemo_whs_list.qta:
                             _logger.info(
-                                'WMS LOG: list %s: qty moved %s is bigger than '
-                                'initial qty %s!' % (
+                                "WMS LOG: list %s: qty moved %s is bigger than "
+                                "initial qty %s!" % (
                                     hyddemo_whs_list.id, qty_moved,
                                     hyddemo_whs_list.qta)
                             )
@@ -268,13 +268,13 @@ class BaseExternalDbsource(models.Model):
                     # Set move qty_moved user can create a backorder
                     # Picking become automatically done if all moves are done
                     hyddemo_whs_list.write({
-                        'stato': '4',
-                        'qtamov': qty_moved,
-                        'lotto': lotto,
-                        'lotto2': lotto2,
-                        'lotto3': lotto3,
-                        'lotto4': lotto4,
-                        'lotto5': lotto5,
+                        "stato": "4",
+                        "qtamov": qty_moved,
+                        "lotto": lotto,
+                        "lotto2": lotto2,
+                        "lotto3": lotto3,
+                        "lotto4": lotto4,
+                        "lotto5": lotto5,
                     })
                     if len(move.move_line_ids) > 1:
                         _logger.info(
@@ -291,8 +291,8 @@ class BaseExternalDbsource(models.Model):
                                     "WMS LOG: move id %s is not writeable for %s"
                                     % (move.id, error)
                                 )
-                    if move.picking_id.mapped('move_lines').filtered(
-                        lambda m: m.state not in ('draft', 'cancel', 'done')
+                    if move.picking_id.mapped("move_lines").filtered(
+                        lambda m: m.state not in ("draft", "cancel", "done")
                     ):
                         # FIXME action_assign must assign on qty_done and not on
                         #  available
@@ -309,8 +309,8 @@ class BaseExternalDbsource(models.Model):
                     )
             if pickings_to_assign:
                 pickings_to_assign.filtered(
-                    lambda x: x.mapped('move_lines').filtered(
-                        lambda m: m.state not in ('draft', 'cancel', 'done')
+                    lambda x: x.mapped("move_lines").filtered(
+                        lambda m: m.state not in ("draft", "cancel", "done")
                     )
                 ).action_assign()
 
@@ -334,10 +334,10 @@ class BaseExternalDbsource(models.Model):
         for dbsource in self:
             connection = dbsource.connection_open_mssql()
             if not connection:
-                raise UserError(_('Failed to open connection!'))
+                raise UserError(_("Failed to open connection!"))
 
-            hyddemo_whs_lists = self.env['hyddemo.whs.liste'].search([
-                ('stato', '=', '1'),
+            hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search([
+                ("stato", "=", "1"),
             ])
             # group and insert lists by num_lista
             for num_lista in set(hyddemo_whs_lists.mapped("num_lista")):
@@ -397,7 +397,7 @@ class BaseExternalDbsource(models.Model):
                     )
                 # set state to Elaborato even if query is not created
                 hyddemo_whs_lists.write({"stato": "2"})
-                # commit to exclude rollback as mssql wouldn't be rollbacked too
+                # commit to exclude rollback as mssql wouldn`t be rollbacked too
                 self._cr.commit()  # pylint: disable=E8102
             dbsource.whs_read_and_synchronize_list()
 
@@ -422,27 +422,27 @@ class BaseExternalDbsource(models.Model):
     def _cron_whs_synchronize_stock(self, do_sync=False):
         for dbsource in self.search([]):
             dbsource.whs_update_products()
-            wizard_obj = self.env['wizard.sync.stock.whs.mssql']
+            wizard_obj = self.env["wizard.sync.stock.whs.mssql"]
             wizard_vals = wizard_obj.default_get(
-                ['do_sync']
+                ["do_sync"]
             )
             wizard_vals.update(do_sync=do_sync)
             wizard = wizard_obj.with_context(
                 active_ids=dbsource.ids,
-                active_model='base.external.dbsource').create(wizard_vals)
+                active_model="base.external.dbsource").create(wizard_vals)
             wizard.apply()
 
     @api.multi
     def whs_sync_stock(self):
         self.ensure_one()
-        wizard = self.env.ref('connector_whs.view_wizard_sync_stock_whs_mssql', False)
+        wizard = self.env.ref("connector_whs.view_wizard_sync_stock_whs_mssql", False)
         return {
-            'name': "Synchronize stock inventory with Remote Mssql DB",
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'views': [(wizard.id, 'form')],
-            'view_id': wizard.id,
-            'target': 'new',
-            'res_model': "wizard.sync.stock.whs.mssql",
+            "name": "Synchronize stock inventory with Remote Mssql DB",
+            "type": "ir.actions.act_window",
+            "view_type": "form",
+            "view_mode": "form",
+            "views": [(wizard.id, "form")],
+            "view_id": wizard.id,
+            "target": "new",
+            "res_model": "wizard.sync.stock.whs.mssql",
         }

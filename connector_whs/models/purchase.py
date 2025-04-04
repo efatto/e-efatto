@@ -11,8 +11,8 @@ class PurchaseOrder(models.Model):
     def button_approve(self, force=False):
         res = super(PurchaseOrder, self).button_approve(force=force)
         for order in self:
-            order.picking_ids.filtered(lambda x: x.state != 'cancel').mapped(
-                'move_lines').create_whs_list()
+            order.picking_ids.filtered(lambda x: x.state != "cancel").mapped(
+                "move_lines").create_whs_list()
         return res
 
     @api.multi
