@@ -1,9 +1,12 @@
-from odoo.addons.base_external_dbsource.exceptions import ConnectionSuccessError
+from sqlalchemy import text as sql_text
+
 from odoo.tests import tagged
 from odoo.tests.common import Form
+
+from odoo.addons.base_external_dbsource.exceptions import ConnectionSuccessError
 from odoo.addons.connector_wms_whs.tests.test_connector_wms_whs import (
-    TestConnectorWmsWhs)
-from sqlalchemy import text as sql_text
+    TestConnectorWmsWhs,
+)
 
 
 @tagged("-standard", "test_wms")
@@ -42,14 +45,19 @@ class TestConnectorWmsModula(TestConnectorWmsWhs):
             repair_line_form.location_dest_id = self.manufacture_location
         repair = repair_form.save()
         repair.action_repair_confirm()
-        self.assertEqual(repair.state, "confirmed",
-                         'Repair order should be in "Confirmed" state.')
+        self.assertEqual(
+            repair.state, "confirmed", 'Repair order should be in "Confirmed" state.'
+        )
         repair.action_repair_start()
-        self.assertEqual(repair.state, "under_repair",
-                         'Repair order should be in "Under_repair" state.')
+        self.assertEqual(
+            repair.state,
+            "under_repair",
+            'Repair order should be in "Under_repair" state.',
+        )
         repair.action_repair_end()
-        self.assertEqual(repair.state, "done",
-                         'Repair order should be in "Done" state.')
+        self.assertEqual(
+            repair.state, "done", 'Repair order should be in "Done" state.'
+        )
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
@@ -57,7 +65,8 @@ class TestConnectorWmsModula(TestConnectorWmsWhs):
                 self.dbsource.execute_mssql(
                     sqlquery=sql_text(
                         "SELECT * FROM HOST_LISTE WHERE Elaborato!=:Elaborato AND "
-                        "Qta!=:Qta"),
+                        "Qta!=:Qta"
+                    ),
                     sqlparams=dict(Elaborato=5, Qta=0),
                     metadata=None,
                 )[0]
@@ -67,14 +76,17 @@ class TestConnectorWmsModula(TestConnectorWmsWhs):
 
         # simulate whs work: partial processing of product #2
         # and total of product #3
-        whs_lists = repair.mapped('operations.move_id.whs_list_ids')
+        whs_lists = repair.mapped("operations.move_id.whs_list_ids")
         for whs_list in whs_lists:
-            set_liste_elaborated_query = \
-                "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=%s WHERE " \
-                "NumLista = '%s' AND NumRiga = '%s'" % (
+            set_liste_elaborated_query = (
+                "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=%s WHERE "
+                "NumLista = '%s' AND NumRiga = '%s'"
+                % (
                     2 if whs_list.product_id == self.product2 else 3,
-                    whs_list.num_lista, whs_list.riga
+                    whs_list.num_lista,
+                    whs_list.riga,
                 )
+            )
             self.dbsource.with_context(no_return=True).execute_mssql(
                 sqlquery=sql_text(set_liste_elaborated_query),
                 sqlparams=None,
@@ -82,34 +94,36 @@ class TestConnectorWmsModula(TestConnectorWmsWhs):
             )
 
         for whs_list in whs_lists:
-            whs_select_query = \
-                "SELECT Qta, QtaMovimentata FROM HOST_LISTE WHERE Elaborato = 4 AND " \
-                "NumLista = '%s' AND NumRiga = '%s'" % (
-                    whs_list.num_lista, whs_list.riga
-                )
+            whs_select_query = (
+                "SELECT Qta, QtaMovimentata FROM HOST_LISTE WHERE Elaborato = 4 AND "
+                "NumLista = '%s' AND NumRiga = '%s'"
+                % (whs_list.num_lista, whs_list.riga)
+            )
             result_liste = self.dbsource.execute_mssql(
                 sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
             )
             self.assertEqual(
                 str(result_liste[0]),
                 "[(Decimal('5.000'), Decimal('2.000'))]"
-                if whs_list.product_id == self.product2 else
-                "[(Decimal('3.000'), Decimal('3.000'))]")
+                if whs_list.product_id == self.product2
+                else "[(Decimal('3.000'), Decimal('3.000'))]",
+            )
 
         # this update Odoo from WHS
         self.dbsource.whs_insert_read_and_synchronize_list()
         # check whs_list are elaborated
         for whs_list in whs_lists:
-            whs_select_query = \
-                "SELECT Qta, QtaMovimentata FROM HOST_LISTE WHERE Elaborato = 5 AND " \
-                "NumLista = '%s' AND NumRiga = '%s'" % (
-                    whs_list.num_lista, whs_list.riga
-                )
+            whs_select_query = (
+                "SELECT Qta, QtaMovimentata FROM HOST_LISTE WHERE Elaborato = 5 AND "
+                "NumLista = '%s' AND NumRiga = '%s'"
+                % (whs_list.num_lista, whs_list.riga)
+            )
             result_liste = self.dbsource.execute_mssql(
                 sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
             )
             self.assertIn(
                 "[(Decimal('5.000'), Decimal('2.000'))]"
-                if whs_list.product_id == self.product2 else
-                "[(Decimal('3.000'), Decimal('3.000'))]",
-                str(result_liste))
+                if whs_list.product_id == self.product2
+                else "[(Decimal('3.000'), Decimal('3.000'))]",
+                str(result_liste),
+            )
