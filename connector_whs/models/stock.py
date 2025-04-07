@@ -389,73 +389,73 @@ class StockMove(models.Model):
                                  if x.stato != "3"]
                             )
                         )
-                    continue
-                if not list_number:
-                    list_number = self.env["ir.sequence"].next_by_code(
-                        "hyddemo.whs.liste"
-                    )
-                    riga = 0
-                else:
-                    riga = max(whsliste_obj.search([
-                        ("num_lista", "=", list_number),
-                    ]).mapped("riga"))
-                riga += 1
-                customer = partner_id and move.product_id.customer_ids.filtered(
-                    lambda x: x.name == partner_id.commercial_partner_id
-                ) or False
-                whsliste_data = {
-                    "stato": "1",
-                    "tipo": tipo,
-                    "num_lista": list_number,
-                    "data_lista": fields.Datetime.now(),
-                    "product_id": move.product_id.id,
-                    "qta": move.product_qty,
-                    "move_id": move.id,
-                    "tipo_mov": "move",
-                    "riga": riga,
-                    "client_order_ref": move.sale_line_id.order_id.client_order_ref,
-                }
-                if move.sale_line_id.product_id != move.product_id:
-                    whsliste_data.update(
-                        {
-                            "parent_product_id": move.sale_line_id.product_id.id,
-                        }
-                    )
-                if customer:
-                    whsliste_data.update(
-                        {
-                            "product_customer_code": customer[0].product_code,
-                        })
-                if move.origin:
-                    whsliste_data["riferimento"] = move.origin[:50]
+                        continue
+                    if not list_number:
+                        list_number = self.env["ir.sequence"].next_by_code(
+                            "hyddemo.whs.liste"
+                        )
+                        riga = 0
+                    else:
+                        riga = max(whsliste_obj.search([
+                            ("num_lista", "=", list_number),
+                        ]).mapped("riga"))
+                    riga += 1
+                    customer = partner_id and move.product_id.customer_ids.filtered(
+                        lambda x: x.name == partner_id.commercial_partner_id
+                    ) or False
+                    whsliste_data = {
+                        "stato": "1",
+                        "tipo": tipo,
+                        "num_lista": list_number,
+                        "data_lista": fields.Datetime.now(),
+                        "product_id": move.product_id.id,
+                        "qta": move.product_qty,
+                        "move_id": move.id,
+                        "tipo_mov": "move",
+                        "riga": riga,
+                        "client_order_ref": move.sale_line_id.order_id.client_order_ref,
+                    }
+                    if move.sale_line_id.product_id != move.product_id:
+                        whsliste_data.update(
+                            {
+                                "parent_product_id": move.sale_line_id.product_id.id,
+                            }
+                        )
+                    if customer:
+                        whsliste_data.update(
+                            {
+                                "product_customer_code": customer[0].product_code,
+                            })
+                    if move.origin:
+                        whsliste_data["riferimento"] = move.origin[:50]
 
-                whsliste_data = moves_todo._set_priority(move, whsliste_data)
-                #
-                # if move.sale_line_id.priority:
-                #     whsliste_data["priorita"] = max(
-                #         [int(move.sale_line_id.priority), 0]
-                #     )
-                # elif move.priority:
-                #     whsliste_data["priorita"] = max([int(move.priority), 0])
+                    whsliste_data = moves_todo._set_priority(move, whsliste_data)
+                    #
+                    # if move.sale_line_id.priority:
+                    #     whsliste_data["priorita"] = max(
+                    #         [int(move.sale_line_id.priority), 0]
+                    #     )
+                    # elif move.priority:
+                    #     whsliste_data["priorita"] = max([int(move.priority), 0])
 
-                if ragsoc:
-                    whsliste_data["ragsoc"] = ragsoc[0:100]
-                if indirizzo:
-                    whsliste_data["indirizzo"] = indirizzo[0:50]
-                if cliente:
-                    whsliste_data["cliente"] = cliente.strip()[0:30]
-                if cap:
-                    whsliste_data["cap"] = cap[0:5]
-                if localita:
-                    whsliste_data["localita"] = localita[0:50]
-                if provincia:
-                    whsliste_data["provincia"] = provincia[0:2]
-                if nazione:
-                    whsliste_data["nazione"] = nazione[0:50]
-                whsliste_obj.create(whsliste_data)
-                _logger.info("WMS LOG: create list with data:\n %s" % (
-                    str(whsliste_data)
-                ))
+                    if ragsoc:
+                        whsliste_data["ragsoc"] = ragsoc[0:100]
+                    if indirizzo:
+                        whsliste_data["indirizzo"] = indirizzo[0:50]
+                    if cliente:
+                        whsliste_data["cliente"] = cliente.strip()[0:30]
+                    if cap:
+                        whsliste_data["cap"] = cap[0:5]
+                    if localita:
+                        whsliste_data["localita"] = localita[0:50]
+                    if provincia:
+                        whsliste_data["provincia"] = provincia[0:2]
+                    if nazione:
+                        whsliste_data["nazione"] = nazione[0:50]
+                    whsliste_obj.create(whsliste_data)
+                    _logger.info("WMS LOG: create list with data:\n %s" % (
+                        str(whsliste_data)
+                    ))
             else:
                 raise UserError(
                     _("WMS LOG: list tipo not found for stock move ID %s") % move.id)
