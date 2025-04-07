@@ -120,7 +120,7 @@ class BaseExternalDbsource(models.Model):
                 [
                     {
                         "ultimo_invio": new_last_update,
-                        "errori": "Added %s products" % len(products),
+                        "errori": "Added/Updated %s products" % len(products),
                         "dbsource_id": dbsource.id,
                     }
                 ]
@@ -199,23 +199,44 @@ class BaseExternalDbsource(models.Model):
                             % esito_lista
                         )
                         continue
-                    hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search([
-                        ("num_lista", "=", num_lista),
-                        ("riga", "=", num_riga)
-                    ])
+                    _logger.debug(
+                        "WHS LOG: synchronizing list %s row %s in db"
+                        % (num_lista, num_riga)
+                    )
+                    whs_lista = self.env["hyddemo.whs.liste"].search(
+                        [("num_lista", "=", num_lista)]
+                    )
+                    if not whs_lista:
+                        _logger.info(
+                            "WHS LOG: deleting orphan db list number %s row %s "
+                            "as does not more exist in Odoo." % (num_lista, num_riga)
+                        )
+                        # hyddemo_mssql_log_obj._clean_orphan_db_list(
+                        #     dbsource, num_lista, num_riga
+                        # )
+                        continue
+                    else:
+                        hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search([
+                            ("num_lista", "=", num_lista),
+                            ("riga", "=", num_riga)
+                        ])
                     if not hyddemo_whs_lists:
                         # ROADMAP: if the user want to create the list directly in WMS,
                         # do the reverse synchronization (not requested so far)
                         _logger.info(
-                            "WMS LOG: list num_riga %s num_lista %s not found in "
-                            "lists (found list %s but not row)"
+                            "WMS LOG: list num_riga %s num_lista %s not found in Odoo "
+                            "(found list %s but not row)"
                             % (
                                 num_riga,
                                 num_lista,
-                                self.env["hyddemo.whs.liste"].search([
-                                    ("num_lista", "=", num_lista)]),
+                                whs_lista,
                             )
                         )
+                        _logger.info(
+                            "WHS LOG: deleting orphan db list number %s "
+                            "as does not more exist in Odoo." % num_lista
+                        )
+                        # hyddemo_mssql_log_obj._clean_orphan_db_list(dbsource, num_lista)
                         continue
                     if len(hyddemo_whs_lists) > 1:
                         _logger.info(
@@ -301,12 +322,13 @@ class BaseExternalDbsource(models.Model):
 
                     # Set mssql list done from host, they are not deleted from HOST to
                     # preserve history, but it is a possible implementation to do
-                    set_liste_to_done_query = \
-                        "UPDATE HOST_LISTE SET Elaborato=5 WHERE NumLista='%s' AND " \
+                    set_liste_to_done_query = (
+                        "UPDATE HOST_LISTE SET Elaborato=5 WHERE NumLista='%s' AND "
                         "NumRiga='%s'" % (num_lista, num_riga)
+                    )
                     dbsource.with_context(no_return=True).execute_mssql(
                         sqlquery=sql_text(set_liste_to_done_query),
-                        sqlparams=None, metadata=None
+                        sqlparams=None, metadata=None,
                     )
             if pickings_to_assign:
                 pickings_to_assign.filtered(
@@ -412,15 +434,62 @@ class BaseExternalDbsource(models.Model):
         """
         return True
 
+    @api.model
     def whs_check_list_not_passed(self):
-        for dbsource in self:
-            self.env["hyddemo.mssql.log"].whs_check_list_not_passed(dbsource.id)
-        return True
+        """
+        Funzione lanciabile manualmente che controlla che le liste in stato Elaborate in
+        Odoo non debbano essere in stato Ricevuto Esito.
+        Si cercano quindi le liste che in Odoo sono in stato 2 (Elaborato) mentre in
+        WHS sono in stato 5, per cui dovrebbero essere in stato 4 (Ricevuto esito) in
+        Odoo.
+        :return:
+        """
+        # dbsource_obj = self.env["base.external.dbsource"]
+        # dbsource = dbsource_obj.browse(datasource_id)
+        # connection = dbsource.connection_open_mssql()
+        # if not connection:
+        #     raise UserError(_("Failed to open connection!"))
+        # whs_lists = self.env["hyddemo.whs.liste"].search(
+        #     [
+        #         ("stato", "=", "2"),
+        #         ("whs_list_absent", "=", False),
+        #         (
+        #             "data_lista",
+        #             ">",
+        #             fields.Datetime.now()
+        #             + relativedelta(days=-dbsource.clean_days_limit),
+        #         ),
+        #     ]
+        # )
+        # i = 0
+        # imax = len(whs_lists)
+        # step = 1
+        # for whs_list in whs_lists:
+        #     whs_liste_query = (
+        #         "SELECT NumLista, NumRiga, Qta, QtaMovimentata, Elaborato "
+        #         "FROM HOST_LISTE "
+        #         "WHERE NumLista = '%s' AND NumRiga = '%s' "
+        #         "AND Elaborato = 5" % (whs_list.num_lista, whs_list.riga)
+        #     )
+        #     esiti_liste = dbsource.execute_mssql(
+        #         sqlquery=sql_text(whs_liste_query), sqlparams=None, metadata=None
+        #     )
+        #     # esiti_liste[0] contains result
+        #     if esiti_liste[0] and not whs_list.move_id.raw_material_production_id:
+        #         whs_list.whs_not_passed = True
+        #         # update this check as it exists, but not possible to know if it doesn't
+        #         whs_list.whs_list_absent = False
+        #     else:
+        #         whs_list.whs_not_passed = False
+        #     i += 1
+        #     if i * 100.0 / imax > step:
+        #         _logger.info("WHS LOG: Execution {}% ".format(int(i * 100.0 / imax)))
+        #         step += 1
 
     @api.model
     def _cron_whs_clean_lists(self):
         for dbsource in self.search([]):
-            self.env["hyddemo.mssql.log"].whs_clean_lists(dbsource.id)
+            dbsource.whs_clean_lists()
         return True
 
     @api.model
@@ -454,3 +523,176 @@ class BaseExternalDbsource(models.Model):
             "target": "new",
             "res_model": "wizard.sync.stock.whs.mssql",
         }
+
+    def whs_check_list_state(self, whs_lists=False):
+        """
+        Funzione lanciabile manualmente per marcare le liste in Odoo che non sono più
+        presenti in WHS in quanto cancellate, per verifiche
+        :return:
+        """
+        for dbsource in self:
+            connection = dbsource.connection_open_mssql()
+            if not connection:
+                raise UserError(_("Failed to open connection!"))
+            if not whs_lists:
+                whs_lists = self.env["hyddemo.whs.liste"].search(
+                    [
+                        ("stato", "in", ["1", "2"]),
+                    ]
+                )
+            i = 0
+            imax = len(whs_lists)
+            step = 1
+            for whs_list in whs_lists:
+                whs_liste_query = (
+                    "SELECT NumLista, NumRiga, Qta, QtaMovimentata, Elaborato "
+                    "FROM HOST_LISTE "
+                    "WHERE NumLista = '%s' AND NumRiga = '%s' "
+                    "AND Elaborato != 5" % (whs_list.num_lista, whs_list.riga)
+                )
+                esiti_liste = dbsource.execute_mssql(
+                    sqlquery=sql_text(whs_liste_query), sqlparams=None, metadata=None
+                )
+                # esiti_liste[0] contains result
+                if not esiti_liste[0]:
+                    whs_list.whs_list_absent = True
+                    whs_list.whs_list_multiple = False
+                else:
+                    whs_list.whs_list_absent = False
+                    if len(esiti_liste[0]) > 1:
+                        whs_list.whs_list_multiple = True
+                    else:
+                        whs_list.whs_list_multiple = False
+                i += 1
+                if i * 100.0 / imax > step:
+                    _logger.info("WHS LOG: Execution {}% ".format(int(i * 100.0 / imax)))
+                    step += 1
+
+    def whs_clean_lists(self):
+        """
+        Function launchable by cron to delete old lists in Odoo and in WHS:
+        1. delete whs lists without db list older than clean_days_limit
+        2. delete whs lists with move in state 'done' or 'cancel' older than
+        clean_days_limit
+        3. delete whs lists without move older than clean_days_limit
+        4. delete whs lists and db lists on state '3' ("Da NON elaborare") older than 3
+        months
+        5. delete whs lists and db lists on state '2' with move on state 'done' or
+        'cancel' and tipo_mov in ['mrpin', 'mprout'] older than 30 days
+        6. delete whs lists and db lists on state '2' with move on state
+        'cancel' and tipo_mov in ['mrpin', 'mprout']
+        7. delete orphan db lists > done in whs_read_and_synchronize_list
+        :return:
+        """
+        for dbsource in self:
+            connection = dbsource.connection_open_mssql()
+            if not connection:
+                raise UserError(_("Failed to open connection!"))
+            date_limit = fields.Datetime.now() - relativedelta(
+                days=dbsource.clean_days_limit
+            )
+            # 2.
+            hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
+                [
+                    ("move_id.state", "in", ["done", "cancel"]),
+                    ("data_lista", "<", date_limit),
+                ]
+            )
+            dbsource._clean_lists(hyddemo_whs_lists)
+            # 3.
+            hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
+                [
+                    ("move_id", "=", False),
+                    ("data_lista", "<", date_limit),
+                ]
+            )
+            dbsource._clean_lists(hyddemo_whs_lists)
+            # 4.
+            date_limit_deactivated = fields.Datetime.now() - relativedelta(months=3)
+            hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
+                [
+                    ("stato", "=", "3"),
+                    ("data_lista", "<", date_limit_deactivated),
+                ]
+            )
+            dbsource._clean_lists(hyddemo_whs_lists)
+            # 1.
+            hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
+                [
+                    ("data_lista", "<", date_limit),
+                ],
+                limit=100,
+            )
+            # call method to update whs_list_absent on only 100 records to exclude
+            # timeout
+            dbsource.whs_check_list_state(hyddemo_whs_lists)
+            hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
+                [
+                    ("data_lista", "<", date_limit),
+                    ("whs_list_absent", "=", True),
+                ]
+            )
+            dbsource._clean_lists(hyddemo_whs_lists)
+            # 5.
+            date_limit_mrp = fields.Datetime.now() - relativedelta(days=30)
+            hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
+                [
+                    ("stato", "=", "2"),
+                    ("tipo_mov", "in", ["mrpin", "mrpout"]),
+                    ("move_id.state", "in", ["done", "cancel"]),
+                    ("data_lista", "<", date_limit_mrp),
+                ]
+            )
+            dbsource._clean_lists(hyddemo_whs_lists)
+            # 6.
+            hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
+                [
+                    ("stato", "=", "2"),
+                    ("tipo_mov", "in", ["mrpin", "mrpout"]),
+                    ("move_id.state", "=", "cancel"),
+                ]
+            )
+            dbsource._clean_lists(hyddemo_whs_lists)
+
+    def _clean_lists(self, hyddemo_whs_lists):
+        for dbsource in self:
+            for i in range(0, len(hyddemo_whs_lists), 1000):
+                whs_lists = hyddemo_whs_lists[i : i + 1000]
+                delete_query = (
+                    "DELETE FROM HOST_LISTE WHERE (%s)"
+                    % (
+                        " OR ".join(
+                            "(NumLista='%s' AND NumRiga='%s')" % (y.num_lista, y.riga)
+                            for y in whs_lists
+                        )
+                    )
+                ).replace("\n", " ")
+                _logger.info(
+                    "WHS LOG: delete old record from HOST_LISTE [query: %s]"
+                    % delete_query
+                )
+                dbsource.with_context(no_return=True).execute_mssql(
+                    sqlquery=sql_text(delete_query),
+                    sqlparams=None,
+                    metadata=None,
+                )
+                whs_lists.sudo().unlink()
+
+    @staticmethod
+    def _clean_orphan_db_list(dbsource, num_lista, num_riga=False):
+        if num_riga:
+            delete_query = (
+                "DELETE FROM HOST_LISTE WHERE NumLista='%s' AND NumRiga='%s'"
+                % (num_lista, num_riga)
+            )
+        else:
+            delete_query = "DELETE FROM HOST_LISTE WHERE NumLista='%s'" % num_lista
+        _logger.info(
+            "WHS LOG: delete orphan record from HOST_LISTE [query: %s]" % delete_query
+        )
+        dbsource.with_context(no_return=True).execute_mssql(
+            sqlquery=sql_text(delete_query.replace("\n", " ")),
+            sqlparams=None,
+            metadata=None,
+        )
+

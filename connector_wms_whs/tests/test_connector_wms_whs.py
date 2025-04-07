@@ -3,12 +3,9 @@ import os
 from sqlalchemy import text as sql_text
 
 from odoo import _, fields
-from odoo.exceptions import UserError
-from odoo.tests import tagged
-from odoo.tests.common import Form
+from odoo.exceptions import UserError, ValidationError
+from odoo.tests.common import Form, tagged
 from odoo.tools import relativedelta
-
-from odoo.addons.base_external_dbsource.exceptions import ConnectionSuccessError
 from odoo.addons.connector_whs.tests.test_connector_wms import CommonConnectorWMS
 
 
@@ -19,6 +16,8 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         dbsource_name = "Odoo WMS local server"
         dbsource = self.dbsource_model.search([("name", "=", dbsource_name)])
         if not dbsource:
+            # connection string is something like:
+            # mssql+pymssql://<user>:<password>@<ip>/<database>
             conn_file = os.path.join(os.path.expanduser("~"), "connection_wms_whs.txt")
             if not os.path.isfile(conn_file):
                 raise UserError(_("Missing connection string!"))
@@ -154,7 +153,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         return res and res[0] or []
 
     def test_00_complete_picking_from_sale(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         whs_len_records = len(self._execute_select_all_valid_host_liste())
         order_form1 = Form(self.env["sale.order"])
@@ -277,7 +276,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         self.assertEqual(whs_list.lotto5, lotto5)
 
     def test_01_partial_picking_from_sale(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
 
         whs_len_records = len(self._execute_select_all_valid_host_liste())
@@ -429,7 +428,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         self.assertEqual(backorder_picking.move_lines[0].state, "assigned")
 
     def test_02_partial_picking_partial_available_from_sale(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         whs_len_records = len(self._execute_select_all_valid_host_liste())
         order_form1 = Form(self.env["sale.order"])
@@ -602,7 +601,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         self.assertEqual(backorder_picking.state, "done")
 
     def test_03_partial_picking_from_sale(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         whs_len_records = len(self._execute_select_all_valid_host_liste())
         order_form1 = Form(self.env["sale.order"])
@@ -769,7 +768,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         backorder_picking.action_assign()
 
     def test_04_unlink_sale_order(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         whs_len_records = len(self._execute_select_all_valid_host_liste())
         order_form1 = Form(self.env["sale.order"])
@@ -872,7 +871,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             order1.order_line[0].write({"product_uom_qty": 17})
 
     def test_06_purchase(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         whs_len_records = len(self._execute_select_all_valid_host_liste())
         purchase_form = Form(self.env["purchase.order"])
