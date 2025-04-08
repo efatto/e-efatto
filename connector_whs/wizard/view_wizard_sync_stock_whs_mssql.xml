@@ -14,7 +14,8 @@
                 <sheet>
                     <div>
                         <span>Synchronize stock inventory. </span>
-                        <span>If 'Synchronize stock inventory' is not set, it creates and shows only a log saved in Log WMS.</span>
+                        <span
+            >If 'Synchronize stock inventory' is not set, it creates and shows only a log saved in Log WMS.</span>
                     </div>
                     <group>
                         <field name="do_sync" />

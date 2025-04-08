@@ -4,7 +4,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 import logging
 
-from odoo import api, fields, models, _
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
@@ -167,9 +167,7 @@ class HyddemoWhsListe(models.Model):
                 if not connection:
                     raise UserError(_("Failed to open connection!"))
                 if whs_list.num_lista not in num_lista_done:
-                    dbsource.whs_read_and_synchronize_list(
-                        whs_list.num_lista
-                    )
+                    dbsource.whs_read_and_synchronize_list(whs_list.num_lista)
                     num_lista_done.append(whs_list.num_lista)
 
     def check_list_state(self):

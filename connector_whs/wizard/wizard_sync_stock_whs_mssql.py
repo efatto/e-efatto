@@ -1,4 +1,3 @@
-
 from odoo import fields, models
 
 
@@ -8,7 +7,8 @@ class WizardSyncStockWhsMssql(models.TransientModel):
 
     do_sync = fields.Boolean(
         string="Synchronize stock inventory",
-        help="Valid quantities are those found in the remote database.")
+        help="Valid quantities are those found in the remote database.",
+    )
     product_id = fields.Many2one("product.product", string="Product to sync")
 
     @staticmethod
