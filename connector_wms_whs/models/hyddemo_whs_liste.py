@@ -87,7 +87,7 @@ class HyddemoWhsListe(models.Model):
             )
 
     def check_list_state(self):
-        res = super().check_list_state()
+        super().check_list_state()
         for whs_list in self:
             if whs_list.move_id:
                 dbsource = self.env["base.external.dbsource"].search(
@@ -413,9 +413,7 @@ VALUES (
                 )
                 insert_query = self.env[
                     "hyddemo.whs.liste"
-                ]._get_insert_host_liste_query(
-                    insert_esiti_liste_params
-                )
+                ]._get_insert_host_liste_query(insert_esiti_liste_params)
                 if insert_esiti_liste_params:
                     dbsource.execute_query(
                         dbsource, sql_text(insert_query), insert_esiti_liste_params

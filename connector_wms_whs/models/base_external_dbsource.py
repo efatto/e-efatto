@@ -2,7 +2,7 @@ import logging
 
 from sqlalchemy import text as sql_text
 
-from odoo import _, api, models
+from odoo import _, models
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
