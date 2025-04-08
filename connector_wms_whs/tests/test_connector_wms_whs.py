@@ -287,7 +287,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             order_line.product_id = self.product1
             order_line.product_uom_qty = 5
             order_line.price_unit = 100
-            order_line.priority = "2"
+            order_line.priority = "1"
         with order_form1.order_line.new() as order_line:
             order_line.product_id = self.product1
             order_line.product_uom_qty = 5
@@ -295,7 +295,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         order1 = order_form1.save()
         order1.action_confirm()
         self.assertEqual(order1.state, "sale")
-        self.assertEqual(order1.priority, "2")
+        self.assertEqual(order1.priority, "1")
         self.assertEqual(order1.picking_ids.state, "assigned")
         picking = order1.picking_ids[0]
         self.assertEqual(len(picking.mapped("move_lines.whs_list_ids")), 2)
@@ -437,7 +437,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         with order_form1.order_line.new() as order_line:
             order_line.product_id = self.product1
             order_line.product_uom_qty = 5
-            order_line.priority = "3"
+            order_line.priority = "2"
             order_line.price_unit = 100
         with order_form1.order_line.new() as order_line:
             order_line.product_id = self.product2
@@ -446,8 +446,10 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         order1 = order_form1.save()
         order1.action_confirm()
         self.assertEqual(order1.state, "sale")
-        self.assertEqual(order1.priority, "3")
-        picking = order1.picking_ids[0]
+        self.assertEqual(order1.priority, "2")
+        self.assertEqual(len(order1.picking_ids), 1)
+        picking = order1.picking_ids
+        self.assertEqual(picking.priority, "2")
         self.assertEqual(len(picking.mapped("move_lines.whs_list_ids")), 2)
         self.assertEqual(picking.state, "assigned")
 
