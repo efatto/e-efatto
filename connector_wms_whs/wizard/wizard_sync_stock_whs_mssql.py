@@ -1,9 +1,9 @@
 # flake8: noqa: C901
+from sqlalchemy import text as sql_text
+
 from odoo import _, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import float_compare
-
-from sqlalchemy import text as sql_text
 
 
 class WizardSyncStockWhsMssql(models.TransientModel):
@@ -60,18 +60,14 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         qty = float(esito_lista[2])
                     except ValueError:
                         qty = False
-                        pass
                     except TypeError:
                         qty = False
-                        pass
                     try:
                         weight = float(esito_lista[3]) / 1000.0
                     except ValueError:
                         weight = False
-                        pass
                     except TypeError:
                         weight = False
-                        pass
                     lot_unique_ref = " ".join(
                         [
                             esito_lista[k + 2].strip() if esito_lista[k + 2] else ""
@@ -80,9 +76,9 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         ]
                     )[:20]
                     if articolo not in stock_product_dict:
-                        stock_product_dict.update({
-                            articolo: {lot_unique_ref: qty, "weight": weight}
-                        })
+                        stock_product_dict.update(
+                            {articolo: {lot_unique_ref: qty, "weight": weight}}
+                        )
                     else:
                         stock_product_dict[articolo].update({"weight": weight})
                         if lot_unique_ref not in stock_product_dict[articolo].keys():
@@ -250,7 +246,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 inventory = inventory_obj.create(
                     {
                         "name": "WMS sync inventory "
-                                + new_last_update.strftime("%Y-%m-%d"),
+                        + new_last_update.strftime("%Y-%m-%d"),
                         "location_ids": [(6, 0, dbsource.location_id.ids)],
                         "company_id": dbsource.company_id.id,
                         "line_ids": [(0, 0, x) for x in inventory_lines_data],
@@ -263,7 +259,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 [
                     {
                         "errori": "Stock inventory %s"
-                                  % ("sync" if wizard.do_sync else "check"),
+                        % ("sync" if wizard.do_sync else "check"),
                         "ultimo_invio": new_last_update,
                         "dbsource_id": dbsource.id,
                         "inventory_id": inventory.id,
