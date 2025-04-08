@@ -161,5 +161,10 @@ class CommonConnectorWMS(TransactionCase):
 
     def run_stock_procurement_scheduler(self):
         with mute_logger("odoo.addons.stock.models.procurement"):
-            self.procurement_model.run_scheduler(True)
-            time.sleep(30)
+            self.procurement_model.run_scheduler()
+            time.sleep(15)
+
+    @staticmethod
+    def _auto_fill_consumed_qty(moves):
+        for move in moves:
+            move.quantity_done = move.product_uom_qty
