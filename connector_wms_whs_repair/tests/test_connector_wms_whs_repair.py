@@ -1,9 +1,9 @@
 from sqlalchemy import text as sql_text
 
+from odoo.exceptions import ValidationError
 from odoo.tests import tagged
 from odoo.tests.common import Form
 
-from odoo.exceptions import ValidationError
 from odoo.addons.connector_wms_whs.tests.test_connector_wms_whs import (
     TestConnectorWmsWhs,
 )
