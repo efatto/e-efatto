@@ -139,7 +139,7 @@ class BaseExternalDbsource(models.Model):
             dbsource.connection_close_mssql(connection)
         return True
 
-    def whs_read_and_synchronize_list(self, whs_lists=False):
+    def whs_read_and_synchronize_list(self, whs_lists=False):  # noqa: pylint C901
         """
         Funzione lanciabile tramite cron per aggiornare i movimenti dalle liste create
         per WMS da Odoo nei vari moduli collegati (mrp, stock, ecc.)
