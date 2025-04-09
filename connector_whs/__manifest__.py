@@ -35,5 +35,5 @@
         "data/cron.xml",
     ],
     "installable": True,
-    "external_dependencies": {"python": ["sqlalchemy==1.3.24"]},
+    "external_dependencies": {"python": ["sqlalchemy", "sqlalchemy==1.3.24"]},
 }
