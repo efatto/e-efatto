@@ -9,6 +9,7 @@ class TestMrpProductionManualProcurement(TestProductionData):
     def setUpClass(cls):
         super().setUpClass()
         cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
+        cls.supplierinfo_obj = cls.env["product.supplierinfo"]
         cls.warehouse = cls.env["stock.warehouse"].search([], limit=1)
         cls.product_categ_order_grouping = cls.env["product.category"].create(
             {
@@ -55,9 +56,10 @@ class TestMrpProductionManualProcurement(TestProductionData):
         cls.subcontractor_partner1.property_stock_subcontractor = (
             cls.partner_subcontract_location.id
         )
-        supplierinfo_1 = cls.env["product.supplierinfo"].create(
+        supplierinfo_1 = cls.supplierinfo_obj.create(
             {
                 "name": cls.subcontractor_partner1.id,
+                "autoconfirm_purchase": True,
             }
         )
         cls.subcontractor_partner2 = cls.env["res.partner"].create(
@@ -68,9 +70,10 @@ class TestMrpProductionManualProcurement(TestProductionData):
         cls.subcontractor_partner2.property_stock_subcontractor = (
             cls.partner_subcontract_location.id
         )
-        supplierinfo_2 = cls.env["product.supplierinfo"].create(
+        supplierinfo_2 = cls.supplierinfo_obj.create(
             {
                 "name": cls.subcontractor_partner2.id,
+                "autoconfirm_purchase": True,
             }
         )
         cls.subcontractor_partner3 = cls.env["res.partner"].create(
@@ -81,9 +84,10 @@ class TestMrpProductionManualProcurement(TestProductionData):
         cls.subcontractor_partner3.property_stock_subcontractor = (
             cls.partner_subcontract_location.id
         )
-        supplierinfo_3 = cls.env["product.supplierinfo"].create(
+        supplierinfo_3 = cls.supplierinfo_obj.create(
             {
                 "name": cls.subcontractor_partner3.id,
+                "autoconfirm_purchase": True,
             }
         )
         # ADD to top_product buy route and two subcontractor

@@ -7,16 +7,34 @@ from odoo import fields, models
 class RepairOrder(models.Model):
     _inherit = "repair.order"
 
+    def _get_whs_repair_operation(self, num_lista, move, riga, tipo, tipo_mov):
+        # overridable method
+        return dict(
+            data_lista=fields.Datetime.now(),
+            move_id=move.id,
+            num_lista=num_lista,
+            product_id=move.product_id.id,
+            qta=move.product_uom_qty,
+            riferimento=self.name,
+            riga=riga,
+            stato="1",
+            tipo=tipo,
+            tipo_mov=tipo_mov,
+        )
+
     def action_repair_end(self):
         res = super(RepairOrder, self).action_repair_end()
         whsliste_obj = self.env["hyddemo.whs.liste"]
         for repair in self:
             location_id = repair.location_id
             dbsource = self.env["base.external.dbsource"].search(
-                [("location_id", "=", location_id.id)]
+                [
+                    ("location_id", "=", location_id.id),
+                    ("company_id", "=", repair.company_id.id),
+                ]
             )
             if not dbsource:
-                # This location is not linked to WHS System
+                # This location is not linked to WMS System
                 continue
             add_operations = repair.operations.filtered(
                 lambda x: x.move_id
@@ -36,34 +54,16 @@ class RepairOrder(models.Model):
                 num_lista = self.env["ir.sequence"].next_by_code("hyddemo.whs.liste")
                 for riga, op in enumerate(add_operations, start=1):
                     move = op.move_id
-                    whsliste_data = dict(
-                        stato="1",
-                        tipo="1",
-                        num_lista=num_lista,
-                        data_lista=fields.Datetime.now(),
-                        riferimento=repair.name,
-                        product_id=move.product_id.id,
-                        qta=move.product_uom_qty,
-                        move_id=move.id,
-                        tipo_mov="ripout",
-                        riga=riga,
+                    whsliste_data = repair._get_whs_repair_operation(
+                        num_lista, move, riga, "1", "ripout"
                     )
                     whsliste_obj.create(whsliste_data)
             if remove_operations:
                 num_lista = self.env["ir.sequence"].next_by_code("hyddemo.whs.liste")
                 for riga, op in enumerate(remove_operations, start=1):
                     move = op.move_id
-                    whsliste_data = dict(
-                        stato="1",
-                        num_lista=num_lista,
-                        data_lista=fields.Datetime.now(),
-                        tipo="2",
-                        riferimento=repair.name,
-                        product_id=move.product_id.id,
-                        qta=move.product_uom_qty,
-                        move_id=move.id,
-                        tipo_mov="ripin",
-                        riga=riga,
+                    whsliste_data = repair._get_whs_repair_operation(
+                        num_lista, move, riga, "2", "ripin"
                     )
                     whsliste_obj.create(whsliste_data)
 

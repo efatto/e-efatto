@@ -1,8 +1,8 @@
-# Copyright 2020-21 Sergio Corato <https://github.com/sergiocorato>
+# Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     "name": "Connector WHS MSSQL",
-    "version": "14.0.1.0.9",
+    "version": "14.0.2.0.0",
     "author": "Sergio Corato",
     "website": "https://github.com/efatto/e-efatto",
     "category": "other",
@@ -18,7 +18,6 @@
         "purchase_stock",
         "repair",
         "sale_delivery_split_date",
-        "sale_order_priority",
         "stock_move_line_auto_fill",
         "stock_picking_back2draft",
     ],
@@ -36,5 +35,5 @@
         "data/cron.xml",
     ],
     "installable": True,
-    "external_dependencies": {"python": ["sqlalchemy==1.3.24"]},
+    "external_dependencies": {"python": ["sqlalchemy", "sqlalchemy==1.3.24"]},
 }
