@@ -3,7 +3,6 @@ from odoo import api, fields, models
 
 class ProductTemplate(models.Model):
     _inherit = "product.template"
-
     has_inactive_triggers = fields.Boolean(
         compute="_compute_has_inactive_triggers",
         store=True,
