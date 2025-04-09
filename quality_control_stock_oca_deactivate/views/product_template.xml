@@ -24,6 +24,7 @@
         <field name="arch" type="xml">
             <search string="Inactive QC Trigger Lines">
                 <field name="product_template" />
+                <filter
           string="Inactive"
           name="inactive"
           domain="[('active', '=', False)]"
