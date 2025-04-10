@@ -407,13 +407,10 @@ VALUES (
             )
             if len(db_lists[0]) == 0:
                 # recreate list
-                hyddemo_mssql_log_model = self.env["hyddemo.mssql.log"]
-                insert_esiti_liste_params = (
-                    hyddemo_mssql_log_model._prepare_host_liste_values(whs_list)
+                insert_esiti_liste_params = whs_list.whs_prepare_host_liste_values()
+                insert_query = whs_list._get_insert_host_liste_query(
+                    insert_esiti_liste_params
                 )
-                insert_query = self.env[
-                    "hyddemo.whs.liste"
-                ]._get_insert_host_liste_query(insert_esiti_liste_params)
                 if insert_esiti_liste_params:
                     dbsource.execute_query(
                         dbsource, sql_text(insert_query), insert_esiti_liste_params
