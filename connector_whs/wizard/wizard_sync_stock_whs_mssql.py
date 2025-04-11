@@ -12,7 +12,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
     product_id = fields.Many2one("product.product", string="Product to sync")
 
     @staticmethod
-    def _prepare_giacenze_query(i):
+    def _prepare_giacenze_query(i, dbsource):
         # overridable method
         # respect order of fields retrieved!
         query = ""
