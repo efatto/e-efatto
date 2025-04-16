@@ -14,6 +14,7 @@
                 <field name="user" />
                 <field name="partners" widget="many2many_tags" />
                 <field name="success_number_to_deactivation" />
+                <field name="trigger_activation_number" />
                 <field name="trigger_activation_days" />
             </tree>
         </field>
@@ -55,6 +56,7 @@
             <xpath expr="//field[@name='trigger']" position="after">
                 <field name="active" />
                 <field name="success_number_to_deactivation" />
+                <field name="trigger_activation_number" />
                 <field name="trigger_activation_days" />
             </xpath>
             <group name="qc" position="after">
