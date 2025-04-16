@@ -11,6 +11,7 @@
         "quality_control_stock_oca",
     ],
     "data": [
+        "views/product_product.xml",
         "views/product_template.xml",
     ],
     "installable": True,
