@@ -17,4 +17,6 @@ class QcInspection(models.Model):
             res.update({"lot_internal": trigger_line.lot_internal})
         if trigger_line.lot_supplier:
             res.update({"lot_supplier": trigger_line.lot_supplier})
+        if res.get("qty"):
+            res.update({"qty_inspected": max([int(res.get("qty") / 100.0), 1])})
         return res
