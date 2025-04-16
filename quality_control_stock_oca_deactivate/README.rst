@@ -32,10 +32,22 @@ Add a field to auto-deactivate the trigger after a custom number of successfully
 Configuration
 =============
 
-Nel prodotto o nel template si può indicare un numero di test riusciti raggiunto il quale il controllo di qualità verrà disattivato:
+Solo nel template prodotto si possono indicare:
+
+#. un numero di test riusciti raggiunto il quale il controllo di qualità verrà disattivato:
 
 .. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/quality_control_stock_oca_deactivate/static/description/numero_di_test.png
     :alt: Numero di test
+
+#. un numero di giorni raggiunto il quale il controllo di qualità verrà ri-attivato:
+
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/quality_control_stock_oca_deactivate/static/description/attiva_ogni_n_giorni.png
+    :alt: Attiva ogni numero di giorni
+
+#. un numero di trasferimenti per i quali il test non è stato attivato raggiunto il quale il controllo di qualità verrà ri-attivato:
+
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/quality_control_stock_oca_deactivate/static/description/attiva_ogni_n_controlli.png
+    :alt: Attiva ogni numero di controlli
 
 Bug Tracker
 ===========
