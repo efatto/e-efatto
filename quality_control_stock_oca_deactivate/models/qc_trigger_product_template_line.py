@@ -56,19 +56,33 @@ class QcTriggerProductTemplateLine(models.Model):
             if trigger_line.trigger_activation_number:
                 # todo activate inspection if there are more then activation number
                 #  not-created inspection
-                inspected_pickings = self.env["stock.picking"].sudo().search([
-                    ("picking_type_id", "=", trigger.picking_type_id.id),
-                    ("move_lines.product_id", "=", product.id),
-                    ("qc_inspections_ids", "!=", False),
-                ], order="date desc", limit=1)
+                inspected_pickings = (
+                    self.env["stock.picking"]
+                    .sudo()
+                    .search(
+                        [
+                            ("picking_type_id", "=", trigger.picking_type_id.id),
+                            ("move_lines.product_id", "=", product.id),
+                            ("qc_inspections_ids", "!=", False),
+                        ],
+                        order="date desc",
+                        limit=1,
+                    )
+                )
                 if inspected_pickings:
-                    not_inspected_pickings = self.env["stock.picking"].sudo().search([
-                        ("picking_type_id", "=", trigger.picking_type_id.id),
-                        ("move_lines.product_id", "=", product.id),
-                        ("qc_inspections_ids", "=", False),
-                        ("id", "not in", inspected_pickings.ids),
-                        ("date", ">=", inspected_pickings.date),
-                    ])
+                    not_inspected_pickings = (
+                        self.env["stock.picking"]
+                        .sudo()
+                        .search(
+                            [
+                                ("picking_type_id", "=", trigger.picking_type_id.id),
+                                ("move_lines.product_id", "=", product.id),
+                                ("qc_inspections_ids", "=", False),
+                                ("id", "not in", inspected_pickings.ids),
+                                ("date", ">=", inspected_pickings.date),
+                            ]
+                        )
+                    )
                     if (
                         len(not_inspected_pickings)
                         >= trigger_line.trigger_activation_number
