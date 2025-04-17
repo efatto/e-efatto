@@ -43,22 +43,25 @@ class ProductProduct(models.Model):
         listprice_categ_ids = pricelist.mapped('item_ids.listprice_categ_id')
         operation_prices = {}
         for opt in bom.bom_operation_ids:
-            listprice_ctg = self._get_listprice_categ_id(opt.product_id.categ_id)
+            listprice_ctg = self._get_listprice_categ_id(
+                opt.workcenter_product_id.categ_id)
             if listprice_ctg not in operation_prices:
                 operation_prices.update({listprice_ctg: {}})
         for opt in bom.bom_operation_ids:
             listprice_categ_id = self._get_listprice_categ_id(
-                opt.product_id.categ_id)
+                opt.workcenter_product_id.categ_id)
             if not opt.price_unit:
                 _logger.info(
                     'Missing cost in bom %s operation for product %s!' % (
-                        bom.product_id.display_name, opt.product_id.display_name
+                        bom.product_id.display_name,
+                        opt.workcenter_product_id.display_name
                     )
                 )
             if not opt.time:
                 _logger.info(
                     'Missing time in bom %s operation for product %s!' % (
-                        bom.product_id.display_name, opt.product_id.display_name
+                        bom.product_id.display_name,
+                        opt.workcenter_product_id.display_name
                     )
                 )
             if opt not in operation_prices[listprice_categ_id]:

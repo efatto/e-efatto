@@ -10,7 +10,7 @@ class MrpBomOperation(models.Model):
 
     name = fields.Char('Description')
     time = fields.Float('Estimated Duration (in hours)')
-    product_id = fields.Many2one(
+    workcenter_product_id = fields.Many2one(
         related='operation_id.workcenter_id.product_id')
     price_unit = fields.Float(
         related='operation_id.workcenter_id.costs_hour',
