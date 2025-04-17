@@ -9,6 +9,7 @@
     "category": "Products",
     "depends": [
         "quality_control_stock_oca",
+        "quality_control_stock_oca_validation",  # to test as actually used
     ],
     "data": [
         "views/product_product.xml",
