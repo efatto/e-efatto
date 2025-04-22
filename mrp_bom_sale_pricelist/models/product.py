@@ -87,8 +87,9 @@ class ProductProduct(models.Model):
                     price += sum([
                         operation_price[operation] *
                         rule._compute_price(
-                            operation.price_unit, operation.product_id.uom_id,
-                            operation.product_id)
+                            operation.price_unit,
+                            operation.workcenter_product_id.uom_id,
+                            operation.workcenter_product_id)
                         for operation in operation_price])
                 if base_pricelist_rule_found:
                     total_to_exclude_from_global_rule += price
