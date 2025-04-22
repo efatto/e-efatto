@@ -30,7 +30,8 @@ class SaleOrderLine(models.Model):
                     not product._get_listprice_categ_id(product.categ_id)
                     for product in (
                         line.product_id.bom_ids.mapped('bom_line_ids.product_id') |
-                        line.product_id.bom_ids.mapped('bom_operation_ids.product_id')
+                        line.product_id.bom_ids.mapped(
+                            'bom_operation_ids.workcenter_product_id')
                     )
                 ]):
                     res = False
@@ -48,7 +49,8 @@ class SaleOrderLine(models.Model):
                 + len([
                     x for x in (
                         self.product_id.bom_ids.mapped('bom_line_ids.product_id') |
-                        self.product_id.bom_ids.mapped('bom_operation_ids.product_id')
+                        self.product_id.bom_ids.mapped(
+                            'bom_operation_ids.workcenter_product_id')
                     ) if not x._get_listprice_categ_id(x.categ_id)
                 ]),
                 len([
