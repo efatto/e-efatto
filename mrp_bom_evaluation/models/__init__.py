@@ -1,4 +1,5 @@
 
+from . import invoice
 from . import product
 from . import sale
 from . import mrp_bom
