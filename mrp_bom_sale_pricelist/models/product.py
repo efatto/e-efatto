@@ -98,16 +98,25 @@ class ProductProduct(models.Model):
                 # there are no applicable rules of type listprice category for current
                 # product in this pricelist, so use normal function to find rule to
                 # compute price
+                _logger.info(
+                    'No applicable rules of type listprice category for current product'
+                    ' %s in this pricelist %s!' % (
+                        bom.product_id.display_name,
+                        pricelist.display_name
+                    )
+                )
                 product_context = dict(
                     self.env.context, partner_id=partner.id, date=date, uom=uom_id)
                 for operation_price in operation_prices:
-                    for operation in operation_price:
+                    for operation in operation_prices[operation_price]:
                         fake_price, rule_id = pricelist.with_context(
                             product_context).get_product_price_rule(
-                                operation.product_id, quantity, partner)
+                                operation.workcenter_product_id, quantity, partner)
                         rule = self.env['product.pricelist.item'].browse(rule_id)
                         price = operation_price[operation] * rule._compute_price(
-                            price, operation.product_id.uom_id, operation.product_id
+                            price,
+                            operation.workcenter_product_id.uom_id,
+                            operation.workcenter_product_id
                         )
             total += price
         if not listprice_categ_ids:
