@@ -121,7 +121,7 @@ class ProductProduct(models.Model):
                 for operation in operation_prices[operation_price]:
                     fake_price, rule_id = pricelist.with_context(
                         product_context).get_product_price_rule(
-                        operation.product_id, quantity, partner)
+                        operation.workcenter_product_id, quantity, partner)
                     rule = self.env['product.pricelist.item'].browse(rule_id)
                     if rule.base == 'pricelist' and rule.base_pricelist_id:
                         price = self.get_bom_operation_price(
@@ -132,8 +132,9 @@ class ProductProduct(models.Model):
                         continue
                     price = operation_prices[operation_price][operation] \
                         * rule._compute_price(
-                            operation.price_unit, operation.product_id.uom_id,
-                            operation.product_id
+                            operation.price_unit,
+                            operation.workcenter_product_id.uom_id,
+                            operation.workcenter_product_id
                         )
             total += price
         for global_rule in global_rules:
