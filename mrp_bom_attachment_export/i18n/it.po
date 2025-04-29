@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 12.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-25 10:57+0000\n"
-"PO-Revision-Date: 2021-11-25 10:57+0000\n"
+"POT-Creation-Date: 2025-04-29 16:26+0000\n"
+"PO-Revision-Date: 2025-04-29 16:26+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,18 +16,23 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: mrp_bom_attachment_export
-#: code:addons/mrp_bom_attachment_export/wizard/mrp_bom_attachment_export.py:60
+#: code:addons/mrp_bom_attachment_export/wizard/mrp_bom_attachment_export.py:76
 #, python-format
 msgid "Attachment %s does not have file"
 msgstr "L'allegato %s non ha un file"
 
 #. module: mrp_bom_attachment_export
-#: model:ir.model.fields,field_description:mrp_bom_attachment_export.field_wizard_mrp_bom_attachment_export__attachment_ctg_ids
-msgid "Attachment categories"
-msgstr "Categorie allegati"
+#: model:ir.model.fields,field_description:mrp_bom_attachment_export.field_wizard_mrp_bom_attachment_export__and_attachment_ctg_ids
+msgid "Attachment categories with AND logic"
+msgstr "Categorie allegati con logica AND"
 
 #. module: mrp_bom_attachment_export
-#: code:addons/mrp_bom_attachment_export/wizard/mrp_bom_attachment_export.py:30
+#: model:ir.model.fields,field_description:mrp_bom_attachment_export.field_wizard_mrp_bom_attachment_export__or_attachment_ctg_ids
+msgid "Attachment categories with OR logic"
+msgstr "Categorie allegati con logica OR"
+
+#. module: mrp_bom_attachment_export
+#: code:addons/mrp_bom_attachment_export/wizard/mrp_bom_attachment_export.py:32
 #, python-format
 msgid "BOM"
 msgstr ""
@@ -65,7 +70,7 @@ msgid "Export Zip"
 msgstr "Esporta Zip"
 
 #. module: mrp_bom_attachment_export
-#: code:addons/mrp_bom_attachment_export/wizard/mrp_bom_attachment_export.py:77
+#: code:addons/mrp_bom_attachment_export/wizard/mrp_bom_attachment_export.py:93
 #, python-format
 msgid "Export component attachments"
 msgstr "Esporta allegati componenti"
@@ -88,7 +93,7 @@ msgstr ""
 #. module: mrp_bom_attachment_export
 #: model:ir.model.fields,field_description:mrp_bom_attachment_export.field_wizard_mrp_bom_attachment_export____last_update
 msgid "Last Modified on"
-msgstr "Ultima modifica il"
+msgstr "Data di ultima modifica"
 
 #. module: mrp_bom_attachment_export
 #: model:ir.model.fields,field_description:mrp_bom_attachment_export.field_wizard_mrp_bom_attachment_export__write_uid
@@ -101,15 +106,10 @@ msgid "Last Updated on"
 msgstr "Ultima modifica il"
 
 #. module: mrp_bom_attachment_export
-#: code:addons/mrp_bom_attachment_export/wizard/mrp_bom_attachment_export.py:55
+#: code:addons/mrp_bom_attachment_export/wizard/mrp_bom_attachment_export.py:71
 #, python-format
 msgid "No attachment found!"
 msgstr "Nessun allegato trovato!"
-
-#. module: mrp_bom_attachment_export
-#: model:ir.model.fields,field_description:mrp_bom_attachment_export.field_wizard_mrp_bom_attachment_export__product_ids
-msgid "Product"
-msgstr "Prodotto"
 
 #. module: mrp_bom_attachment_export
 #: model:ir.model,name:mrp_bom_attachment_export.model_wizard_mrp_bom_attachment_export
