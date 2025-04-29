@@ -7,7 +7,8 @@
         <field name="arch" type="xml">
             <form string="Download ZIP components attachment">
                 <group>
-                    <field name="attachment_ctg_ids" widget="many2many_tags"/>
+                    <field name="and_attachment_ctg_ids" widget="many2many_tags"/>
+                    <field name="or_attachment_ctg_ids" widget="many2many_tags"/>
                     <field name="name"/>
                 </group>
                 <footer>
