@@ -7,6 +7,7 @@ import zipfile
 from datetime import datetime
 from odoo import models, api, fields, _
 from odoo.exceptions import UserError
+from odoo.osv import expression
 
 
 class WizardMrpBomAttachmentExport(models.TransientModel):
@@ -36,9 +37,15 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
 
     data = fields.Binary("File", readonly=True)
     name = fields.Char('Filename', default=_default_name, required=True)
-    attachment_ctg_ids = fields.Many2many(
-        'ir.attachment.category',
-        string='Attachment categories',
+    and_attachment_ctg_ids = fields.Many2many(
+        comodel_name='ir.attachment.category',
+        relation="export_ir_attachment_category_and",
+        string='Attachment categories with AND logic',
+    )
+    or_attachment_ctg_ids = fields.Many2many(
+        comodel_name='ir.attachment.category',
+        relation="export_ir_attachment_category_or",
+        string='Attachment categories with OR logic',
     )
 
     @api.multi
@@ -46,9 +53,19 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
         self.ensure_one()
         product_ids = self._get_product_ids()
         attachments = product_ids.mapped('product_tmpl_id.all_attachment_ids')
-        if self.attachment_ctg_ids:
-            attachments = attachments.filtered(
-                lambda x: any(y in self.attachment_ctg_ids for y in x.category_ids))
+        domain = []
+        if self.and_attachment_ctg_ids:
+            for and_attachment_ctg_id in self.and_attachment_ctg_ids:
+                domain = expression.AND(
+                    [domain, [("category_ids", "=", and_attachment_ctg_id.id)]])
+        if self.or_attachment_ctg_ids:
+            for or_attachment_ctg_id in self.or_attachment_ctg_ids:
+                domain = expression.OR(
+                    [domain, [("category_ids", "=", or_attachment_ctg_id.id)]])
+        domain = expression.AND(
+            [domain, [("id", "in", attachments.ids)]]
+        )
+        attachments = self.env["ir.attachment"].search(domain)
         if not attachments:
             raise UserError(
                 _("No attachment found!")
