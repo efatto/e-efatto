@@ -56,7 +56,7 @@
             <group name="qc" position="after">
                 <field name="product_has_inactive_triggers" invisible="1" />
                 <button
-          name="%(action_qc_trigger_product_line_all)d"
+          name="%(quality_control_stock_oca_deactivate.action_qc_trigger_product_line_all)d"
           type="action"
           string="Show inactive triggers"
           class="oe_highlight"
