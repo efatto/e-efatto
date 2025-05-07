@@ -28,7 +28,7 @@ class QcTriggerProductLine(models.Model):
                 limit=trigger_line.success_number_to_deactivation,
             )
             if len(inspections) == trigger_line.success_number_to_deactivation and all(
-                (ins.state == "success" for ins in inspections)
+                ins.state == "success" for ins in inspections
             ):
                 trigger_line.active = False
         # deactivate/activate trigger line when there are other inspection in the period
