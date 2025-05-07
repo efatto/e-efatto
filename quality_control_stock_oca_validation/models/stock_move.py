@@ -29,7 +29,7 @@ class StockMove(models.Model):
             ]:
                 partner = (
                     operation.picking_id.partner_id
-                    if (qc_trigger.partner_selectable)
+                    if qc_trigger.partner_selectable
                     else False
                 )
                 trigger_lines = trigger_lines.union(
