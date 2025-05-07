@@ -323,7 +323,7 @@ class ProductProduct(models.Model):
                     fields.Date.today(),
                     round=False,
                 )
-        if seller.product_uom != self.uom_id:
+        if seller.product_uom and self.uom_id and seller.product_uom != self.uom_id:
             price_unit = seller.product_uom._compute_price(price_unit, self.uom_id)
         if direct_cost:
             return price_unit
