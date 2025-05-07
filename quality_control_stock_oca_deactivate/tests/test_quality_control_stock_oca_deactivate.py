@@ -75,46 +75,78 @@ class QualityControlStockOcaDeactivate(SingleTransactionCase):
         )
         return purchase_order
 
-    def test_00_purchase_order(self):
-        product2_form = Form(self.product2)
-        with product2_form.qc_triggers.new() as qc_trigger:
-            qc_trigger.trigger = self.in_trigger
-            qc_trigger.test = self.qc_test
-        product2_form.save()
-        self.assertTrue(self.product2.qc_triggers)
+    def _test_purchase_order(self, should_be_inactive=False):
+        if should_be_inactive:
+            self.assertFalse(self.product2.qc_triggers)
+        else:
+            self.assertTrue(self.product2.qc_triggers)
         purchase_order = self._create_purchase_order(20, 40, "Vendor Reference")
         picking = purchase_order.picking_ids
         # check inspection is created yet
-        self.assertEqual(len(picking.qc_inspections_ids), 1)
+        if should_be_inactive:
+            self.assertEqual(len(picking.qc_inspections_ids), 0)
+        else:
+            self.assertEqual(len(picking.qc_inspections_ids), 1)
         # set done 10 pc of product2, which does not generate a new check
         for sml in picking.move_lines.mapped("move_line_ids").filtered(
             lambda x: x.product_id == self.product2
         ):
             sml.qty_done = sml.product_uom_qty / 2.0
         res = picking.button_validate()
-        self.assertEqual(len(picking.qc_inspections_ids), 1)
-        ok_ql = (
-            self.env["qc.inspection.line"]
-            .search(
-                [
-                    ("inspection_id", "=", picking.qc_inspections_ids.id),
-                    ("possible_ql_values.ok", "=", True),
-                ]
+        if should_be_inactive:
+            self.assertEqual(len(picking.qc_inspections_ids), 0)
+        else:
+            self.assertEqual(len(picking.qc_inspections_ids), 1)
+            ok_ql = (
+                self.env["qc.inspection.line"]
+                .search(
+                    [
+                        ("inspection_id", "=", picking.qc_inspections_ids.id),
+                        ("possible_ql_values.ok", "=", True),
+                    ]
+                )
+                .possible_ql_values.filtered("ok")
             )
-            .possible_ql_values.filtered("ok")
-        )
-        with self.assertRaises(ValidationError):
-            # check it is impossible to validate as product2 is linked to a draft check
-            Form(
-                self.env[res["res_model"]].with_context(res["context"])
-            ).save().process()
-        qc_inspection_form = Form(picking.qc_inspections_ids)
-        qc_inspection_line_form = Form(picking.qc_inspections_ids.inspection_lines)
-        qc_inspection_line_form.qualitative_value = ok_ql
-        qc_inspection_line_form.save()
-        qc_inspection = qc_inspection_form.save()
-        qc_inspection.action_confirm()
+            with self.assertRaises(ValidationError):
+                # check it is impossible to validate as product2 is linked to a draft
+                # check
+                Form(
+                    self.env[res["res_model"]].with_context(res["context"])
+                ).save().process()
+            qc_inspection_form = Form(picking.qc_inspections_ids)
+            qc_inspection_line_form = Form(picking.qc_inspections_ids.inspection_lines)
+            qc_inspection_line_form.qualitative_value = ok_ql
+            qc_inspection_line_form.save()
+            qc_inspection = qc_inspection_form.save()
+            qc_inspection.action_confirm()
+            self.assertTrue(qc_inspection.success)
         res = picking.button_validate()
         Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
         backorder_picking = purchase_order.picking_ids - picking
         self.assertTrue(backorder_picking)
+
+    def test_00_purchase_order(self):
+        self.product2.qc_triggers.unlink()
+        self.assertFalse(self.product2.qc_triggers)
+        product2_form = Form(self.product2)
+        with product2_form.qc_triggers.new() as qc_trigger:
+            qc_trigger.trigger = self.in_trigger
+            qc_trigger.test = self.qc_test
+        product2_form.save()
+        self._test_purchase_order()
+        self.product2.qc_triggers.unlink()
+
+    def test_01_purchase_order_with_deactivation(self):
+        self.product2.qc_triggers.unlink()
+        self.assertFalse(self.product2.qc_triggers)
+        product2_form = Form(self.product2)
+        with product2_form.qc_triggers.new() as qc_trigger:
+            qc_trigger.trigger = self.in_trigger
+            qc_trigger.test = self.qc_test
+            qc_trigger.success_number_to_deactivation = 2
+        product2_form.save()
+        # create 3 purchase orders to force deactivation
+        self._test_purchase_order()
+        self._test_purchase_order()
+        self._test_purchase_order(should_be_inactive=True)
+        self.product2.qc_triggers.unlink()
