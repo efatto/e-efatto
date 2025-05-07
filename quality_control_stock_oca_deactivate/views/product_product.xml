@@ -33,10 +33,7 @@
             </search>
         </field>
     </record>
-    <record
-    model="ir.actions.act_window"
-    id="action_qc_trigger_product_line_all"
-  >
+    <record model="ir.actions.act_window" id="action_qc_trigger_product_line_all">
         <field name="name">Inactive Trigger Lines</field>
         <field name="res_model">qc.trigger.product_line</field>
         <field name="view_mode">tree,form</field>
@@ -44,10 +41,7 @@
       name="context"
     >{'search_default_inactive': 1, 'search_default_product': active_id}</field>
         <field name="domain">[('product', '=', active_id)]</field>
-        <field
-      name="search_view_id"
-      ref="qc_trigger_product_line_search_view"
-    />
+        <field name="search_view_id" ref="qc_trigger_product_line_search_view" />
     </record>
     <record id="product_form_view" model="ir.ui.view">
         <field name="model">product.product</field>
