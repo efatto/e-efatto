@@ -44,7 +44,8 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                                         "warehouse_id.company_id",
                                         "=",
                                         self.env.user.company_id.id,
-                                    )
+                                    ),
+                                    ("code", "!=", "mrp_operation"),
                                 ]
                             )
                             .ids,
