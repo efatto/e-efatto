@@ -31,8 +31,8 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                     "conn_string_sandbox": conn_string,
                     "connector": "mssql",  # noqa
                     "location_id": self.env.ref(
-                        "stock.stock_location_stock"
-                    ).id,  # noqa
+                        "stock.stock_location_stock"  # noqa
+                    ).id,
                     "stock_picking_type_ids": [
                         (
                             6,
