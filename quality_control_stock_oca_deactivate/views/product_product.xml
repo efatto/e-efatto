@@ -47,7 +47,7 @@
         <field name="model">product.product</field>
         <field name="inherit_id" ref="product.product_normal_form_view" />
         <field name="arch" type="xml">
-            <group name="qc" position="after">
+            <page name="inventory" position="inside">
                 <field name="product_has_inactive_triggers" invisible="1" />
                 <button
           name="%(quality_control_stock_oca_deactivate.action_qc_trigger_product_line_all)d"
@@ -56,7 +56,7 @@
           class="oe_highlight"
           attrs="{'invisible': [('product_has_inactive_triggers', '=', False)]}"
         />
-            </group>
+            </page>
         </field>
     </record>
 </odoo>
