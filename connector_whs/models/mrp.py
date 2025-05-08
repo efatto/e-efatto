@@ -203,7 +203,9 @@ class MrpProduction(models.Model):
             )
             if (
                 raw_dbsource
-                and production.picking_type_id in raw_dbsource.stock_picking_type_ids
+                # and production.picking_type_id in raw_dbsource.stock_picking_type_ids
+                # bypass check on locations, as this button is called from the user to
+                # create directly whs lists
             ):
                 num_lista = False
                 riga = 0
@@ -251,8 +253,10 @@ class MrpProduction(models.Model):
             )
             if (
                 finished_dbsource
-                and production.picking_type_id
-                in finished_dbsource.stock_picking_type_ids
+                # and production.picking_type_id
+                # in finished_dbsource.stock_picking_type_ids
+                # bypass check on locations, as this button is called from the user to
+                # create directly whs lists
                 and not (
                     production.picking_type_id.warehouse_id.mto_pull_id.route_id
                     in production.product_id.route_ids
