@@ -39,23 +39,27 @@ class HyddemoWhsListe(models.Model):
     #                                                  annulla un trasferimento
     # 4        5 = Elaborato da host                   Il cron di Odoo importa gli esiti
     data_lista = fields.Datetime("Data lista")
-    riferimento = fields.Text("Riferimento", size=50)
-    tipo = fields.Selection([
-        ("1", "Prelievo"),
-        ("2", "Deposito/Versamento"),
-        ("3", "Inventario"),  # 5 su WMS, 6 trasferimento
-        ("4", "E..."),  # Per Modula, informarsi a che serve
-    ], string="Tipo lista")
-    vettore = fields.Text("Vettore", size=30)
-    cliente = fields.Text("Codice cliente", size=30,
-                          help="Used as unique code in outher db, so spaces are "
-                               "not admitted.")
-    ragsoc = fields.Text("Ragione sociale", size=100)
-    indirizzo = fields.Text("Indirizzo", size=50)
-    cap = fields.Text("Cap", size=10)
-    localita = fields.Text("Località", size=50)
-    provincia = fields.Text("Provincia", size=2)
-    nazione = fields.Text("Nazione", size=50)
+    riferimento = fields.Text("Riferimento")  # , size=50)
+    tipo = fields.Selection(
+        [
+            ("1", "Prelievo"),
+            ("2", "Deposito"),
+            ("3", "Inventario"),  # 5 su WMS, 6 trasferimento
+            ("4", "E..."),  # Per Modula, informarsi a che serve
+        ],
+        string="Tipo lista",
+    )
+    vettore = fields.Text("Vettore")  # , size=30)
+    cliente = fields.Text(
+        "Codice cliente",
+        help="Used as unique code in outher db, so spaces are not admitted.",
+    )  # size=30,
+    ragsoc = fields.Text("Ragione sociale")  # , size=100)
+    indirizzo = fields.Text("Indirizzo")  # , size=50)
+    cap = fields.Text("Cap")  # , size=10)
+    localita = fields.Text("Località")  # , size=50)
+    provincia = fields.Text("Provincia")  # , size=2)
+    nazione = fields.Text("Nazione")  # , size=50)
     product_id = fields.Many2one(
         "product.product",
         string="Prodotto",

@@ -12,6 +12,10 @@ from sqlalchemy import text as sql_text
 _logger = logging.getLogger(__name__)
 
 
+def clean_sql_text(text):
+    return sql_text(text.replace("\n", " "))
+
+
 class BaseExternalDbsource(models.Model):
     _inherit = "base.external.dbsource"
 
@@ -109,7 +113,7 @@ class BaseExternalDbsource(models.Model):
                     product, dbsource.location_id.id, last_id)
                 insert_product_query = dbsource._get_insert_product_query()
                 dbsource.with_context(no_return=True).execute_mssql(
-                    sqlquery=sql_text(insert_product_query.replace("\n", " ")),
+                    sqlquery=clean_sql_text(insert_product_query),
                     sqlparams=insert_product_params,
                     metadata=None)
 
@@ -151,7 +155,7 @@ class BaseExternalDbsource(models.Model):
                 pos = 0
                 if whs_lists:
                     esiti_liste = dbsource.execute_mssql(
-                        sqlquery=sql_text(
+                        sqlquery=clean_sql_text(
                             "SELECT NumLista, NumRiga, Qta, QtaMovimentata, Lotto, "
                             "Lotto2, Lotto3, Lotto4, Lotto5, Articolo, "
                             "DescrizioneArticolo FROM HOST_LISTE WHERE Elaborato=4 "
@@ -164,7 +168,7 @@ class BaseExternalDbsource(models.Model):
                     )
                 else:
                     esiti_liste = dbsource.execute_mssql(
-                        sqlquery=sql_text(
+                        sqlquery=clean_sql_text(
                             "SELECT * FROM (SELECT row_number() OVER "
                             "(ORDER BY NumLista, NumRiga) "
                             "AS rownum, NumLista, NumRiga, Qta, QtaMovimentata, Lotto, "
@@ -300,12 +304,17 @@ class BaseExternalDbsource(models.Model):
 
                     # Set mssql list done from host, they are not deleted from HOST to
                     # preserve history, but it is a possible implementation to do
-                    set_liste_to_done_query = \
-                        "UPDATE HOST_LISTE SET Elaborato=5 WHERE NumLista='%s' AND " \
-                        "NumRiga='%s'" % (num_lista, num_riga)
+                    set_liste_to_done_query = (
+                        "UPDATE HOST_LISTE SET Elaborato=5 WHERE NumLista=:NumLista AND "
+                        "NumRiga=:NumRiga"
+                    )
                     dbsource.with_context(no_return=True).execute_mssql(
-                        sqlquery=sql_text(set_liste_to_done_query),
-                        sqlparams=None, metadata=None
+                        sqlquery=clean_sql_text(set_liste_to_done_query),
+                        sqlparams=dict(
+                            NumLista=num_lista,
+                            NumRiga=num_riga,
+                        ),
+                        metadata=None,
                     )
             if pickings_to_assign:
                 pickings_to_assign.filtered(
@@ -355,12 +364,14 @@ class BaseExternalDbsource(models.Model):
                             ]._get_insert_host_liste_query(
                                 insert_order_params[num_lista])
                             self.execute_query(
-                                dbsource, sql_text(insert_query),
-                                insert_order_params[num_lista][riga])
+                                dbsource,
+                                clean_sql_text(insert_query),
+                                insert_order_params[num_lista][riga],
+                            )
                     else:
                         # there are separated tables for order and order line
                         res = dbsource.execute_mssql(
-                            sqlquery=sql_text(
+                            sqlquery=clean_sql_text(
                                 "SELECT ORD_ORDINE FROM IMP_ORDINI WHERE "
                                 "ORD_OPERAZIONE='I' "
                                 "AND ORD_ORDINE=:ORD_ORDINE"),
@@ -374,8 +385,10 @@ class BaseExternalDbsource(models.Model):
                             ]._get_insert_host_liste_query(
                                 insert_order_params[num_lista])
                             self.execute_query(
-                                dbsource, sql_text(insert_order_query),
-                                insert_order_params[num_lista])
+                                dbsource,
+                                clean_sql_text(insert_order_query),
+                                insert_order_params[num_lista],
+                            )
                         for riga in insert_order_line_params[num_lista]:
                             insert_line_query = self.env[
                                 "hyddemo.whs.liste"
@@ -383,8 +396,10 @@ class BaseExternalDbsource(models.Model):
                                 insert_order_line_params[num_lista]
                             )
                             self.execute_query(
-                                dbsource, sql_text(insert_line_query),
-                                insert_order_line_params[num_lista][riga])
+                                dbsource,
+                                clean_sql_text(insert_line_query),
+                                insert_order_line_params[num_lista][riga],
+                            )
             # Update lists on mssql from 0 to 1 to be elaborated from WMS all in the
             # same time
             if hyddemo_whs_lists:
@@ -392,8 +407,9 @@ class BaseExternalDbsource(models.Model):
                     hyddemo_whs_lists._get_set_liste_to_elaborate_query()
                 if set_liste_to_elaborate_query:
                     dbsource.with_context(no_return=True).execute_mssql(
-                        sqlquery=sql_text(set_liste_to_elaborate_query),
-                        sqlparams=None, metadata=None
+                        sqlquery=clean_sql_text(set_liste_to_elaborate_query),
+                        sqlparams=None,
+                        metadata=None,
                     )
                 # set state to Elaborato even if query is not created
                 hyddemo_whs_lists.write({"stato": "2"})
