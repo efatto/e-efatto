@@ -1,4 +1,4 @@
-from sqlalchemy import text as sql_text
+from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
 
 from odoo.exceptions import ValidationError
 from odoo.tests import tagged
@@ -63,7 +63,7 @@ class TestConnectorWmsModula(TestConnectorWmsWhs):
         self.assertEqual(
             len(
                 self.dbsource.execute_mssql(
-                    sqlquery=sql_text(
+                    sqlquery=clean_sql_text(
                         "SELECT * FROM HOST_LISTE WHERE Elaborato!=:Elaborato AND "
                         "Qta!=:Qta"
                     ),
@@ -79,28 +79,31 @@ class TestConnectorWmsModula(TestConnectorWmsWhs):
         whs_lists = repair.mapped("operations.move_id.whs_list_ids")
         for whs_list in whs_lists:
             set_liste_elaborated_query = (
-                "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=%s WHERE "
-                "NumLista = '%s' AND NumRiga = '%s'"
-                % (
-                    2 if whs_list.product_id == self.product2 else 3,
-                    whs_list.num_lista,
-                    whs_list.riga,
-                )
+                "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=:QtaMov WHERE "
+                "NumLista=:NumLista AND NumRiga=:NumRiga"
             )
             self.dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=sql_text(set_liste_elaborated_query),
-                sqlparams=None,
+                sqlquery=clean_sql_text(set_liste_elaborated_query),
+                sqlparams=dict(
+                    QtaMov=2 if whs_list.product_id == self.product2 else 3,
+                    NumLista=whs_list.num_lista,
+                    NumRiga=whs_list.riga,
+                ),
                 metadata=None,
             )
 
         for whs_list in whs_lists:
             whs_select_query = (
                 "SELECT Qta, QtaMovimentata FROM HOST_LISTE WHERE Elaborato = 4 AND "
-                "NumLista = '%s' AND NumRiga = '%s'"
-                % (whs_list.num_lista, whs_list.riga)
+                "NumLista=:NumLista AND NumRiga=:NumRiga"
             )
             result_liste = self.dbsource.execute_mssql(
-                sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+                sqlquery=clean_sql_text(whs_select_query),
+                sqlparams=dict(
+                    NumLista=whs_list.num_lista,
+                    NumRiga=whs_list.riga,
+                ),
+                metadata=None
             )
             self.assertEqual(
                 str(result_liste[0]),
@@ -115,11 +118,15 @@ class TestConnectorWmsModula(TestConnectorWmsWhs):
         for whs_list in whs_lists:
             whs_select_query = (
                 "SELECT Qta, QtaMovimentata FROM HOST_LISTE WHERE Elaborato = 5 AND "
-                "NumLista = '%s' AND NumRiga = '%s'"
-                % (whs_list.num_lista, whs_list.riga)
+                "NumLista=:NumLista AND NumRiga=:NumRiga"
             )
             result_liste = self.dbsource.execute_mssql(
-                sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+                sqlquery=clean_sql_text(whs_select_query),
+                sqlparams=dict(
+                    NumLista=whs_list.num_lista,
+                    NumRiga=whs_list.riga,
+                ),
+                metadata=None
             )
             self.assertIn(
                 "[(Decimal('5.000'), Decimal('2.000'))]"
