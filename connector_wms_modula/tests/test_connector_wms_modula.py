@@ -982,6 +982,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
     def _test_09_mrp_total_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
             self.dbsource.connection_test()
+        self._clean_all()
         order_form = Form(self.env["sale.order"])
         order_form.partner_id = self.env.ref("base.res_partner_12")
         order_form.date_order = fields.Datetime.now()
@@ -999,14 +1000,18 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertTrue(man_order)
         man_order.button_plan()
         self.assertEqual(man_order.state, "confirmed")
-        mo_form = Form(man_order)
-        mo_form.product_qty = 20
-        man_order = mo_form.save()
+        produce_form = Form(self.env['mrp.product.produce'].with_context(
+            active_id=man_order.id,
+            active_ids=[man_order.id],
+        ))
+        produce_form.product_qty = 20
+        wizard = produce_form.save()
+        wizard.do_produce()
         self.assertTrue(man_order.mapped("move_raw_ids.move_line_ids"))
-        # self.assertTrue(man_order.move_finished_ids.move_line_ids)
-        # self.assertEqual(
-        #     man_order.move_finished_ids.move_line_ids.mapped("state"), ["confirmed"]
-        # )
+        self.assertTrue(man_order.move_finished_ids.move_line_ids)
+        self.assertEqual(
+            man_order.move_finished_ids.move_line_ids.mapped("state"), ["confirmed"]
+        )
         # check whs list are added: 3 components and 1 finished product
         self.dbsource.whs_insert_read_and_synchronize_list()
         created_whs_list_number = (
@@ -1020,11 +1025,11 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             created_whs_list_number,
         )
 
-        # simulate whs work: consume 25% of components to produce 5 finished product
+        # simulate whs work: consume 100% of components to produce 20 finished products
         component_whs_lists = man_order.mapped("move_raw_ids.whs_list_ids")
         finished_whs_lists = man_order.mapped("move_finished_ids.whs_list_ids")
         self.simulate_wms_cron({
-            x: x.qta * 0.25 for x in component_whs_lists | finished_whs_lists})
+            x: x.qta for x in component_whs_lists | finished_whs_lists})
 
         for whs_list in component_whs_lists | finished_whs_lists:
             result_liste = self._select_wms_liste(whs_list)
@@ -1049,7 +1054,6 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.dbsource.whs_insert_read_and_synchronize_list()
 
         man_order.with_context(test_connector_whs=True).button_mark_done()
-        self.assertEqual(len(man_order.procurement_group_id.mrp_production_ids), 1)
         self.assertEqual(man_order.state, "done")
 
     def test_00_complete_picking_from_sale_1step(self):
@@ -1100,18 +1104,18 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self._configure_2_steps_delivery()
         self._test_06_purchase()
 
-    def test_00_mrp_partial_from_sale_1step(self):
+    def test_08_mrp_partial_from_sale_1step(self):
         self._configure_1_step_delivery()
         self._test_08_mrp_partial_from_sale()
 
-    def test_00a_mrp_partial_from_sale_2steps(self):
+    def test_08a_mrp_partial_from_sale_2steps(self):
         self._configure_2_steps_delivery()
         self._test_08_mrp_partial_from_sale()
 
-    def _test_00_mrp_total_from_sale_1step(self):
+    def test_09_mrp_total_from_sale_1step(self):
         self._configure_1_step_delivery()
         self._test_09_mrp_total_from_sale()
 
-    def _test_00a_mrp_total_from_sale_2steps(self):
+    def test_09a_mrp_total_from_sale_2steps(self):
         self._configure_2_steps_delivery()
         self._test_09_mrp_total_from_sale()
