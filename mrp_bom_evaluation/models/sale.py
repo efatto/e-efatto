@@ -192,6 +192,24 @@ class SaleOrder(models.Model):
         self._compute_analytic_cost()
         self.mapped('order_line')._compute_mrp_production_total_amount()
 
+
+    @api.model
+    def _cron_recalculate_all_costs(self):
+        # this cron ensures that all costs are aligned when a bom is changed and the
+        # sale orders with that product are not
+        sale_orders = self.env["sale.order"].search([
+            ('order_line.product_id.bom_ids', '!=', False),
+        ])
+        _logger.info(
+            "Start recalculate all costs job for #%s sale orders." %
+            len(sale_orders)
+        )
+        sale_orders._recalculate_bom_costs()
+        _logger.info(
+            "End recalculate all costs job for #%s sale orders." %
+            len(sale_orders)
+        )
+
     @api.model
     def _cron_recalculate_bom_costs(self):
         # this cron ensure that bom costs are aligned when a bom is changed and the

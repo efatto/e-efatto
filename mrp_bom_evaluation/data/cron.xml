@@ -12,4 +12,15 @@
         <field name="doall" eval="False"/>
     </record>
 
+    <record id="ir_cron_mrp_bom_evaluation_update_all_costs_sale_order" model="ir.cron">
+        <field name="name">BOM and MRP evaluation - compute all costs and update in sale orders</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active" eval="False"/>
+        <field name="model_id" ref="model_sale_order"/>
+        <field name="code">model._cron_recalculate_all_costs()</field>
+        <field name="doall" eval="False"/>
+    </record>
+
 </odoo>
