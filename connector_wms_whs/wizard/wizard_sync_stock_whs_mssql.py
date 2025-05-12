@@ -10,14 +10,13 @@ class WizardSyncStockWhsMssql(models.TransientModel):
     _inherit = "wizard.sync.stock.whs.mssql"
 
     @staticmethod
-    def _prepare_giacenze_query(i, dbsource):
+    def _prepare_giacenze_query(i):
         # overridable method
         # respect order of fields retrieved!
         query = (
             "SELECT * FROM (SELECT row_number() OVER (ORDER BY Articolo) "
             "AS rownum, Articolo, Qta, Peso FROM HOST_GIACENZE) as A "
-            "WHERE A.rownum BETWEEN %s AND %s AND idHost='%s'"
-            % (i, i + 2000, dbsource.name)
+            "WHERE A.rownum BETWEEN %s AND %s" % (i, i + 2000)
         )
         # removed as unused: Lotto, Lotto2, Lotto3, Lotto4, Lotto5, dataora,
         return query
@@ -41,7 +40,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
             stock_product_dict = dict()
             # get and aggregate stock data from wms
             while True:
-                giacenze_query = self._prepare_giacenze_query(i, dbsource)
+                giacenze_query = self._prepare_giacenze_query(i)
                 if wizard.product_id:
                     giacenze_query = giacenze_query.replace(
                         "HOST_GIACENZE",
@@ -262,7 +261,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         "errori": "Stock inventory %s"
                         % ("sync" if wizard.do_sync else "check"),
                         "ultimo_invio": new_last_update,
-                        "dbsource_id": dbsource.name,
+                        "dbsource_id": dbsource.id,
                         "inventory_id": inventory.id,
                         "hyddemo_mssql_log_line_ids": [
                             (0, 0, x) for x in whs_log_lines

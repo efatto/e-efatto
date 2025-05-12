@@ -14,7 +14,7 @@ from odoo.addons.connector_whs.tests.test_connector_wms import CommonConnectorWM
 class TestConnectorWmsWhs(CommonConnectorWMS):
     def setUp(self):
         super().setUp()
-        dbsource_name = "OdooWMS"
+        dbsource_name = "Odoo WMS local server"
         dbsource = self.dbsource_model.search([("name", "=", dbsource_name)])
         if not dbsource:
             # connection string is something like:
@@ -58,25 +58,23 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             sqlquery=sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
         )
 
-    def _select_whs_liste_rif(self, dbsource, riferimento):
+    def _select_whs_liste_rif(self, riferimento):
         return self.dbsource.execute_mssql(
             sqlquery=sql_text(
-                "SELECT Elaborato FROM HOST_LISTE WHERE Riferimento=:Riferimento "
-                "AND idHost=:idHost"
+                "SELECT Elaborato FROM HOST_LISTE " "WHERE Riferimento=:Riferimento"
             ),
-            sqlparams=dict(Riferimento=riferimento, idHost=dbsource.name),
+            sqlparams=dict(Riferimento=riferimento),
             metadata=None,
         )
 
-    def _select_whs_liste(self, whs_list, dbsource, elaborato=False):
+    def _select_whs_liste(self, wms_list, elaborato=False):
         query = (
             "SELECT Qta, QtaMovimentata, Priorita FROM HOST_LISTE "
-            "WHERE NumLista=:NumLista AND NumRiga=:NumRiga AND idHost=:idHost"
+            "WHERE NumLista=:NUM_LISTA AND NumRiga=:NUM_RIGA"
         )
         sql_params = dict(
-            NumLista=whs_list.num_lista,
-            NumRiga=whs_list.riga,
-            idHost=dbsource.name,
+            NUM_LISTA=wms_list.num_lista,
+            NUM_RIGA=wms_list.riga,
         )
         if elaborato:
             query += " AND Elaborato=:ELABORATO"
@@ -116,7 +114,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         riferimento = (
             picking.sale_id.name if picking.sale_id else picking.purchase_id.name
         )
-        whs_records = self._select_whs_liste_rif(self.dbsource, riferimento)[0]
+        whs_records = self._select_whs_liste_rif(riferimento)[0]
         whs_lists = picking.mapped("move_lines.whs_list_ids")
         self.assertEqual(len(whs_lists), list_len)
         self.assertEqual(set(whs_lists.mapped("stato")), {"2"})
@@ -136,7 +134,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         riferimento = (
             picking.sale_id.name if picking.sale_id else picking.purchase_id.name
         )
-        whs_records1 = self._select_whs_liste_rif(self.dbsource, riferimento)[0]
+        whs_records1 = self._select_whs_liste_rif(riferimento)[0]
         self.assertEqual(len(whs_records1), len(whs_records))
         self.assertEqual({x[0] for x in whs_records1}, {5})
         # restore picking to assigned state
@@ -153,7 +151,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         riferimento = (
             picking.sale_id.name if picking.sale_id else picking.purchase_id.name
         )
-        whs_records2 = self._select_whs_liste_rif(self.dbsource, riferimento)[0]
+        whs_records2 = self._select_whs_liste_rif(riferimento)[0]
         # 4 whs lists of which 2 valid (stato=1) and 2 invalid (stato=3)
         self.assertEqual(len(whs_records2), len(whs_records) + list_len)
         for Elaborato in {x[0] for x in whs_records2}:
@@ -367,7 +365,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         # do not launch self.dbsource.whs_insert_read_and_synchronize_list() here as it
         # would change Elaborato from 4 to 5, as it must do
         for whs_list in whs_lists:
-            result_liste = self._select_whs_liste(whs_list, self.dbsource, 4)
+            result_liste = self._select_whs_liste(whs_list, 4)
             self.assertIn(
                 "[(Decimal('5.000'), Decimal('3.000'), 1)]", str(result_liste)
             )
@@ -494,7 +492,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             )
         # check WMS work is done correctly
         for whs_list in whs_lists:
-            result_liste = self._select_whs_liste(whs_list, self.dbsource, 4)
+            result_liste = self._select_whs_liste(whs_list, 4)
             self.assertEqual(
                 str(result_liste[0]),
                 "[(Decimal('5.000'), Decimal('3.000'), 2)]"
@@ -557,7 +555,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
 
         # todo check whs_list for backorder is created
         self.dbsource.whs_insert_read_and_synchronize_list()
-        result_liste = self._select_whs_liste(back_whs_list, self.dbsource)
+        result_liste = self._select_whs_liste(back_whs_list)
         self.assertEqual(str(result_liste[0]), "[(Decimal('2.000'), None, 2)]")
 
         # simulate whs work set done to rest of backorder
@@ -622,7 +620,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         )
 
         for whs_l in whs_lists:
-            result_liste = self._select_whs_liste(whs_l, self.dbsource, 4)
+            result_liste = self._select_whs_liste(whs_l, 4)
             self.assertEqual(
                 str(result_liste[0]),
                 "[(Decimal('5.000'), Decimal('5.000'), 0)]"
@@ -850,7 +848,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             {x: 2 if x.product_id == self.product2 else 3 for x in whs_lists}
         )
         for whs_list in whs_lists:
-            result_liste = self._select_whs_liste(whs_list, self.dbsource, 4)
+            result_liste = self._select_whs_liste(whs_list, 4)
             self.assertEqual(
                 str(result_liste[0]),
                 "[(Decimal('17.000'), Decimal('2.000'), 0)]"
@@ -862,7 +860,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         self.dbsource.whs_insert_read_and_synchronize_list()
         # check whs_list are elaborated
         for whs_list in whs_lists:
-            result_liste = self._select_whs_liste(whs_list, self.dbsource, 5)
+            result_liste = self._select_whs_liste(whs_list, 5)
             self.assertEqual(
                 str(result_liste[0]),
                 "[(Decimal('17.000'), Decimal('2.000'), 0)]"
@@ -897,7 +895,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         # check whs_list for backorder is created
         self.dbsource.whs_insert_read_and_synchronize_list()
         back_whs_list = backorder_picking.mapped("move_lines.whs_list_ids")
-        result_liste = self._select_whs_liste(back_whs_list, self.dbsource)
+        result_liste = self._select_whs_liste(back_whs_list)
         self.assertEqual(str(result_liste[0]), "[(Decimal('15.000'), None, 0)]")
         # TODO check cancel workflow without action_assign that create WMS list anyway
         self._check_cancel_workflow(backorder_picking, 1)
@@ -981,7 +979,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             lambda x: x.qta == 7
         )
         self.dbsource.whs_insert_read_and_synchronize_list()
-        result_liste = self._select_whs_liste(po_whs_list, self.dbsource)
+        result_liste = self._select_whs_liste(po_whs_list)
         # WMS list is created for the increased qty
         self.assertEqual(str(result_liste[0]), "[(Decimal('7.000'), None, 0)]")
 
@@ -1016,7 +1014,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         # simulate whs work: partial processing of product #2
         whs_list = purchase.mapped("picking_ids.move_lines.whs_list_ids")
         self.simulate_whs_cron({x: 7 for x in whs_list})
-        result_liste = self._select_whs_liste(whs_list, self.dbsource, elaborato=4)
+        result_liste = self._select_whs_liste(whs_list, elaborato=4)
         self.assertEqual(
             str(result_liste[0]),
             "[(Decimal('20.000'), Decimal('7.000'), 0)]",
@@ -1024,7 +1022,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         # this update Odoo from WHS
         self.dbsource.whs_insert_read_and_synchronize_list()
         # check whs_list are elaborated
-        result_liste = self._select_whs_liste(whs_list, self.dbsource, 5)
+        result_liste = self._select_whs_liste(whs_list, 5)
         self.assertEqual(
             str(result_liste[0]),
             "[(Decimal('20.000'), Decimal('7.000'), 0)]",
@@ -1077,7 +1075,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         # simulate whs work: processing more qty than requested for product #2
         whs_list = purchase.mapped("picking_ids.move_lines.whs_list_ids")
         self.simulate_whs_cron({x: 27 for x in whs_list})
-        result_liste = self._select_whs_liste(whs_list, self.dbsource, 4)
+        result_liste = self._select_whs_liste(whs_list, 4)
         self.assertEqual(
             str(result_liste[0]),
             "[(Decimal('20.000'), Decimal('27.000'), 0)]",
@@ -1085,7 +1083,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         # this update Odoo from WHS
         self.dbsource.whs_insert_read_and_synchronize_list()
         # check whs_list are elaborated
-        result_liste = self._select_whs_liste(whs_list, self.dbsource, 5)
+        result_liste = self._select_whs_liste(whs_list, 5)
         self.assertEqual(
             str(result_liste[0]),
             "[(Decimal('20.000'), Decimal('27.000'), 0)]",
@@ -1158,7 +1156,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         self.simulate_whs_cron({x: 5 for x in finished_whs_lists})
 
         for whs_list in component_whs_lists | finished_whs_lists:
-            result_liste = self._select_whs_liste(whs_list, self.dbsource, 4)
+            result_liste = self._select_whs_liste(whs_list, 4)
             if whs_list.product_id == self.subproduct_1_1:
                 self.assertIn(
                     str(result_liste[0]),
@@ -1242,7 +1240,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         self.simulate_whs_cron({x: 5 for x in finished_whs_lists})
 
         for whs_list in component_whs_lists | finished_whs_lists:
-            result_liste = self._select_whs_liste(whs_list, self.dbsource, 4)
+            result_liste = self._select_whs_liste(whs_list, 4)
             if whs_list.product_id == self.subproduct_1_1:
                 self.assertIn(
                     str(result_liste[0]),
