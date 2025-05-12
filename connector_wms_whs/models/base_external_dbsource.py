@@ -2,7 +2,7 @@ import logging
 
 from sqlalchemy import text as sql_text
 
-from odoo import _, fields, models
+from odoo import _, models
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
@@ -11,36 +11,13 @@ _logger = logging.getLogger(__name__)
 class BaseExternalDbsource(models.Model):
     _inherit = "base.external.dbsource"
 
-    name = fields.Char(
-        size=10,
-    )
-
-    _sql_constraints = [
-        (
-            "dbsource_unique_name",
-            "UNIQUE (name)",
-            _("The Name must be unique!"),
-        )
-    ]
-
-    def copy(self, default=None):
-        default = dict(
-            default or {},
-            name=_("id_%s_copy") % self.id,
-            location_id=False,
-        )
-        return super().copy(default=default)
-
     def _pre_insert_product_query(self):
         self.ensure_one()
         pre_insert_product_query = (
-            "DELETE FROM HOST_ARTICOLI WHERE idHost=:idHost AND "
-            "(Elaborato = 2 OR Elaborato = 0)"
+            "DELETE FROM HOST_ARTICOLI WHERE Elaborato = 2 OR Elaborato = 0"
         )
         self.with_context(no_return=True).execute_mssql(
-            sqlquery=sql_text(pre_insert_product_query),
-            sqlparams=dict(idHost=self.name),
-            metadata=None,
+            sqlquery=sql_text(pre_insert_product_query), sqlparams=None, metadata=None
         )
         return True
 
@@ -48,13 +25,10 @@ class BaseExternalDbsource(models.Model):
         # Set record from Elaborato=0 to Elaborato=1 to be processable from WHS
         self.ensure_one()
         update_product_query = (
-            "UPDATE HOST_ARTICOLI SET Elaborato = 1 "
-            "WHERE idHost=:idHost AND Elaborato = 0"
+            "UPDATE HOST_ARTICOLI SET Elaborato = 1 WHERE Elaborato = 0"
         )
         self.with_context(no_return=True).execute_mssql(
-            sqlquery=sql_text(update_product_query),
-            sqlparams=dict(idHost=self.name),
-            metadata=None,
+            sqlquery=sql_text(update_product_query), sqlparams=None, metadata=None
         )
         return True
 
@@ -77,8 +51,7 @@ class BaseExternalDbsource(models.Model):
         Profondita,
         DescrizioneBreve,
         ScortaMin,
-        Id,
-        idHost
+        Id
         )
         VALUES (
         :Elaborato,
@@ -97,8 +70,7 @@ class BaseExternalDbsource(models.Model):
         :Profondita,
         :DescrizioneBreve,
         :ScortaMin,
-        :Id,
-        :idHost
+        :Id
         )
         """
         return insert_product_query
@@ -150,7 +122,6 @@ class BaseExternalDbsource(models.Model):
             "DescrizioneBreve": " ",
             "ScortaMin": product_min_qty,  # digits=(18, 3)
             "Id": last_id + 1,
-            "idHost": self.name,
         }
         return execute_params
 
@@ -177,16 +148,11 @@ class BaseExternalDbsource(models.Model):
                 whs_liste_query = (
                     "SELECT NumLista, NumRiga, Qta, QtaMovimentata, Elaborato "
                     "FROM HOST_LISTE "
-                    "WHERE idHost=:idHost NumLista=:NumLista AND NumRiga=:NumRiga"
+                    "WHERE NumLista = '%s' AND NumRiga = '%s'"
+                    % (whs_list.num_lista, whs_list.riga)
                 )
                 esiti_liste = dbsource.execute_mssql(
-                    sqlquery=sql_text(whs_liste_query),
-                    sqlparams=dict(
-                        idHost=dbsource.name,
-                        NumLista=whs_list.num_lista,
-                        NumRiga=whs_list.riga,
-                    ),
-                    metadata=None,
+                    sqlquery=sql_text(whs_liste_query), sqlparams=None, metadata=None
                 )
                 # esiti_liste[0] contains result
                 if not esiti_liste[0]:
