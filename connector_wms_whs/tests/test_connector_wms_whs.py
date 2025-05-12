@@ -1,6 +1,6 @@
 import os
 
-from sqlalchemy import text as sql_text
+from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
 
 from odoo import _, fields
 from odoo.exceptions import UserError, ValidationError
@@ -55,13 +55,13 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             )
         self.dbsource = dbsource
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
+            sqlquery=clean_sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
         )
 
     def _select_whs_liste_rif(self, riferimento):
         return self.dbsource.execute_mssql(
-            sqlquery=sql_text(
-                "SELECT Elaborato FROM HOST_LISTE " "WHERE Riferimento=:Riferimento"
+            sqlquery=clean_sql_text(
+                "SELECT Elaborato FROM HOST_LISTE WHERE Riferimento=:Riferimento"
             ),
             sqlparams=dict(Riferimento=riferimento),
             metadata=None,
@@ -80,7 +80,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             query += " AND Elaborato=:ELABORATO"
             sql_params.update(ELABORATO=elaborato)
         return self.dbsource.execute_mssql(
-            sqlquery=sql_text(query), sqlparams=sql_params, metadata=None
+            sqlquery=clean_sql_text(query), sqlparams=sql_params, metadata=None
         )
 
     def simulate_whs_cron(self, whs_lists_dict, elaborato=4):
@@ -91,18 +91,18 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             current_whs_lists = whs_lists.filtered(lambda x: x.num_lista == num_lista)
             for whs_list in current_whs_lists:
                 set_liste_elaborated_query = (
-                    "UPDATE HOST_LISTE SET Elaborato=%s, QtaMovimentata=%s WHERE "
-                    "NumLista = '%s' AND NumRiga = '%s'"
-                    % (
-                        elaborato,
-                        whs_lists_dict[whs_list],
-                        whs_list.num_lista,
-                        whs_list.riga,
-                    )
+                    "UPDATE HOST_LISTE SET Elaborato=:Elaborato, "
+                    "QtaMovimentata=:QtaMov WHERE "
+                    "NumLista=:NumLista AND NumRiga=:NumRiga"
                 )
                 self.dbsource.with_context(no_return=True).execute_mssql(
-                    sqlquery=sql_text(set_liste_elaborated_query),
-                    sqlparams=None,
+                    sqlquery=clean_sql_text(set_liste_elaborated_query),
+                    sqlparams=dict(
+                        Elaborato=elaborato,
+                        QtaMov=whs_lists_dict[whs_list],
+                        NumLista=whs_list.num_lista,
+                        NumRiga=whs_list.riga,
+                    ),
                     metadata=None,
                 )
 
@@ -163,7 +163,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         # insert lists in WHS: this has to be invoked before every sql call!
         self.dbsource.whs_insert_read_and_synchronize_list()
         res = self.dbsource.execute_mssql(
-            sqlquery=sql_text("SELECT * FROM HOST_LISTE WHERE Qta!=:Qta"),
+            sqlquery=clean_sql_text("SELECT * FROM HOST_LISTE WHERE Qta!=:Qta"),
             sqlparams=dict(Qta=0),
             metadata=None,
         )
@@ -243,31 +243,38 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         lotto4 = "55A4"
         lotto5 = "55A5"
         set_liste_elaborated_query = (
-            "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=%s, "
-            "Lotto='%s', Lotto2='%s', Lotto3='%s', Lotto4='%s', Lotto5='%s' WHERE "
-            "NumLista = '%s' AND NumRiga = '%s'"
-            % (
-                whs_list.qta,
-                lotto,
-                lotto2,
-                lotto3,
-                lotto4,
-                lotto5,
-                whs_list.num_lista,
-                whs_list.riga,
-            )
+            "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=:QtaMov, "
+            "Lotto=:Lotto, Lotto2=:Lotto2, Lotto3=:Lotto3, Lotto4=:Lotto4, "
+            "Lotto5=:Lotto5 WHERE "
+            "NumLista=:NumLista AND NumRiga=:NumRiga"
         )
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=sql_text(set_liste_elaborated_query), sqlparams=None, metadata=None
+            sqlquery=clean_sql_text(set_liste_elaborated_query),
+            sqlparams=dict(
+                Lotto=lotto,
+                Lotto2=lotto2,
+                Lotto3=lotto3,
+                Lotto4=lotto4,
+                Lotto5=lotto5,
+                QtaMov=whs_list.qta,
+                NumLista=whs_list.num_lista,
+                NumRiga=whs_list.riga,
+            ),
+             metadata=None
         )
 
         whs_select_query = (
             "SELECT Qta, QtaMovimentata, Lotto, Lotto3, Lotto3, Lotto4, Lotto5 "
             "FROM HOST_LISTE WHERE Elaborato = 4 AND "
-            "NumLista = '%s' AND NumRiga = '%s'" % (whs_list.num_lista, whs_list.riga)
+            "NumLista=:NumLista AND NumRiga=:NumRiga"
         )
         result_liste = self.dbsource.execute_mssql(
-            sqlquery=sql_text(whs_select_query), sqlparams=None, metadata=None
+            sqlquery=clean_sql_text(whs_select_query),
+            sqlparams=dict(
+                NumLista=whs_list.num_lista,
+                NumRiga=whs_list.riga,
+            ),
+            metadata=None
         )
         self.assertEqual(
             str(result_liste[0]),
@@ -323,7 +330,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         # check WMS list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self.dbsource.execute_mssql(
-            sqlquery=sql_text(
+            sqlquery=clean_sql_text(
                 "SELECT Elaborato, NumLista, NumRiga, * FROM HOST_LISTE WHERE "
                 "Qta!=:Qta"
             ),
@@ -352,7 +359,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         whs_lists = self._check_cancel_workflow(picking, 2)
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self.dbsource.execute_mssql(
-            sqlquery=sql_text(
+            sqlquery=clean_sql_text(
                 "SELECT Elaborato, NumLista, NumRiga FROM HOST_LISTE WHERE Qta!=:Qta"
             ),
             sqlparams=dict(Qta=0),
@@ -393,13 +400,16 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         for whs_list in whs_lists:
             # simulate whs work: total process
             set_liste_elaborated_query = (
-                "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=%s WHERE "
-                "NumLista = '%s' AND NumRiga = '%s'"
-                % (whs_list.qta, whs_list.num_lista, whs_list.riga)
+                "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=:QtaMov WHERE "
+                "NumLista=:NumLista AND NumRiga=:NumRiga"
             )
             self.dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=sql_text(set_liste_elaborated_query),
-                sqlparams=None,
+                sqlquery=clean_sql_text(set_liste_elaborated_query),
+                sqlparams=dict(
+                    QtaMov=whs_list.qta,
+                    NumLista=whs_list.num_lista,
+                    NumRiga=whs_list.riga,
+                ),
                 metadata=None,
             )
 
@@ -443,7 +453,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         # check whs list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self.dbsource.execute_mssql(
-            sqlquery=sql_text(
+            sqlquery=clean_sql_text(
                 "SELECT * FROM HOST_LISTE WHERE Elaborato!=:Elaborato AND Qta!=:Qta"
             ),
             sqlparams=dict(Elaborato=5, Qta=0),
@@ -477,17 +487,16 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             # simulate WMS work: partial processing (3 of 5) of product #1
             # and total (20 of 20) of product #2 so it is -4 on warehouse
             set_liste_elaborated_query = (
-                "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=%s WHERE "
-                "NumLista = '%s' AND NumRiga = '%s'"
-                % (
-                    3 if whs_list.product_id == self.product1 else 20,
-                    whs_list.num_lista,
-                    whs_list.riga,
-                )
+                "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=:QtaMov WHERE "
+                "NumLista=:NumLista AND NumRiga=:NumRiga"
             )
             self.dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=sql_text(set_liste_elaborated_query),
-                sqlparams=None,
+                sqlquery=clean_sql_text(set_liste_elaborated_query),
+                sqlparams=dict(
+                    QtaMov=3 if whs_list.product_id == self.product1 else 20,
+                    NumLista=whs_list.num_lista,
+                    NumRiga=whs_list.riga,
+                ),
                 metadata=None,
             )
         # check WMS work is done correctly
@@ -527,17 +536,16 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         for whs_list in whs_lists:
             # simulate whs work: total process
             set_liste_elaborated_query = (
-                "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=%s WHERE "
-                "NumLista = '%s' AND NumRiga = '%s'"
-                % (
-                    2 if whs_list.product_id == self.product2 else 3,
-                    whs_list.num_lista,
-                    whs_list.riga,
-                )
+                "UPDATE HOST_LISTE SET Elaborato=4, QtaMovimentata=:QtaMov WHERE "
+                "NumLista=:NumLista AND NumRiga=:NumRiga"
             )
             self.dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=sql_text(set_liste_elaborated_query),
-                sqlparams=None,
+                sqlquery=clean_sql_text(set_liste_elaborated_query),
+                sqlparams=dict(
+                    QtaMov=2 if whs_list.product_id == self.product2 else 3,
+                    NumLista=whs_list.num_lista,
+                    NumRiga=whs_list.riga,
+                ),
                 metadata=None,
             )
 
@@ -768,7 +776,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             )
         )
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=sql_text(set_liste_elaborating_query),
+            sqlquery=clean_sql_text(set_liste_elaborating_query),
             sqlparams=None,
             metadata=None,
         )
