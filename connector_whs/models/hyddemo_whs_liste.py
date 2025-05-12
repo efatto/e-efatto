@@ -188,11 +188,11 @@ class HyddemoWhsListe(models.Model):
         # overridable method
         return "".replace("\n", " ")
 
-    def whs_prepare_host_liste_values(self, dbsource):
+    def whs_prepare_host_liste_values(self):
         # overridable method
         execute_params_order, execute_params_order_line = {}, {}
         return execute_params_order, execute_params_order_line
 
-    def _get_set_liste_to_elaborate_query(self, dbsource):
+    def _get_set_liste_to_elaborate_query(self):
         # overridable method
         return ""
