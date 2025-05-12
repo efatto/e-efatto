@@ -1,6 +1,6 @@
 import logging
 
-from sqlalchemy import text as sql_text
+from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
@@ -17,15 +17,14 @@ class HyddemoWhsListe(models.Model):
         # do no call super() and put specific code
         for whs_list in self:
             delete_lists_query = (
-                "DELETE FROM HOST_LISTE WHERE NumLista = '%s' AND NumRiga = '%s'"
-                % (
-                    whs_list.num_lista,
-                    whs_list.riga,
-                )
+                "DELETE FROM HOST_LISTE WHERE NumLista=:NumLista AND NumRiga=:NumRiga"
             )
             dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=sql_text(delete_lists_query.replace("\n", " ")),
-                sqlparams=None,
+                sqlquery=clean_sql_text(delete_lists_query),
+                sqlparams=dict(
+                    NumLista=whs_list.num_lista,
+                    NumRiga=whs_list.riga,
+                ),
                 metadata=None,
             )
             _logger.info(
@@ -38,11 +37,14 @@ class HyddemoWhsListe(models.Model):
         for whs_list in self:
             set_to_not_elaborate_query = (
                 "UPDATE HOST_LISTE SET Elaborato=1, Qta=0 WHERE "
-                "NumLista='%s' AND NumRiga='%s'" % (whs_list.num_lista, whs_list.riga)
+                "NumLista=:NumLista AND NumRiga=:NumRiga"
             )
             dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=sql_text(set_to_not_elaborate_query),
-                sqlparams=None,
+                sqlquery=clean_sql_text(set_to_not_elaborate_query),
+                sqlparams=dict(
+                    NumLista=whs_list.num_lista,
+                    NumRiga=whs_list.riga,
+                ),
                 metadata=None,
             )
             _logger.info(
@@ -54,12 +56,14 @@ class HyddemoWhsListe(models.Model):
     def whs_check_lists(self, num_lista, dbsource):
         # do no call super() and put specific code
         check_elaborated_lists_query = (
-            "SELECT * FROM HOST_LISTE WHERE NumLista = '%s' "
-            "AND Elaborato = 4 AND QtaMovimentata > 0" % (num_lista,)
+            "SELECT * FROM HOST_LISTE WHERE NumLista=:NumLista "
+            "AND Elaborato = 4 AND QtaMovimentata > 0"
         )
         elaborated_lists = dbsource.execute_mssql(
-            sqlquery=sql_text(check_elaborated_lists_query),
-            sqlparams=None,
+            sqlquery=clean_sql_text(check_elaborated_lists_query),
+            sqlparams=dict(
+                NumLista=num_lista,
+            ),
             metadata=None,
         )
         if elaborated_lists[0]:
@@ -70,12 +74,14 @@ class HyddemoWhsListe(models.Model):
                 )
             )
         check_elaborating_lists_query = (
-            "SELECT * FROM HOST_LISTE WHERE NumLista = '%s' "
-            "AND Elaborato = 3" % (num_lista,)
+            "SELECT * FROM HOST_LISTE WHERE NumLista=:NumLista "
+            "AND Elaborato = 3"
         )
         elaborating_lists = dbsource.execute_mssql(
-            sqlquery=sql_text(check_elaborating_lists_query),
-            sqlparams=None,
+            sqlquery=clean_sql_text(check_elaborating_lists_query),
+            sqlparams=dict(
+                NumLista=num_lista,
+            ),
             metadata=None,
         )
         if elaborating_lists[0]:
@@ -103,31 +109,38 @@ class HyddemoWhsListe(models.Model):
                 whs_liste_query = (
                     "SELECT NumLista, NumRiga, Elaborato, DataLista, TipoOrdine, "
                     "Stato, Articolo, Qta, QtaMovimentata FROM HOST_LISTE "
-                    "WHERE NumLista = '%s' AND NumRiga = '%s'"
-                    % (whs_list.num_lista, whs_list.riga)
+                    "WHERE NumLista=:NumLista AND NumRiga=:NumRiga"
                 )
                 esiti_liste = dbsource.execute_mssql(
-                    sqlquery=sql_text(whs_liste_query), sqlparams=None, metadata=None
+                    sqlquery=clean_sql_text(whs_liste_query),
+                    sqlparams=dict(
+                        NumLista=whs_list.num_lista,
+                        NumRiga=whs_list.riga,
+                    ),
+                    metadata=None
                 )
                 if not esiti_liste[0]:
                     whs_liste_query_simple = (
                         "SELECT NumLista, Elaborato FROM HOST_LISTE "
-                        "WHERE NumLista = '%s' AND Elaborato != 5" % whs_list.num_lista
+                        "WHERE NumLista=:NumLista AND Elaborato != 5"
                     )
                     esito_lista_simple = dbsource.execute_mssql(
-                        sqlquery=sql_text(whs_liste_query_simple),
-                        sqlparams=None,
+                        sqlquery=clean_sql_text(whs_liste_query_simple),
+                        sqlparams=dict(
+                            NumLista=whs_list.num_lista,
+                        ),
                         metadata=None,
                     )
                     if not esito_lista_simple[0]:
                         whs_liste_query_super_simple = (
                             "SELECT NumLista, Elaborato FROM HOST_LISTE "
-                            "WHERE NumLista like '%s' AND Elaborato != 5"
-                            % whs_list.num_lista.replace("WHS/", "")
+                            "WHERE NumLista like ':NumLista' AND Elaborato != 5"
                         )
                         esito_lista_super_simple = dbsource.execute_mssql(
-                            sqlquery=sql_text(whs_liste_query_super_simple),
-                            sqlparams=None,
+                            sqlquery=clean_sql_text(whs_liste_query_super_simple),
+                            sqlparams=dict(
+                                NumLista=whs_list.num_lista.replace("WHS/", ""),
+                            ),
                             metadata=None,
                         )
                         whs_list.write(
@@ -392,17 +405,16 @@ VALUES (
             if not dbsource:
                 return False
             db_lists = dbsource.execute_mssql(
-                sqlquery=sql_text(
+                sqlquery=clean_sql_text(
                     (
-                        "SELECT * FROM HOST_LISTE WHERE NumLista = '%s' "
-                        "AND NumRiga = '%s' AND Elaborato != 5"
-                        % (
-                            whs_list.num_lista,
-                            whs_list.riga,
-                        )
-                    ).replace("\n", " ")
+                        "SELECT * FROM HOST_LISTE WHERE NumLista=:NumLista "
+                        "AND NumRiga=:NumRiga AND Elaborato != 5"
+                    )
                 ),
-                sqlparams=None,
+                sqlparams=dict(
+                    NumLista=whs_list.num_lista,
+                    NumRiga=whs_list.riga,
+                ),
                 metadata=None,
             )
             if len(db_lists[0]) == 0:
@@ -413,16 +425,18 @@ VALUES (
                 )
                 if insert_esiti_liste_params:
                     dbsource.execute_query(
-                        dbsource, sql_text(insert_query), insert_esiti_liste_params
+                        dbsource, clean_sql_text(insert_query), insert_esiti_liste_params
                     )
                     set_liste_to_elaborate_query = (
                         "UPDATE HOST_LISTE SET Elaborato=1 WHERE Elaborato=0 "
-                        "AND NumLista='%s' AND NumRiga='%s'"
-                        % (whs_list.num_lista, whs_list.riga)
+                        "AND NumLista=:NumLista AND NumRiga=:NumRiga"
                     )
                     dbsource.with_context(no_return=True).execute_mssql(
-                        sqlquery=sql_text(set_liste_to_elaborate_query),
-                        sqlparams=None,
+                        sqlquery=clean_sql_text(set_liste_to_elaborate_query),
+                        sqlparams=dict(
+                            NumLista=whs_list.num_lista,
+                            NumRiga=whs_list.riga,
+                        ),
                         metadata=None,
                     )
                     whs_list.write({"stato": "2"})
@@ -447,32 +461,30 @@ VALUES (
             if not dbsource:
                 return False
             number_of_duplicates = dbsource.execute_mssql(
-                sqlquery=sql_text(
+                sqlquery=clean_sql_text(
                     (
-                        "SELECT * FROM HOST_LISTE WHERE NumLista = '%s' "
-                        "AND NumRiga = '%s' AND ISNULL(QtaMovimentata, 0) = 0"
-                        % (
-                            whs_list.num_lista,
-                            whs_list.riga,
-                        )
-                    ).replace("\n", " ")
+                        "SELECT * FROM HOST_LISTE WHERE NumLista=:NumLista "
+                        "AND NumRiga=:NumRiga AND ISNULL(QtaMovimentata, 0) = 0"
+                    )
                 ),
-                sqlparams=None,
+                sqlparams=dict(
+                    NumLista=whs_list.num_lista,
+                    NumRiga=whs_list.riga,
+                ),
                 metadata=None,
             )
             if len(number_of_duplicates[0]) > 1:
                 delete_lists_query = (
-                    "DELETE TOP(%s) FROM HOST_LISTE WHERE NumLista = '%s' "
-                    "AND NumRiga = '%s' AND ISNULL(QtaMovimentata, 0) = 0"
-                    % (
-                        len(number_of_duplicates[0]) - 1,
-                        whs_list.num_lista,
-                        whs_list.riga,
-                    )
+                    "DELETE TOP(:Top) FROM HOST_LISTE WHERE NumLista=:NumLista "
+                    "AND NumRiga=:NumRiga AND ISNULL(QtaMovimentata, 0) = 0"
                 )
                 dbsource.with_context(no_return=True).execute_mssql(
-                    sqlquery=sql_text(delete_lists_query.replace("\n", " ")),
-                    sqlparams=None,
+                    sqlquery=clean_sql_text(delete_lists_query),
+                    sqlparams=dict(
+                        Top=len(number_of_duplicates[0]) - 1,
+                        NumLista=whs_list.num_lista,
+                        NumRiga=whs_list.riga,
+                    ),
                     metadata=None,
                 )
                 _logger.info(
@@ -481,65 +493,61 @@ VALUES (
                 )
             # remove residual duplicates with qty moved
             residual_number_of_duplicates = dbsource.execute_mssql(
-                sqlquery=sql_text(
+                sqlquery=clean_sql_text(
                     (
-                        "SELECT * FROM HOST_LISTE WHERE NumLista = '%s' "
-                        "AND NumRiga = '%s'"
-                        % (
-                            whs_list.num_lista,
-                            whs_list.riga,
-                        )
-                    ).replace("\n", " ")
+                        "SELECT * FROM HOST_LISTE WHERE NumLista=:NumLista "
+                        "AND NumRiga=:NumRiga"
+                    )
                 ),
-                sqlparams=None,
+                sqlparams=dict(
+                    NumLista=whs_list.num_lista,
+                    NumRiga=whs_list.riga,
+                ),
                 metadata=None,
             )
             if len(residual_number_of_duplicates[0]) > 1:
                 # first remove possible lines without QtaMovimentata
                 dbsource.with_context(no_return=True).execute_mssql(
-                    sqlquery=sql_text(
+                    sqlquery=clean_sql_text(
                         (
-                            "DELETE FROM HOST_LISTE WHERE NumLista = '%s' "
-                            "AND NumRiga = '%s' AND ISNULL(QtaMovimentata, 0) = 0"
-                            % (
-                                whs_list.num_lista,
-                                whs_list.riga,
-                            )
-                        ).replace("\n", " ")
+                            "DELETE FROM HOST_LISTE WHERE NumLista=:NumLista "
+                            "AND NumRiga=:NumRiga AND ISNULL(QtaMovimentata, 0) = 0"
+                        )
                     ),
-                    sqlparams=None,
+                    sqlparams=dict(
+                        NumLista=whs_list.num_lista,
+                        NumRiga=whs_list.riga,
+                    ),
                     metadata=None,
                 )
                 # check if there are other duplicates
                 residual_number_of_duplicates = dbsource.execute_mssql(
-                    sqlquery=sql_text(
+                    sqlquery=clean_sql_text(
                         (
-                            "SELECT * FROM HOST_LISTE WHERE NumLista = '%s' "
-                            "AND NumRiga = '%s'"
-                            % (
-                                whs_list.num_lista,
-                                whs_list.riga,
-                            )
-                        ).replace("\n", " ")
+                            "SELECT * FROM HOST_LISTE WHERE NumLista=:NumLista "
+                            "AND NumRiga=:NumRiga"
+                        )
                     ),
-                    sqlparams=None,
+                    sqlparams=dict(
+                        NumLista=whs_list.num_lista,
+                        NumRiga=whs_list.riga,
+                    ),
                     metadata=None,
                 )
                 if len(residual_number_of_duplicates[0]) > 1:
                     residual_delete_lists_query = (
-                        "DELETE TOP(%s) FROM HOST_LISTE WHERE NumLista = '%s' "
-                        "AND NumRiga = '%s'"
-                        % (
-                            len(residual_number_of_duplicates[0]) - 1,
-                            whs_list.num_lista,
-                            whs_list.riga,
-                        )
+                        "DELETE TOP(:Top) FROM HOST_LISTE WHERE NumLista=:NumLista "
+                        "AND NumRiga=:NumRiga"
                     )
                     dbsource.with_context(no_return=True).execute_mssql(
-                        sqlquery=sql_text(
-                            residual_delete_lists_query.replace("\n", " ")
+                        sqlquery=clean_sql_text(
+                            residual_delete_lists_query
                         ),
-                        sqlparams=None,
+                        sqlparams=dict(
+                            Top=len(residual_number_of_duplicates[0]) - 1,
+                            NumLista=whs_list.num_lista,
+                            NumRiga=whs_list.riga,
+                        ),
                         metadata=None,
                     )
                     _logger.info(
