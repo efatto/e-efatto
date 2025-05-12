@@ -1,5 +1,5 @@
 # flake8: noqa: C901
-from sqlalchemy import text as sql_text
+from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
 
 from odoo import _, fields, models
 from odoo.exceptions import UserError
@@ -49,7 +49,9 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     )
                 i += 2000
                 esiti_liste = dbsource.execute_mssql(
-                    sqlquery=sql_text(giacenze_query), sqlparams=None, metadata=None
+                    sqlquery=clean_sql_text(giacenze_query),
+                    sqlparams=None,
+                    metadata=None,
                 )
                 # esiti_liste[0] contain result
                 if not esiti_liste[0]:
