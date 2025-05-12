@@ -150,14 +150,12 @@ INSERT INTO IMP_ORDINI (
 ORD_OPERAZIONE,
 ORD_ORDINE,
 ORD_DES,
-ORD_PRIOHOST,
 ORD_TIPOOP
 )
 VALUES (
 :ORD_OPERAZIONE,
 :ORD_ORDINE,
 :ORD_DES,
-:ORD_PRIOHOST,
 :ORD_TIPOOP
 )
 """
@@ -178,7 +176,7 @@ VALUES (
                         lista.ragsoc[:47 - len(lista.riferimento) or 47]
                         if lista.ragsoc else "",
                     ),  # char 50
-                    'ORD_PRIOHOST': lista.priorita,  # decimal(16,0)
+                    # 'ORD_PRIOHOST': lista.priorita,  # decimal(16,0) NOT IMPLEMENTED
                     'ORD_TIPOOP': tipo_operazione_dict[lista.tipo],  # char 5: P,V,I,E
                 }
             product = lista.product_id
