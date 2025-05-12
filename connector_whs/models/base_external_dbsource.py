@@ -408,9 +408,7 @@ class BaseExternalDbsource(models.Model):
                     insert_order_line_params,
                 ) = hyddemo_whs_lists.filtered(
                     lambda x: x.num_lista == num_lista
-                ).whs_prepare_host_liste_values(
-                    dbsource
-                )
+                ).whs_prepare_host_liste_values()
                 if insert_order_params:
                     if not insert_order_line_params:
                         # there is a unique table for order and order line
@@ -463,7 +461,7 @@ class BaseExternalDbsource(models.Model):
             # same time
             if hyddemo_whs_lists:
                 set_liste_to_elaborate_query = (
-                    hyddemo_whs_lists._get_set_liste_to_elaborate_query(dbsource)
+                    hyddemo_whs_lists._get_set_liste_to_elaborate_query()
                 )
                 if set_liste_to_elaborate_query:
                     dbsource.with_context(no_return=True).execute_mssql(
