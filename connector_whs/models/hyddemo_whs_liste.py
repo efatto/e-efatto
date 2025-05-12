@@ -57,7 +57,7 @@ class HyddemoWhsListe(models.Model):
     vettore = fields.Text("Vettore")  # , size=30)
     cliente = fields.Text(
         "Codice cliente",
-        help="Used as unique code in outher db, so spaces are " "not admitted.",
+        help="Used as unique code in outher db, so spaces are not admitted.",
     )  # size=30,
     ragsoc = fields.Text("Ragione sociale")  # , size=100)
     indirizzo = fields.Text("Indirizzo")  # , size=50)
