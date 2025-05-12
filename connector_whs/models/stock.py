@@ -256,7 +256,7 @@ class StockMove(models.Model):
             if list_numbers:
                 if len(list_numbers) > 1:
                     raise UserError(
-                        _("More than one list number found for picking %s:" "%s")
+                        _("More than one list number found for picking %s: %s")
                         % (move.picking_id.name, "|".join(list_numbers))
                     )
                 if len(list_numbers) == 1:
