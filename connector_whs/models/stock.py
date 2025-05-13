@@ -156,8 +156,9 @@ class StockMove(models.Model):
             ).filtered(lambda x: x.stato != "3")
             if (valid_whs_list or origin_moves_whs_list) and not move.state == "done":
                 if (
-                    move.product_uom_qty != valid_whs_list.qta
-                    or move.product_uom_qty != origin_moves_whs_list.qta
+                    valid_whs_list and move.product_uom_qty != valid_whs_list.qta
+                    or origin_moves_whs_list
+                    and move.product_uom_qty != origin_moves_whs_list.qta
                 ):
                     raise UserError(_("WMS valid list exists and qty cannot be "
                                       "modified!"))
