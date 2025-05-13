@@ -150,18 +150,36 @@ class StockMove(models.Model):
     @api.multi
     def _check_valid_whs_list(self):
         for move in self:
-            valid_whs_list = move.whs_list_ids.filtered(lambda x: x.stato != "3")
+            valid_whs_lists = move.whs_list_ids.filtered(lambda x: x.stato != "3")
             origin_moves_whs_list = move.mapped(
                 "move_orig_ids.whs_list_ids"
             ).filtered(lambda x: x.stato != "3")
-            if (valid_whs_list or origin_moves_whs_list) and not move.state == "done":
+            if (
+                valid_whs_lists
+                or origin_moves_whs_list
+                or self._context.get("previous_product_uom_qty")
+            ) and not move.state == "done":
                 if (
-                    valid_whs_list and move.product_uom_qty != valid_whs_list.qta
-                    or origin_moves_whs_list
-                    and move.product_uom_qty != origin_moves_whs_list.qta
+                    valid_whs_lists and any(
+                        move.product_uom_qty != v.qta for v in valid_whs_lists)
                 ):
-                    raise UserError(_("WMS valid list exists and qty cannot be "
-                                      "modified!"))
+                    raise UserError(_(
+                        "WMS valid list exists and qty cannot be modified!"))
+                if origin_moves_whs_list and any(
+                    move.product_uom_qty != o.qta for o in origin_moves_whs_list
+                ):
+                    raise UserError(_(
+                        "WMS valid list exists in origin moves and qty cannot be "
+                        "modified!"))
+                if (
+                    self._context.get("previous_product_uom_qty")
+                    and self._context["previous_product_uom_qty"].get(
+                        move.product_id.id)
+                    and move.product_uom_qty !=
+                    self._context.get("previous_product_uom_qty")
+                ):
+                    raise UserError(_(
+                        "WMS valid list exists and previous qty cannot be modified!"))
 
     def write(self, vals):
         res = super().write(vals=vals)

@@ -734,10 +734,27 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             1,
         )
 
-        # test change qty of sale order line is forbidden
-        with self.assertRaises(UserError):
-            order_line = order1.order_line[0]
-            order_line.write({"product_uom_qty": order_line.product_uom_qty + 5})
+        # test changing qty of sale order line does not change the linked whs list
+        order_line = order1.order_line[0]
+        whs_lists = order_line.move_ids.filtered(
+            lambda x: x.state != "cancel").mapped("whs_list_ids")
+        if whs_lists:
+            self.assertEqual(len(whs_lists), 1)
+            whs_list = whs_lists[0]
+            self.assertEqual(whs_list.qta, order_line.product_uom_qty)
+        initial_qty = order_line.product_uom_qty
+        if self.step_delivery == "one":
+            order_line.write({"product_uom_qty": order_line.product_uom_qty + 6})
+        else:
+            with self.assertRaises(UserError):
+                # changing qty in two steps option is forbidden
+                order_line.write({"product_uom_qty": order_line.product_uom_qty + 6})
+        new_whs_lists = order_line.move_ids.filtered(
+            lambda x: x.state != "cancel").mapped("whs_list_ids")
+        if new_whs_lists:
+            new_whs_list = new_whs_lists - whs_lists
+            self.assertEqual(whs_lists.qta, initial_qty)
+            self.assertEqual(new_whs_list.qta, 6)
 
     def _test_06_purchase(self):
         with self.assertRaises(ConnectionSuccessError):
