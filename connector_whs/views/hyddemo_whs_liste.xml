@@ -31,7 +31,7 @@
         <field name="name">view.whsliste.tree</field>
         <field name="model">hyddemo.whs.liste</field>
         <field name="arch" type="xml">
-            <tree string="Liste prelievo, deposito e inventario">
+            <tree>
                 <field name="whs_list_absent"/>
                 <field name="num_lista"/>
                 <field name="stato"/>

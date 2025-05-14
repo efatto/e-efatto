@@ -31,9 +31,13 @@ class Picking(models.Model):
             # stato == "3" the wms list is no more processable, so ignored
             if any(x.stato == "4" and x.qtamov != x.move_id.quantity_done
                    for x in pick.mapped("move_lines.whs_list_ids")):
-                raise UserError(_("Trying to validate picking %s which is "
-                                  "already elaborated on WMS with different qty.") %
-                                pick.name)
+                raise UserError(
+                    _(
+                        "Trying to validate picking %s which is "
+                        "already elaborated on WMS with different qty."
+                    )
+                    % pick.name
+                )
             # stato == "3" is ok when qtamov is 0, as is no more processable (n.b. qty
             # in move is obviously moved as it is the same move linked to correct list)
             if any(x.stato == "3" and x.qtamov != 0
@@ -60,10 +64,16 @@ class Picking(models.Model):
                         # presents here as only stato=4 is processable on Odoo,
                         # that equals to Elaborato=4
                         # Lists with stato=3 and quantity_done=0 are deleted here
-                        dbsource = self.env["base.external.dbsource"].search([
-                            ("stock_picking_type_ids", "in", pick.picking_type_id.ids),
-                            ("company_id", "=", pick.company_id.id),
-                        ])
+                        dbsource = self.env["base.external.dbsource"].search(
+                            [
+                                (
+                                    "stock_picking_type_ids",
+                                    "in",
+                                    pick.picking_type_id.ids,
+                                ),
+                                ("company_id", "=", pick.company_id.id),
+                            ]
+                        )
                         if not dbsource:
                             _logger.info(
                                 "WMS LOG: Picking type %s not linked to WMS System in "
@@ -195,11 +205,16 @@ class StockMove(models.Model):
 
     @api.multi
     def _action_confirm(self, merge=True, merge_into=False):
-        if self.env["base.external.dbsource"].search([
-            ("location_id", "in", (
-                self.mapped("location_dest_id") | self.mapped("location_id")
-            ).ids),
-        ]):
+        if self.env["base.external.dbsource"].search(
+            [
+                (
+                        "location_id",
+                        "in",
+                        (self.mapped("location_dest_id") | self.mapped(
+                            "location_id")).ids,
+                ),
+            ]
+        ):
             # never merge stock moves linked to WMS lists
             merge = False
         res = super()._action_confirm(merge, merge_into)
@@ -229,7 +244,7 @@ class StockMove(models.Model):
             if list_numbers:
                 if len(list_numbers) > 1:
                     raise UserError(
-                        _("More than one list number found for picking %s:" "%s")
+                        _("More than one list number found for picking %s: %s")
                         % (move.picking_id.name, "|".join(list_numbers))
                     )
                 if len(list_numbers) == 1:
@@ -248,7 +263,7 @@ class StockMove(models.Model):
                 [
                     x in [
                         self.env.ref("mrp.route_warehouse0_manufacture"),
-                        self.env.ref("stock.route_warehouse0_mto")
+                        self.env.ref("stock.route_warehouse0_mto"),
                     ]
                     for x in move.product_id.route_ids
                 ]
@@ -274,47 +289,54 @@ class StockMove(models.Model):
             delivery_steps = warehouse.delivery_steps
             manufacture_steps = warehouse.manufacture_steps
             if (
-                # reception two steps
-                reception_steps == "two_steps" and
-                move.location_id != warehouse.lot_stock_id and
-                move.location_dest_id == warehouse.lot_stock_id
-            ) or (
-                # incoming product from production two steps
-                manufacture_steps == "pbm" and
-                move.location_id != warehouse.lot_stock_id and
-                move.location_dest_id == warehouse.lot_stock_id
-            ) or (
-                # reception one step
-                reception_steps == "one_step" and
-                move.picking_type_id.code == "incoming"
-            ) or (
-                # incoming product from production one step
-                manufacture_steps == "mrp_one_step" and
-                move.picking_type_id.code == "mrp_operation"
+                (
+                    # reception two steps
+                    reception_steps == "two_steps" and
+                    move.location_id != warehouse.lot_stock_id
+                    and move.location_dest_id == warehouse.lot_stock_id
+                ) or (
+                    # incoming product from production two steps
+                    manufacture_steps == "pbm"
+                    and move.location_id != warehouse.lot_stock_id
+                    and move.location_dest_id == warehouse.lot_stock_id
+                ) or (
+                    # reception one step
+                    reception_steps == "one_step"
+                    and move.picking_type_id.code == "incoming"
+                ) or (
+                    # incoming product from production one step
+                    manufacture_steps == "mrp_one_step"
+                    and move.picking_type_id.code == "mrp_operation"
+                )
             ):
                 tipo = "2"
                 # set Modula dest location if it`s an incoming transfer or a move from
                 # input location to internal location (2 steps case)
                 move.location_dest_id = dbsource.location_id
             elif (
-                # delivery two steps
-                delivery_steps == "pick_ship" and
-                move.location_id in [warehouse.lot_stock_id, dbsource.location_id] and
-                move.location_dest_id != warehouse.lot_stock_id
-            ) or (
-                # consumption of components two steps
-                manufacture_steps == "pbm" and
-                move.location_id in [warehouse.lot_stock_id, dbsource.location_id] and
-                move.location_dest_id != warehouse.lot_stock_id
-            ) or (
-                # delivery one step
-                delivery_steps == "ship_only" and
-                move.picking_type_id.code == "outgoing"
-            ) or (
-                # consumption of components one step
-                manufacture_steps == "mrp_one_step" and
-                move.location_id in [warehouse.lot_stock_id, dbsource.location_id] and
-                move.picking_type_id.code == "mrp_operation"
+                (
+                    # delivery two steps
+                    delivery_steps == "pick_ship"
+                    and move.location_id
+                    in [warehouse.lot_stock_id, dbsource.location_id]
+                    and move.location_dest_id != warehouse.lot_stock_id
+                ) or (
+                    # consumption of components two steps
+                    manufacture_steps == "pbm"
+                    and move.location_id
+                    in [warehouse.lot_stock_id, dbsource.location_id]
+                    and move.location_dest_id != warehouse.lot_stock_id
+                ) or (
+                    # delivery one step
+                    delivery_steps == "ship_only"
+                    and move.picking_type_id.code == "outgoing"
+                ) or (
+                    # consumption of components one step
+                    manufacture_steps == "mrp_one_step"
+                    and move.location_id
+                    in [warehouse.lot_stock_id, dbsource.location_id]
+                    and move.picking_type_id.code == "mrp_operation"
+                )
             ):
                 tipo = "1"
                 # set Modula source location if it`s an outgoing or consuming transfer
@@ -332,9 +354,13 @@ class StockMove(models.Model):
             partner_id = move.partner_id or move.move_orig_ids.picking_id.partner_id
             if partner_id:
                 ragsoc = partner_id.name
-                cliente = partner_id.ref if partner_id.ref else \
-                    partner_id.parent_id.ref if partner_id.parent_id.ref \
+                cliente = (
+                    partner_id.ref
+                    if partner_id.ref
+                    else partner_id.parent_id.ref
+                    if partner_id.parent_id.ref
                     else False
+                )
                 indirizzo = partner_id.street if partner_id.street else False
                 cap = partner_id.zip if partner_id.zip else False
                 localita = partner_id.city if partner_id.city else False
@@ -343,12 +369,14 @@ class StockMove(models.Model):
 
             if tipo:
                 # ROADMAP check phantom products that generates only out moves
-                if move.state != "cancel" and move.product_id.type == "product" \
+                if (
+                    move.state != "cancel"
+                    and move.product_id.type == "product"
                     and (
                         (tipo == "2" and move.location_dest_id == dbsource.location_id)
-                        or
-                        (tipo == "1" and move.location_id == dbsource.location_id)
-                        ):
+                        or (tipo == "1" and move.location_id == dbsource.location_id)
+                    )
+                ):
                     if move.whs_list_ids and any(
                             x.stato != "3" for x in move.whs_list_ids):
                         _logger.info(
@@ -370,9 +398,13 @@ class StockMove(models.Model):
                             ("num_lista", "=", list_number),
                         ]).mapped("riga"))
                     riga += 1
-                    customer = partner_id and move.product_id.customer_ids.filtered(
+                    customer = (
+                        partner_id
+                        and move.product_id.customer_ids.filtered(
                         lambda x: x.name == partner_id.commercial_partner_id
-                    ) or False
+                        )
+                        or False
+                    )
                     whsliste_data = {
                         "stato": "1",
                         "tipo": tipo,
