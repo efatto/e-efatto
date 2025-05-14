@@ -34,7 +34,10 @@
             <xpath expr="//group" position="after">
                 <group>
                     <field name="location_id"/>
-                    <field name="stock_picking_type_ids" />
+                    <field
+            name="stock_picking_type_ids"
+            domain="[('code', '!=', 'mrp_operation')]"
+           />
                 </group>
             </xpath>
         </field>
