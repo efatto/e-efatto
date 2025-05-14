@@ -3,7 +3,7 @@ import logging
 from odoo import api, models, _, fields
 from odoo.exceptions import UserError
 
-from sqlalchemy import text as sql_text
+from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
 
 _logger = logging.getLogger(__name__)
 
@@ -39,12 +39,12 @@ class HyddemoWhsListe(models.Model):
         for num_lista in set(self.mapped("num_lista")):
             current_whs_lists = self.filtered(lambda x: x.num_lista == num_lista)
             dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=sql_text(
+                sqlquery=clean_sql_text(
                     f"DELETE FROM {db_type}_ORDINI WHERE ORD_ORDINE=:ORD_ORDINE"),
                 sqlparams=dict(ORD_ORDINE=num_lista),
                 metadata=None)
             dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=sql_text(
+                sqlquery=clean_sql_text(
                     f"DELETE FROM {db_type}_ORDINI_RIGHE WHERE RIG_ORDINE=:RIG_ORDINE"),
                 sqlparams=dict(RIG_ORDINE=num_lista),
                 metadata=None)
@@ -66,7 +66,7 @@ class HyddemoWhsListe(models.Model):
             to_cancel_lists = todo_lists.filtered(lambda x: x.num_lista == num_lista)
             todo_lists -= to_cancel_lists
             res = dbsource.execute_mssql(
-                sqlquery=sql_text(
+                sqlquery=clean_sql_text(
                     "SELECT ORD_ORDINE FROM IMP_ORDINI WHERE ORD_OPERAZIONE='I' "
                     "AND ORD_ORDINE=:ORD_ORDINE"),
                 sqlparams=dict(ORD_ORDINE=num_lista),
@@ -82,7 +82,7 @@ class HyddemoWhsListe(models.Model):
                 # lista does not exist, so order to WMS to unlink it
                 # (this will unlink its rows too)
                 dbsource.with_context(no_return=True).execute_mssql(
-                    sqlquery=sql_text(
+                    sqlquery=clean_sql_text(
                         "INSERT INTO IMP_ORDINI (ORD_OPERAZIONE, ORD_ORDINE) VALUES "
                         "('D', :ORD_ORDINE)"),
                     sqlparams=dict(ORD_ORDINE=num_lista),
@@ -96,7 +96,7 @@ class HyddemoWhsListe(models.Model):
     def whs_check_lists(self, num_lista, dbsource):
         # do no call super() and put specific code
         elaborated_lists = dbsource.execute_mssql(
-            sqlquery=sql_text(
+            sqlquery=clean_sql_text(
                 "SELECT * FROM EXP_ORDINI_RIGHE WHERE RIG_ORDINE=:NUM_LISTA "
                 "AND RIG_QTAE > 0"
             ),
@@ -108,7 +108,7 @@ class HyddemoWhsListe(models.Model):
                 "please wait for cron synchronization or force it."
             ))
         deleting_lists = dbsource.execute_mssql(
-            sqlquery=sql_text(
+            sqlquery=clean_sql_text(
                 "SELECT * FROM IMP_ORDINI WHERE ORD_ORDINE=:NUM_LISTA "
                 "AND ORD_OPERAZIONE='D'"
             ),

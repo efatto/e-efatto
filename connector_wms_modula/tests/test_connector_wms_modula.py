@@ -7,7 +7,7 @@ from odoo.addons.connector_whs.tests.test_connector_wms import CommonConnectorWM
 from ..models.hyddemo_whs_liste import tipo_operazione_dict
 from odoo.exceptions import UserError
 from odoo.tools import relativedelta
-from sqlalchemy import text as sql_text
+from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
 
 
 @tagged("-standard", "test_wms")
@@ -66,23 +66,23 @@ class TestConnectorWmsModula(CommonConnectorWMS):
 
     def _clean_all(self):
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=sql_text("DELETE FROM IMP_ORDINI_RIGHE"),
+            sqlquery=clean_sql_text("DELETE FROM IMP_ORDINI_RIGHE"),
             sqlparams=None, metadata=None
         )
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=sql_text("DELETE FROM IMP_ORDINI"), sqlparams=None, metadata=None
+            sqlquery=clean_sql_text("DELETE FROM IMP_ORDINI"), sqlparams=None, metadata=None
         )
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=sql_text("DELETE FROM EXP_ORDINI_RIGHE"),
+            sqlquery=clean_sql_text("DELETE FROM EXP_ORDINI_RIGHE"),
             sqlparams=None, metadata=None
         )
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=sql_text("DELETE FROM EXP_ORDINI"), sqlparams=None, metadata=None
+            sqlquery=clean_sql_text("DELETE FROM EXP_ORDINI"), sqlparams=None, metadata=None
         )
 
     def _select_wms_liste(self, wms_list, db_type="EXP"):
         return self.dbsource.execute_mssql(
-            sqlquery=sql_text(
+            sqlquery=clean_sql_text(
                 f"SELECT RIG_QTAR {', RIG_QTAE' if db_type == 'EXP' else ''} "
                 f"FROM {db_type}_ORDINI_RIGHE WHERE "
                 "RIG_ORDINE=:RIG_ORDINE AND RIG_HOSTINF=:RIG_HOSTINF"
@@ -110,7 +110,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertFalse(picking.mapped("move_lines.whs_list_ids"))
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records1 = self.dbsource.execute_mssql(
-            sqlquery=sql_text(
+            sqlquery=clean_sql_text(
                 "SELECT RIG_ORDINE, RIG_HOSTINF FROM EXP_ORDINI_RIGHE "
                 "WHERE RIG_ORDINE IN :RIG_ORDINE"),
             sqlparams=dict(RIG_ORDINE=num_liste),
@@ -129,7 +129,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # check new WMS lists are present
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records2 = self.dbsource.execute_mssql(
-            sqlquery=sql_text(
+            sqlquery=clean_sql_text(
                 "SELECT RIG_ORDINE, RIG_HOSTINF FROM IMP_ORDINI_RIGHE "
                 "WHERE RIG_ORDINE IN :RIG_ORDINE"),
             sqlparams=dict(
@@ -144,7 +144,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # insert lists in WMS: this has to be invoked before every sql call!
         self.dbsource.whs_insert_read_and_synchronize_list()
         res = self.dbsource.execute_mssql(
-            sqlquery=sql_text(
+            sqlquery=clean_sql_text(
                 "SELECT RIG_ORDINE, RIG_HOSTINF, RIG_ARTICOLO, RIG_QTAR "
                 "FROM IMP_ORDINI_RIGHE WHERE RIG_QTAR!=:RIG_QTAR"),
             sqlparams=dict(RIG_QTAR=0),
@@ -160,7 +160,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         for num_lista in set(whs_lists.mapped("num_lista")):
             current_whs_lists = whs_lists.filtered(lambda x: x.num_lista == num_lista)
             self.dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=sql_text(
+                sqlquery=clean_sql_text(
                     "INSERT INTO EXP_ORDINI "
                     "(ORD_ORDINE, ORD_TIPOOP, ORD_DES) VALUES "
                     "(:ORD_ORDINE, :ORD_TIPOOP, :ORD_DES)"),
@@ -177,7 +177,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             )
             for whs_list in current_whs_lists:
                 self.dbsource.with_context(no_return=True).execute_mssql(
-                    sqlquery=sql_text(
+                    sqlquery=clean_sql_text(
                         "INSERT INTO EXP_ORDINI_RIGHE "
                         "(RIG_ORDINE, RIG_HOSTINF, RIG_ARTICOLO, RIG_QTAR, RIG_QTAE) "
                         "VALUES "
@@ -197,13 +197,13 @@ class TestConnectorWmsModula(CommonConnectorWMS):
                 )
         for num_lista in set(whs_lists.mapped("num_lista")):
             self.dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=sql_text(
+                sqlquery=clean_sql_text(
                     "DELETE FROM IMP_ORDINI_RIGHE WHERE RIG_ORDINE=:RIG_ORDINE"
                 ),
                 sqlparams=dict(RIG_ORDINE=num_lista), metadata=None
             )
             self.dbsource.with_context(no_return=True).execute_mssql(
-                sqlquery=sql_text(
+                sqlquery=clean_sql_text(
                     "DELETE FROM IMP_ORDINI WHERE ORD_ORDINE=:ORD_ORDINE"
                 ), sqlparams=dict(ORD_ORDINE=num_lista), metadata=None
             )
@@ -338,7 +338,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         whs_lists = self._check_cancel_workflow(picking, 2)
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self.dbsource.execute_mssql(
-            sqlquery=sql_text(
+            sqlquery=clean_sql_text(
                 "SELECT RIG_ORDINE, RIG_HOSTINF FROM IMP_ORDINI_RIGHE "
                 "WHERE RIG_QTAR!=:RIG_QTAR"),
             sqlparams=dict(RIG_QTAR=0),
@@ -429,7 +429,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # self.simulate_wms_cron(
         #     {x: x.qta for x in picking.mapped('move_lines.whs_list_ids')})
         whs_records = self.dbsource.execute_mssql(
-            sqlquery=sql_text(
+            sqlquery=clean_sql_text(
                 "SELECT RIG_ORDINE, RIG_HOSTINF, RIG_ARTICOLO, RIG_QTAR "
                 "FROM IMP_ORDINI_RIGHE WHERE RIG_QTAR!=:RIG_QTAR"),
             sqlparams=dict(RIG_QTAR=0),
