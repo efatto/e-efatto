@@ -32,7 +32,7 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
             _("BOM"),
             '-'.join(
                 hasattr(x, 'product_id') and x.product_id.default_code
-                or x.product_tmpl_id.default_code for x in obj_ids),
+                or x.product_tmpl_id.default_code or "" for x in obj_ids),
             datetime.now().strftime('%Y%m%d%H%M'))
 
     data = fields.Binary("File", readonly=True)
@@ -54,10 +54,6 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
         product_ids = self._get_product_ids()
         attachments = product_ids.mapped('product_tmpl_id.all_attachment_ids')
         domain = []
-        if self.and_attachment_ctg_ids:
-            for and_attachment_ctg_id in self.and_attachment_ctg_ids:
-                domain = expression.AND(
-                    [domain, [("category_ids", "=", and_attachment_ctg_id.id)]])
         if self.or_attachment_ctg_ids:
             for or_attachment_ctg_id in self.or_attachment_ctg_ids:
                 domain = expression.OR(
@@ -65,6 +61,10 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
         domain = expression.AND(
             [domain, [("id", "in", attachments.ids)]]
         )
+        if self.and_attachment_ctg_ids:
+            for and_attachment_ctg_id in self.and_attachment_ctg_ids:
+                domain = expression.AND(
+                    [domain, [("category_ids", "=", and_attachment_ctg_id.id)]])
         attachments = self.env["ir.attachment"].search(domain)
         if not attachments:
             raise UserError(
