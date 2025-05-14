@@ -4,7 +4,7 @@ import logging
 from odoo import models, api, _, fields
 from odoo.exceptions import UserError
 
-from sqlalchemy import text as sql_text
+from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
 
 _logger = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ FROM IMP_ARTICOLI
 WHERE ART_ERRORE IS NOT NULL AND ART_ERRORE <> ' '
         """
         results = self.execute_mssql(
-            sqlquery=sql_text(product_error_query),
+            sqlquery=clean_sql_text(product_error_query),
             sqlparams=None, metadata=None
         )
         if not results[0]:
@@ -64,7 +64,7 @@ WHERE (IMP_O.ORD_ERRORE IS NOT NULL AND IMP_O.ORD_ERRORE <> ' ')
 OR (IMP_OR.RIG_ERRORE IS NOT NULL AND IMP_OR.RIG_ERRORE <> ' ')
         """
         results = self.execute_mssql(
-            sqlquery=sql_text(list_error_query),
+            sqlquery=clean_sql_text(list_error_query),
             sqlparams=None, metadata=None
         )
         if not results[0]:
@@ -103,7 +103,7 @@ FROM EXP_ORDINI_RIGHE EOR
 WHERE EOR.RIG_STARIORD = 'I'
         """
         results = self.execute_mssql(
-            sqlquery=sql_text(list_incomplete_query),
+            sqlquery=clean_sql_text(list_incomplete_query),
             sqlparams=None, metadata=None
         )
         if not results[0]:
@@ -131,7 +131,7 @@ WHERE EOR.RIG_STARIORD = 'I'
         # ensure exported items data do not exist, they usually don't with the option
         # set in importation query
         self.with_context(no_return=True).execute_mssql(
-            sqlquery=sql_text("DELETE FROM IMP_ARTICOLI"),
+            sqlquery=clean_sql_text("DELETE FROM IMP_ARTICOLI"),
             sqlparams=None, metadata=None
         )
         # get from EXP_UBICAZIONI products configured (with or without availabitity)
@@ -142,7 +142,7 @@ SELECT DISTINCT UBI_ARTICOLO FROM EXP_UBICAZIONI
 WHERE UBI_ARTICOLO IS NOT NULL AND UBI_ARTICOLO <> ' '
         """
         results = self.execute_mssql(
-            sqlquery=sql_text(pre_insert_product_query),
+            sqlquery=clean_sql_text(pre_insert_product_query),
             sqlparams=None, metadata=None
         )
         if not results[0]:
@@ -180,7 +180,7 @@ SELECT DISTINCT UBI_ARTICOLO FROM EXP_UBICAZIONI
 WHERE UBI_ARTICOLO IS NULL OR UBI_ARTICOLO = ' '
         """
         results = self.execute_mssql(
-            sqlquery=sql_text(to_delete_product_query),
+            sqlquery=clean_sql_text(to_delete_product_query),
             sqlparams=None, metadata=None
         )
         if not results[0]:
@@ -203,7 +203,7 @@ WHERE UBI_ARTICOLO IS NULL OR UBI_ARTICOLO = ' '
                 operation="D")
             insert_product_query = self._get_insert_product_query()
             self.with_context(no_return=True).execute_mssql(
-                sqlquery=sql_text(insert_product_query.replace("\n", " ")),
+                sqlquery=clean_sql_text(insert_product_query),
                 sqlparams=insert_product_params,
                 metadata=None)
         res = self.env["hyddemo.mssql.log"].create(
@@ -309,7 +309,7 @@ VALUES (
                 pos = 0
                 if whs_lists:
                     esiti_liste = dbsource.execute_mssql(
-                        sqlquery=sql_text(
+                        sqlquery=clean_sql_text(
                             "SELECT RIG_ORDINE, RIG_HOSTINF, RIG_QTAR, RIG_QTAE, "
                             "RIG_ARTICOLO FROM EXP_ORDINI_RIGHE WHERE RIG_ORDINE IN "
                             ":NUM_LISTE ORDER BY RIG_ORDINE, RIG_HOSTINF"
@@ -321,7 +321,7 @@ VALUES (
                     )
                 else:
                     esiti_liste = dbsource.execute_mssql(
-                        sqlquery=sql_text(
+                        sqlquery=clean_sql_text(
                             "SELECT * FROM (SELECT row_number() OVER "
                             "(ORDER BY RIG_ORDINE, RIG_HOSTINF) "
                             "AS rownum, RIG_ORDINE, RIG_HOSTINF, RIG_QTAR, RIG_QTAE, "
