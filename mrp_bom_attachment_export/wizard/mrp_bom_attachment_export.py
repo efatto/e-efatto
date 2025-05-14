@@ -55,16 +55,14 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
         attachments = product_ids.mapped('product_tmpl_id.all_attachment_ids')
         domain = []
         if self.or_attachment_ctg_ids:
-            for or_attachment_ctg_id in self.or_attachment_ctg_ids:
-                domain = expression.OR(
-                    [domain, [("category_ids", "=", or_attachment_ctg_id.id)]])
+            domain = expression.OR(
+                [domain, [("category_ids", "in", self.or_attachment_ctg_ids.ids)]])
         domain = expression.AND(
             [domain, [("id", "in", attachments.ids)]]
         )
         if self.and_attachment_ctg_ids:
-            for and_attachment_ctg_id in self.and_attachment_ctg_ids:
-                domain = expression.AND(
-                    [domain, [("category_ids", "=", and_attachment_ctg_id.id)]])
+            domain = expression.AND(
+                [domain, [("category_ids", "in", self.and_attachment_ctg_ids.ids)]])
         attachments = self.env["ir.attachment"].search(domain)
         if not attachments:
             raise UserError(
