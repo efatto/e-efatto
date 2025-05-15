@@ -16,7 +16,6 @@
         "product_supplierinfo_for_customer",
         "purchase_delivery_split_date",
         "purchase_stock",
-        "repair",
         "sale_delivery_split_date",
         "stock_move_line_auto_fill",
         "stock_picking_back2draft",
