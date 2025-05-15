@@ -1,14 +1,14 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* connector_wms_whs
+# 	* connector_wms_whs
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 12.0\n"
+"Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-14 09:06+0000\n"
-"PO-Revision-Date: 2023-04-14 09:06+0000\n"
-"Last-Translator: <>\n"
+"POT-Creation-Date: 2025-05-15 06:44+0000\n"
+"PO-Revision-Date: 2025-05-15 06:44+0000\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -16,6 +16,146 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_base_external_dbsource__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_liste__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order_line__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_wms_whs.field_stock_move__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_wms_whs.field_stock_picking__assigned_attachment_ids
+msgid "Assigned Attachments"
+msgstr "Allegati assegnati"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_base_external_dbsource__display_name
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_liste__display_name
+#: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order__display_name
+#: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order_line__display_name
+#: model:ir.model.fields,field_description:connector_wms_whs.field_stock_move__display_name
+#: model:ir.model.fields,field_description:connector_wms_whs.field_stock_picking__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
+
+#. module: connector_wms_whs
+#: model:ir.model,name:connector_wms_whs.model_base_external_dbsource
+msgid "External Database Sources"
+msgstr "Sorgenti Database Esterne"
+
+#. module: connector_wms_whs
+#: code:addons/connector_wms_whs/models/base_external_dbsource.py:0
+#: code:addons/connector_wms_whs/models/hyddemo_whs_liste.py:0
+#: code:addons/connector_wms_whs/models/hyddemo_whs_liste.py:0
+#: code:addons/connector_wms_whs/models/hyddemo_whs_liste.py:0
+#: code:addons/connector_wms_whs/wizard/wizard_sync_stock_whs_mssql.py:0
+#, python-format
+msgid "Failed to open connection!"
+msgstr "Connessione fallita!"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_base_external_dbsource__id
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_liste__id
+#: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order__id
+#: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order_line__id
+#: model:ir.model.fields,field_description:connector_wms_whs.field_stock_move__id
+#: model:ir.model.fields,field_description:connector_wms_whs.field_stock_picking__id
+msgid "ID"
+msgstr ""
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_base_external_dbsource____last_update
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_liste____last_update
+#: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order____last_update
+#: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order_line____last_update
+#: model:ir.model.fields,field_description:connector_wms_whs.field_stock_move____last_update
+#: model:ir.model.fields,field_description:connector_wms_whs.field_stock_picking____last_update
+msgid "Last Modified on"
+msgstr "Ultima modifica il"
+
+#. module: connector_wms_whs
+#: model:ir.model,name:connector_wms_whs.model_hyddemo_whs_liste
+msgid "Lists to synchronize with WMS"
+msgstr "Liste da sincronizzare con WMS"
+
+#. module: connector_wms_whs
+#: code:addons/connector_wms_whs/tests/test_connector_wms_whs.py:0
+#, python-format
+msgid "Missing connection string!"
+msgstr "Stringa di connessione mancante!"
+
+#. module: connector_wms_whs
 #: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_liste__priorita
 msgid "Priorita"
 msgstr "Priorità"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order__priority
+#: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order_line__priority
+#: model:ir.model.fields,field_description:connector_wms_whs.field_stock_move__priority
+#: model:ir.model.fields,field_description:connector_wms_whs.field_stock_picking__priority
+msgid "Priority"
+msgstr "Priorità"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,help:connector_wms_whs.field_sale_order__priority
+msgid ""
+"Priority for this sale order. Setting manually a value here would set it as "
+"priority for all the order lines"
+msgstr ""
+"Priorità di questo ordine di vendita. Impostando qui un valore, verrà "
+"impostato anche in tutte le righe"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,help:connector_wms_whs.field_stock_picking__priority
+msgid ""
+"Products will be reserved first for the transfers with the highest "
+"priorities."
+msgstr ""
+"Vengono prenotati per primi i prodotti di trasferimenti con le priorità più "
+"alte."
+
+#. module: connector_wms_whs
+#: model:ir.model,name:connector_wms_whs.model_sale_order
+msgid "Sales Order"
+msgstr "Ordine di vendita"
+
+#. module: connector_wms_whs
+#: model:ir.model,name:connector_wms_whs.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Riga ordine di vendita"
+
+#. module: connector_wms_whs
+#: model:ir.model,name:connector_wms_whs.model_stock_move
+msgid "Stock Move"
+msgstr "Movimento di magazzino"
+
+#. module: connector_wms_whs
+#: model:ir.model,name:connector_wms_whs.model_stock_picking
+msgid "Transfer"
+msgstr "Trasferimento"
+
+#. module: connector_wms_whs
+#: code:addons/connector_wms_whs/models/hyddemo_whs_liste.py:0
+#, python-format
+msgid ""
+"Trying to cancel lists elaborated from WHS, please wait for cron "
+"synchronization or force it."
+msgstr ""
+"Tentativo di annullamento liste elaborate dal WMS, si prega di attendere "
+"il cron di sincronizzazione o di forzarne l'avvio."
+
+#. module: connector_wms_whs
+#: code:addons/connector_wms_whs/models/hyddemo_whs_liste.py:0
+#, python-format
+msgid ""
+"Trying to cancel lists launched in processing from user in WHS, please wait "
+"for order end processing."
+msgstr ""
+"Tentativo di annullamento liste avviate in esecuzione dall'utente nel WMS, si prega di attendere "
+"il completamento dell'ordine."
+
+#. module: connector_wms_whs
+#: model:ir.model.fields.selection,name:connector_wms_whs.selection__sale_order__priority__2
+#: model:ir.model.fields.selection,name:connector_wms_whs.selection__sale_order_line__priority__2
+#: model:ir.model.fields.selection,name:connector_wms_whs.selection__stock_move__priority__2
+#: model:ir.model.fields.selection,name:connector_wms_whs.selection__stock_picking__priority__2
+msgid "Very Urgent"
+msgstr "Molto urgente"
