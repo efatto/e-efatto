@@ -92,7 +92,6 @@ msgstr "Salva"
 #: model:ir.model.fields,field_description:connector_whs.field_mrp_production__assigned_attachment_ids
 #: model:ir.model.fields,field_description:connector_whs.field_product_template__assigned_attachment_ids
 #: model:ir.model.fields,field_description:connector_whs.field_purchase_order__assigned_attachment_ids
-#: model:ir.model.fields,field_description:connector_whs.field_repair_order__assigned_attachment_ids
 #: model:ir.model.fields,field_description:connector_whs.field_sale_order__assigned_attachment_ids
 #: model:ir.model.fields,field_description:connector_whs.field_sale_order_line__assigned_attachment_ids
 #: model:ir.model.fields,field_description:connector_whs.field_stock_move__assigned_attachment_ids
@@ -257,7 +256,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:connector_whs.field_mrp_production__display_name
 #: model:ir.model.fields,field_description:connector_whs.field_product_template__display_name
 #: model:ir.model.fields,field_description:connector_whs.field_purchase_order__display_name
-#: model:ir.model.fields,field_description:connector_whs.field_repair_order__display_name
 #: model:ir.model.fields,field_description:connector_whs.field_sale_order__display_name
 #: model:ir.model.fields,field_description:connector_whs.field_sale_order_line__display_name
 #: model:ir.model.fields,field_description:connector_whs.field_stock_move__display_name
@@ -343,7 +341,6 @@ msgstr "Log Connessioni Mssql"
 #: model:ir.model.fields,field_description:connector_whs.field_mrp_production__id
 #: model:ir.model.fields,field_description:connector_whs.field_product_template__id
 #: model:ir.model.fields,field_description:connector_whs.field_purchase_order__id
-#: model:ir.model.fields,field_description:connector_whs.field_repair_order__id
 #: model:ir.model.fields,field_description:connector_whs.field_sale_order__id
 #: model:ir.model.fields,field_description:connector_whs.field_sale_order_line__id
 #: model:ir.model.fields,field_description:connector_whs.field_stock_move__id
@@ -396,7 +393,6 @@ msgstr "Ultimo ID in WHS"
 #: model:ir.model.fields,field_description:connector_whs.field_mrp_production____last_update
 #: model:ir.model.fields,field_description:connector_whs.field_product_template____last_update
 #: model:ir.model.fields,field_description:connector_whs.field_purchase_order____last_update
-#: model:ir.model.fields,field_description:connector_whs.field_repair_order____last_update
 #: model:ir.model.fields,field_description:connector_whs.field_sale_order____last_update
 #: model:ir.model.fields,field_description:connector_whs.field_sale_order_line____last_update
 #: model:ir.model.fields,field_description:connector_whs.field_stock_move____last_update
@@ -712,11 +708,6 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_whs_liste_form
 msgid "Recreate list in DB"
 msgstr "Ricrea lista nel DB"
-
-#. module: connector_whs
-#: model:ir.model,name:connector_whs.model_repair_order
-msgid "Repair Order"
-msgstr "Ordine di riparazione"
 
 #. module: connector_whs
 #: model:ir.model.fields.selection,name:connector_whs.selection__hyddemo_whs_liste__stato__4

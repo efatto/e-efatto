@@ -394,7 +394,7 @@ class BaseExternalDbsource(models.Model):
 
     def whs_insert_read_and_synchronize_list(self):
         """
-        Write on mssql the lists in stato 1 created from stock and repair in
+        Write on mssql the lists in stato 1 created from stock in
         hyddemo.whs.liste to be elaborated from WMS
         :return: True
         """
