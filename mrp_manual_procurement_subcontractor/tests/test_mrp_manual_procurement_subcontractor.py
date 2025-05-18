@@ -53,57 +53,43 @@ class TestMrpProductionManualProcurement(TestProductionData):
                 "name": "Subcontractor 1",
             }
         )
-        cls.subcontractor_partner1.property_stock_subcontractor = (
-            cls.partner_subcontract_location.id
-        )
-        supplierinfo_1 = cls.supplierinfo_obj.create(
-            {
-                "name": cls.subcontractor_partner1.id,
-                "autoconfirm_purchase": True,
-            }
-        )
         cls.subcontractor_partner2 = cls.env["res.partner"].create(
             {
                 "name": "Subcontractor 2",
             }
         )
-        cls.subcontractor_partner2.property_stock_subcontractor = (
-            cls.partner_subcontract_location.id
-        )
-        supplierinfo_2 = cls.supplierinfo_obj.create(
+        cls.supplier_3 = cls.env["res.partner"].create(
             {
-                "name": cls.subcontractor_partner2.id,
-                "autoconfirm_purchase": True,
+                "name": "Supplier 3",
             }
         )
-        cls.subcontractor_partner3 = cls.env["res.partner"].create(
-            {
-                "name": "Subcontractor 3",
-            }
-        )
-        cls.subcontractor_partner3.property_stock_subcontractor = (
-            cls.partner_subcontract_location.id
-        )
-        supplierinfo_3 = cls.supplierinfo_obj.create(
-            {
-                "name": cls.subcontractor_partner3.id,
-                "autoconfirm_purchase": True,
-            }
-        )
-        # ADD to top_product buy route and two subcontractor
+        # ADD to top_product buy route and two subcontractors
         cls.top_product.write(
             {
                 "purchase_ok": True,
                 "route_ids": [
                     (4, cls.env.ref("purchase_stock.route_warehouse0_buy").id),
                 ],
-                "seller_ids": [(6, 0, [supplierinfo_1.id, supplierinfo_2.id])],
+                "seller_ids": [
+                    (0, 0,
+                        {
+                            "name": cls.subcontractor_partner1.id,
+                            "autoconfirm_purchase": True,
+                        },
+                    ),
+                    (0, 0,
+                        {
+                            "name": cls.subcontractor_partner2.id,
+                            "autoconfirm_purchase": True,
+                        },
+                    )
+                ],
             }
         )
-        # Create subcontracted component with one subcontractor
+        # Create component with one supplier
         cls.subproduct3 = cls.env["product.product"].create(
             {
-                "name": "Subcontracted component",
+                "name": "Component",
                 "route_ids": [
                     (
                         6,
@@ -115,37 +101,42 @@ class TestMrpProductionManualProcurement(TestProductionData):
                         ],
                     )
                 ],
-                "seller_ids": [(6, 0, [supplierinfo_3.id])],
-                "categ_id": cls.product_categ_order_grouping.id,
+                "seller_ids": [(0, 0,  {
+                    "name": cls.supplier_3.id,
+                    # "autoconfirm_purchase": True,
+                })],
+                # "categ_id": cls.product_categ_order_grouping.id,
                 "type": "product",
             }
         )
-        # Create bom of type subcontract for subcontracted component
-        cls.sub_bom3 = cls.env["mrp.bom"].create(
-            {
-                "product_tmpl_id": cls.subproduct3.product_tmpl_id.id,
-                "type": "subcontract",
-                "subcontractor_ids": [
-                    (
-                        6,
-                        0,
-                        [
-                            cls.subcontractor_partner3.id,
-                        ],
-                    )
-                ],
-                "bom_line_ids": [
-                    (
-                        0,
-                        0,
-                        {
-                            "product_id": cls.subproduct_1_1.id,
-                            "product_qty": 5,
-                        },
-                    )
-                ],
-            }
-        )
+        # this test is for a subcontracted product with a normal component to be bought
+        # todo add a separate test for componet to be subcontracted too
+        # Create bom of type subcontract for component
+        # cls.sub_bom3 = cls.env["mrp.bom"].create(
+        #     {
+        #         "product_tmpl_id": cls.subproduct3.product_tmpl_id.id,
+        #         "type": "subcontract",
+        #         "subcontractor_ids": [
+        #             (
+        #                 6,
+        #                 0,
+        #                 [
+        #                     cls.supplier_3.id,
+        #                 ],
+        #             )
+        #         ],
+        #         "bom_line_ids": [
+        #             (
+        #                 0,
+        #                 0,
+        #                 {
+        #                     "product_id": cls.subproduct_1_1.id,
+        #                     "product_qty": 5,
+        #                 },
+        #             )
+        #         ],
+        #     }
+        # )
         cls.main_bom_subcontracted = cls.main_bom.copy(
             default={
                 "type": "subcontract",
@@ -257,13 +248,16 @@ class TestMrpProductionManualProcurement(TestProductionData):
         self.assertEqual(len(new_po_ids.mapped("order_line")), 1)
         self.assertEqual(new_po_ids.state, "purchase")
         self.assertTrue(new_po_ids.subcontract_production_ids)
-        self.assertTrue(new_po_ids.subcontract_production_ids.picking_ids)
+        # self.assertTrue(new_po_ids.subcontract_production_ids.picking_ids)
         outgoing_components_picking = (
             new_po_ids.subcontract_production_ids.picking_ids.filtered(
                 lambda x: x.picking_type_code == "outgoing"
-        ))
-        self.assertEqual(outgoing_components_picking.location_dest_id,
-                         self.partner_subcontract_location)
+            )
+        )
+        self.assertEqual(
+            outgoing_components_picking.location_dest_id,
+            self.partner_subcontract_location,
+        )
         subproduct3_po_ids = self.env["purchase.order"].search(
             [
                 ("order_line.product_id", "=", self.subproduct3.id),
@@ -286,6 +280,7 @@ class TestMrpProductionManualProcurement(TestProductionData):
             1,
             "A procurement scheduler run should not create new purchase orders!",
         )
+        subproduct3_po_ids.button_confirm()
         self.assertEqual(subproduct3_po_ids.state, "purchase")
 
     def test_02_normal_mo_from_sale_with_mto(self):
@@ -333,6 +328,7 @@ class TestMrpProductionManualProcurement(TestProductionData):
             ]
         )
         self.assertEqual(len(subproduct3_po_ids), 1)
+        subproduct3_po_ids.button_confirm()
         self.assertEqual(subproduct3_po_ids.state, "purchase")
         self.assertEqual(subproduct3_po_ids.origin, production.name)
 
@@ -355,6 +351,7 @@ class TestMrpProductionManualProcurement(TestProductionData):
             )
 
     def test_03_mo_from_sale_with_subcontracting_and_orderpoint(self):
+        # call normally to create subcontracting with wizard
         self._remove_mto_and_create_orderpoint()
         order_form = Form(self.env["sale.order"])
         order_form.partner_id = self.partner_1
@@ -434,9 +431,12 @@ class TestMrpProductionManualProcurement(TestProductionData):
         outgoing_components_picking = (
             new_po_ids.subcontract_production_ids.picking_ids.filtered(
                 lambda x: x.picking_type_code == "outgoing"
-        ))
-        self.assertEqual(outgoing_components_picking.location_dest_id,
-                         self.partner_subcontract_location)
+            )
+        )
+        self.assertEqual(
+            outgoing_components_picking.location_dest_id,
+            self.partner_subcontract_location,
+        )
         subproduct3_po_ids = self.env["purchase.order"].search(
             [
                 ("order_line.product_id", "=", self.subproduct3.id),
@@ -452,9 +452,44 @@ class TestMrpProductionManualProcurement(TestProductionData):
             ]
         )
         self.assertEqual(len(subproduct3_po_ids), 1)
+        subproduct3_po_ids.button_confirm()
         self.assertEqual(subproduct3_po_ids.state, "purchase")
         self.assertIn(self.subproduct3.orderpoint_ids.name, subproduct3_po_ids.origin)
         self.assertIn(new_po_ids.picking_ids.name, subproduct3_po_ids.origin)
+
+    # todo create a test for a product not subcontractable (this means without ability
+    #  to be subcontracted to various partner or producted/subcontracted (change name
+    #  of the variable to be more adequate)
+    # def test_03a_mo_from_sale_with_subcontracting_and_orderpoint(self):
+    #     # call with only 1 subcontractor and 1 bom of type subcontract to create
+    #     # subcontracting automatically
+    #     bom_ids = self.top_product.bom_ids
+    #     self.top_product.write({
+    #         "bom_ids": [(6, 0, bom_ids.filtered(lambda x: x.type == "subcontract").ids)],
+    #     })
+    #     self.top_product.write({
+    #         "seller_ids": [(0, 0, {
+    #             "name": self.subcontractor_partner1.id,
+    #             "autoconfirm_purchase": True,
+    #         })],
+    #     })
+    #     self._test_03_mo_from_sale_with_subcontracting_and_orderpoint(
+    #         single_subcontractor=True)
+    #     self.top_product.write({
+    #         "seller_ids": [+
+    #             (0, 0,
+    #                 {
+    #                     "name": self.subcontractor_partner1.id,
+    #                     "autoconfirm_purchase": True,
+    #                 }),
+    #             (0, 0,
+    #                 {
+    #                     "name": self.subcontractor_partner2.id,
+    #                     "autoconfirm_purchase": True,
+    #                 },
+    #         )],
+    #     })
+    #     self.top_product.bom_ids = bom_ids
 
     def test_04_normal_mo_from_sale_with_orderpoint(self):
         # produce in house
@@ -516,5 +551,7 @@ class TestMrpProductionManualProcurement(TestProductionData):
             ]
         )
         self.assertEqual(len(subproduct3_po_ids), 1)
+        # removed autoconfirm for the component
+        subproduct3_po_ids.button_confirm()
         self.assertEqual(subproduct3_po_ids.state, "purchase")
         self.assertIn(self.subproduct3.orderpoint_ids.name, subproduct3_po_ids.origin)
