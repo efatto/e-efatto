@@ -257,6 +257,13 @@ class TestMrpProductionManualProcurement(TestProductionData):
         self.assertEqual(len(new_po_ids.mapped("order_line")), 1)
         self.assertEqual(new_po_ids.state, "purchase")
         self.assertTrue(new_po_ids.subcontract_production_ids)
+        self.assertTrue(new_po_ids.subcontract_production_ids.picking_ids)
+        outgoing_components_picking = (
+            new_po_ids.subcontract_production_ids.picking_ids.filtered(
+                lambda x: x.picking_type_code == "outgoing"
+        ))
+        self.assertEqual(outgoing_components_picking.location_dest_id,
+                         self.partner_subcontract_location)
         subproduct3_po_ids = self.env["purchase.order"].search(
             [
                 ("order_line.product_id", "=", self.subproduct3.id),
@@ -423,7 +430,13 @@ class TestMrpProductionManualProcurement(TestProductionData):
         self.assertEqual(new_po_ids.partner_id, self.subcontractor_partner2)
         self.assertEqual(len(new_po_ids.mapped("order_line")), 1)
         self.assertEqual(new_po_ids.state, "purchase")
-        self.assertTrue(new_po_ids.subcontract_production_ids)
+        self.assertTrue(new_po_ids.subcontract_production_ids.picking_ids)
+        outgoing_components_picking = (
+            new_po_ids.subcontract_production_ids.picking_ids.filtered(
+                lambda x: x.picking_type_code == "outgoing"
+        ))
+        self.assertEqual(outgoing_components_picking.location_dest_id,
+                         self.partner_subcontract_location)
         subproduct3_po_ids = self.env["purchase.order"].search(
             [
                 ("order_line.product_id", "=", self.subproduct3.id),

@@ -25,42 +25,47 @@ class MrpProduction(models.Model):
         buy_route = self.env.ref("purchase_stock.route_warehouse0_buy")
         for production in self:
             # produce route is obviously already present
-            is_subcontractable = bool(
+            is_subcontractable = False
+            if (
                 buy_route in production.product_id.route_ids
                 and not production.purchase_order_id
                 and not production.proceed_to_production
-                and (
+            ):
+                if (
                     len(
                         production.mapped("product_id.seller_ids").filtered(
                             lambda x: x.is_subcontractor
                         )
                     )
                     >= 2
-                    or (
-                        production.mapped("product_id.seller_ids").filtered(
-                            lambda x: x.is_subcontractor
-                        )
-                        and len(
-                            set(
-                                production.product_id.bom_ids.filtered(
-                                    lambda x: x.type in ["normal", "subcontract"]
-                                ).mapped("type")
-                            )
-                        )
-                        >= 2
+                ):
+                    is_subcontractable = True
+                elif (
+                    production.mapped("product_id.seller_ids").filtered(
+                        lambda x: x.is_subcontractor
                     )
-                )
-            )
+                    and len(
+                        set(
+                            production.product_id.bom_ids.filtered(
+                                lambda x: x.type in ["normal", "subcontract"]
+                            ).mapped("type")
+                        )
+                    )
+                    >= 2
+                ):
+                    is_subcontractable = True
             production.is_subcontractable = is_subcontractable
 
     def action_confirm(self):
         # Block subcontractable productions
         self._check_company()
+        production_todo = self
         if not config["test_enable"] or self.env.context.get(
             "test_mrp_manual_procurement_subcontractor"
         ):
-            self = self.filtered(lambda x: not x.is_subcontractable)
-        if self:
+            production_todo = production_todo.filtered(
+                lambda x: not x.is_subcontractable)
+        if production_todo:
             # do only when subproduction is not confirmed
             proceed_to_production = self.env.context.get("proceed_to_production")
             changed_move = self.env["stock.move"]
@@ -68,13 +73,14 @@ class MrpProduction(models.Model):
                 [("name", "ilike", "Subcontracting")], limit=1
             )
             if not proceed_to_production:
-                lot_stock_id = self[0].picking_type_id.warehouse_id.lot_stock_id
-                for move in self.mapped("move_raw_ids").filtered(
-                    lambda x: x.location_id == partner_location_id
-                ):
-                    changed_move |= move
-                    move.location_id = lot_stock_id
-            super(MrpProduction, self).action_confirm()
+                for production in production_todo:
+                    for move in production.move_raw_ids.filtered(
+                        lambda x: x.location_id == partner_location_id
+                    ):
+                        changed_move |= move
+                        move.location_id = (
+                            production.picking_type_id.warehouse_id.lot_stock_id)
+            super(MrpProduction, production_todo).action_confirm()
             if not proceed_to_production:
                 for move in changed_move:
                     move.location_id = partner_location_id
