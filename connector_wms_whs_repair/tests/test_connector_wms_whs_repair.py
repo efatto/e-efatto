@@ -1,9 +1,8 @@
-from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
-
 from odoo.exceptions import ValidationError
 from odoo.tests import tagged
 from odoo.tests.common import Form
 
+from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
 from odoo.addons.connector_wms_whs.tests.test_connector_wms_whs import (
     TestConnectorWmsWhs,
 )
@@ -103,7 +102,7 @@ class TestConnectorWmsModula(TestConnectorWmsWhs):
                     NumLista=whs_list.num_lista,
                     NumRiga=whs_list.riga,
                 ),
-                metadata=None
+                metadata=None,
             )
             self.assertEqual(
                 str(result_liste[0]),
@@ -126,7 +125,7 @@ class TestConnectorWmsModula(TestConnectorWmsWhs):
                     NumLista=whs_list.num_lista,
                     NumRiga=whs_list.riga,
                 ),
-                metadata=None
+                metadata=None,
             )
             self.assertIn(
                 "[(Decimal('5.000'), Decimal('2.000'))]"
