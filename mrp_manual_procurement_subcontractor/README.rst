@@ -33,7 +33,7 @@ Configuration
 =============
 
 Questo modulo permette di scegliere se continuare la produzione creata per un prodotto oppure rifornirlo presso un subappaltatore.
-Il prodotto richiesto deve avere sia il percorso di produzione che quello di acquisto, con una distinta base di produzione e una di subappalto.
+Il prodotto richiesto deve avere sia il percorso di produzione (con una priorità superiore) che quello di acquisto (con una priorità inferiore), con una distinta base di produzione e una di subappalto oppure con una sola distinta di tipo subappalto con almeno due possibili subappaltatori.
 Alla creazione della produzione di un prodotto che ha queste caratteristiche non vengono più avviati gli approvvigionamenti dei componenti.
 
 Vengono quindi resi visibili due bottoni, che permettono, in alternativa, di proseguire con la produzione o di fermare la produzione e avviare l'acquisto presso un subappaltatore a scelta.

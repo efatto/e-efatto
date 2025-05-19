@@ -71,18 +71,22 @@ class TestMrpProductionManualProcurement(TestProductionData):
                     (4, cls.env.ref("purchase_stock.route_warehouse0_buy").id),
                 ],
                 "seller_ids": [
-                    (0, 0,
+                    (
+                        0,
+                        0,
                         {
                             "name": cls.subcontractor_partner1.id,
                             "autoconfirm_purchase": True,
                         },
                     ),
-                    (0, 0,
+                    (
+                        0,
+                        0,
                         {
                             "name": cls.subcontractor_partner2.id,
                             "autoconfirm_purchase": True,
                         },
-                    )
+                    ),
                 ],
             }
         )
@@ -101,10 +105,16 @@ class TestMrpProductionManualProcurement(TestProductionData):
                         ],
                     )
                 ],
-                "seller_ids": [(0, 0,  {
-                    "name": cls.supplier_3.id,
-                    # "autoconfirm_purchase": True,
-                })],
+                "seller_ids": [
+                    (
+                        0,
+                        0,
+                        {
+                            "name": cls.supplier_3.id,
+                            # "autoconfirm_purchase": True,
+                        },
+                    )
+                ],
                 # "categ_id": cls.product_categ_order_grouping.id,
                 "type": "product",
             }
