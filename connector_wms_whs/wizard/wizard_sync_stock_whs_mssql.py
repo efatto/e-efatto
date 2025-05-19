@@ -1,9 +1,9 @@
 # flake8: noqa: C901
-from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
-
 from odoo import _, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import float_compare
+
+from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
 
 
 class WizardSyncStockWhsMssql(models.TransientModel):

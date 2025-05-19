@@ -1,12 +1,11 @@
 import os
 
-from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
-
 from odoo import _, fields
 from odoo.exceptions import UserError, ValidationError
 from odoo.tests.common import Form, tagged
 from odoo.tools import relativedelta
 
+from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
 from odoo.addons.connector_whs.tests.test_connector_wms import CommonConnectorWMS
 
 
@@ -55,7 +54,9 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             )
         self.dbsource = dbsource
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=clean_sql_text("DELETE FROM HOST_LISTE"), sqlparams=None, metadata=None
+            sqlquery=clean_sql_text("DELETE FROM HOST_LISTE"),
+            sqlparams=None,
+            metadata=None,
         )
 
     def _select_whs_liste_rif(self, riferimento):
@@ -260,7 +261,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                 NumLista=whs_list.num_lista,
                 NumRiga=whs_list.riga,
             ),
-             metadata=None
+            metadata=None,
         )
 
         whs_select_query = (
@@ -274,7 +275,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                 NumLista=whs_list.num_lista,
                 NumRiga=whs_list.riga,
             ),
-            metadata=None
+            metadata=None,
         )
         self.assertEqual(
             str(result_liste[0]),
