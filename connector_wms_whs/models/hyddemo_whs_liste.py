@@ -1,9 +1,9 @@
 import logging
 
-from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
-
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+
+from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
 
 _logger = logging.getLogger(__name__)
 
@@ -74,8 +74,7 @@ class HyddemoWhsListe(models.Model):
                 )
             )
         check_elaborating_lists_query = (
-            "SELECT * FROM HOST_LISTE WHERE NumLista=:NumLista "
-            "AND Elaborato = 3"
+            "SELECT * FROM HOST_LISTE WHERE NumLista=:NumLista AND Elaborato = 3"
         )
         elaborating_lists = dbsource.execute_mssql(
             sqlquery=clean_sql_text(check_elaborating_lists_query),
@@ -117,7 +116,7 @@ class HyddemoWhsListe(models.Model):
                         NumLista=whs_list.num_lista,
                         NumRiga=whs_list.riga,
                     ),
-                    metadata=None
+                    metadata=None,
                 )
                 if not esiti_liste[0]:
                     whs_liste_query_simple = (
@@ -407,10 +406,8 @@ VALUES (
                 return False
             db_lists = dbsource.execute_mssql(
                 sqlquery=clean_sql_text(
-                    (
-                        "SELECT * FROM HOST_LISTE WHERE NumLista=:NumLista "
-                        "AND NumRiga=:NumRiga AND Elaborato != 5"
-                    )
+                    "SELECT * FROM HOST_LISTE WHERE NumLista=:NumLista "
+                    "AND NumRiga=:NumRiga AND Elaborato != 5"
                 ),
                 sqlparams=dict(
                     NumLista=whs_list.num_lista,
@@ -419,14 +416,16 @@ VALUES (
                 metadata=None,
             )
             if len(db_lists[0]) == 0:
-                # recreate list
+                # recreate the list
                 insert_esiti_liste_params = whs_list.whs_prepare_host_liste_values()
                 insert_query = whs_list._get_insert_host_liste_query(
                     insert_esiti_liste_params
                 )
                 if insert_esiti_liste_params:
                     dbsource.execute_query(
-                        dbsource, clean_sql_text(insert_query), insert_esiti_liste_params
+                        dbsource,
+                        clean_sql_text(insert_query),
+                        insert_esiti_liste_params,
                     )
                     set_liste_to_elaborate_query = (
                         "UPDATE HOST_LISTE SET Elaborato=1 WHERE Elaborato=0 "
@@ -441,6 +440,7 @@ VALUES (
                         metadata=None,
                     )
                     whs_list.write({"stato": "2"})
+        return None
 
     def whs_deduplicate_lists(self):
         """
@@ -463,10 +463,8 @@ VALUES (
                 return False
             number_of_duplicates = dbsource.execute_mssql(
                 sqlquery=clean_sql_text(
-                    (
-                        "SELECT * FROM HOST_LISTE WHERE NumLista=:NumLista "
-                        "AND NumRiga=:NumRiga AND ISNULL(QtaMovimentata, 0) = 0"
-                    )
+                    "SELECT * FROM HOST_LISTE WHERE NumLista=:NumLista "
+                    "AND NumRiga=:NumRiga AND ISNULL(QtaMovimentata, 0) = 0"
                 ),
                 sqlparams=dict(
                     NumLista=whs_list.num_lista,
@@ -495,10 +493,8 @@ VALUES (
             # remove residual duplicates with qty moved
             residual_number_of_duplicates = dbsource.execute_mssql(
                 sqlquery=clean_sql_text(
-                    (
-                        "SELECT * FROM HOST_LISTE WHERE NumLista=:NumLista "
-                        "AND NumRiga=:NumRiga"
-                    )
+                    "SELECT * FROM HOST_LISTE WHERE NumLista=:NumLista "
+                    "AND NumRiga=:NumRiga"
                 ),
                 sqlparams=dict(
                     NumLista=whs_list.num_lista,
@@ -510,10 +506,8 @@ VALUES (
                 # first remove possible lines without QtaMovimentata
                 dbsource.with_context(no_return=True).execute_mssql(
                     sqlquery=clean_sql_text(
-                        (
-                            "DELETE FROM HOST_LISTE WHERE NumLista=:NumLista "
-                            "AND NumRiga=:NumRiga AND ISNULL(QtaMovimentata, 0) = 0"
-                        )
+                        "DELETE FROM HOST_LISTE WHERE NumLista=:NumLista "
+                        "AND NumRiga=:NumRiga AND ISNULL(QtaMovimentata, 0) = 0"
                     ),
                     sqlparams=dict(
                         NumLista=whs_list.num_lista,
@@ -524,10 +518,8 @@ VALUES (
                 # check if there are other duplicates
                 residual_number_of_duplicates = dbsource.execute_mssql(
                     sqlquery=clean_sql_text(
-                        (
-                            "SELECT * FROM HOST_LISTE WHERE NumLista=:NumLista "
-                            "AND NumRiga=:NumRiga"
-                        )
+                        "SELECT * FROM HOST_LISTE WHERE NumLista=:NumLista "
+                        "AND NumRiga=:NumRiga"
                     ),
                     sqlparams=dict(
                         NumLista=whs_list.num_lista,
@@ -541,9 +533,7 @@ VALUES (
                         "AND NumRiga=:NumRiga"
                     )
                     dbsource.with_context(no_return=True).execute_mssql(
-                        sqlquery=clean_sql_text(
-                            residual_delete_lists_query
-                        ),
+                        sqlquery=clean_sql_text(residual_delete_lists_query),
                         sqlparams=dict(
                             Top=len(residual_number_of_duplicates[0]) - 1,
                             NumLista=whs_list.num_lista,
