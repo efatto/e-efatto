@@ -614,7 +614,7 @@ class BaseExternalDbsource(models.Model):
                         NumLista=whs_list.num_lista,
                         NumRiga=whs_list.riga,
                     ),
-                    metadata=None
+                    metadata=None,
                 )
                 # esiti_liste[0] contains result
                 if not esiti_liste[0]:
@@ -723,13 +723,10 @@ class BaseExternalDbsource(models.Model):
         for dbsource in self:
             for i in range(0, len(hyddemo_whs_lists), 1000):
                 whs_lists = hyddemo_whs_lists[i : i + 1000]
-                delete_query = (
-                    "DELETE FROM HOST_LISTE WHERE (%s)"
-                    % (
-                        " OR ".join(
-                            "(NumLista='%s' AND NumRiga='%s')" % (y.num_lista, y.riga)
-                            for y in whs_lists
-                        )
+                delete_query = "DELETE FROM HOST_LISTE WHERE (%s)" % (
+                    " OR ".join(
+                        "(NumLista='%s' AND NumRiga='%s')" % (y.num_lista, y.riga)
+                        for y in whs_lists
                     )
                 )
                 _logger.info(
