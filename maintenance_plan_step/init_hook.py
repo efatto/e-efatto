@@ -21,7 +21,7 @@ def pre_init_hook(cr):
     )
 
     _logger.info(
-        "Store field maintenance_plan on maintenance.plan in " "planning_step_max"
+        "Store field maintenance_plan on maintenance.plan in planning_step_max"
     )
     cr.execute(
         """
