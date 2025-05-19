@@ -1,9 +1,9 @@
 import logging
 
-from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
-
 from odoo import _, models
 from odoo.exceptions import UserError
+
+from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
 
 _logger = logging.getLogger(__name__)
 
@@ -17,7 +17,9 @@ class BaseExternalDbsource(models.Model):
             "DELETE FROM HOST_ARTICOLI WHERE Elaborato = 2 OR Elaborato = 0"
         )
         self.with_context(no_return=True).execute_mssql(
-            sqlquery=clean_sql_text(pre_insert_product_query), sqlparams=None, metadata=None
+            sqlquery=clean_sql_text(pre_insert_product_query),
+            sqlparams=None,
+            metadata=None,
         )
         return True
 
@@ -149,7 +151,6 @@ class BaseExternalDbsource(models.Model):
                     "SELECT NumLista, NumRiga, Qta, QtaMovimentata, Elaborato "
                     "FROM HOST_LISTE "
                     "WHERE NumLista=:NumLista AND NumRiga=:NumRiga"
-                    % (whs_list.num_lista, whs_list.riga)
                 )
                 esiti_liste = dbsource.execute_mssql(
                     sqlquery=clean_sql_text(whs_liste_query),
@@ -157,7 +158,7 @@ class BaseExternalDbsource(models.Model):
                         NumLista=whs_list.num_lista,
                         NumRiga=whs_list.riga,
                     ),
-                    metadata=None
+                    metadata=None,
                 )
                 # esiti_liste[0] contains result
                 if not esiti_liste[0]:
