@@ -8,7 +8,7 @@
     "category": "Manufacturing",
     "author": "Sergio Corato",
     "website": "https://github.com/efatto/e-efatto",
-    "summary": "Add ability to create procurement after production order " "creation.",
+    "summary": "Add ability to create procurement after production order creation.",
     "depends": [
         "mrp_production_demo",
         # 'mrp_production_procurement_analytic',
