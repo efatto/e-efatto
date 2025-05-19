@@ -98,9 +98,13 @@ class MrpProduction(models.Model):
 
     def button_proceed_to_production(self):
         self.write({"proceed_to_production": True})
-        self.env["stock.warehouse.orderpoint"].search([
-            ("product_id", "in", (
-                self.product_id | self.mapped("move_raw_ids.product_id")
-            ).ids),
-        ])._compute_qty()
+        self.env["stock.warehouse.orderpoint"].search(
+            [
+                (
+                    "product_id",
+                    "in",
+                    (self.product_id | self.mapped("move_raw_ids.product_id")).ids,
+                ),
+            ]
+        )._compute_qty()
         self._autoconfirm_production()
