@@ -423,7 +423,7 @@ class BaseExternalDbsource(models.Model):
                             insert_query = self.env[
                                 "hyddemo.whs.liste"
                             ]._get_insert_host_liste_query(
-                                insert_order_params[num_lista]
+                                insert_order_params[num_lista][riga]
                             )
                             self.execute_query(
                                 dbsource,
@@ -457,7 +457,7 @@ class BaseExternalDbsource(models.Model):
                             insert_line_query = self.env[
                                 "hyddemo.whs.liste"
                             ]._get_insert_order_line_query(
-                                insert_order_line_params[num_lista]
+                                insert_order_line_params[num_lista][riga]
                             )
                             self.execute_query(
                                 dbsource,
