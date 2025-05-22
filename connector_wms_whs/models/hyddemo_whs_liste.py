@@ -131,10 +131,9 @@ class HyddemoWhsListe(models.Model):
                         metadata=None,
                     )
                     if not esito_lista_simple[0]:
-                        # todo check if like really needs variable in ''
                         whs_liste_query_super_simple = (
                             "SELECT NumLista, Elaborato FROM HOST_LISTE "
-                            "WHERE NumLista like ':NumLista' AND Elaborato != 5"
+                            "WHERE NumLista like :NumLista AND Elaborato != 5"
                         )
                         esito_lista_super_simple = dbsource.execute_mssql(
                             sqlquery=clean_sql_text(whs_liste_query_super_simple),
