@@ -72,7 +72,12 @@
           />
                     <button
             name="whs_recreate_db_lists"
-            string="Recreate list in DB"
+            string="Recreate list in WMS"
+            type="object"
+          />
+                    <button
+            name="whs_force_recreate_db_lists"
+            string="Force list recreation in WMS"
             type="object"
           />
                     <button name="whs_list_sync" string="Sync list" type="object" />

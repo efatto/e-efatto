@@ -109,7 +109,10 @@ class HyddemoWhsListe(models.Model):
         self.whs_unlink_lists(dbsource)
         return True
 
-    def whs_recreate_db_lists(self):
+    def whs_force_recreate_db_lists(self):
+        self.whs_recreate_db_lists(force=True)
+
+    def whs_recreate_db_lists(self, force=False):
         # overridable method
         return True
 
