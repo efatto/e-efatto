@@ -236,7 +236,10 @@ Elaborato,
 AuxTesto1,
 AuxTestoRiga1,
 AuxTestoRiga2,
-AuxTestoRiga3
+AuxTestoRiga3,
+AuxTestoRiga4,
+AuxTestoRiga5,
+AuxTestoRiga6
 )
 VALUES (
 :NumLista,
@@ -267,10 +270,15 @@ VALUES (
 :AuxTesto1,
 :AuxTestoRiga1,
 :AuxTestoRiga2,
-:AuxTestoRiga3
+:AuxTestoRiga3,
+:AuxTestoRiga4,
+:AuxTestoRiga5,
+:AuxTestoRiga6
 )
 """
+        # idCliente + idPuntoDiConsegna sono una chiave univoca
         if "idCliente" in params:
+            # valorizzare idPuntoDiConsegna con l'id punto di consegna del cliente
             if "RagioneSociale" in params:
                 insert_query = insert_host_liste_query.format(
                     idCliente="idCliente,",
@@ -308,6 +316,16 @@ VALUES (
             parent_product_id = (
                 lista.parent_product_id if lista.parent_product_id else False
             )
+            produced_product_desc = (
+                parent_product_id.default_code[:250]
+                if parent_product_id.default_code
+                else parent_product_id.name[:250]
+            ) if parent_product_id else ""
+            product_customer_code = (
+                lista.product_customer_code[:250]
+                if lista.product_customer_code
+                else ""
+            )
             execute_params_order[lista.num_lista][lista.riga] = {
                 "NumLista": lista.num_lista[:50],  # char 50
                 "NumRiga": lista.riga,  # char 50 but is an integer
@@ -316,7 +334,8 @@ VALUES (
                 "Riferimento": lista.riferimento[:50] if lista.riferimento else "",
                 # char 50
                 "TipoOrdine": lista.tipo,  # int
-                "Causale": 10 if lista.tipo == "1" else 20,  # int
+                "Causale": 10 if lista.tipo == "1" else 12 if lista.tipo == 5 else 20,
+                # int
                 "Priorita": lista.priorita,  # int
                 "RichiestoEsito": 1,  # int
                 "Stato": 0,  # int
@@ -345,19 +364,18 @@ VALUES (
                 "AuxTesto1": lista.client_order_ref[:50]
                 if lista.client_order_ref
                 else "",  # char 50
-                "AuxTestoRiga1": lista.product_customer_code[:250]
-                if lista.product_customer_code
-                else "",  # char 250
-                "AuxTestoRiga2": lista.product_customer_code[:250]
-                if lista.product_customer_code
-                else "",  # char 250
-                "AuxTestoRiga3": (
-                    parent_product_id.default_code[:250]
-                    if parent_product_id.default_code
-                    else parent_product_id.name[:250]
-                )
-                if parent_product_id
-                else "",  # char 250
+                "AuxTestoRiga1": product_customer_code,  # char 250 -> NoteHost
+                "AuxTestoRiga2": product_customer_code,  # char 250 -> Distinta
+                "AuxTestoRiga3": product_customer_code,  # char 250 -> Cod. Art. Cliente
+                "AuxTestoRiga4": product_customer_code,  # char 250 -> Descrizione
+                # (mai popolato sulla tabella)
+                "AuxTestoRiga5": produced_product_desc,
+                # char 250 -> Codice articolo finito (per lavorazioni robot)
+                "AuxTestoRiga6": "",  # char 250 -> NON USATO
+                "Lotto": "",  # -> AnnoSettimana
+                "Lotto2": "",  # -> Lotto Fornitore
+                "Lotto3": "",  # -> NumeroDDT
+                "Lotto4": "",  # -> Disegno
             }
             if lista.cliente:  # char 30
                 execute_params_order[lista.num_lista][lista.riga].update(

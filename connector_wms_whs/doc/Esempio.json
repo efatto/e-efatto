@@ -1,0 +1,67 @@
+{
+	"PackingId": 2163,
+	"Packages": [
+		{
+			"SerialCode": "CEPC202410251346168",
+			"PackageType": "BOX",
+			"Dimension": {
+				"WeightKg": 0.45,
+				"WidthCm": 23,
+				"HeightCm": 20,
+				"DepthCm": 22
+			},
+			"Contents": [
+				{
+					"LogisticSN": "CEQC202410251214137",
+					"ItemId": "2181302",
+					"ItemBatchNumber": "BAU24R009829",
+					"ItemInventLocationId": "001",
+					"ItemSerialNumber": "",
+					"Qty": 1,
+					"OrderNumber": "CP24R005396",
+					"RowNumber": "R29909.0000" 
+				},
+				{
+					"LogisticSN": "CEQC202410251321146",
+					"ItemId": "6103859",
+					"ItemBatchNumber": "BAU24R009822",
+					"ItemInventLocationId": "001",
+					"ItemSerialNumber": "",
+					"Qty": 1,
+					"OrderNumber": "CP24R005396",
+					"RowNumber": "R29913.0000"
+				},
+				{
+					"LogisticSN": "CEQC202410251321145",
+					"ItemId": "6103858",
+					"ItemBatchNumber": "BAU24R009821",
+					"ItemInventLocationId": "001",
+					"ItemSerialNumber": "",
+					"Qty": 1,
+					"OrderNumber": "CP24R005396",
+					"RowNumber": "R29912.0000"
+				},
+				{
+					"LogisticSN": "CEQC202410251214135",
+					"ItemId": "2224636",
+					"ItemBatchNumber": "BAU24R009831",
+					"ItemInventLocationId": "001",
+					"ItemSerialNumber": "",
+					"Qty": 1,
+					"OrderNumber": "CP24R005396",
+					"RowNumber": "R29911.0000"
+				},
+				{
+					"LogisticSN": "CEQC202410251214136",
+					"ItemId": "2171075",
+					"ItemBatchNumber": "BAU24R009830",
+					"ItemInventLocationId": "001",
+					"ItemSerialNumber": "",
+					"Qty": 1,
+					"OrderNumber": "CP24R005396",
+					"RowNumber": "R29910.0000"
+				}
+			]
+		}
+	]
+}
