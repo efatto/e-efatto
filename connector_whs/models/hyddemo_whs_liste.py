@@ -167,7 +167,7 @@ class HyddemoWhsListe(models.Model):
                 if not connection:
                     raise UserError(_("Failed to open connection!"))
                 if whs_list.num_lista not in num_lista_done:
-                    dbsource.whs_read_and_synchronize_list(whs_list.num_lista)
+                    dbsource.whs_read_and_synchronize_list(whs_list)
                     num_lista_done.append(whs_list.num_lista)
 
     def check_list_state(self):
