@@ -107,7 +107,7 @@ class HyddemoWhsListe(models.Model):
                     raise UserError(_("Failed to open connection!"))
                 whs_liste_query = (
                     "SELECT NumLista, NumRiga, Elaborato, DataLista, TipoOrdine, "
-                    "Stato, Articolo, Qta, QtaMovimentata FROM HOST_LISTE "
+                    "Stato, Articolo, Qta, QtaMovimentata, * FROM HOST_LISTE "
                     "WHERE NumLista=:NumLista AND NumRiga=:NumRiga"
                 )
                 esiti_liste = dbsource.execute_mssql(
