@@ -387,10 +387,10 @@ VALUES (
         )
         return set_liste_to_elaborate_query
 
-    def whs_recreate_db_lists(self):
+    def whs_recreate_db_lists(self, force=False):
         for whs_list in self:
             dbsource = False
-            if whs_list.whs_list_absent and whs_list.move_id:
+            if (force or whs_list.whs_list_absent) and whs_list.move_id:
                 dbsource = self.env["base.external.dbsource"].search(
                     [("location_id", "=", whs_list.move_id.location_id.id)]
                 )
@@ -414,7 +414,7 @@ VALUES (
                 ),
                 metadata=None,
             )
-            if len(db_lists[0]) == 0:
+            if len(db_lists[0]) == 0 or force:
                 # recreate the list
                 insert_esiti_liste_params = whs_list.whs_prepare_host_liste_values()
                 insert_query = whs_list._get_insert_host_liste_query(
