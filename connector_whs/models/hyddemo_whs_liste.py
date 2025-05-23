@@ -79,7 +79,7 @@ class HyddemoWhsListe(models.Model):
     lotto4 = fields.Char(size=20)
     lotto5 = fields.Char(size=20)
     qta = fields.Float("Quantità")
-    qtamov = fields.Float("Quantità movimentata")
+    qtamov = fields.Float("Quantità movimentata", tracking=True)
     move_id = fields.Many2one(
         "stock.move",
         string="Stock Move",
