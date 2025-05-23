@@ -3,12 +3,13 @@
 import logging
 import time
 
-from odoo import models, fields, api, _
+from sqlalchemy import text as sql_text
+
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools.config import config as system_base_config
 from odoo.tools.date_utils import relativedelta
 
-from sqlalchemy import text as sql_text
 _logger = logging.getLogger(__name__)
 
 
@@ -22,7 +23,7 @@ class BaseExternalDbsource(models.Model):
     location_id = fields.Many2one(
         "stock.location", "Location linked to WMS")
     conn_string_sandbox = fields.Text("Connection string sandbox")
-    active = fields.Boolean("Active", default=True)
+    active = fields.Boolean(string="Active", default=True)
     stock_picking_type_ids = fields.Many2many(
         comodel_name="stock.picking.type",
         string="Stock picking types enabled",
@@ -103,8 +104,11 @@ class BaseExternalDbsource(models.Model):
                 [], ["ultimo_invio", "ultimo_id"], order="ultimo_id desc", limit=1)
             _logger.info(log_data)
             last_id = log_data and log_data[0]["ultimo_id"] or 0
-            last_date_dt = log_data and log_data[0]["ultimo_invio"] or (
-                fields.Datetime.now() + relativedelta(years=-10))
+            last_date_dt = (
+                log_data
+                and log_data[0]["ultimo_invio"]
+                or (fields.Datetime.now() + relativedelta(years=-10))
+            )
             last_date = fields.Datetime.to_string(last_date_dt)
             products = self.env["product.product"]._get_product_to_sync(last_date)
             new_last_update = fields.Datetime.now()
@@ -115,14 +119,15 @@ class BaseExternalDbsource(models.Model):
                 dbsource.with_context(no_return=True).execute_mssql(
                     sqlquery=clean_sql_text(insert_product_query),
                     sqlparams=insert_product_params,
-                    metadata=None)
+                    metadata=None,
+                )
 
             dbsource._post_insert_product_query(last_id)
             res = self.env["hyddemo.mssql.log"].create(
                 [
                     {
                         "ultimo_invio": new_last_update,
-                        "errori": "Added %s products" % len(products),
+                        "errori": "Added/Updated %s products" % len(products),
                         "dbsource_id": dbsource.id,
                     }
                 ]
@@ -132,7 +137,7 @@ class BaseExternalDbsource(models.Model):
         return True
 
     @api.multi
-    def whs_read_and_synchronize_list(self, whs_lists=False):
+    def whs_read_and_synchronize_list(self, whs_lists=False):  # noqa: pylint C901
         """
         Funzione lanciabile tramite cron per aggiornare i movimenti dalle liste create
         per WMS da Odoo nei vari moduli collegati (mrp, stock, ecc.)
@@ -147,7 +152,7 @@ class BaseExternalDbsource(models.Model):
             pickings_to_assign = self.env["stock.picking"]
             db_fields = [
                 "NumLista", "NumRiga", "Qta", "QtaMovimentata", "Lotto", "Lotto2",
-                "Lotto3", "Lotto4", "Lotto5", "Articolo", "DescrizioneArticolo"]
+                "Lotto3", "Lotto4", "Lotto5", "Articolo", "DescrizioneArticolo",]
             while True:
                 # read 1000 record instead of 100 as in the past version
                 # for test use Elaborato=1 instead of 4 and manually change qty_moved in
@@ -180,7 +185,7 @@ class BaseExternalDbsource(models.Model):
                             I_FROM=i,
                             I_TO=i + 1000,
                         ),
-                        metadata=None
+                        metadata=None,
                     )
                     pos = 1
                     i += 1000
@@ -202,6 +207,10 @@ class BaseExternalDbsource(models.Model):
                             % esito_lista
                         )
                         continue
+                    _logger.debug(
+                        "WHS LOG: synchronizing list %s row %s in db"
+                        % (num_lista, num_riga)
+                    )
                     hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search([
                         ("num_lista", "=", num_lista),
                         ("riga", "=", num_riga)
@@ -210,8 +219,8 @@ class BaseExternalDbsource(models.Model):
                         # ROADMAP: if the user want to create the list directly in WMS,
                         # do the reverse synchronization (not requested so far)
                         _logger.info(
-                            "WMS LOG: list num_riga %s num_lista %s not found in "
-                            "lists (found list %s but not row)"
+                            "WMS LOG: list num_riga %s num_lista %s not found in Odoo "
+                            "(found list %s but not row)"
                             % (
                                 num_riga,
                                 num_lista,
@@ -222,8 +231,9 @@ class BaseExternalDbsource(models.Model):
                         continue
                     if len(hyddemo_whs_lists) > 1:
                         _logger.info(
-                            "WMS LOG: More than 1 list found for lista %s" %
-                            hyddemo_whs_lists)
+                            "WMS LOG: More than 1 list found for lista %s"
+                            % hyddemo_whs_lists
+                        )
                     hyddemo_whs_list = hyddemo_whs_lists[0]
                     if hyddemo_whs_list.stato == "3":
                         _logger.debug("WMS LOG: list not processable: %s-%s" % (
@@ -260,9 +270,8 @@ class BaseExternalDbsource(models.Model):
                         if qty_moved > hyddemo_whs_list.qta:
                             _logger.info(
                                 "WMS LOG: list %s: qty moved %s is bigger than "
-                                "initial qty %s!" % (
-                                    hyddemo_whs_list.id, qty_moved,
-                                    hyddemo_whs_list.qta)
+                                "initial qty %s!"
+                                % (hyddemo_whs_list.id, qty_moved, hyddemo_whs_list.qta)
                             )
 
                     # set reserved availability on qty_moved if != 0.0 and with max of
@@ -350,11 +359,12 @@ class BaseExternalDbsource(models.Model):
             ])
             # group and insert lists by num_lista
             for num_lista in set(hyddemo_whs_lists.mapped("num_lista")):
-                insert_order_params, insert_order_line_params = (
-                    hyddemo_whs_lists.filtered(
-                        lambda x: x.num_lista == num_lista
-                    ).whs_prepare_host_liste_values()
-                )
+                (
+                    insert_order_params,
+                    insert_order_line_params,
+                ) = hyddemo_whs_lists.filtered(
+                    lambda x: x.num_lista == num_lista
+                ).whs_prepare_host_liste_values()
                 if insert_order_params:
                     if not insert_order_line_params:
                         # there is a unique table for order and order line
@@ -403,8 +413,9 @@ class BaseExternalDbsource(models.Model):
             # Update lists on mssql from 0 to 1 to be elaborated from WMS all in the
             # same time
             if hyddemo_whs_lists:
-                set_liste_to_elaborate_query = \
+                set_liste_to_elaborate_query = (
                     hyddemo_whs_lists._get_set_liste_to_elaborate_query()
+                )
                 if set_liste_to_elaborate_query:
                     dbsource.with_context(no_return=True).execute_mssql(
                         sqlquery=clean_sql_text(set_liste_to_elaborate_query),

@@ -17,10 +17,11 @@ class CommonConnectorWMS(TransactionCase):
         self.wms_location = self.env["stock.location"].create({
             "name": "WMS Location (child of default internal location)",
             "location_id": self.src_location.id,
-        })
-        self.manufacture_location = self.env["stock.location"].search([
-            ("usage", "=", "production")
-        ], limit=1)[0]
+            }
+        )
+        self.manufacture_location = self.env["stock.location"].search(
+            [("usage", "=", "production")], limit=1
+        )[0]
         self.procurement_model = self.env["procurement.group"]
         self.partner = self.env.ref("base.res_partner_2")
         # Create product with 11 on hand on WMS location and 5 in default Stock location
@@ -76,7 +77,7 @@ class CommonConnectorWMS(TransactionCase):
                     "name": self.partner.id,
                     "product_code": "CUSTOMERCODE",
                     "product_name": "Product customer name",
-                })
+                },)
             ]
         })
         self.product2.invoice_policy = "order"
@@ -166,4 +167,4 @@ class CommonConnectorWMS(TransactionCase):
     def run_stock_procurement_scheduler(self):
         with mute_logger("odoo.addons.stock.models.procurement"):
             self.procurement_model.run_scheduler(True)
-            time.sleep(30)
+            time.sleep(15)

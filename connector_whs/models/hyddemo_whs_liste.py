@@ -12,17 +12,22 @@ _logger = logging.getLogger(__name__)
 
 class HyddemoWhsListe(models.Model):
     _name = "hyddemo.whs.liste"
+    _inherit = ["mail.thread"]
     _description = "Lists to synchronize with WMS"
     _order = "id desc"
 
-    num_lista = fields.Text("Numero Lista", size=50)
+    num_lista = fields.Text("Numero Lista")  # , size=50)
     riga = fields.Integer("Numero riga")
-    stato = fields.Selection([
-        ("1", "Da elaborare"),
-        ("2", "Elaborata"),
-        ("3", "Da NON elaborare"),
-        ("4", "Ricevuto esito")
-    ], string="stato")
+    stato = fields.Selection(
+        [
+            ("1", "Da elaborare"),
+            ("2", "Elaborata"),
+            ("3", "Da NON elaborare"),
+            ("4", "Ricevuto esito"),
+        ],
+        string="stato",
+        tracking=True,
+    )
     # Equivale al campo "Elaborato" nel database
     # campo   campo
     # Odoo:   WMS:
