@@ -250,6 +250,7 @@ VALUES (
         tabella: IMP_ARTICOLI
         campi: vedi sotto
         """
+        # todo i PO sono caricati senza dati fornitore ecc.
         super()._prepare_host_articoli_values(
             product, location_id, last_id, operation=operation
         )
