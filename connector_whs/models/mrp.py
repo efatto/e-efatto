@@ -64,8 +64,10 @@ class MrpProduction(models.Model):
                 ("company_id", "=", production.company_id.id),
             ])
             if (
-                raw_dbsource and production.picking_type_id
-                in raw_dbsource.stock_picking_type_ids
+                raw_dbsource
+                # and production.picking_type_id in raw_dbsource.stock_picking_type_ids
+                # bypass check on locations, as this button is called from the user to
+                # create directly whs lists
             ):
                 num_lista = False
                 riga = 0
@@ -114,8 +116,10 @@ class MrpProduction(models.Model):
             ])
             if (
                 finished_dbsource
-                and production.picking_type_id
-                in finished_dbsource.stock_picking_type_ids
+                # and production.picking_type_id
+                # in finished_dbsource.stock_picking_type_ids
+                # bypass check on locations, as this button is called from the user to
+                # create directly whs lists
             ):
                 # Location of finished material is linked to WMS
                 num_lista = False
