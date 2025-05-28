@@ -208,13 +208,13 @@ class StockMove(models.Model):
         if self.env["base.external.dbsource"].search(
             [
                 (
-                        "location_id",
-                        "in",
-                        (self.mapped("location_dest_id") | self.mapped(
-                            "location_id")).ids,
+                    "location_id",
+                    "in", (
+                        self.mapped("location_dest_id") | self.mapped("location_id")
+                    ).ids,
                 ),
             ]
-        ):
+        ) or self.mapped("production_id"):  # TODO or raw_material_production_id ?
             # never merge stock moves linked to WMS lists
             merge = False
         res = super()._action_confirm(merge, merge_into)
