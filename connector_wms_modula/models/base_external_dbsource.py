@@ -94,11 +94,11 @@ OR (IMP_OR.RIG_ERRORE IS NOT NULL AND IMP_OR.RIG_ERRORE <> ' ')
     @api.multi
     def _check_export_list(self):
         """
-        Check 'Incomplete' lists from Modula, as not executable for quantity limits.
+        Check 'Incomplete' lists from Modula, as executed partially
         """
         self.ensure_one()
         list_incomplete_query = """
-SELECT EOR.RIG_ORDINE, EOR.RIG_HOSTINF, EOR.RIG_QTAR
+SELECT EOR.RIG_ORDINE, EOR.RIG_HOSTINF, EOR.RIG_QTAR, EOR.RIG_QTAE
 FROM EXP_ORDINI_RIGHE EOR
 WHERE EOR.RIG_STARIORD = 'I'
         """
@@ -112,16 +112,18 @@ WHERE EOR.RIG_STARIORD = 'I'
             num_lista = result[0]
             riga = result[1]
             qta = result[2]
+            qtamov = result[3]
             lista_id = self.env["hyddemo.whs.liste"].search([
                 ("num_lista", "=", num_lista),
                 ("riga", "=", riga),
             ])
             if lista_id:
                 lista_id.wms_modula_error = _(
-                    "Lista marked as 'To NOT elaborate' as refused from WMS Modula "
-                    "connector for excessive quantity: %s"
-                ) % qta
+                    "Lista executed partially (no more marked as 'To NOT elaborate')\n"
+                    "Quantity requested %s, quantity moved %s."
+                ) % (qta, qtamov)
                 lista_id.stato = "3"
+        return None
 
     @api.multi
     def _pre_insert_product_query(self):
