@@ -219,12 +219,10 @@ class StockMove(models.Model):
         if self.env["base.external.dbsource"].search(
             [
                 (
-                    "location_id",
-                    "in",
-                    (self.mapped("location_dest_id") | self.mapped("location_id")).ids,
+                    "stock_picking_type_ids", "in", self.mapped("picking_type_id").ids,
                 ),
             ]
-        ) or self.mapped("production_id"):  # TODO or raw_material_production_id ?
+        ) or self.mapped("production_id") or self.mapped("raw_material_production_id"):
             # never merge stock moves linked to WMS lists
             move_to_create_whs_list = self
             for move in self:
