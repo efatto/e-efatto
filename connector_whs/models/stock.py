@@ -224,7 +224,8 @@ class StockMove(models.Model):
                     (self.mapped("location_dest_id") | self.mapped("location_id")).ids,
                 ),
             ]
-        ):
+        ) or self.mapped("production_id"):  # TODO or raw_material_production_id ?
+            # never merge stock moves linked to WMS lists
             move_to_create_whs_list = self
             for move in self:
                 if merge and merge_into:
