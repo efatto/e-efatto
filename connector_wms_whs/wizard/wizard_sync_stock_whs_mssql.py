@@ -276,9 +276,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     "ultimo_invio": new_last_update,
                     "dbsource_id": dbsource.id,
                     "inventory_id": inventory.id,
-                    "hyddemo_mssql_log_line_ids": [
-                        (0, 0, x) for x in whs_log_lines
-                    ],
+                    "hyddemo_mssql_log_line_ids": [(0, 0, x) for x in whs_log_lines],
                 }
             ]
         )
