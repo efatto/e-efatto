@@ -13,9 +13,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
     @staticmethod
     def _prepare_giacenze_query(i):
         # overridable method
-        # respect order of fields retrieved!
-        query = ""
-        return query
+        return ""
 
     @api.multi
     def apply(self):
