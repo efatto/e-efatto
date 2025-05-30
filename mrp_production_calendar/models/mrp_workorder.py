@@ -24,10 +24,9 @@ class MrpWorkorder(models.Model):
     def _compute_estimated_duration(self):
         for workcorder in self:
             estimated_duration_days = (
-                (workcorder.duration_expected)
+                workcorder.duration_expected
                 /
-                (workcorder.workcenter_id.resource_calendar_id.hours_per_day
-                 or 8.0)
+                (workcorder.workcenter_id.resource_calendar_id.hours_per_day or 8.0)
                 / 60.0
                 / 5 * 7  # parameter to consider 2 holiday days by week
             )
