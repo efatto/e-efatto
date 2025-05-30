@@ -8,10 +8,9 @@
     'category': 'Manufacturing',
     'author': 'Sergio Corato',
     'website': 'https://github.com/efatto/e-efatto',
-    'description': 'Add computed field to show duration of production and workorder '
-                   'on views.',
+    'summary': 'Add computed field to show duration of production and workorder '
+               'on views.',
     'depends': [
-        'mrp_production_demo',
         'mrp_workorder_hierarchy',
         'web_timeline',
     ],
