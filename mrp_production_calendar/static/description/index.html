@@ -385,9 +385,10 @@ ul.auto-toc {
 </div>
 <div class="section" id="configuration">
 <h1><a class="toc-backref" href="#toc-entry-1">Configuration</a></h1>
-<p>Questo modulo aggiunge dei campi calcolati con il valore dei giorni di durata della produzione in base alle durate degli ordini di lavoro, calcolati in base ai minuti previsti diviso le ore medie giornaliere e parametrati alla giornata intera e infine ai 5 giorni lavorativi settimanali. Quindi se le ore medie di lavoro giornaliere sono 8, un ordine di lavoro con una durata prevista di 4 ore occuperà il 70% della giornata. (4ore/8ore-giorno/5giorni-lavorativi*7giorni-settimanali)</p>
-<img alt="Durata in giorni" src="https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_calendar/static/description/durata-in-giorni.png" />
-<p>Questi campi sono quindi utilizzati per mostrare la durata nelle viste di calendario e timeline negli ordini di produzione e degli ordini di lavoro.</p>
+<p>Questo modulo aggiunge la vista timeline e il collegamento tra gli ordini di lavoro padri e quelli figli con una freccia visibile a video:</p>
+<img alt="Timeline ordini di lavoro" src="https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_calendar/static/description/timeline_ordini_lavoro.png" />
+<p>Aggiunge il campo data pianificata finale sulla produzione, calcolata dalla massima data pianificata finale sugli ordini di lavoro. Se non sono stati pianificati gli ordini di lavoro, la data finale non è impostata.</p>
+<img alt="Timeline produzioni" src="https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_calendar/static/description/timeline_produzione.png" />
 </div>
 <div class="section" id="bug-tracker">
 <h1><a class="toc-backref" href="#toc-entry-2">Bug Tracker</a></h1>
