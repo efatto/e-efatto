@@ -6,11 +6,12 @@
     "license": "AGPL-3",
     "category": "Manufacturing",
     "author": "Sergio Corato",
+    "development_status": "Alpha",
     "website": "https://github.com/efatto/e-efatto",
     "summary": "Add computed field to show duration of production and workorder "
     "on views.",
     "depends": [
-        # 'mrp_workorder_hierarchy',
+        "mrp_routing",
         "web_timeline",
     ],
     "data": [

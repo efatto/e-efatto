@@ -32,12 +32,15 @@ This module add multiple views with calendar and timeline to production.
 Configuration
 =============
 
-Questo modulo aggiunge dei campi calcolati con il valore dei giorni di durata della produzione in base alle durate degli ordini di lavoro, calcolati in base ai minuti previsti diviso le ore medie giornaliere e parametrati alla giornata intera e infine ai 5 giorni lavorativi settimanali. Quindi se le ore medie di lavoro giornaliere sono 8, un ordine di lavoro con una durata prevista di 4 ore occuperà il 70% della giornata. (4ore/8ore-giorno/5giorni-lavorativi*7giorni-settimanali)
+Questo modulo aggiunge la vista timeline e il collegamento tra gli ordini di lavoro padri e quelli figli con una freccia visibile a video:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_calendar/static/description/durata-in-giorni.png
-    :alt: Durata in giorni
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_calendar/static/description/timeline_ordini_lavoro.png
+    :alt: Timeline ordini di lavoro
 
-Questi campi sono quindi utilizzati per mostrare la durata nelle viste di calendario e timeline negli ordini di produzione e degli ordini di lavoro.
+Aggiunge il campo data pianificata finale sulla produzione, calcolata dalla massima data pianificata finale sugli ordini di lavoro. Se non sono stati pianificati gli ordini di lavoro, la data finale non è impostata.
+
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_calendar/static/description/timeline_produzione.png
+    :alt: Timeline produzioni
 
 Bug Tracker
 ===========
