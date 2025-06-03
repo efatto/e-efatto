@@ -1,14 +1,14 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* mrp_production_calendar
+# 	* mrp_production_calendar
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 12.0\n"
+"Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-03 16:21+0000\n"
-"PO-Revision-Date: 2022-08-03 16:21+0000\n"
-"Last-Translator: <>\n"
+"POT-Creation-Date: 2025-06-03 15:14+0000\n"
+"PO-Revision-Date: 2025-06-03 15:14+0000\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -16,46 +16,81 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: mrp_production_calendar
-#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_production__estimated_days_duration
-#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing__estimated_days_duration
-#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing_workcenter__estimated_days_duration
-#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder__estimated_days_duration
-msgid "Estimated Days Duration"
-msgstr "Durata prevista in giorni"
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_production__assigned_attachment_ids
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder__assigned_attachment_ids
+msgid "Assigned Attachments"
+msgstr "Allegati assegnati"
 
 #. module: mrp_production_calendar
-#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_production__estimated_duration
-#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing__estimated_duration
-#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing_workcenter__estimated_duration
-#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder__estimated_duration
-msgid "Estimated Duration"
-msgstr "Durata prevista"
+#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_production__date_planned_finished
+msgid "Date at which you plan to finish the production."
+msgstr "Data pianificata per terminare la produzione."
 
 #. module: mrp_production_calendar
-#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_production__estimated_duration
-#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_routing__estimated_duration
-#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_routing_workcenter__estimated_duration
-#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_workorder__estimated_duration
-msgid "Estimated duration in hours splitted on days"
-msgstr "Durata prevista in ore parametrata in giorni"
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_production__display_name
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_production__id
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder__id
+msgid "ID"
+msgstr ""
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_production____last_update
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder____last_update
+msgid "Last Modified on"
+msgstr "Ultima modifica il"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_production__previous_production_ids
+msgid "Previous Production"
+msgstr "Produzioni precedenti"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder__previous_work_order_ids
+msgid "Previous Work Order"
+msgstr "Ordini di lavoro precedenti"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_production__previous_production_ids
+msgid ""
+"Previous production of the current one, which are the children as the "
+"components are created before the current one."
+msgstr ""
+"Le produzioni precedenti a quella corrente, che sono i figli dato che i "
+"componenti sono creati prima di quella corrente."
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_workorder__previous_work_order_ids
+msgid "Previous workorder of the current one"
+msgstr "Ordini di lavoro precedenti di quello corrente"
 
 #. module: mrp_production_calendar
 #: model:ir.model,name:mrp_production_calendar.model_mrp_production
 msgid "Production Order"
-msgstr "Ordine di Produzione"
+msgstr "Ordine di produzione"
 
 #. module: mrp_production_calendar
-#: model:ir.model,name:mrp_production_calendar.model_mrp_routing
-msgid "Routings"
-msgstr "Cicli di lavorazione"
+#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_workorder__origin
+msgid ""
+"Reference of the document that generated this production order request."
+msgstr ""
+"Riferimento del documento che ha generato la richiesta ordine di questa produzione."
 
 #. module: mrp_production_calendar
-#: model:ir.model,name:mrp_production_calendar.model_mrp_routing_workcenter
-msgid "Work Center Usage"
-msgstr "Utilizzo Centri di Lavoro"
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_production__date_planned_finished
+msgid "Scheduled End Date"
+msgstr "Data di fine programmata"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder__origin
+msgid "Source"
+msgstr "Origine"
 
 #. module: mrp_production_calendar
 #: model:ir.model,name:mrp_production_calendar.model_mrp_workorder
 msgid "Work Order"
-msgstr "Ordine di Lavoro"
-
+msgstr "Ordine di lavoro"

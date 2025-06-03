@@ -16,7 +16,7 @@ class MrpProduction(models.Model):
         column2="previous_production_id",
         compute="_compute_previous_production_ids",
         store=True,
-        help="Previous production of the current one, with are the children as the "
+        help="Previous production of the current one, which are the children as the "
         "components are created before the current one.",
     )
 
