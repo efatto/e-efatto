@@ -94,7 +94,10 @@ OR (IMP_OR.RIG_ERRORE IS NOT NULL AND IMP_OR.RIG_ERRORE <> ' ')
     @api.multi
     def _check_export_list(self):
         """
-        Check 'Incomplete' lists from Modula, as executed partially
+        Check 'Incomplete' lists from Modula, as executed partially. This lists are
+        already elaborated from whs_read_and_synchronize_list, this method only add an
+        info.
+        TODO check if this lists are deleted from the whs_read_and_synchronize_list
         """
         self.ensure_one()
         list_incomplete_query = """
@@ -122,7 +125,6 @@ WHERE EOR.RIG_STARIORD = 'I'
                     "Lista executed partially (no more marked as 'To NOT elaborate')\n"
                     "Quantity requested %s, quantity moved %s."
                 ) % (qta, qtamov)
-                lista_id.stato = "3"
         return None
 
     @api.multi
