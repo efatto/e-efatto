@@ -215,7 +215,8 @@ class StockMove(models.Model):
             # never merge stock moves linked to WMS lists
             merge = False
         res = super()._action_confirm(merge, merge_into)
-        self.create_whs_list()
+        # do not use self as it is change from the method
+        res.create_whs_list()
         return res
 
     @staticmethod
