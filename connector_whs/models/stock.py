@@ -19,10 +19,16 @@ class Picking(models.Model):
             if op.product_id.type == "product" and op.move_id.whs_list_ids:
                 op.qty_done = op.move_id.whs_list_ids[0].qtamov
 
+    def button_validate_bypass_wms(self):
+        return self.with_context(bypass_wms=True).button_validate()
+
     def _action_done(self):
         # Set whs_list.qta equal to move quantity_done, to stop any possible error
         # from wms user, if not elaborated from wms, else raise an error
         for pick in self:
+            if self.env.context.get("bypass_wms"):
+                pick.cancel_whs_list()
+                continue
             # Check wms lists are not in Elaborato=3 as WMS is working on them? no
             # as only stato=4 is processed
             # Synchronize wms lists? no as only stato=4 is processed, which is no
@@ -140,8 +146,8 @@ class Picking(models.Model):
                 if not dbsource:
                     _logger.info(
                         "WMS LOG: Picking type %s not linked to WMS System in "
-                        "cancel_whs_list" % pick.picking_type_id.name
-                    )
+                        "cancel_whs_list, nothing todo." %
+                        pick.picking_type_id.name)
                     continue
                 if any([x.stato != "1" and x.qtamov != 0 for x in whs_lists]):
                     raise UserError(_("Some moves already elaborated from WMS!"))
@@ -150,6 +156,17 @@ class Picking(models.Model):
                     whs_lists.unlink_lists(dbsource.id)
                 else:
                     whs_lists.cancel_lists(dbsource.id)
+                    if self.env.context.get("bypass_wms"):
+                        pick.move_lines.write({"exclude_from_wms": True})
+                    pick.move_lines.write({
+                        "location_id": pick.location_id.id,
+                        "location_dest_id": pick.location_dest_id.id,
+                    })
+                    # restore stock.move.line destinations
+                    pick.move_line_ids.write({
+                        "location_id": pick.location_id.id,
+                        "location_dest_id": pick.location_dest_id.id,
+                    })
         return True
 
 
@@ -242,12 +259,12 @@ class StockMove(models.Model):
             return True
         moves_todo = self.filtered(lambda x: not x.exclude_from_wms)
         whsliste_obj = self.env["hyddemo.whs.liste"]
-        list_number = False
-        for move in moves_todo.filtered(lambda x: not x.product_id.exclude_from_whs):
-            # get existing active list_number to append new whslist
+        for pick in moves_todo.mapped("picking_id"):
+            # get existing active list_number for picking to append new whs list
+            list_number = False
             list_numbers = list(
                 set(
-                    move.picking_id.move_lines.mapped("whs_list_ids")
+                    pick.move_lines.mapped("whs_list_ids")
                     .filtered(lambda x: x.stato != "3")
                     .mapped("num_lista")
                 )
@@ -256,234 +273,227 @@ class StockMove(models.Model):
                 if len(list_numbers) > 1:
                     raise UserError(
                         _("More than one list number found for picking %s: %s")
-                        % (move.picking_id.name, "|".join(list_numbers))
+                        % (pick.name, "|".join(list_numbers))
                     )
                 if len(list_numbers) == 1:
                     list_number = list_numbers[0]
-            tipo = False
-            ragsoc = False
-            indirizzo = False
-            cliente = False
-            cap = False
-            localita = False
-            provincia = False
-            nazione = False
-            # ROADMAP check this part as it is duplicated in mrp.py and an MO creates
-            # whs_list with that function
-            if all(
-                [
-                    x
-                    in [
-                        self.env.ref("mrp.route_warehouse0_manufacture"),
-                        self.env.ref("stock.route_warehouse0_mto"),
-                    ]
-                    for x in move.product_id.route_ids
-                ]
+            for move in moves_todo.filtered(
+                lambda x: x.picking_id == pick and not x.product_id.exclude_from_whs
             ):
-                # Never create wms list for OUT or IN related to manufactured products,
-                # only create MO.
-                # The IN will be without whs_list_ids so freely validatable
-                # as production is done.
-                # Same for the OUT, that one will be based only on Odoo stock current
-                # availability (user has to check this one is correct)
-                if move.procure_method == "make_to_order":
-                    continue
+                tipo = False
+                ragsoc = False
+                indirizzo = False
+                cliente = False
+                cap = False
+                localita = False
+                provincia = False
+                nazione = False
+                # ROADMAP check this part as it is duplicated in mrp.py and an MO
+                # creates whs_list with that function
+                if all(
+                    [
+                        x in [
+                            self.env.ref("mrp.route_warehouse0_manufacture"),
+                            self.env.ref("stock.route_warehouse0_mto"),
+                        ]
+                        for x in move.product_id.route_ids
+                    ]
+                ):
+                    # Never create wms list for OUT or IN related to manufactured
+                    # products, only create MO.
+                    # The IN will be without whs_list_ids so freely validatable
+                    # as production is done.
+                    # Same for the OUT, that one will be based only on Odoo stock
+                    # current availability (user has to check this one is correct)
+                    if move.procure_method == "make_to_order":
+                        continue
 
-            dbsource = self.env["base.external.dbsource"].search(
-                [
+                dbsource = self.env["base.external.dbsource"].search([
                     ("stock_picking_type_ids", "in", move.picking_type_id.ids),
                     ("company_id", "=", move.company_id.id),
-                ]
-            )
-            if not dbsource:
-                # Picking type is not linked to WMS System
-                continue
-            warehouse = move.picking_type_id.warehouse_id
-            reception_steps = warehouse.reception_steps
-            delivery_steps = warehouse.delivery_steps
-            manufacture_steps = warehouse.manufacture_steps
-            if (
-                (
-                    # reception two steps
-                    reception_steps == "two_steps"
-                    and move.location_id != warehouse.lot_stock_id
-                    and move.location_dest_id == warehouse.lot_stock_id
-                )
-                or (
-                    # incoming product from production two steps
-                    manufacture_steps == "pbm"
-                    and move.location_id != warehouse.lot_stock_id
-                    and move.location_dest_id == warehouse.lot_stock_id
-                )
-                or (
-                    # reception one step
-                    reception_steps == "one_step"
-                    and move.picking_type_id.code == "incoming"
-                )
-                or (
-                    # incoming product from production one step
-                    manufacture_steps == "mrp_one_step"
-                    and move.picking_type_id.code == "mrp_operation"
-                )
-            ):
-                tipo = "2"
-                # set Modula dest location if it`s an incoming transfer or a move from
-                # input location to internal location (2 steps case)
-                move.location_dest_id = dbsource.location_id
-            elif (
-                (
-                    # delivery two steps
-                    delivery_steps == "pick_ship"
-                    and move.location_id
-                    in [warehouse.lot_stock_id, dbsource.location_id]
-                    and move.location_dest_id != warehouse.lot_stock_id
-                )
-                or (
-                    # consumption of components two steps
-                    manufacture_steps == "pbm"
-                    and move.location_id
-                    in [warehouse.lot_stock_id, dbsource.location_id]
-                    and move.location_dest_id != warehouse.lot_stock_id
-                )
-                or (
-                    # delivery one step
-                    delivery_steps == "ship_only"
-                    and move.picking_type_id.code == "outgoing"
-                )
-                or (
-                    # consumption of components one step
-                    manufacture_steps == "mrp_one_step"
-                    and move.location_id
-                    in [warehouse.lot_stock_id, dbsource.location_id]
-                    and move.picking_type_id.code == "mrp_operation"
-                )
-            ):
-                tipo = "1"
-                # set Modula source location if it`s an outgoing or consuming transfer
-                move.location_id = dbsource.location_id
-            if not tipo:
-                # todo actively exclude moves not managed by WMS, except for production?
-                if move.picking_type_id not in dbsource.stock_picking_type_ids:
+                ])
+                if not dbsource:
+                    # Picking type is not linked to WMS System
                     continue
-                if all(
-                    x != dbsource.location_id
-                    for x in (move.location_id | move.location_dest_id)
-                ):
-                    # none of move locations are enabled in WMS
-                    continue
-            partner_id = move.partner_id or move.move_orig_ids.picking_id.partner_id
-            if partner_id:
-                ragsoc = partner_id.name
-                cliente = (
-                    partner_id.ref
-                    if partner_id.ref
-                    else partner_id.parent_id.ref
-                    if partner_id.parent_id.ref
-                    else False
-                )
-                indirizzo = partner_id.street if partner_id.street else False
-                cap = partner_id.zip if partner_id.zip else False
-                localita = partner_id.city if partner_id.city else False
-                provincia = partner_id.state_id.code if partner_id.state_id else False
-                nazione = partner_id.country_id.name if partner_id.country_id else False
-
-            if tipo:
-                # ROADMAP check phantom products that generates only out moves
+                warehouse = move.picking_type_id.warehouse_id
+                reception_steps = warehouse.reception_steps
+                delivery_steps = warehouse.delivery_steps
+                manufacture_steps = warehouse.manufacture_steps
                 if (
-                    move.state != "cancel"
-                    and move.product_id.type == "product"
-                    and (
-                        (tipo == "2" and move.location_dest_id == dbsource.location_id)
-                        or (tipo == "1" and move.location_id == dbsource.location_id)
+                    (
+                        # reception two steps
+                        reception_steps == "two_steps" and
+                        move.location_id != warehouse.lot_stock_id
+                        and move.location_dest_id == warehouse.lot_stock_id
+                    ) or (
+                        # incoming product from production two steps
+                        manufacture_steps == "pbm"
+                        and move.location_id != warehouse.lot_stock_id
+                        and move.location_dest_id == warehouse.lot_stock_id
+                    ) or (
+                        # reception one step
+                        reception_steps == "one_step"
+                        and move.picking_type_id.code == "incoming"
+                    ) or (
+                        # incoming product from production one step
+                        manufacture_steps == "mrp_one_step"
+                        and move.picking_type_id.code == "mrp_operation"
                     )
                 ):
-                    if move.whs_list_ids and any(
-                        x.stato != "3" for x in move.whs_list_ids
+                    tipo = "2"
+                    # set Modula dest location if it`s an incoming transfer or a move
+                    # from input location to internal location (2 steps case)
+                    move.location_dest_id = dbsource.location_id
+                elif (
+                    (
+                        # delivery two steps
+                        delivery_steps == "pick_ship"
+                        and move.location_id
+                        in [warehouse.lot_stock_id, dbsource.location_id]
+                        and move.location_dest_id != warehouse.lot_stock_id
+                    ) or (
+                        # consumption of components two steps
+                        manufacture_steps == "pbm"
+                        and move.location_id
+                        in [warehouse.lot_stock_id, dbsource.location_id]
+                        and move.location_dest_id != warehouse.lot_stock_id
+                    ) or (
+                        # delivery one step
+                        delivery_steps == "ship_only"
+                        and move.picking_type_id.code == "outgoing"
+                    ) or (
+                        # consumption of components one step
+                        manufacture_steps == "mrp_one_step"
+                        and move.location_id
+                        in [warehouse.lot_stock_id, dbsource.location_id]
+                        and move.picking_type_id.code == "mrp_operation"
+                    )
+                ):
+                    tipo = "1"
+                    # set Modula source location if it`s an outgoing or consuming
+                    # transfer
+                    move.location_id = dbsource.location_id
+                if not tipo:
+                    # todo actively exclude moves not managed by WMS, except for
+                    #  production?
+                    if move.picking_type_id not in dbsource.stock_picking_type_ids:
+                        continue
+                    if all(
+                        x != dbsource.location_id for x in (
+                            move.location_id | move.location_dest_id)
                     ):
-                        _logger.info(
-                            "WMS LOG: Ignored creation of WMS list %s as it "
-                            "already exists and is processable!"
-                            % str(
-                                [
-                                    "%s-%s" % (x.riga, x.num_lista)
-                                    for x in move.whs_list_ids
-                                    if x.stato != "3"
-                                ]
+                        # none of move locations are enabled in WMS
+                        continue
+                partner_id = move.partner_id or move.move_orig_ids.picking_id.partner_id
+                if partner_id:
+                    ragsoc = partner_id.name
+                    cliente = (
+                        partner_id.ref
+                        if partner_id.ref
+                        else partner_id.parent_id.ref
+                        if partner_id.parent_id.ref
+                        else False
+                    )
+                    indirizzo = partner_id.street if partner_id.street else False
+                    cap = partner_id.zip if partner_id.zip else False
+                    localita = partner_id.city if partner_id.city else False
+                    provincia = (
+                        partner_id.state_id.code) if partner_id.state_id else False
+                    nazione = (
+                        partner_id.country_id.name) if partner_id.country_id else False
+
+                if tipo:
+                    # ROADMAP check phantom products that generates only out moves
+                    if (
+                        move.state != "cancel"
+                        and move.product_id.type == "product"
+                        and (
+                            (
+                                tipo == "2"
+                                and move.location_dest_id == dbsource.location_id
+                            )
+                            or (
+                                tipo == "1"
+                                and move.location_id == dbsource.location_id
                             )
                         )
-                        continue
-                    if not list_number:
-                        list_number = self.env["ir.sequence"].next_by_code(
-                            "hyddemo.whs.liste"
-                        )
-                        riga = 0
-                    else:
-                        riga = max(
-                            whsliste_obj.search(
-                                [
-                                    ("num_lista", "=", list_number),
-                                ]
-                            ).mapped("riga")
-                        )
-                    riga += 1
-                    customer = (
-                        partner_id
-                        and move.product_id.customer_ids.filtered(
+                    ):
+                        if move.whs_list_ids and any(
+                                x.stato != "3" for x in move.whs_list_ids):
+                            _logger.info(
+                                "WMS LOG: Ignored creation of WMS list %s as it "
+                                "already exists and is processable!"
+                                % str(
+                                    ["%s-%s" % (x.riga, x.num_lista)
+                                     for x in move.whs_list_ids
+                                     if x.stato != "3"]
+                                )
+                            )
+                            continue
+                        if not list_number:
+                            list_number = self.env["ir.sequence"].next_by_code(
+                                "hyddemo.whs.liste")
+                            riga = 0
+                        else:
+                            riga = max(whsliste_obj.search([
+                                ("num_lista", "=", list_number),
+                            ]).mapped("riga"))
+                        riga += 1
+                        customer = (
+                            partner_id
+                            and move.product_id.customer_ids.filtered(
                             lambda x: x.name == partner_id.commercial_partner_id
+                            )
+                            or False
                         )
-                        or False
-                    )
-                    whsliste_data = {
-                        "stato": "1",
-                        "tipo": tipo,
-                        "num_lista": list_number,
-                        "data_lista": fields.Datetime.now(),
-                        "product_id": move.product_id.id,
-                        "qta": move.product_qty,
-                        "move_id": move.id,
-                        "tipo_mov": "move",
-                        "riga": riga,
-                        "client_order_ref": move.sale_line_id.order_id.client_order_ref,
-                    }
-                    if move.sale_line_id.product_id != move.product_id:
-                        whsliste_data.update(
-                            {
+                        whsliste_data = {
+                            "stato": "1",
+                            "tipo": tipo,
+                            "num_lista": list_number,
+                            "data_lista": fields.Datetime.now(),
+                            "product_id": move.product_id.id,
+                            "qta": move.product_qty,
+                            "move_id": move.id,
+                            "tipo_mov": "move",
+                            "riga": riga,
+                            "client_order_ref":
+                                move.sale_line_id.order_id.client_order_ref,
+                        }
+                        if move.sale_line_id.product_id != move.product_id:
+                            whsliste_data.update({
                                 "parent_product_id": move.sale_line_id.product_id.id,
-                            }
-                        )
-                    if customer:
-                        whsliste_data.update(
-                            {
+                            })
+                        if customer:
+                            whsliste_data.update({
                                 "product_customer_code": customer[0].product_code,
-                            }
-                        )
-                    if move.origin:
-                        whsliste_data["riferimento"] = move.origin[:50]
+                            })
+                        if move.origin:
+                            whsliste_data["riferimento"] = move.origin[:50]
 
-                    whsliste_data = moves_todo._set_priority(move, whsliste_data)
+                        whsliste_data = moves_todo._set_priority(move, whsliste_data)
 
-                    if ragsoc:
-                        whsliste_data["ragsoc"] = ragsoc[0:100]
-                    if indirizzo:
-                        whsliste_data["indirizzo"] = indirizzo[0:50]
-                    if cliente:
-                        whsliste_data["cliente"] = cliente.strip()[0:30]
-                    if cap:
-                        whsliste_data["cap"] = cap[0:5]
-                    if localita:
-                        whsliste_data["localita"] = localita[0:50]
-                    if provincia:
-                        whsliste_data["provincia"] = provincia[0:2]
-                    if nazione:
-                        whsliste_data["nazione"] = nazione[0:50]
-                    whsliste_obj.create(whsliste_data)
-                    _logger.info(
-                        "WMS LOG: create list with data:\n %s" % (str(whsliste_data))
-                    )
-            else:
-                raise UserError(
-                    _("WMS LOG: list tipo not found for stock move ID %s") % move.id
-                )
+                        if ragsoc:
+                            whsliste_data["ragsoc"] = ragsoc[0:100]
+                        if indirizzo:
+                            whsliste_data["indirizzo"] = indirizzo[0:50]
+                        if cliente:
+                            whsliste_data["cliente"] = cliente.strip()[0:30]
+                        if cap:
+                            whsliste_data["cap"] = cap[0:5]
+                        if localita:
+                            whsliste_data["localita"] = localita[0:50]
+                        if provincia:
+                            whsliste_data["provincia"] = provincia[0:2]
+                        if nazione:
+                            whsliste_data["nazione"] = nazione[0:50]
+                        whsliste_obj.create(whsliste_data)
+                        _logger.info("WMS LOG: create list with data:\n %s" % (
+                            str(whsliste_data)
+                        ))
+                else:
+                    raise UserError(
+                        _("WMS LOG: list tipo not found for stock move ID %s")
+                        % move.id)
         return True
 
     def custom_check_mrp(self):
