@@ -76,16 +76,13 @@ class MrpProductionProcureSubcontractor(models.TransientModel):
                 [
                     ("order_line.product_id", "=", mo.product_id.id),
                     ("state", "=", "purchase"),
+                    ("origin", "ilike", mo.name),
                 ]
             )
-            if purchase_orders:
-                purchase_orders = purchase_orders.filtered(
-                    lambda x: mo.name in x.origin
-                )
-                if len(purchase_orders) == 1:
-                    purchase_order = purchase_orders[0]
-                    purchase_order.button_confirm()
-                    mo_ids = purchase_order.subcontract_production_ids
+            if purchase_orders and len(purchase_orders) == 1:
+                purchase_order = purchase_orders[0]
+                purchase_order.button_confirm()
+                mo_ids = purchase_order.subcontract_production_ids
         if len(mo_ids) == 1:
             return {
                 "type": "ir.actions.act_window",
