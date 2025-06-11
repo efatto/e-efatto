@@ -21,6 +21,11 @@ Si apre quindi una procedura che permette di scegliere tra i possibili subappalt
 
 Nel caso ci siano prodotti subappaltati presso un singolo subappaltore, l'ordine di acquisto generato viene automaticamente confermato, sia che sia generato dalla rotta `Procura su Ordine` che da una regola di riordino.
 
+Il subappalto generato sarà quindi raggiungibile da un bottone sulla produzione annullata:
+
+.. image:: ../static/description/mo_in_subappalto.png
+    :alt: MO subappaltato
+
 È stato aggiunto un bottone per aprire i trasferimenti da fare verso il subappaltatore direttamente dall'ordine di acquisto:
 
 .. image:: ../static/description/bottone_trasferimenti_subappaltatore.png
