@@ -24,18 +24,20 @@
         />
             </xpath>
             <div class="oe_button_box" position="inside">
-                <button class="oe_stat_button"
-                        name="action_view_subcontracted_production_ids"
-                        type="object"
-                        icon="fa-wrench"
-                        attrs="{'invisible': [('subcontracted_production_count', '=', 0)]}">
+                <button
+          class="oe_stat_button"
+          name="action_view_subcontracted_production_ids"
+          type="object"
+          icon="fa-wrench"
+          attrs="{'invisible': [('subcontracted_production_count', '=', 0)]}"
+        >
                     <field name="subcontracted_production_ids" invisible="1" />
                     <field
-                        name="subcontracted_production_count"
-                        widget="statinfo"
-                        string="Subcontracted MO"
-                        help="Generated subcontrated productions"
-                      />
+            name="subcontracted_production_count"
+            widget="statinfo"
+            string="Subcontracted MO"
+            help="Generated subcontrated productions"
+          />
                 </button>
             </div>
         </field>

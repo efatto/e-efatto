@@ -25,7 +25,8 @@ class MrpProduction(models.Model):
     def _compute_subcontracted_production_count(self):
         for record in self:
             record.subcontracted_production_count = len(
-                record.subcontracted_production_ids)
+                record.subcontracted_production_ids
+            )
 
     @api.depends(
         "move_raw_ids.state",
@@ -137,7 +138,7 @@ class MrpProduction(models.Model):
                 "res_id": mo_ids[0].id,
                 "views": [(False, "form")],
                 "res_model": "mrp.production",
-                "target": "new",
+                "target": "current",
             }
         else:
             return {
@@ -148,5 +149,5 @@ class MrpProduction(models.Model):
                 "view_type": "tree",
                 "views": [(False, "tree")],
                 "res_model": "mrp.production",
-                "target": "new",
+                "target": "current",
             }
