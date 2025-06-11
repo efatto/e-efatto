@@ -14,13 +14,13 @@
           name="button_proceed_to_production"
           type="object"
           string="Proceed To Production"
-          attrs="{'invisible': [('is_subcontractable', '!=', True)]}"
+          attrs="{'invisible': ['|', ('is_subcontractable', '!=', True), ('state', '!=', 'draft')]}"
         />
                 <button
           name="%(action_procure_subcontractor)d"
           type="action"
           string="Procure from subcontractor"
-          attrs="{'invisible': [('is_subcontractable', '!=', True)]}"
+          attrs="{'invisible': ['|', ('is_subcontractable', '!=', True), ('state', '!=', 'draft')]}"
         />
             </xpath>
             <div class="oe_button_box" position="inside">
