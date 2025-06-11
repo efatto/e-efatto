@@ -34,7 +34,8 @@ class MrpProductionProcureSubcontractor(models.TransientModel):
         return defaults
 
     def action_done(self):
-        # cancel current mo and create a new mo for subcontractor with buy route
+        # 1. cancel current MO and create a new PO for subcontractor with buy route
+        # 2. confirm this PO (only if there is only one) to create a new MO
         self.ensure_one()
         buy_route = self.env.ref("purchase_stock.route_warehouse0_buy")
         mo = self.env["mrp.production"].browse(self.env.context["active_id"])
@@ -60,46 +61,24 @@ class MrpProductionProcureSubcontractor(models.TransientModel):
         replenish_wizard.launch_replenishment_with_origin()
         po_ids = self.env["purchase.order"].search(
             [
-                ("origin", "=ilike", mo.name),
+                ("origin", "ilike", mo.name),
                 ("order_line.product_id", "=", mo.product_id.id),
             ]
         )
-        mo_ids = self.env["mrp.production"].search(
-            [
-                ("origin", "=", mo.name),
-            ]
-        )
-        if po_ids and not mo_ids:
-            mo_ids = po_ids.mapped("subcontract_production_ids")
+        mo_ids = po_ids.mapped("subcontract_production_ids")
         if not mo_ids:
-            purchase_orders = self.env["purchase.order"].search(
+            mo_ids = self.env["mrp.production"].search(
                 [
-                    ("order_line.product_id", "=", mo.product_id.id),
-                    ("state", "=", "purchase"),
-                    ("origin", "ilike", mo.name),
+                    ("origin", "=", mo.name),
+                    ("product_id", "=", mo.product_id.id),
                 ]
             )
-            if purchase_orders and len(purchase_orders) == 1:
-                purchase_order = purchase_orders[0]
-                purchase_order.button_confirm()
-                mo_ids = purchase_order.subcontract_production_ids
-        if len(mo_ids) == 1:
-            return {
-                "type": "ir.actions.act_window",
-                "name": "Mrp production",
-                "view_mode": "form",
-                "view_type": "form",
-                "res_id": mo_ids[0].id,
-                "views": [(False, "form")],
-                "res_model": "mrp.production",
-            }
-        else:
-            return {
-                "type": "ir.actions.act_window",
-                "name": "Mrp production",
-                "domain": [("id", "in", mo_ids.ids)],
-                "view_mode": "form",
-                "view_type": "tree",
-                "views": [(False, "tree")],
-                "res_model": "mrp.production",
-            }
+        if po_ids and len(po_ids) == 1:
+            purchase_order = po_ids[0]
+            purchase_order.button_confirm()
+            mo_ids = purchase_order.subcontract_production_ids
+        if mo_ids:
+            mo.subcontracted_production_ids = mo_ids
+        return {
+            "type": "ir.actions.act_window_close",
+        }
