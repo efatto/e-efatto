@@ -240,10 +240,9 @@ class TestMrpProductionManualProcurement(TestProductionData):
         )
         procure_form.subcontractor_id = self.subcontractor_partner2
         wizard = procure_form.save()
-        res = wizard.action_done()
+        wizard.action_done()
         self.assertEqual(production.state, "cancel")
-        self.assertTrue(res.get("res_id"))
-        new_production = self.env["mrp.production"].browse(res.get("res_id"))
+        new_production = production.subcontracted_production_ids
         self.assertTrue(new_production)
         self.assertFalse(new_production.is_subcontractable)
         new_production.action_confirm()
