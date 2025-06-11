@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-24 15:11+0000\n"
-"PO-Revision-Date: 2025-03-24 15:11+0000\n"
+"POT-Creation-Date: 2025-06-11 06:01+0000\n"
+"PO-Revision-Date: 2025-06-11 06:01+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -74,6 +74,11 @@ msgstr "Annulla"
 #: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_stock_warehouse_orderpoint__display_name
 msgid "Display Name"
 msgstr "Nome visualizzato"
+
+#. module: mrp_manual_procurement_subcontractor
+#: model_terms:ir.ui.view,arch_db:mrp_manual_procurement_subcontractor.mrp_production_form_view
+msgid "Generated subcontrated productions"
+msgstr "Subappalti generati"
 
 #. module: mrp_manual_procurement_subcontractor
 #: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production__id
@@ -205,8 +210,8 @@ msgid ""
 "Select this option to make the RdP for the subcontracted product directly "
 "confirmed."
 msgstr ""
-"Seleziona questa opzione per fare in modo che le RdP per i prodotti in subappalto siano confermate "
-"direttamente."
+"Seleziona questa opzione per fare in modo che le RdP per i prodotti in "
+"subappalto siano confermate direttamente."
 
 #. module: mrp_manual_procurement_subcontractor
 #: model:ir.model,name:mrp_manual_procurement_subcontractor.model_stock_rule
@@ -222,6 +227,21 @@ msgstr "Trasferimenti subappaltore"
 #: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_purchase_order__subcontract_production_picking_count
 msgid "Subcontract pickings count"
 msgstr "Conteggio trasferimenti subappaltatore"
+
+#. module: mrp_manual_procurement_subcontractor
+#: model_terms:ir.ui.view,arch_db:mrp_manual_procurement_subcontractor.mrp_production_form_view
+msgid "Subcontracted MO"
+msgstr "MO in subappalto"
+
+#. module: mrp_manual_procurement_subcontractor
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production__subcontracted_production_ids
+msgid "Subcontracted Production"
+msgstr "Produzioni subappaltate"
+
+#. module: mrp_manual_procurement_subcontractor
+#: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production__subcontracted_production_count
+msgid "Subcontracted Production Count"
+msgstr "Numero di produzioni subappaltate"
 
 #. module: mrp_manual_procurement_subcontractor
 #: model:ir.model.fields,field_description:mrp_manual_procurement_subcontractor.field_mrp_production_procure_subcontractor__subcontractor_id
