@@ -10,9 +10,9 @@ MRP Production Calendar
    !! source digest: sha256:687ec41f1c62fdddddefe9336f7398bf9a468240cbbc289218447761d78b0e53
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-.. |badge1| image:: https://img.shields.io/badge/maturity-Beta-yellow.png
+.. |badge1| image:: https://img.shields.io/badge/maturity-Alpha-red.png
     :target: https://odoo-community.org/page/development-status
-    :alt: Beta
+    :alt: Alpha
 .. |badge2| image:: https://img.shields.io/badge/licence-AGPL--3-blue.png
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
@@ -23,6 +23,11 @@ MRP Production Calendar
 |badge1| |badge2| |badge3|
 
 This module add multiple views with calendar and timeline to production.
+
+.. IMPORTANT::
+   This is an alpha version, the data model and design can change at any time without warning.
+   Only for development or testing purpose, do not use in production.
+   `More details on development status <https://odoo-community.org/page/development-status>`_
 
 **Table of contents**
 
