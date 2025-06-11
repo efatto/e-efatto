@@ -9,6 +9,23 @@ class MrpProduction(models.Model):
         compute="_compute_is_subcontractable", store=True, copy=False
     )
     proceed_to_production = fields.Boolean(copy=False)
+    subcontracted_production_ids = fields.Many2many(
+        comodel_name="mrp.production",
+        relation="mrp_subcontracted_production_ids_rel",
+        column1="production_id",
+        column2="subcontracted_production_id",
+        copy=False,
+    )
+    subcontracted_production_count = fields.Integer(
+        compute="_compute_subcontracted_production_count",
+        store=True,
+    )
+
+    @api.depends("subcontracted_production_ids")
+    def _compute_subcontracted_production_count(self):
+        for record in self:
+            record.subcontracted_production_count = len(
+                record.subcontracted_production_ids)
 
     @api.depends(
         "move_raw_ids.state",
@@ -108,3 +125,28 @@ class MrpProduction(models.Model):
             ]
         )._compute_qty()
         self._autoconfirm_production()
+
+    def action_view_subcontracted_production_ids(self):
+        mo_ids = self.subcontracted_production_ids
+        if len(mo_ids) == 1:
+            return {
+                "type": "ir.actions.act_window",
+                "name": "Mrp production",
+                "view_mode": "form",
+                "view_type": "form",
+                "res_id": mo_ids[0].id,
+                "views": [(False, "form")],
+                "res_model": "mrp.production",
+                "target": "new",
+            }
+        else:
+            return {
+                "type": "ir.actions.act_window",
+                "name": "Mrp production",
+                "domain": [("id", "in", mo_ids.ids)],
+                "view_mode": "form",
+                "view_type": "tree",
+                "views": [(False, "tree")],
+                "res_model": "mrp.production",
+                "target": "new",
+            }

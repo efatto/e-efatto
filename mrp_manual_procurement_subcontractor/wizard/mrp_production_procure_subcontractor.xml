@@ -24,13 +24,13 @@
                     Are you sure you want to procure from this subcontractor?
                 </div>
                 <footer>
-                    <button string="Discard" special="cancel" class="btn-secondary" />
                     <button
             name="action_done"
             string="Confirm"
             type="object"
             class="btn-primary"
           />
+                    <button string="Discard" special="cancel" class="btn-secondary" />
                 </footer>
             </form>
         </field>
