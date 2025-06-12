@@ -6,9 +6,13 @@
         <field name="model">mrp.workorder</field>
         <field name="inherit_id" ref="mrp.workcenter_line_calendar" />
         <field name="arch" type="xml">
+            <xpath expr="//calendar" position="attributes">
+                <attribute name="event_limit">0</attribute>
+            </xpath>
             <field name="workcenter_id" position="after">
                 <field name="name" />
                 <field name="origin" />
+                <field name="has_exceeded_capacity" />
             </field>
         </field>
     </record>
@@ -30,6 +34,10 @@
 
     <record id="mrp.mrp_workorder_todo" model="ir.actions.act_window">
         <field name="view_mode">kanban,tree,form,timeline,calendar,pivot,graph</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="mrp.action_work_orders">
+        <field name="view_mode">tree,timeline,form,gantt,pivot,graph,calendar</field>
     </record>
 
     <record
@@ -102,5 +110,26 @@
             </xpath>
         </field>
     </record>
+
+<!--    <record id="mrp_workcenter_kanban" model="ir.ui.view">-->
+<!--        <field name="name">mrp.workcenter.kanban</field>-->
+<!--        <field name="model">mrp.workcenter</field>-->
+<!--        <field name="inherit_id" ref="mrp.mrp_workcenter_kanban" />-->
+<!--        <field name="arch" type="xml">-->
+<!--            <xpath expr="//kanban" position="attributes">-->
+<!--                <attribute name="default_group_by">state</attribute>-->
+<!--            </xpath>-->
+<!--        </field>-->
+<!--    </record>-->
+
+
+    <menuitem
+    id="menu_mrp_workcenter_dashboard"
+    name="Workcenter Overview"
+    action="mrp.mrp_workcenter_kanban_action"
+    groups="mrp.group_mrp_routings"
+    parent="mrp.menu_mrp_root"
+    sequence="5"
+  />
 
 </odoo>
