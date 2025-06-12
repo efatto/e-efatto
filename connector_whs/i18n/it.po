@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-12 07:49+0000\n"
-"PO-Revision-Date: 2025-06-12 07:49+0000\n"
+"POT-Creation-Date: 2025-06-12 10:21+0000\n"
+"PO-Revision-Date: 2025-06-12 10:21+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -71,7 +71,7 @@ msgstr "Attivo"
 
 #. module: connector_whs
 #: code:addons/connector_whs/models/mrp.py:52
-#: code:addons/connector_whs/models/stock.py:188
+#: code:addons/connector_whs/models/stock.py:223
 #, python-format
 msgid "Almost a WMS list is not in state 'Ricevuto Esito'!"
 msgstr "Almeno una lista WMS non è in stato 'Ricevuto Esito'!"
@@ -314,7 +314,7 @@ msgstr "Messaggi falliti"
 #: code:addons/connector_whs/models/hyddemo_whs_liste.py:0
 #, python-format
 msgid "Failed to open connection!"
-msgstr "Apertura connessione fallita!"
+msgstr "Connessione alla sorgente dati fallita!"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__message_follower_ids
@@ -431,12 +431,6 @@ msgid "Last Updated on"
 msgstr "Ultima modifica il"
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/stock.py:50
-#, python-format
-msgid "List/row: %s/%s - WMS/Stock moved qty %s/%s"
-msgstr "Lista/riga: %s/%s - Qtà movimentata WMS/Magazzino %s/%s"
-
-#. module: connector_whs
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_whs_liste_form
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_whs_liste_search
 msgid "Liste prelievo, deposito e inventario"
@@ -536,7 +530,7 @@ msgid "Mismatch"
 msgstr "Squadrato"
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/stock.py:275
+#: code:addons/connector_whs/models/stock.py:310
 #, python-format
 msgid "More than one list number found for picking %s: %s"
 msgstr "Più di un numero di lista trovato per trasferimento %s: %s"
@@ -638,6 +632,14 @@ msgid "Product"
 msgstr "Prodotto"
 
 #. module: connector_whs
+#: code:addons/connector_whs/models/stock.py:50
+#: code:addons/connector_whs/models/stock.py:74
+#: code:addons/connector_whs/models/stock.py:94
+#, python-format
+msgid "Product %s - List/row: %s/%s - WMS/Stock moved qty %s/%s"
+msgstr "Prodotto %s - Lista/riga: %s/%s - WMS/Magazzino qtà movimentata %s/%s"
+
+#. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__product_customer_code
 msgid "Product Customer Code"
 msgstr "Codice Prodotto Cliente"
@@ -735,7 +737,7 @@ msgstr ""
 
 #. module: connector_whs
 #: code:addons/connector_whs/models/mrp.py:22
-#: code:addons/connector_whs/models/stock.py:154
+#: code:addons/connector_whs/models/stock.py:189
 #, python-format
 msgid "Some moves already elaborated from WMS!"
 msgstr "Alcuni movimenti già elaborati da WMS"
@@ -832,20 +834,16 @@ msgid "Trying to validate picking %s which is already elaborated on WMS with dif
 msgstr "Tentativo di validare il picking %s che è già stato elaborato in WMS con una quantità diversa per liste %s"
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/stock.py:69
+#: code:addons/connector_whs/models/stock.py:90
 #, python-format
-msgid "Trying to validate picking %s which is not elaborated on WMS."
-msgstr "Tentativo di validare picking %s che non è stato elaborato in WMS."
+msgid "Trying to validate picking %s which is not elaborated on WMS: %s"
+msgstr "Tentativo di validare picking %s che non è stato elaborato in WMS: %s"
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/stock.py:64
+#: code:addons/connector_whs/models/stock.py:69
 #, python-format
-msgid ""
-"Trying to validate picking %s which is not processable in Odoo but "
-"elaborated on WMS."
-msgstr ""
-"Tentativo di validare il trasferimento %s che non è processabile in Odoo ma "
-"elaborato in WMS."
+msgid "Trying to validate picking %s which is not processable in Odoo but elaborated on WMS: %s"
+msgstr "Tentativo di validare il trasferimento %s che non è processabile in Odoo ma elaborato in WMS: %s"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__type
@@ -895,7 +893,7 @@ msgid "WHS state mismatch"
 msgstr "Disallineamento stato WMS"
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/stock.py:0
+#: code:addons/connector_whs/models/stock.py:530
 #, python-format
 msgid "WMS LOG: list tipo not found for stock move ID %s"
 msgstr "WMS LOG: tipo lista non trovato per stock move ID %s"
@@ -929,7 +927,7 @@ msgid "WMS Weight"
 msgstr "Peso WMS"
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/stock.py:221
+#: code:addons/connector_whs/models/stock.py:256
 #, python-format
 msgid ""
 "WMS valid list exists and qty cannot be modified!\n"
@@ -953,7 +951,13 @@ msgid "Whs List Multiple"
 msgstr "Liste WHS multiple"
 
 #. module: connector_whs
-#: code:addons/connector_whs/models/stock.py:211
+#: code:addons/connector_whs/models/stock.py:241
+#, python-format
+msgid "WMS valid list exists and qty cannot be modified!"
+msgstr "Esiste una lista WMS valida e la quantità non può essere modificata!"
+
+#. module: connector_whs
+#: code:addons/connector_whs/models/stock.py:246
 #, python-format
 msgid "WMS valid list exists in origin moves and qty cannot be modified!"
 msgstr "Esistono liste WMS valide nei movimenti originali e le quantità non possono essere modificate!"
