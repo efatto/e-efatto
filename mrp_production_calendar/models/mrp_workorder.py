@@ -17,17 +17,17 @@ class MrpWorkorder(models.Model):
     origin = fields.Char(related="production_id.origin")
     has_exceeded_capacity = fields.Boolean(
         compute="_compute_has_exceeded_capacity",
+        store=True,
         string="Has exceeded capacity?",
         help="Show if a workorder has exceeded capacity of its workcenter, computed "
         "on workcenter concurrent capacity.",
     )
 
-    @staticmethod
-    def _get_overlapping_periods(workorders):
+    def _get_overlapping_periods(self):
         overlappings = {}
-        for i in range(len(workorders)):
-            current_wo = workorders[i]
-            for next_wo in workorders - current_wo:
+        for i in range(len(self)):
+            current_wo = self[i]
+            for next_wo in self - current_wo:
                 if (
                     current_wo.date_planned_finished > next_wo.date_planned_start
                     and current_wo.date_planned_start < next_wo.date_planned_finished
@@ -58,19 +58,29 @@ class MrpWorkorder(models.Model):
                     max_overlaps += 1
         return max_overlaps
 
+    @api.depends(
+        "workcenter_id.order_ids.date_planned_start",
+        "workcenter_id.order_ids.date_planned_finished",
+        "workcenter_id.order_ids.state",
+        "workcenter_id.capacity",
+    )
     def _compute_has_exceeded_capacity(self):
         # search for workorders to be done in the same time and check if the workcenter
         # has a capacity do to them concurrently
-        overlappings = self._get_overlapping_periods(self)
-        for workorder in self:
-            # n.b. 1 overlap means 2 concurrent workorders, 2 means 3, etc.
-            if (
-                self._count_overlapping_periods(overlappings.get(workorder, []))
-                >= workorder.workcenter_id.capacity
-            ):
-                workorder.has_exceeded_capacity = True
-            else:
-                workorder.has_exceeded_capacity = False
+        for workcenter in self.mapped("workcenter_id"):
+            overlappings = workcenter.order_ids.filtered(
+                lambda wo: wo.state not in ["done", "cancel"]
+                and wo.date_planned_start and wo.date_planned_finished
+            )._get_overlapping_periods()
+            for workorder in self.filtered(lambda wo: wo.workcenter_id == workcenter):
+                # n.b. 1 overlap means 2 concurrent workorders, 2 means 3, etc.
+                if (
+                    self._count_overlapping_periods(overlappings.get(workorder, []))
+                    >= workorder.workcenter_id.capacity
+                ):
+                    workorder.has_exceeded_capacity = True
+                else:
+                    workorder.has_exceeded_capacity = False
 
     @api.depends("production_id.workorder_ids.next_work_order_id")
     def _compute_previous_work_order_ids(self):
