@@ -45,7 +45,10 @@ class Picking(models.Model):
                     )
                     % (
                         pick.name, "\n".join(
-                            _("List/row: %s/%s - WMS/Stock moved qty %s/%s") % (
+                            _("Product %s - List/row: %s/%s - "
+                              "WMS/Stock moved qty %s/%s"
+                              ) % (
+                                m.product_id.display_name,
                                 m.num_lista,
                                 m.riga,
                                 m.qtamov,
