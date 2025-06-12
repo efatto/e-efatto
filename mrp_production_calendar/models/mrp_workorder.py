@@ -25,11 +25,9 @@ class MrpWorkorder(models.Model):
     @staticmethod
     def _get_overlapping_periods(workorders):
         overlappings = {}
-        workorders_sorted = workorders.sorted(key=lambda w: w.date_planned_start)
-
-        for i in range(len(workorders_sorted)):
-            current_wo = workorders_sorted[i]
-            for next_wo in workorders_sorted - current_wo:
+        for i in range(len(workorders)):
+            current_wo = workorders[i]
+            for next_wo in workorders - current_wo:
                 if (
                     current_wo.date_planned_finished > next_wo.date_planned_start
                     and current_wo.date_planned_start < next_wo.date_planned_finished
@@ -85,7 +83,7 @@ class MrpWorkorder(models.Model):
 
     def write(self, values):
         # Enable changing duration of a workorder. It will change the end date of the
-        # production too, if it's the last workorder.
+        # production if it's the last workorder (default behavior).
         if "date_planned_start" in values or "date_planned_finished" in values:
             for workorder in self:
                 start_date = fields.Datetime.to_datetime(
