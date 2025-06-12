@@ -28,8 +28,6 @@ class MrpWorkorder(models.Model):
     def write(self, values):
         # Enable changing duration of a workorder. It will change the end date of the
         # production too, if it's the last workorder.
-        # todo move next workorders? Ask the user if do it, as workorders could be
-        #  asynchronous
         if "date_planned_start" in values or "date_planned_finished" in values:
             for workorder in self:
                 start_date = fields.Datetime.to_datetime(
@@ -52,5 +50,6 @@ class MrpWorkorder(models.Model):
                     )
                     values["duration_expected"] = computed_duration
         res = super().write(values)
-        # todo is it possible to open a wizard to ask confirm adding it to res?
+        # todo is it possible to open a wizard (adding it to res?) to ask confirm for
+        #  move next workorders? (workorders could be asynchronous)
         return res
