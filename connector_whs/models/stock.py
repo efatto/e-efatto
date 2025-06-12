@@ -34,16 +34,26 @@ class Picking(models.Model):
             # Synchronize wms lists? no as only stato=4 is processed, which is no
             # more workable from WMS
             # stato == "3" the wms list is no more processable, so ignored
-            if any(
-                x.stato == "4" and x.qtamov != x.move_id.quantity_done
-                for x in pick.mapped("move_lines.whs_list_ids")
-            ):
+            mismatch_lists = pick.mapped("move_lines.whs_list_ids").filtered(
+                lambda x: x.stato == "4" and x.qtamov != x.move_id.quantity_done
+            )
+            if mismatch_lists:
                 raise UserError(
                     _(
                         "Trying to validate picking %s which is "
-                        "already elaborated on WMS with different qty."
+                        "already elaborated on WMS with different qty for lists %s"
                     )
-                    % pick.name
+                    % (
+                        pick.name, "\n".join(
+                            _("List/row: %s/%s - WMS/Stock moved qty %s/%s") % (
+                                m.num_lista,
+                                m.riga,
+                                m.qtamov,
+                                m.move_id.quantity_done,
+                            )
+                        for m in mismatch_lists
+                        )
+                    )
                 )
             # stato == "3" is ok when qtamov is 0, as is no more processable (n.b. qty
             # in move is obviously moved as it is the same move linked to correct list)
