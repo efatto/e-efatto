@@ -60,28 +60,47 @@ class Picking(models.Model):
                 )
             # stato == "3" is ok when qtamov is 0, as is no more processable (n.b. qty
             # in move is obviously moved as it is the same move linked to correct list)
-            if any(
-                x.stato == "3" and x.qtamov != 0
-                for x in pick.mapped("move_lines.whs_list_ids")
-            ):
-                raise UserError(
-                    _(
-                        "Trying to validate picking %s which is "
-                        "not processable in Odoo but elaborated on WMS."
+            not_processable_lists = pick.mapped("move_lines.whs_list_ids").filtered(
+                lambda x: x.stato == "3" and x.qtamov != 0
+            )
+            if not_processable_lists:
+                raise UserError(_(
+                    "Trying to validate picking %s which is not processable in Odoo "
+                    "but elaborated on WMS: %s"
+                ) % (
+                    pick.name, "\n".join(
+                        _("Product %s - List/row: %s/%s - "
+                          "WMS/Stock moved qty %s/%s"
+                          ) % (
+                            m.product_id.display_name,
+                            m.num_lista,
+                            m.riga,
+                            m.qtamov,
+                            m.move_id.quantity_done,
+                        )
+                    for m in not_processable_lists
                     )
-                    % pick.name
-                )
-            if any(
-                x.stato not in ("3", "4") and x.move_id.quantity_done != 0
-                for x in pick.mapped("move_lines.whs_list_ids")
-            ):
-                raise UserError(
-                    _(
-                        "Trying to validate picking %s which is "
-                        "not elaborated on WMS."
+                ))
+            moved_list_without_wms = pick.mapped("move_lines.whs_list_ids").filtered(
+                lambda x: x.stato not in ("3", "4") and x.move_id.quantity_done != 0
+            )
+            if moved_list_without_wms:
+                raise UserError(_(
+                    "Trying to validate picking %s which is not elaborated on WMS: %s"
+                ) % (
+                    pick.name, "\n".join(
+                        _("Product %s - List/row: %s/%s - "
+                          "WMS/Stock moved qty %s/%s"
+                          ) % (
+                            m.product_id.display_name,
+                            m.num_lista,
+                            m.riga,
+                            m.qtamov,
+                            m.move_id.quantity_done,
+                        )
+                    for m in moved_list_without_wms
                     )
-                    % pick.name
-                )
+                ))
             for move in pick.move_lines:
                 for whs_list in move.whs_list_ids:
                     if whs_list.qtamov != move.quantity_done != 0:
