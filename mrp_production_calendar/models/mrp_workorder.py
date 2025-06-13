@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import pandas as pd
 
 from odoo import _, api, fields, models
@@ -136,12 +138,32 @@ class MrpWorkorder(models.Model):
                         <= day.date()
                         <= wo.date_planned_finished.date()
                     )
+                    # get the amount of hours that are workable in the current day from
+                    # the date planned start to the date planned finished for the
+                    # current resource_calendar_id
                     consumption = sum(
                         [
                             min(
                                 [
                                     wo.duration_expected,
-                                    workcenter.resource_calendar_id.hours_per_day * 60,
+                                    workcenter.resource_calendar_id.get_work_duration_data(
+                                        max(
+                                            wo.date_planned_start,
+                                            fields.Datetime.to_datetime(day.date()),
+                                        ),
+                                        min(
+                                            wo.date_planned_finished,
+                                            fields.Datetime.to_datetime(
+                                                day.date() + timedelta(days=1)
+                                            ),
+                                        ),
+                                        domain=[
+                                            ("time_type", "in", ["leave", "other"])
+                                        ],
+                                    )[
+                                        "hours"
+                                    ]
+                                    * 60,
                                 ]
                             )
                             for wo in day_planned_workorders
