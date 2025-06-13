@@ -8,12 +8,13 @@
     "author": "Sergio Corato",
     "development_status": "Alpha",
     "website": "https://github.com/efatto/e-efatto",
-    "summary": "Add computed field to show duration of production and workorder "
-    "on views.",
+    "summary": "Add some field to show estimated exceeding of time and capacity of "
+    "workorders by workcenter.",
     "depends": [
         "mrp_routing",
         "web_timeline",
     ],
+    "external_dependencies": {"python": ["pandas"]},
     "data": [
         "views/mrp.xml",
     ],
