@@ -13,7 +13,7 @@
                 <field name="name" />
                 <field name="origin" />
                 <field name="has_exceeded_capacity" />
-                <field name="has_exceeded_daily_working_time" />
+                <field name="has_exceeded_daily_working_hours" />
             </field>
         </field>
     </record>
@@ -126,7 +126,7 @@
                 <filter
           string="Exceeded working hours"
           name="exceeded_working_hours"
-          domain="[('has_exceeded_daily_working_time', '=', True)]"
+          domain="[('has_exceeded_daily_working_hours', '=', True)]"
         />
             </filter>
         </field>
@@ -138,8 +138,8 @@
         <field name="inherit_id" ref="mrp.mrp_workcenter_kanban" />
         <field name="arch" type="xml">
             <field name="oee_target" position="after">
-                <field name="wo_exceeded_capacity_value" />
                 <field name="wo_exceeded_capacity_count" />
+                <field name="wo_exceeded_daily_working_hours_count" />
             </field>
             <xpath
         expr="//div[hasclass('col-6', 'o_kanban_primary_right')]"
@@ -164,16 +164,19 @@
                 </div>
                 <div
           class="row"
-          t-if="record.wo_exceeded_capacity_count.raw_value &gt; 0"
+          t-if="record.wo_exceeded_daily_working_hours_count.raw_value &gt; 0"
         >
-                    <div class="col-6 text-right">
-                        <span
-              t-att-class="record.wo_exceeded_capacity_value.raw_value and (record.wo_exceeded_capacity_value.raw_value &gt; 0) and 'text-danger' or 'text-success'"
+                    <div class="col-8">
+                        <a
+              name="action_work_order"
+              type="object"
+              context="{'search_default_exceeded_working_hours': 1}"
             >
-                            <strong>
-                                <field name="wo_exceeded_capacity_value" />
-                            </strong>
-                        </span>
+                            Exceeded Hours
+                        </a>
+                    </div>
+                    <div class="col-4 text-right">
+                        <field name="wo_exceeded_daily_working_hours_count" />
                     </div>
                 </div>
             </xpath>

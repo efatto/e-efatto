@@ -24,7 +24,7 @@ class MrpWorkorder(models.Model):
         help="Show if a workorder has exceeded capacity of its workcenter, computed "
         "on workcenter concurrent capacity.",
     )
-    has_exceeded_daily_working_time = fields.Boolean(
+    has_exceeded_daily_working_hours = fields.Boolean(
         compute="_compute_has_exceeded_capacity",
         store=True,
         string="Has exceeded time?",
@@ -102,7 +102,7 @@ class MrpWorkorder(models.Model):
             (self - workorders).write(
                 {
                     "has_exceeded_capacity": False,
-                    "has_exceeded_daily_working_time": False,
+                    "has_exceeded_daily_working_hours": False,
                 }
             )
             for workorder in workorders:
@@ -129,8 +129,8 @@ class MrpWorkorder(models.Model):
                     # are planned, so they are not definitive.
                     # Check if any of this consumption is greater than the total
                     # capacity of the workcenter.
-                    # For workorders planned in multiple days and 1 day only is over
-                    # working time, this field will be true.
+                    # For workorders planned in multiple days and at least 1 day is
+                    # greater than the working hours, this field will be true.
                     day_planned_workorders = workcenter_planned_workorders.filtered(
                         lambda wo: wo.date_planned_start.date()
                         <= day.date()
@@ -153,10 +153,10 @@ class MrpWorkorder(models.Model):
                         * workcenter.resource_calendar_id.hours_per_day
                         * 60
                     ):
-                        workorder.has_exceeded_daily_working_time = True
+                        workorder.has_exceeded_daily_working_hours = True
                         workorders_to_bypass.append(workorder)
                     elif workorder not in workorders_to_bypass:
-                        workorder.has_exceeded_daily_working_time = False
+                        workorder.has_exceeded_daily_working_hours = False
 
     @api.depends("production_id.workorder_ids.next_work_order_id")
     def _compute_previous_work_order_ids(self):
