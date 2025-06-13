@@ -1,5 +1,6 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+import pandas as pd
 
 
 class MrpWorkorder(models.Model):
@@ -21,6 +22,12 @@ class MrpWorkorder(models.Model):
         string="Has exceeded capacity?",
         help="Show if a workorder has exceeded capacity of its workcenter, computed "
         "on workcenter concurrent capacity.",
+    )
+    has_exceeded_daily_working_time = fields.Boolean(
+        compute="_compute_has_exceeded_capacity",
+        store=True,
+        string="Has exceeded time?",
+        help="Show if a workorder has exceeded its workcenter daily working time."
     )
 
     def _get_overlapping_periods(self):
@@ -58,22 +65,42 @@ class MrpWorkorder(models.Model):
                     max_overlaps += 1
         return max_overlaps
 
+    @staticmethod
+    def get_all_days(date_list):
+        if not date_list:
+            return []
+        start_date = min(date_list)
+        end_date = max(date_list)
+        return pd.date_range(start=start_date, end=end_date, freq='D').tolist()
+
     @api.depends(
         "workcenter_id.order_ids.date_planned_start",
         "workcenter_id.order_ids.date_planned_finished",
         "workcenter_id.order_ids.state",
         "workcenter_id.capacity",
+        "workcenter_id.resource_calendar_id.hours_per_day"
     )
     def _compute_has_exceeded_capacity(self):
         # search for workorders to be done in the same time and check if the workcenter
         # has a capacity do to them concurrently
         for workcenter in self.mapped("workcenter_id"):
-            overlappings = workcenter.order_ids.filtered(
+            workcenter_planned_workorders = workcenter.order_ids.filtered(
                 lambda wo: wo.state not in ["done", "cancel"]
                 and wo.date_planned_start
                 and wo.date_planned_finished
-            )._get_overlapping_periods()
-            for workorder in self.filtered(lambda wo: wo.workcenter_id == workcenter):
+            )
+            overlappings = workcenter_planned_workorders._get_overlapping_periods()
+            workorders = self.filtered(
+                lambda wo: wo.workcenter_id == workcenter
+                and wo.state not in ["done", "cancel"]
+                and wo.date_planned_start
+                and wo.date_planned_finished
+            )
+            (self - workorders).write({
+                "has_exceeded_capacity": False,
+                "has_exceeded_daily_working_time": False,
+             })
+            for workorder in workorders:
                 # n.b. 1 overlap means 2 concurrent workorders, 2 means 3, etc.
                 if (
                     self._count_overlapping_periods(overlappings.get(workorder, []))
@@ -82,6 +109,34 @@ class MrpWorkorder(models.Model):
                     workorder.has_exceeded_capacity = True
                 else:
                     workorder.has_exceeded_capacity = False
+                # get all days that this workorder is planned to be done
+                days = workorder.get_all_days(
+                    [workorder.date_planned_start, workorder.date_planned_finished]
+                )
+                # get total consumption of hours estimated for every day for all the
+                # workorders
+                for day in days:
+                    # todo sum only the duration for the current day
+                    # Check if any of this consumption is greater than the total
+                    # capacity of the workcenter
+                    consumption = sum(
+                        [
+                            wo.duration_expected
+                            for wo in workcenter_planned_workorders
+                            if
+                            wo.date_planned_start.date()
+                            <= day.date()
+                            <= wo.date_planned_finished.date()
+                        ]
+                    )
+                    if (
+                        consumption
+                        > workcenter.capacity
+                        * workcenter.resource_calendar_id.hours_per_day * 60
+                    ):
+                        workorder.has_exceeded_daily_working_time = True
+                    else:
+                        workorder.has_exceeded_daily_working_time = False
 
     @api.depends("production_id.workorder_ids.next_work_order_id")
     def _compute_previous_work_order_ids(self):
