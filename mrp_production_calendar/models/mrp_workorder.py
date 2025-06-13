@@ -55,6 +55,8 @@ class MrpWorkorder(models.Model):
 
     @staticmethod
     def _count_overlapping_periods(overlappings):
+        if not overlappings:
+            return 0
         # count how many periods are overlapping on the same period
         max_overlaps = 1
         for i in range(len(overlappings)):
