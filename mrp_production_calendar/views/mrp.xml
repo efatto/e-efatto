@@ -13,6 +13,7 @@
                 <field name="name" />
                 <field name="origin" />
                 <field name="has_exceeded_capacity" />
+                <field name="has_exceeded_daily_working_time" />
             </field>
         </field>
     </record>
@@ -121,6 +122,11 @@
           string="Exceeded"
           name="exceeded"
           domain="[('has_exceeded_capacity', '=', True)]"
+        />
+                <filter
+          string="Exceeded working hours"
+          name="exceeded_working_hours"
+          domain="[('has_exceeded_daily_working_time', '=', True)]"
         />
             </filter>
         </field>
