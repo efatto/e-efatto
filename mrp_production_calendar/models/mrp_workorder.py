@@ -70,7 +70,8 @@ class MrpWorkorder(models.Model):
         for workcenter in self.mapped("workcenter_id"):
             overlappings = workcenter.order_ids.filtered(
                 lambda wo: wo.state not in ["done", "cancel"]
-                and wo.date_planned_start and wo.date_planned_finished
+                and wo.date_planned_start
+                and wo.date_planned_finished
             )._get_overlapping_periods()
             for workorder in self.filtered(lambda wo: wo.workcenter_id == workcenter):
                 # n.b. 1 overlap means 2 concurrent workorders, 2 means 3, etc.

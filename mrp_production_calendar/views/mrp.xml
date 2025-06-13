@@ -114,10 +114,14 @@
     <record id="view_mrp_production_work_order_search" model="ir.ui.view">
         <field name="name">mrp.production.work.order.search</field>
         <field name="model">mrp.workorder</field>
-        <field name="inherit_id" ref="mrp.view_mrp_production_work_order_search"/>
+        <field name="inherit_id" ref="mrp.view_mrp_production_work_order_search" />
         <field name="arch" type="xml">
             <filter name="late" position="after">
-                <filter string="Exceeded" name="exceeded" domain="[('has_exceeded_capacity', '=', True)]"/>
+                <filter
+          string="Exceeded"
+          name="exceeded"
+          domain="[('has_exceeded_capacity', '=', True)]"
+        />
             </filter>
         </field>
     </record>
@@ -129,22 +133,37 @@
         <field name="arch" type="xml">
             <field name="oee_target" position="after">
                 <field name="wo_exceeded_capacity_value" />
-                <field name="wo_exceeded_capacity_count"/>
+                <field name="wo_exceeded_capacity_count" />
             </field>
-            <xpath expr="//div[hasclass('col-6', 'o_kanban_primary_right')]" position="inside">
-                <div class="row" t-if="record.wo_exceeded_capacity_count.raw_value &gt; 0">
+            <xpath
+        expr="//div[hasclass('col-6', 'o_kanban_primary_right')]"
+        position="inside"
+      >
+                <div
+          class="row"
+          t-if="record.wo_exceeded_capacity_count.raw_value &gt; 0"
+        >
                     <div class="col-8">
-                        <a name="action_work_order" type="object" context="{'search_default_exceeded': 1}">
+                        <a
+              name="action_work_order"
+              type="object"
+              context="{'search_default_exceeded': 1}"
+            >
                             Exceeded Capacity
                         </a>
                     </div>
                     <div class="col-4 text-right">
-                        <field name="wo_exceeded_capacity_count"/>
+                        <field name="wo_exceeded_capacity_count" />
                     </div>
                 </div>
-                <div class="row" t-if="record.wo_exceeded_capacity_count.raw_value &gt; 0">
+                <div
+          class="row"
+          t-if="record.wo_exceeded_capacity_count.raw_value &gt; 0"
+        >
                     <div class="col-6 text-right">
-                        <span t-att-class="record.wo_exceeded_capacity_value.raw_value and (record.wo_exceeded_capacity_value.raw_value &gt; 0) and 'text-danger' or 'text-success'">
+                        <span
+              t-att-class="record.wo_exceeded_capacity_value.raw_value and (record.wo_exceeded_capacity_value.raw_value &gt; 0) and 'text-danger' or 'text-success'"
+            >
                             <strong>
                                 <field name="wo_exceeded_capacity_value" />
                             </strong>
