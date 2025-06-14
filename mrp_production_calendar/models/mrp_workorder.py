@@ -31,6 +31,31 @@ class MrpWorkorder(models.Model):
         string="Has exceeded working hours?",
         help="Show if a workorder has exceeded its workcenter daily working hours.",
     )
+    to_be_replanned = fields.Boolean(
+        compute="_compute_to_be_replanned",
+        store=True,
+        string="To be replanned or set to done.",
+    )
+
+    @api.depends("date_planned_finished", "date_planned_start", "state")
+    def _compute_to_be_replanned(self):
+        # todo update this compute with a cron to force recompute every day
+        # todo 1: other logic depending on previous or next jobs?
+        for wo in self:
+            if (
+                wo.date_planned_finished
+                and wo.date_planned_finished < fields.Datetime.now()
+                and wo.state not in ["progress", "done", "cancel"]
+            ):
+                wo.to_be_replanned = True
+            elif (
+                wo.date_planned_start
+                and wo.date_planned_start < fields.Datetime.now()
+                and wo.state not in ["progress", "done", "cancel"]
+            ):
+                wo.to_be_replanned = True
+            else:
+                wo.to_be_replanned = False
 
     def _get_overlapping_periods(self):
         overlappings = {}
