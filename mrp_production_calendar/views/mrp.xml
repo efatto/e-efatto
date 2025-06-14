@@ -13,7 +13,7 @@
                 <field name="name" />
                 <field name="origin" />
                 <field name="has_exceeded_capacity" />
-                <field name="has_exceeded_daily_working_hours" />
+                <field name="has_exceeded_working_hours" />
             </field>
         </field>
     </record>
@@ -119,14 +119,14 @@
         <field name="arch" type="xml">
             <filter name="late" position="after">
                 <filter
-          string="Exceeded"
-          name="exceeded"
+          string="Exceeded Capacity"
+          name="exceeded_capacity"
           domain="[('has_exceeded_capacity', '=', True)]"
         />
                 <filter
-          string="Exceeded working hours"
-          name="exceeded_working_hours"
-          domain="[('has_exceeded_daily_working_hours', '=', True)]"
+          string="Exceeded Hours"
+          name="exceeded_hours"
+          domain="[('has_exceeded_working_hours', '=', True)]"
         />
             </filter>
         </field>
@@ -139,7 +139,7 @@
         <field name="arch" type="xml">
             <field name="oee_target" position="after">
                 <field name="wo_exceeded_capacity_count" />
-                <field name="wo_exceeded_daily_working_hours_count" />
+                <field name="wo_exceeded_hours_count" />
             </field>
             <xpath
         expr="//div[hasclass('col-6', 'o_kanban_primary_right')]"
@@ -153,7 +153,7 @@
                         <a
               name="action_work_order"
               type="object"
-              context="{'search_default_exceeded': 1}"
+              context="{'search_default_exceeded_capacity': 1}"
             >
                             Exceeded Capacity
                         </a>
@@ -164,19 +164,19 @@
                 </div>
                 <div
           class="row"
-          t-if="record.wo_exceeded_daily_working_hours_count.raw_value &gt; 0"
+          t-if="record.wo_exceeded_hours_count.raw_value &gt; 0"
         >
                     <div class="col-8">
                         <a
               name="action_work_order"
               type="object"
-              context="{'search_default_exceeded_working_hours': 1}"
+              context="{'search_default_exceeded_hours': 1}"
             >
                             Exceeded Hours
                         </a>
                     </div>
                     <div class="col-4 text-right">
-                        <field name="wo_exceeded_daily_working_hours_count" />
+                        <field name="wo_exceeded_hours_count" />
                     </div>
                 </div>
             </xpath>
