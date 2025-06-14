@@ -23,14 +23,13 @@ class MrpWorkorder(models.Model):
         compute="_compute_has_exceeded_capacity",
         store=True,
         string="Has exceeded capacity?",
-        help="Show if a workorder has exceeded capacity of its workcenter, computed "
-        "on workcenter concurrent capacity.",
+        help="Show if a workorder has exceeded concurrent capacity of its workcenter.",
     )
-    has_exceeded_daily_working_hours = fields.Boolean(
+    has_exceeded_working_hours = fields.Boolean(
         compute="_compute_has_exceeded_capacity",
         store=True,
-        string="Has exceeded time?",
-        help="Show if a workorder has exceeded its workcenter daily working time.",
+        string="Has exceeded working hours?",
+        help="Show if a workorder has exceeded its workcenter daily working hours.",
     )
 
     def _get_overlapping_periods(self):
@@ -104,7 +103,7 @@ class MrpWorkorder(models.Model):
             (self - workorders).write(
                 {
                     "has_exceeded_capacity": False,
-                    "has_exceeded_daily_working_hours": False,
+                    "has_exceeded_working_hours": False,
                 }
             )
             for workorder in workorders:
@@ -175,10 +174,10 @@ class MrpWorkorder(models.Model):
                         * workcenter.resource_calendar_id.hours_per_day
                         * 60
                     ):
-                        workorder.has_exceeded_daily_working_hours = True
+                        workorder.has_exceeded_working_hours = True
                         workorders_to_bypass.append(workorder)
                     elif workorder not in workorders_to_bypass:
-                        workorder.has_exceeded_daily_working_hours = False
+                        workorder.has_exceeded_working_hours = False
 
     @api.depends("production_id.workorder_ids.next_work_order_id")
     def _compute_previous_work_order_ids(self):
