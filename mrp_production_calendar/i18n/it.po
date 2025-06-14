@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-13 09:28+0000\n"
-"PO-Revision-Date: 2025-06-13 09:28+0000\n"
+"POT-Creation-Date: 2025-06-14 08:20+0000\n"
+"PO-Revision-Date: 2025-06-14 08:20+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -26,11 +26,21 @@ msgid "# Workorder Exceeded Working Hours"
 msgstr "# Ordini di lavoro che superano le ore lavorabili"
 
 #. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workcenter__wo_to_be_replanned_count
+msgid "# Workorder To Be Replanned"
+msgstr "# Ordini da Ripianificare"
+
+#. module: mrp_production_calendar
 #: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_production__assigned_attachment_ids
 #: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workcenter__assigned_attachment_ids
 #: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder__assigned_attachment_ids
 msgid "Assigned Attachments"
 msgstr "Allegati assegnati"
+
+#. module: mrp_production_calendar
+#: model_terms:ir.ui.view,arch_db:mrp_production_calendar.mrp_workcenter_kanban
+msgid "Check To Replan Orders"
+msgstr "Controlla Piano Ordini"
 
 #. module: mrp_production_calendar
 #: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_production__date_planned_finished_computed
@@ -45,12 +55,8 @@ msgid "Display Name"
 msgstr "Nome visualizzato"
 
 #. module: mrp_production_calendar
-#: model_terms:ir.ui.view,arch_db:mrp_production_calendar.view_mrp_production_work_order_search
-msgid "Exceeded"
-msgstr "Superato"
-
-#. module: mrp_production_calendar
 #: model_terms:ir.ui.view,arch_db:mrp_production_calendar.mrp_workcenter_kanban
+#: model_terms:ir.ui.view,arch_db:mrp_production_calendar.view_mrp_production_work_order_search
 msgid "Exceeded Capacity"
 msgstr "Capacità superata"
 
@@ -67,7 +73,7 @@ msgstr "Ha superato la capacità?"
 
 #. module: mrp_production_calendar
 #: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder__has_exceeded_working_hours
-msgid "Has exceeded time?"
+msgid "Has exceeded working hours?"
 msgstr "Ha superato le ore lavorabili?"
 
 #. module: mrp_production_calendar
@@ -83,6 +89,21 @@ msgstr ""
 #: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder____last_update
 msgid "Last Modified on"
 msgstr "Ultima modifica il"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_workcenter__wo_exceeded_capacity_count
+msgid "Number of workorders that have exceeded capacity."
+msgstr "Numero di ordini di lavoro che hanno superato la capacità."
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_workcenter__wo_exceeded_hours_count
+msgid "Number of workorders that have exceeded daily working hours."
+msgstr "Numero di ordini di lavoro che hanno superato le ore lavorabili giornaliere."
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_workcenter__wo_to_be_replanned_count
+msgid "Number of workorders that have to be replanned."
+msgstr "Numero di ordini di lavoro che devono essere ripianificati."
 
 #. module: mrp_production_calendar
 #: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_production__previous_production_ids
@@ -124,15 +145,13 @@ msgstr ""
 #. module: mrp_production_calendar
 #: model:ir.model.fields,help:mrp_production_calendar.field_mrp_workorder__has_exceeded_capacity
 msgid ""
-"Show if a workorder has exceeded capacity of its workcenter, computed on "
-"workcenter concurrent capacity."
+"Show if a workorder has exceeded concurrent capacity of its workcenter."
 msgstr ""
-"Mostra se un ordine di lavoro ha superato la capacità del suo centro di lavoro, calcolato sulla "
-"capacità di lavorazione parallela del centro di lavoro."
+"Mostra se un ordine di lavoro ha superato la capacità di lavoro parallela del suo centro di lavoro."
 
 #. module: mrp_production_calendar
 #: model:ir.model.fields,help:mrp_production_calendar.field_mrp_workorder__has_exceeded_working_hours
-msgid "Show if a workorder has exceeded its workcenter daily working time."
+msgid "Show if a workorder has exceeded its workcenter daily working hours."
 msgstr "Mostra se un ordine di lavoro ha superato le ore lavorabili giornaliere del suo centro di lavoro."
 
 #. module: mrp_production_calendar
@@ -149,6 +168,17 @@ msgid ""
 msgstr ""
 "La data di fine pianificata dell'ordine di lavoro non può essere precedente "
 "alla data pianificata di inizio, si prega di correggere per proseguire."
+
+#. module: mrp_production_calendar
+#: model_terms:ir.ui.view,arch_db:mrp_production_calendar.mrp_workcenter_kanban
+#: model_terms:ir.ui.view,arch_db:mrp_production_calendar.view_mrp_production_work_order_search
+msgid "To Be Replanned"
+msgstr "Da Ripianificare"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder__to_be_replanned
+msgid "To be replanned or set to done."
+msgstr "Da ripianificare o marcare completato."
 
 #. module: mrp_production_calendar
 #: model:ir.model,name:mrp_production_calendar.model_mrp_workcenter
