@@ -149,7 +149,10 @@
             </field>
             <div name="plan_order" position="after">
                 <div role="menuitem" name="check_orders_to_be_replanned">
-                    <a name="action_compute_to_be_replanned" type="object">Check To Replan Orders</a>
+                    <a
+            name="action_compute_to_be_replanned"
+            type="object"
+          >Check To Replan Orders</a>
                 </div>
             </div>
             <xpath
@@ -173,10 +176,7 @@
                         <field name="wo_exceeded_capacity_count" />
                     </div>
                 </div>
-                <div
-          class="row"
-          t-if="record.wo_exceeded_hours_count.raw_value &gt; 0"
-        >
+                <div class="row" t-if="record.wo_exceeded_hours_count.raw_value &gt; 0">
                     <div class="col-8">
                         <a
               name="action_work_order"
