@@ -128,6 +128,11 @@
           name="exceeded_hours"
           domain="[('has_exceeded_working_hours', '=', True)]"
         />
+                <filter
+          string="To Be Replanned"
+          name="to_be_replanned"
+          domain="[('to_be_replanned', '=', True)]"
+        />
             </filter>
         </field>
     </record>
@@ -140,7 +145,13 @@
             <field name="oee_target" position="after">
                 <field name="wo_exceeded_capacity_count" />
                 <field name="wo_exceeded_hours_count" />
+                <field name="wo_to_be_replanned_count" />
             </field>
+            <div name="plan_order" position="after">
+                <div role="menuitem" name="check_orders_to_be_replanned">
+                    <a name="action_compute_to_be_replanned" type="object">Check To Replan Orders</a>
+                </div>
+            </div>
             <xpath
         expr="//div[hasclass('col-6', 'o_kanban_primary_right')]"
         position="inside"
@@ -177,6 +188,23 @@
                     </div>
                     <div class="col-4 text-right">
                         <field name="wo_exceeded_hours_count" />
+                    </div>
+                </div>
+                <div
+          class="row"
+          t-if="record.wo_to_be_replanned_count.raw_value &gt; 0"
+        >
+                    <div class="col-8">
+                        <a
+              name="action_work_order"
+              type="object"
+              context="{'search_default_to_be_replanned': 1}"
+            >
+                            To Be Replanned
+                        </a>
+                    </div>
+                    <div class="col-4 text-right">
+                        <field name="wo_to_be_replanned_count" />
                     </div>
                 </div>
             </xpath>
