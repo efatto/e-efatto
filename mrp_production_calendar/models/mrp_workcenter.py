@@ -8,19 +8,19 @@ class MrpWorkcenter(models.Model):
         string="# Workorder Exceeded Capacity",
         compute="_compute_exceeded_capacity",
         store=True,
-        help="Number of workorders that have exceeded capacity."
+        help="Number of workorders that have exceeded capacity.",
     )
     wo_exceeded_hours_count = fields.Integer(
         string="# Workorder Exceeded Working Hours",
         compute="_compute_exceeded_capacity",
         store=True,
-        help="Number of workorders that have exceeded daily working hours."
+        help="Number of workorders that have exceeded daily working hours.",
     )
     wo_to_be_replanned_count = fields.Integer(
         string="# Workorder To Be Replanned",
         compute="_compute_to_be_replanned",
         store=True,
-        help="Number of workorders that have to be replanned."
+        help="Number of workorders that have to be replanned.",
     )
 
     @api.depends(
