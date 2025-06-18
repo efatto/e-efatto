@@ -12,8 +12,6 @@
             <field name="workcenter_id" position="after">
                 <field name="name" />
                 <field name="origin" />
-                <field name="has_exceeded_capacity" />
-                <field name="has_exceeded_working_hours" />
             </field>
         </field>
     </record>
@@ -119,16 +117,6 @@
         <field name="arch" type="xml">
             <filter name="late" position="after">
                 <filter
-          string="Exceeded Capacity"
-          name="exceeded_capacity"
-          domain="[('has_exceeded_capacity', '=', True)]"
-        />
-                <filter
-          string="Exceeded Hours"
-          name="exceeded_hours"
-          domain="[('has_exceeded_working_hours', '=', True)]"
-        />
-                <filter
           string="To Be Replanned"
           name="to_be_replanned"
           domain="[('to_be_replanned', '=', True)]"
@@ -143,8 +131,6 @@
         <field name="inherit_id" ref="mrp.mrp_workcenter_kanban" />
         <field name="arch" type="xml">
             <field name="oee_target" position="after">
-                <field name="wo_exceeded_capacity_count" />
-                <field name="wo_exceeded_hours_count" />
                 <field name="wo_to_be_replanned_count" />
             </field>
             <div name="plan_order" position="after">
@@ -159,37 +145,6 @@
         expr="//div[hasclass('col-6', 'o_kanban_primary_right')]"
         position="inside"
       >
-                <div
-          class="row"
-          t-if="record.wo_exceeded_capacity_count.raw_value &gt; 0"
-        >
-                    <div class="col-8">
-                        <a
-              name="action_work_order"
-              type="object"
-              context="{'search_default_exceeded_capacity': 1}"
-            >
-                            Exceeded Capacity
-                        </a>
-                    </div>
-                    <div class="col-4 text-right">
-                        <field name="wo_exceeded_capacity_count" />
-                    </div>
-                </div>
-                <div class="row" t-if="record.wo_exceeded_hours_count.raw_value &gt; 0">
-                    <div class="col-8">
-                        <a
-              name="action_work_order"
-              type="object"
-              context="{'search_default_exceeded_hours': 1}"
-            >
-                            Exceeded Hours
-                        </a>
-                    </div>
-                    <div class="col-4 text-right">
-                        <field name="wo_exceeded_hours_count" />
-                    </div>
-                </div>
                 <div
           class="row"
           t-if="record.wo_to_be_replanned_count.raw_value &gt; 0"

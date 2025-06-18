@@ -8,8 +8,7 @@
     "author": "Sergio Corato",
     "development_status": "Alpha",
     "website": "https://github.com/efatto/e-efatto",
-    "summary": "Add some field to show estimated exceeding of time and capacity of "
-    "workorders by workcenter.",
+    "summary": "Add some field to show workorders state in workcenter.",
     "depends": [
         "mrp_routing",
         "web_timeline",
