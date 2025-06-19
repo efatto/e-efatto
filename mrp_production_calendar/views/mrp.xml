@@ -169,7 +169,7 @@
 
     <menuitem
     id="menu_mrp_workcenter_dashboard"
-    name="Workcenter Overview"
+    name="MRP Overview"
     action="mrp.mrp_workcenter_kanban_action"
     groups="mrp.group_mrp_routings"
     parent="mrp.menu_mrp_root"
