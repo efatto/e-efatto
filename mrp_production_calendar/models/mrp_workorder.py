@@ -79,6 +79,6 @@ class MrpWorkorder(models.Model):
                     )
                     values["duration_expected"] = computed_duration
         res = super().write(values)
-        # todo is it possible to open a wizard (adding it to res?) to ask confirm for
+        # todo is it possible to open a wizard (adding it to res?) to ask confirm to
         #  move next workorders? (workorders could be asynchronous)
         return res

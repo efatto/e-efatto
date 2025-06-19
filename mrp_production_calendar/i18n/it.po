@@ -138,5 +138,5 @@ msgstr "Ordine di lavoro"
 
 #. module: mrp_production_calendar
 #: model:ir.ui.menu,name:mrp_production_calendar.menu_mrp_workcenter_dashboard
-msgid "Workcenter Overview"
-msgstr "Dashboard Centri Lavoro"
+msgid "MRP Overview"
+msgstr "Dashboard Produzione"
