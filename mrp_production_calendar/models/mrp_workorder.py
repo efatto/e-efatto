@@ -23,12 +23,21 @@ class MrpWorkorder(models.Model):
         compute="_compute_to_be_replanned",
         store=True,
         string="To be replanned or set to done.",
+        help="Cases:\n 1. the estimated finished date has been overcome and the "
+             "workorder is not 'in progress' or 'done' or 'cancelled'; 2. the planned "
+             "start date has been overcome and the workorder is not 'in progress' or "
+             "'done' or 'cancelled'; 3. the workorder is planned to be done in the "
+             "same time of other workorders and is in state 'pending' or 'ready'."
+        ,
     )
 
     @api.depends("date_planned_finished", "date_planned_start", "state")
     def _compute_to_be_replanned(self):
         # todo update this compute with a cron to force recompute every day
         # todo 1: other logic depending on previous or next jobs?
+        conflicted_dict = {}
+        if self.ids:
+            conflicted_dict = self._get_conflicted_workorder_ids()
         for wo in self:
             if (
                 wo.date_planned_finished
@@ -41,6 +50,8 @@ class MrpWorkorder(models.Model):
                 and wo.date_planned_start < fields.Datetime.now()
                 and wo.state not in ["progress", "done", "cancel"]
             ):
+                wo.to_be_replanned = True
+            elif conflicted_dict.get(wo.id):
                 wo.to_be_replanned = True
             else:
                 wo.to_be_replanned = False
