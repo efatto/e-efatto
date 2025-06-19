@@ -37,6 +37,15 @@ This module add multiple views with calendar and timeline to production.
 Configuration
 =============
 
+Questo modulo permette di eseguire diversi ordini di lavoro in parallelo su diversi centri di lavoro.
+Non permette di farli sullo stesso centro di lavoro, come è previsto di default dal sistema originale.
+
+Le quantità lavorate sugli ordini di lavoro in parallelo si intendono suddivise in maniera proporzionale, quindi se ci sono 2 lavorazioni parallele, si presume che lavorino il 50% dei prodotti ciascuna e il calcolo del tempo per lavorarli sarà il 50% della lavorazione totale. È possibile modificare nell'ordine di lavoro la quantità da eseguire, la cui somma dovrà comunque essere sempre il totale da lavorare.
+
+Non c'è quindi bisogno di impostare ciascuno centro di lavoro con capacità 2 oppure con efficienza 200%, in quanto lo stesso centro di lavoro potrebbe essere utilizzato per altre attività non in parallelo, oppure in parallelo con un valore diverso (ad es. 3 lavorazioni in parallelo).
+
+Impostando il check `Lavorazione parallela` si abilita il campo `Centri di lavoro in parallelo` su cui, in base al numero di centri di lavoro scelti, verrà suddivisa la lavorazione. Nel caso in cui venga scelto un solo centro di lavoro, l'effetto sarà che la lavorazione verrà eseguita singolarmente, ma senza essere pianificata in maniera sequenziale con la lavorazione precedente.
+
 Questo modulo aggiunge la vista timeline e il collegamento tra gli ordini di lavoro padri e quelli figli con una freccia visibile a video:
 
 .. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_calendar/static/description/timeline_ordini_lavoro.png

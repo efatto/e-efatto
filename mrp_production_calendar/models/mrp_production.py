@@ -42,3 +42,48 @@ class MrpProduction(models.Model):
             if dates_planned_finished:
                 date_planned_finished = max(dates_planned_finished)
             production.date_planned_finished_computed = date_planned_finished
+
+    def _create_workorder(self):
+        # extend this method to create additional parallel workorders
+        res = super()._create_workorder()
+        workorders_values = []
+        for production in self:
+            if not production.bom_id:
+                continue
+            for workorder in production.workorder_ids.filtered(
+                lambda x: x.operation_id.enable_parallel
+                and len(x.operation_id.optional_parallel_workcenter_ids) > 1
+            ):
+                workorder.write(
+                    {
+                        "workcenter_id": (
+                            workorder.operation_id.optional_parallel_workcenter_ids
+                        )[0].id,
+                        "enable_parallel": workorder.operation_id.enable_parallel,
+                        "parallel_qty_production": production.product_qty
+                        / len(workorder.operation_id.optional_parallel_workcenter_ids),
+                    }
+                )
+                for workcenter in (
+                    workorder.operation_id.optional_parallel_workcenter_ids
+                )[1:]:
+                    workorders_values += [
+                        {
+                            "name": workorder.operation_id.name,
+                            "production_id": production.id,
+                            "workcenter_id": workcenter.id,
+                            "product_uom_id": production.product_uom_id.id,
+                            "operation_id": workorder.operation_id.id,
+                            "state": "pending",
+                            "consumption": production.consumption,
+                            "enable_parallel": workorder.operation_id.enable_parallel,
+                            "parallel_qty_production": production.product_qty
+                            / len(
+                                workorder.operation_id.optional_parallel_workcenter_ids
+                            ),
+                        }
+                    ]
+            production.workorder_ids = [(0, 0, value) for value in workorders_values]
+            for workorder in production.workorder_ids.filtered("enable_parallel"):
+                workorder.duration_expected = workorder._get_duration_expected()
+        return res

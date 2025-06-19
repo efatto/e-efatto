@@ -1,9 +1,6 @@
-from datetime import timedelta
-
-import pandas as pd
-
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+from odoo.tools import float_round
 
 
 class MrpWorkorder(models.Model):
@@ -24,11 +21,21 @@ class MrpWorkorder(models.Model):
         store=True,
         string="To be replanned or set to done.",
         help="Cases:\n 1. the estimated finished date has been overcome and the "
-             "workorder is not 'in progress' or 'done' or 'cancelled'; 2. the planned "
-             "start date has been overcome and the workorder is not 'in progress' or "
-             "'done' or 'cancelled'; 3. the workorder is planned to be done in the "
-             "same time of other workorders and is in state 'pending' or 'ready'."
-        ,
+        "workorder is not 'in progress' or 'done' or 'cancelled'; 2. the planned "
+        "start date has been overcome and the workorder is not 'in progress' or "
+        "'done' or 'cancelled'; 3. the workorder is planned to be done in the "
+        "same time of other workorders and is in state 'pending' or 'ready'.",
+    )
+    enable_parallel = fields.Boolean(
+        string="Enable Parallel Execution",
+        help="Allows to execute the workorder in parallel with other workorders.",
+    )
+    parallel_qty_production = fields.Float(
+        string="Parallel Production Quantity",
+        help="The quantity of the product to be produced in parallel with other "
+        "workorders. The sum of all parallel production quantities must be equal "
+        "to the production original quantity. This field is only used to compute "
+        "the expected duration of the workorder.",
     )
 
     @api.depends("date_planned_finished", "date_planned_start", "state")
@@ -93,3 +100,73 @@ class MrpWorkorder(models.Model):
         # todo is it possible to open a wizard (adding it to res?) to ask confirm to
         #  move next workorders? (workorders could be asynchronous)
         return res
+
+    def _get_duration_expected(self, alternative_workcenter=False, ratio=1):
+        self.ensure_one()
+        # if parallel execution is enabled and there is more than 1 optional workcenter,
+        # split expected duration on workorders
+        if not self.workcenter_id or not self.operation_id or not self.enable_parallel:
+            return super()._get_duration_expected(
+                alternative_workcenter=alternative_workcenter, ratio=ratio
+            )
+        qty_production = self.production_id.product_uom_id._compute_quantity(
+            self.qty_production, self.production_id.product_id.uom_id
+        )
+        cycle_number = float_round(
+            qty_production / self.workcenter_id.capacity,
+            precision_digits=0,
+            rounding_method="UP",
+        )
+        if len(self.operation_id.optional_parallel_workcenter_ids) > 1:
+            cycle_number = float_round(
+                cycle_number / len(self.operation_id.optional_parallel_workcenter_ids),
+                precision_digits=0,
+                rounding_method="UP",
+            )
+        if alternative_workcenter:
+            duration_expected_working = (
+                (
+                    self.duration_expected
+                    - self.workcenter_id.time_start
+                    - self.workcenter_id.time_stop
+                )
+                * self.workcenter_id.time_efficiency
+                / (100.0 * cycle_number)
+            )
+            if duration_expected_working < 0:
+                duration_expected_working = 0
+            alternative_wc_cycle_nb = float_round(
+                qty_production / alternative_workcenter.capacity,
+                precision_digits=0,
+                rounding_method="UP",
+            )
+            return (
+                alternative_workcenter.time_start
+                + alternative_workcenter.time_stop
+                + alternative_wc_cycle_nb
+                * duration_expected_working
+                * 100.0
+                / alternative_workcenter.time_efficiency
+            )
+        time_cycle = self.operation_id.time_cycle
+        if len(self.operation_id.optional_parallel_workcenter_ids) > 1:
+            time_cycle = float_round(
+                time_cycle / len(self.operation_id.optional_parallel_workcenter_ids),
+                precision_digits=0,
+                rounding_method="UP",
+            )
+        return (
+            self.workcenter_id.time_start
+            + self.workcenter_id.time_stop
+            + cycle_number * time_cycle * 100.0 / self.workcenter_id.time_efficiency
+        )
+
+    @api.onchange("qty_production")
+    def _onchange_qty_production(self):
+        if (
+            self.enable_parallel
+            and len(self.operation_id.optional_parallel_workcenter_ids) > 1
+        ):
+            self.parallel_qty_production = self.qty_production / len(
+                self.operation_id.optional_parallel_workcenter_ids
+            )
