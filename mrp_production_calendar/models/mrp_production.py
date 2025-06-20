@@ -51,7 +51,7 @@ class MrpProduction(models.Model):
             if not production.bom_id:
                 continue
             for workorder in production.workorder_ids.filtered(
-                lambda x: x.operation_id.enable_parallel
+                lambda x: x.operation_id.parallel_execution
                 and len(x.operation_id.optional_parallel_workcenter_ids) > 1
             ):
                 workorder.write(
@@ -59,7 +59,7 @@ class MrpProduction(models.Model):
                         "workcenter_id": (
                             workorder.operation_id.optional_parallel_workcenter_ids
                         )[0].id,
-                        "enable_parallel": workorder.operation_id.enable_parallel,
+                        "parallel_execution": workorder.operation_id.parallel_execution,
                         "parallel_qty_production": production.product_qty
                         / len(workorder.operation_id.optional_parallel_workcenter_ids),
                     }
@@ -70,13 +70,14 @@ class MrpProduction(models.Model):
                     workorders_values += [
                         {
                             "name": workorder.operation_id.name,
+                            "sequence": workorder.sequence,
                             "production_id": production.id,
                             "workcenter_id": workcenter.id,
                             "product_uom_id": production.product_uom_id.id,
                             "operation_id": workorder.operation_id.id,
                             "state": "pending",
                             "consumption": production.consumption,
-                            "enable_parallel": workorder.operation_id.enable_parallel,
+                            "parallel_execution": workorder.operation_id.parallel_execution,
                             "parallel_qty_production": production.product_qty
                             / len(
                                 workorder.operation_id.optional_parallel_workcenter_ids
@@ -84,6 +85,19 @@ class MrpProduction(models.Model):
                         }
                     ]
             production.workorder_ids = [(0, 0, value) for value in workorders_values]
-            for workorder in production.workorder_ids.filtered("enable_parallel"):
+            for workorder in production.workorder_ids.filtered("parallel_execution"):
                 workorder.duration_expected = workorder._get_duration_expected()
         return res
+
+    @api.onchange('product_qty')
+    def _onchange_product_qty_for_workorder(self):
+        for workorder in self.workorder_ids.filtered(
+            lambda x: x.parallel_execution
+            and len(x.operation_id.optional_parallel_workcenter_ids) > 1
+        ):
+            workorder.parallel_qty_production = workorder.qty_production / len(
+                workorder.operation_id.optional_parallel_workcenter_ids
+            )
+            workorder.duration_expected = workorder.with_context(
+                parallel_qty_production=workorder.parallel_qty_production
+            )._get_duration_expected()
