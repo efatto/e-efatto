@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="mrp.mrp_routing_workcenter_form_view" />
         <field name="arch" type="xml">
             <field name="workcenter_id" position="before">
-                <field name="enable_parallel" widget="boolean_toggle" />
+                <field name="parallel_execution" widget="boolean_toggle" />
                 <field
           name="optional_parallel_workcenter_ids"
           widget="many2many_tags"
@@ -22,7 +22,7 @@
         <field name="inherit_id" ref="mrp.mrp_routing_workcenter_tree_view" />
         <field name="arch" type="xml">
             <field name="workcenter_id" position="before">
-                <field name="enable_parallel" widget="boolean_toggle" />
+                <field name="parallel_execution" widget="boolean_toggle" />
                 <field
           name="optional_parallel_workcenter_ids"
           widget="many2many_tags"
@@ -40,7 +40,7 @@
     />
         <field name="arch" type="xml">
             <field name="workcenter_id" position="after">
-                <field name="enable_parallel" widget="boolean_toggle" optional="hide" />
+                <field name="parallel_execution" widget="boolean_toggle" optional="hide" />
                 <field name="parallel_qty_production" optional="hide" />
             </field>
         </field>

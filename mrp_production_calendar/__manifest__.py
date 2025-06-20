@@ -11,6 +11,7 @@
     "summary": "Add some field to show workorders state in workcenter.",
     "depends": [
         "mrp_routing",
+        "mrp_workorder_sequence",
         "web_timeline",
     ],
     "external_dependencies": {"python": ["pandas"]},
