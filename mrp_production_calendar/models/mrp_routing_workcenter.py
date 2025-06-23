@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class MrpRoutingWorkcenter(models.Model):
@@ -12,3 +12,7 @@ class MrpRoutingWorkcenter(models.Model):
         comodel_name="mrp.workcenter",
         string="Optional Parallel Workcenters",
     )
+
+    @api.onchange("optional_parallel_workcenter_ids")
+    def _onchange_optional_parallel_workcenter_ids(self):
+        self.workcenter_id = self.optional_parallel_workcenter_ids[0]
