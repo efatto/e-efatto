@@ -4,7 +4,10 @@
     <record id="mrp_routing_workcenter_template_form_view" model="ir.ui.view">
         <field name="name">mrp.routing.workcenter.form</field>
         <field name="model">mrp.routing.workcenter.template</field>
-        <field name="inherit_id" ref="mrp_routing.mrp_routing_workcenter_template_form_view" />
+        <field
+      name="inherit_id"
+      ref="mrp_routing.mrp_routing_workcenter_template_form_view"
+    />
         <field name="arch" type="xml">
             <field name="workcenter_id" position="before">
                 <field name="parallel_execution" widget="boolean_toggle" />
@@ -19,7 +22,10 @@
     <record id="mrp_routing_workcenter_template_tree_view" model="ir.ui.view">
         <field name="name">mrp.routing.workcenter.tree</field>
         <field name="model">mrp.routing.workcenter.template</field>
-        <field name="inherit_id" ref="mrp_routing.mrp_routing_workcenter_template_tree_view" />
+        <field
+      name="inherit_id"
+      ref="mrp_routing.mrp_routing_workcenter_template_tree_view"
+    />
         <field name="arch" type="xml">
             <field name="workcenter_id" position="before">
                 <field name="parallel_execution" widget="boolean_toggle" />
