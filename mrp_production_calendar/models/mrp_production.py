@@ -1,4 +1,5 @@
-from odoo import api, fields, models
+from odoo import api, fields, models, _
+from odoo.tools import float_compare
 
 
 class MrpProduction(models.Model):
@@ -19,6 +20,36 @@ class MrpProduction(models.Model):
         help="Previous production of the current one, which are the children as the "
         "components are created before the current one.",
     )
+
+    @api.constrains("workorder_ids")
+    def check_parallel_qty_production(self):
+        for production in self:
+            for operation in production.workorder_ids.mapped("operation_id"):
+                workorders = production.workorder_ids.filtered(
+                    lambda x: x.operation_id == operation
+                    and x.operation_id.parallel_execution
+                )
+                workorders_qty_production = production.product_uom_id._compute_quantity(
+                        sum(
+                        workorders.mapped("parallel_qty_production")
+                    ),
+                    production.product_id.uom_id,
+                )
+                if workorders and float_compare(
+                    workorders_qty_production,
+                    production.product_qty,
+                    precision_digits=0,
+                ):
+                    raise models.ValidationError(_
+                        (
+                            "The sum of parallel qty production %s of all workorders "
+                            "created from operation %s of the production must be equal "
+                            "to the production original quantity %s."
+                        ) % (
+                            workorders_qty_production,
+                            operation.name,
+                            production.product_qty)
+                    )
 
     @api.depends(
         "procurement_group_id.stock_move_ids.created_production_id.procurement_group_id.mrp_production_ids",  # noqa: B950
