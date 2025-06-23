@@ -40,7 +40,6 @@
     />
         <field name="arch" type="xml">
             <field name="workcenter_id" position="after">
-                <field name="parallel_execution" widget="boolean_toggle" optional="hide" />
                 <field name="parallel_qty_production" optional="hide" />
             </field>
         </field>
