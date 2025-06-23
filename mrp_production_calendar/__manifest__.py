@@ -10,6 +10,7 @@
     "website": "https://github.com/efatto/e-efatto",
     "summary": "Add some field to show workorders state in workcenter.",
     "depends": [
+        "mrp_production_demo",
         "mrp_routing",
         "mrp_workorder_sequence",
         "web_timeline",
