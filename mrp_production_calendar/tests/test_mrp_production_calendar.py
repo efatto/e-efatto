@@ -1,5 +1,4 @@
 from odoo.tests import Form
-from odoo.tools import mute_logger
 
 from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
 
@@ -31,10 +30,12 @@ class TestMrpProductionCalendar(TestProductionData):
                 "sequence": 1,
             }
         )
-        cls.parallel_routing_3 = cls.env["mrp.routing"].create({
-            "name": "Operation in 3 parallel workcenter",
-            "operation_ids": [(6, 0, cls.parallel_routing_tmpl_3.ids)]
-        })
+        cls.parallel_routing_3 = cls.env["mrp.routing"].create(
+            {
+                "name": "Operation in 3 parallel workcenter",
+                "operation_ids": [(6, 0, cls.parallel_routing_tmpl_3.ids)],
+            }
+        )
 
     def test_01_mo_with_parallel_routing(self):
         with Form(self.main_bom) as bom_form:

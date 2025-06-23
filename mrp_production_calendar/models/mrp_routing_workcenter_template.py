@@ -1,5 +1,8 @@
 from odoo import fields, models
-from odoo.addons.mrp_routing.models.mrp_routing_workcenter_template import FIELDS_TO_SYNC
+
+from odoo.addons.mrp_routing.models.mrp_routing_workcenter_template import (
+    FIELDS_TO_SYNC,
+)
 
 FIELDS_TO_SYNC += ["parallel_execution", "optional_parallel_workcenter_ids"]
 
