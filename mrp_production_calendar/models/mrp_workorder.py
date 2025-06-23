@@ -26,10 +26,6 @@ class MrpWorkorder(models.Model):
         "'done' or 'cancelled'; 3. the workorder is planned to be done in the "
         "same time of other workorders and is in state 'pending' or 'ready'.",
     )
-    parallel_execution = fields.Boolean(
-        string="Parallel Execution",
-        help="Allows to execute the workorder in parallel with other workorders.",
-    )
     parallel_qty_production = fields.Float(
         string="Parallel Quantity",
         help="The quantity of the product to be produced in parallel with other "
@@ -97,9 +93,9 @@ class MrpWorkorder(models.Model):
                     )
                     values["duration_expected"] = computed_duration
         res = super().write(values)
-        if "parallel_qty_production" in values or "parallel_execution" in values:
+        if "parallel_qty_production" in values:
             # update after 'write'
-            for workorder in self.filtered("parallel_execution"):
+            for workorder in self.filtered("parallel_qty_production"):
                 if values.get("parallel_qty_production"):
                     workorder.duration_expected = workorder._get_duration_expected()
         # todo is it possible to open a wizard (adding it to res?) to ask confirm to
@@ -114,24 +110,22 @@ class MrpWorkorder(models.Model):
             alternative_workcenter=alternative_workcenter, ratio=ratio
         )
         if (
-            not self.parallel_execution
-            or not self.workcenter_id
+            (
+                not self.parallel_qty_production
+                and not self.env.context.get("parallel_qty_production")
+            )
+            and not self.workcenter_id
             or not self.operation_id
         ):
             return res
         qty_production = self.production_id.product_uom_id._compute_quantity(
             self.qty_production, self.production_id.product_id.uom_id
         )
-        if self.parallel_execution:
-            if self.env.context.get("parallel_qty_production"):
-                qty_production = self.env.context.get("parallel_qty_production")
-            elif self.parallel_qty_production:
-                qty_production = self.parallel_qty_production
-        cycle_number = float_round(
-            qty_production / self.workcenter_id.capacity,
-            precision_digits=0,
-            rounding_method="UP",
-        )
+        if self.env.context.get("parallel_qty_production"):
+            qty_production = self.env.context.get("parallel_qty_production")
+        elif self.parallel_qty_production:
+            qty_production = self.parallel_qty_production
+        cycle_number = qty_production / self.workcenter_id.capacity
         if alternative_workcenter:
             duration_expected_working = (
                 (
@@ -144,22 +138,22 @@ class MrpWorkorder(models.Model):
             )
             if duration_expected_working < 0:
                 duration_expected_working = 0
-            alternative_wc_cycle_nb = float_round(
-                qty_production / alternative_workcenter.capacity,
-                precision_digits=0,
-                rounding_method="UP",
-            )
-            return (
+            alternative_wc_cycle_nb = qty_production / alternative_workcenter.capacity
+            return float_round(
                 alternative_workcenter.time_start
                 + alternative_workcenter.time_stop
                 + alternative_wc_cycle_nb
                 * duration_expected_working
                 * 100.0
-                / alternative_workcenter.time_efficiency
+                / alternative_workcenter.time_efficiency,
+                precision_digits=2,
+                rounding_method="UP",
             )
         time_cycle = self.operation_id.time_cycle
-        return (
+        return float_round(
             self.workcenter_id.time_start
             + self.workcenter_id.time_stop
-            + cycle_number * time_cycle * 100.0 / self.workcenter_id.time_efficiency
+            + cycle_number * time_cycle * 100.0 / self.workcenter_id.time_efficiency,
+            precision_digits=2,
+            rounding_method="UP",
         )
