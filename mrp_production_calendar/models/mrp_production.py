@@ -1,4 +1,4 @@
-from odoo import api, fields, models, _
+from odoo import _, api, fields, models
 from odoo.tools import float_compare
 
 
@@ -30,9 +30,7 @@ class MrpProduction(models.Model):
                     and x.operation_id.parallel_execution
                 )
                 workorders_qty_production = production.product_uom_id._compute_quantity(
-                        sum(
-                        workorders.mapped("parallel_qty_production")
-                    ),
+                    sum(workorders.mapped("parallel_qty_production")),
                     production.product_id.uom_id,
                 )
                 if workorders and float_compare(
@@ -40,15 +38,17 @@ class MrpProduction(models.Model):
                     production.product_qty,
                     precision_digits=0,
                 ):
-                    raise models.ValidationError(_
-                        (
+                    raise models.ValidationError(
+                        _(
                             "The sum of parallel qty production %s of all workorders "
                             "created from operation %s of the production must be equal "
                             "to the production original quantity %s."
-                        ) % (
+                        )
+                        % (
                             workorders_qty_production,
                             operation.name,
-                            production.product_qty)
+                            production.product_qty,
+                        )
                     )
 
     @api.depends(
