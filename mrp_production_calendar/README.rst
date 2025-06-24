@@ -40,6 +40,8 @@ Configuration
 Questo modulo permette di eseguire diversi ordini di lavoro in parallelo su diversi centri di lavoro.
 Non permette di farli sullo stesso centro di lavoro, come è previsto di default dal sistema originale.
 
+La pianificazione degli ordini in parallelo parte dallo stesso momento e comunque prende la prima data disponibile presso il centro di lavoro dove è previsto vengano eseguiti. Il lavoro successivo viene pianificato alla fine dell'esecuzione dell'ultimo ordine di lavoro da eseguire in parallelo.
+
 Le quantità lavorate sugli ordini di lavoro in parallelo si intendono suddivise in maniera proporzionale, quindi se ci sono 2 lavorazioni parallele, si presume che lavorino il 50% dei prodotti ciascuna e il calcolo del tempo per lavorarli sarà il 50% della lavorazione totale. È possibile modificare nell'ordine di lavoro la quantità da eseguire, la cui somma dovrà comunque essere sempre il totale da lavorare.
 
 Non c'è quindi bisogno di impostare ciascuno centro di lavoro con capacità 2 oppure con efficienza 200%, in quanto lo stesso centro di lavoro potrebbe essere utilizzato per altre attività non in parallelo, oppure in parallelo con un valore diverso (ad es. 3 lavorazioni in parallelo).
