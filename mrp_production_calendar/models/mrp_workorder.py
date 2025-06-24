@@ -71,24 +71,22 @@ class MrpWorkorder(models.Model):
     )
     def _compute_previous_work_order_ids(self):
         for workorder in self:
-            previous_work_order_ids = (
-                workorder.production_id.workorder_ids.filtered(
-                    lambda w: w.next_work_order_id == workorder
-                )
+            previous_work_order_ids = workorder.production_id.workorder_ids.filtered(
+                lambda w: w.next_work_order_id == workorder
             )
-            for operation_id in previous_work_order_ids.mapped(
-                    "operation_id").filtered("parallel_execution"):
+            for operation_id in previous_work_order_ids.mapped("operation_id").filtered(
+                "parallel_execution"
+            ):
                 previous_work_order_ids |= (
                     workorder.production_id.workorder_ids.filtered(
                         lambda w: w.operation_id == operation_id
-                    ))
+                    )
+                )
             parallel_workorders = workorder.production_id.workorder_ids.filtered(
                 lambda wo: wo.operation_id == workorder.operation_id
             )
-            previous_work_order_ids |= (
-                workorder.production_id.workorder_ids.filtered(
-                    lambda w: w.next_work_order_id in parallel_workorders
-                )
+            previous_work_order_ids |= workorder.production_id.workorder_ids.filtered(
+                lambda w: w.next_work_order_id in parallel_workorders
             )
             workorder.previous_work_order_ids = previous_work_order_ids
 
