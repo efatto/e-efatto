@@ -7,7 +7,8 @@ from odoo.tools import float_round
 
 class MrpWorkorder(models.Model):
     _inherit = "mrp.workorder"
-    _order = "sequence asc, next_work_order_id desc"
+    _order = ("sequence ASC, next_work_order_id DESC, date_planned_start ASC, "
+              "date_planned_finished ASC")
 
     previous_work_order_ids = fields.Many2many(
         comodel_name="mrp.workorder",
