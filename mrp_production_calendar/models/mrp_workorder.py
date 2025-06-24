@@ -65,14 +65,32 @@ class MrpWorkorder(models.Model):
             else:
                 wo.to_be_replanned = False
 
-    @api.depends("production_id.workorder_ids.next_work_order_id")
+    @api.depends(
+        "production_id.workorder_ids.next_work_order_id",
+        "production_id.workorder_ids.operation_id.parallel_execution",
+    )
     def _compute_previous_work_order_ids(self):
         for workorder in self:
-            workorder.previous_work_order_ids = (
+            previous_work_order_ids = (
                 workorder.production_id.workorder_ids.filtered(
                     lambda w: w.next_work_order_id == workorder
                 )
             )
+            for operation_id in previous_work_order_ids.mapped(
+                    "operation_id").filtered("parallel_execution"):
+                previous_work_order_ids |= (
+                    workorder.production_id.workorder_ids.filtered(
+                        lambda w: w.operation_id == operation_id
+                    ))
+            parallel_workorders = workorder.production_id.workorder_ids.filtered(
+                lambda wo: wo.operation_id == workorder.operation_id
+            )
+            previous_work_order_ids |= (
+                workorder.production_id.workorder_ids.filtered(
+                    lambda w: w.next_work_order_id in parallel_workorders
+                )
+            )
+            workorder.previous_work_order_ids = previous_work_order_ids
 
     def write(self, values):
         # Enable changing the duration of a workorder. It will change the end date of
