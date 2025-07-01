@@ -22,3 +22,7 @@ class MrpWorkcenter(models.Model):
             workcenter.order_ids.filtered(
                 lambda wo: wo.state not in ["progress", "done", "cancel"]
             )._compute_to_be_replanned()
+
+    @api.model
+    def _cron_compute_to_be_replanned(self):
+        self.search([]).action_compute_to_be_replanned()
