@@ -18,6 +18,7 @@
     ],
     "external_dependencies": {"python": ["pandas"]},
     "data": [
+        "data/cron.xml",
         "views/mrp.xml",
     ],
     "installable": True,
