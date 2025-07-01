@@ -2,7 +2,9 @@
 <odoo noupdate="1">
 
     <record id="ir_cron_mrp_production_calendar" model="ir.cron">
-        <field name="name">Production Calendar - update to be replanned workorders</field>
+        <field
+      name="name"
+    >Production Calendar - update to be replanned workorders</field>
         <field name="interval_number">12</field>
         <field name="interval_type">hours</field>
         <field name="numbercall">-1</field>
