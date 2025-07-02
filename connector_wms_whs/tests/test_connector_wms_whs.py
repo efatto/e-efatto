@@ -801,10 +801,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         )
         # self.run_stock_procurement_scheduler()
         picking.action_assign()
-        if all(x.state == "assigned" for x in picking.move_lines):
-            self.assertEqual(picking.state, "assigned")
-        else:
-            self.assertEqual(picking.state, "cancel")
+        self.assertEqual(picking.state, "assigned")
         hyddemo_whs_lists = picking.mapped("move_lines.whs_list_ids")
         lists = {x.riga: x.num_lista for x in hyddemo_whs_lists}
         # simulate launch from WMS user
