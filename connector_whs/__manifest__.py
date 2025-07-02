@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     "name": "Connector WHS MSSQL",
-    "version": "14.0.2.0.0",
+    "version": "14.0.2.0.1",
     "author": "Sergio Corato",
     "website": "https://github.com/efatto/e-efatto",
     "category": "other",
@@ -17,6 +17,7 @@
         "purchase_delivery_split_date",
         "purchase_stock",
         "sale_delivery_split_date",
+        "stock_change_qty_reason",
         "stock_move_line_auto_fill",
         "stock_picking_back2draft",
     ],
