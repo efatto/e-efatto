@@ -340,21 +340,26 @@ class BaseExternalDbsource(models.Model):
                             "lotto5": lotto5,
                         }
                     )
-                    if len(move.move_line_ids) > 1:
-                        _logger.info(
-                            "WMS LOG: many stock move line found for Whs list %s-%s of "
-                            "move %s, impossible to set qty done!"
-                            % (num_lista, num_riga, move.name)
-                        )
-                    else:
-                        if move.state != "cancel":
-                            try:
-                                move.quantity_done = qty_moved
-                            except UserError as error:
+
+                    if move.state != "cancel":
+                        try:
+                            if len(move.move_line_ids) > 1:
                                 _logger.info(
-                                    "WMS LOG: move id %s is not writeable for %s"
-                                    % (move.id, error)
+                                    "WMS LOG: many stock move line found for Whs list "
+                                    "%s-%s of move %s, set qty done for each one"
+                                    % (num_lista, num_riga, move.name)
                                 )
+                                for ml in move.move_line_ids:
+                                    qty_to_move = min(qty_moved, ml.product_uom_qty)
+                                    ml.qty_done = qty_to_move
+                                    qty_moved -= qty_to_move
+                            else:
+                                move.quantity_done = qty_moved
+                        except UserError as error:
+                            _logger.info(
+                                "WMS LOG: move id %s is not writeable for %s"
+                                % (move.id, error)
+                            )
                     if move.picking_id.mapped("move_lines").filtered(
                         lambda m: m.state not in ("draft", "cancel", "done")
                     ):
