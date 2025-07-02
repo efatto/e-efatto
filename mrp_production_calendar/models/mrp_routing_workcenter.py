@@ -15,4 +15,5 @@ class MrpRoutingWorkcenter(models.Model):
 
     @api.onchange("optional_parallel_workcenter_ids")
     def _onchange_optional_parallel_workcenter_ids(self):
-        self.workcenter_id = self.optional_parallel_workcenter_ids[0]
+        if self.optional_parallel_workcenter_ids:
+            self.workcenter_id = self.optional_parallel_workcenter_ids[0]
