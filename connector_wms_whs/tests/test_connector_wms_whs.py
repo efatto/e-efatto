@@ -556,7 +556,8 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         for move in picking.move_lines:
             # stock.move.line could be splitted, so check only stock.move
             self.assertAlmostEqual(
-                move.quantity_done, 3.0 if move.product_id == self.product1 else 20)
+                move.quantity_done, 3.0 if move.product_id == self.product1 else 20
+            )
         picking.action_assign()
         self.assertEqual(picking.state, "assigned")
         # check that action_assign run by scheduler do not change state
