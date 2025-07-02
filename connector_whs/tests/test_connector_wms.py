@@ -13,88 +13,142 @@ class CommonConnectorWMS(TransactionCase):
     def setUp(self):
         super().setUp()
         self.dbsource_model = self.env["base.external.dbsource"]
+        self.stock_location_model = self.env["stock.location"]
+        self.product_model = self.env["product.product"]
         self.dest_location = self.env.ref("stock.stock_location_customers")
         self.src_location = self.env.ref("stock.stock_location_stock")  # noqa
-        self.wms_location = self.env["stock.location"].create(
-            {
-                "name": "WMS Location (child of default internal location)",
-                "location_id": self.src_location.id,
-            }
+        self.wms_location = self.stock_location_model.search(
+            [
+                ("name", "=", "WMS Location (child of default internal location)"),
+            ]
         )
-        self.manufacture_location = self.env["stock.location"].search(
+        if not self.wms_location:
+            self.wms_location = self.stock_location_model.create(
+                {
+                    "name": "WMS Location (child of default internal location)",
+                    "location_id": self.src_location.id,
+                }
+            )
+        self.manufacture_location = self.stock_location_model.search(
             [("usage", "=", "production")], limit=1
         )[0]
         self.procurement_model = self.env["procurement.group"]
         self.partner = self.env.ref("base.res_partner_2")
         # Create product with 11 on hand on WMS location and 5 in default Stock location
         # Odoo gets products from all internal locations in the warehouse by default
-        self.product1 = self.env["product.product"].create(
+        self.product1 = self.product_model.search(
             [
-                {
-                    "name": "test product1",
-                    "default_code": "PRODUCT1",
-                    "type": "product",
-                }
+                ("default_code", "=", "PRODUCT1"),
             ]
         )
+        if not self.product1:
+            self.product1 = self.product_model.create(
+                [
+                    {
+                        "name": "test product1",
+                        "default_code": "PRODUCT1",
+                        "type": "product",
+                    }
+                ]
+            )
         self.StockQuant = self.env["stock.quant"]
-        self.quant_product1 = self.StockQuant.create(
+        self.quant_product1 = self.StockQuant.search(
             [
-                {
-                    "product_id": self.product1.id,
-                    "location_id": self.wms_location.id,
-                    "quantity": 11.0,
-                }
+                ("product_id", "=", self.product1.id),
+                ("quantity", "=", 11.0),
             ]
         )
-        self.quant_product1 = self.StockQuant.create(
+        if not self.quant_product1:
+            self.quant_product1 = self.StockQuant.create(
+                [
+                    {
+                        "product_id": self.product1.id,
+                        "location_id": self.wms_location.id,
+                        "quantity": 11.0,
+                    }
+                ]
+            )
+        self.quant_product1_1 = self.StockQuant.search(
             [
-                {
-                    "product_id": self.product1.id,
-                    "location_id": self.src_location.id,
-                    "quantity": 5.0,
-                }
+                ("product_id", "=", self.product1.id),
+                ("quantity", "=", 5.0),
             ]
         )
+        if not self.quant_product1_1:
+            self.quant_product1_1 = self.StockQuant.create(
+                [
+                    {
+                        "product_id": self.product1.id,
+                        "location_id": self.src_location.id,
+                        "quantity": 5.0,
+                    }
+                ]
+            )
         # Create product with 8 on hand
-        self.product2 = self.env["product.product"].create(
+        self.product2 = self.product_model.search(
             [
-                {
-                    "name": "test product2",
-                    "default_code": "PRODUCT2",
-                    "type": "product",
-                }
+                ("default_code", "=", "PRODUCT2"),
             ]
         )
-        self.quant_product2 = self.StockQuant.create(
+        if not self.product2:
+            self.product2 = self.product_model.create(
+                [
+                    {
+                        "name": "test product2",
+                        "default_code": "PRODUCT2",
+                        "type": "product",
+                    }
+                ]
+            )
+        self.quant_product2 = self.StockQuant.search(
             [
-                {
-                    "product_id": self.product2.id,
-                    "location_id": self.wms_location.id,
-                    "quantity": 8.0,
-                }
+                ("product_id", "=", self.product2.id),
+                ("quantity", "=", 8.0),
             ]
         )
+        if not self.quant_product2:
+            self.quant_product2 = self.StockQuant.create(
+                [
+                    {
+                        "product_id": self.product2.id,
+                        "location_id": self.wms_location.id,
+                        "quantity": 8.0,
+                    }
+                ]
+            )
         # create product excluded from WMS with 10 on hand
-        self.product_excluded = self.env["product.product"].create(
+        self.product_excluded = self.product_model.search(
             [
-                {
-                    "name": "test product excluded from WMS",
-                    "default_code": "PRODUCT1",
-                    "type": "product",
-                    "exclude_from_whs": True,
-                }
+                ("default_code", "=", "PRODUCTEX"),
             ]
         )
-        self.quant_product_excluded = self.StockQuant.create(
+        if not self.product_excluded:
+            self.product_excluded = self.product_model.create(
+                [
+                    {
+                        "name": "test product excluded from WMS",
+                        "default_code": "PRODUCTEX",
+                        "type": "product",
+                        "exclude_from_whs": True,
+                    }
+                ]
+            )
+        self.quant_product_excluded = self.StockQuant.search(
             [
-                {
-                    "product_id": self.product_excluded.id,
-                    "location_id": self.src_location.id,
-                    "quantity": 10.0,
-                }
+                ("product_id", "=", self.product_excluded.id),
+                ("quantity", "=", 10.0),
             ]
         )
+        if not self.quant_product_excluded:
+            self.quant_product_excluded = self.StockQuant.create(
+                [
+                    {
+                        "product_id": self.product_excluded.id,
+                        "location_id": self.src_location.id,
+                        "quantity": 10.0,
+                    }
+                ]
+            )
         # Large Cabinet, 250 on hand
         self.product3 = self.env.ref("product.product_product_6")
         # Drawer Black, 0 on hand
@@ -180,15 +234,22 @@ class CommonConnectorWMS(TransactionCase):
                 "costs_hour": 23.0,
             }
         )
-        self.operation1 = self.env["mrp.routing.workcenter"].create(
-            {
-                "name": "Operation 1",
-                "workcenter_id": self.workcenter1.id,
-                "time_mode": "manual",
-                "time_cycle_manual": 90,
-                "sequence": 1,
-            }
+        self.operation1 = self.env["mrp.routing.workcenter"].search(
+            [
+                ("name", "=", "Operation 1"),
+                ("workcenter_id", "=", self.workcenter1.id),
+            ]
         )
+        if not self.operation1:
+            self.operation1 = self.env["mrp.routing.workcenter"].create(
+                {
+                    "name": "Operation 1",
+                    "workcenter_id": self.workcenter1.id,
+                    "time_mode": "manual",
+                    "time_cycle_manual": 90,
+                    "sequence": 1,
+                }
+            )
         self.mrp_user = self.env.ref("base.user_demo")
         self.mrp_user.write(
             {
