@@ -107,6 +107,44 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                     metadata=None,
                 )
 
+    def simulate_whs_cron_inventory(self, product, quantity):
+        # check if there is a row with this product and update it, otherwise create one
+        res = self.dbsource.execute_mssql(
+            sqlquery=clean_sql_text(
+                "SELECT Articolo, Qta FROM HOST_GIACENZE WHERE Articolo=:Articolo"
+            ),
+            sqlparams=dict(
+                Articolo=product.default_code,
+            ),
+            metadata=None,
+        )
+        if res and res[0] and len(res[0]) == 1:
+            giacenze_query = (
+                "UPDATE HOST_GIACENZE SET Qta=:Qta WHERE Articolo=:Articolo"
+            )
+        else:
+            giacenze_query = (
+                "INSERT INTO HOST_GIACENZE (Articolo, Qta) VALUES (:Articolo, :Qta)"
+            )
+        self.dbsource.with_context(no_return=True).execute_mssql(
+            sqlquery=clean_sql_text(giacenze_query),
+            sqlparams=dict(
+                Articolo=product.default_code,
+                Qta=quantity,
+            ),
+            metadata=None,
+        )
+        sync_stock_form = Form(
+            self.env["wizard.sync.stock.whs.mssql"].with_context(
+                active_id=self.dbsource.id,
+                active_ids=self.dbsource.ids,
+            )
+        )
+        sync_stock_form.do_sync = True
+        sync_stock_form.product_id = product
+        sync_stock = sync_stock_form.save()
+        sync_stock.apply()
+
     def _check_cancel_workflow(self, picking, list_len):
         """
         This method is used to check the re-use of the same whs list linked to the
@@ -386,7 +424,9 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             self.assertEqual(picking.state, "assigned")
         else:
             self.assertEqual(picking.state, "waiting")
-        self.assertAlmostEqual(picking.move_lines[0].move_line_ids[0].qty_done, 3.0)
+        for move in picking.move_lines:
+            # stock.move.line could be splitted, so check only stock.move
+            self.assertAlmostEqual(move.quantity_done, 3.0)
         self.assertEqual(picking.state, "assigned")
 
         # simulate user partial validate of picking and check backorder exist
@@ -513,8 +553,10 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         self.dbsource.whs_insert_read_and_synchronize_list()
 
         # check move and picking linked to sale order have changed state to done
-        self.assertEqual(picking.move_lines[0].state, "assigned")
-        self.assertAlmostEqual(picking.move_lines[0].move_line_ids[0].qty_done, 3.0)
+        for move in picking.move_lines:
+            # stock.move.line could be splitted, so check only stock.move
+            self.assertAlmostEqual(
+                move.quantity_done, 3.0 if move.product_id == self.product1 else 20)
         picking.action_assign()
         self.assertEqual(picking.state, "assigned")
         # check that action_assign run by scheduler do not change state
@@ -811,6 +853,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
     def test_06_purchase(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
+        self.simulate_whs_cron_inventory(self.product2, 8)
         whs_len_records = len(self._execute_select_all_valid_host_liste())
         purchase_form = Form(self.env["purchase.order"])
         purchase_form.partner_id = self.partner
@@ -849,7 +892,8 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             len(self._execute_select_all_valid_host_liste()),
             whs_len_records + 2,
         )
-
+        # get available qty for product2 before purchase order
+        qty_available_product2 = self.product2.qty_available
         # simulate WMS work: partial processing of product #2
         # and total of product #3
         whs_lists = purchase.mapped("picking_ids.move_lines.whs_list_ids")
@@ -877,9 +921,15 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                 else "[(Decimal('3.000'), Decimal('3.000'), 0)]",
             )
 
+        # sync inventory to test this product is not considered even if the user
+        # hasn't completed the picking
+        # WHSystem already has the 2 pc income from purchase order, so we add them
+        self.simulate_whs_cron_inventory(self.product2, self.product2.qty_available + 2)
+        new_qty_available_product2 = self.product2.qty_available
+        self.assertAlmostEqual(qty_available_product2, new_qty_available_product2, 2)
+
         # simulate user partial validate of picking and check backorder exist
         picking = purchase.picking_ids[0]
-        # self.run_stock_procurement_scheduler()
         picking.action_assign()
         if all(x.state == "assigned" for x in picking.move_lines):
             self.assertEqual(picking.state, "assigned")
