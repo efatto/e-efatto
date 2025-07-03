@@ -59,6 +59,8 @@ jobs:
         run: pip3 install -e "git+https://github.com/decgroupe/purchase-workflow@14.0-mig-purchase_line_procurement_group#egg=odoo14-addon-purchase_line_procurement_group&subdirectory=setup/purchase_line_procurement_group"
       - name: Install sale_order_confirmation_date module from e-account repo
         run: pip3 install -e "git+https://github.com/efatto/e-account@14.0#egg=odoo14-addon-sale_order_confirmation_date&subdirectory=setup/sale_order_confirmation_date"
+      - name: Install product_is_kit module from efatto repo
+        run: pip3 install -e "git+https://github.com/efatto/efatto@14.0#egg=odoo14-addon-product_is_kit&subdirectory=setup/product_is_kit"
       - name: Install addons and dependencies
         run: oca_install_addons
       - name: Check licenses
