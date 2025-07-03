@@ -109,6 +109,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     ("default_code", "=", stock_product),
                     ("type", "in", ["product", "consu"]),
                     ("exclude_from_whs", "!=", True),
+                    ("is_kit", "!=", True),
                 ]
             )
             # if it is a service, only log but do not create inventory line
@@ -118,6 +119,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         ("default_code", "=", stock_product),
                         ("type", "=", "service"),
                         ("exclude_from_whs", "!=", True),
+                        ("is_kit", "!=", True),
                     ]
                 )
                 if not product:
@@ -168,12 +170,16 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     ]
                 )
                 if open_whs_list_ids:
-                    # add the outgoing qtys ("1") and remove the incoming qtys ("2" and
-                    # others, to check "3" inventory)
+                    # Neutralize the outgoing moves adding qty not completed in Odoo but
+                    # completed in WHS, and viceversa for the incomings.
+                    # Ignore MRP moves.
+                    # `tipo`: "1"=out "2"=in "3"=inventory
+                    # `tipo_mov`: mrpin mrpout move (unused: noback ripin ripout)
                     product_qty += sum(
                         [
                             x.qtamov * (1 if x.tipo == "1" else -1)
                             for x in open_whs_list_ids
+                            if "mrp" not in x.tipo_mov
                         ]
                     )
                 if float_compare(
