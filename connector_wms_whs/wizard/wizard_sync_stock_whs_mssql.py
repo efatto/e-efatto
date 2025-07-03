@@ -182,6 +182,24 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                             if "mrp" not in x.tipo_mov
                         ]
                     )
+                if product_qty < 0:
+                    # do not consider negative quantities in WHS
+                    whs_log_line.update(
+                        {
+                            "product_id": product.id,
+                            "qty_wrong": product.qty_available,
+                            "qty": product_qty,
+                            "type": "mismatch",
+                            "lot": " ".join(
+                                [
+                                    x
+                                    for x in stock_product_dict[stock_product]
+                                    if x != "weight"
+                                ]
+                            ),
+                        }
+                    )
+                    continue
                 if float_compare(
                     product_qty,
                     product.qty_available,
