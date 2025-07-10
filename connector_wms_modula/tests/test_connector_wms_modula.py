@@ -234,6 +234,9 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             )
         )
         self.assertEqual(len(picking1.mapped('move_lines.whs_list_ids')), 1)
+        self.assertEqual(
+            picking1.mapped('move_lines.whs_list_ids')[0].ragsoc,
+            order1.partner_id.name)
         if all(x.state == 'assigned' for x in picking1.move_lines):
             self.assertEqual(picking1.state, 'assigned')
         else:
@@ -325,6 +328,9 @@ class TestConnectorWmsModula(CommonConnectorWMS):
                 lambda x: x.picking_type_id == self.warehouse.pick_type_id
             )
         self.assertEqual(len(picking.mapped('move_lines.whs_list_ids')), 2)
+        self.assertEqual(
+            picking.mapped('move_lines.whs_list_ids')[0].ragsoc,
+            order1.partner_id.name)
         # self.assertEqual(  # todo restore this check
         #     len(set(picking.mapped("move_lines.whs_list_ids.num_lista"))), 1
         # )
@@ -794,6 +800,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             x: 2 if x.product_id == self.product2 else 3 for x in whs_lists})
         for whs_list in whs_lists:
             result_liste = self._select_wms_liste(whs_list)
+            self.assertEqual(whs_list.ragsoc, purchase.partner_id.name)
             self.assertEqual(
                 str(result_liste[0]),
                 "[(Decimal('20.000'), Decimal('2.000'))]"
