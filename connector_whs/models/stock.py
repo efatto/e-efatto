@@ -419,7 +419,12 @@ class StockMove(models.Model):
                     ):
                         # none of move locations are enabled in WMS
                         continue
-                partner_id = move.partner_id or move.move_orig_ids.picking_id.partner_id
+                partner_id = (
+                    move.sale_line_id.order_id.partner_id
+                    or move.purchase_line_id.order_id.partner_id
+                    or move.partner_id
+                    or move.move_orig_ids.picking_id.partner_id
+                )
                 if partner_id:
                     ragsoc = partner_id.name
                     cliente = (
