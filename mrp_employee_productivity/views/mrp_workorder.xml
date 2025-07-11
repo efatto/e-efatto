@@ -14,7 +14,7 @@
             </xpath>
             <xpath
         expr="//field[@name='time_ids']/tree/field[@name='user_id']"
-        position="replace"
+        position="before"
       >
             </xpath>
             <xpath

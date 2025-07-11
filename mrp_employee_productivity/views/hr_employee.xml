@@ -5,7 +5,6 @@
     model="ir.actions.act_window"
   >
         <field name="res_model">mrp.workcenter.productivity</field>
-        <field name="view_type">form</field>
         <field name="name">Productivity</field>
         <field name="view_mode">tree,form</field>
         <field
@@ -21,7 +20,7 @@
         <field name="priority">10</field>
         <field name="groups_id" eval="[(4,ref('hr.group_hr_manager'))]" />
         <field name="arch" type="xml">
-            <xpath expr="//button[@name='toggle_active']" position="before">
+            <xpath expr="//button[@id='hr_presence_button']" position="before">
                 <button
           name="%(mrp_employee_productivity.action_mrp_workcenter_productivity_employee)d"
           class="oe_stat_button"
