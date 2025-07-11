@@ -1,9 +1,9 @@
-from odoo import models, fields, api, _
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 
 class MrpWorkorder(models.Model):
-    _inherit = 'mrp.workorder'
+    _inherit = "mrp.workorder"
     _parent_store = True
     _parent_name = "parent_id"
 
@@ -17,7 +17,7 @@ class MrpWorkorder(models.Model):
         string="Parent Workorder",
         ondelete="cascade",
         index=True,
-        domain="[('production_id', '=', production_id)]"
+        domain="[('production_id', '=', production_id)]",
     )
     child_workorder_ids = fields.One2many(
         comodel_name="mrp.workorder",
@@ -31,14 +31,14 @@ class MrpWorkorder(models.Model):
         for workorder in self:
             if workorder.parent_id:
                 workorder.complete_name = "{} / {}".format(
-                    workorder.parent_id.complete_name, workorder.name,
+                    workorder.parent_id.complete_name,
+                    workorder.name,
                 )
             else:
                 workorder.complete_name = workorder.name
 
-    @api.multi
     def button_start(self):
         self.ensure_one()
-        if self.parent_id and self.parent_id.state not in ['progress', 'done']:
-            raise UserError(_('Parent workorder has not been processed!'))
+        if self.parent_id and self.parent_id.state not in ["progress", "done"]:
+            raise UserError(_("Parent workorder has not been processed!"))
         return super().button_start()
