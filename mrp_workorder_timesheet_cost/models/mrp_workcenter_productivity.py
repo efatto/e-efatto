@@ -33,13 +33,12 @@ class MrpWorkcenterProductivity(models.Model):
                 productivity.write(values_to_write[productivity.id])
         return values
 
-    @api.multi
     def _productivity_postprocess_values(self, values):
-        """Get the addionnal values to write on record
+        """Get the additional values to write on record
         :param dict values: values for the model's fields, as a dictionary::
             {'field_name': field_value, ...}
         :return: a dictionary mapping each record id to its corresponding
-            dictionnary values to write (may be empty).
+            dictionary values to write (maybe empty).
         """
         result = {id_: {} for id_ in self.ids}
         sudo_self = self.sudo()
