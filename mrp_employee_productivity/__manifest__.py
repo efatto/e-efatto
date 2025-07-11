@@ -2,12 +2,12 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     'name': 'Employee MRP Workcenter Productivity Time',
-    'version': '12.0.1.0.0',
+    'version': '14.0.1.0.0',
     'license': 'AGPL-3',
     'category': 'Manufacturing',
     'author': 'Sergio Corato',
     'website': 'https://github.com/efatto/e-efatto',
-    'description': 'View employee productivity time in employee view.',
+    'summary': 'View employee productivity time in employee view.',
     'depends': [
         'hr',
         'mrp_sale_info_link',

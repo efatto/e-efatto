@@ -1,7 +1,7 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import api, fields, models
+from odoo import fields, models
 
 
 class HrEmployee(models.Model):
@@ -12,7 +12,6 @@ class HrEmployee(models.Model):
         string='Productivity count',
     )
 
-    @api.multi
     def _compute_productivity_count(self):
         productivity_obj = self.env['mrp.workcenter.productivity']
         for employee in self:
