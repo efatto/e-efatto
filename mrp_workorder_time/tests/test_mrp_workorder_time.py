@@ -1,3 +1,5 @@
+from odoo.tests import Form
+
 from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
 
 
@@ -7,20 +9,17 @@ class TestMrpWorkorderTime(TestProductionData):
         super().setUpClass()
         cls.main_bom.write(
             {
-                "routing_id": cls.routing1.id,
+                "operation_ids": cls.operation1.ids,
             }
         )
 
     def test_update_product_qty(self):
-        man_order = self.env["mrp.production"].create(
-            {
-                "name": "MO-Test",
-                "product_id": self.top_product.id,
-                "product_uom_id": self.top_product.uom_id.id,
-                "product_qty": 1,
-                "bom_id": self.main_bom.id,
-            }
-        )
+        man_order_form = Form(self.env["mrp.production"])
+        man_order_form.product_id = self.top_product
+        man_order_form.product_uom_id = self.top_product.uom_id
+        man_order_form.product_qty = 1
+        man_order_form.bom_id = self.main_bom
+        man_order = man_order_form.save()
         man_order.button_plan()
         self.assertTrue(man_order.workorder_ids)
         workorder = man_order.workorder_ids[0]
