@@ -38,33 +38,24 @@
         <field name="model">mrp.workcenter.productivity</field>
         <field name="inherit_id" ref="mrp.oee_form_view" />
         <field name="arch" type="xml">
-            <xpath expr="//form" position="replace">
-                <form string="Mrp Workcenter Productivity">
-                    <sheet string="Mrp Workcenter Productivity">
-                        <group>
-                            <group>
-                                <field name="employee_id" />
-                                <field name="workorder_id" required="True" />
-                                <field name="date_start" />
-                                <field name="unit_amount" />
-                                <field name="description" />
-                                <field name="sale_id" />
-                                <field name="workcenter_id" />
-                                <field name="date_end" />
-                                <field name="duration" />
-                                <field name="loss_id" />
-                            </group>
-                        </group>
-                    </sheet>
-                </form>
-            </xpath>
+            <field name="production_id" position="after">
+                <field name="employee_id" />
+            </field>
+            <field name="workorder_id" position="attributes">
+                <attribute name="attrs">{'required': True}</attribute>
+            </field>
+            <field name="date_start" position="before">
+                <field name="unit_amount" />
+            </field>
+            <field name="company_id" position="after">
+                <field name="sale_id" />
+            </field>
         </field>
     </record>
     <record id="action_mrp_workcenter_productivity" model="ir.actions.act_window">
         <field name="name">Workcenter Productivity</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">mrp.workcenter.productivity</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="context">{}</field>
         <field name="view_id" ref="view_mrp_workcenter_productivity_tree" />
