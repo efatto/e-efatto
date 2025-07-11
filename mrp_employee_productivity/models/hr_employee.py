@@ -8,13 +8,13 @@ class HrEmployee(models.Model):
     _inherit = "hr.employee"
 
     productivity_count = fields.Integer(
-        compute='_compute_productivity_count',
-        string='Productivity count',
+        compute="_compute_productivity_count",
+        string="Productivity count",
     )
 
     def _compute_productivity_count(self):
-        productivity_obj = self.env['mrp.workcenter.productivity']
+        productivity_obj = self.env["mrp.workcenter.productivity"]
         for employee in self:
-            employee.productivity_count = productivity_obj.search_count([
-                ('employee_id', '=', employee.id)
-            ])
+            employee.productivity_count = productivity_obj.search_count(
+                [("employee_id", "=", employee.id)]
+            )
