@@ -24,7 +24,7 @@ class TestMrpProductionLotCustomAssign(TestProductionData):
 
         # Change production qty before producing would change equally expected qty
         new_production_qty = man_order.product_qty + 100
-        new_production_qty / man_order.product_qty  # factor =
+        # new_production_qty / man_order.product_qty  # factor =
         change_production_form = Form(self.env["change.production.qty"])
         change_production_form.mo_id = man_order
         change_production_form.product_qty = man_order.product_qty + 100
@@ -55,7 +55,7 @@ class TestMrpProductionLotCustomAssign(TestProductionData):
         self.assertAlmostEqual(
             sum(man_order.mapped("finished_move_line_ids.qty_done")), 2.0
         )
-        man_order.move_raw_ids[1]
+        # man_order.move_raw_ids[1]
         # self.assertEqual(move_raw.product_uom_qty, 40 * factor)
         # self.assertEqual(len(man_order.move_raw_ids), 3)
 
