@@ -93,6 +93,7 @@
             <field name="workcenter_id" position="after">
                 <field name="name" />
                 <field name="origin" />
+                <field name="production_id" />
             </field>
         </field>
     </record>
