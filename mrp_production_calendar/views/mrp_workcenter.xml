@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="mrp_routing_workcenter_template_form_view" model="ir.ui.view">
+        <field name="name">mrp.routing.workcenter.form</field>
+        <field name="model">mrp.routing.workcenter.template</field>
+        <field
+      name="inherit_id"
+      ref="mrp_routing.mrp_routing_workcenter_template_form_view"
+    />
+        <field name="arch" type="xml">
+            <field name="workcenter_id" position="before">
+                <field name="parallel_execution" widget="boolean_toggle" />
+                <field
+          name="optional_parallel_workcenter_ids"
+          widget="many2many_tags"
+          attrs="{'invisible': [('parallel_execution', '=', False)]}"
+        />
+            </field>
+        </field>
+    </record>
+
+    <record id="mrp_routing_workcenter_template_tree_view" model="ir.ui.view">
+        <field name="name">mrp.routing.workcenter.tree</field>
+        <field name="model">mrp.routing.workcenter.template</field>
+        <field
+      name="inherit_id"
+      ref="mrp_routing.mrp_routing_workcenter_template_tree_view"
+    />
+        <field name="arch" type="xml">
+            <field name="workcenter_id" position="before">
+                <field name="parallel_execution" widget="boolean_toggle" />
+                <field
+          name="optional_parallel_workcenter_ids"
+          widget="many2many_tags"
+        />
+            </field>
+        </field>
+    </record>
+
+    <record id="mrp_routing_workcenter_form_view" model="ir.ui.view">
+        <field name="name">mrp.routing.workcenter.form</field>
+        <field name="model">mrp.routing.workcenter</field>
+        <field name="inherit_id" ref="mrp.mrp_routing_workcenter_form_view" />
+        <field name="arch" type="xml">
+            <field name="workcenter_id" position="before">
+                <field name="parallel_execution" widget="boolean_toggle" />
+                <field
+          name="optional_parallel_workcenter_ids"
+          widget="many2many_tags"
+        />
+            </field>
+        </field>
+    </record>
+
+    <record id="mrp_routing_workcenter_tree_view" model="ir.ui.view">
+        <field name="name">mrp.routing.workcenter.tree</field>
+        <field name="model">mrp.routing.workcenter</field>
+        <field name="inherit_id" ref="mrp.mrp_routing_workcenter_tree_view" />
+        <field name="arch" type="xml">
+            <field name="workcenter_id" position="before">
+                <field name="parallel_execution" widget="boolean_toggle" />
+                <field
+          name="optional_parallel_workcenter_ids"
+          widget="many2many_tags"
+        />
+            </field>
+        </field>
+    </record>
+
+    <record id="mrp_workcenter_kanban" model="ir.ui.view">
+        <field name="name">mrp.workcenter.kanban</field>
+        <field name="model">mrp.workcenter</field>
+        <field name="inherit_id" ref="mrp.mrp_workcenter_kanban" />
+        <field name="arch" type="xml">
+            <field name="oee_target" position="after">
+                <field name="wo_to_be_replanned_count" />
+            </field>
+            <div name="plan_order" position="after">
+                <div role="menuitem" name="check_orders_to_be_replanned">
+                    <a
+            name="action_compute_to_be_replanned"
+            type="object"
+          >Check To Replan Orders</a>
+                </div>
+            </div>
+            <xpath
+        expr="//div[hasclass('col-6', 'o_kanban_primary_right')]"
+        position="inside"
+      >
+                <div
+          class="row"
+          t-if="record.wo_to_be_replanned_count.raw_value &gt; 0"
+        >
+                    <div class="col-8">
+                        <a
+              name="action_work_order"
+              type="object"
+              context="{'search_default_to_be_replanned': 1}"
+            >
+                            To Be Replanned
+                        </a>
+                    </div>
+                    <div class="col-4 text-right">
+                        <field name="wo_to_be_replanned_count" />
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+
+    <menuitem
+    id="menu_mrp_workcenter_dashboard"
+    name="MRP Overview"
+    action="mrp.mrp_workcenter_kanban_action"
+    groups="mrp.group_mrp_routings"
+    parent="mrp.menu_mrp_root"
+    sequence="5"
+  />
+
+</odoo>
