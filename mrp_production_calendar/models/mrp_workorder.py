@@ -42,7 +42,6 @@ class MrpWorkorder(models.Model):
 
     @api.depends("date_planned_finished", "date_planned_start", "state")
     def _compute_to_be_replanned(self):
-        # todo update this compute with a cron to force recompute every day
         # todo 1: other logic depending on previous or next jobs?
         conflicted_dict = {}
         if self.ids:
