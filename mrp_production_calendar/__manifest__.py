@@ -18,10 +18,12 @@
     ],
     "external_dependencies": {"python": ["pandas"]},
     "data": [
+        "security/ir.model.access.csv",
         "data/cron.xml",
         "views/mrp_production.xml",
         "views/mrp_workcenter.xml",
         "views/mrp_workorder.xml",
+        "wizard/mrp_workorder_replan.xml",
     ],
     "installable": True,
 }
