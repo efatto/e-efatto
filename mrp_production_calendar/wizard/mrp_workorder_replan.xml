@@ -25,10 +25,7 @@
         <field name="name">Replan workorder</field>
         <field name="res_model">mrp.workorder.replan</field>
         <field name="view_mode">form</field>
-        <field
-            name="binding_model_id"
-            ref="mrp.model_mrp_workorder"
-        />
+        <field name="binding_model_id" ref="mrp.model_mrp_workorder" />
         <field name="target">new</field>
     </record>
 
