@@ -83,6 +83,8 @@ class TestMrpProductionCalendar(TestProductionData):
         production = production_form.save()
         self.assertEqual(production.state, "draft")
         self.assertTrue(production.workorder_ids)
+        production.action_confirm()
+        production.button_plan()
         for workorder in production.workorder_ids:
             duration = (
                 workorder.operation_id.time_cycle_manual
@@ -90,3 +92,38 @@ class TestMrpProductionCalendar(TestProductionData):
                 / workorder.workcenter_id.capacity
             )
             self.assertAlmostEqual(workorder.duration_expected, duration)
+            if workorder.operation_id.name == self.routing_tmpl_1.name:
+                self.assertFalse(workorder.previous_work_order_ids)
+                self.assertTrue(workorder.next_work_order_id)
+                self.assertIn(
+                    workorder.next_work_order_id,
+                    production.workorder_ids.filtered(
+                        lambda w: w.operation_id.name
+                        == self.parallel_routing_tmpl_3.name
+                    ),
+                )
+            if workorder.operation_id.name == self.routing_tmpl_2.name:
+                self.assertFalse(workorder.next_work_order_id)
+                self.assertTrue(workorder.previous_work_order_ids)
+                self.assertEqual(
+                    workorder.previous_work_order_ids,
+                    production.workorder_ids.filtered(
+                        lambda w: w.operation_id.name
+                        == self.parallel_routing_tmpl_3.name
+                    ),
+                )
+            if workorder.operation_id.name == self.parallel_routing_tmpl_3.name:
+                # self.assertTrue(workorder.next_work_order_id)
+                # self.assertEqual(
+                #     workorder.next_work_order_id,
+                #     production.workorder_ids.filtered(
+                #         lambda w:
+                #         w.operation_id.name == self.routing_tmpl_2.name
+                #     ))
+                self.assertTrue(workorder.previous_work_order_ids)
+                self.assertEqual(
+                    workorder.previous_work_order_ids,
+                    production.workorder_ids.filtered(
+                        lambda w: w.operation_id.name == self.routing_tmpl_1.name
+                    ),
+                )
