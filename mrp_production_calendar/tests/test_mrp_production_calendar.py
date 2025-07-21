@@ -1,3 +1,5 @@
+from dateutil.relativedelta import relativedelta
+
 from odoo.tests import Form
 
 from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
@@ -13,8 +15,9 @@ class TestMrpProductionCalendar(TestProductionData):
             {"name": "Workcenter in parallel 2", "capacity": 2},
             {"name": "Workcenter in parallel 3"},
         ]
-        workcenter_obj = cls.env["mrp.workcenter"]
-        workcenters = workcenter_obj.browse()
+        cls.workcenter_obj = cls.env["mrp.workcenter"]
+        cls.workorder_obj = cls.env["mrp.workorder"]
+        workcenters = cls.workcenter_obj.browse()
         for workcenter_vals in cls.parallel_workcenters:
             workcenters |= cls.env["mrp.workcenter"].create(workcenter_vals)
         cls.normal_workcenter_1 = cls.env["mrp.workcenter"].create(
@@ -50,7 +53,7 @@ class TestMrpProductionCalendar(TestProductionData):
                 ],
                 "workcenter_id": workcenters[0].id,
                 "time_mode": "manual",
-                "time_cycle_manual": 90.6,
+                "time_cycle_manual": 90,
                 "sequence": 1,
             }
         )
@@ -85,6 +88,9 @@ class TestMrpProductionCalendar(TestProductionData):
         self.assertTrue(production.workorder_ids)
         production.action_confirm()
         production.button_plan()
+        first_workorder = self.workorder_obj.browse()
+        third_workorder = self.workorder_obj.browse()
+        parallel_workorder = self.workorder_obj.browse()
         for workorder in production.workorder_ids:
             duration = (
                 workorder.operation_id.time_cycle_manual
@@ -93,6 +99,7 @@ class TestMrpProductionCalendar(TestProductionData):
             )
             self.assertAlmostEqual(workorder.duration_expected, duration)
             if workorder.operation_id.name == self.routing_tmpl_1.name:
+                first_workorder = workorder
                 self.assertFalse(workorder.previous_work_order_ids)
                 self.assertTrue(workorder.next_work_order_id)
                 self.assertIn(
@@ -103,6 +110,7 @@ class TestMrpProductionCalendar(TestProductionData):
                     ),
                 )
             if workorder.operation_id.name == self.routing_tmpl_2.name:
+                third_workorder = workorder
                 self.assertFalse(workorder.next_work_order_id)
                 self.assertTrue(workorder.previous_work_order_ids)
                 self.assertEqual(
@@ -113,6 +121,7 @@ class TestMrpProductionCalendar(TestProductionData):
                     ),
                 )
             if workorder.operation_id.name == self.parallel_routing_tmpl_3.name:
+                parallel_workorder |= workorder
                 self.assertTrue(workorder.next_work_order_id)
                 self.assertEqual(
                     workorder.next_work_order_id,
@@ -127,3 +136,28 @@ class TestMrpProductionCalendar(TestProductionData):
                         lambda w: w.operation_id.name == self.routing_tmpl_1.name
                     ),
                 )
+        # move the first workorder and check all the others are moved
+        self.assertTrue(
+            first_workorder.date_planned_finished <= min(
+                parallel_workorder.mapped("date_planned_start")
+            )
+        )
+        self.assertTrue(
+            third_workorder.date_planned_start >= max(
+                parallel_workorder.mapped("date_planned_finished")
+            )
+        )
+        first_workorder_form = Form(first_workorder)
+        first_workorder_form.date_planned_start = \
+            first_workorder.date_planned_start + relativedelta(hours=3)
+        first_workorder = first_workorder_form.save()
+        self.assertTrue(
+            first_workorder.date_planned_finished <= min(
+                parallel_workorder.mapped("date_planned_start")
+            )
+        )
+        self.assertTrue(
+            third_workorder.date_planned_start >= max(
+                parallel_workorder.mapped("date_planned_finished")
+            )
+        )
