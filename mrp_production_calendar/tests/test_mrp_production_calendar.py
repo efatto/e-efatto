@@ -17,6 +17,30 @@ class TestMrpProductionCalendar(TestProductionData):
         workcenters = workcenter_obj.browse()
         for workcenter_vals in cls.parallel_workcenters:
             workcenters |= cls.env["mrp.workcenter"].create(workcenter_vals)
+        cls.normal_workcenter_1 = cls.env["mrp.workcenter"].create(
+            {"name": "Workcenter normal 1"}
+        )
+        cls.normal_workcenter_2 = cls.env["mrp.workcenter"].create(
+            {"name": "Workcenter normal 2"}
+        )
+        cls.routing_tmpl_1 = cls.env["mrp.routing.workcenter.template"].create(
+            {
+                "name": "Operation 1 in normal workcenter",
+                "workcenter_id": cls.normal_workcenter_1.id,
+                "time_mode": "manual",
+                "time_cycle_manual": 36,
+                "sequence": 1,
+            }
+        )
+        cls.routing_tmpl_2 = cls.env["mrp.routing.workcenter.template"].create(
+            {
+                "name": "Operation 2 in normal workcenter",
+                "workcenter_id": cls.normal_workcenter_2.id,
+                "time_mode": "manual",
+                "time_cycle_manual": 17,
+                "sequence": 1,
+            }
+        )
         cls.parallel_routing_tmpl_3 = cls.env["mrp.routing.workcenter.template"].create(
             {
                 "name": "Operation in 3 parallel workcenter",
@@ -33,7 +57,17 @@ class TestMrpProductionCalendar(TestProductionData):
         cls.parallel_routing_3 = cls.env["mrp.routing"].create(
             {
                 "name": "Operation in 3 parallel workcenter",
-                "operation_ids": [(6, 0, cls.parallel_routing_tmpl_3.ids)],
+                "operation_ids": [
+                    (
+                        6,
+                        0,
+                        (
+                            cls.routing_tmpl_1
+                            | cls.parallel_routing_tmpl_3
+                            | cls.routing_tmpl_2
+                        ).ids,
+                    ),
+                ],
             }
         )
 
@@ -50,5 +84,9 @@ class TestMrpProductionCalendar(TestProductionData):
         self.assertEqual(production.state, "draft")
         self.assertTrue(production.workorder_ids)
         for workorder in production.workorder_ids:
-            duration = 90.6 / 3.0 / workorder.workcenter_id.capacity
+            duration = (
+                workorder.operation_id.time_cycle_manual
+                / (len(workorder.operation_id.optional_parallel_workcenter_ids) or 1)
+                / workorder.workcenter_id.capacity
+            )
             self.assertAlmostEqual(workorder.duration_expected, duration)
