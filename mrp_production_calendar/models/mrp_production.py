@@ -138,15 +138,12 @@ class MrpProduction(models.Model):
             lambda x: x.parallel_qty_production
         )
         for operation_id in parallel_workorders.mapped("operation_id"):
-            # get the last finished of these workorders (linked to the same
-            # operation_id) and set the next_work_order_id only to this one
+            # set the next_work_order_id to all parallel workorders
             operation_workorder_ids = parallel_workorders.filtered(
                 lambda x: x.operation_id == operation_id
             )
             next_workorder_id = operation_workorder_ids.mapped(
                 "next_work_order_id"
             ).filtered(lambda x: x not in operation_workorder_ids)
-            operation_workorder_ids.write({"next_work_order_id": False})
-            last_workorder_id = operation_workorder_ids._get_last_finished_workorder()
-            last_workorder_id.next_work_order_id = next_workorder_id
+            operation_workorder_ids.write({"next_work_order_id": next_workorder_id.id})
         return super()._plan_workorders(replan=replan)

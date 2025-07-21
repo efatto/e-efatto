@@ -113,13 +113,13 @@ class TestMrpProductionCalendar(TestProductionData):
                     ),
                 )
             if workorder.operation_id.name == self.parallel_routing_tmpl_3.name:
-                # self.assertTrue(workorder.next_work_order_id)
-                # self.assertEqual(
-                #     workorder.next_work_order_id,
-                #     production.workorder_ids.filtered(
-                #         lambda w:
-                #         w.operation_id.name == self.routing_tmpl_2.name
-                #     ))
+                self.assertTrue(workorder.next_work_order_id)
+                self.assertEqual(
+                    workorder.next_work_order_id,
+                    production.workorder_ids.filtered(
+                        lambda w: w.operation_id.name == self.routing_tmpl_2.name
+                    ),
+                )
                 self.assertTrue(workorder.previous_work_order_ids)
                 self.assertEqual(
                     workorder.previous_work_order_ids,
