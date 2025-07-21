@@ -1,5 +1,3 @@
-import datetime
-
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import float_round
@@ -211,68 +209,3 @@ class MrpWorkorder(models.Model):
             precision_digits=2,
             rounding_method="UP",
         )
-
-    # def _action_confirm(self):
-    #     res = super()._action_confirm()
-    #     # todo set next_workorder_id only to the last finished parallel wo
-    #     workorders_by_production = defaultdict(lambda: self.env['mrp.workorder'])
-    #     for workorder in self:
-    #         workorders_by_production[workorder.production_id] |= workorder
-    #
-    #     for production, workorders in workorders_by_production.items():
-    #         for workorder in self:
-    #             if workorder in workorders:
-    #                 parallel_workorders = sorted(
-    #                     workorders.filtered(
-    #                         lambda x: x.operation_id == workorder.operation_id
-    #                         and x.operation_id.parallel_execution
-    #                     ),
-    #                     key=lambda x: x.date_planned_finished,
-    #                 )
-    #                 if len(parallel_workorders) > 1:
-    #                     for parallel_wo in parallel_workorders[:-1]:
-    #                         parallel_wo.next_work_order_id = False
-    #     return res
-
-    def _get_last_finished_workorder(self):
-        start_date = datetime.datetime.now()
-        best_finished_dates = {}
-        for workorder in self:
-            workcenters = (
-                workorder.workcenter_id
-                | workorder.workcenter_id.alternative_workcenter_ids
-            )
-
-            best_finished_date = datetime.datetime.max
-            for workcenter in workcenters:
-                # compute theoretical duration
-                if workorder.workcenter_id == workcenter:
-                    duration_expected = workorder.duration_expected
-                else:
-                    duration_expected = workorder._get_duration_expected(
-                        alternative_workcenter=workcenter
-                    )
-
-                from_date, to_date = workcenter._get_first_available_slot(
-                    start_date, duration_expected
-                )
-                # If the workcenter is unavailable, try planning on the next one
-                if not from_date:
-                    continue
-                # Check if this workcenter is better than the previous ones
-                if to_date and to_date < best_finished_date:
-                    best_finished_date = to_date
-
-            # If none of the workcenter are available, raise
-            if best_finished_date == datetime.datetime.max:
-                raise UserError(
-                    _(
-                        "Impossible to plan the workorder. Please check the workcenter "
-                        "availabilities."
-                    )
-                )
-            best_finished_dates.update({workorder: best_finished_date})
-        last_finished_workorder = max(
-            best_finished_dates, key=lambda x: [best_finished_dates[x]]
-        )
-        return last_finished_workorder
