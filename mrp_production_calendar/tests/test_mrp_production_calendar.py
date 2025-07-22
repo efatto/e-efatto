@@ -138,26 +138,24 @@ class TestMrpProductionCalendar(TestProductionData):
                 )
         # move the first workorder and check all the others are moved
         self.assertTrue(
-            first_workorder.date_planned_finished <= min(
-                parallel_workorder.mapped("date_planned_start")
-            )
+            first_workorder.date_planned_finished
+            <= min(parallel_workorder.mapped("date_planned_start"))
         )
         self.assertTrue(
-            third_workorder.date_planned_start >= max(
-                parallel_workorder.mapped("date_planned_finished")
-            )
+            third_workorder.date_planned_start
+            >= max(parallel_workorder.mapped("date_planned_finished"))
         )
         first_workorder_form = Form(first_workorder)
-        first_workorder_form.date_planned_start = \
+        first_workorder_form.date_planned_start = (
             first_workorder.date_planned_start + relativedelta(hours=3)
+        )
         first_workorder = first_workorder_form.save()
         self.assertTrue(
-            first_workorder.date_planned_finished <= min(
-                parallel_workorder.mapped("date_planned_start")
-            )
+            first_workorder.date_planned_finished
+            <= min(parallel_workorder.mapped("date_planned_start"))
         )
         self.assertTrue(
-            third_workorder.date_planned_start >= max(
-                parallel_workorder.mapped("date_planned_finished")
-            )
+            third_workorder.date_planned_start
+            >= max(parallel_workorder.mapped("date_planned_finished"))
         )
+        # todo check a possible hole in a workcenter planning
