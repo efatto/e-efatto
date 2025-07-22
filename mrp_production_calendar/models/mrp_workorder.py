@@ -120,6 +120,28 @@ class MrpWorkorder(models.Model):
                 )
         return res
 
+    def _replan_workorder(self):
+        # replan workorders by default if dates are changed
+        workorder_tobe_replanned = self.env["mrp.workorder"].browse()
+        for workcenter in self.mapped("workcenter_id"):
+            workorder_tobe_replanned |= self.env["mrp.workorder"].search(
+                [
+                    ("workcenter_id", "=", workcenter.id),
+                    ("state", "in", ["pending", "ready"]),
+                    ("date_planned_start", "!=", False),
+                    ("date_planned_finished", "!=", False),
+                ]
+            )
+        for production in workorder_tobe_replanned.mapped("production_id"):
+            production.with_context(skip_replan=True)._plan_workorders(replan=True)
+            # We replan children workorders too, as we call this action at
+            # mrp.production level (btw, even calling from mrp.workorder to
+            # the same, but we call directly from the production to minimize
+            # method calls
+        # todo check if workorders in other workcenters which were planned
+        #  after these ones are replanned correctly, to avoid holes in
+        #  workcenter planners
+
     def write(self, values):
         # Enable changing the duration of a workorder. It will change the end date of
         # the production if it's the last workorder (default behavior).
@@ -150,8 +172,13 @@ class MrpWorkorder(models.Model):
             for workorder in self.filtered("parallel_qty_production"):
                 if values.get("parallel_qty_production"):
                     workorder.duration_expected = workorder._get_duration_expected()
-        # todo is it possible to open a wizard (adding it to res?) to ask confirm to
-        #  move next workorders? (workorders could be asynchronous)
+        if (
+            "date_planned_start" in values
+            or "date_planned_finished" in values
+            and not self.env.context.get("skip_replan")
+            and self.state == "progress"
+        ):
+            self._replan_workorder()
         return res
 
     def _get_duration_expected(self, alternative_workcenter=False, ratio=1):
