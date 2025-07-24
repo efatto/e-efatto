@@ -315,7 +315,8 @@ VALUES (
                 "Riferimento": lista.riferimento[:50] if lista.riferimento else "",
                 # char 50
                 "TipoOrdine": lista.tipo,  # int
-                "Causale": 10 if lista.tipo == "1" else 20,  # int
+                "Causale": 10 if lista.tipo == "1" else 11 if lista.tipo == "5" else 20,
+                # int: 10=prelievo, 11=assemblaggio, 20=deposito
                 "Priorita": lista.priorita,  # int
                 "RichiestoEsito": 1,  # int
                 "Stato": 0,  # int
