@@ -291,7 +291,7 @@ class MrpProduction(models.Model):
                         riga += 1
                         whsliste_data = dict(
                             stato="1",
-                            tipo="2",
+                            tipo="5",  # manufacturing: incoming produced product
                             num_lista=num_lista,
                             data_lista=fields.Datetime.now(),
                             riferimento=production.name,
