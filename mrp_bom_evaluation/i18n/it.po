@@ -57,8 +57,8 @@ msgstr "Costo analitico"
 
 #. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_order__extra_cost
-msgid "Analytic Extra Cost"
-msgstr "Costo analitico extra"
+msgid "Analytic Actual Cost"
+msgstr "Costo analitico effettivo"
 
 #. module: mrp_bom_evaluation
 #: model:ir.model.fields,field_description:mrp_bom_evaluation.field_sale_order__internal_timesheet_cost

@@ -71,7 +71,7 @@ class SaleOrderLine(models.Model):
     def _compute_mrp_production_total_amount(self):
         for line in self:
             line.analytic_cost = (
-                line.order_id.extra_cost + line.order_id.extra_cost_no_product
+                line.order_id.extra_cost
                 + line.order_id.internal_timesheet_cost
             ) * line.price_subtotal / (line.order_id.amount_untaxed or 1.0)
             line.mrp_production_total_amount = sum(
@@ -117,12 +117,7 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     extra_cost = fields.Float(
-        string="Analytic Extra Cost",
-        compute="_compute_analytic_cost",
-        store=True,
-    )
-    extra_cost_no_product = fields.Float(
-        string="Analytic Extra Cost No Product",
+        string="Analytic Actual Cost",
         compute="_compute_analytic_cost",
         store=True,
     )
@@ -153,11 +148,11 @@ class SaleOrder(models.Model):
             sale.extra_cost = - sum(extra_costs.mapped('extra_cost') or [0]) * (
                 sale.amount_untaxed / (analytic_sale_revenue or 1.0)
             )
-            sale.extra_cost_no_product = - sum(
-                extra_costs.mapped('extra_cost_no_product') or [0]
-            ) * (
-                sale.amount_untaxed / (analytic_sale_revenue or 1.0)
-            )
+            # sale.extra_cost_no_product = - sum(
+            #     extra_costs.mapped('extra_cost_no_product') or [0]
+            # ) * (
+            #     sale.amount_untaxed / (analytic_sale_revenue or 1.0)
+            # )
             sale.internal_timesheet_cost = - sum(
                 internal_timesheet_costs.mapped('amount') or [0]) * (
                 sale.amount_untaxed / (analytic_sale_revenue or 1.0)
@@ -264,7 +259,7 @@ class SaleOrder(models.Model):
             len(sale_mrp_order_to_recomputes)
         )
 
-        # recompute extra cost and timesheet cost whenever any account.analytic.line
+        # recompute actual cost and timesheet cost whenever any account.analytic.line
         # is added or changed for this sale order
         sale_analytic_order_to_recomputes = self.env["sale.order"].browse()
         for sale_order in sale_orders:
