@@ -5,12 +5,10 @@ odoo.define("sale_hide_section.hide_section_details", function (require) {
   var section_and_note_one2many = fieldRegistry.get("section_and_note_one2many");
 
   var SectionAndNoteListRenderer = {
-    _renderBodyCell: function (record, node, index, options) {
+    _renderBodyCell: function (record, node) {
       var $cell = this._super.apply(this, arguments);
-
       var field_info = this.state.fieldsInfo.list[node.attrs.name];
       var show_in_line_section = field_info && field_info.options.show_in_line_section;
-
       var isSection = record.data.display_type === "line_section";
       var isNote = record.data.display_type === "line_note";
       if (isSection || isNote) {
@@ -47,7 +45,7 @@ odoo.define("sale_hide_section.hide_section_details", function (require) {
         $th.text("").removeClass("o_column_sortable");
       return $th;
     },
-    _renderBody: function (record) {
+    _renderBody: function () {
       var $body = this._super();
       var hide_details = false;
       // On clik on eye icon we hide/show the rows until next section

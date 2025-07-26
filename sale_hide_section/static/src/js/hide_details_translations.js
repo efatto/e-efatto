@@ -4,6 +4,7 @@
 // if the terms are already present in the translation map.
 // This code does nothing but marks the strings as translatable
 var _t = function (x) {
+  "use strict";
   return x;
 };
 
