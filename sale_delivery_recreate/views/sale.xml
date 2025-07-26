@@ -5,7 +5,7 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form" />
         <field name="arch" type="xml">
-            <xpath expr="//header/button[@name='action_unlock']" position="after">
+            <xpath expr="//header/button[@name='action_draft']" position="after">
                 <button
           name="delivery_recreate"
           type="object"
