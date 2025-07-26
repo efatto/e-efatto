@@ -6,7 +6,7 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form" />
         <field name="arch" type="xml">
-            <button name="action_unlock" position="after">
+            <field name="state" position="before">
                 <button
           name="recalculate_prices"
           class="ml-2 btn btn-default"
@@ -16,7 +16,7 @@
           attrs="{'invisible': [('state', '!=', 'sale')]}"
           groups="sale_order_recalculation_visibility.group_recalculation_on_sale_state"
         />
-            </button>
+            </field>
         </field>
     </record>
 
