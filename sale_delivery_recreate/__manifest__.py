@@ -3,8 +3,7 @@
 {
     "name": "Sale Recreate Delivery",
     "summary": "Add ability to recreate delivery in sale order",
-    "version": "12.0.1.0.1",
-    "development_status": "Beta",
+    "version": "14.0.1.0.0",
     "category": "Sale",
     "website": "https://github.com/efatto/e-efatto",
     "author": "Sergio Corato",
