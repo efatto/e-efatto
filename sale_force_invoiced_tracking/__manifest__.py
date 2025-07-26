@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 {
     "name": "Sale track invoice status",
-    "version": "12.0.1.0.0",
+    "version": "14.0.1.0.0",
     "category": "Sales",
     "author": "Sergio Corato",
     "website": "https://github.com/efatto/e-efatto",
@@ -11,7 +11,6 @@
         "sale",
         "sale_force_invoiced",
     ],
-    "data": [
-    ],
-    "installable": True
+    "data": [],
+    "installable": True,
 }
