@@ -1,60 +1,50 @@
-# Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
-
-from odoo.tests.common import TransactionCase
+from odoo.tests import Form
+from odoo.tests.common import SavepointCase
 
 
-class TestSaleDeliveryRecreate(TransactionCase):
-    def _create_sale_order_line(self, order, product, qty):
-        line = self.env["sale.order.line"].create(
-            {
-                "order_id": order.id,
-                "product_id": product.id,
-                "product_uom_qty": qty,
-                "price_unit": 100,
-            }
-        )
-        line.product_id_change()
-        line._convert_to_write(line._cache)
-        return line
-
-    def setUp(self):
-        super(TestSaleDeliveryRecreate, self).setUp()
-        self.partner = self.env.ref("base.res_partner_2")
+class TestSaleDeliveryRecreate(SavepointCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.partner = cls.env.ref("base.res_partner_2")
         # Acoustic Bloc Screens, 16 on hand
-        self.product1 = self.env.ref("product.product_product_25")
+        cls.product1 = cls.env.ref("product.product_product_25")
         # Cabinet with Doors, 8 on hand
-        self.product2 = self.env.ref("product.product_product_10")
+        cls.product2 = cls.env.ref("product.product_product_10")
         # Large Cabinet, 250 on hand
-        self.product3 = self.env.ref("product.product_product_6")
-        self.product1.invoice_policy = "order"
-        vendor1 = self.env["res.partner"].create(
+        cls.product3 = cls.env.ref("product.product_product_6")
+        cls.product1.invoice_policy = "order"
+        vendor1 = cls.env["res.partner"].create(
             {"name": "AAA", "email": "from.test@example.com"}
         )
-        supplier_info1 = self.env["product.supplierinfo"].create(
+        supplier_info1 = cls.env["product.supplierinfo"].create(
             {
                 "name": vendor1.id,
                 "price": 50,
             }
         )
-        route_buy = self.ref("purchase_stock.route_warehouse0_buy")
-        warehouse1 = self.env.ref("stock.warehouse0")
-        route_mto = warehouse1.mto_pull_id.route_id.id
-        self.product2.write(
+        route_buy = cls.env.ref("purchase_stock.route_warehouse0_buy")
+        warehouse1 = cls.env.ref("stock.warehouse0")
+        route_mto = warehouse1.mto_pull_id.route_id
+        cls.product2.write(
             {
                 "seller_ids": [(6, 0, [supplier_info1.id])],
-                "route_ids": [(6, 0, [route_buy, route_mto])],
+                "route_ids": [(6, 0, [route_buy.id, route_mto.id])],
             }
         )
 
     def test_complete_picking_from_sale(self):
-        order = self.env["sale.order"].create(
-            {
-                "partner_id": self.partner.id,
-            }
-        )
-        self._create_sale_order_line(order, self.product1, 5)
-        self._create_sale_order_line(order, self.product2, 10)
+        order_form = Form(self.env["sale.order"])
+        order_form.partner_id = self.partner
+        with order_form.order_line.new() as line:
+            line.product_id = self.product1
+            line.product_uom_qty = 5
+            line.price_unit = 100
+        with order_form.order_line.new() as line:
+            line.product_id = self.product2
+            line.product_uom_qty = 10
+            line.price_unit = 100
+        order = order_form.save()
         order.action_confirm()
         self.assertEqual(order.state, "sale")
         self.assertEqual(len(order.picking_ids), 1)
@@ -67,13 +57,17 @@ class TestSaleDeliveryRecreate(TransactionCase):
         self.assertEqual(sum(po.mapped("order_line.product_qty")), 10)
 
     def test_partial_picking_from_sale(self):
-        order1 = self.env["sale.order"].create(
-            {
-                "partner_id": self.partner.id,
-            }
-        )
-        self._create_sale_order_line(order1, self.product1, 5)
-        self._create_sale_order_line(order1, self.product2, 10)
+        order_form = Form(self.env["sale.order"])
+        order_form.partner_id = self.partner
+        with order_form.order_line.new() as line:
+            line.product_id = self.product1
+            line.product_uom_qty = 5
+            line.price_unit = 100
+        with order_form.order_line.new() as line:
+            line.product_id = self.product2
+            line.product_uom_qty = 10
+            line.price_unit = 100
+        order1 = order_form.save()
         order1.action_confirm()
         self.assertEqual(order1.state, "sale")
         picking = order1.picking_ids[0]
