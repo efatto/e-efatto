@@ -1,14 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="view_order_form" model="ir.ui.view">
         <field name="name">sale.order.hide.detail.form</field>
         <field name="model">sale.order</field>
-        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="inherit_id" ref="sale.view_order_form" />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='order_line']/tree" position="inside">
-                <field name="hide_details"
-                       widget="boolean_fa_icon"
-                       options="{
+                <field
+          name="hide_details"
+          widget="boolean_fa_icon"
+          options="{
                             'show_in_line_section': true,
                             'fa_icons': {
                                 'icon_true': 'fa-eye',
@@ -19,7 +20,8 @@
                                 'hover_false': 'Switch to: details shown',
                             },
                        }"
-                       attrs="{'invisible': [('display_type', '!=', 'line_section')]}"/>
+          attrs="{'invisible': [('display_type', '!=', 'line_section')]}"
+        />
             </xpath>
         </field>
     </record>
