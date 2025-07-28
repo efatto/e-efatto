@@ -58,6 +58,15 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             sqlparams=None,
             metadata=None,
         )
+        self.categ_id = self.env.ref("product.product_category_3")
+        self.assertNotEqual(self.categ_id.name, "CUSTOM")
+        self.custom_categ_id = self.env["product.category"].search([
+            ("name", "=", "CUSTOM"),
+        ])
+        if not self.custom_categ_id:
+            self.custom_categ_id = self.env["product.category"].create({
+                "name": "CUSTOM",
+            })
 
     def _select_whs_liste_rif(self, riferimento):
         return self.dbsource.execute_mssql(
@@ -1162,7 +1171,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         )
         self.assertEqual(len(whs_lists), 1)
 
-    def test_08_mrp_partial_from_sale(self):
+    def _mrp_partial_from_sale(self, is_custom=False):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         whs_len_records = len(self._execute_select_all_valid_host_liste())
@@ -1197,7 +1206,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         created_whs_list_number = (
             3
             if self.warehouse.mto_pull_id.route_id in man_order.product_id.route_ids
-            and man_order.product_id.categ_id.name == "CUSTOM"
+            and is_custom
             else 4
         )
         self.assertEqual(
@@ -1215,6 +1224,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         for whs_list in component_whs_lists | finished_whs_lists:
             result_liste = self._select_whs_liste(whs_list, 4)
             if whs_list.product_id == self.subproduct_1_1:
+                self.assertEqual(whs_list.tipo, "5" if is_custom else "1")
                 self.assertIn(
                     str(result_liste[0]),
                     [
@@ -1223,6 +1233,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                     ],
                 )
             elif whs_list.product_id == self.subproduct_2_1:
+                self.assertEqual(whs_list.tipo, "5" if is_custom else "1")
                 self.assertEqual(
                     str(result_liste[0]), "[(Decimal('160.000'), Decimal('40.000'), 0)]"
                 )
@@ -1247,7 +1258,17 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             # check production ore cannot be done without WHS lists
             mo_backorder.with_context(test_connector_whs=True).button_mark_done()
 
-    def test_09_mrp_total_from_sale(self):
+    def test_08_mrp_partial_from_sale(self):
+        self.top_product.categ_id = self.categ_id
+        self.assertNotEqual(self.top_product.categ_id.name, "CUSTOM")
+        self._mrp_partial_from_sale()
+
+    def test_08_mrp_partial_from_sale_custom(self):
+        self.top_product.categ_id = self.custom_categ_id
+        self.assertEqual(self.top_product.categ_id.name, "CUSTOM")
+        self._mrp_partial_from_sale(is_custom=True)
+
+    def _mrp_total_from_sale(self, is_custom=False):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         whs_len_records = len(self._execute_select_all_valid_host_liste())
@@ -1282,7 +1303,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         created_whs_list_number = (
             3
             if self.warehouse.mto_pull_id.route_id in man_order.product_id.route_ids
-            and man_order.product_id.categ_id.name == "CUSTOM"
+            and is_custom
             else 4
         )
         self.assertEqual(
@@ -1299,6 +1320,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         for whs_list in component_whs_lists | finished_whs_lists:
             result_liste = self._select_whs_liste(whs_list, 4)
             if whs_list.product_id == self.subproduct_1_1:
+                self.assertEqual(whs_list.tipo, "5" if is_custom else "1")
                 self.assertIn(
                     str(result_liste[0]),
                     [
@@ -1307,6 +1329,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                     ],
                 )
             elif whs_list.product_id == self.subproduct_2_1:
+                self.assertEqual(whs_list.tipo, "5" if is_custom else "1")
                 self.assertEqual(
                     str(result_liste[0]), "[(Decimal('160.000'), Decimal('40.000'), 0)]"
                 )
@@ -1321,3 +1344,13 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         man_order.with_context(test_connector_whs=True).button_mark_done()
         self.assertEqual(len(man_order.procurement_group_id.mrp_production_ids), 1)
         self.assertEqual(man_order.state, "progress")
+
+    def test_09_mrp_total_from_sale(self):
+        self.top_product.categ_id = self.categ_id
+        self.assertNotEqual(self.top_product.categ_id.name, "CUSTOM")
+        self._mrp_total_from_sale()
+
+    def test_09_mrp_total_from_sale_custom(self):
+        self.top_product.categ_id = self.custom_categ_id
+        self.assertEqual(self.top_product.categ_id.name, "CUSTOM")
+        self._mrp_total_from_sale(is_custom=True)
