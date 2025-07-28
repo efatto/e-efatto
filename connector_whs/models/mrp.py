@@ -201,6 +201,11 @@ class MrpProduction(models.Model):
             raw_dbsource = self.env["base.external.dbsource"].search(
                 [("location_id", "=", production.location_src_id.id)]
             )
+            is_custom = (
+                production.picking_type_id.warehouse_id.mto_pull_id.route_id
+                in production.product_id.route_ids
+                and production.product_id.categ_id.name == "CUSTOM"
+            )
             if (
                 raw_dbsource
                 # and production.picking_type_id in raw_dbsource.stock_picking_type_ids
@@ -238,7 +243,7 @@ class MrpProduction(models.Model):
                             stato="1",
                             data_lista=fields.Datetime.now(),
                             riferimento=production.name,
-                            tipo="1",
+                            tipo="5" if is_custom else "1",  # "5" if manufacturing
                             product_id=move.product_id.id,
                             parent_product_id=production.product_id.id,
                             qta=move.product_uom_qty,
@@ -258,11 +263,7 @@ class MrpProduction(models.Model):
                 # in finished_dbsource.stock_picking_type_ids
                 # bypass check on locations, as this button is called from the user to
                 # create directly whs lists
-                and not (
-                    production.picking_type_id.warehouse_id.mto_pull_id.route_id
-                    in production.product_id.route_ids
-                    and production.product_id.categ_id.name == "CUSTOM"
-                )
+                and not is_custom
             ):
                 # Location of finished material is linked to WMS
                 num_lista = False
@@ -291,7 +292,7 @@ class MrpProduction(models.Model):
                         riga += 1
                         whsliste_data = dict(
                             stato="1",
-                            tipo="5",  # manufacturing: incoming produced product
+                            tipo="2",
                             num_lista=num_lista,
                             data_lista=fields.Datetime.now(),
                             riferimento=production.name,
