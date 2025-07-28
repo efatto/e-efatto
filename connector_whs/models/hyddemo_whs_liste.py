@@ -51,7 +51,7 @@ class HyddemoWhsListe(models.Model):
             ("2", "Deposito"),
             ("3", "Inventario"),  # 5 su WMS, 6 trasferimento
             ("4", "E..."),  # Per Modula, informarsi a che serve
-            ("5", "Assemblaggio"),
+            ("5", "Assemblaggio"),  # Scarico per assemblaggio
         ],
         string="Tipo lista",
     )
