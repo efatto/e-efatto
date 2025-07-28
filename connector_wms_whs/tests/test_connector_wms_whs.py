@@ -60,13 +60,23 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         )
         self.categ_id = self.env.ref("product.product_category_3")
         self.assertNotEqual(self.categ_id.name, "CUSTOM")
-        self.custom_categ_id = self.env["product.category"].search([
-            ("name", "=", "CUSTOM"),
-        ])
+        self.custom_categ_id = self.env["product.category"].search(
+            [
+                ("name", "=", "CUSTOM"),
+            ]
+        )
         if not self.custom_categ_id:
-            self.custom_categ_id = self.env["product.category"].create({
-                "name": "CUSTOM",
-            })
+            self.custom_categ_id = self.env["product.category"].create(
+                {
+                    "name": "CUSTOM",
+                }
+            )
+        # int: 10 = prelievo, 11 = (prelievo per) assemblaggio, 20 = deposito
+        self.causali = {
+            "out": "10",
+            "out_manufacturing": "11",
+            "in": "20",
+        }
 
     def _select_whs_liste_rif(self, riferimento):
         return self.dbsource.execute_mssql(
@@ -79,7 +89,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
 
     def _select_whs_liste(self, wms_list, elaborato=False):
         query = (
-            "SELECT Qta, QtaMovimentata, Priorita FROM HOST_LISTE "
+            "SELECT Qta, QtaMovimentata, Priorita, Causale FROM HOST_LISTE "
             "WHERE NumLista=:NUM_LISTA AND NumRiga=:NUM_RIGA"
         )
         sql_params = dict(
@@ -422,7 +432,8 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         for whs_list in whs_lists:
             result_liste = self._select_whs_liste(whs_list, 4)
             self.assertIn(
-                "[(Decimal('5.000'), Decimal('3.000'), 1)]", str(result_liste)
+                f"[(Decimal('5.000'), Decimal('3.000'), 1, '{self.causali['out']}')]",
+                str(result_liste),
             )
 
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -554,9 +565,9 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             result_liste = self._select_whs_liste(whs_list, 4)
             self.assertEqual(
                 str(result_liste[0]),
-                "[(Decimal('5.000'), Decimal('3.000'), 2)]"
+                f"[(Decimal('5.000'), Decimal('3.000'), 2, '{self.causali['out']}')]"
                 if whs_list.product_id == self.product1
-                else "[(Decimal('20.000'), Decimal('20.000'), 2)]",
+                else f"[(Decimal('20.000'), Decimal('20.000'), 2, '{self.causali['out']}')]",
             )
 
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -617,7 +628,10 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         # todo check whs_list for backorder is created
         self.dbsource.whs_insert_read_and_synchronize_list()
         result_liste = self._select_whs_liste(back_whs_list)
-        self.assertEqual(str(result_liste[0]), "[(Decimal('2.000'), None, 2)]")
+        self.assertEqual(
+            str(result_liste[0]),
+            f"[(Decimal('2.000'), None, 2, '{self.causali['out']}')]",
+        )
 
         # simulate whs work set done to rest of backorder
         self.simulate_whs_cron({x: 2 for x in back_whs_list})
@@ -684,13 +698,13 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             result_liste = self._select_whs_liste(whs_l, 4)
             self.assertEqual(
                 str(result_liste[0]),
-                "[(Decimal('5.000'), Decimal('5.000'), 0)]"
+                f"[(Decimal('5.000'), Decimal('5.000'), 0, '{self.causali['out']}')]"
                 if whs_l.product_id == self.product1
-                else "[(Decimal('10.000'), Decimal('5.000'), 0)]"
+                else f"[(Decimal('10.000'), Decimal('5.000'), 0, '{self.causali['out']}')]"
                 if whs_l.product_id == self.product2
-                else "[(Decimal('20.000'), Decimal('0.000'), 0)]"
+                else f"[(Decimal('20.000'), Decimal('0.000'), 0, '{self.causali['out']}')]"
                 if whs_l.product_id == self.product3
-                else "[(Decimal('20.000'), Decimal('5.000'), 0)]",
+                else f"[(Decimal('20.000'), Decimal('5.000'), 0, '{self.causali['out']}')]",
             )
 
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -911,9 +925,9 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             result_liste = self._select_whs_liste(whs_list, 4)
             self.assertEqual(
                 str(result_liste[0]),
-                "[(Decimal('17.000'), Decimal('2.000'), 0)]"
+                f"[(Decimal('17.000'), Decimal('2.000'), 0, '{self.causali['in']}')]"
                 if whs_list.product_id == self.product2
-                else "[(Decimal('3.000'), Decimal('3.000'), 0)]",
+                else f"[(Decimal('3.000'), Decimal('3.000'), 0, '{self.causali['in']}')]",
             )
 
         # this update Odoo from WHS
@@ -923,9 +937,9 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             result_liste = self._select_whs_liste(whs_list, 5)
             self.assertEqual(
                 str(result_liste[0]),
-                "[(Decimal('17.000'), Decimal('2.000'), 0)]"
+                f"[(Decimal('17.000'), Decimal('2.000'), 0, '{self.causali['in']}')]"
                 if whs_list.product_id == self.product2
-                else "[(Decimal('3.000'), Decimal('3.000'), 0)]",
+                else f"[(Decimal('3.000'), Decimal('3.000'), 0, '{self.causali['in']}')]",
             )
 
         # sync inventory to test this product is not considered even if the user
@@ -962,7 +976,10 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         self.dbsource.whs_insert_read_and_synchronize_list()
         back_whs_list = backorder_picking.mapped("move_lines.whs_list_ids")
         result_liste = self._select_whs_liste(back_whs_list)
-        self.assertEqual(str(result_liste[0]), "[(Decimal('15.000'), None, 0)]")
+        self.assertEqual(
+            str(result_liste[0]),
+            f"[(Decimal('15.000'), None, 0, '{self.causali['in']}')]",
+        )
         # TODO check cancel workflow without action_assign that create WMS list anyway
         self._check_cancel_workflow(backorder_picking, 1)
         backorder_picking.action_assign()
@@ -1047,7 +1064,9 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         self.dbsource.whs_insert_read_and_synchronize_list()
         result_liste = self._select_whs_liste(po_whs_list)
         # WMS list is created for the increased qty
-        self.assertEqual(str(result_liste[0]), "[(Decimal('7.000'), None, 0)]")
+        self.assertEqual(
+            str(result_liste[0]),
+            f"[(Decimal('7.000'), None, 0, '{self.causali['in']}')]")
 
         # TODO test user can receive in WHS a qty > move quantity
 
@@ -1083,7 +1102,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         result_liste = self._select_whs_liste(whs_list, elaborato=4)
         self.assertEqual(
             str(result_liste[0]),
-            "[(Decimal('20.000'), Decimal('7.000'), 0)]",
+            f"[(Decimal('20.000'), Decimal('7.000'), 0, '{self.causali['in']}')]",
         )
         # this update Odoo from WHS
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -1091,7 +1110,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         result_liste = self._select_whs_liste(whs_list, 5)
         self.assertEqual(
             str(result_liste[0]),
-            "[(Decimal('20.000'), Decimal('7.000'), 0)]",
+            f"[(Decimal('20.000'), Decimal('7.000'), 0, '{self.causali['in']}')]",
         )
 
         # simulate user partial validate of picking and check backorder does not exist
@@ -1144,7 +1163,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         result_liste = self._select_whs_liste(whs_list, 4)
         self.assertEqual(
             str(result_liste[0]),
-            "[(Decimal('20.000'), Decimal('27.000'), 0)]",
+            f"[(Decimal('20.000'), Decimal('27.000'), 0, '{self.causali['in']}')]",
         )
         # this update Odoo from WHS
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -1152,7 +1171,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         result_liste = self._select_whs_liste(whs_list, 5)
         self.assertEqual(
             str(result_liste[0]),
-            "[(Decimal('20.000'), Decimal('27.000'), 0)]",
+            f"[(Decimal('20.000'), Decimal('27.000'), 0, '{self.causali['in']}')]",
         )
 
         # simulate user partial validate of picking and check backorder does not exist
@@ -1223,23 +1242,28 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
 
         for whs_list in component_whs_lists | finished_whs_lists:
             result_liste = self._select_whs_liste(whs_list, 4)
+            causale = (
+                self.causali["out_manufacturing"] if is_custom else self.causali["out"]
+            )
             if whs_list.product_id == self.subproduct_1_1:
                 self.assertEqual(whs_list.tipo, "5" if is_custom else "1")
                 self.assertIn(
                     str(result_liste[0]),
                     [
-                        "[(Decimal('200.000'), Decimal('50.000'), 0)]",
-                        "[(Decimal('120.000'), Decimal('30.000'), 0)]",
+                        f"[(Decimal('200.000'), Decimal('50.000'), 0, '{causale}')]",
+                        f"[(Decimal('120.000'), Decimal('30.000'), 0, '{causale}')]",
                     ],
                 )
             elif whs_list.product_id == self.subproduct_2_1:
                 self.assertEqual(whs_list.tipo, "5" if is_custom else "1")
                 self.assertEqual(
-                    str(result_liste[0]), "[(Decimal('160.000'), Decimal('40.000'), 0)]"
+                    str(result_liste[0]),
+                    f"[(Decimal('160.000'), Decimal('40.000'), 0, '{causale}')]",
                 )
             elif whs_list.product_id == self.top_product:
                 self.assertEqual(
-                    str(result_liste[0]), "[(Decimal('20.000'), Decimal('5.000'), 0)]"
+                    str(result_liste[0]),
+                    f"[(Decimal('20.000'), Decimal('5.000'), 0, '{self.causali['in']}')]",
                 )
 
         # this update Odoo from WHS
@@ -1319,23 +1343,28 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
 
         for whs_list in component_whs_lists | finished_whs_lists:
             result_liste = self._select_whs_liste(whs_list, 4)
+            causale = (
+                self.causali["out_manufacturing"] if is_custom else self.causali["out"]
+            )
             if whs_list.product_id == self.subproduct_1_1:
                 self.assertEqual(whs_list.tipo, "5" if is_custom else "1")
                 self.assertIn(
                     str(result_liste[0]),
                     [
-                        "[(Decimal('200.000'), Decimal('50.000'), 0)]",
-                        "[(Decimal('120.000'), Decimal('30.000'), 0)]",
+                        f"[(Decimal('200.000'), Decimal('50.000'), 0, '{causale}')]",
+                        f"[(Decimal('120.000'), Decimal('30.000'), 0, '{causale}')]",
                     ],
                 )
             elif whs_list.product_id == self.subproduct_2_1:
                 self.assertEqual(whs_list.tipo, "5" if is_custom else "1")
                 self.assertEqual(
-                    str(result_liste[0]), "[(Decimal('160.000'), Decimal('40.000'), 0)]"
+                    str(result_liste[0]),
+                    f"[(Decimal('160.000'), Decimal('40.000'), 0, '{causale}')]",
                 )
             elif whs_list.product_id == self.top_product:
                 self.assertEqual(
-                    str(result_liste[0]), "[(Decimal('20.000'), Decimal('5.000'), 0)]"
+                    str(result_liste[0]),
+                    f"[(Decimal('20.000'), Decimal('5.000'), 0, '{self.causali['in']}')]",
                 )
 
         # this update Odoo from WHS
