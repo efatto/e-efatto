@@ -5,11 +5,6 @@ from odoo.tools import float_compare
 class MrpProduction(models.Model):
     _inherit = "mrp.production"
 
-    date_planned_finished_computed = fields.Datetime(
-        compute="_compute_date_planned_finished",
-        store=True,
-        readonly=False,
-    )
     previous_production_ids = fields.Many2many(
         comodel_name="mrp.production",
         relation="mrp_production_previous_rel",
@@ -60,19 +55,6 @@ class MrpProduction(models.Model):
         # children are the previous ones.
         for production in self:
             production.previous_production_ids = production._get_children()
-
-    @api.depends(
-        "workorder_ids.date_planned_finished",
-    )
-    def _compute_date_planned_finished(self):
-        for production in self:
-            date_planned_finished = False
-            dates_planned_finished = production.workorder_ids.filtered(
-                lambda x: x.date_planned_finished
-            ).mapped("date_planned_finished")
-            if dates_planned_finished:
-                date_planned_finished = max(dates_planned_finished)
-            production.date_planned_finished_computed = date_planned_finished
 
     def _create_workorder(self):
         # extend this method to create additional parallel workorders
