@@ -10,17 +10,17 @@
                 <field name="mrp_date_planned_finished" />
             </field>
             <xpath
-                expr="//field[@name='order_line']/form//field[@name='tax_id']"
-                position="after"
-            >
+        expr="//field[@name='order_line']/form//field[@name='tax_id']"
+        position="after"
+      >
                 <field name="mrp_date_planned_finished" />
             </xpath>
             <xpath
-                expr="//field[@name='order_line']/tree/field[@name='tax_id']"
-                position="before"
-            >
-                <field name="production_ids" invisible="1"/>
-                <field name="mrp_date_planned_finished" optional="hide"/>
+        expr="//field[@name='order_line']/tree/field[@name='tax_id']"
+        position="before"
+      >
+                <field name="production_ids" invisible="1" />
+                <field name="mrp_date_planned_finished" optional="hide" />
             </xpath>
         </field>
     </record>
