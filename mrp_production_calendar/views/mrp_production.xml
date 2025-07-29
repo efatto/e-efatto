@@ -12,17 +12,6 @@
         </field>
     </record>
 
-    <record id="mrp_production_form_view" model="ir.ui.view">
-        <field name="name">mrp.production.form</field>
-        <field name="model">mrp.production</field>
-        <field name="inherit_id" ref="mrp.mrp_production_form_view" />
-        <field name="arch" type="xml">
-            <field name="user_id" position="before">
-                <field name="date_planned_finished_computed" />
-            </field>
-        </field>
-    </record>
-
     <record id="view_production_calendar" model="ir.ui.view">
         <field name="name">mrp.production.calendar</field>
         <field name="model">mrp.production</field>

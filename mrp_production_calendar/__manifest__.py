@@ -11,6 +11,7 @@
     "summary": "Add some field to show workorders state in workcenter and ability "
     "to plan workorders in parallel.",
     "depends": [
+        "mrp_production_dates",
         "mrp_production_demo",
         "mrp_routing",
         "mrp_workorder_sequence",
