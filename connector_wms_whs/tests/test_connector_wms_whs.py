@@ -1066,7 +1066,8 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         # WMS list is created for the increased qty
         self.assertEqual(
             str(result_liste[0]),
-            f"[(Decimal('7.000'), None, 0, '{self.causali['in']}')]")
+            f"[(Decimal('7.000'), None, 0, '{self.causali['in']}')]",
+        )
 
         # TODO test user can receive in WHS a qty > move quantity
 
