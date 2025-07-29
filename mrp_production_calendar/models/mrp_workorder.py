@@ -187,7 +187,7 @@ class MrpWorkorder(models.Model):
         if (
             initial_date_planned_finished
             and not self.env.context.get("skip_move")
-            and self
+            and self and self[0].date_planned_finished
         ):
             time_moved_finished = (
                 self[0].date_planned_finished - initial_date_planned_finished
