@@ -50,11 +50,6 @@ msgid "Check To Replan Orders"
 msgstr "Controlla Piano Ordini"
 
 #. module: mrp_production_calendar
-#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_production__date_planned_finished_computed
-msgid "Date Planned Finished Computed"
-msgstr "Data pianificata calcolata per terminare la produzione."
-
-#. module: mrp_production_calendar
 #: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_production__display_name
 #: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing_workcenter__display_name
 #: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing_workcenter_template__display_name
