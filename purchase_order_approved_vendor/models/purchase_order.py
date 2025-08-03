@@ -1,6 +1,3 @@
-# Copyright 2020-2021 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-
 from odoo import api, fields, models
 
 
@@ -38,7 +35,6 @@ class PurchaseOrder(models.Model):
     company_id = fields.Many2one(states=READONLY_STATES)
     picking_type_id = fields.Many2one(states=READONLY_STATES)
 
-    @api.multi
     def action_rfq_send(self):
         res = super().action_rfq_send()
         if self.env.context.get("send_draft_rfq", False):
@@ -50,7 +46,6 @@ class PurchaseOrder(models.Model):
             )
         return res
 
-    @api.multi
     @api.returns("mail.message", lambda value: value.id)
     def message_post(self, **kwargs):
         if self.env.context.get("mark_rfq_as_draft_sent"):
@@ -61,7 +56,6 @@ class PurchaseOrder(models.Model):
             PurchaseOrder, self.with_context(mail_post_autofollow=True)
         ).message_post(**kwargs)
 
-    @api.multi
     def button_confirm_rfq(self):
         confirm_purchases = self.filtered(
             lambda p: p.company_id.purchase_approve_active
@@ -69,7 +63,6 @@ class PurchaseOrder(models.Model):
         confirm_purchases.write({"state": "rfq confirmed"})
         return super(PurchaseOrder, self - confirm_purchases).button_approve()
 
-    @api.multi
     def button_confirm(self):
         # BUG nel caso questo modulo sia installato, il flag su Approvazione ordini
         # di acquisto non funziona se non è flaggato anche Stato Confermato extra!!!
@@ -96,7 +89,6 @@ class PurchaseOrder(models.Model):
                 order.write({"state": "to approve"})
         return super(PurchaseOrder, self - rfq_confirmed_orders).button_confirm()
 
-    @api.multi
     def print_quotation(self):
         if self.state == "draft":
             self.write({"state": "rfq sent"})
