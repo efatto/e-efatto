@@ -23,8 +23,6 @@ class TestMrpProductionLotCustomAssign(TestProductionData):
             self.assertEqual(move.product_uom_qty, move.expected_product_uom_qty)
 
         # Change production qty before producing would change equally expected qty
-        new_production_qty = man_order.product_qty + 100
-        # new_production_qty / man_order.product_qty  # factor =
         change_production_form = Form(self.env["change.production.qty"])
         change_production_form.mo_id = man_order
         change_production_form.product_qty = man_order.product_qty + 100
