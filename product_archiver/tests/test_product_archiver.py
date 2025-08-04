@@ -1,10 +1,7 @@
-# Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-
 from datetime import timedelta
 
 from odoo import fields
-from odoo.tests.common import SavepointCase
+from odoo.tests.common import Form, SavepointCase
 from odoo.tools import mute_logger
 
 
@@ -23,16 +20,17 @@ class ProductArchiver(SavepointCase):
         old_date = today_date - timedelta(days=10)
         old_service = self.env["product.product"].create(
             {
-                "name": "Old product",
-                "default_code": "OLD_P_CODE",
+                "name": "Old service",
+                "default_code": "OLD_S_CODE",
                 "type": "service",
             }
         )
         old_service.create_date = old_date.strftime("%Y-%m-%d")
         old_product = self.env["product.product"].create(
             {
-                "name": "Old service",
-                "default_code": "OLD_S_CODE",
+                "name": "Old product",
+                "default_code": "OLD_P_CODE",
+                "type": "consu",
             }
         )
         old_product.create_date = old_date.strftime("%Y-%m-%d")
@@ -41,12 +39,12 @@ class ProductArchiver(SavepointCase):
             {
                 "name": "New product",
                 "default_code": "NEW_P_CODE",
+                "type": "consu",
             }
         )
-        wizard_obj = self.env["product.archiver"]
-        wizard_vals = wizard_obj.default_get(["model"])
-        wizard_vals.update({"from_date": from_date})
-        wizard = wizard_obj.create(wizard_vals)
+        wizard_form = Form(self.env["product.archiver"])
+        wizard_form.from_date = from_date
+        wizard = wizard_form.save()
         res = wizard.archive()
         domain = res.get("domain")
         model = res.get("res_model")
