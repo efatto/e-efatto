@@ -53,30 +53,7 @@ class TestMrpProductionLotCustomAssign(TestProductionData):
         self.assertAlmostEqual(
             sum(man_order.mapped("finished_move_line_ids.qty_done")), 2.0
         )
-        # man_order.move_raw_ids[1]
-        # self.assertEqual(move_raw.product_uom_qty, 40 * factor)
-        # self.assertEqual(len(man_order.move_raw_ids), 3)
+        self.assertEqual(len(man_order.move_raw_ids), 6)
 
-        # new_production_qty = man_order.product_qty - 50
-        # factor = new_production_qty / man_order.product_qty
-        # old_move_raw_qty_dict = {
-        #     move.id: move.product_uom_qty for move in man_order.move_raw_ids
-        # }
-        # self.env["change.production.qty"].create(
-        #     {
-        #         "mo_id": man_order.id,
-        #         "product_qty": new_production_qty,
-        #     }
-        # ).change_prod_qty()
-        # for move in man_order.move_raw_ids:
-        #     self.assertAlmostEqual(
-        #         old_move_raw_qty_dict[move.id] * factor, move.expected_product_uom_qty
-        #     )
-        #
-        # # set 0 to move_raw quantity_done unlink related move lines
-        # sml = self.env["stock.move.line"].search([("move_id", "=", move_raw.id)])
-        # self.assertAlmostEqual(move_raw.quantity_done, 16.0)
-        # sml.unlink()
-        # self.assertAlmostEqual(move_raw.quantity_done, 0.0)
-        # man_order.button_mark_done()
-        # self.assertAlmostEqual(move_raw.quantity_done, 0.0)
+        # from v. 14.0 the production is done and generate a backorder for the residual,
+        # so it's not possible to change the qty done again
