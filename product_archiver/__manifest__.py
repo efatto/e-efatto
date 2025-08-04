@@ -12,10 +12,10 @@
         "purchase_stock",
         "sale_stock",
     ],
-    "summary": "Add an action 'Archive Products' to menu Settings > Products, "
-    "configurable with variable: Inactive from date, "
-    "which will deactivate products without stock and inactive from "
-    "the selected date.",
+    "summary": """
+    Add an action 'Archive Products' to menu Settings > Products, configurable with
+    variable: Inactive from date, which will deactivate products without stock and
+    inactive from the selected date.""",
     "data": [
         "wizard/product_archiver.xml",
     ],
