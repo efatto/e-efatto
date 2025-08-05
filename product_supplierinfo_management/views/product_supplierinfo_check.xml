@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" ?>
 <odoo>
     <record model="ir.ui.view" id="view_product_supplierinfo_check_tree">
         <field name="name">product.supplierinfo.check.tree</field>
@@ -6,10 +6,10 @@
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="Product Supplierinfo Check">
-                <field name="name"/>
-                <field name="last_update"/>
-                <field name="listprice_id"/>
-                <field name="product_ctg_ids" widget="many2many_tags"/>
+                <field name="name" />
+                <field name="last_update" />
+                <field name="listprice_id" />
+                <field name="product_ctg_ids" widget="many2many_tags" />
             </tree>
         </field>
     </record>
@@ -18,82 +18,154 @@
         <field name="model">product.supplierinfo.check</field>
         <field name="arch" type="xml">
             <form string="Product Supplierinfo Check">
-                <header/>
+                <header />
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button type="object" name="action_view_product_ids"
-                            class="oe_stat_button" icon="fa-database">
-                            <field string="Products" name="products_count" widget="statinfo"/>
+                        <button
+              type="object"
+              name="action_view_product_ids"
+              class="oe_stat_button"
+              icon="fa-database"
+            >
+                            <field
+                string="Products"
+                name="products_count"
+                widget="statinfo"
+              />
                         </button>
-                        <button type="object" name="action_view_product_ids"
-                            class="oe_stat_button" icon="fa-database"
-                            context="{'missing_seller_products': True}">
-                            <field string="Missing seller" name="missing_seller_products_count" widget="statinfo"/>
+                        <button
+              type="object"
+              name="action_view_product_ids"
+              class="oe_stat_button"
+              icon="fa-database"
+              context="{'missing_seller_products': True}"
+            >
+                            <field
+                string="Missing seller"
+                name="missing_seller_products_count"
+                widget="statinfo"
+              />
                         </button>
-                        <button type="object" name="action_view_product_ids"
-                            class="oe_stat_button" icon="fa-database"
-                            context="{'obsolete_seller_price_products': True}">
-                            <field string="Obsolete price" name="obsolete_seller_price_products_count" widget="statinfo"/>
+                        <button
+              type="object"
+              name="action_view_product_ids"
+              class="oe_stat_button"
+              icon="fa-database"
+              context="{'obsolete_seller_price_products': True}"
+            >
+                            <field
+                string="Obsolete price"
+                name="obsolete_seller_price_products_count"
+                widget="statinfo"
+              />
                         </button>
-                        <button type="object" name="action_view_product_ids"
-                            class="oe_stat_button" icon="fa-database"
-                            context="{'mismatch_seller_products': True}">
-                            <field string="Mismatch seller" name="mismatch_seller_products_count" widget="statinfo"/>
+                        <button
+              type="object"
+              name="action_view_product_ids"
+              class="oe_stat_button"
+              icon="fa-database"
+              context="{'mismatch_seller_products': True}"
+            >
+                            <field
+                string="Mismatch seller"
+                name="mismatch_seller_products_count"
+                widget="statinfo"
+              />
                         </button>
-                        <button type="object" name="action_view_product_ids"
-                            class="oe_stat_button" icon="fa-database"
-                            context="{'no_purchase_invoice_recent_zero_products': True}">
-                            <field string="No invoice" name="no_purchase_invoice_recent_zero_products_count" widget="statinfo"/>
+                        <button
+              type="object"
+              name="action_view_product_ids"
+              class="oe_stat_button"
+              icon="fa-database"
+              context="{'no_purchase_invoice_recent_zero_products': True}"
+            >
+                            <field
+                string="No invoice"
+                name="no_purchase_invoice_recent_zero_products_count"
+                widget="statinfo"
+              />
                         </button>
-                        <button type="object" name="action_view_product_ids"
-                            class="oe_stat_button" icon="fa-database"
-                            context="{'no_purchase_invoice_zero_products': True}">
-                            <field string="No purch/inv." name="no_purchase_invoice_zero_products_count" widget="statinfo"/>
+                        <button
+              type="object"
+              name="action_view_product_ids"
+              class="oe_stat_button"
+              icon="fa-database"
+              context="{'no_purchase_invoice_zero_products': True}"
+            >
+                            <field
+                string="No purch/inv."
+                name="no_purchase_invoice_zero_products_count"
+                widget="statinfo"
+              />
                         </button>
-                        <button type="object" name="action_view_product_ids"
-                            class="oe_stat_button" icon="fa-database"
-                            context="{'purchase_recent_zero_products': True}">
-                            <field string="Zero purchase" name="purchase_recent_zero_products_count" widget="statinfo"/>
+                        <button
+              type="object"
+              name="action_view_product_ids"
+              class="oe_stat_button"
+              icon="fa-database"
+              context="{'purchase_recent_zero_products': True}"
+            >
+                            <field
+                string="Zero purchase"
+                name="purchase_recent_zero_products_count"
+                widget="statinfo"
+              />
                         </button>
-                        <button type="object" name="action_view_product_ids"
-                            class="oe_stat_button" icon="fa-database"
-                            context="{'invoice_recent_zero_products': True}">
-                            <field string="Zero invoice" name="invoice_recent_zero_products_count" widget="statinfo"/>
+                        <button
+              type="object"
+              name="action_view_product_ids"
+              class="oe_stat_button"
+              icon="fa-database"
+              context="{'invoice_recent_zero_products': True}"
+            >
+                            <field
+                string="Zero invoice"
+                name="invoice_recent_zero_products_count"
+                widget="statinfo"
+              />
                         </button>
                     </div>
                     <div class="oe_title">
                         <h1>
-                            <field name="name"/>
+                            <field name="name" />
                         </h1>
                     </div>
                     <group>
                         <group>
-                            <field name="date_validity_supplierinfo"/>
-                            <field name="product_ctg_ids" widget="many2many_tags"/>
-                            <field name="listprice_id" context="{'default_enable_supplierinfo_management': True}"/>
+                            <field name="date_validity_supplierinfo" />
+                            <field name="product_ctg_ids" widget="many2many_tags" />
+                            <field
+                name="listprice_id"
+                context="{'default_enable_supplierinfo_management': True}"
+              />
                         </group>
                         <group>
-                            <field name="last_update" readonly="True"/>
-                            <field name="date_obsolete_supplierinfo_price"/>
-                            <field name="company_id" groups="base.group_multi_company"
-                                   options="{'no_create': True}"/>
+                            <field name="last_update" readonly="True" />
+                            <field name="date_obsolete_supplierinfo_price" />
+                            <field
+                name="company_id"
+                groups="base.group_multi_company"
+                options="{'no_create': True}"
+              />
                         </group>
                         <group>
-                            <button name="check_products_supplierinfo"
-                                    string="Check Supplierinfo Values"
-                                    type="object"
-                                    confirm="Are you sure?"
-                            />
+                            <button
+                name="check_products_supplierinfo"
+                string="Check Supplierinfo Values"
+                type="object"
+                confirm="Are you sure?"
+              />
                         </group>
-                        <group/>
+                        <group />
                         <group>
-                            <button name="update_products_replenishment_cost"
-                                    string="Update Products Replenishment Cost"
-                                    type="object"
-                                    confirm="This action will override the product's replenishment cost and is not restorable. Are you sure?"
-                            />
+                            <button
+                name="update_products_replenishment_cost"
+                string="Update Products Replenishment Cost"
+                type="object"
+                confirm="This action will override the product's replenishment cost and is not restorable. Are you sure?"
+              />
                         </group>
-                        <group/>
+                        <group />
 <!--                        <group>-->
 <!--                            <button name="update_products_standard_price"-->
 <!--                                    string="Update Products Standard Price"-->
@@ -111,65 +183,67 @@
 <!--                        </group>-->
 <!--                        <group/>-->
                         <group>
-                            <field name="log"/>
+                            <field name="log" />
                         </group>
                     </group>
                     <notebook>
-                        <page string="Product price zero without purchase or invoice recent">
+                        <page
+              string="Product price zero without purchase or invoice recent"
+            >
                             <field name="no_purchase_invoice_recent_zero_product_ids">
                                 <tree>
-                                    <field name="default_code"/>
-                                    <field name="name"/>
+                                    <field name="default_code" />
+                                    <field name="name" />
                                 </tree>
                             </field>
                         </page>
                         <page string="Product price zero without purchase or invoice">
                             <field name="no_purchase_invoice_zero_product_ids">
                                 <tree>
-                                    <field name="default_code"/>
-                                    <field name="name"/>
+                                    <field name="default_code" />
+                                    <field name="name" />
                                 </tree>
                             </field>
                         </page>
                         <page string="Product price zero with purchase">
                             <field name="purchase_recent_zero_product_ids">
                                 <tree>
-                                    <field name="default_code"/>
-                                    <field name="name"/>
+                                    <field name="default_code" />
+                                    <field name="name" />
                                 </tree>
                             </field>
                         </page>
                         <page string="Product price zero with invoice">
                             <field name="invoice_recent_zero_product_ids">
                                 <tree>
-                                    <field name="default_code"/>
-                                    <field name="name"/>
+                                    <field name="default_code" />
+                                    <field name="name" />
                                 </tree>
                             </field>
                         </page>
                         <page string="Products without seller">
                             <field name="missing_seller_product_ids">
                                 <tree>
-                                    <field name="default_code"/>
-                                    <field name="name"/>
+                                    <field name="default_code" />
+                                    <field name="name" />
                                 </tree>
                             </field>
                         </page>
                         <page string="Products with obsolete price">
                             <field name="obsolete_seller_price_product_ids">
                                 <tree>
-                                    <field name="default_code"/>
-                                    <field name="name"/>
-                                    <field name="last_supplier_invoice_id"/>
+                                    <field name="default_code" />
+                                    <field name="name" />
+                                    <field name="last_supplier_invoice_id" />
                                 </tree>
                             </field>
                         </page>
                         <page string="Products with mismatch seller">
                             <field name="mismatch_seller_product_ids">
                                 <tree>
-                                    <field name="default_code"/>
-                                    <field name="name"/>
-                                    <field name="last_supplier_invoice_id"/>
+                                    <field name="default_code" />
+                                    <field name="name" />
+                                    <field name="last_supplier_invoice_id" />
                                 </tree>
                             </field>
                         </page>
@@ -184,11 +258,13 @@
         <field name="res_model">product.supplierinfo.check</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="view_id" ref="view_product_supplierinfo_check_tree"/>
+        <field name="view_id" ref="view_product_supplierinfo_check_tree" />
     </record>
-    <menuitem name="Product Supplierinfo Check"
-              id="menu_product_supplierinfo_check"
-              parent="stock.menu_warehouse_config"
-              groups="base.group_erp_manager,stock.group_stock_manager"
-              action="action_product_supplierinfo_check"/>
+    <menuitem
+    name="Product Supplierinfo Check"
+    id="menu_product_supplierinfo_check"
+    parent="stock.menu_warehouse_config"
+    groups="base.group_erp_manager,stock.group_stock_manager"
+    action="action_product_supplierinfo_check"
+  />
 </odoo>

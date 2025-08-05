@@ -1,119 +1,137 @@
 # Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 import time
-from odoo import api, fields, models, _
+
+from odoo import _, api, fields, models
 
 
 class ProductSupplierinfoCheck(models.Model):
-    _name = 'product.supplierinfo.check'
-    _description = 'Product Supplierinfo Check'
+    _name = "product.supplierinfo.check"
+    _description = "Product Supplierinfo Check"
 
     name = fields.Char()
     date_obsolete_supplierinfo_price = fields.Date(
         help="Date to filter products in 'Products with obsolete price', where there "
-             "are products which first valid seller has a previous last write date."
+        "are products which first valid seller has a previous last write date."
     )
     date_validity_supplierinfo = fields.Date(
         default=fields.Date.context_today,
         help="Date to filter supplierinfo validity and to compute price with chosen "
-             "listprice."
+        "listprice.",
     )
     last_update = fields.Datetime()
     company_id = fields.Many2one(
-        comodel_name='res.company',
-        string='Company',
+        comodel_name="res.company",
+        string="Company",
         default=lambda self: self.env.user.company_id,
     )
     product_ctg_ids = fields.Many2many(
-        comodel_name='product.category',
-        string='Product Categories'
+        comodel_name="product.category", string="Product Categories"
     )
-    product_ids = fields.Many2many(
-        comodel_name='product.product')
-    products_count = fields.Integer(
-        compute='_compute_products_count', store=True)
+    product_ids = fields.Many2many(comodel_name="product.product")
+    products_count = fields.Integer(compute="_compute_products_count", store=True)
     missing_seller_products_count = fields.Integer(
-        compute='_compute_products_count', store=True)
+        compute="_compute_products_count", store=True
+    )
     obsolete_seller_price_products_count = fields.Integer(
-        compute='_compute_products_count', store=True)
+        compute="_compute_products_count", store=True
+    )
     mismatch_seller_products_count = fields.Integer(
-        compute='_compute_products_count', store=True)
+        compute="_compute_products_count", store=True
+    )
     no_purchase_invoice_recent_zero_products_count = fields.Integer(
-        compute='_compute_products_count', store=True)
+        compute="_compute_products_count", store=True
+    )
     no_purchase_invoice_zero_products_count = fields.Integer(
-        compute='_compute_products_count', store=True)
+        compute="_compute_products_count", store=True
+    )
     purchase_recent_zero_products_count = fields.Integer(
-        compute='_compute_products_count', store=True)
+        compute="_compute_products_count", store=True
+    )
     invoice_recent_zero_products_count = fields.Integer(
-        compute='_compute_products_count', store=True)
+        compute="_compute_products_count", store=True
+    )
     log = fields.Text()
     missing_seller_product_ids = fields.Many2many(
-        comodel_name='product.product',
-        relation='supplierinfo_missing_seller_rel',
-        column1='supplierinfo_id',
-        column2='prod_id',
-        string="Product missing seller")
+        comodel_name="product.product",
+        relation="supplierinfo_missing_seller_rel",
+        column1="supplierinfo_id",
+        column2="prod_id",
+        string="Product missing seller",
+    )
     obsolete_seller_price_product_ids = fields.Many2many(
-        comodel_name='product.product',
-        relation='supplierinfo_obsolete_price_rel',
-        column1='supplierinfo_id',
-        column2='prod_id',
-        string="Product obsolete price")
+        comodel_name="product.product",
+        relation="supplierinfo_obsolete_price_rel",
+        column1="supplierinfo_id",
+        column2="prod_id",
+        string="Product obsolete price",
+    )
     mismatch_seller_product_ids = fields.Many2many(
-        comodel_name='product.product',
-        relation='supplierinfo_mismatch_rel',
-        column1='supplierinfo_id',
-        column2='prod_id',
-        string="Product mismatch seller")
+        comodel_name="product.product",
+        relation="supplierinfo_mismatch_rel",
+        column1="supplierinfo_id",
+        column2="prod_id",
+        string="Product mismatch seller",
+    )
     no_purchase_invoice_recent_zero_product_ids = fields.Many2many(
-        comodel_name='product.product',
-        relation='supplierinfo_no_recent_zero_rel',
-        column1='supplierinfo_id',
-        column2='prod_id',
-        string="Product price zero with purchase or invoice older")
+        comodel_name="product.product",
+        relation="supplierinfo_no_recent_zero_rel",
+        column1="supplierinfo_id",
+        column2="prod_id",
+        string="Product price zero with purchase or invoice older",
+    )
     no_purchase_invoice_zero_product_ids = fields.Many2many(
-        comodel_name='product.product',
-        relation='supplierinfo_no_zero_rel',
-        column1='supplierinfo_id',
-        column2='prod_id',
-        string="Product price zero without purchase or invoice")
+        comodel_name="product.product",
+        relation="supplierinfo_no_zero_rel",
+        column1="supplierinfo_id",
+        column2="prod_id",
+        string="Product price zero without purchase or invoice",
+    )
     purchase_recent_zero_product_ids = fields.Many2many(
-        comodel_name='product.product',
-        relation='supplierinfo_purchase_zero_rel',
-        column1='supplierinfo_id',
-        column2='prod_id',
-        string="Product price zero with purchase")
+        comodel_name="product.product",
+        relation="supplierinfo_purchase_zero_rel",
+        column1="supplierinfo_id",
+        column2="prod_id",
+        string="Product price zero with purchase",
+    )
     invoice_recent_zero_product_ids = fields.Many2many(
-        comodel_name='product.product',
-        relation='supplierinfo_invoice_zero_rel',
-        column1='supplierinfo_id',
-        column2='prod_id',
-        string="Product price zero with invoice")
+        comodel_name="product.product",
+        relation="supplierinfo_invoice_zero_rel",
+        column1="supplierinfo_id",
+        column2="prod_id",
+        string="Product price zero with invoice",
+    )
     listprice_id = fields.Many2one(
-        comodel_name='product.pricelist',
+        comodel_name="product.pricelist",
         required=True,
-        string='Pricelist for recomputation',
-        domain=[('enable_supplierinfo_management', '=', True)],
+        string="Pricelist for recomputation",
+        domain=[("enable_supplierinfo_management", "=", True)],
     )
 
     @api.multi
-    @api.depends('product_ids')
+    @api.depends("product_ids")
     def _compute_products_count(self):
         for check in self:
             check.products_count = len(check.product_ids)
             check.missing_seller_products_count = len(check.missing_seller_product_ids)
             check.obsolete_seller_price_products_count = len(
-                check.obsolete_seller_price_product_ids)
+                check.obsolete_seller_price_product_ids
+            )
             check.mismatch_seller_products_count = len(
-                check.mismatch_seller_product_ids)
+                check.mismatch_seller_product_ids
+            )
             check.no_purchase_invoice_recent_zero_products_count = len(
-                check.no_purchase_invoice_recent_zero_product_ids)
+                check.no_purchase_invoice_recent_zero_product_ids
+            )
             check.no_purchase_invoice_zero_products_count = len(
-                check.no_purchase_invoice_zero_product_ids)
+                check.no_purchase_invoice_zero_product_ids
+            )
             check.purchase_recent_zero_products_count = len(
-                check.purchase_recent_zero_product_ids)
+                check.purchase_recent_zero_product_ids
+            )
             check.invoice_recent_zero_products_count = len(
-                check.invoice_recent_zero_product_ids)
+                check.invoice_recent_zero_product_ids
+            )
 
     @api.multi
     def copy_products_replenishment_cost_to_standard_price(self):
@@ -144,96 +162,128 @@ class ProductSupplierinfoCheck(models.Model):
     @api.multi
     def update_products_cost(self):
         for supplierinfo_check in self:
-            domain = [('purchase_ok', '=', True)]
+            domain = [("purchase_ok", "=", True)]
             if supplierinfo_check.product_ctg_ids:
                 domain.append(
-                    ('categ_id', 'child_of', supplierinfo_check.product_ctg_ids.ids))
-            products = self.env['product.product'].search(domain)
-            started_at = time.time()
-            products_without_seller, products_with_obsolete_price,\
-                products_seller_mismatch, \
-                products_price_no_purchase_no_invoice_recent_zero,\
-                products_price_no_purchase_no_invoice_zero, \
-                products_price_purchase_recent_zero, \
-                products_price_supplier_invoice_recent_zero = \
-                products.do_update_managed_replenishment_cost(
-                    date_obsolete_supplierinfo_price=  # noqa
-                    supplierinfo_check.date_obsolete_supplierinfo_price,
-                    date_validity_supplierinfo=  # noqa
-                    supplierinfo_check.date_validity_supplierinfo,
-                    listprice_id=supplierinfo_check.listprice_id
+                    ("categ_id", "child_of", supplierinfo_check.product_ctg_ids.ids)
                 )
+            products = self.env["product.product"].search(domain)
+            started_at = time.time()
+            (
+                products_without_seller,
+                products_with_obsolete_price,
+                products_seller_mismatch,
+                products_price_no_purchase_no_invoice_recent_zero,
+                products_price_no_purchase_no_invoice_zero,
+                products_price_purchase_recent_zero,
+                products_price_supplier_invoice_recent_zero,
+            ) = products.do_update_managed_replenishment_cost(
+                date_obsolete_supplierinfo_price=supplierinfo_check.date_obsolete_supplierinfo_price,  # noqa
+                date_validity_supplierinfo=supplierinfo_check.date_validity_supplierinfo,  # noqa
+                listprice_id=supplierinfo_check.listprice_id,
+            )
             duration = time.time() - started_at
             last_update = fields.Datetime.now()
             if not supplierinfo_check.name:
-                supplierinfo_check.name = _('Update of %s' % last_update)
-            supplierinfo_check.write(dict(
-                last_update=last_update,
-                log=_('%s %s products in %.2f minutes.') % (
-                    _('Updated standard price of')
-                    if self.env.context.get('update_standard_price')
-                    else
-                    _('Updated replenishment cost of')
-                    if self.env.context.get('update_managed_replenishment_cost')
-                    else
-                    _('Copied replenishment cost to standard price of')
-                    if self.env.context.get(
-                        'copy_managed_replenishment_cost_to_standard_price')
-                    else _('Checked'),
-                    len(products),
-                    duration / 60,
+                supplierinfo_check.name = _("Update of %s" % last_update)
+            supplierinfo_check.write(
+                dict(
+                    last_update=last_update,
+                    log=_("%s %s products in %.2f minutes.")
+                    % (
+                        _("Updated standard price of")
+                        if self.env.context.get("update_standard_price")
+                        else _("Updated replenishment cost of")
+                        if self.env.context.get("update_managed_replenishment_cost")
+                        else _("Copied replenishment cost to standard price of")
+                        if self.env.context.get(
+                            "copy_managed_replenishment_cost_to_standard_price"
+                        )
+                        else _("Checked"),
+                        len(products),
+                        duration / 60,
                     ),
                 )
             )
             supplierinfo_check.missing_seller_product_ids = products_without_seller
-            supplierinfo_check.obsolete_seller_price_product_ids = \
+            supplierinfo_check.obsolete_seller_price_product_ids = (
                 products_with_obsolete_price
+            )
             supplierinfo_check.mismatch_seller_product_ids = products_seller_mismatch
-            supplierinfo_check.no_purchase_invoice_recent_zero_product_ids = \
+            supplierinfo_check.no_purchase_invoice_recent_zero_product_ids = (
                 products_price_no_purchase_no_invoice_recent_zero
-            supplierinfo_check.no_purchase_invoice_zero_product_ids = \
+            )
+            supplierinfo_check.no_purchase_invoice_zero_product_ids = (
                 products_price_no_purchase_no_invoice_zero
-            supplierinfo_check.purchase_recent_zero_product_ids = \
+            )
+            supplierinfo_check.purchase_recent_zero_product_ids = (
                 products_price_purchase_recent_zero
-            supplierinfo_check.invoice_recent_zero_product_ids = \
+            )
+            supplierinfo_check.invoice_recent_zero_product_ids = (
                 products_price_supplier_invoice_recent_zero
+            )
             supplierinfo_check.product_ids = products
         return True
 
     def action_view_product_ids(self):
         self.ensure_one()
-        action = self.env.ref('stock.stock_product_normal_action').read()[0]
-        if self.env.context.get('missing_seller_products'):
-            action.update({
-                'domain': [('id', 'in', self.missing_seller_product_ids.ids)],
-            })
-        elif self.env.context.get('obsolete_seller_price_products'):
-            action.update({
-                'domain': [('id', 'in', self.obsolete_seller_price_product_ids.ids)],
-            })
-        elif self.env.context.get('mismatch_seller_products'):
-            action.update({
-                'domain': [('id', 'in', self.mismatch_seller_product_ids.ids)],
-            })
-        elif self.env.context.get('no_purchase_invoice_recent_zero_products'):
-            action.update({
-                'domain': [
-                    ('id', 'in', self.no_purchase_invoice_recent_zero_product_ids.ids)],
-            })
-        elif self.env.context.get('no_purchase_invoice_zero_products'):
-            action.update({
-                'domain': [('id', 'in', self.no_purchase_invoice_zero_product_ids.ids)],
-            })
-        elif self.env.context.get('purchase_recent_zero_products'):
-            action.update({
-                'domain': [('id', 'in', self.purchase_recent_zero_product_ids.ids)],
-            })
-        elif self.env.context.get('invoice_recent_zero_products'):
-            action.update({
-                'domain': [('id', 'in', self.invoice_recent_zero_product_ids.ids)],
-            })
+        action = self.env.ref("stock.stock_product_normal_action").read()[0]
+        if self.env.context.get("missing_seller_products"):
+            action.update(
+                {
+                    "domain": [("id", "in", self.missing_seller_product_ids.ids)],
+                }
+            )
+        elif self.env.context.get("obsolete_seller_price_products"):
+            action.update(
+                {
+                    "domain": [
+                        ("id", "in", self.obsolete_seller_price_product_ids.ids)
+                    ],
+                }
+            )
+        elif self.env.context.get("mismatch_seller_products"):
+            action.update(
+                {
+                    "domain": [("id", "in", self.mismatch_seller_product_ids.ids)],
+                }
+            )
+        elif self.env.context.get("no_purchase_invoice_recent_zero_products"):
+            action.update(
+                {
+                    "domain": [
+                        (
+                            "id",
+                            "in",
+                            self.no_purchase_invoice_recent_zero_product_ids.ids,
+                        )
+                    ],
+                }
+            )
+        elif self.env.context.get("no_purchase_invoice_zero_products"):
+            action.update(
+                {
+                    "domain": [
+                        ("id", "in", self.no_purchase_invoice_zero_product_ids.ids)
+                    ],
+                }
+            )
+        elif self.env.context.get("purchase_recent_zero_products"):
+            action.update(
+                {
+                    "domain": [("id", "in", self.purchase_recent_zero_product_ids.ids)],
+                }
+            )
+        elif self.env.context.get("invoice_recent_zero_products"):
+            action.update(
+                {
+                    "domain": [("id", "in", self.invoice_recent_zero_product_ids.ids)],
+                }
+            )
         else:
-            action.update({
-                'domain': [('id', 'in', self.product_ids.ids)],
-            })
+            action.update(
+                {
+                    "domain": [("id", "in", self.product_ids.ids)],
+                }
+            )
         return action

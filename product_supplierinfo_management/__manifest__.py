@@ -3,8 +3,8 @@
 {
     "name": "Product Supplierinfo Management",
     "summary": "This module add the ability to check attendibility and update standard "
-               "price on supplierinfo values.",
-    "version": "12.0.1.0.0",
+    "price on supplierinfo values.",
+    "version": "14.0.1.0.0",
     "author": "Sergio Corato",
     "website": "https://github.com/efatto/e-efatto",
     "category": "Products",

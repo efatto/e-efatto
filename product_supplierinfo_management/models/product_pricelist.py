@@ -3,7 +3,7 @@ from odoo.exceptions import ValidationError
 
 
 class ProductPricelist(models.Model):
-    _inherit = 'product.pricelist'
+    _inherit = "product.pricelist"
 
     enable_supplierinfo_management = fields.Boolean()
 
@@ -11,17 +11,19 @@ class ProductPricelist(models.Model):
 
 
 class ProductPricelistItem(models.Model):
-    _inherit = 'product.pricelist.item'
+    _inherit = "product.pricelist.item"
 
     enable_supplierinfo_management = fields.Boolean(
-        related='pricelist_id.enable_supplierinfo_management'
+        related="pricelist_id.enable_supplierinfo_management"
     )
 
-    @api.constrains('compute_price')
+    @api.constrains("compute_price")
     def check_compute_price(self):
-        for item in self.filtered('pricelist_id.enable_supplierinfo_management'):
-            if item.compute_price != 'formula':
+        for item in self.filtered("pricelist_id.enable_supplierinfo_management"):
+            if item.compute_price != "formula":
                 raise ValidationError(
-                    _('Item of pricelist with supplierinfo managament enabled '
-                      'cannot have a compute price different of formula!')
+                    _(
+                        "Item of pricelist with supplierinfo managament enabled "
+                        "cannot have a compute price different of formula!"
+                    )
                 )

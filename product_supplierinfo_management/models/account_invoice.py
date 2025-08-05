@@ -11,17 +11,19 @@ class AccountInvoice(models.Model):
     @api.multi
     def action_invoice_open(self):
         res = super().action_invoice_open()
-        for rec in self.filtered(lambda inv: inv.type == 'in_invoice'):
-            rec.invoice_line_ids.mapped('product_id').set_product_last_supplier_invoice(
-                rec.id)
+        for rec in self.filtered(lambda inv: inv.type == "in_invoice"):
+            rec.invoice_line_ids.mapped("product_id").set_product_last_supplier_invoice(
+                rec.id
+            )
         return res
 
     @api.multi
     def action_invoice_cancel(self):
         res = super().action_invoice_cancel()
-        for rec in self.filtered(lambda inv: inv.type == 'in_invoice'):
-            rec.invoice_line_ids.mapped('product_id').set_product_last_supplier_invoice(
-                )
+        for rec in self.filtered(lambda inv: inv.type == "in_invoice"):
+            rec.invoice_line_ids.mapped(
+                "product_id"
+            ).set_product_last_supplier_invoice()
         return res
 
 
@@ -29,4 +31,5 @@ class AccountInvoiceLine(models.Model):
     _inherit = "account.invoice.line"
 
     invoice_state = fields.Selection(
-        related='invoice_id.state', store=True, readonly=False)
+        related="invoice_id.state", store=True, readonly=False
+    )
