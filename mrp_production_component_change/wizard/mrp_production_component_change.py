@@ -1,10 +1,5 @@
-# Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
-
-import odoo.addons.decimal_precision as dp
 
 
 class MrpProductionComponentChange(models.TransientModel):
@@ -13,7 +8,8 @@ class MrpProductionComponentChange(models.TransientModel):
 
     product_id = fields.Many2one(comodel_name="product.product", required=True)
     product_uom_qty = fields.Float(
-        digits=dp.get_precision("Product Unit of Measure"), required=True
+        digits="Product Unit of Measure",
+        required=True,
     )
 
     @api.model
@@ -27,7 +23,6 @@ class MrpProductionComponentChange(models.TransientModel):
         defaults["product_uom_qty"] = move.product_uom_qty
         return defaults
 
-    @api.multi
     def action_done(self):
         self.ensure_one()
         move = self.env["stock.move"].browse(self.env.context["active_id"])

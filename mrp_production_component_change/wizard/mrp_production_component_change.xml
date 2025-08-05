@@ -27,13 +27,14 @@
             </form>
         </field>
     </record>
-    <act_window
-    id="action_change_production_component"
-    name="Change production component"
-    res_model="mrp.production.component.change"
-    src_model="mrp.production"
-    view_mode="form"
-    target="new"
-  />
+
+    <record id="action_change_production_component" model="ir.actions.act_window">
+        <field name="name">Change production component</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">mrp.production.component.change</field>
+        <field name="binding_model_id" ref="mrp.model_mrp_production" />
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
 
 </odoo>
