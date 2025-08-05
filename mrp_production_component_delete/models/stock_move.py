@@ -5,11 +5,9 @@ from odoo import api, fields, models
 
 
 class StockMove(models.Model):
-    _inherit = 'stock.move'
+    _inherit = "stock.move"
 
-    is_locked = fields.Boolean(
-        related='raw_material_production_id.is_locked'
-    )
+    is_locked = fields.Boolean(related="raw_material_production_id.is_locked")
 
     @api.multi
     def delete_production_component(self):
