@@ -8,8 +8,8 @@ class StockMoveLine(models.Model):
     _inherit = "stock.move.line"
 
     @api.onchange("lot_name", "lot_id")
-    def onchange_serial_number(self):
-        res = super().onchange_serial_number()
+    def _onchange_serial_number(self):
+        res = super()._onchange_serial_number()
         if self.product_id.tracking == "serial":
             if isinstance(self.id, models.NewId):
                 move_id = self._origin.move_id
@@ -17,13 +17,14 @@ class StockMoveLine(models.Model):
                 move_id = self.move_id
             if move_id.production_id:
                 # remove switch to 1 for serial product to avoid duplication in
-                # manufacturing process
+                # the manufacturing process
                 self.qty_done = 0
         return res
 
-    @api.onchange("product_id")
-    def onchange_product_id(self):
-        res = super().onchange_product_id()
+    @api.onchange("product_id", "product_uom_id")
+    def _onchange_product_id(self):
+        res = super()._onchange_product_id()
+        # FIXME I don't understand the note below
         # this is needed as stock move in NewId, as is stock move line, so it is
         # impossible to retrieve lot ids from this recursive NewId
         if self._context.get("default_production_id", False):

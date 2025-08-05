@@ -3,6 +3,7 @@
 {
     "name": "MRP Production Lot Custom Assign",
     "version": "14.0.1.0.0",
+    "development_status": "Alpha",
     "license": "AGPL-3",
     "category": "Manufacturing",
     "author": "Sergio Corato",
@@ -11,6 +12,7 @@
     "workorders.",
     "depends": [
         "mrp_production_demo",
+        "mrp_routing",
     ],
     "data": [],
     "installable": True,

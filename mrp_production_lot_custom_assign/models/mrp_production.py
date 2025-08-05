@@ -11,7 +11,7 @@ class MrpProduction(models.Model):
     @api.model
     def create(self, values):
         production = super().create(values)
-        if production.routing_id and production.product_id.tracking != "none":
+        if production.bom_id.routing_id and production.product_id.tracking != "none":
             # force qty change to create finished product rows to let user assign lots
             self.env["change.production.qty"].create(
                 {
@@ -21,10 +21,9 @@ class MrpProduction(models.Model):
             ).change_prod_qty()
         return production
 
-    @api.multi
     def button_plan(self):
         orders_to_plan = self.filtered(
-            lambda order: order.routing_id and order.state == "confirmed"
+            lambda mo: mo.bom_id.routing_id and mo.state == "confirmed"
         )
         for order in orders_to_plan:
             if order.product_id.tracking != "none" and not order.mapped(
@@ -47,7 +46,7 @@ class MrpProduction(models.Model):
                 lot = order.finished_move_line_ids[0].lot_id
                 order.workorder_ids.filtered(lambda x: not x.next_work_order_id).write(
                     {
-                        "final_lot_id": lot.id,
+                        "finished_lot_id": lot.id,
                     }
                 )
         return res
