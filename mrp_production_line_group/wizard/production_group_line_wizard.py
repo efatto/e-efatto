@@ -1,6 +1,3 @@
-# Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
-
 from odoo import api, fields, models
 
 
@@ -41,7 +38,6 @@ class ProductionGroupLineWizard(models.TransientModel):
         stock_move_master._action_assign()
         return True
 
-    @api.multi
     def action_done(self):
         # group move_raw_ids by product if bom origin is phantom
         for wizard in self:
