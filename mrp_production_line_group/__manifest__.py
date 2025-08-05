@@ -12,6 +12,7 @@
     "maintainers": ["sergiocorato"],
     "depends": ["mrp_production_demo"],
     "data": [
+        "security/ir.model.access.csv",
         "wizard/production_group_line_wizard.xml",
         "views/mrp_production.xml",
     ],
