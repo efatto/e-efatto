@@ -50,12 +50,9 @@ class TestExcelImportExport(SingleTransactionCase):
         cls.setUpPrepMrpBom()
         # Create a Mrp Bom
         product_line = {
-            "name": cls.product_order.name,
             "product_id": cls.product_order.id,
-            "product_uom_qty": 2,
-            "product_uom": cls.product_order.uom_id.id,
-            "price_unit": cls.product_order.list_price,
-            "tax_id": False,
+            "product_qty": 2,
+            "product_uom_id": cls.product_order.uom_id.id,
         }
         cls.mrp_bom = cls.env["mrp.bom"].create(
             {
@@ -69,12 +66,9 @@ class TestExcelImportExport(SingleTransactionCase):
         cls.setUpPrepMrpBom()
         # Create many mrp bom
         product_line = {
-            "name": cls.product_order.name,
             "product_id": cls.product_order.id,
-            "product_uom_qty": 2,
-            "product_uom": cls.product_order.uom_id.id,
-            "price_unit": cls.product_order.list_price,
-            "tax_id": False,
+            "product_qty": 2,
+            "product_uom_id": cls.product_order.uom_id.id,
         }
         for _i in range(10):
             cls.env["mrp.bom"].create(
