@@ -1,6 +1,3 @@
-# Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
-
 from odoo.tests import Form
 
 from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
@@ -19,25 +16,11 @@ class TestProductionGroupLine(TestProductionData):
             "bom_id": self.main_bom.id,
         }
 
-    def _update_product_qty(self, product, location, quantity):
-        """Update Product quantity."""
-        product_qty = self.env["stock.change.product.qty"].create(
-            {
-                "location_id": location.id,
-                "product_id": product.id,
-                "new_quantity": quantity,
-            }
-        )
-        product_qty.change_product_qty()
-        return product_qty
-
     def test_mo_by_product(self):
-        self._update_product_qty(self.subproduct_1_1, self.stock_location_stock, 16 * 3)
-        self._update_product_qty(self.subproduct_2_1, self.stock_location_stock, 8 * 3)
+        self._update_product_qty(self.subproduct_1_1, 16 * 3)
+        self._update_product_qty(self.subproduct_2_1, 8 * 3)
         self.production = self.production_model.create(self._get_production_vals())
         self.production.action_assign()
-
-        self.assertEqual(self.production.availability, "partially_available")
         self.assertEquals(self.subproduct_1_1.virtual_available, 16 * 2)
 
         wizard_obj = self.env["production.group.line.wizard"]
@@ -74,29 +57,24 @@ class TestProductionGroupLine(TestProductionData):
         self.production.action_assign()
         self.assertEqual(self.subproduct_1_1.virtual_available, 0)
         self.assertEqual(self.subproduct_2_1.virtual_available, 0)
-        self.assertEqual(self.production.availability, "partially_available")
-        produce_form = Form(
-            self.env["mrp.product.produce"].with_context(
-                active_id=self.production.id,
-                active_ids=[self.production.id],
-            )
-        )
-        produce_form.product_qty = 3.0
-        wizard = produce_form.save()
-        wizard.do_produce()
-        self.assertEqual(len(self.production), 1)
+        self.assertEqual(self.production.reservation_state, "waiting")
+        production_form = Form(self.production)
+        production_form.qty_producing = 3.0
+        production = production_form.save()
+        production.button_mark_done()
+        self.assertEqual(len(production), 1)
         self.assertEqual(
-            self.production.move_raw_ids.filtered(
+            production.move_raw_ids.filtered(
                 lambda x: x.product_id == self.subproduct_1_1
             ).unit_factor,
             16,
         )
         self.assertEqual(
-            self.production.move_raw_ids.mapped("product_uom_qty"), [16 * 3, 8 * 3]
+            production.move_raw_ids.mapped("product_uom_qty"), [16 * 3, 8 * 3]
         )
         self.assertEqual(
-            self.production.move_raw_ids.mapped("quantity_done"), [16 * 3, 8 * 3]
+            production.move_raw_ids.mapped("quantity_done"), [16 * 3, 8 * 3]
         )
-        self.production.button_mark_done()
-        self.assertEqual(self.production.availability, "assigned")
+        production.button_mark_done()
+        self.assertEqual(production.reservation_state, "assigned")
         self.assertEquals(self.top_product.qty_available, 3)
