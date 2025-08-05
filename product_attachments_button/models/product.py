@@ -1,7 +1,4 @@
-# Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-
-from odoo import _, api, fields, models
+from odoo import _, fields, models
 
 
 class ProductTemplate(models.Model):
@@ -14,7 +11,6 @@ class ProductTemplate(models.Model):
         "# All Attachments", compute="_compute_all_attachment_count"
     )
 
-    @api.multi
     def _compute_all_attachment_count(self):
         for template in self:
             all_attachment_ids = self.env["ir.attachment"].search(
