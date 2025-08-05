@@ -26,14 +26,14 @@
             </form>
         </field>
     </record>
-    <act_window
-    id="action_create_bom_from_production_order"
-    name="Create BOM from production order"
-    res_model="mrp.production.bom.create"
-    src_model="mrp.production"
-    view_mode="form"
-    target="new"
-    key2="client_action_multi"
-  />
+
+    <record id="action_create_bom_from_production_order" model="ir.actions.act_window">
+        <field name="name">Create BOM from production order</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">mrp.production.bom.create</field>
+        <field name="binding_model_id" ref="mrp.model_mrp_production" />
+        <field name="view_mode">tree,form</field>
+        <field name="target">new</field>
+    </record>
 
 </odoo>

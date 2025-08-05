@@ -1,6 +1,3 @@
-# Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-
 from odoo import api, fields, models
 
 
@@ -14,7 +11,6 @@ class MrpProductionBomCreate(models.TransientModel):
         .product_id.default_code
     )
 
-    @api.multi
     def action_done(self):
         self.ensure_one()
         production = self.env["mrp.production"].browse(self.env.context["active_ids"])
@@ -24,7 +20,7 @@ class MrpProductionBomCreate(models.TransientModel):
                 "product_tmpl_id": production.product_id.product_tmpl_id.id,
                 "code": self.name,
                 "type": "normal",
-                "routing_id": production.routing_id.id,
+                "routing_id": production.bom_id.routing_id.id,
                 "product_qty": 1,
                 "sequence": 1,
                 "product_uom_id": production.product_id.uom_id.id,
