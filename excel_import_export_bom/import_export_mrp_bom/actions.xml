@@ -1,40 +1,46 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
 
-    <act_window id="action_mrp_bom_export_xlsx"
-        name="Export Excel"
-        res_model="export.xlsx.wizard"
-        src_model="mrp.bom"
-        view_mode="form"
-        target="new"
-        context="{
+    <act_window
+    id="action_mrp_bom_export_xlsx"
+    name="Export Excel"
+    res_model="export.xlsx.wizard"
+    src_model="mrp.bom"
+    view_mode="form"
+    target="new"
+    context="{
           'template_domain': [('res_model', '=', 'mrp.bom'),
                               ('fname', '=', 'mrp_bom.xlsx'),
                               ('gname', '=', False)],
-        }"/>
-    <act_window id="action_mrp_production_bom_export_xlsx"
-        name="Export Bom Excel"
-        res_model="export.xlsx.wizard"
-        src_model="mrp.production"
-        view_mode="form"
-        target="new"
-        context="{
+        }"
+  />
+    <act_window
+    id="action_mrp_production_bom_export_xlsx"
+    name="Export Bom Excel"
+    res_model="export.xlsx.wizard"
+    src_model="mrp.production"
+    view_mode="form"
+    target="new"
+    context="{
           'template_domain': [('res_model', '=', 'mrp.production'),
                               ('fname', '=', 'mrp_production_bom.xlsx'),
                               ('gname', '=', False)],
-        }"/>
-    <act_window id="action_mrp_bom_import_xlsx"
-        name="Import Excel"
-        res_model="import.xlsx.wizard"
-        src_model="mrp.bom"
-        view_mode="form"
-        target="new"
-        context="{
+        }"
+  />
+    <act_window
+    id="action_mrp_bom_import_xlsx"
+    name="Import Excel"
+    res_model="import.xlsx.wizard"
+    src_model="mrp.bom"
+    view_mode="form"
+    target="new"
+    context="{
           'template_domain': [('res_model', '=', 'mrp.bom'),
                               ('fname', '=', 'mrp_bom.xlsx'),
                               ('gname', '=', False)],
           'template_context': {},
           'template_import_states': [],
-        }"/>
+        }"
+  />
 
 </odoo>
