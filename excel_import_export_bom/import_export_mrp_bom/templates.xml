@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
 
     <record id="mrp_bom_xlsx_template" model="xlsx.template">
@@ -39,7 +39,7 @@
     </record>
 
     <function model="xlsx.template" name="load_xlsx_template">
-        <value eval="[ref('mrp_bom_xlsx_template')]"/>
+        <value eval="[ref('mrp_bom_xlsx_template')]" />
     </function>
 
     <record id="mrp_production_bom_xlsx_template" model="xlsx.template">
@@ -74,7 +74,7 @@
     </record>
 
     <function model="xlsx.template" name="load_xlsx_template">
-        <value eval="[ref('mrp_production_bom_xlsx_template')]"/>
+        <value eval="[ref('mrp_production_bom_xlsx_template')]" />
     </function>
 
 </odoo>
