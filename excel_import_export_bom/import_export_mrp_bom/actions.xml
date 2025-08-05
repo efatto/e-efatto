@@ -1,46 +1,45 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
 
-    <act_window
-    id="action_mrp_bom_export_xlsx"
-    name="Export Excel"
-    res_model="export.xlsx.wizard"
-    src_model="mrp.bom"
-    view_mode="form"
-    target="new"
-    context="{
-          'template_domain': [('res_model', '=', 'mrp.bom'),
-                              ('fname', '=', 'mrp_bom.xlsx'),
-                              ('gname', '=', False)],
-        }"
-  />
-    <act_window
-    id="action_mrp_production_bom_export_xlsx"
-    name="Export Bom Excel"
-    res_model="export.xlsx.wizard"
-    src_model="mrp.production"
-    view_mode="form"
-    target="new"
-    context="{
-          'template_domain': [('res_model', '=', 'mrp.production'),
-                              ('fname', '=', 'mrp_production_bom.xlsx'),
-                              ('gname', '=', False)],
-        }"
-  />
-    <act_window
-    id="action_mrp_bom_import_xlsx"
-    name="Import Excel"
-    res_model="import.xlsx.wizard"
-    src_model="mrp.bom"
-    view_mode="form"
-    target="new"
-    context="{
-          'template_domain': [('res_model', '=', 'mrp.bom'),
-                              ('fname', '=', 'mrp_bom.xlsx'),
-                              ('gname', '=', False)],
-          'template_context': {},
-          'template_import_states': [],
-        }"
-  />
+    <record id="action_mrp_bom_export_xlsx" model="ir.actions.act_window">
+        <field name="name">Export Excel</field>
+        <field name="res_model">export.xlsx.wizard</field>
+        <field name="view_mode">form</field>
+      <field name="binding_model_id" ref="mrp.model_mrp_bom" />
+        <field name="target">new</field>
+        <field name="context">{
+            'template_domain': [('res_model', '=', 'mrp.bom'),
+                                ('fname', '=', 'mrp_bom.xlsx'),
+                                ('gname', '=', False)], }
+        </field>
+    </record>
+
+    <record id="action_mrp_production_bom_export_xlsx" model="ir.actions.act_window">
+        <field name="name">Export Bom Excel</field>
+        <field name="res_model">export.xlsx.wizard</field>
+        <field name="view_mode">form</field>
+      <field name="binding_model_id" ref="mrp.model_mrp_production" />
+        <field name="target">new</field>
+        <field name="context">{
+            'template_domain': [('res_model', '=', 'mrp.production'),
+                                ('fname', '=', 'mrp_production_bom.xlsx'),
+                                ('gname', '=', False)], }
+        </field>
+    </record>
+
+    <record id="action_mrp_bom_import_xlsx" model="ir.actions.act_window">
+        <field name="name">Import Excel</field>
+        <field name="res_model">import.xlsx.wizard</field>
+        <field name="view_mode">form</field>
+      <field name="binding_model_id" ref="mrp.model_mrp_bom" />
+        <field name="target">new</field>
+        <field name="context">{
+            'template_domain': [('res_model', '=', 'mrp.bom'),
+                                ('fname', '=', 'mrp_bom.xlsx'),
+                                ('gname', '=', False)],
+            'template_context': {},
+            'template_import_states': [], }
+        </field>
+    </record>
 
 </odoo>
