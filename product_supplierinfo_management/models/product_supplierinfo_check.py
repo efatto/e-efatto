@@ -1,5 +1,3 @@
-# Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 import time
 
 from odoo import _, api, fields, models
@@ -108,7 +106,6 @@ class ProductSupplierinfoCheck(models.Model):
         domain=[("enable_supplierinfo_management", "=", True)],
     )
 
-    @api.multi
     @api.depends("product_ids")
     def _compute_products_count(self):
         for check in self:
@@ -133,33 +130,28 @@ class ProductSupplierinfoCheck(models.Model):
                 check.invoice_recent_zero_product_ids
             )
 
-    @api.multi
     def copy_products_replenishment_cost_to_standard_price(self):
         res = self.with_context(
             copy_managed_replenishment_cost_to_standard_price=True,
         ).update_products_cost()
         return res
 
-    @api.multi
     def update_products_standard_price(self):
         res = self.with_context(
             update_standard_price=True,
         ).update_products_cost()
         return res
 
-    @api.multi
     def update_products_replenishment_cost(self):
         res = self.with_context(
             update_managed_replenishment_cost=True,
         ).update_products_cost()
         return res
 
-    @api.multi
     def check_products_supplierinfo(self):
         res = self.update_products_cost()
         return res
 
-    @api.multi
     def update_products_cost(self):
         for supplierinfo_check in self:
             domain = [("purchase_ok", "=", True)]
