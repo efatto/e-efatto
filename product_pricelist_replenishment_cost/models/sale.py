@@ -4,7 +4,7 @@ from odoo import api, fields, models
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    @api.depends('product_id', 'company_id', 'currency_id', 'product_uom')
+    @api.depends("product_id", "company_id", "currency_id", "product_uom")
     def _compute_purchase_price(self):
         super()._compute_purchase_price()
         for line in self:
@@ -26,9 +26,8 @@ class SaleOrderLine(models.Model):
             fake_price, rule_id = order.pricelist_id.with_context(
                 product_context
             ).get_product_price_rule(
-                product=product,
-                quantity=1,
-                partner=order.partner_id)
+                product=product, quantity=1, partner=order.partner_id
+            )
             rule = self.env["product.pricelist.item"].browse(rule_id)
             if rule and rule.base == "managed_replenishment_cost":
                 product_cost = product.managed_replenishment_cost
@@ -46,12 +45,16 @@ class SaleOrderLine(models.Model):
                         product_cost,
                         line.product_uom,
                     )
-                line.purchase_price = fro_cur._convert(
-                    from_amount=product_cost,
-                    to_currency=to_cur,
-                    company=line.company_id or self.env.company,
-                    date=line.order_id.date_order or fields.Date.today(),
-                    round=False,
-                ) if to_cur and product_cost else product_cost
+                line.purchase_price = (
+                    fro_cur._convert(
+                        from_amount=product_cost,
+                        to_currency=to_cur,
+                        company=line.company_id or self.env.company,
+                        date=line.order_id.date_order or fields.Date.today(),
+                        round=False,
+                    )
+                    if to_cur and product_cost
+                    else product_cost
+                )
                 # The pricelist may not have been set, therefore no conversion
                 # is needed because we don't know the target currency.
