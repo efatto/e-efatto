@@ -23,23 +23,19 @@
             </form>
         </field>
     </record>
-    <act_window
-    id="action_production_attachment_export"
-    name="Download ZIP components attachment"
-    res_model="wizard.mrp.bom.attachment.export"
-    src_model="mrp.production"
-    view_mode="form"
-    target="new"
-    key2="client_action_multi"
-  />
-    <act_window
-    id="action_bom_attachment_export"
-    name="Download ZIP components attachment"
-    res_model="wizard.mrp.bom.attachment.export"
-    src_model="mrp.bom"
-    view_mode="form"
-    target="new"
-    key2="client_action_multi"
-  />
+    <record model="ir.actions.act_window" id="action_production_attachment_export">
+        <field name="name">Download ZIP components attachment</field>
+        <field name="res_model">wizard.mrp.bom.attachment.export</field>
+        <field name="view_mode">form</field>
+        <field name="binding_model_id" ref="mrp.model_mrp_production" />
+        <field name="target">new</field>
+    </record>
+    <record model="ir.actions.act_window" id="action_bom_attachment_export">
+        <field name="name">Download ZIP components attachment</field>
+        <field name="res_model">wizard.mrp.bom.attachment.export</field>
+        <field name="view_mode">form</field>
+        <field name="binding_model_id" ref="mrp.model_mrp_bom" />
+        <field name="target">new</field>
+    </record>
 
 </odoo>

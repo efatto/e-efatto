@@ -1,6 +1,3 @@
-# Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-
 import base64
 import io
 import zipfile
@@ -61,7 +58,6 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
         string="Attachment categories with OR logic",
     )
 
-    @api.multi
     def export_zip(self):
         self.ensure_one()
         product_ids = self._get_product_ids()
@@ -80,7 +76,7 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
         if not attachments:
             raise UserError(_("No attachment found!"))
         for att in attachments:
-            if not att.datas or not att.datas_fname:
+            if not att.datas or not att.name:
                 raise UserError(
                     _("Attachment %s does not have file") % att.display_name
                 )
@@ -88,7 +84,7 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
         fp = io.BytesIO()
         with zipfile.ZipFile(fp, mode="w") as zf:
             for att in attachments:
-                zf.writestr(att.datas_fname, base64.b64decode(att.datas))
+                zf.writestr(att.name, base64.b64decode(att.datas))
         fp.seek(0)
         data = fp.read()
         attach_vals = {
