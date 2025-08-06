@@ -256,7 +256,6 @@
     <record model="ir.actions.act_window" id="action_product_supplierinfo_check">
         <field name="name">Product Supplierinfo Check</field>
         <field name="res_model">product.supplierinfo.check</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="view_product_supplierinfo_check_tree" />
     </record>

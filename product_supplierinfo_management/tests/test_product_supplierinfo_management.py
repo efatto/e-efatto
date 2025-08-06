@@ -9,9 +9,11 @@ from odoo.tools.date_utils import date, relativedelta
 class TestProductManagedReplenishmentCost(SavepointCase):
     @staticmethod
     def _create_pricelist_item(pricelist, vals):
-        item = pricelist.create(vals)
-        item._convert_to_write(item._cache)
-        return item
+        pricelist_form = Form(pricelist)
+        with pricelist_form.item_ids.new() as item:
+            for val in vals:
+                item[val] = vals[val]
+        pricelist_form.save()
 
     @classmethod
     def setUpClass(cls):
@@ -139,41 +141,36 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         cls.pricelist_item = cls.env["product.pricelist.item"]
         for vals in [
             {
-                "pricelist_id": cls.pricelist.id,
                 "applied_on": "2_product_category",
-                "categ_id": cls.sub_child_expense_categ.id,
+                "categ_id": cls.sub_child_expense_categ,
                 "compute_price": "formula",
                 "base": "standard_price",
                 "price_discount": -40.0,
             },
             {
-                "pricelist_id": cls.pricelist.id,
                 "applied_on": "2_product_category",
-                "categ_id": cls.sub_child_expense_categ.id,
+                "categ_id": cls.sub_child_expense_categ,
                 "compute_price": "formula",
                 "base": "standard_price",
                 "price_discount": -30.0,
             },
             {
-                "pricelist_id": cls.pricelist.id,
                 "applied_on": "2_product_category",
-                "categ_id": cls.sub_child_expense_categ.id,
+                "categ_id": cls.sub_child_expense_categ,
                 "compute_price": "formula",
                 "base": "list_price",
                 "price_discount": -20.0,
             },
             {
-                "pricelist_id": cls.pricelist.id,
                 "applied_on": "2_product_category",
-                "categ_id": cls.child_expense_categ.id,
+                "categ_id": cls.child_expense_categ,
                 "compute_price": "formula",
                 "base": "standard_price",
                 "price_discount": -10.0,
             },
             {
-                "pricelist_id": cls.pricelist.id,
                 "applied_on": "2_product_category",
-                "categ_id": cls.child_expense_categ.id,
+                "categ_id": cls.child_expense_categ,
                 "compute_price": "formula",
                 "base": "standard_price",
                 "price_discount": -15.0,
@@ -181,16 +178,15 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 "date_end": today + relativedelta(days=-60),
             },
             {
-                "pricelist_id": cls.pricelist.id,
                 "applied_on": "2_product_category",
-                "categ_id": cls.child_expense_categ.id,
+                "categ_id": cls.child_expense_categ,
                 "compute_price": "formula",
                 "base": "list_price",
                 "price_discount": -20.0,
                 "date_end": today + relativedelta(days=-91),
             },
         ]:
-            cls._create_pricelist_item(cls.pricelist_item, vals=vals)
+            cls._create_pricelist_item(cls.pricelist, vals=vals)
         cls.pricelist_parent = cls.env["product.pricelist"].create(
             [
                 {
@@ -201,14 +197,13 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         )
         for vals in [
             {
-                "pricelist_id": cls.pricelist_parent.id,
                 "applied_on": "2_product_category",
                 "compute_price": "formula",
                 "base": "standard_price",
                 "price_discount": -20.0,
             },
         ]:
-            cls._create_pricelist_item(cls.pricelist_item, vals=vals)
+            cls._create_pricelist_item(cls.pricelist_parent, vals=vals)
         cls.pricelist_parent.item_ids.filtered(
             lambda x: x.applied_on == "3_global"
         ).write(
@@ -223,28 +218,26 @@ class TestProductManagedReplenishmentCost(SavepointCase):
     def test_00_check_pricelist(self):
         with self.assertRaises(ValidationError):
             vals = {
-                "pricelist_id": self.pricelist.id,
                 "applied_on": "1_product",
-                "product_tmpl_id": self.product2.product_tmpl_id.id,
+                "product_tmpl_id": self.product2.product_tmpl_id,
                 "compute_price": "fixed",
                 "fixed_price": 150,
                 "min_quantity": 1,
             }
-            self._create_pricelist_item(self.pricelist_item, vals=vals)
+            self._create_pricelist_item(self.pricelist, vals=vals)
 
     def test_01_today(self):
         today = date.today()
         day_check_validity = today
         with self.assertRaises(ValidationError):
             vals = {
-                "pricelist_id": self.pricelist.id,
                 "applied_on": "1_product",
-                "product_tmpl_id": self.product2.product_tmpl_id.id,
+                "product_tmpl_id": self.product2.product_tmpl_id,
                 "compute_price": "fixed",
                 "fixed_price": 150,
                 "min_quantity": 1,
             }
-            self._create_pricelist_item(self.pricelist_item, vals=vals)
+            self._create_pricelist_item(self.pricelist, vals=vals)
         self.execute_test(today, day_check_validity)
 
     def test_02_65_days_ago(self):
