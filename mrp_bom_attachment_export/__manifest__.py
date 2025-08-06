@@ -1,22 +1,20 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
-    'name': 'Mrp download Zip attachment',
-    'version': '12.0.1.0.0',
-    'category': 'Manufacture',
-    'license': 'AGPL-3',
-    'description': """
-    Download zip of attachment of components from production order or bom.
-    """,
-    'author': 'Sergio Corato',
-    'website': 'https://github.com/efatto/e-efatto',
-    'depends': [
-        'attachment_category',
-        'mrp',
-        'product_attachments_button',
+    "name": "Mrp download Zip attachment",
+    "version": "14.0.1.0.0",
+    "category": "Manufacture",
+    "license": "AGPL-3",
+    "summary": "Download zip of attachment of components from production order or bom",
+    "author": "Sergio Corato",
+    "website": "https://github.com/efatto/e-efatto",
+    "depends": [
+        "attachment_category",
+        "mrp",
+        "product_attachments_button",
     ],
-    'data': [
-        'wizard/mrp_bom_attachment_export.xml',
+    "data": [
+        "wizard/mrp_bom_attachment_export.xml",
     ],
-    'installable': True,
+    "installable": True,
 }
