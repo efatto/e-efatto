@@ -26,7 +26,7 @@
         >{'invisible': [('enable_supplierinfo_management', '!=', False)]}</attribute>
             </field>
             <xpath
-        expr="//field[@name='base']/following-sibling::label"
+        expr="//group[@name='pricelist_rule_advanced']/label"
         position="attributes"
       >
                 <attribute
@@ -34,7 +34,7 @@
         >{'invisible': [('enable_supplierinfo_management', '!=', False)]}</attribute>
             </xpath>
             <xpath
-        expr="//field[@name='base']/following-sibling::div"
+        expr="//group[@name='pricelist_rule_advanced']/div"
         position="attributes"
       >
                 <attribute
