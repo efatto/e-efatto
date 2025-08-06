@@ -1,9 +1,6 @@
-# Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-
 import logging
 
-from odoo import api, fields, models
+from odoo import fields, models
 from odoo.tools.float_utils import float_compare
 
 _logger = logging.getLogger(__name__)
@@ -30,11 +27,11 @@ class ProductProduct(models.Model):
     )
 
     last_supplier_invoice_line_id = fields.Many2one(
-        comodel_name="account.invoice.line", string="Last Invoice Line"
+        comodel_name="account.move.line", string="Last Invoice Line"
     )
     last_supplier_invoice_id = fields.Many2one(
-        comodel_name="account.invoice",
-        related="last_supplier_invoice_line_id.invoice_id",
+        comodel_name="account.move",
+        related="last_supplier_invoice_line_id.move_id",
         string="Last Invoice",
     )
     last_supplier_invoice_price = fields.Float(
@@ -50,13 +47,12 @@ class ProductProduct(models.Model):
         related="last_supplier_invoice_line_id.discount3"
     )
     last_supplier_invoice_date = fields.Date(
-        related="last_supplier_invoice_id.date_invoice"
+        related="last_supplier_invoice_id.invoice_date"
     )
     last_supplier_invoice_partner_id = fields.Many2one(
         related="last_supplier_invoice_id.partner_id", string="Last Invoice Supplier"
     )
 
-    @api.multi
     def set_product_last_purchase(self, order_id=False):
         """Get last purchase price, last purchase date and last supplier"""
         PurchaseOrderLine = self.env["purchase.order.line"]
@@ -91,10 +87,9 @@ class ProductProduct(models.Model):
             # Set related product template values
             product.product_tmpl_id.set_product_template_last_purchase(last_line)
 
-    @api.multi
     def set_product_last_supplier_invoice(self, invoice_id=False):
         """Get last supplier invoice price, last invoice date and last supplier"""
-        invoice_line_obj = self.env["account.invoice.line"]
+        invoice_line_obj = self.env["account.move.line"]
         if not self.check_access_rights("write", raise_exception=False):
             return
         for product in self:
@@ -102,17 +97,17 @@ class ProductProduct(models.Model):
             # Check if Invoice ID was passed, to speed up the search
             if invoice_id:
                 lines = invoice_line_obj.search(
-                    [("invoice_id", "=", invoice_id), ("product_id", "=", product.id)],
+                    [("move_id", "=", invoice_id), ("product_id", "=", product.id)],
                     limit=1,
                 )
             else:
                 lines = invoice_line_obj.search(
                     [
                         ("product_id", "=", product.id),
-                        ("invoice_type", "=", "in_invoice"),
+                        ("move_type", "=", "in_invoice"),
                         ("invoice_state", "not in", ["draft", "cancel"]),
                     ]
-                ).sorted(key=lambda l: l.invoice_id.date_invoice, reverse=True)
+                ).sorted(key=lambda l: l.move_id.invoice_date, reverse=True)
 
             if lines:
                 # Get most recent Invoice Line
@@ -131,8 +126,7 @@ class ProductProduct(models.Model):
                 last_line
             )
 
-    @api.multi
-    def do_update_managed_replenishment_cost(
+    def do_update_managed_replenishment_cost(  # noqa C901
         self,
         date_obsolete_supplierinfo_price=False,
         date_validity_supplierinfo=False,
@@ -353,7 +347,6 @@ class ProductProduct(models.Model):
             products_price_supplier_invoice_recent_zero,
         )
 
-    @api.multi
     def _update_prices(
         self,
         price,
@@ -369,7 +362,6 @@ class ProductProduct(models.Model):
         if copy_managed_replenishment_cost_to_standard_price:
             self.standard_price = self.managed_replenishment_cost
 
-    @api.multi
     def _get_price_unit_from_pricelist(self, pricelist, price, qty, partner, date):
         # search applicable rule and use to compute price
         self.ensure_one()
@@ -405,11 +397,11 @@ class ProductTemplate(models.Model):
     )
 
     last_supplier_invoice_line_id = fields.Many2one(
-        comodel_name="account.invoice.line", string="Last Invoice Line"
+        comodel_name="account.move.line", string="Last Invoice Line"
     )
     last_supplier_invoice_id = fields.Many2one(
-        comodel_name="account.invoice",
-        related="last_supplier_invoice_line_id.invoice_id",
+        comodel_name="account.move",
+        related="last_supplier_invoice_line_id.move_id",
         string="Last Invoice",
     )
     last_supplier_invoice_price = fields.Float(
@@ -425,7 +417,7 @@ class ProductTemplate(models.Model):
         related="last_supplier_invoice_line_id.discount3"
     )
     last_supplier_invoice_date = fields.Date(
-        related="last_supplier_invoice_id.date_invoice"
+        related="last_supplier_invoice_id.invoice_date"
     )
     last_supplier_invoice_partner_id = fields.Many2one(
         related="last_supplier_invoice_id.partner_id"

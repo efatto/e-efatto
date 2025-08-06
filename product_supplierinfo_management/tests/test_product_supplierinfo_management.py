@@ -1,6 +1,7 @@
 import time
 
 from odoo.exceptions import ValidationError
+from odoo.tests import Form
 from odoo.tests.common import SavepointCase
 from odoo.tools.date_utils import date, relativedelta
 
@@ -11,22 +12,6 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         item = pricelist.create(vals)
         item._convert_to_write(item._cache)
         return item
-
-    def _create_purchase_order_line(self, order, product, qty, price):
-        vals = {
-            "order_id": order.id,
-            "product_id": product.id,
-            "product_qty": qty,
-            "product_uom": product.uom_po_id.id,
-            "price_unit": price,
-            "name": product.name,
-            "date_planned": date.today(),
-        }
-        line = self.env["purchase.order.line"].create(vals)
-        line.onchange_product_id()
-        line._convert_to_write(line._cache)
-        line.price_unit = price
-        return line
 
     @classmethod
     def setUpClass(cls):
@@ -311,10 +296,16 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         #####
         # wait 2 seconds to ensure purchase date is later than seller price write date
         time.sleep(2)
-        purchase_order = self.env["purchase.order"].create(
-            {"partner_id": self.vendor.id}
-        )
-        self._create_purchase_order_line(purchase_order, self.product, 5.0, 77.55)
+        purchase_order_form = Form(self.env["purchase.order"])
+        purchase_order_form.partner_id = self.vendor
+        with purchase_order_form.order_line.new() as purchase_order_line_form:
+            purchase_order_line_form.product_id = self.product
+            purchase_order_line_form.product_qty = 5.0
+            purchase_order_line_form.price_unit = 77.55
+            purchase_order_line_form.uom_po_id = self.product.uom_po_id
+            purchase_order_line_form.name = self.product.name
+            purchase_order_line_form.date_planned = date.today()
+        purchase_order = purchase_order_form.save()
         purchase_order.button_approve()
         check.update_products_replenishment_cost()
         self.assertAlmostEqual(

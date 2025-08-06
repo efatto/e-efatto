@@ -2,25 +2,23 @@
 # Copyright 2019 Eficent Business and IT Consulting Services S.L.
 #   (http://www.eficent.com)
 
-from odoo import api, fields, models
+from odoo import fields, models
 
 
 class AccountInvoice(models.Model):
-    _inherit = "account.invoice"
+    _inherit = "account.move"
 
-    @api.multi
-    def action_invoice_open(self):
-        res = super().action_invoice_open()
-        for rec in self.filtered(lambda inv: inv.type == "in_invoice"):
+    def action_post(self):
+        res = super().action_post()
+        for rec in self.filtered(lambda inv: inv.move_type == "in_invoice"):
             rec.invoice_line_ids.mapped("product_id").set_product_last_supplier_invoice(
                 rec.id
             )
         return res
 
-    @api.multi
-    def action_invoice_cancel(self):
-        res = super().action_invoice_cancel()
-        for rec in self.filtered(lambda inv: inv.type == "in_invoice"):
+    def button_cancel(self):
+        res = super().button_cancel()
+        for rec in self.filtered(lambda inv: inv.move_type == "in_invoice"):
             rec.invoice_line_ids.mapped(
                 "product_id"
             ).set_product_last_supplier_invoice()
@@ -28,8 +26,8 @@ class AccountInvoice(models.Model):
 
 
 class AccountInvoiceLine(models.Model):
-    _inherit = "account.invoice.line"
+    _inherit = "account.move.line"
 
     invoice_state = fields.Selection(
-        related="invoice_id.state", store=True, readonly=False
+        related="move_id.state", store=True, readonly=False
     )
