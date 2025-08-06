@@ -14,6 +14,7 @@
         "product_attachments_button",
     ],
     "data": [
+        "security/ir.model.access.csv",
         "wizard/mrp_bom_attachment_export.xml",
     ],
     "installable": True,
