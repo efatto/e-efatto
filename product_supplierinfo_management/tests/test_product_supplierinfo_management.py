@@ -12,7 +12,8 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         pricelist_form = Form(pricelist)
         with pricelist_form.item_ids.new() as item:
             for val in vals:
-                item[val] = vals[val]
+                if hasattr(item, val):
+                    setattr(item, val, vals[val])
         pricelist_form.save()
 
     @classmethod
@@ -20,6 +21,10 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         super().setUpClass()
         cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
         cls.user_model = cls.env["res.users"].with_context(no_reset_password=True)
+        config = Form(cls.env["res.config.settings"])
+        config.product_pricelist_setting = "advanced"
+        config = config.save()
+        config.execute()
         cls.partner = cls.env.ref("base.res_partner_2")
         cls.vendor = cls.env.ref("base.res_partner_1")
         cls.vendor1 = cls.env.ref("base.res_partner_3")
@@ -198,6 +203,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         for vals in [
             {
                 "applied_on": "2_product_category",
+                "categ_id": cls.expense_categ,  # todo check if there was the default here
                 "compute_price": "formula",
                 "base": "standard_price",
                 "price_discount": -20.0,
@@ -295,7 +301,6 @@ class TestProductManagedReplenishmentCost(SavepointCase):
             purchase_order_line_form.product_id = self.product
             purchase_order_line_form.product_qty = 5.0
             purchase_order_line_form.price_unit = 77.55
-            purchase_order_line_form.uom_po_id = self.product.uom_po_id
             purchase_order_line_form.name = self.product.name
             purchase_order_line_form.date_planned = date.today()
         purchase_order = purchase_order_form.save()
