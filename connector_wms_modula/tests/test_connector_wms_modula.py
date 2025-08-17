@@ -1,12 +1,11 @@
 import os
 
 from odoo import _, fields
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 from odoo.tests import tagged
 from odoo.tests.common import Form
 from odoo.tools import relativedelta
 
-from odoo.addons.base_external_dbsource.exceptions import ConnectionSuccessError
 from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
 from odoo.addons.connector_whs.tests.test_connector_wms import CommonConnectorWMS
 
@@ -34,8 +33,8 @@ class TestConnectorWmsModula(CommonConnectorWMS):
                     "conn_string_sandbox": conn_string,
                     "connector": "mssql",  # noqa
                     "location_id": self.env.ref(
-                        "stock.stock_location_stock"
-                    ).id,  # noqa
+                        "stock.stock_location_stock"  # noqa
+                    ).id,
                 }
             )
         self.dbsource = dbsource
@@ -44,6 +43,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
                 ("company_id", "=", self.env.user.company_id.id),
             ]
         )
+        self.warehouse = self.warehouse.with_context(do_not_check_quant=True)
         self.step_delivery = ""
         self._clean_all()
 
@@ -261,7 +261,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             )
 
     def _test_00_complete_picking_from_sale(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         self._clean_all()
         order_form1 = Form(self.env["sale.order"])
@@ -355,7 +355,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertEqual(picking1.state, "assigned")
 
     def _test_01_partial_picking_from_sale(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         self._clean_all()
         order_form1 = Form(self.env["sale.order"])
@@ -419,12 +419,9 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertEqual(picking.state, "assigned")
 
         # simulate user partial validate of picking and check backorder exist
-        backorder_wiz_id = picking.button_validate()["res_id"]
-        backorder_wiz = self.env["stock.backorder.confirmation"].browse(
-            backorder_wiz_id
-        )
+        res = picking.button_validate()
+        Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
         # Create backorder: 1 WMS list of 2 is partially processed
-        backorder_wiz.process()
         if self.step_delivery == "one":
             backorder_picking = (
                 order1.picking_ids.filtered(lambda x: not x.state == "cancel") - picking
@@ -460,7 +457,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertEqual(backorder_picking.move_lines[0].state, "assigned")
 
     def _test_02_partial_picking_partial_available_from_sale(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         self._clean_all()
         order_form1 = Form(self.env["sale.order"])
@@ -547,10 +544,10 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertEqual(picking.state, "assigned")
 
         # simulate user partial validate of picking and check backorder exist
-        backorder_wiz_id = picking.button_validate()["res_id"]
-        backorder_wiz = self.env["stock.backorder.confirmation"].browse(
-            backorder_wiz_id
-        )
+        res = picking.button_validate()
+        backorder_wiz = Form(
+            self.env[res["res_model"]].with_context(res["context"])
+        ).save()
         # User cannot create backorder if WMS list is not processed on WMS system
         # with self.assertRaises(UserError):
         # TODO: check backorder is created for residual
@@ -597,7 +594,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertEqual(backorder_picking.state, "done")
 
     def _test_03_partial_picking_from_sale(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         self._clean_all()
         order_form1 = Form(self.env["sale.order"])
@@ -675,10 +672,10 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertEqual(picking.state, "assigned")
 
         # simulate user partial validate of picking and check backorder exist
-        backorder_wiz_id = picking.button_validate()["res_id"]
-        backorder_wiz = self.env["stock.backorder.confirmation"].browse(
-            backorder_wiz_id
-        )
+        res = picking.button_validate()
+        backorder_wiz = Form(
+            self.env[res["res_model"]].with_context(res["context"])
+        ).save()
         # User must set correctly quantity as set by WMS user, ignoring qty set
         # different by Odoo or a user, so set a qty different and check that error is
         # raised without intervent
@@ -730,7 +727,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         backorder_picking.action_assign()
 
     def _test_04_unlink_sale_order(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         self._clean_all()
         order_form1 = Form(self.env["sale.order"])
@@ -848,7 +845,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             self.assertEqual(new_whs_list.qta, 6)
 
     def _test_06_purchase(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         self._clean_all()
         purchase_form = Form(self.env["purchase.order"])
@@ -899,11 +896,9 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         picking = purchase.picking_ids[0]
         picking.action_assign()
         self.assertEqual(picking.state, "assigned")
-        backorder_wiz_id = picking.button_validate()["res_id"]
-        backorder_wiz = self.env["stock.backorder.confirmation"].browse(
-            backorder_wiz_id
-        )
-        backorder_wiz.process()
+        res = picking.button_validate()
+        wiz = Form(self.env[res["res_model"]].with_context(res["context"])).save()
+        wiz.process()
         self.assertEqual(picking.state, "done")
 
         # check back picking is waiting as waiting for WMS work
@@ -999,7 +994,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertEqual(str(result_liste[0]), "[(Decimal('7.000'),)]")
 
     def _test_08_mrp_partial_from_sale(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         self._clean_all()
         order_form = Form(self.env["sale.order"])
@@ -1017,22 +1012,18 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertEqual(order.state, "sale")
         man_order = self.env["mrp.production"].search([("origin", "ilike", order.name)])
         self.assertTrue(man_order)
-        man_order.button_plan()
+        man_order.action_confirm()
         self.assertEqual(man_order.state, "confirmed")
-        produce_form = Form(
-            self.env["mrp.product.produce"].with_context(
-                active_id=man_order.id,
-                active_ids=[man_order.id],
-            )
-        )
-        produce_form.product_qty = 5
-        wizard = produce_form.save()
-        wizard.do_produce()
+        man_order.qty_producing = 5
+        self._auto_fill_consumed_qty(man_order.move_raw_ids)
+        self.assertTrue(man_order.move_raw_ids.move_line_ids)
+        # self.assertTrue(man_order.move_finished_ids.move_line_ids)
+        # self.assertEqual(
+        #     man_order.move_finished_ids.move_line_ids.mapped("state"), ["confirmed"]
+        # )
+        man_order.button_send_to_whs()
+        self.assertTrue(man_order.sent_to_whs)
         self.assertTrue(man_order.mapped("move_raw_ids.move_line_ids"))
-        self.assertTrue(man_order.move_finished_ids.move_line_ids)
-        self.assertEqual(
-            man_order.move_finished_ids.move_line_ids.mapped("state"), ["confirmed"]
-        )
         # check whs list are added: 3 components and 1 finished product
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
@@ -1068,32 +1059,37 @@ class TestConnectorWmsModula(CommonConnectorWMS):
 
         # this update Odoo from WMS
         self.dbsource.whs_insert_read_and_synchronize_list()
-        man_order.with_context(test_connector_whs=True).button_mark_done()
-        produce_form = Form(
-            self.env["mrp.product.produce"].with_context(
-                active_id=man_order.id,
-                active_ids=[man_order.id],
-            )
+        action = man_order.with_context(test_connector_whs=True).button_mark_done()
+        backorder_form = Form(
+            self.env["mrp.production.backorder"].with_context(**action["context"])
         )
-        produce_form.product_qty = 3.0
-        wizard = produce_form.save()
-        wizard.do_produce()
+        backorder_form.save().action_backorder()
+        self.assertEqual(len(man_order.procurement_group_id.mrp_production_ids), 2)
         # MO backorder exists only in >= 14.0
-        # self.assertEqual(len(
-        #     self.env["mrp.production"].search([
-        #         ("procurement_group_id", "=", man_order.procurement_group_id.id),
-        #         ])
-        # ), 2)
-        # self.assertEqual(man_order.state, "done")
-        #
-        # mo_backorder = man_order.procurement_group_id.mrp_production_ids[-1]
-        # self.assertEqual(mo_backorder.state, "confirmed")
-        # with self.assertRaises(UserError):
-        #     # check production ore cannot be done without WMS lists
-        #     mo_backorder.with_context(test_connector_whs=True).button_mark_done()
+        self.assertEqual(
+            len(
+                self.env["mrp.production"].search(
+                    [
+                        (
+                            "procurement_group_id",
+                            "=",
+                            man_order.procurement_group_id.id,
+                        ),
+                    ]
+                )
+            ),
+            2,
+        )
+        self.assertEqual(man_order.state, "done")
+
+        mo_backorder = man_order.procurement_group_id.mrp_production_ids[-1]
+        self.assertEqual(mo_backorder.state, "confirmed")
+        with self.assertRaises(UserError):
+            # check production order cannot be done without WMS lists
+            mo_backorder.with_context(test_connector_whs=True).button_mark_done()
 
     def _test_09_mrp_total_from_sale(self):
-        with self.assertRaises(ConnectionSuccessError):
+        with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         self._clean_all()
         order_form = Form(self.env["sale.order"])
@@ -1113,15 +1109,8 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertTrue(man_order)
         man_order.button_plan()
         self.assertEqual(man_order.state, "confirmed")
-        produce_form = Form(
-            self.env["mrp.product.produce"].with_context(
-                active_id=man_order.id,
-                active_ids=[man_order.id],
-            )
-        )
-        produce_form.product_qty = 20
-        wizard = produce_form.save()
-        wizard.do_produce()
+        man_order.qty_producing = 20
+        self._auto_fill_consumed_qty(man_order.move_raw_ids)
         self.assertTrue(man_order.mapped("move_raw_ids.move_line_ids"))
         self.assertTrue(man_order.move_finished_ids.move_line_ids)
         self.assertEqual(
