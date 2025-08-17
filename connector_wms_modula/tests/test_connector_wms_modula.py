@@ -1,13 +1,16 @@
 import os
-from odoo import fields, _
-from odoo.addons.base_external_dbsource.exceptions import ConnectionSuccessError
+
+from odoo import _, fields
+from odoo.exceptions import UserError
 from odoo.tests import tagged
 from odoo.tests.common import Form
-from odoo.addons.connector_whs.tests.test_connector_wms import CommonConnectorWMS
-from ..models.hyddemo_whs_liste import tipo_operazione_dict
-from odoo.exceptions import UserError
 from odoo.tools import relativedelta
+
+from odoo.addons.base_external_dbsource.exceptions import ConnectionSuccessError
 from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
+from odoo.addons.connector_whs.tests.test_connector_wms import CommonConnectorWMS
+
+from ..models.hyddemo_whs_liste import tipo_operazione_dict
 
 
 @tagged("-standard", "test_wms")
@@ -18,66 +21,105 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         dbsource = self.dbsource_model.search([("name", "=", dbsource_name)])
         if not dbsource:
             conn_file = os.path.join(
-                os.path.expanduser('~'),
-                "connection_wms_modula.txt"
+                os.path.expanduser("~"), "connection_wms_modula.txt"
             )
             if not os.path.isfile(conn_file):
                 raise UserError(_("Missing connection string!"))
-            with open(conn_file, 'r') as file:
-                conn_string = file.read().replace('\n', '')
+            with open(conn_file, "r") as file:
+                conn_string = file.read().replace("\n", "")
             # Enable WMS on picking types of Your Company only
-            dbsource = self.dbsource_model.create({
-                'name': dbsource_name,
-                'conn_string_sandbox': conn_string,
-                'connector': 'mssql',  # noqa
-                'location_id': self.env.ref('stock.stock_location_stock').id,  # noqa
-            })
+            dbsource = self.dbsource_model.create(
+                {
+                    "name": dbsource_name,
+                    "conn_string_sandbox": conn_string,
+                    "connector": "mssql",  # noqa
+                    "location_id": self.env.ref(
+                        "stock.stock_location_stock"
+                    ).id,  # noqa
+                }
+            )
         self.dbsource = dbsource
-        self.warehouse = self.env["stock.warehouse"].search([
-            ("company_id", "=", self.env.user.company_id.id),
-        ])
+        self.warehouse = self.env["stock.warehouse"].search(
+            [
+                ("company_id", "=", self.env.user.company_id.id),
+            ]
+        )
         self.step_delivery = ""
         self._clean_all()
 
     def _configure_1_step_delivery(self):
         self.warehouse.delivery_steps = "ship_only"
         self.warehouse.manufacture_steps = "mrp_one_step"
-        self.dbsource.write({
-            'stock_picking_type_ids': [
-                (6, 0, self.env['stock.picking.type'].search([
-                    ('warehouse_id.company_id', '=', self.env.user.company_id.id),
-                ]).ids)
-            ]
-        })
-        self.step_delivery = 'one'
+        self.dbsource.write(
+            {
+                "stock_picking_type_ids": [
+                    (
+                        6,
+                        0,
+                        self.env["stock.picking.type"]
+                        .search(
+                            [
+                                (
+                                    "warehouse_id.company_id",
+                                    "=",
+                                    self.env.user.company_id.id,
+                                ),
+                            ]
+                        )
+                        .ids,
+                    )
+                ]
+            }
+        )
+        self.step_delivery = "one"
 
     def _configure_2_steps_delivery(self):
         self.warehouse.delivery_steps = "pick_ship"
         self.warehouse.manufacture_steps = "pbm"
-        self.dbsource.write({
-            'stock_picking_type_ids': [
-                (6, 0, self.env['stock.picking.type'].search([
-                    ('warehouse_id.company_id', '=', self.env.user.company_id.id),
-                    ('id', '!=', self.warehouse.out_type_id.id),
-                ]).ids)
-            ]
-        })
-        self.step_delivery = 'two'
+        self.dbsource.write(
+            {
+                "stock_picking_type_ids": [
+                    (
+                        6,
+                        0,
+                        self.env["stock.picking.type"]
+                        .search(
+                            [
+                                (
+                                    "warehouse_id.company_id",
+                                    "=",
+                                    self.env.user.company_id.id,
+                                ),
+                                ("id", "!=", self.warehouse.out_type_id.id),
+                            ]
+                        )
+                        .ids,
+                    )
+                ]
+            }
+        )
+        self.step_delivery = "two"
 
     def _clean_all(self):
         self.dbsource.with_context(no_return=True).execute_mssql(
             sqlquery=clean_sql_text("DELETE FROM IMP_ORDINI_RIGHE"),
-            sqlparams=None, metadata=None
+            sqlparams=None,
+            metadata=None,
         )
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=clean_sql_text("DELETE FROM IMP_ORDINI"), sqlparams=None, metadata=None
+            sqlquery=clean_sql_text("DELETE FROM IMP_ORDINI"),
+            sqlparams=None,
+            metadata=None,
         )
         self.dbsource.with_context(no_return=True).execute_mssql(
             sqlquery=clean_sql_text("DELETE FROM EXP_ORDINI_RIGHE"),
-            sqlparams=None, metadata=None
+            sqlparams=None,
+            metadata=None,
         )
         self.dbsource.with_context(no_return=True).execute_mssql(
-            sqlquery=clean_sql_text("DELETE FROM EXP_ORDINI"), sqlparams=None, metadata=None
+            sqlquery=clean_sql_text("DELETE FROM EXP_ORDINI"),
+            sqlparams=None,
+            metadata=None,
         )
 
     def _select_wms_liste(self, wms_list, db_type="EXP"):
@@ -87,9 +129,8 @@ class TestConnectorWmsModula(CommonConnectorWMS):
                 f"FROM {db_type}_ORDINI_RIGHE WHERE "
                 "RIG_ORDINE=:RIG_ORDINE AND RIG_HOSTINF=:RIG_HOSTINF"
             ),
-            sqlparams=dict(
-                RIG_ORDINE=wms_list.num_lista, RIG_HOSTINF=wms_list.riga),
-            metadata=None
+            sqlparams=dict(RIG_ORDINE=wms_list.num_lista, RIG_HOSTINF=wms_list.riga),
+            metadata=None,
         )
 
     def _check_cancel_workflow(self, picking, list_len):
@@ -98,21 +139,22 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         picking when this is cancelled, without re-creating a new one.
         """
         whs_lists = picking.mapped("move_lines.whs_list_ids")
-        num_liste = whs_lists.mapped('num_lista')
+        num_liste = whs_lists.mapped("num_lista")
         self.assertEqual(len(whs_lists), list_len)
         self.assertEqual(set(whs_lists.mapped("stato")), {"2"})
-        self.assertEqual(set(whs_lists.mapped('qtamov')), {0.0})
+        self.assertEqual(set(whs_lists.mapped("qtamov")), {0.0})
         picking.action_assign()
         self.assertEqual(picking.state, "assigned")
         picking.action_cancel()
         # check WMS lists are deleted
-        self.assertEqual(picking.state, 'cancel')
+        self.assertEqual(picking.state, "cancel")
         self.assertFalse(picking.mapped("move_lines.whs_list_ids"))
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records1 = self.dbsource.execute_mssql(
             sqlquery=clean_sql_text(
                 "SELECT RIG_ORDINE, RIG_HOSTINF FROM EXP_ORDINI_RIGHE "
-                "WHERE RIG_ORDINE IN :RIG_ORDINE"),
+                "WHERE RIG_ORDINE IN :RIG_ORDINE"
+            ),
             sqlparams=dict(RIG_ORDINE=num_liste),
             metadata=None,
         )
@@ -131,13 +173,14 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         whs_records2 = self.dbsource.execute_mssql(
             sqlquery=clean_sql_text(
                 "SELECT RIG_ORDINE, RIG_HOSTINF FROM IMP_ORDINI_RIGHE "
-                "WHERE RIG_ORDINE IN :RIG_ORDINE"),
-            sqlparams=dict(
-                RIG_ORDINE=valid_whs_lists.mapped("num_lista")),
+                "WHERE RIG_ORDINE IN :RIG_ORDINE"
+            ),
+            sqlparams=dict(RIG_ORDINE=valid_whs_lists.mapped("num_lista")),
             metadata=None,
         )[0]
-        self.assertEqual(len(whs_records2), list_len,
-                         "There must exist 2 valid WMS records!")
+        self.assertEqual(
+            len(whs_records2), list_len, "There must exist 2 valid WMS records!"
+        )
         return valid_whs_lists
 
     def _execute_select_all_valid_host_liste(self):
@@ -146,7 +189,8 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         res = self.dbsource.execute_mssql(
             sqlquery=clean_sql_text(
                 "SELECT RIG_ORDINE, RIG_HOSTINF, RIG_ARTICOLO, RIG_QTAR "
-                "FROM IMP_ORDINI_RIGHE WHERE RIG_QTAR!=:RIG_QTAR"),
+                "FROM IMP_ORDINI_RIGHE WHERE RIG_QTAR!=:RIG_QTAR"
+            ),
             sqlparams=dict(RIG_QTAR=0),
             metadata=None,
         )
@@ -163,17 +207,22 @@ class TestConnectorWmsModula(CommonConnectorWMS):
                 sqlquery=clean_sql_text(
                     "INSERT INTO EXP_ORDINI "
                     "(ORD_ORDINE, ORD_TIPOOP, ORD_DES) VALUES "
-                    "(:ORD_ORDINE, :ORD_TIPOOP, :ORD_DES)"),
+                    "(:ORD_ORDINE, :ORD_TIPOOP, :ORD_DES)"
+                ),
                 sqlparams=dict(
                     ORD_ORDINE=num_lista,
                     ORD_TIPOOP=tipo_operazione_dict[current_whs_lists[0].tipo],
-                    ORD_DES="%s - %s"[:50] % (
+                    ORD_DES="%s - %s"[:50]
+                    % (
                         current_whs_lists[0].riferimento
-                        if current_whs_lists[0].riferimento else '',
+                        if current_whs_lists[0].riferimento
+                        else "",
                         current_whs_lists[0].ragsoc
-                        if current_whs_lists[0].ragsoc else "",
+                        if current_whs_lists[0].ragsoc
+                        else "",
                     ),
-                ), metadata=None
+                ),
+                metadata=None,
             )
             for whs_list in current_whs_lists:
                 self.dbsource.with_context(no_return=True).execute_mssql(
@@ -187,25 +236,28 @@ class TestConnectorWmsModula(CommonConnectorWMS):
                     sqlparams=dict(
                         RIG_ORDINE=whs_list.num_lista,
                         RIG_HOSTINF=whs_list.riga,
-                        RIG_ARTICOLO=whs_list.product_id.default_code[:50] if
-                        whs_list.product_id.default_code
-                        else 'prodotto %s senza codice' % whs_list.product_id.id,
+                        RIG_ARTICOLO=whs_list.product_id.default_code[:50]
+                        if whs_list.product_id.default_code
+                        else "prodotto %s senza codice" % whs_list.product_id.id,
                         RIG_QTAR=whs_list.qta,
                         RIG_QTAE=whs_lists_dict[whs_list],
                     ),
-                    metadata=None
+                    metadata=None,
                 )
         for num_lista in set(whs_lists.mapped("num_lista")):
             self.dbsource.with_context(no_return=True).execute_mssql(
                 sqlquery=clean_sql_text(
                     "DELETE FROM IMP_ORDINI_RIGHE WHERE RIG_ORDINE=:RIG_ORDINE"
                 ),
-                sqlparams=dict(RIG_ORDINE=num_lista), metadata=None
+                sqlparams=dict(RIG_ORDINE=num_lista),
+                metadata=None,
             )
             self.dbsource.with_context(no_return=True).execute_mssql(
                 sqlquery=clean_sql_text(
                     "DELETE FROM IMP_ORDINI WHERE ORD_ORDINE=:ORD_ORDINE"
-                ), sqlparams=dict(ORD_ORDINE=num_lista), metadata=None
+                ),
+                sqlparams=dict(ORD_ORDINE=num_lista),
+                metadata=None,
             )
 
     def _test_00_complete_picking_from_sale(self):
@@ -225,22 +277,23 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             order_line.price_unit = 100
         order1 = order_form1.save()
         order1.action_confirm()
-        self.assertEqual(order1.state, 'sale')
+        self.assertEqual(order1.state, "sale")
         picking1 = order1.picking_ids.filtered(
-            lambda x: x.picking_type_id == (
+            lambda x: x.picking_type_id
+            == (
                 self.warehouse.out_type_id
-                if self.step_delivery == "one" else
-                self.warehouse.pick_type_id
+                if self.step_delivery == "one"
+                else self.warehouse.pick_type_id
             )
         )
-        self.assertEqual(len(picking1.mapped('move_lines.whs_list_ids')), 1)
+        self.assertEqual(len(picking1.mapped("move_lines.whs_list_ids")), 1)
         self.assertEqual(
-            picking1.mapped('move_lines.whs_list_ids')[0].ragsoc,
-            order1.partner_id.name)
-        if all(x.state == 'assigned' for x in picking1.move_lines):
-            self.assertEqual(picking1.state, 'assigned')
+            picking1.mapped("move_lines.whs_list_ids")[0].ragsoc, order1.partner_id.name
+        )
+        if all(x.state == "assigned" for x in picking1.move_lines):
+            self.assertEqual(picking1.state, "assigned")
         else:
-            self.assertEqual(picking1.state, 'waiting')
+            self.assertEqual(picking1.state, "waiting")
         # check WMS list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self._execute_select_all_valid_host_liste()
@@ -261,24 +314,24 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             self.assertEqual(qty, move_line.whs_list_ids.qta)
             self.assertEqual(lista, move_line.whs_list_ids.num_lista)
         # check cancel workflow
-        whs_lists = picking1.mapped('move_lines.whs_list_ids')
+        whs_lists = picking1.mapped("move_lines.whs_list_ids")
         self.assertEqual(len(whs_lists), 1)
-        self.assertEqual(whs_lists.stato, '2')
-        if all(x.state == 'assigned' for x in picking1.move_lines):
-            self.assertEqual(picking1.state, 'assigned')
+        self.assertEqual(whs_lists.stato, "2")
+        if all(x.state == "assigned" for x in picking1.move_lines):
+            self.assertEqual(picking1.state, "assigned")
         else:
-            self.assertEqual(picking1.state, 'waiting')
+            self.assertEqual(picking1.state, "waiting")
         picking1.action_cancel()
-        self.assertEqual(picking1.state, 'cancel')
+        self.assertEqual(picking1.state, "cancel")
         # check WMS lists are unlinked (only with a working WMS software they could be
         # in stato '3' -> 'Da NON elaborare' after elaboration)
-        self.assertFalse(picking1.move_lines.mapped('whs_list_ids'))
+        self.assertFalse(picking1.move_lines.mapped("whs_list_ids"))
         # restore picking to assigned state
         picking1.action_back_to_draft()
         picking1.action_confirm()
         picking1.action_assign()
-        whs_lists = picking1.mapped('move_lines.whs_list_ids').filtered(
-            lambda x: x.stato != '3'
+        whs_lists = picking1.mapped("move_lines.whs_list_ids").filtered(
+            lambda x: x.stato != "3"
         )
         self.assertEqual(len(whs_lists), 1)
         # check WMS list is added, and only 1 valid WMS list exists
@@ -288,17 +341,18 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.simulate_wms_cron({x: x.qta for x in whs_lists})
 
         result_liste = self._select_wms_liste(whs_lists)
-        self.assertEqual(
-            str(result_liste[0]),
-            "[(Decimal('5.000'), Decimal('5.000'))]")
+        self.assertEqual(str(result_liste[0]), "[(Decimal('5.000'), Decimal('5.000'))]")
 
         self.dbsource.whs_insert_read_and_synchronize_list()
 
         # check move and picking linked to sale order have changed state to done
-        self.assertEqual(picking1.move_lines.filtered(
-            lambda x: not x.product_id.exclude_from_whs
-        ).state, 'assigned')
-        self.assertEqual(picking1.state, 'assigned')
+        self.assertEqual(
+            picking1.move_lines.filtered(
+                lambda x: not x.product_id.exclude_from_whs
+            ).state,
+            "assigned",
+        )
+        self.assertEqual(picking1.state, "assigned")
 
     def _test_01_partial_picking_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
@@ -317,20 +371,20 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             order_line.price_unit = 100
         order1 = order_form1.save()
         order1.action_confirm()
-        self.assertEqual(order1.state, 'sale')
+        self.assertEqual(order1.state, "sale")
         if self.step_delivery == "one":
             self.assertEqual(len(order1.picking_ids), 1)
             picking = order1.picking_ids
-            self.assertEqual(picking.state, 'assigned')
+            self.assertEqual(picking.state, "assigned")
         else:
             self.assertEqual(len(order1.picking_ids), 2)
             picking = order1.picking_ids.filtered(
                 lambda x: x.picking_type_id == self.warehouse.pick_type_id
             )
-        self.assertEqual(len(picking.mapped('move_lines.whs_list_ids')), 2)
+        self.assertEqual(len(picking.mapped("move_lines.whs_list_ids")), 2)
         self.assertEqual(
-            picking.mapped('move_lines.whs_list_ids')[0].ragsoc,
-            order1.partner_id.name)
+            picking.mapped("move_lines.whs_list_ids")[0].ragsoc, order1.partner_id.name
+        )
         # self.assertEqual(  # todo restore this check
         #     len(set(picking.mapped("move_lines.whs_list_ids.num_lista"))), 1
         # )
@@ -340,13 +394,14 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # lists are not processed in Modula now, so do not launch simulate_wms_cron() as
         # it do the whole process (import from Host to Modula, process by user, export
         # from Modula to Host)
-        self.assertEqual(set(picking.mapped('move_lines.whs_list_ids.stato')), {'2'})
+        self.assertEqual(set(picking.mapped("move_lines.whs_list_ids.stato")), {"2"})
         whs_lists = self._check_cancel_workflow(picking, 2)
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self.dbsource.execute_mssql(
             sqlquery=clean_sql_text(
                 "SELECT RIG_ORDINE, RIG_HOSTINF FROM IMP_ORDINI_RIGHE "
-                "WHERE RIG_QTAR!=:RIG_QTAR"),
+                "WHERE RIG_QTAR!=:RIG_QTAR"
+            ),
             sqlparams=dict(RIG_QTAR=0),
             metadata=None,
         )[0]
@@ -356,29 +411,32 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.simulate_wms_cron({x: 3 for x in whs_lists})
         for whs_list in whs_lists:
             result_liste = self._select_wms_liste(whs_list)
-            self.assertIn("[(Decimal('5.000'), Decimal('3.000'))]",
-                          str(result_liste))
+            self.assertIn("[(Decimal('5.000'), Decimal('3.000'))]", str(result_liste))
         self.dbsource.whs_insert_read_and_synchronize_list()
         # check move and picking linked to sale order have changed state to done
-        self.assertEqual(set(picking.move_lines.mapped('state')), {'assigned'})
+        self.assertEqual(set(picking.move_lines.mapped("state")), {"assigned"})
         self.assertAlmostEqual(picking.move_lines[0].move_line_ids[0].qty_done, 3.0)
-        self.assertEqual(picking.state, 'assigned')
+        self.assertEqual(picking.state, "assigned")
 
         # simulate user partial validate of picking and check backorder exist
-        backorder_wiz_id = picking.button_validate()['res_id']
-        backorder_wiz = self.env['stock.backorder.confirmation'].browse(
-            backorder_wiz_id)
+        backorder_wiz_id = picking.button_validate()["res_id"]
+        backorder_wiz = self.env["stock.backorder.confirmation"].browse(
+            backorder_wiz_id
+        )
         # Create backorder: 1 WMS list of 2 is partially processed
         backorder_wiz.process()
         if self.step_delivery == "one":
-            backorder_picking = order1.picking_ids.filtered(
-                lambda x: not x.state == "cancel"
-            ) - picking
+            backorder_picking = (
+                order1.picking_ids.filtered(lambda x: not x.state == "cancel") - picking
+            )
         else:
-            backorder_picking = order1.picking_ids.filtered(
-                lambda x: not x.state == "cancel"
-                and x.picking_type_id == self.warehouse.pick_type_id
-            ) - picking
+            backorder_picking = (
+                order1.picking_ids.filtered(
+                    lambda x: not x.state == "cancel"
+                    and x.picking_type_id == self.warehouse.pick_type_id
+                )
+                - picking
+            )
         # Simulate WMS user validation
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_lists = backorder_picking.mapped("move_lines.whs_list_ids").filtered(
@@ -398,8 +456,8 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             self.assertEqual(len(order1.picking_ids), 2)
         else:
             self.assertEqual(len(order1.picking_ids), 3)
-        self.assertEqual(backorder_picking.state, 'assigned')
-        self.assertEqual(backorder_picking.move_lines[0].state, 'assigned')
+        self.assertEqual(backorder_picking.state, "assigned")
+        self.assertEqual(backorder_picking.move_lines[0].state, "assigned")
 
     def _test_02_partial_picking_partial_available_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
@@ -418,7 +476,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             order_line.price_unit = 100
         order1 = order_form1.save()
         order1.action_confirm()
-        self.assertEqual(order1.state, 'sale')
+        self.assertEqual(order1.state, "sale")
         if self.step_delivery == "one":
             self.assertEqual(len(order1.picking_ids), 1)
             picking = order1.picking_ids
@@ -427,8 +485,8 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             picking = order1.picking_ids.filtered(
                 lambda x: x.picking_type_id == self.warehouse.pick_type_id
             )
-        self.assertEqual(len(picking.mapped('move_lines.whs_list_ids')), 2)
-        self.assertEqual(picking.state, 'assigned')
+        self.assertEqual(len(picking.mapped("move_lines.whs_list_ids")), 2)
+        self.assertEqual(picking.state, "assigned")
 
         # check WMS list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -437,17 +495,18 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         whs_records = self.dbsource.execute_mssql(
             sqlquery=clean_sql_text(
                 "SELECT RIG_ORDINE, RIG_HOSTINF, RIG_ARTICOLO, RIG_QTAR "
-                "FROM IMP_ORDINI_RIGHE WHERE RIG_QTAR!=:RIG_QTAR"),
+                "FROM IMP_ORDINI_RIGHE WHERE RIG_QTAR!=:RIG_QTAR"
+            ),
             sqlparams=dict(RIG_QTAR=0),
             metadata=None,
         )[0]
         self.assertEqual(len(whs_records), 2)
         # check backorder is not created without WMS list validation
         res = picking.button_validate()
-        Form(self.env[res['res_model']].with_context(res['context'])).save().process()
+        Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
         # User cannot create backorder if WMS list is not processed on WMS system
         # TODO: check backorder is created for residual
-        self.assertNotEqual(picking.state, 'done')
+        self.assertNotEqual(picking.state, "done")
         if self.step_delivery == "one":
             self.assertEqual(len(order1.picking_ids), 1)
             picking = order1.picking_ids
@@ -460,49 +519,53 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         whs_lists = picking.mapped("move_lines.whs_list_ids")
         # simulate WMS work: partial processing (3 of 5) of product #1
         # and total (20 of 20) of product #2, so it is -4 on warehouse
-        self.simulate_wms_cron({
-            x: 3 if x.product_id == self.product1 else 20 for x in whs_lists})
+        self.simulate_wms_cron(
+            {x: 3 if x.product_id == self.product1 else 20 for x in whs_lists}
+        )
         # check WMS work is done correctly
         for whs_list in whs_lists:
             result_liste = self._select_wms_liste(whs_list)
             self.assertEqual(
                 str(result_liste[0]),
                 "[(Decimal('5.000'), Decimal('3.000'))]"
-                if whs_list.product_id == self.product1 else
-                "[(Decimal('20.000'), Decimal('20.000'))]")
+                if whs_list.product_id == self.product1
+                else "[(Decimal('20.000'), Decimal('20.000'))]",
+            )
 
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.simulate_wms_cron(
-            {x: x.qta for x in picking.mapped('move_lines.whs_list_ids')})
+            {x: x.qta for x in picking.mapped("move_lines.whs_list_ids")}
+        )
         # check move and picking linked to sale order have changed state to done
-        self.assertEqual(picking.move_lines[0].state, 'assigned')
+        self.assertEqual(picking.move_lines[0].state, "assigned")
         self.assertAlmostEqual(picking.move_lines[0].move_line_ids[0].qty_done, 3.0)
         picking.action_assign()
-        self.assertEqual(picking.state, 'assigned')
+        self.assertEqual(picking.state, "assigned")
         # check that action_assign run by scheduler do not change state
         self.run_stock_procurement_scheduler()
         picking.action_assign()
-        self.assertEqual(picking.state, 'assigned')
+        self.assertEqual(picking.state, "assigned")
 
         # simulate user partial validate of picking and check backorder exist
-        backorder_wiz_id = picking.button_validate()['res_id']
-        backorder_wiz = self.env['stock.backorder.confirmation'].browse(
-            backorder_wiz_id)
+        backorder_wiz_id = picking.button_validate()["res_id"]
+        backorder_wiz = self.env["stock.backorder.confirmation"].browse(
+            backorder_wiz_id
+        )
         # User cannot create backorder if WMS list is not processed on WMS system
         # with self.assertRaises(UserError):
         # TODO: check backorder is created for residual
         backorder_wiz.process()
 
         # Simulate WMS user validation
-        whs_lists = picking.mapped('move_lines.whs_list_ids')
+        whs_lists = picking.mapped("move_lines.whs_list_ids")
         # this function do the action_assign() too
         self.dbsource.whs_insert_read_and_synchronize_list()
         # simulate WMS work: total process
-        self.simulate_wms_cron({
-            x: 2 if x.product_id == self.product2 else 3 for x in whs_lists
-        })
+        self.simulate_wms_cron(
+            {x: 2 if x.product_id == self.product2 else 3 for x in whs_lists}
+        )
         backorder_wiz.process()
-        self.assertEqual(picking.state, 'done')
+        self.assertEqual(picking.state, "done")
 
         # check back picking is waiting as Odoo qty is not considered
         if self.step_delivery == "one":
@@ -510,13 +573,16 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             backorder_picking = order1.picking_ids - picking
         else:
             self.assertEqual(len(order1.picking_ids), 3)
-            backorder_picking = order1.picking_ids.filtered(
-                lambda x: x.picking_type_id == self.warehouse.pick_type_id
-            ) - picking
-        back_whs_list = backorder_picking.mapped('move_lines.whs_list_ids')
-        self.assertEqual(backorder_picking.move_lines.mapped('state'), ['assigned'])
+            backorder_picking = (
+                order1.picking_ids.filtered(
+                    lambda x: x.picking_type_id == self.warehouse.pick_type_id
+                )
+                - picking
+            )
+        back_whs_list = backorder_picking.mapped("move_lines.whs_list_ids")
+        self.assertEqual(backorder_picking.move_lines.mapped("state"), ["assigned"])
         # todo check also a 'partially_available'
-        self.assertEqual(backorder_picking.state, 'assigned')
+        self.assertEqual(backorder_picking.state, "assigned")
 
         # todo check whs_list for backorder is created
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -528,7 +594,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertEqual(str(result_liste[0]), "[(Decimal('2.000'), Decimal('2.000'))]")
         self.dbsource.whs_insert_read_and_synchronize_list()
         backorder_picking.button_validate()
-        self.assertEqual(backorder_picking.state, 'done')
+        self.assertEqual(backorder_picking.state, "done")
 
     def _test_03_partial_picking_from_sale(self):
         with self.assertRaises(ConnectionSuccessError):
@@ -555,7 +621,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             order_line.price_unit = 100
         order1 = order_form1.save()
         order1.action_confirm()
-        self.assertEqual(order1.state, 'sale')
+        self.assertEqual(order1.state, "sale")
         # self.assertEqual(order1.mapped('picking_ids.state'), ['assigned'])
         if self.step_delivery == "one":
             self.assertEqual(len(order1.picking_ids), 1)
@@ -565,27 +631,29 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             picking = order1.picking_ids.filtered(
                 lambda x: x.picking_type_id == self.warehouse.pick_type_id
             )
-        self.assertEqual(len(picking.mapped('move_lines.whs_list_ids')), 4)
+        self.assertEqual(len(picking.mapped("move_lines.whs_list_ids")), 4)
 
         # check WMS list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self._execute_select_all_valid_host_liste()
         self.assertEqual(len(whs_records), 4)
         # simulate WMS work: validate first move totally and second move partially
-        whs_lists = picking.mapped('move_lines.whs_list_ids')
-        self.simulate_wms_cron({
-            x: 0 if x.product_id == self.product3 else 5 for x in whs_lists})
+        whs_lists = picking.mapped("move_lines.whs_list_ids")
+        self.simulate_wms_cron(
+            {x: 0 if x.product_id == self.product3 else 5 for x in whs_lists}
+        )
         for whs_list in whs_lists:
             result_liste = self._select_wms_liste(whs_list)
             self.assertEqual(
                 str(result_liste[0]),
                 "[(Decimal('5.000'), Decimal('5.000'))]"
-                if whs_list.product_id == self.product1 else
-                "[(Decimal('10.000'), Decimal('5.000'))]"
-                if whs_list.product_id == self.product2 else
-                "[(Decimal('20.000'), Decimal('0.000'))]"
-                if whs_list.product_id == self.product3 else
-                "[(Decimal('20.000'), Decimal('5.000'))]")
+                if whs_list.product_id == self.product1
+                else "[(Decimal('10.000'), Decimal('5.000'))]"
+                if whs_list.product_id == self.product2
+                else "[(Decimal('20.000'), Decimal('0.000'))]"
+                if whs_list.product_id == self.product3
+                else "[(Decimal('20.000'), Decimal('5.000'))]",
+            )
 
         self.dbsource.whs_insert_read_and_synchronize_list()
 
@@ -593,7 +661,10 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         for move_line in picking.move_lines:
             for stock_move_line in move_line.move_line_ids:
                 if stock_move_line.product_id in [
-                        self.product1, self.product2, self.product4]:
+                    self.product1,
+                    self.product2,
+                    self.product4,
+                ]:
                     self.assertAlmostEqual(stock_move_line.qty_done, 5.0)
                 if stock_move_line.product_id == self.product3:
                     self.assertAlmostEqual(stock_move_line.qty_done, 0)
@@ -601,12 +672,13 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # check that action_assign run by scheduler do not change state
         # self.assertEqual(picking.state, "confirmed")
         picking.action_assign()
-        self.assertEqual(picking.state, 'assigned')
+        self.assertEqual(picking.state, "assigned")
 
         # simulate user partial validate of picking and check backorder exist
-        backorder_wiz_id = picking.button_validate()['res_id']
-        backorder_wiz = self.env['stock.backorder.confirmation'].browse(
-            backorder_wiz_id)
+        backorder_wiz_id = picking.button_validate()["res_id"]
+        backorder_wiz = self.env["stock.backorder.confirmation"].browse(
+            backorder_wiz_id
+        )
         # User must set correctly quantity as set by WMS user, ignoring qty set
         # different by Odoo or a user, so set a qty different and check that error is
         # raised without intervent
@@ -616,8 +688,11 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         with self.assertRaises(UserError):
             backorder_wiz.process()
         for move_line in picking.move_lines:
-            move_line.quantity_done = 5 if move_line.product_id in [
-                self.product1, self.product2, self.product4] else 0
+            move_line.quantity_done = (
+                5
+                if move_line.product_id in [self.product1, self.product2, self.product4]
+                else 0
+            )
         backorder_wiz.process()
         self.assertEqual(picking.state, "done")
         # check backorder WMS list has the correct qty
@@ -626,16 +701,24 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             backorder_picking = order1.picking_ids - picking
         else:
             self.assertEqual(len(order1.picking_ids), 3)
-            backorder_picking = order1.picking_ids.filtered(
-                lambda x: x.picking_type_id == self.warehouse.pick_type_id
-            ) - picking
+            backorder_picking = (
+                order1.picking_ids.filtered(
+                    lambda x: x.picking_type_id == self.warehouse.pick_type_id
+                )
+                - picking
+            )
         for move_line in backorder_picking.move_lines:
-            self.assertAlmostEqual(move_line.whs_list_ids[0].qta, 5 if
-                                   move_line.product_id == self.product2 else 20 if
-                                   move_line.product_id == self.product3 else 15)
+            self.assertAlmostEqual(
+                move_line.whs_list_ids[0].qta,
+                5
+                if move_line.product_id == self.product2
+                else 20
+                if move_line.product_id == self.product3
+                else 15,
+            )
 
         # Simulate WMS user validation
-        whs_lists = picking.mapped('move_lines.whs_list_ids')
+        whs_lists = picking.mapped("move_lines.whs_list_ids")
         # simulate WMS work: total process
         self.simulate_wms_cron({x: x.qta for x in whs_lists})
 
@@ -674,7 +757,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             )
         picking.action_assign()
         self.assertEqual(picking.state, "assigned")
-        self.assertEqual(len(picking.mapped('move_lines.whs_list_ids')), 2)
+        self.assertEqual(len(picking.mapped("move_lines.whs_list_ids")), 2)
 
         # check WMS list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -695,14 +778,14 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         order1.action_confirm()
         if self.step_delivery == "one":
             self.assertEqual(len(order1.picking_ids), 2)
-            picking = order1.picking_ids.filtered(lambda x: x.state != 'cancel')
+            picking = order1.picking_ids.filtered(lambda x: x.state != "cancel")
         else:
             self.assertEqual(len(order1.picking_ids), 4)
             picking = order1.picking_ids.filtered(
                 lambda x: x.picking_type_id == self.warehouse.pick_type_id
-                and x.state != 'cancel'
+                and x.state != "cancel"
             )
-        self.assertEqual(picking.mapped('move_lines.whs_list_ids.stato'), ['1', '1'])
+        self.assertEqual(picking.mapped("move_lines.whs_list_ids.stato"), ["1", "1"])
         # insert lists in WMS: this has to be invoked before every sql call!
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
@@ -730,7 +813,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         order1 = order_form2.save()
         pickings = order1.picking_ids.filtered(lambda x: x.state == "assigned")
         pickings.action_assign()
-        new_product_move_line_ids = order1.picking_ids.mapped('move_lines').filtered(
+        new_product_move_line_ids = order1.picking_ids.mapped("move_lines").filtered(
             lambda x: x.product_id == self.product4
         )
         self.assertTrue(new_product_move_line_ids.mapped("whs_list_ids"))
@@ -742,8 +825,9 @@ class TestConnectorWmsModula(CommonConnectorWMS):
 
         # test changing qty of sale order line does not change the linked whs list
         order_line = order1.order_line[0]
-        whs_lists = order_line.move_ids.filtered(
-            lambda x: x.state != "cancel").mapped("whs_list_ids")
+        whs_lists = order_line.move_ids.filtered(lambda x: x.state != "cancel").mapped(
+            "whs_list_ids"
+        )
         if whs_lists:
             self.assertEqual(len(whs_lists), 1)
             whs_list = whs_lists[0]
@@ -756,7 +840,8 @@ class TestConnectorWmsModula(CommonConnectorWMS):
                 # changing qty in two steps option is forbidden
                 order_line.write({"product_uom_qty": order_line.product_uom_qty + 6})
         new_whs_lists = order_line.move_ids.filtered(
-            lambda x: x.state != "cancel").mapped("whs_list_ids")
+            lambda x: x.state != "cancel"
+        ).mapped("whs_list_ids")
         if new_whs_lists:
             new_whs_list = new_whs_lists - whs_lists
             self.assertEqual(whs_lists.qta, initial_qty)
@@ -785,7 +870,8 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         purchase = purchase_form.save()
         purchase.button_approve()
         self.assertEqual(
-            purchase.state, 'purchase', 'Purchase state should be "Purchase"')
+            purchase.state, "purchase", 'Purchase state should be "Purchase"'
+        )
         # check WMS list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
@@ -795,27 +881,30 @@ class TestConnectorWmsModula(CommonConnectorWMS):
 
         # simulate WMS work: partial processing of product #2
         # and total of product #3
-        whs_lists = purchase.mapped('picking_ids.move_lines.whs_list_ids')
-        self.simulate_wms_cron({
-            x: 2 if x.product_id == self.product2 else 3 for x in whs_lists})
+        whs_lists = purchase.mapped("picking_ids.move_lines.whs_list_ids")
+        self.simulate_wms_cron(
+            {x: 2 if x.product_id == self.product2 else 3 for x in whs_lists}
+        )
         for whs_list in whs_lists:
             result_liste = self._select_wms_liste(whs_list)
             self.assertEqual(whs_list.ragsoc, purchase.partner_id.name)
             self.assertEqual(
                 str(result_liste[0]),
                 "[(Decimal('20.000'), Decimal('2.000'))]"
-                if whs_list.product_id == self.product2 else
-                "[(Decimal('3.000'), Decimal('3.000'))]")
+                if whs_list.product_id == self.product2
+                else "[(Decimal('3.000'), Decimal('3.000'))]",
+            )
         self.dbsource.whs_insert_read_and_synchronize_list()
         # simulate user partial validate of picking and check backorder exist
         picking = purchase.picking_ids[0]
         picking.action_assign()
-        self.assertEqual(picking.state, 'assigned')
-        backorder_wiz_id = picking.button_validate()['res_id']
-        backorder_wiz = self.env['stock.backorder.confirmation'].browse(
-            backorder_wiz_id)
+        self.assertEqual(picking.state, "assigned")
+        backorder_wiz_id = picking.button_validate()["res_id"]
+        backorder_wiz = self.env["stock.backorder.confirmation"].browse(
+            backorder_wiz_id
+        )
         backorder_wiz.process()
-        self.assertEqual(picking.state, 'done')
+        self.assertEqual(picking.state, "done")
 
         # check back picking is waiting as waiting for WMS work
         self.assertEqual(len(purchase.picking_ids), 2)
@@ -826,13 +915,13 @@ class TestConnectorWmsModula(CommonConnectorWMS):
 
         # check whs_list for backorder is created
         self.dbsource.whs_insert_read_and_synchronize_list()
-        back_whs_list = backorder_picking.mapped('move_lines.whs_list_ids')
+        back_whs_list = backorder_picking.mapped("move_lines.whs_list_ids")
         result_liste = self._select_wms_liste(back_whs_list, "IMP")
         self.assertEqual(str(result_liste[0]), "[(Decimal('18.000'),)]")
         # TODO check cancel workflow without action_assign that create WMS list anyway
         self._check_cancel_workflow(backorder_picking, 1)
         backorder_picking.action_assign()
-        back_whs_list = backorder_picking.mapped('move_lines.whs_list_ids')
+        back_whs_list = backorder_picking.mapped("move_lines.whs_list_ids")
         # DO NOT simulate WMS work set done to rest of backorder
         # self.simulate_wms_cron({x: 18 for x in back_whs_list})
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -883,7 +972,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # added o changed
         pickings = purchase.picking_ids.filtered(lambda x: x.state == "assigned")
         pickings.action_assign()  # aka "Controlla disponibilità"
-        new_product_move_line_ids = purchase.picking_ids.mapped('move_lines').filtered(
+        new_product_move_line_ids = purchase.picking_ids.mapped("move_lines").filtered(
             lambda x: x.product_id == self.product5
         )
         self.assertTrue(new_product_move_line_ids.mapped("whs_list_ids"))
@@ -899,9 +988,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             lambda x: x.product_id == self.product5
         )[-1]
         po_line_to_change.write({"product_qty": 27})
-        pickings = purchase.picking_ids.filtered(
-            lambda x: x.state == "assigned"
-        )
+        pickings = purchase.picking_ids.filtered(lambda x: x.state == "assigned")
         pickings.action_assign()
         po_whs_list = po_line_to_change.mapped("move_ids.whs_list_ids").filtered(
             lambda x: x.qta == 7
@@ -932,10 +1019,12 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertTrue(man_order)
         man_order.button_plan()
         self.assertEqual(man_order.state, "confirmed")
-        produce_form = Form(self.env['mrp.product.produce'].with_context(
-            active_id=man_order.id,
-            active_ids=[man_order.id],
-        ))
+        produce_form = Form(
+            self.env["mrp.product.produce"].with_context(
+                active_id=man_order.id,
+                active_ids=[man_order.id],
+            )
+        )
         produce_form.product_qty = 5
         wizard = produce_form.save()
         wizard.do_produce()
@@ -956,10 +1045,8 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # consumed and finished product are sent to WMS for the consumed/produced qty
         component_whs_lists = man_order.mapped("move_raw_ids.whs_list_ids")
         finished_whs_lists = man_order.mapped("move_finished_ids.whs_list_ids")
-        self.simulate_wms_cron({
-            x: x.qta * 0.25 for x in component_whs_lists})
-        self.simulate_wms_cron({
-            x: 5 for x in finished_whs_lists})
+        self.simulate_wms_cron({x: x.qta * 0.25 for x in component_whs_lists})
+        self.simulate_wms_cron({x: 5 for x in finished_whs_lists})
         for whs_list in component_whs_lists | finished_whs_lists:
             result_liste = self._select_wms_liste(whs_list)
             if whs_list.product_id == self.subproduct_1_1:
@@ -982,10 +1069,12 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # this update Odoo from WMS
         self.dbsource.whs_insert_read_and_synchronize_list()
         man_order.with_context(test_connector_whs=True).button_mark_done()
-        produce_form = Form(self.env['mrp.product.produce'].with_context(
-            active_id=man_order.id,
-            active_ids=[man_order.id],
-        ))
+        produce_form = Form(
+            self.env["mrp.product.produce"].with_context(
+                active_id=man_order.id,
+                active_ids=[man_order.id],
+            )
+        )
         produce_form.product_qty = 3.0
         wizard = produce_form.save()
         wizard.do_produce()
@@ -1024,10 +1113,12 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertTrue(man_order)
         man_order.button_plan()
         self.assertEqual(man_order.state, "confirmed")
-        produce_form = Form(self.env['mrp.product.produce'].with_context(
-            active_id=man_order.id,
-            active_ids=[man_order.id],
-        ))
+        produce_form = Form(
+            self.env["mrp.product.produce"].with_context(
+                active_id=man_order.id,
+                active_ids=[man_order.id],
+            )
+        )
         produce_form.product_qty = 20
         wizard = produce_form.save()
         wizard.do_produce()
@@ -1052,8 +1143,9 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # simulate whs work: consume 100% of components to produce 20 finished products
         component_whs_lists = man_order.mapped("move_raw_ids.whs_list_ids")
         finished_whs_lists = man_order.mapped("move_finished_ids.whs_list_ids")
-        self.simulate_wms_cron({
-            x: x.qta for x in component_whs_lists | finished_whs_lists})
+        self.simulate_wms_cron(
+            {x: x.qta for x in component_whs_lists | finished_whs_lists}
+        )
 
         for whs_list in component_whs_lists | finished_whs_lists:
             result_liste = self._select_wms_liste(whs_list)
