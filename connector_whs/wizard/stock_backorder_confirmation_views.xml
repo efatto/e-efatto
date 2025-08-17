@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_backorder_confirmation" model="ir.ui.view">
+        <field name="name">stock_backorder_confirmation</field>
+        <field name="model">stock.backorder.confirmation</field>
+        <field name="inherit_id" ref="stock.view_backorder_confirmation"/>
+        <field name="arch" type="xml">
+            <button name="process" position="after">
+                <button name="process_bypass_wms"
+                        string="Create Backorder Bypassing WMS"
+                        type="object"
+                        class="oe_highlight"/>
+            </button>
+        </field>
+    </record>
+</odoo>

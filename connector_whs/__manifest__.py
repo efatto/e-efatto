@@ -31,6 +31,7 @@
         "views/mrp_production.xml",
         "views/product_template.xml",
         "views/stock.xml",
+        "wizard/stock_backorder_confirmation_views.xml",
         "wizard/view_wizard_sync_stock_whs_mssql.xml",
         "data/cron.xml",
     ],
