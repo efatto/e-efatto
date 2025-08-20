@@ -199,7 +199,8 @@ class MrpProduction(models.Model):
         for production in self:
             # Create WMS list for raw materials
             raw_dbsource = self.env["base.external.dbsource"].search(
-                [("location_id", "=", production.location_src_id.id)]
+                [("location_id", "in",
+                  (production.location_src_id | production.location_dest_id).ids)]
             )
             is_custom = (
                 production.picking_type_id.warehouse_id.mto_pull_id.route_id
