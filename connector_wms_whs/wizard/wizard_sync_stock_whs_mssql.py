@@ -177,7 +177,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     # `tipo_mov`: mrpin mrpout move (unused: noback ripin ripout)
                     product_qty += sum(
                         [
-                            x.qtamov * (1 if x.tipo == "1" else -1)
+                            x.qtamov * (1 if x.tipo[0] == "1" else -1)
                             for x in open_whs_list_ids
                             if "mrp" not in x.tipo_mov
                         ]
