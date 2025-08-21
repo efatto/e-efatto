@@ -47,11 +47,12 @@ class HyddemoWhsListe(models.Model):
     riferimento = fields.Text("Riferimento")  # , size=50)
     tipo = fields.Selection(
         [
-            ("1", "Prelievo"),
-            ("2", "Deposito"),
-            ("3", "Inventario"),  # 5 su WMS, 6 trasferimento
-            ("4", "E..."),  # Per Modula, informarsi a che serve
-            ("5", "Assemblaggio"),  # Scarico per assemblaggio
+            ("1", "Prelievo"),  # causale 10 scarico
+            ("11", "Assemblaggio"),  # causale 11 scarico per assemblaggio
+            ("2", "Deposito"),  # causale 20 carico
+            ("5", "Inventario"),  # causale 50 inventario, non usata
+            ("6", "Trasferimento di giacenza"),  # causale 60 trasferimento, non usata
+            ("4", "E..."),  # Per Modula, non usata
         ],
         string="Tipo lista",
     )
