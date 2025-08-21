@@ -1247,7 +1247,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                 self.causali["out_manufacturing"] if is_custom else self.causali["out"]
             )
             if whs_list.product_id == self.subproduct_1_1:
-                self.assertEqual(whs_list.tipo, "5" if is_custom else "1")
+                self.assertEqual(whs_list.tipo, "11" if is_custom else "1")
                 self.assertIn(
                     str(result_liste[0]),
                     [
@@ -1256,7 +1256,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                     ],
                 )
             elif whs_list.product_id == self.subproduct_2_1:
-                self.assertEqual(whs_list.tipo, "5" if is_custom else "1")
+                self.assertEqual(whs_list.tipo, "11" if is_custom else "1")
                 self.assertEqual(
                     str(result_liste[0]),
                     f"[(Decimal('160.000'), Decimal('40.000'), 0, '{causale}')]",
@@ -1348,7 +1348,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                 self.causali["out_manufacturing"] if is_custom else self.causali["out"]
             )
             if whs_list.product_id == self.subproduct_1_1:
-                self.assertEqual(whs_list.tipo, "5" if is_custom else "1")
+                self.assertEqual(whs_list.tipo, "11" if is_custom else "1")
                 self.assertIn(
                     str(result_liste[0]),
                     [
@@ -1357,7 +1357,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                     ],
                 )
             elif whs_list.product_id == self.subproduct_2_1:
-                self.assertEqual(whs_list.tipo, "5" if is_custom else "1")
+                self.assertEqual(whs_list.tipo, "11" if is_custom else "1")
                 self.assertEqual(
                     str(result_liste[0]),
                     f"[(Decimal('160.000'), Decimal('40.000'), 0, '{causale}')]",
