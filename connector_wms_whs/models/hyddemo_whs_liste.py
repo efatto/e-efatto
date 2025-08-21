@@ -314,8 +314,8 @@ VALUES (
                 # formato aaaa.mm.gg datalista
                 "Riferimento": lista.riferimento[:50] if lista.riferimento else "",
                 # char 50
-                "TipoOrdine": lista.tipo,  # int
-                "Causale": 10 if lista.tipo == "1" else 11 if lista.tipo == "5" else 20,
+                "TipoOrdine": lista.tipo[0],  # int - get only the first characther
+                "Causale": lista.tipo + "0" if len(lista.tipo) == 1 else lista.tipo,
                 # int: 10=prelievo, 11=assemblaggio, 20=deposito
                 "Priorita": lista.priorita,  # int
                 "RichiestoEsito": 1,  # int
