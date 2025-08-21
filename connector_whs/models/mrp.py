@@ -243,7 +243,7 @@ class MrpProduction(models.Model):
                             stato="1",
                             data_lista=fields.Datetime.now(),
                             riferimento=production.name,
-                            tipo="5" if is_custom else "1",  # "5" if manufacturing
+                            tipo="11" if is_custom else "1",  # "11" if manufacturing
                             product_id=move.product_id.id,
                             parent_product_id=production.product_id.id,
                             qta=move.product_uom_qty,
