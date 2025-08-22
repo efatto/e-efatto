@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="view_whs_liste_tree" model="ir.ui.view">
+        <field name="name">view.whsliste.tree</field>
+        <field name="model">hyddemo.whs.liste</field>
+        <field name="inherit_id" ref="connector_whs.view_whs_liste_tree" />
+        <field name="arch" type="xml">
+            <field name="whs_list_absent" position="after">
+                <field name="wms_modula_error" />
+                <field name="wms_modula_riga_error" />
+            </field>
+        </field>
+    </record>
+
+    <record id="view_whs_liste_form" model="ir.ui.view">
+        <field name="name">view.whsliste.form</field>
+        <field name="model">hyddemo.whs.liste</field>
+        <field name="inherit_id" ref="connector_whs.view_whs_liste_form" />
+        <field name="arch" type="xml">
+            <field name="whs_list_log" position="after">
+                <field name="wms_modula_error" />
+                <field name="wms_modula_riga_error" />
+            </field>
+        </field>
+    </record>
+
+</odoo>
