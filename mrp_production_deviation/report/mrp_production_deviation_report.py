@@ -5,23 +5,23 @@ from odoo import api, fields, models, tools
 
 
 class MrpProductionDeviationReport(models.Model):
-    _name = 'mrp.production.deviation.report'
+    _name = "mrp.production.deviation.report"
     _auto = False
-    _description = 'Production Deviation Report'
+    _description = "Production Deviation Report"
 
-    name = fields.Char('Reference', readonly=True)
-    date = fields.Date('Planned Date', readonly=True)
-    production_id = fields.Many2one('mrp.production', readonly=True)
-    workorder_id = fields.Many2one('mrp.workorder', readonly=True)
-    duration_expected = fields.Float('Expected Duration', readonly=True)
-    duration_expected_rw = fields.Float('Expected Routing Duration', readonly=True)
-    duration = fields.Float('Duration Done', readonly=True)
-    duration_deviation = fields.Float('Duration Deviation', readonly=True)
-    duration_deviation_rw = fields.Float('Duration Routing Deviation', readonly=True)
-    product_id = fields.Many2one('product.product', readonly=True)
-    quantity_expected = fields.Float('Qty Expected', readonly=True)
-    product_qty = fields.Float('Qty Done', readonly=True)
-    quantity_deviation = fields.Float('Qty Deviation', readonly=True)
+    name = fields.Char("Reference", readonly=True)
+    date = fields.Date("Planned Date", readonly=True)
+    production_id = fields.Many2one("mrp.production", readonly=True)
+    workorder_id = fields.Many2one("mrp.workorder", readonly=True)
+    duration_expected = fields.Float("Expected Duration", readonly=True)
+    duration_expected_rw = fields.Float("Expected Routing Duration", readonly=True)
+    duration = fields.Float("Duration Done", readonly=True)
+    duration_deviation = fields.Float("Duration Deviation", readonly=True)
+    duration_deviation_rw = fields.Float("Duration Routing Deviation", readonly=True)
+    product_id = fields.Many2one("product.product", readonly=True)
+    quantity_expected = fields.Float("Qty Expected", readonly=True)
+    product_qty = fields.Float("Qty Done", readonly=True)
+    quantity_deviation = fields.Float("Qty Deviation", readonly=True)
     cost_expected = fields.Float(string="Cost Expected", readonly=True)
     cost_expected_rw = fields.Float(string="Cost Routing Expected", readonly=True)
     cost = fields.Float(string="Final Cost", readonly=True)
@@ -55,7 +55,8 @@ class MrpProductionDeviationReport(models.Model):
             finali al costo salvato nello stock move
         """
         tools.drop_view_if_exists(self.env.cr, self._table)
-        self._cr.execute("""CREATE OR REPLACE VIEW %s AS (
+        self._cr.execute(
+            """CREATE OR REPLACE VIEW %s AS (
             SELECT
                 MIN(id) AS id,
                 MIN(workorder_id) AS workorder_id,
@@ -194,4 +195,6 @@ class MrpProductionDeviationReport(models.Model):
             AS sub
             GROUP BY date, production_id, product_id, workorder_id
         )
-        """ % self._table)
+        """
+            % self._table
+        )
