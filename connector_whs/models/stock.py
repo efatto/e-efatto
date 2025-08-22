@@ -242,12 +242,19 @@ class StockMove(models.Model):
                 lambda x: x.stato != "3"
             )
             if (valid_whs_list or origin_moves_whs_list) and not move.state == "done":
-                if move.purchase_line_id and valid_whs_list.stato == "1":
+                if valid_whs_list and (
+                    move.purchase_line_id and valid_whs_list.stato == "1"
+                ):
                     # update whs_list as it is not yet sent to WHS
                     valid_whs_list.qta = move.product_uom_qty
                 elif not move.purchase_line_id and (
-                    move.product_uom_qty != valid_whs_list.qta
-                    or move.product_uom_qty != origin_moves_whs_list.qta
+                    valid_whs_list
+                    and (move.product_uom_qty != valid_whs_list.qta)
+                    # do not block raw materials consumptions on productions when they
+                    # don't have whs lists directly linked
+                    or origin_moves_whs_list
+                    and not move.raw_material_production_id
+                    and (move.product_uom_qty != origin_moves_whs_list.qta)
                 ):
                     raise UserError(
                         _(
@@ -256,7 +263,7 @@ class StockMove(models.Model):
                             "requested quantity."
                         )
                     )
-                if move.quantity_done != valid_whs_list.qtamov:
+                if valid_whs_list and move.quantity_done != valid_whs_list.qtamov:
                     raise UserError(
                         _(
                             "A WMS valid list exists and qty moved is different "
