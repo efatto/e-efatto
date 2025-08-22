@@ -44,18 +44,21 @@ class Picking(models.Model):
                         "already elaborated on WMS with different qty for lists %s"
                     )
                     % (
-                        pick.name, "\n".join(
-                            _("Product %s - List/row: %s/%s - "
-                              "WMS/Stock moved qty %s/%s"
-                              ) % (
+                        pick.name,
+                        "\n".join(
+                            _(
+                                "Product %s - List/row: %s/%s - "
+                                "WMS/Stock moved qty %s/%s"
+                            )
+                            % (
                                 m.product_id.display_name,
                                 m.num_lista,
                                 m.riga,
                                 m.qtamov,
                                 m.move_id.quantity_done,
                             )
-                        for m in mismatch_lists
-                        )
+                            for m in mismatch_lists
+                        ),
                     )
                 )
             # stato == "3" is ok when qtamov is 0, as is no more processable (n.b. qty
@@ -64,43 +67,55 @@ class Picking(models.Model):
                 lambda x: x.stato == "3" and x.qtamov != 0
             )
             if not_processable_lists:
-                raise UserError(_(
-                    "Trying to validate picking %s which is not processable in Odoo "
-                    "but elaborated on WMS: %s"
-                ) % (
-                    pick.name, "\n".join(
-                        _("Product %s - List/row: %s/%s - "
-                          "WMS/Stock moved qty %s/%s"
-                          ) % (
-                            m.product_id.display_name,
-                            m.num_lista,
-                            m.riga,
-                            m.qtamov,
-                            m.move_id.quantity_done,
-                        )
-                    for m in not_processable_lists
+                raise UserError(
+                    _(
+                        "Trying to validate picking %s which is not processable in Odoo "
+                        "but elaborated on WMS: %s"
                     )
-                ))
+                    % (
+                        pick.name,
+                        "\n".join(
+                            _(
+                                "Product %s - List/row: %s/%s - "
+                                "WMS/Stock moved qty %s/%s"
+                            )
+                            % (
+                                m.product_id.display_name,
+                                m.num_lista,
+                                m.riga,
+                                m.qtamov,
+                                m.move_id.quantity_done,
+                            )
+                            for m in not_processable_lists
+                        ),
+                    )
+                )
             moved_list_without_wms = pick.mapped("move_lines.whs_list_ids").filtered(
                 lambda x: x.stato not in ("3", "4") and x.move_id.quantity_done != 0
             )
             if moved_list_without_wms:
-                raise UserError(_(
-                    "Trying to validate picking %s which is not elaborated on WMS: %s"
-                ) % (
-                    pick.name, "\n".join(
-                        _("Product %s - List/row: %s/%s - "
-                          "WMS/Stock moved qty %s/%s"
-                          ) % (
-                            m.product_id.display_name,
-                            m.num_lista,
-                            m.riga,
-                            m.qtamov,
-                            m.move_id.quantity_done,
-                        )
-                    for m in moved_list_without_wms
+                raise UserError(
+                    _(
+                        "Trying to validate picking %s which is not elaborated on WMS: %s"
                     )
-                ))
+                    % (
+                        pick.name,
+                        "\n".join(
+                            _(
+                                "Product %s - List/row: %s/%s - "
+                                "WMS/Stock moved qty %s/%s"
+                            )
+                            % (
+                                m.product_id.display_name,
+                                m.num_lista,
+                                m.riga,
+                                m.qtamov,
+                                m.move_id.quantity_done,
+                            )
+                            for m in moved_list_without_wms
+                        ),
+                    )
+                )
             for move in pick.move_lines:
                 for whs_list in move.whs_list_ids:
                     if whs_list.qtamov != move.quantity_done != 0:
@@ -178,8 +193,8 @@ class Picking(models.Model):
                 if not dbsource:
                     _logger.info(
                         "WMS LOG: Picking type %s not linked to WMS System in "
-                        "cancel_whs_list, nothing todo." %
-                        pick.picking_type_id.name)
+                        "cancel_whs_list, nothing todo." % pick.picking_type_id.name
+                    )
                     continue
                 if any([x.stato != "1" and x.qtamov != 0 for x in whs_lists]):
                     raise UserError(_("Some moves already elaborated from WMS!"))
@@ -190,15 +205,19 @@ class Picking(models.Model):
                     whs_lists.cancel_lists(dbsource.id)
                     if self.env.context.get("bypass_wms"):
                         pick.move_lines.write({"exclude_from_wms": True})
-                    pick.move_lines.write({
-                        "location_id": pick.location_id.id,
-                        "location_dest_id": pick.location_dest_id.id,
-                    })
+                    pick.move_lines.write(
+                        {
+                            "location_id": pick.location_id.id,
+                            "location_dest_id": pick.location_dest_id.id,
+                        }
+                    )
                     # restore stock.move.line destinations
-                    pick.move_line_ids.write({
-                        "location_id": pick.location_id.id,
-                        "location_dest_id": pick.location_dest_id.id,
-                    })
+                    pick.move_line_ids.write(
+                        {
+                            "location_id": pick.location_id.id,
+                            "location_dest_id": pick.location_dest_id.id,
+                        }
+                    )
         return True
 
 
@@ -265,13 +284,19 @@ class StockMove(models.Model):
         return super().write(vals)
 
     def _action_confirm(self, merge=True, merge_into=False):
-        if self.env["base.external.dbsource"].search(
-            [
-                (
-                    "stock_picking_type_ids", "in", self.mapped("picking_type_id").ids,
-                ),
-            ]
-        ) or self.mapped("production_id") or self.mapped("raw_material_production_id"):
+        if (
+            self.env["base.external.dbsource"].search(
+                [
+                    (
+                        "stock_picking_type_ids",
+                        "in",
+                        self.mapped("picking_type_id").ids,
+                    ),
+                ]
+            )
+            or self.mapped("production_id")
+            or self.mapped("raw_material_production_id")
+        ):
             # never merge stock moves linked to WMS lists
             move_to_create_whs_list = self
             for move in self:
@@ -324,7 +349,8 @@ class StockMove(models.Model):
                 # creates whs_list with that function
                 if all(
                     [
-                        x in [
+                        x
+                        in [
                             self.env.ref("mrp.route_warehouse0_manufacture"),
                             self.env.ref("stock.route_warehouse0_mto"),
                         ]
@@ -340,10 +366,12 @@ class StockMove(models.Model):
                     if move.procure_method == "make_to_order":
                         continue
 
-                dbsource = self.env["base.external.dbsource"].search([
-                    ("stock_picking_type_ids", "in", move.picking_type_id.ids),
-                    ("company_id", "=", move.company_id.id),
-                ])
+                dbsource = self.env["base.external.dbsource"].search(
+                    [
+                        ("stock_picking_type_ids", "in", move.picking_type_id.ids),
+                        ("company_id", "=", move.company_id.id),
+                    ]
+                )
                 if not dbsource:
                     # Picking type is not linked to WMS System
                     continue
@@ -354,19 +382,22 @@ class StockMove(models.Model):
                 if (
                     (
                         # reception two steps
-                        reception_steps == "two_steps" and
-                        move.location_id != warehouse.lot_stock_id
+                        reception_steps == "two_steps"
+                        and move.location_id != warehouse.lot_stock_id
                         and move.location_dest_id == warehouse.lot_stock_id
-                    ) or (
+                    )
+                    or (
                         # incoming product from production two steps
                         manufacture_steps == "pbm"
                         and move.location_id != warehouse.lot_stock_id
                         and move.location_dest_id == warehouse.lot_stock_id
-                    ) or (
+                    )
+                    or (
                         # reception one step
                         reception_steps == "one_step"
                         and move.picking_type_id.code == "incoming"
-                    ) or (
+                    )
+                    or (
                         # incoming product from production one step
                         manufacture_steps == "mrp_one_step"
                         and move.picking_type_id.code == "mrp_operation"
@@ -383,17 +414,20 @@ class StockMove(models.Model):
                         and move.location_id
                         in [warehouse.lot_stock_id, dbsource.location_id]
                         and move.location_dest_id != warehouse.lot_stock_id
-                    ) or (
+                    )
+                    or (
                         # consumption of components two steps
                         manufacture_steps == "pbm"
                         and move.location_id
                         in [warehouse.lot_stock_id, dbsource.location_id]
                         and move.location_dest_id != warehouse.lot_stock_id
-                    ) or (
+                    )
+                    or (
                         # delivery one step
                         delivery_steps == "ship_only"
                         and move.picking_type_id.code == "outgoing"
-                    ) or (
+                    )
+                    or (
                         # consumption of components one step
                         manufacture_steps == "mrp_one_step"
                         and move.location_id
@@ -411,12 +445,17 @@ class StockMove(models.Model):
                     if move.picking_type_id not in dbsource.stock_picking_type_ids:
                         continue
                     if all(
-                        x != dbsource.location_id for x in (
-                            move.location_id | move.location_dest_id)
+                        x != dbsource.location_id
+                        for x in (move.location_id | move.location_dest_id)
                     ):
                         # none of move locations are enabled in WMS
                         continue
-                partner_id = move.partner_id or move.move_orig_ids.picking_id.partner_id
+                partner_id = (
+                    move.partner_id
+                    or move.move_orig_ids.picking_id.partner_id
+                    or move.purchase_line_id.order_id.partner_id
+                    or move.sale_line_id.order_id.partner_id
+                )
                 if partner_id:
                     ragsoc = partner_id.name
                     cliente = (
@@ -430,9 +469,11 @@ class StockMove(models.Model):
                     cap = partner_id.zip if partner_id.zip else False
                     localita = partner_id.city if partner_id.city else False
                     provincia = (
-                        partner_id.state_id.code) if partner_id.state_id else False
+                        partner_id.state_id.code if partner_id.state_id else False
+                    )
                     nazione = (
-                        partner_id.country_id.name) if partner_id.country_id else False
+                        partner_id.country_id.name if partner_id.country_id else False
+                    )
 
                 if tipo:
                     # ROADMAP check phantom products that generates only out moves
@@ -445,36 +486,43 @@ class StockMove(models.Model):
                                 and move.location_dest_id == dbsource.location_id
                             )
                             or (
-                                tipo == "1"
-                                and move.location_id == dbsource.location_id
+                                tipo == "1" and move.location_id == dbsource.location_id
                             )
                         )
                     ):
                         if move.whs_list_ids and any(
-                                x.stato != "3" for x in move.whs_list_ids):
+                            x.stato != "3" for x in move.whs_list_ids
+                        ):
                             _logger.info(
                                 "WMS LOG: Ignored creation of WMS list %s as it "
                                 "already exists and is processable!"
                                 % str(
-                                    ["%s-%s" % (x.riga, x.num_lista)
-                                     for x in move.whs_list_ids
-                                     if x.stato != "3"]
+                                    [
+                                        "%s-%s" % (x.riga, x.num_lista)
+                                        for x in move.whs_list_ids
+                                        if x.stato != "3"
+                                    ]
                                 )
                             )
                             continue
                         if not list_number:
                             list_number = self.env["ir.sequence"].next_by_code(
-                                "hyddemo.whs.liste")
+                                "hyddemo.whs.liste"
+                            )
                             riga = 0
                         else:
-                            riga = max(whsliste_obj.search([
-                                ("num_lista", "=", list_number),
-                            ]).mapped("riga"))
+                            riga = max(
+                                whsliste_obj.search(
+                                    [
+                                        ("num_lista", "=", list_number),
+                                    ]
+                                ).mapped("riga")
+                            )
                         riga += 1
                         customer = (
                             partner_id
                             and move.product_id.customer_ids.filtered(
-                            lambda x: x.name == partner_id.commercial_partner_id
+                                lambda x: x.name == partner_id.commercial_partner_id
                             )
                             or False
                         )
@@ -488,17 +536,20 @@ class StockMove(models.Model):
                             "move_id": move.id,
                             "tipo_mov": "move",
                             "riga": riga,
-                            "client_order_ref":
-                                move.sale_line_id.order_id.client_order_ref,
+                            "client_order_ref": move.sale_line_id.order_id.client_order_ref,
                         }
                         if move.sale_line_id.product_id != move.product_id:
-                            whsliste_data.update({
-                                "parent_product_id": move.sale_line_id.product_id.id,
-                            })
+                            whsliste_data.update(
+                                {
+                                    "parent_product_id": move.sale_line_id.product_id.id,
+                                }
+                            )
                         if customer:
-                            whsliste_data.update({
-                                "product_customer_code": customer[0].product_code,
-                            })
+                            whsliste_data.update(
+                                {
+                                    "product_customer_code": customer[0].product_code,
+                                }
+                            )
                         if move.origin:
                             whsliste_data["riferimento"] = move.origin[:50]
 
@@ -519,13 +570,14 @@ class StockMove(models.Model):
                         if nazione:
                             whsliste_data["nazione"] = nazione[0:50]
                         whsliste_obj.create(whsliste_data)
-                        _logger.info("WMS LOG: create list with data:\n %s" % (
-                            str(whsliste_data)
-                        ))
+                        _logger.info(
+                            "WMS LOG: create list with data:\n %s"
+                            % (str(whsliste_data))
+                        )
                 else:
                     raise UserError(
-                        _("WMS LOG: list tipo not found for stock move ID %s")
-                        % move.id)
+                        _("WMS LOG: list tipo not found for stock move ID %s") % move.id
+                    )
         return True
 
     def custom_check_mrp(self):

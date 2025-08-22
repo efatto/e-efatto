@@ -1,5 +1,6 @@
 import logging
-from odoo import api, models
+
+from odoo import models
 
 _logger = logging.getLogger(__name__)
 
@@ -10,22 +11,25 @@ class StockBackorderConfirmation(models.TransientModel):
     def process(self):
         super().process()
         for pick_id in self.pick_ids:
-            backorder_picks = self.env["stock.picking"].search([
-                ("backorder_id", "=", pick_id.id)])
+            backorder_picks = self.env["stock.picking"].search(
+                [("backorder_id", "=", pick_id.id)]
+            )
             for backorder_pick in backorder_picks:
                 warehouse = backorder_pick.picking_type_id.warehouse_id
                 reception_steps = warehouse.reception_steps
                 delivery_steps = warehouse.delivery_steps
                 manufacture_steps = warehouse.manufacture_steps
                 if (
-                    backorder_pick.location_dest_id !=
-                    backorder_pick.picking_type_id.default_location_dest_id
+                    backorder_pick.location_dest_id
+                    != backorder_pick.picking_type_id.default_location_dest_id
                 ) and (
                     (
-                        reception_steps == "two_steps" and
-                        backorder_pick.location_id == warehouse.wh_input_stock_loc_id
+                        reception_steps == "two_steps"
+                        and backorder_pick.location_id
+                        == warehouse.wh_input_stock_loc_id
                         and backorder_pick.location_dest_id.usage == "internal"
-                    ) or (
+                    )
+                    or (
                         reception_steps == "one_step"
                         and backorder_pick.picking_type_id.code == "incoming"
                     )
@@ -37,27 +41,33 @@ class StockBackorderConfirmation(models.TransientModel):
                     # 2. the move from input location to stock *
                     # * only this one is usually managed in WMS
                     _logger.info(
-                        "WMS restored backorder %s pick dest loc from %s to %s" % (
+                        "WMS restored backorder %s pick dest loc from %s to %s"
+                        % (
                             backorder_pick.name,
                             backorder_pick.location_dest_id.name,
-                            backorder_pick.picking_type_id.default_location_dest_id.name
-                        ))
+                            backorder_pick.picking_type_id.default_location_dest_id.name,
+                        )
+                    )
                     backorder_pick.location_dest_id = (
-                        backorder_pick.picking_type_id.default_location_dest_id)
+                        backorder_pick.picking_type_id.default_location_dest_id
+                    )
                 elif (
                     (
-                        delivery_steps == "pick_ship" and
-                        backorder_pick.location_dest_id ==
-                        warehouse.wh_output_stock_loc_id
-                    ) or (
-                        manufacture_steps == "pbm" and
-                        backorder_pick.location_dest_id == warehouse.pbm_loc_id
-                    ) or (
-                        delivery_steps == "ship_only" and
-                        backorder_pick.picking_type_id.code == "outgoing"
-                    ) or (
-                        manufacture_steps == "mrp_one_step" and
-                        backorder_pick.picking_type_id.code == "mrp_operation"
+                        delivery_steps == "pick_ship"
+                        and backorder_pick.location_dest_id
+                        == warehouse.wh_output_stock_loc_id
+                    )
+                    or (
+                        manufacture_steps == "pbm"
+                        and backorder_pick.location_dest_id == warehouse.pbm_loc_id
+                    )
+                    or (
+                        delivery_steps == "ship_only"
+                        and backorder_pick.picking_type_id.code == "outgoing"
+                    )
+                    or (
+                        manufacture_steps == "mrp_one_step"
+                        and backorder_pick.picking_type_id.code == "mrp_operation"
                     )
                 ):
                     # restore the default location if it was set to WMS one
@@ -72,20 +82,24 @@ class StockBackorderConfirmation(models.TransientModel):
                     if self.env.context.get("bypass_wms"):
                         if backorder_pick.location_id != warehouse.lot_stock_id:
                             _logger.info(
-                                "WMS restored backorder %s pick loc from %s to %s" % (
+                                "WMS restored backorder %s pick loc from %s to %s"
+                                % (
                                     backorder_pick.name,
                                     backorder_pick.location_id.name,
-                                    warehouse.lot_stock_id.name
-                                ))
+                                    warehouse.lot_stock_id.name,
+                                )
+                            )
                             backorder_pick.location_id = warehouse.lot_stock_id
                         for ml in backorder_pick.mapped("move_line_ids"):
                             if ml.location_id != backorder_pick.location_id:
                                 _logger.info(
-                                    "WMS restored move line %s loc from %s to %s" % (
+                                    "WMS restored move line %s loc from %s to %s"
+                                    % (
                                         ml.display_name,
                                         ml.location_id.name,
-                                        backorder_pick.location_id.name
-                                    ))
+                                        backorder_pick.location_id.name,
+                                    )
+                                )
                                 ml.location_id = backorder_pick.location_id
                     # if needed, this is the reverse option of backorder without WMS
                     # else:
@@ -93,14 +107,16 @@ class StockBackorderConfirmation(models.TransientModel):
                     #         backorder_pick.picking_type_id.default_location_src_id)
                 if self.env.context.get("bypass_wms"):
                     # Exclude this stock.move from wms list creation
-                    backorder_pick.mapped("move_lines").write({
-                        "exclude_from_wms": True
-                    })
+                    backorder_pick.mapped("move_lines").write(
+                        {"exclude_from_wms": True}
+                    )
                 # restore stock.move.line destinations
-                backorder_pick.move_line_ids.write({
-                    "location_id": backorder_pick.location_id.id,
-                    "location_dest_id": backorder_pick.location_dest_id.id,
-                })
+                backorder_pick.move_line_ids.write(
+                    {
+                        "location_id": backorder_pick.location_id.id,
+                        "location_dest_id": backorder_pick.location_dest_id.id,
+                    }
+                )
 
     def process_bypass_wms(self):
         self.with_context(bypass_wms=True).process()

@@ -53,12 +53,15 @@ class MrpProduction(models.Model):
     def _compute_sent_to_whs(self):
         for production in self.filtered(lambda mo: mo.state not in ["done", "cancel"]):
             moves = production.move_raw_ids
+            is_two_steps = bool(
+                "pbm" in moves.mapped("picking_type_id.warehouse_id.manufacture_steps")
+            )
             if (
                 production.picking_type_id.warehouse_id.mto_pull_id.route_id
                 not in production.product_id.route_ids
             ):
                 moves |= production.move_finished_ids
-            production.sent_to_whs = all(
+            production.sent_to_whs = is_two_steps or all(
                 x.whs_list_ids
                 and not all(whs_list.stato == "3" for whs_list in x.whs_list_ids)
                 for x in moves.filtered(
@@ -131,7 +134,7 @@ class MrpProduction(models.Model):
                     lambda m: m.product_qty == 0.0 and m.quantity_done > 0
                 ):
                     move.product_uom_qty = move.quantity_done
-                # MRP do not merge move, catch the result of _action_done in order
+                # MRP do not merge move, catch the result of _action_done
                 # to get extra moves.
                 moves_to_do = moves_to_do._action_done()
                 production._cal_price(moves_to_do)
@@ -197,9 +200,12 @@ class MrpProduction(models.Model):
     def _generate_whs(self):
         whsliste_obj = self.env["hyddemo.whs.liste"]
         for production in self:
-            # Create WMS list for raw materials
+            # Create WMS lists for raw materials
             raw_dbsource = self.env["base.external.dbsource"].search(
-                [("location_id", "=", production.location_src_id.id)]
+                [
+                    ("location_id", "=", production.location_src_id.id),
+                    ("company_id", "=", production.company_id.id),
+                ]
             )
             is_custom = (
                 production.picking_type_id.warehouse_id.mto_pull_id.route_id
@@ -208,6 +214,7 @@ class MrpProduction(models.Model):
             )
             if (
                 raw_dbsource
+                and len(raw_dbsource) == 1
                 # and production.picking_type_id in raw_dbsource.stock_picking_type_ids
                 # bypass check on locations, as this button is called from the user to
                 # create directly whs lists
@@ -255,7 +262,10 @@ class MrpProduction(models.Model):
 
             # Create WMS list for finished products
             finished_dbsource = self.env["base.external.dbsource"].search(
-                [("location_id", "=", production.location_dest_id.id)]
+                [
+                    ("location_id", "=", production.location_dest_id.id),
+                    ("company_id", "=", production.company_id.id),
+                ]
             )
             if (
                 finished_dbsource
