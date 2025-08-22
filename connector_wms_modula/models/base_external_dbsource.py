@@ -450,17 +450,19 @@ VALUES (
                         }
                     )
                     if len(move.move_line_ids) > 1:
-                        if sum(move.move_line_ids.mapped('product_qty')) < qty_moved:
+                        if sum(move.move_line_ids.mapped("product_qty")) < qty_moved:
                             _logger.info(
                                 "WMS LOG: impossible to set qty done!\n"
                                 "Many stock move line found for Whs list %s-%s of "
                                 "move %s with product_qty %s lesser than qty moved %s."
                                 ""
-                                % (num_lista,
-                                   num_riga,
-                                   move.name,
-                                   sum(move.move_line_ids.mapped('product_qty')),
-                                   qty_moved)
+                                % (
+                                    num_lista,
+                                    num_riga,
+                                    move.name,
+                                    sum(move.move_line_ids.mapped("product_qty")),
+                                    qty_moved,
+                                )
                             )
                         else:
                             try:

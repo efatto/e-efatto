@@ -399,7 +399,8 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # from Modula to Host)
         self.assertEqual(set(picking.mapped("move_lines.whs_list_ids.stato")), {"2"})
         whs_lists = self._check_cancel_workflow(
-            picking, 2 if self.step_delivery == "one" else 1)
+            picking, 2 if self.step_delivery == "one" else 1
+        )
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self.dbsource.execute_mssql(
             sqlquery=clean_sql_text(
@@ -409,8 +410,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             sqlparams=dict(RIG_QTAR=0),
             metadata=None,
         )[0]
-        self.assertEqual(
-            len(whs_records), 2 if self.step_delivery == "one" else 1)
+        self.assertEqual(len(whs_records), 2 if self.step_delivery == "one" else 1)
         # simulate WMS work: validate first move partially (3 over 5)
         self.dbsource.whs_insert_read_and_synchronize_list()
         if self.step_delivery == "one":
@@ -420,15 +420,18 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         for whs_list in whs_lists:
             result_liste = self._select_wms_liste(whs_list)
             if self.step_delivery == "one":
-                self.assertIn("[(Decimal('5.000'), Decimal('3.000'))]", str(result_liste))
+                self.assertIn(
+                    "[(Decimal('5.000'), Decimal('3.000'))]", str(result_liste)
+                )
             else:
-                self.assertIn("[(Decimal('10.000'), Decimal('6.000'))]", str(result_liste))
+                self.assertIn(
+                    "[(Decimal('10.000'), Decimal('6.000'))]", str(result_liste)
+                )
         self.dbsource.whs_insert_read_and_synchronize_list()
         # check move and picking linked to sale order have changed state to done
         self.assertEqual(picking.state, "assigned")
         self.assertAlmostEqual(
-            sum(picking.mapped("move_lines.move_line_ids.qty_done")),
-            6.0
+            sum(picking.mapped("move_lines.move_line_ids.qty_done")), 6.0
         )
 
         # simulate user partial validate of picking and check backorder exist
@@ -515,7 +518,9 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # check backorder is not created without WMS list validation
         # User cannot create backorder if WMS list is not processed on WMS system
         if self.step_delivery == "one":
-            Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
+            Form(
+                self.env[res["res_model"]].with_context(res["context"])
+            ).save().process()
         self.assertNotEqual(picking.state, "done")
         if self.step_delivery == "one":
             self.assertEqual(len(order1.picking_ids), 1)
@@ -547,11 +552,15 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             {x: x.qta for x in picking.mapped("move_lines.whs_list_ids")}
         )
         # check move and picking linked to sale order have changed state to done
-        self.assertEqual(picking.move_lines.filtered(
-            lambda x: x.product_id == self.product1 and x.quantity_done == 3
-        ).state, "assigned")
+        self.assertEqual(
+            picking.move_lines.filtered(
+                lambda x: x.product_id == self.product1 and x.quantity_done == 3
+            ).state,
+            "assigned",
+        )
         self.assertAlmostEqual(
-            sum(picking.mapped("move_lines.move_line_ids.qty_done")), 23.0)
+            sum(picking.mapped("move_lines.move_line_ids.qty_done")), 23.0
+        )
         picking.action_assign()
         self.assertEqual(picking.state, "assigned")
         # check that action_assign run by scheduler do not change state
@@ -1118,8 +1127,10 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             self.env["mrp.production.backorder"].with_context(**action["context"])
         )
         backorder_form.save().action_backorder()
-        self.assertEqual(len(man_order.procurement_group_id.mrp_production_ids),
-                         2 if self.step_delivery == "one" else 1)
+        self.assertEqual(
+            len(man_order.procurement_group_id.mrp_production_ids),
+            2 if self.step_delivery == "one" else 1,
+        )
         if self.step_delivery == "one":
             self.assertEqual(man_order.state, "done")
 

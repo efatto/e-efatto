@@ -54,9 +54,7 @@ class MrpProduction(models.Model):
         for production in self.filtered(lambda mo: mo.state not in ["done", "cancel"]):
             moves = production.move_raw_ids
             is_two_steps = bool(
-                "pbm" in moves.mapped(
-                    "picking_type_id.warehouse_id.manufacture_steps"
-                )
+                "pbm" in moves.mapped("picking_type_id.warehouse_id.manufacture_steps")
             )
             if (
                 production.picking_type_id.warehouse_id.mto_pull_id.route_id
@@ -203,17 +201,20 @@ class MrpProduction(models.Model):
         whsliste_obj = self.env["hyddemo.whs.liste"]
         for production in self:
             # Create WMS lists for raw materials
-            raw_dbsource = self.env["base.external.dbsource"].search([
-                ("location_id", "=", production.location_src_id.id),
-                ("company_id", "=", production.company_id.id),
-            ])
+            raw_dbsource = self.env["base.external.dbsource"].search(
+                [
+                    ("location_id", "=", production.location_src_id.id),
+                    ("company_id", "=", production.company_id.id),
+                ]
+            )
             is_custom = (
                 production.picking_type_id.warehouse_id.mto_pull_id.route_id
                 in production.product_id.route_ids
                 and production.product_id.categ_id.name == "CUSTOM"
             )
             if (
-                raw_dbsource and len(raw_dbsource) == 1
+                raw_dbsource
+                and len(raw_dbsource) == 1
                 # and production.picking_type_id in raw_dbsource.stock_picking_type_ids
                 # bypass check on locations, as this button is called from the user to
                 # create directly whs lists
@@ -260,10 +261,11 @@ class MrpProduction(models.Model):
                         whsliste_obj.create(whsliste_data)
 
             # Create WMS list for finished products
-            finished_dbsource = self.env["base.external.dbsource"].search([
-                ("location_id", "=", production.location_dest_id.id),
-                ("company_id", "=", production.company_id.id),
-            ]
+            finished_dbsource = self.env["base.external.dbsource"].search(
+                [
+                    ("location_id", "=", production.location_dest_id.id),
+                    ("company_id", "=", production.company_id.id),
+                ]
             )
             if (
                 finished_dbsource
