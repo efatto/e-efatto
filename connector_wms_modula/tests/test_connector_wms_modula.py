@@ -829,12 +829,13 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             order_line.product_uom_qty = 5
             order_line.price_unit = 100
         order1 = order_form2.save()
+        pickings = order1.picking_ids.filtered(lambda x: x.state != "cancel")
         if self.step_delivery == "one":
-            self.assertEqual(len(order1.picking_ids), 1)
+            self.assertEqual(len(pickings), 1)
             picking = order1.picking_ids
         else:
-            self.assertEqual(len(order1.picking_ids), 2)
-            picking = order1.picking_ids.filtered(
+            self.assertEqual(len(pickings), 2)
+            picking = pickings.filtered(
                 lambda x: x.picking_type_id == self.warehouse.pick_type_id
             )
         # get only the picking moved in WMS, which is in the "two steps option" only the
