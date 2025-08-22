@@ -923,6 +923,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         )
         for whs_list in whs_lists:
             result_liste = self._select_whs_liste(whs_list, 4)
+            self.assertEqual(whs_list.ragsoc, purchase.partner_id.name)
             self.assertEqual(
                 str(result_liste[0]),
                 f"[(Decimal('17.000'), Decimal('2.000'), 0, '{self.causali['in']}')]"
