@@ -1,7 +1,4 @@
-# Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-
-from odoo import api, fields, models, tools
+from odoo import fields, models, tools
 
 
 class MrpProductionDeviationReport(models.Model):
@@ -30,7 +27,6 @@ class MrpProductionDeviationReport(models.Model):
     cost_deviation = fields.Float(string="Cost Deviation", readonly=True)
     cost_deviation_rw = fields.Float(string="Cost Routing Deviation", readonly=True)
 
-    @api.model_cr
     def init(self):
         """
         Notes:
