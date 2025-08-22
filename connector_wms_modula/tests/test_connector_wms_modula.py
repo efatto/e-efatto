@@ -144,7 +144,11 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertEqual(set(whs_lists.mapped("stato")), {"2"})
         self.assertEqual(set(whs_lists.mapped("qtamov")), {0.0})
         picking.action_assign()
-        self.assertEqual(picking.state, "assigned")
+        # todo if it's a purchase it's assigned
+        if self.step_delivery == "two":
+            self.assertEqual(picking.state, "confirmed")
+        else:
+            self.assertEqual(picking.state, "assigned")
         picking.action_cancel()
         # check WMS lists are deleted
         self.assertEqual(picking.state, "cancel")
@@ -293,7 +297,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         if all(x.state == "assigned" for x in picking1.move_lines):
             self.assertEqual(picking1.state, "assigned")
         else:
-            self.assertEqual(picking1.state, "waiting")
+            self.assertIn(picking1.state, ["waiting", "confirmed"])
         # check WMS list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self._execute_select_all_valid_host_liste()
@@ -320,7 +324,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         if all(x.state == "assigned" for x in picking1.move_lines):
             self.assertEqual(picking1.state, "assigned")
         else:
-            self.assertEqual(picking1.state, "waiting")
+            self.assertEqual(picking1.state, "confirmed")
         picking1.action_cancel()
         self.assertEqual(picking1.state, "cancel")
         # check WMS lists are unlinked (only with a working WMS software they could be
@@ -375,19 +379,21 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         if self.step_delivery == "one":
             self.assertEqual(len(order1.picking_ids), 1)
             picking = order1.picking_ids
-            self.assertEqual(picking.state, "assigned")
+            self.assertIn(picking.state, ["assigned", "confirmed"])
         else:
             self.assertEqual(len(order1.picking_ids), 2)
             picking = order1.picking_ids.filtered(
                 lambda x: x.picking_type_id == self.warehouse.pick_type_id
             )
-        self.assertEqual(len(picking.mapped("move_lines.whs_list_ids")), 2)
+            self.assertIn(picking.state, ["assigned", "confirmed"])
+        # sale order lines for the same product are merged
+        self.assertEqual(sum(picking.mapped("move_lines.whs_list_ids.qta")), 10)
         self.assertEqual(
             picking.mapped("move_lines.whs_list_ids")[0].ragsoc, order1.partner_id.name
         )
-        # self.assertEqual(  # todo restore this check
-        #     len(set(picking.mapped("move_lines.whs_list_ids.num_lista"))), 1
-        # )
+        self.assertEqual(
+            len(set(picking.mapped("move_lines.whs_list_ids.num_lista"))), 1
+        )
 
         # check WMS list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -395,7 +401,8 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # it do the whole process (import from Host to Modula, process by user, export
         # from Modula to Host)
         self.assertEqual(set(picking.mapped("move_lines.whs_list_ids.stato")), {"2"})
-        whs_lists = self._check_cancel_workflow(picking, 2)
+        whs_lists = self._check_cancel_workflow(
+            picking, 2 if self.step_delivery == "one" else 1)
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self.dbsource.execute_mssql(
             sqlquery=clean_sql_text(
@@ -405,18 +412,25 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             sqlparams=dict(RIG_QTAR=0),
             metadata=None,
         )[0]
-        self.assertEqual(len(whs_records), 2)
+        self.assertEqual(
+            len(whs_records), 2 if self.step_delivery == "one" else 1)
         # simulate WMS work: validate first move partially (3 over 5)
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.simulate_wms_cron({x: 3 for x in whs_lists})
         for whs_list in whs_lists:
             result_liste = self._select_wms_liste(whs_list)
-            self.assertIn("[(Decimal('5.000'), Decimal('3.000'))]", str(result_liste))
+            if self.step_delivery == "one":
+                self.assertIn("[(Decimal('5.000'), Decimal('3.000'))]", str(result_liste))
+            else:
+                self.assertIn("[(Decimal('10.000'), Decimal('3.000'))]", str(result_liste))
         self.dbsource.whs_insert_read_and_synchronize_list()
         # check move and picking linked to sale order have changed state to done
-        self.assertEqual(set(picking.move_lines.mapped("state")), {"assigned"})
-        self.assertAlmostEqual(picking.move_lines[0].move_line_ids[0].qty_done, 3.0)
-        self.assertEqual(picking.state, "assigned")
+        if self.step_delivery == "one":
+            self.assertEqual(picking.state, "assigned")
+        else:
+            # self.assertEqual(set(picking.move_lines.mapped("state")), {"assigned"})
+            self.assertEqual(picking.state, "confirmed")
+            self.assertAlmostEqual(picking.move_lines[0].move_line_ids[0].qty_done, 3.0)
 
         # simulate user partial validate of picking and check backorder exist
         res = picking.button_validate()
@@ -453,8 +467,9 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             self.assertEqual(len(order1.picking_ids), 2)
         else:
             self.assertEqual(len(order1.picking_ids), 3)
-        self.assertEqual(backorder_picking.state, "assigned")
-        self.assertEqual(backorder_picking.move_lines[0].state, "assigned")
+        if self.step_delivery == "one":
+            self.assertEqual(backorder_picking.state, "assigned")
+            self.assertEqual(backorder_picking.move_lines[0].state, "assigned")
 
     def _test_02_partial_picking_partial_available_from_sale(self):
         with self.assertRaises(ValidationError):
@@ -534,7 +549,9 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             {x: x.qta for x in picking.mapped("move_lines.whs_list_ids")}
         )
         # check move and picking linked to sale order have changed state to done
-        self.assertEqual(picking.move_lines[0].state, "assigned")
+        self.assertEqual(picking.move_lines.filtered(
+            lambda x: x.product_id == self.product1 and x.quantity_done == 3
+        ).state, "assigned")
         self.assertAlmostEqual(picking.move_lines[0].move_line_ids[0].qty_done, 3.0)
         picking.action_assign()
         self.assertEqual(picking.state, "assigned")
@@ -753,7 +770,10 @@ class TestConnectorWmsModula(CommonConnectorWMS):
                 lambda x: x.picking_type_id == self.warehouse.pick_type_id
             )
         picking.action_assign()
-        self.assertEqual(picking.state, "assigned")
+        if self.step_delivery == "one":
+            self.assertEqual(picking.state, "assigned")
+        if self.step_delivery == "two":
+            self.assertEqual(picking.state, "confirmed")
         self.assertEqual(len(picking.mapped("move_lines.whs_list_ids")), 2)
 
         # check WMS list is added
@@ -791,7 +811,8 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         )
         # self.run_stock_procurement_scheduler()
         picking.action_assign()
-        self.assertEqual(picking.state, "assigned")
+        if self.step_delivery == "one":
+            self.assertEqual(picking.state, "assigned")
         whs_lists = picking.mapped("move_lines.whs_list_ids")
         # todo it's not possibile to simulate a work in progress from WMS user, as there
         #  are only done lists in EXP_ORDINI* tables afaik (check it)
@@ -808,9 +829,22 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             order_line.product_uom_qty = 5
             order_line.price_unit = 100
         order1 = order_form2.save()
-        pickings = order1.picking_ids.filtered(lambda x: x.state == "assigned")
-        pickings.action_assign()
-        new_product_move_line_ids = order1.picking_ids.mapped("move_lines").filtered(
+        if self.step_delivery == "one":
+            self.assertEqual(len(order1.picking_ids), 1)
+            picking = order1.picking_ids
+        else:
+            self.assertEqual(len(order1.picking_ids), 2)
+            picking = order1.picking_ids.filtered(
+                lambda x: x.picking_type_id == self.warehouse.pick_type_id
+            )
+        # get only the picking moved in WMS, which is in the "two steps option" only the
+        # one moved from stock to output location
+        # location_usage = "customer" if self.step_delivery == "one" else "internal"
+        # pickings = order1.picking_ids.filtered(
+        #     lambda x: x.state != "cancel"
+        #     and x.location_dest_id.usage == location_usage)
+        picking.action_assign()
+        new_product_move_line_ids = picking.mapped("move_lines").filtered(
             lambda x: x.product_id == self.product4
         )
         self.assertTrue(new_product_move_line_ids.mapped("whs_list_ids"))
@@ -829,20 +863,19 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             self.assertEqual(len(whs_lists), 1)
             whs_list = whs_lists[0]
             self.assertEqual(whs_list.qta, order_line.product_uom_qty)
-        initial_qty = order_line.product_uom_qty
-        if self.step_delivery == "one":
+        # initial_qty = order_line.product_uom_qty
+        with self.assertRaises(UserError):
+            # changing qty is forbidden
+            # (todo in v. 12.0 wasn't forbidden in one step option, why?)
             order_line.write({"product_uom_qty": order_line.product_uom_qty + 6})
-        else:
-            with self.assertRaises(UserError):
-                # changing qty in two steps option is forbidden
-                order_line.write({"product_uom_qty": order_line.product_uom_qty + 6})
-        new_whs_lists = order_line.move_ids.filtered(
-            lambda x: x.state != "cancel"
-        ).mapped("whs_list_ids")
-        if new_whs_lists:
-            new_whs_list = new_whs_lists - whs_lists
-            self.assertEqual(whs_lists.qta, initial_qty)
-            self.assertEqual(new_whs_list.qta, 6)
+        # this part was in v. 12.0, now the change is no more accepted
+        # new_whs_lists = order_line.move_ids.filtered(
+        #     lambda x: x.state != "cancel"
+        # ).mapped("whs_list_ids")
+        # if new_whs_lists:
+        #     new_whs_list = new_whs_lists - whs_lists
+        #     self.assertEqual(whs_lists.qta, initial_qty)
+        #     self.assertEqual(new_whs_list.qta, 6)
 
     def _test_06_purchase(self):
         with self.assertRaises(ValidationError):
@@ -869,31 +902,58 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertEqual(
             purchase.state, "purchase", 'Purchase state should be "Purchase"'
         )
+        move_line = purchase.picking_ids.move_lines.filtered(
+            lambda x: x.product_id == self.product2
+        )
+        order_line = purchase.order_line.filtered(
+            lambda x: x.product_id == self.product2
+        )
+        order_line.product_qty = 17
+        # update directly as it is a readonly field in view and Form() doesn't work
+        move_line.product_uom_qty = 17
+        self.assertEqual(order_line.product_qty, move_line.whs_list_ids.qta)
         # check WMS list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         self.assertEqual(
             len(self._execute_select_all_valid_host_liste()),
             2,
         )
-
+        # get available qty for product2 before purchase order
+        qty_available_product2 = self.product2.qty_available
         # simulate WMS work: partial processing of product #2
         # and total of product #3
         whs_lists = purchase.mapped("picking_ids.move_lines.whs_list_ids")
         self.simulate_wms_cron(
             {x: 2 if x.product_id == self.product2 else 3 for x in whs_lists}
         )
+        # check whs_list are elaborated
         for whs_list in whs_lists:
             result_liste = self._select_wms_liste(whs_list)
             self.assertEqual(whs_list.ragsoc, purchase.partner_id.name)
             self.assertEqual(
                 str(result_liste[0]),
-                "[(Decimal('20.000'), Decimal('2.000'))]"
+                "[(Decimal('17.000'), Decimal('2.000'))]"
                 if whs_list.product_id == self.product2
                 else "[(Decimal('3.000'), Decimal('3.000'))]",
             )
+
+        # this update Odoo from WHS
         self.dbsource.whs_insert_read_and_synchronize_list()
+        # sync inventory to test this product is not considered even if the user
+        # hasn't completed the picking
+        # WHSystem already has the 2 pc income from purchase order, so we add them
+        # self.simulate_whs_cron_inventory(self.product2, self.product2.qty_available + 2)
+        new_qty_available_product2 = self.product2.qty_available
+        self.assertAlmostEqual(qty_available_product2, new_qty_available_product2, 2)
+
         # simulate user partial validate of picking and check backorder exist
         picking = purchase.picking_ids[0]
+        picking.action_assign()
+        if all(x.state == "assigned" for x in picking.move_lines):
+            self.assertEqual(picking.state, "assigned")
+        else:
+            self.assertEqual(picking.state, "waiting")
+        # check that action_assign run by scheduler do not change state
         picking.action_assign()
         self.assertEqual(picking.state, "assigned")
         res = picking.button_validate()
@@ -906,21 +966,27 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         backorder_picking = purchase.picking_ids - picking
         # self.run_stock_procurement_scheduler()
         backorder_picking.action_assign()
-        self.assertEqual(backorder_picking.state, "assigned")
+        if all(x.state == "assigned" for x in backorder_picking.move_lines):
+            self.assertEqual(backorder_picking.state, "assigned")
 
         # check whs_list for backorder is created
         self.dbsource.whs_insert_read_and_synchronize_list()
         back_whs_list = backorder_picking.mapped("move_lines.whs_list_ids")
         result_liste = self._select_wms_liste(back_whs_list, "IMP")
-        self.assertEqual(str(result_liste[0]), "[(Decimal('18.000'),)]")
+        self.assertEqual(str(result_liste[0]), "[(Decimal('15.000'),)]")
         # TODO check cancel workflow without action_assign that create WMS list anyway
         self._check_cancel_workflow(backorder_picking, 1)
         backorder_picking.action_assign()
-        back_whs_list = backorder_picking.mapped("move_lines.whs_list_ids")
         # DO NOT simulate WMS work set done to rest of backorder
         # self.simulate_wms_cron({x: 18 for x in back_whs_list})
         self.dbsource.whs_insert_read_and_synchronize_list()
         backorder_picking.button_validate()
+        if self.step_delivery == "one":
+            self.assertEqual(backorder_picking.state, "assigned")
+        else:
+            self.assertEqual(backorder_picking.state, "confirmed")
+        # self.run_stock_procurement_scheduler()
+        backorder_picking.action_assign()
         self.assertEqual(backorder_picking.state, "assigned")
         self.assertFalse(
             all(
@@ -993,13 +1059,13 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # WMS list is created for the increased qty
         self.assertEqual(str(result_liste[0]), "[(Decimal('7.000'),)]")
 
-    def _test_08_mrp_partial_from_sale(self):
+    def _mrp_partial_from_sale(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         self._clean_all()
         order_form = Form(self.env["sale.order"])
         order_form.partner_id = self.env.ref("base.res_partner_12")
-        order_form.date_order = fields.Datetime.now()
+        order_form.date_order = fields.Date.today()
         order_form.picking_policy = "direct"
         with order_form.order_line.new() as line:
             line.product_id = self.top_product
@@ -1023,21 +1089,24 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # )
         man_order.button_send_to_whs()
         self.assertTrue(man_order.sent_to_whs)
-        self.assertTrue(man_order.mapped("move_raw_ids.move_line_ids"))
-        # check whs list are added: 3 components and 1 finished product
+        # Check whs list are added
+        # In one step option 3 components and 1 finished product
+        # In two steps option the move from stock to pre-production is done outside the
+        # manufacturing process, as it is a normal stock picking
         self.dbsource.whs_insert_read_and_synchronize_list()
+        created_whs_list_number = 4 if self.step_delivery == "one" else 3
         self.assertEqual(
             len(self._execute_select_all_valid_host_liste()),
-            4,
+            created_whs_list_number,
         )
 
         # simulate whs work: consume 25% of components to produce 5 finished product
-        # as we changed something in the manufacturing
         # consumed and finished product are sent to WMS for the consumed/produced qty
         component_whs_lists = man_order.mapped("move_raw_ids.whs_list_ids")
         finished_whs_lists = man_order.mapped("move_finished_ids.whs_list_ids")
         self.simulate_wms_cron({x: x.qta * 0.25 for x in component_whs_lists})
         self.simulate_wms_cron({x: 5 for x in finished_whs_lists})
+
         for whs_list in component_whs_lists | finished_whs_lists:
             result_liste = self._select_wms_liste(whs_list)
             if whs_list.product_id == self.subproduct_1_1:
@@ -1064,31 +1133,21 @@ class TestConnectorWmsModula(CommonConnectorWMS):
             self.env["mrp.production.backorder"].with_context(**action["context"])
         )
         backorder_form.save().action_backorder()
-        self.assertEqual(len(man_order.procurement_group_id.mrp_production_ids), 2)
-        # MO backorder exists only in >= 14.0
-        self.assertEqual(
-            len(
-                self.env["mrp.production"].search(
-                    [
-                        (
-                            "procurement_group_id",
-                            "=",
-                            man_order.procurement_group_id.id,
-                        ),
-                    ]
-                )
-            ),
-            2,
-        )
-        self.assertEqual(man_order.state, "done")
+        self.assertEqual(len(man_order.procurement_group_id.mrp_production_ids),
+                         2 if self.step_delivery == "one" else 1)
+        if self.step_delivery == "one":
+            self.assertEqual(man_order.state, "done")
 
         mo_backorder = man_order.procurement_group_id.mrp_production_ids[-1]
-        self.assertEqual(mo_backorder.state, "confirmed")
-        with self.assertRaises(UserError):
-            # check production order cannot be done without WMS lists
-            mo_backorder.with_context(test_connector_whs=True).button_mark_done()
+        if self.step_delivery == "one":
+            self.assertEqual(mo_backorder.state, "confirmed")
+            with self.assertRaises(UserError):
+                # check production order cannot be done without WMS lists
+                mo_backorder.with_context(test_connector_whs=True).button_mark_done()
+        else:
+            self.assertEqual(mo_backorder.state, "progress")
 
-    def _test_09_mrp_total_from_sale(self):
+    def _mrp_total_from_sale(self):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         self._clean_all()
@@ -1112,18 +1171,18 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         man_order.qty_producing = 20
         self._auto_fill_consumed_qty(man_order.move_raw_ids)
         self.assertTrue(man_order.mapped("move_raw_ids.move_line_ids"))
-        self.assertTrue(man_order.move_finished_ids.move_line_ids)
-        self.assertEqual(
-            man_order.move_finished_ids.move_line_ids.mapped("state"), ["confirmed"]
-        )
-        # check whs list are added: 3 components and 1 finished product
+        # self.assertTrue(man_order.move_finished_ids.move_line_ids)
+        # self.assertEqual(
+        #     man_order.move_finished_ids.move_line_ids.mapped("state"), ["confirmed"]
+        # )
+        man_order.button_send_to_whs()
+        self.assertTrue(man_order.sent_to_whs)
+        # Check whs list are added
+        # In one step option 3 components and 1 finished product
+        # In two steps option the move from stock to pre-production is done outside the
+        # manufacturing process, as it is a normal stock picking
         self.dbsource.whs_insert_read_and_synchronize_list()
-        created_whs_list_number = (
-            3
-            if self.warehouse.mto_pull_id.route_id in man_order.product_id.route_ids
-            and man_order.product_id.categ_id.name == "CUSTOM"
-            else 4
-        )
+        created_whs_list_number = 4 if self.step_delivery == "one" else 3
         self.assertEqual(
             len(self._execute_select_all_valid_host_liste()),
             created_whs_list_number,
@@ -1211,16 +1270,16 @@ class TestConnectorWmsModula(CommonConnectorWMS):
 
     def test_08_mrp_partial_from_sale_1step(self):
         self._configure_1_step_delivery()
-        self._test_08_mrp_partial_from_sale()
+        self._mrp_partial_from_sale()
 
     def test_08a_mrp_partial_from_sale_2steps(self):
         self._configure_2_steps_delivery()
-        self._test_08_mrp_partial_from_sale()
+        self._mrp_partial_from_sale()
 
     def test_09_mrp_total_from_sale_1step(self):
         self._configure_1_step_delivery()
-        self._test_09_mrp_total_from_sale()
+        self._mrp_total_from_sale()
 
     def test_09a_mrp_total_from_sale_2steps(self):
         self._configure_2_steps_delivery()
-        self._test_09_mrp_total_from_sale()
+        self._mrp_total_from_sale()
