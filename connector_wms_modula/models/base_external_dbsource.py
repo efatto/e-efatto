@@ -450,11 +450,29 @@ VALUES (
                         }
                     )
                     if len(move.move_line_ids) > 1:
-                        _logger.info(
-                            "WMS LOG: many stock move line found for Whs list %s-%s of "
-                            "move %s, impossible to set qty done!"
-                            % (num_lista, num_riga, move.name)
-                        )
+                        if sum(move.move_line_ids.mapped('product_qty')) < qty_moved:
+                            _logger.info(
+                                "WMS LOG: impossible to set qty done!\n"
+                                "Many stock move line found for Whs list %s-%s of "
+                                "move %s with product_qty %s lesser than qty moved %s."
+                                ""
+                                % (num_lista,
+                                   num_riga,
+                                   move.name,
+                                   sum(move.move_line_ids.mapped('product_qty')),
+                                   qty_moved)
+                            )
+                        else:
+                            try:
+                                for ml in move.move_line_ids:
+                                    if qty_moved > 0:
+                                        ml.qty_done = min(qty_moved, ml.product_qty)
+                                        qty_moved -= ml.qty_done
+                            except UserError as error:
+                                _logger.info(
+                                    "WMS LOG: move line id %s is not writeable for %s"
+                                    % (move.id, error)
+                                )
                     else:
                         if move.state != "cancel":
                             try:
