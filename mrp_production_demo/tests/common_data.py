@@ -121,3 +121,8 @@ class TestProductionData(SavepointCase):
         )
         product_qty.change_product_qty()
         return product_qty
+
+    @staticmethod
+    def _auto_fill_consumed_qty(moves):
+        for move in moves:
+            move.quantity_done = move.product_uom_qty
