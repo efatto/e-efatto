@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mrp_production_component_change_all,access_mrp_production_component_change all,model_mrp_production_component_change,base.group_user,1,0,0,0
+access_mrp_production_component_change_user,access_mrp_production_component_change user,model_mrp_production_component_change,mrp.group_mrp_user,1,1,1,1

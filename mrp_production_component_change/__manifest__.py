@@ -11,6 +11,7 @@
         "mrp_production_demo",
     ],
     "data": [
+        "security/ir.model.access.csv",
         "wizard/mrp_production_component_change.xml",
         "views/mrp.xml",
     ],
