@@ -1,4 +1,3 @@
-
 def colorscale(hexstr, scalefactor):
     """
     Scales a hex string by ``scalefactor``. Returns scaled hex string.
@@ -21,13 +20,12 @@ def colorscale(hexstr, scalefactor):
             return maximum
         return val
 
-    hexstr = hexstr.strip('#')
+    hexstr = hexstr.strip("#")
 
     if scalefactor < 0 or len(hexstr) != 6:
         return hexstr
 
-    r, g, b = int(hexstr[:2], 16),\
-        int(hexstr[2:4], 16), int(hexstr[4:], 16)
+    r, g, b = int(hexstr[:2], 16), int(hexstr[2:4], 16), int(hexstr[4:], 16)
 
     r = clamp(r * scalefactor)
     g = clamp(g * scalefactor)

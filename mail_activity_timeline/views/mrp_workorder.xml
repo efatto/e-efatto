@@ -3,22 +3,31 @@
     <record model="ir.ui.view" id="mrp_production_workorder_form_view_inherit">
         <field name="name">mrp.production.work.order.form</field>
         <field name="model">mrp.workorder</field>
-        <field name="inherit_id" ref="mrp.mrp_production_workorder_form_view_inherit"/>
+        <field name="inherit_id" ref="mrp.mrp_production_workorder_form_view_inherit" />
         <field name="arch" type="xml">
             <field name="message_follower_ids" position="after">
-                <field name="activity_ids" widget="mail_activity"/>
+                <field name="activity_ids" widget="mail_activity" />
             </field>
             <field name="complete_name" position="after">
-                <field name="user_id"/>
+                <field name="user_id" />
             </field>
             <xpath expr="//field[@name='date_start']/ancestor::*[1]" position="after">
-                <label for="activity_date_start" string="Activity Date"/>
+                <label for="activity_date_start" string="Activity Date" />
                 <div class="o_row">
-                    <field name="activity_date_start" class="mr8"/>
-                    <div attrs="{'invisible': [('activity_date_start', '=', False)]}" class="o_row">
-                        <strong attrs="{'invisible': [('activity_date_end', '=', False)]}" class="mr8">to</strong>
-                        <strong class="oe_edit_only mr8" attrs="{'invisible': [('activity_date_end', '!=', False)]}">to</strong>
-                        <field name="activity_date_end"/>
+                    <field name="activity_date_start" class="mr8" />
+                    <div
+            attrs="{'invisible': [('activity_date_start', '=', False)]}"
+            class="o_row"
+          >
+                        <strong
+              attrs="{'invisible': [('activity_date_end', '=', False)]}"
+              class="mr8"
+            >to</strong>
+                        <strong
+              class="oe_edit_only mr8"
+              attrs="{'invisible': [('activity_date_end', '!=', False)]}"
+            >to</strong>
+                        <field name="activity_date_end" />
                     </div>
                 </div>
             </xpath>

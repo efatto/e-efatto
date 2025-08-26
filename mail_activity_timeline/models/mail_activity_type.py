@@ -2,7 +2,7 @@ from odoo import fields, models
 
 
 class MailActivityType(models.Model):
-    _inherit = 'mail.activity.type'
+    _inherit = "mail.activity.type"
 
     is_resource_planner = fields.Boolean()
 

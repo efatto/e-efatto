@@ -3,20 +3,20 @@
     <record model="ir.ui.view" id="mrp_workcenter_view">
         <field name="name">mrp.workcenter.form</field>
         <field name="model">mrp.workcenter</field>
-        <field name="inherit_id" ref="mrp.mrp_workcenter_view"/>
+        <field name="inherit_id" ref="mrp.mrp_workcenter_view" />
         <field name="arch" type="xml">
             <field name="resource_calendar_id" position="after">
-                <field name="user_id"/>
+                <field name="user_id" />
             </field>
         </field>
     </record>
     <record model="ir.ui.view" id="mrp_workcenter_tree_view">
         <field name="name">mrp.workcenter.tree</field>
         <field name="model">mrp.workcenter</field>
-        <field name="inherit_id" ref="mrp.mrp_workcenter_tree_view"/>
+        <field name="inherit_id" ref="mrp.mrp_workcenter_tree_view" />
         <field name="arch" type="xml">
             <field name="name" position="after">
-                <field name="user_id"/>
+                <field name="user_id" />
             </field>
         </field>
     </record>

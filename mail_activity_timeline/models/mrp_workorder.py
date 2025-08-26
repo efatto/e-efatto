@@ -2,12 +2,12 @@ from odoo import api, fields, models
 
 
 class MrpWorkorder(models.Model):
-    _inherit = ['mrp.workorder', 'mail.thread', 'mail.activity.mixin']
-    _name = 'mrp.workorder'
+    _inherit = ["mrp.workorder", "mail.thread", "mail.activity.mixin"]
+    _name = "mrp.workorder"
 
     user_id = fields.Many2one(
-        comodel_name='res.users',
-        string='Assigned user',
+        comodel_name="res.users",
+        string="Assigned user",
         index=True,
     )
     activity_date_start = fields.Datetime(
@@ -18,68 +18,76 @@ class MrpWorkorder(models.Model):
         compute="_compute_dates",
         store=True,
     )
-    color = fields.Char(related='production_id.color', readonly=True)
+    color = fields.Char(related="production_id.color", readonly=True)
 
     @api.multi
     def name_get(self):
         return [
             (
-                wo.id, "%s - %s - %s" % (
-                    wo.production_id.sudo().name, wo.name, wo.product_id.sudo().name
-                )
-            ) for wo in self]
+                wo.id,
+                "%s - %s - %s"
+                % (wo.production_id.sudo().name, wo.name, wo.product_id.sudo().name),
+            )
+            for wo in self
+        ]
 
     @api.multi
-    @api.depends('activity_ids.date_start', 'activity_ids.date_end')
+    @api.depends("activity_ids.date_start", "activity_ids.date_end")
     def _compute_dates(self):
         for workorder in self:
             workorder.activity_date_start = min(
-                workorder.mapped("activity_ids.date_start") or [False])
+                workorder.mapped("activity_ids.date_start") or [False]
+            )
             workorder.activity_date_end = max(
-                workorder.mapped("activity_ids.date_end") or [False])
+                workorder.mapped("activity_ids.date_end") or [False]
+            )
 
     @api.model
     def create(self, vals_list):
         workorder = super().create(vals_list)
-        activity_ids = workorder.activity_ids.filtered(
-            lambda x: x.is_resource_planner
-        )
+        activity_ids = workorder.activity_ids.filtered(lambda x: x.is_resource_planner)
         if not activity_ids and vals_list.get("user_id", False):
             # create only when a user directly create workorder
-            self.env['mail.activity'].create_planner_activity(
+            self.env["mail.activity"].create_planner_activity(
                 workorder,
-                workorder.workcenter_id.user_id or
-                workorder.user_id or
-                workorder.production_id.user_id)
+                workorder.workcenter_id.user_id
+                or workorder.user_id
+                or workorder.production_id.user_id,
+            )
         return workorder
 
     @api.multi
     def write(self, values):
         res = super().write(values)
-        if not self.env.context.get('bypass_resource_planner'):
+        if not self.env.context.get("bypass_resource_planner"):
             for workorder in self:
                 # search as activities could be not linked at the moment of write
-                activity_ids = self.env['mail.activity'].search([
-                    ('res_model', '=', workorder._name),
-                    ('res_id', '=', workorder.id),
-                ])
+                activity_ids = self.env["mail.activity"].search(
+                    [
+                        ("res_model", "=", workorder._name),
+                        ("res_id", "=", workorder.id),
+                    ]
+                )
                 if activity_ids:
-                    if any(x in values for x in [
-                        'date_planned_start',
-                        'date_planned_finished',
-                        'user_id',
-                        'parent_id',
-                        'name',
-                        'workcenter_id',
-                        'color'
-                    ]):
+                    if any(
+                        x in values
+                        for x in [
+                            "date_planned_start",
+                            "date_planned_finished",
+                            "user_id",
+                            "parent_id",
+                            "name",
+                            "workcenter_id",
+                            "color",
+                        ]
+                    ):
                         activity_ids._compute_planner()
         return res
 
     @api.multi
     def record_production(self):
         res = super().record_production()
-        if self.state == 'done':
+        if self.state == "done":
             activity_ids = self.activity_ids.filtered(lambda x: x.is_resource_planner)
             activity_ids.action_done()
         return res
