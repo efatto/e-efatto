@@ -3,7 +3,6 @@ odoo.define("mail_activity_timeline.info", function (require) {
 
   var TimelineRenderer = require("web_timeline.TimelineRenderer");
   var core = require("web.core");
-  var _t = core._t;
   var qweb = core.qweb;
 
   TimelineRenderer.include({

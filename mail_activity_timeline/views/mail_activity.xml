@@ -31,7 +31,7 @@
             >
                             <field
                 name="active"
-                widget="boolean_button"
+                widget="boolean"
                 options='{"terminology": "archive"}'
               />
                         </button>
@@ -168,6 +168,7 @@
                 width="24"
                 height="24"
                 class="mr8"
+                alt="User avatar"
               />
                             <span name="res_name">
                                 <t t-esc="record.res_name" />
@@ -184,7 +185,7 @@
         <field name="model">mail.activity</field>
         <field name="inherit_id" ref="mail.mail_activity_view_search" />
         <field name="arch" type="xml">
-            <xpath expr='//filter[@name="activities_my"]' position='after'>
+            <xpath expr='//filter[@name="activities_upcoming_all"]' position='after'>
                 <filter
           string="All"
           name="activities_all"
@@ -226,7 +227,6 @@
     <record model="ir.actions.act_window" id="resource_planner_activities">
         <field name="name">Resource Planner Activities</field>
         <field name="res_model">mail.activity</field>
-        <field name="view_type">form</field>
         <field name="view_mode">timeline,kanban,tree,form</field>
         <field name="domain">[('is_resource_planner', '=', True)]</field>
         <field name="context">{'search_default_activities_all': 1}</field>

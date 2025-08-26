@@ -10,7 +10,6 @@ odoo.define("mail_activity_timeline.brightness", function (require) {
       if (self.arch.attrs.color_field !== undefined) {
         var color = evt[self.arch.attrs.color_field];
         if (color) {
-          const rgb = [255, 0, 0];
           const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
           if (result) {
             const red = parseInt(result[1], 16);
@@ -18,7 +17,9 @@ odoo.define("mail_activity_timeline.brightness", function (require) {
             const black = parseInt(result[3], 16);
             // http://www.w3.org/TR/AERT#color-contrast
             const brightness = Math.round(
-              (parseInt(red) * 299 + parseInt(green) * 587 + parseInt(black) * 114) /
+              (parseInt(red, 16) * 299 +
+                parseInt(green, 16) * 587 +
+                parseInt(black, 16) * 114) /
                 1000
             );
             const textColor = brightness > 125 ? "black" : "white";

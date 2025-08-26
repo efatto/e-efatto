@@ -5,13 +5,20 @@
         <field name="model">mrp.workorder</field>
         <field name="inherit_id" ref="mrp.mrp_production_workorder_form_view_inherit" />
         <field name="arch" type="xml">
-            <field name="message_follower_ids" position="after">
-                <field name="activity_ids" widget="mail_activity" />
-            </field>
-            <field name="complete_name" position="after">
+            <xpath expr="//sheet" position="after">
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" />
+                    <field name="activity_ids" />
+                    <field name="message_ids" />
+                </div>
+            </xpath>
+            <field name="product_id" position="before">
                 <field name="user_id" />
             </field>
-            <xpath expr="//field[@name='date_start']/ancestor::*[1]" position="after">
+            <xpath
+        expr="//field[@name='duration_expected']/ancestor::*[1]"
+        position="after"
+      >
                 <label for="activity_date_start" string="Activity Date" />
                 <div class="o_row">
                     <field name="activity_date_start" class="mr8" />

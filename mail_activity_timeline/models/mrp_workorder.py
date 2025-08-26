@@ -20,7 +20,6 @@ class MrpWorkorder(models.Model):
     )
     color = fields.Char(related="production_id.color", readonly=True)
 
-    @api.multi
     def name_get(self):
         return [
             (
@@ -31,7 +30,6 @@ class MrpWorkorder(models.Model):
             for wo in self
         ]
 
-    @api.multi
     @api.depends("activity_ids.date_start", "activity_ids.date_end")
     def _compute_dates(self):
         for workorder in self:
@@ -56,7 +54,6 @@ class MrpWorkorder(models.Model):
             )
         return workorder
 
-    @api.multi
     def write(self, values):
         res = super().write(values)
         if not self.env.context.get("bypass_resource_planner"):
@@ -84,9 +81,8 @@ class MrpWorkorder(models.Model):
                         activity_ids._compute_planner()
         return res
 
-    @api.multi
-    def record_production(self):
-        res = super().record_production()
+    def button_done(self):
+        res = super().button_done()
         if self.state == "done":
             activity_ids = self.activity_ids.filtered(lambda x: x.is_resource_planner)
             activity_ids.action_done()

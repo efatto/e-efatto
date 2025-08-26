@@ -44,7 +44,7 @@ class MailActivity(models.Model):
     )
     mail_activity_origin_id = fields.Many2one(
         comodel_name="mail.activity.origin",
-        string="Origin",
+        string="Activity Origin",
     )
 
     def _get_mail_activity_origin(self):
@@ -212,7 +212,6 @@ class MailActivity(models.Model):
                 color = colorscale.colorscale(color, 0.5)
         return color
 
-    @api.multi
     @api.depends("res_model", "res_id")
     def _compute_planner(self):
         # for this compute @api.depends is only partial possible, as dependants fields

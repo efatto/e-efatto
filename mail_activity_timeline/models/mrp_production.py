@@ -18,7 +18,6 @@ class MrpProduction(models.Model):
         context={"active_test": False},
     )
 
-    @api.multi
     @api.depends("workorder_ids.activity_ids")
     def _compute_workorders_activity_ids(self):
         for production in self:
@@ -33,7 +32,6 @@ class MrpProduction(models.Model):
                 )
             )
 
-    @api.multi
     def write(self, values):
         res = super().write(values)
         if not self.env.context.get("bypass_resource_planner"):
