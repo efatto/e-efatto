@@ -1,14 +1,11 @@
-# Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-from odoo import api, models
+from odoo import models
 
 
 class StockMove(models.Model):
     _inherit = "stock.move"
 
-    @api.multi
-    def _action_done(self):
-        moves_todo = super()._action_done()
+    def _action_done(self, cancel_backorder=False):
+        moves_todo = super()._action_done(cancel_backorder=cancel_backorder)
         for move in moves_todo:
             if move.picking_id.transfer_date:
                 move.write({"date": move.picking_id.transfer_date})
