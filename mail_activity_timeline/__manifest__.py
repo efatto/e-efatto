@@ -1,0 +1,42 @@
+# Copyright 2023 Sergio Corato <https://github.com/sergiocorato>
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+{
+    "name": "Resource Planner Timeline",
+    "version": "14.0.1.0.0",
+    "license": "AGPL-3",
+    "development_status": "Alpha",
+    "category": "Mail",
+    "author": "Sergio Corato",
+    "website": "https://github.com/efatto/e-efatto",
+    "summary": "Use mail activity to plan resources.",
+    "depends": [
+        "mail_activity_board",
+        "mail_activity_done",
+        "mail_activity_partner",
+        "mail_activity_team",
+        "mrp_production_calendar",
+        "mrp_production_demo",
+        "mrp_sale_info",
+        "mrp_workorder_hierarchy",
+        "project_stage_state",
+        "web_timeline",
+        "web_view_calendar_list",
+    ],
+    "qweb": [
+        "static/src/xml/web_timeline.xml",
+        "static/src/xml/web_kanban_activity.xml",
+    ],
+    "data": [
+        "security/ir.model.access.csv",
+        "data/mail_activity_type.xml",
+        "data/mrp_workcenter.xml",
+        "views/mail_activity.xml",
+        "views/mrp_workcenter.xml",
+        "views/mrp_workorder.xml",
+        "views/mrp.xml",
+        "views/project.xml",
+        "views/task.xml",
+        "views/web.xml",
+    ],
+    "installable": True,
+}
