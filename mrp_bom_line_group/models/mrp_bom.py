@@ -13,7 +13,6 @@ class MrpBome(models.Model):
         line_to_mantain.write({"product_qty": qty_total})
         return True
 
-    @api.multi
     def action_bom_group_line(self):
         for bom in self:
             products = bom.bom_line_ids.mapped("product_id")
