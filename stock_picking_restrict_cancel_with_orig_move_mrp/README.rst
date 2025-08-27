@@ -2,9 +2,9 @@
    :target: https://odoo-community.org/get-involved?utm_source=readme
    :alt: Odoo Community Association
 
-=================================================
-Stock Picking Restrict Cancel with Original Moves
-=================================================
+========================================================
+Stock Picking Restrict Cancel in MRP with Original Moves
+========================================================
 
 .. 
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
