@@ -17,6 +17,7 @@
     variable: Inactive from date, which will deactivate products without stock and
     inactive from the selected date.""",
     "data": [
+        "security/ir.model.access.csv",
         "wizard/product_archiver.xml",
     ],
     "installable": True,
