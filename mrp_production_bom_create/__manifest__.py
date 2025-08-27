@@ -13,6 +13,7 @@
         "mrp_routing",
     ],
     "data": [
+        "security/ir.model.access.csv",
         "wizard/mrp_production_bom_create.xml",
     ],
     "installable": True,
