@@ -5,9 +5,8 @@ def migrate_invoice_line_values(cr, table, column):
     query = """
 UPDATE {table}
 SET {column} = aml.id
-FROM account_invoice_line ail
-WHERE aml.old_invoice_line_id = ail.id
-AND aml.old_invoice_line_id = {table}.{column}
+JOIN account_move_line aml
+ON aml.old_invoice_line_id = {table}.{column}
     """.format(
         table=table,
         column=column,
