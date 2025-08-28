@@ -1,5 +1,4 @@
 from openupgradelib import openupgrade
-
 from psycopg2 import sql
 
 
@@ -22,6 +21,7 @@ def drop_constraint(cr, table, column):
                 sql.Identifier(constraint),
             ),
         )
+
 
 def migrate_invoice_line_values(cr, table, column):
     query = """
