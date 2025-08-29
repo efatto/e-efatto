@@ -92,3 +92,8 @@ class ProductProduct(models.Model):
 
     def action_name_is_too_long(self):
         raise UserError(_("Product name is too long!"))
+
+    def action_wms_modula_error(self):
+        raise UserError(
+            _("Error importing product on WMS Modula: %s" % self.wms_modula_error)
+        )
