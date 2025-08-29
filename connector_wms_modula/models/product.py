@@ -89,3 +89,6 @@ class ProductProduct(models.Model):
                 ("default_code", "!=", " "),
             ]
         )
+
+    def action_name_is_too_long(self):
+        raise UserError(_("Product name is too long!"))
