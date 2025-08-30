@@ -70,9 +70,11 @@ class TestProductionData(SavepointCase):
                 supplier_taxes_id=[
                     (
                         4,
-                        cls.env["account.tax"].search(
-                            [("type_tax_use", "=", "purchase")], limit=1).id
-                    )]
+                        cls.env["account.tax"]
+                        .search([("type_tax_use", "=", "purchase")], limit=1)
+                        .id,
+                    )
+                ],
             )
         )
         cls.subproduct_2_1 = cls.env.ref(
