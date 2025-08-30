@@ -5,16 +5,12 @@ class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
 
     state = fields.Selection(
-        selection=[
-            ("draft", "RFQ"),
+        selection_add=[
             ("rfq sent", "RFQ Sent"),
             ("rfq confirmed", "RFQ Confirmed"),
-            ("sent", "Order Sent"),
-            ("to approve", "To Approve"),
+            ("sent",),
             ("approved", "Approved"),
-            ("purchase", "Purchase Order"),
-            ("done", "Locked"),
-            ("cancel", "Cancelled"),
+            ("purchase",),
         ]
     )
 
