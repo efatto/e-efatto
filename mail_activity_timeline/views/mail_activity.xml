@@ -150,7 +150,7 @@
         event_open_popup="%(mail_activity_timeline.mail_activity_view_form_popup_timeline)s"
         mode="month"
         color_field="color_active"
-        dependency_arrow="parent_id"
+        dependency_arrow="parent_ids"
       >
                 <field name="user_id" />
                 <field name="color_active" />

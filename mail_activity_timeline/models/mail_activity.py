@@ -25,6 +25,15 @@ class MailActivity(models.Model):
         ondelete="cascade",
         index=True,
     )
+    parent_ids = fields.Many2many(
+        comodel_name="mail.activity",
+        relation="mail_activity_parents_rel",
+        column1="activity_id",
+        column2="parent_id",
+        compute="_compute_parent_ids",
+        store=True,
+        string="Parent Activities",
+    )
     workcenter_id = fields.Many2one(
         string="Work Center",
         comodel_name="mrp.workcenter",
@@ -46,6 +55,11 @@ class MailActivity(models.Model):
         comodel_name="mail.activity.origin",
         string="Activity Origin",
     )
+
+    @api.depends("parent_id")
+    def _compute_parent_ids(self):
+        for activity in self:
+            activity.parent_ids = activity.parent_id.ids
 
     def _get_mail_activity_origin(self):
         self.ensure_one()
