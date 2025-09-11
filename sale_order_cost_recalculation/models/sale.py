@@ -11,7 +11,7 @@ class SaleOrderLine(models.Model):
 
     purchase_date = fields.Datetime(compute="_compute_purchase_date", store=True)
     # Extend digits of existing purchase_price field
-    purchase_price = fields.Float(digits=(20, 8))
+    purchase_price = fields.Float(digits=(20, 8), copy=False)
 
     @api.depends("purchase_price")
     def _compute_purchase_date(self):
