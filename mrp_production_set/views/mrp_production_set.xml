@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="mrp_production_set_search" model="ir.ui.view">
+        <field name="name">mrp.production.set.search</field>
+        <field name="model">mrp.production.set</field>
+        <field name="arch" type="xml">
+            <search string="Production Set">
+                <field name="name" />
+                <field name="workcenter_id" />
+                <field name="production_left_id" />
+                <field name="production_right_id" />
+            </search>
+        </field>
+    </record>
+
+    <record id="mrp_production_set_tree" model="ir.ui.view">
+        <field name="name">mrp.production.set.tree</field>
+        <field name="model">mrp.production.set</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="workcenter_id" />
+                <field name="production_left_id" />
+                <field name="production_right_id" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="mrp_production_set_form" model="ir.ui.view">
+        <field name="name">mrp.production.set.form</field>
+        <field name="model">mrp.production.set</field>
+        <field name="arch" type="xml">
+            <form string="Production Set">
+                <sheet string="Production Set">
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only" />
+                        <h1><field name="name" /></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="workcenter_id" />
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Production Left">
+                            <field name="production_left_id" />
+                        </group>
+                        <group string="Production Right">
+                            <field name="production_right_id" />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_mrp_production_set" model="ir.actions.act_window">
+        <field name="name">Production Sets</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">mrp.production.set</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+        action="action_mrp_production_set"
+        id="menu_mrp_production_set"
+        parent="mrp.menu_mrp_manufacturing"
+        sequence="2"
+    />
+
+</odoo>
