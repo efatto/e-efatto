@@ -56,7 +56,7 @@ class BaseExternalDbsource(models.Model):
         server_running_state = system_base_config.get("running_env")
         for record in self:
             conn_string = record.conn_string
-            if server_running_state != "prod":
+            if server_running_state not in ["prod", "migr"]:
                 conn_string = record.conn_string_sandbox
             if record.password:
                 if "%s" not in conn_string:
