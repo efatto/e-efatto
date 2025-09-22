@@ -12,7 +12,6 @@
     "website": "https://github.com/efatto/e-efatto",
     "depends": [
         "connector_whs",
-        "product_is_kit",
         "sale_order_priority",
     ],
     "data": [
