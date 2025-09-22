@@ -10,13 +10,13 @@ class TestMrpProductionLotCustomAssign(TestProductionData):
 
     def test_create_production(self):
         self.main_bom.operation_ids = self.operation1
+        # put only product_id and product_qty in the wizard data to avoid the default
+        # setting of product_qty to 1
         man_order_form = Form(self.env["mrp.production"])
         man_order_form.product_id = self.top_product
-        man_order_form.product_uom_id = self.top_product.uom_id
         man_order_form.product_qty = 5
-        man_order_form.bom_id = self.main_bom
         man_order = man_order_form.save()
-        man_order.product_qty = 5
+        self.assertEqual(man_order.bom_id, self.main_bom)
         self.assertEqual(man_order.product_qty, 5)
         self.assertEqual(len(man_order.move_raw_ids), 3)
         for move in man_order.move_raw_ids:
