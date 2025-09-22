@@ -105,7 +105,7 @@ class TestMrpProductionPreserveKitRoute(TestProductionData):
         man_order_form.product_id = self.product_bom
         man_order_form.product_qty = 1
         man_order = man_order_form.save()
-        self.assertEqual(man_order.bom_id, self.main_bom)
+        self.assertEqual(man_order.bom_id, self.bom)
         man_order.action_confirm()
         self.assertEqual(len(man_order.move_raw_ids), 4)
         self.assertEqual(
