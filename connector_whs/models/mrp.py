@@ -197,6 +197,13 @@ class MrpProduction(models.Model):
         res = super()._post_inventory(cancel_backorder=cancel_backorder)
         return res
 
+    def _get_tipo(self, is_custom=False):
+        # "11" if manufacturing but "12" if production_set
+        return "11" if is_custom else "1"
+
+    def _get_num_lista(self):
+        return self.env["ir.sequence"].next_by_code("hyddemo.whs.liste"), 0
+
     def _generate_whs(self):
         whsliste_obj = self.env["hyddemo.whs.liste"]
         for production in self:
@@ -239,10 +246,7 @@ class MrpProduction(models.Model):
                         and move.location_id == production.location_src_id
                     ):
                         if not num_lista:
-                            num_lista = self.env["ir.sequence"].next_by_code(
-                                "hyddemo.whs.liste"
-                            )
-                            riga = 0
+                            num_lista, riga = production._get_num_lista()
                         riga += 1
                         whsliste_data = dict(
                             num_lista=num_lista,
@@ -250,7 +254,7 @@ class MrpProduction(models.Model):
                             stato="1",
                             data_lista=fields.Datetime.now(),
                             riferimento=production.name,
-                            tipo="11" if is_custom else "1",  # "11" if manufacturing
+                            tipo=production._get_tipo(is_custom=is_custom),
                             product_id=move.product_id.id,
                             parent_product_id=production.product_id.id,
                             qta=move.product_uom_qty,
@@ -259,6 +263,7 @@ class MrpProduction(models.Model):
                             tipo_mov="mrpout",
                         )
                         whsliste_obj.create(whsliste_data)
+                        whsliste_obj.flush()
 
             # Create WMS list for finished products
             finished_dbsource = self.env["base.external.dbsource"].search(
