@@ -7,7 +7,6 @@
         <field name="arch" type="xml">
             <search string="Production Set">
                 <field name="name" />
-                <field name="workcenter_id" />
                 <field name="production_left_id" />
                 <field name="production_right_id" />
             </search>
@@ -20,7 +19,6 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="name" />
-                <field name="workcenter_id" />
                 <field name="production_left_id" />
                 <field name="production_right_id" />
             </tree>
@@ -32,16 +30,18 @@
         <field name="model">mrp.production.set</field>
         <field name="arch" type="xml">
             <form string="Production Set">
+                <header>
+                    <field
+            name="state"
+            widget="statusbar"
+            statusbar_visible="draft,confirmed,progress,done"
+          />
+                </header>
                 <sheet string="Production Set">
                     <div class="oe_title">
                         <label for="name" class="oe_edit_only" />
                         <h1><field name="name" /></h1>
                     </div>
-                    <group>
-                        <group>
-                            <field name="workcenter_id" />
-                        </group>
-                    </group>
                     <group>
                         <group string="Production Left">
                             <field name="production_left_id" />
@@ -50,6 +50,7 @@
                             <field name="production_right_id" />
                         </group>
                     </group>
+                    <field name="compatible_mrp_production_ids" />
                 </sheet>
             </form>
         </field>
@@ -63,10 +64,10 @@
     </record>
 
     <menuitem
-        action="action_mrp_production_set"
-        id="menu_mrp_production_set"
-        parent="mrp.menu_mrp_manufacturing"
-        sequence="2"
-    />
+    action="action_mrp_production_set"
+    id="menu_mrp_production_set"
+    parent="mrp.menu_mrp_manufacturing"
+    sequence="2"
+  />
 
 </odoo>

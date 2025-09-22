@@ -14,6 +14,7 @@
     "data": [
         "security/ir.model.access.csv",
         "views/mrp_production_set.xml",
+        "views/mrp_production.xml",
     ],
     "installable": True,
 }
