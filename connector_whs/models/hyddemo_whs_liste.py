@@ -68,9 +68,11 @@ class HyddemoWhsListe(models.Model):
     provincia = fields.Text("Provincia")  # , size=2)
     nazione = fields.Text("Nazione")  # , size=50)
     product_id = fields.Many2one(
-        "product.product", string="Prodotto", domain=[("type", "=", "product")],
+        "product.product",
+        string="Prodotto",
+        domain=[("type", "=", "product")],
         help="If it is a kit, this is the product sold to the customer. When it is "
-             "produced, this is the product produced.",
+        "produced, this is the product produced.",
     )
     parent_product_id = fields.Many2one(
         "product.product", string="Prodotto Padre", domain=[("type", "=", "product")]
