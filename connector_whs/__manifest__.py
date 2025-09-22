@@ -12,6 +12,7 @@
         "mrp",
         "mrp_production_demo",
         "mrp_subcontracting",
+        "product_is_kit",
         "product_logistics_uom",
         "product_supplierinfo_for_customer",
         "purchase_delivery_split_date",
