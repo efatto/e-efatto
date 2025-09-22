@@ -16,10 +16,10 @@ class TestMrpWorkorderTime(TestProductionData):
     def test_update_product_qty(self):
         man_order_form = Form(self.env["mrp.production"])
         man_order_form.product_id = self.top_product
-        man_order_form.product_uom_id = self.top_product.uom_id
-        man_order_form.product_qty = 1
-        man_order_form.bom_id = self.main_bom
+        man_order_form.product_qty = 2
         man_order = man_order_form.save()
+        self.assertEqual(man_order.product_qty, 2)
+        self.assertEqual(man_order.bom_id, self.main_bom)
         man_order.button_plan()
         self.assertTrue(man_order.workorder_ids)
         workorder = man_order.workorder_ids[0]
