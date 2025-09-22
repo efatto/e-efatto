@@ -9,7 +9,7 @@ class StockBackorderConfirmation(models.TransientModel):
     _inherit = "stock.backorder.confirmation"
 
     def process(self):
-        super().process()
+        res = super().process()
         for pick_id in self.pick_ids:
             backorder_picks = self.env["stock.picking"].search(
                 [("backorder_id", "=", pick_id.id)]
@@ -117,6 +117,7 @@ class StockBackorderConfirmation(models.TransientModel):
                         "location_dest_id": backorder_pick.location_dest_id.id,
                     }
                 )
+        return res
 
     def process_bypass_wms(self):
         self.with_context(bypass_wms=True).process()
