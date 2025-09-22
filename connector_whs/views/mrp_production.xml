@@ -59,7 +59,7 @@
             <field name="qty_producing" position="attributes">
                 <attribute
           name="attrs"
-        >{'readonly': ['|', ('sent_to_whs', '=', True), ('state', 'not in', ['draft', 'confirmed', 'progress'])]}</attribute>
+        >{'readonly': [('qty_producing', '!=', 0), ('sent_to_whs', '=', True), ('state', 'not in', ['draft', 'confirmed', 'progress'])]}</attribute>
             </field>
         </field>
     </record>
