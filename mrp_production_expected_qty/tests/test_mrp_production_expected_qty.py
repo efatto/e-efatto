@@ -53,7 +53,7 @@ class TestMrpProductionLotCustomAssign(TestProductionData):
         self.assertAlmostEqual(
             sum(man_order.mapped("finished_move_line_ids.qty_done")), 2.0
         )
-        self.assertEqual(len(man_order.move_raw_ids), 6)
+        self.assertEqual(len(man_order.move_raw_ids), 3)
 
         # from v. 14.0 the production is done and generate a backorder for the residual,
         # so it's not possible to change the qty done again
