@@ -99,12 +99,13 @@ class TestMrpProductionPreserveKitRoute(TestProductionData):
         )
 
     def test_so_bom_kit(self):
+        # put only product_id and product_qty in the wizard data to avoid the default
+        # setting of product_qty to 1
         man_order_form = Form(self.env["mrp.production"])
         man_order_form.product_id = self.product_bom
-        man_order_form.product_uom_id = self.product_bom.uom_id
-        man_order_form.bom_id = self.bom
         man_order_form.product_qty = 1
         man_order = man_order_form.save()
+        self.assertEqual(man_order.bom_id, self.main_bom)
         man_order.action_confirm()
         self.assertEqual(len(man_order.move_raw_ids), 4)
         self.assertEqual(
