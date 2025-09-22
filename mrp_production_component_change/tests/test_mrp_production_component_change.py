@@ -20,11 +20,12 @@ class TestMrpProductionComponentChange(TestProductionData):
 
     def test_01_update_product(self):
         man_order_form = Form(self.env["mrp.production"])
+        # put only product_id and product_qty in the wizard data to avoid the default
+        # setting of product_qty to 1
         man_order_form.product_id = self.top_product
-        man_order_form.product_uom_id = self.top_product.uom_id
         man_order_form.product_qty = 1
-        man_order_form.bom_id = self.main_bom
         man_order = man_order_form.save()
+        self.assertEqual(man_order.bom_id, self.main_bom)
         self.assertEqual(len(man_order.move_raw_ids), 3)
         move_raw = man_order.move_raw_ids[1]
         self.assertEqual(move_raw.product_uom_qty, 8)
