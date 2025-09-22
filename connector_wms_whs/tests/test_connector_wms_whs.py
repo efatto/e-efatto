@@ -1192,20 +1192,17 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         )
         self.assertEqual(len(whs_lists), 1)
 
-    def _mrp_partial_from_sale(self, is_custom=False):
-        with self.assertRaises(ValidationError):
-            self.dbsource.connection_test()
-        whs_len_records = len(self._execute_select_all_valid_host_liste())
+    def _create_sale_order_with_mrp(self, product):
         order_form = Form(self.env["sale.order"])
         order_form.partner_id = self.env.ref("base.res_partner_12")
         order_form.date_order = fields.Date.today()
         order_form.picking_policy = "direct"
         with order_form.order_line.new() as line:
-            line.product_id = self.top_product
+            line.product_id = product
             line.product_uom_qty = 20
-            line.product_uom = self.top_product.uom_po_id
-            line.price_unit = self.top_product.list_price
-            line.name = self.top_product.name
+            line.product_uom = product.uom_po_id
+            line.price_unit = product.list_price
+            line.name = product.name
         order = order_form.save()
         order.action_confirm()
         self.assertEqual(order.state, "sale")
@@ -1213,6 +1210,13 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         self.assertTrue(man_order)
         man_order.action_confirm()
         self.assertEqual(man_order.state, "confirmed")
+        return man_order
+
+    def _mrp_partial_from_sale(self, man_orders, is_custom=False):
+        with self.assertRaises(ValidationError):
+            self.dbsource.connection_test()
+        whs_len_records = len(self._execute_select_all_valid_host_liste())
+        man_order = man_orders[0]
         man_order.qty_producing = 5
         self._auto_fill_consumed_qty(man_order.move_raw_ids)
         self.assertTrue(man_order.move_raw_ids.move_line_ids)
@@ -1248,7 +1252,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                 self.causali["out_manufacturing"] if is_custom else self.causali["out"]
             )
             if whs_list.product_id == self.subproduct_1_1:
-                self.assertEqual(whs_list.tipo, "11" if is_custom else "1")
+                self.assertEqual(whs_list.tipo, man_order._get_tipo(is_custom))
                 self.assertIn(
                     str(result_liste[0]),
                     [
@@ -1257,7 +1261,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                     ],
                 )
             elif whs_list.product_id == self.subproduct_2_1:
-                self.assertEqual(whs_list.tipo, "11" if is_custom else "1")
+                self.assertEqual(whs_list.tipo, man_order._get_tipo(is_custom))
                 self.assertEqual(
                     str(result_liste[0]),
                     f"[(Decimal('160.000'), Decimal('40.000'), 0, '{causale}')]",
@@ -1287,34 +1291,22 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
     def test_08_mrp_partial_from_sale(self):
         self.top_product.categ_id = self.categ_id
         self.assertNotEqual(self.top_product.categ_id.name, "CUSTOM")
-        self._mrp_partial_from_sale()
+        self._mrp_partial_from_sale(
+            self._create_sale_order_with_mrp(product=self.top_product)
+        )
 
     def test_08_mrp_partial_from_sale_custom(self):
         self.top_product.categ_id = self.custom_categ_id
         self.assertEqual(self.top_product.categ_id.name, "CUSTOM")
-        self._mrp_partial_from_sale(is_custom=True)
+        self._mrp_partial_from_sale(
+            self._create_sale_order_with_mrp(product=self.top_product), is_custom=True
+        )
 
     def _mrp_total_from_sale(self, is_custom=False):
         with self.assertRaises(ValidationError):
             self.dbsource.connection_test()
         whs_len_records = len(self._execute_select_all_valid_host_liste())
-        order_form = Form(self.env["sale.order"])
-        order_form.partner_id = self.env.ref("base.res_partner_12")
-        order_form.date_order = fields.Date.today()
-        order_form.picking_policy = "direct"
-        with order_form.order_line.new() as line:
-            line.product_id = self.top_product
-            line.product_uom_qty = 20
-            line.product_uom = self.top_product.uom_po_id
-            line.price_unit = self.top_product.list_price
-            line.name = self.top_product.name
-        order = order_form.save()
-        order.action_confirm()
-        self.assertEqual(order.state, "sale")
-        man_order = self.env["mrp.production"].search([("origin", "ilike", order.name)])
-        self.assertTrue(man_order)
-        man_order.action_confirm()
-        self.assertEqual(man_order.state, "confirmed")
+        man_order = self._create_sale_order_with_mrp(product=self.top_product)
         man_order.qty_producing = 20
         self._auto_fill_consumed_qty(man_order.move_raw_ids)
         self.assertTrue(man_order.move_raw_ids.move_line_ids)
@@ -1349,7 +1341,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                 self.causali["out_manufacturing"] if is_custom else self.causali["out"]
             )
             if whs_list.product_id == self.subproduct_1_1:
-                self.assertEqual(whs_list.tipo, "11" if is_custom else "1")
+                self.assertEqual(whs_list.tipo, man_order._get_tipo(is_custom))
                 self.assertIn(
                     str(result_liste[0]),
                     [
@@ -1358,7 +1350,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                     ],
                 )
             elif whs_list.product_id == self.subproduct_2_1:
-                self.assertEqual(whs_list.tipo, "11" if is_custom else "1")
+                self.assertEqual(whs_list.tipo, man_order._get_tipo(is_custom))
                 self.assertEqual(
                     str(result_liste[0]),
                     f"[(Decimal('160.000'), Decimal('40.000'), 0, '{causale}')]",
