@@ -1,7 +1,4 @@
-# Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-
-from odoo import api, fields, models, tools
+from odoo import fields, models, tools
 
 
 class TimesheetProductivity(models.Model):
@@ -20,7 +17,6 @@ class TimesheetProductivity(models.Model):
     task_id = fields.Many2one("project.task")
     project_id = fields.Many2one("project.project")
 
-    @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
         self._cr.execute(
