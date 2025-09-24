@@ -1,18 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="view_hr_timesheet_productivity_report_tree" model="ir.ui.view">
         <field name="name">HR timesheet productivity report tree</field>
         <field name="model">hr.timesheet.productivity.report</field>
         <field name="arch" type="xml">
             <tree string="timesheet productivity">
-                <field name="date"/>
-                <field name="name"/>
-                <field name="employee_id"/>
-                <field name="workorder_id"/>
-                <field name="task_id"/>
-                <field name="total_timesheet"/>
-                <field name="total_productivity"/>
-                <field name="total_worked"/>
+                <field name="date" />
+                <field name="name" />
+                <field name="employee_id" />
+                <field name="workorder_id" />
+                <field name="task_id" />
+                <field name="total_timesheet" />
+                <field name="total_productivity" />
+                <field name="total_worked" />
             </tree>
         </field>
     </record>
@@ -21,8 +21,8 @@
         <field name="model">hr.timesheet.productivity.report</field>
         <field name="arch" type="xml">
             <search string="timesheet productivity">
-                <field name="employee_id"/>
-                <filter name="month" string="Date" date="date"/>
+                <field name="employee_id" />
+                <filter name="month" string="Date" date="date" />
             </search>
         </field>
     </record>
@@ -31,11 +31,11 @@
         <field name="model">hr.timesheet.productivity.report</field>
         <field name="arch" type="xml">
             <pivot string="timesheet productivity">
-                <field name="employee_id" type="row"/>
-                <field name="date" interval="day" type="col"/>
-                <field name="total_timesheet" type="measure" widget="float_time"/>
-                <field name="total_productivity" type="measure" widget="float_time"/>
-                <field name="total_worked" type="measure" widget="float_time"/>
+                <field name="employee_id" type="row" />
+                <field name="date" interval="day" type="col" />
+                <field name="total_timesheet" type="measure" widget="float_time" />
+                <field name="total_productivity" type="measure" widget="float_time" />
+                <field name="total_worked" type="measure" widget="float_time" />
             </pivot>
         </field>
     </record>
@@ -47,8 +47,10 @@
         <field name="context">{'search_default_month': True}</field>
     </record>
 
-    <menuitem id="menu_hr_timesheet_productivity_report"
-              parent="hr_timesheet.menu_timesheets_reports"
-              action="action_hr_timesheet_productivity_report"
-              name="Timesheet / Productivity"/>
+    <menuitem
+    id="menu_hr_timesheet_productivity_report"
+    parent="hr_timesheet.menu_timesheets_reports"
+    action="action_hr_timesheet_productivity_report"
+    name="Timesheet / Productivity"
+  />
 </odoo>

@@ -5,25 +5,26 @@ from odoo import api, fields, models, tools
 
 
 class TimesheetProductivity(models.Model):
-    _name = 'hr.timesheet.productivity.report'
+    _name = "hr.timesheet.productivity.report"
     _auto = False
-    _description = 'Timesheet Productivity Report'
+    _description = "Timesheet Productivity Report"
 
-    employee_id = fields.Many2one('hr.employee')
+    employee_id = fields.Many2one("hr.employee")
     date = fields.Date()
     total_timesheet = fields.Float(string="Timesheet")
     total_productivity = fields.Float(string="Productivity")
     total_worked = fields.Float(string="Total")
     name = fields.Char()
-    workorder_id = fields.Many2one('mrp.workorder')
-    production_id = fields.Many2one('mrp.production')
-    task_id = fields.Many2one('project.task')
-    project_id = fields.Many2one('project.project')
+    workorder_id = fields.Many2one("mrp.workorder")
+    production_id = fields.Many2one("mrp.production")
+    task_id = fields.Many2one("project.task")
+    project_id = fields.Many2one("project.project")
 
     @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
-        self._cr.execute("""CREATE OR REPLACE VIEW %s AS (
+        self._cr.execute(
+            """CREATE OR REPLACE VIEW %s AS (
             SELECT
                 t.id AS id,
                 t.employee_id,
@@ -72,4 +73,6 @@ class TimesheetProductivity(models.Model):
             GROUP BY t.employee_id, t.date, t.name, t.id
             ORDER BY t.date
         )
-        """ % self._table)
+        """
+            % self._table
+        )
