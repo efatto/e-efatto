@@ -176,11 +176,13 @@ class MrpWorkorder(models.Model):
                             "work order."
                         )
                     )
-                if start_date and end_date:
-                    computed_duration = workorder._calculate_duration_expected(
-                        date_planned_start=start_date, date_planned_finished=end_date
-                    )
-                    values["duration_expected"] = computed_duration
+                # part removed as duration_expected must be unchanged
+                # todo without this code the user has some problems?
+                # if start_date and end_date:
+                #     computed_duration = workorder._calculate_duration_expected(
+                #         date_planned_start=start_date, date_planned_finished=end_date
+                #     )
+                #     values["duration_expected"] = computed_duration
         res = super().write(values)
         if "parallel_qty_production" in values:
             # update after 'write'
