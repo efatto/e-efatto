@@ -16,5 +16,6 @@
     ],
     "data": [],
     "installable": True,
+    "excludes": "connector_wms_modula",
     "auto_install": True,
 }
