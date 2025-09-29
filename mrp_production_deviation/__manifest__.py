@@ -18,4 +18,5 @@
         "views/mrp.xml",
     ],
     "installable": True,
+    "post_init_hook": "set_price_unit_production_component_moves",
 }
