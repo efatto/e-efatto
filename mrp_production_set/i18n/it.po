@@ -1,16 +1,190 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# 	* connector_desk_mrp
+# 	* mrp_production_set
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 14.0+e\n"
+"Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-26 10:44+0000\n"
-"PO-Revision-Date: 2024-04-26 10:44+0000\n"
+"POT-Creation-Date: 2025-10-08 14:43+0000\n"
+"PO-Revision-Date: 2025-10-08 14:43+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: mrp_production_set
+#: code:addons/mrp_production_set/models/mrp_production_set.py:0
+#, python-format
+msgid "A production set must have only 1 component!"
+msgstr "Un set di produzione deve avere solo 1 componente!"
+
+#. module: mrp_production_set
+#: code:addons/mrp_production_set/models/mrp_production_set.py:0
+#, python-format
+msgid "A production set must have the same components!"
+msgstr "Un set di produzione deve avere gli stessi componenti!"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production__assigned_attachment_ids
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__assigned_attachment_ids
+msgid "Assigned Attachments"
+msgstr "Allegati assegnati"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__compatible_mrp_production_ids
+msgid "Compatible Mrp Production"
+msgstr "Produzione compatibile"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production__display_name
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production__id
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__id
+msgid "ID"
+msgstr ""
+
+#. module: mrp_production_set
+#: model:ir.model.fields,help:mrp_production_set.field_mrp_production_set__split_production
+msgid "If checked, the production will be splitted in two."
+msgstr "Se selezionato, la produzione sarà divisa in due."
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production__is_compatible_for_set
+msgid "Is Compatible For Set"
+msgstr "È compatibile per Set di Produzione"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production____last_update
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set____last_update
+msgid "Last Modified on"
+msgstr "Ultima modifica il"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__write_uid
+msgid "Last Updated by"
+msgstr "Ultima modifica da"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,help:mrp_production_set.field_mrp_production_set__compatible_mrp_production_ids
+msgid ""
+"List only the productions with the same components. Do not matter on "
+"quantities."
+msgstr ""
+"Elenca solo le produzioni con gli stessi componenti. Non sono rilevanti "
+"le quantità."
+
+#. module: mrp_production_set
+#: model:ir.model,name:mrp_production_set.model_mrp_production_set
+msgid "MRP Production Set"
+msgstr "Set Ordini Produzione"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__name
+msgid "Name"
+msgstr "Nome"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__move_raw_product_id
+msgid "Product"
+msgstr "Prodotto"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__production_left_id
+#: model_terms:ir.ui.view,arch_db:mrp_production_set.mrp_production_set_form
+msgid "Production Left"
+msgstr "Produzione Sinistra"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production__production_left_set_ids
+msgid "Production Left Set"
+msgstr "Set Produzione Sinistra"
+
+#. module: mrp_production_set
+#: model:ir.model,name:mrp_production_set.model_mrp_production
+msgid "Production Order"
+msgstr "Ordine di produzione"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__production_right_id
+#: model_terms:ir.ui.view,arch_db:mrp_production_set.mrp_production_set_form
+msgid "Production Right"
+msgstr "Produzione Destra"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production__production_right_set_ids
+msgid "Production Right Set"
+msgstr "Set Produzione Destra"
+
+#. module: mrp_production_set
+#: model_terms:ir.ui.view,arch_db:mrp_production_set.mrp_production_set_form
+#: model_terms:ir.ui.view,arch_db:mrp_production_set.mrp_production_set_search
+msgid "Production Set"
+msgstr "Set di Produzione"
+
+#. module: mrp_production_set
+#: model:ir.actions.act_window,name:mrp_production_set.action_mrp_production_set
+#: model:ir.ui.menu,name:mrp_production_set.menu_mrp_production_set
+msgid "Production Sets"
+msgstr "Sets di Produzione"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__qty_producing_left
+msgid "Quantity Producing Left"
+msgstr "Quantità in Produzione Sinistra"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__qty_producing_right
+msgid "Quantity Producing Right"
+msgstr "Quantità in Produzione Destra"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,help:mrp_production_set.field_mrp_production_set__qty_producing_left
+msgid "Set the quantity producing in the left production."
+msgstr "Imposta la quantità di produzione nella produzione sinistra."
+
+#. module: mrp_production_set
+#: model:ir.model.fields,help:mrp_production_set.field_mrp_production_set__qty_producing_right
+msgid "Set the quantity producing in the right production."
+msgstr "Imposta la quantità di produzione nella produzione destra."
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__split_production
+msgid "Split Production"
+msgstr "Suddividere la produzione"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__state
+msgid "State"
+msgstr "Stato"
+
+#. module: mrp_production_set
+#: model_terms:ir.ui.view,arch_db:mrp_production_set.mrp_production_set_form
+msgid "The same as Production Left"
+msgstr "Uguale a Produzione Sinistra"
+
+#. module: mrp_production_set
+#: model_terms:ir.ui.view,arch_db:mrp_production_set.mrp_production_set_form
+msgid "Update qty producing"
+msgstr "Aggiorna Q.tà in Produzione"

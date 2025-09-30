@@ -31,6 +31,13 @@
         <field name="arch" type="xml">
             <form string="Production Set">
                 <header>
+                    <button
+            name="button_update_qty_producing"
+            type="object"
+            string="Update qty producing"
+            class="oe_highlight"
+            attrs="{'invisible': [('state', '!=', 'confirmed')]}"
+          />
                     <field
             name="state"
             widget="statusbar"
@@ -42,15 +49,33 @@
                         <label for="name" class="oe_edit_only" />
                         <h1><field name="name" /></h1>
                     </div>
+                    <field name="compatible_mrp_production_ids" invisible="1" />
+                    <group>
+                        <field name="move_raw_product_id" readonly="1" />
+                        <field name="split_production" />
+                    </group>
                     <group>
                         <group string="Production Left">
                             <field name="production_left_id" />
+                            <field name="qty_producing_left" />
                         </group>
                         <group string="Production Right">
-                            <field name="production_right_id" />
+                            <div
+                attrs="{'invisible': [('split_production', '!=', True)]}"
+              >
+                                The same as Production Left
+                            </div>
+                            <field
+                name="production_right_id"
+                domain="[('id', 'in', compatible_mrp_production_ids)] "
+                attrs="{'invisible': [('split_production', '=', True)]}"
+              />
+                            <field
+                name="qty_producing_right"
+                attrs="{'invisible': [('split_production', '=', True)]}"
+              />
                         </group>
                     </group>
-                    <field name="compatible_mrp_production_ids" />
                 </sheet>
             </form>
         </field>
