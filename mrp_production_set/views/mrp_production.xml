@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='bom_id']" position="after">
                 <field
-          name="production_set_id"
+          name="production_left_set_ids"
           context="{'default_production_left_id': active_id}"
         />
             </xpath>

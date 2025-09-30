@@ -4,28 +4,24 @@ from odoo import api, fields, models
 class MrpProduction(models.Model):
     _inherit = "mrp.production"
 
-    production_set_id = fields.Many2one(
+    production_left_set_ids = fields.One2many(
         comodel_name="mrp.production.set",
+        inverse_name="production_left_id",
+        string="Production Left Set",
+    )
+    production_right_set_ids = fields.One2many(
+        comodel_name="mrp.production.set",
+        inverse_name="production_right_id",
+        string="Production Right Set",
+    )
+    is_compatible_for_set = fields.Boolean(
+        compute="_compute_is_compatible_for_set",
+        store=True,
     )
 
-    @api.model
-    def _name_search(
-        self, name, args=None, operator="ilike", limit=100, name_get_uid=None
-    ):
-        if not name == "" and operator in ("ilike", "like", "=", "=like", "=ilike"):
-            args = [] if args is None else args.copy()
-            args += [
-                "|",
-                ("name", operator, name),
-                ("product_id.name", operator, name),
-            ]
-            if operator == "ilike":
-                # to exclude extension of args with and & domain
-                name = ""
-        return super()._name_search(
-            name=name,
-            args=args,
-            operator=operator,
-            limit=limit,
-            name_get_uid=name_get_uid,
-        )
+    @api.depends("move_raw_ids.product_id")
+    def _compute_is_compatible_for_set(self):
+        for record in self:
+            record.is_compatible_for_set = bool(
+                len(record.move_raw_ids.mapped("product_id")) == 1
+            )
