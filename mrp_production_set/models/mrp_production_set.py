@@ -13,11 +13,14 @@ class MrpProductionSet(models.Model):
     )
     production_left_id = fields.Many2one(
         comodel_name="mrp.production",
-        # todo domain on the same components of bom? or same product?
+        domain="[('is_compatible_for_set', '=', True), "
+        "('state', 'in', ['draft', 'confirmed'])]",
         string="Production Left",
     )
     production_right_id = fields.Many2one(
         comodel_name="mrp.production",
+        domain="[('is_compatible_for_set', '=', True), "
+        "('state', 'in', ['draft', 'confirmed'])]",
         string="Production Right",
     )
     compatible_mrp_production_ids = fields.Many2many(
@@ -25,8 +28,35 @@ class MrpProductionSet(models.Model):
         compute="_compute_compatible_mrp_production_ids",
         help="List only the productions with the same components. Do not matter on "
         "quantities.",
+        store=True,
     )
-    # todo button to start the 2 productions
+    move_raw_product_id = fields.Many2one(
+        comodel_name="product.product",
+        related="production_left_id.move_raw_ids.product_id",
+        string="Product",
+        store=True,
+        copy=False,
+    )
+    qty_producing_left = fields.Float(
+        string="Quantity Producing Left",
+        digits="Product Unit of Measure",
+        copy=False,
+        help="Set the quantity producing in the left production.",
+    )
+    qty_producing_right = fields.Float(
+        string="Quantity Producing Right",
+        digits="Product Unit of Measure",
+        copy=False,
+        help="Set the quantity producing in the right production.",
+    )
+    split_production = fields.Boolean(
+        string="Split Production",
+        help="If checked, the production will be splitted in two.",
+    )
+
+    @api.onchange("qty_producing_left")
+    def _onchange_qty_producing_left(self):
+        self.qty_producing_right = self.qty_producing_left
 
     @api.depends("production_left_id", "production_right_id")
     def _compute_name(self):
@@ -36,28 +66,50 @@ class MrpProductionSet(models.Model):
                 right=record.production_right_id.name or "n.a.",
             )
 
-    @api.depends("production_left_id", "production_right_id")
+    @api.depends("production_left_id")
     def _compute_state(self):
         for record in self:
             record.state = record.production_left_id.state or "draft"
-            # todo what about right?
+            # The right production state is the same as it is the only accepted
+
+    @api.constrains("production_left_id", "production_right_id")
+    def _check_production_set_products(self):
+        for record in self:
+            if (
+                record.production_left_id.move_raw_ids.product_id
+                != record.production_right_id.move_raw_ids.product_id
+            ):
+                raise ValidationError(
+                    _("A production set must have the same components!")
+                )
+            if (
+                len(record.production_left_id.move_raw_ids) != 1
+                or len(record.production_right_id.move_raw_ids) != 1
+            ):
+                raise ValidationError(_("A production set must have only 1 component!"))
 
     @api.depends("production_left_id.move_raw_ids")
     def _compute_compatible_mrp_production_ids(self):
         for record in self:
-            compatible_mrp_production_ids = self.env["mrp.production"]
+            compatible_mrp_production_ids = self.env["mrp.production"].search(
+                [
+                    ("state", "in", ["draft", "confirmed"]),
+                    ("is_compatible_for_set", "=", True),
+                ]
+            )
             if record.production_left_id:
-                production_raw_product_ids = (
-                    record.production_left_id.move_raw_ids.mapped("product_id")
-                )
-                if len(production_raw_product_ids) != 1:
-                    raise ValidationError(
-                        _("This option only accept production with 1 component!")
-                    )
-                compatible_mrp_production_ids = self.env["mrp.production"].search(
-                    [
-                        ("state", "in", ["draft", "confirmed"]),
-                        ("move_raw_ids.product_id", "=", production_raw_product_ids),
-                    ]
+                compatible_mrp_production_ids = compatible_mrp_production_ids.filtered(
+                    lambda p: p.move_raw_ids.product_id
+                    == record.production_left_id.move_raw_ids.product_id
+                    and p.state == record.production_left_id.state
                 )
             record.compatible_mrp_production_ids = compatible_mrp_production_ids
+
+    def button_update_qty_producing(self):
+        for record in self:
+            record.production_left_id.write(
+                {"qty_producing": record.qty_producing_left}
+            )
+            record.production_right_id.write(
+                {"qty_producing": record.qty_producing_right}
+            )
