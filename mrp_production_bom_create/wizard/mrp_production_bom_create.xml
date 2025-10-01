@@ -4,6 +4,7 @@
     <record id="view_mrp_production_bom_create" model="ir.ui.view">
         <field name="name">mrp.production.bom.create</field>
         <field name="model">mrp.production.bom.create</field>
+        <field name="type">form</field>
         <field name="arch" type="xml">
             <form string="Create BOM">
                 <div>
@@ -31,8 +32,9 @@
         <field name="name">Create BOM from production order</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">mrp.production.bom.create</field>
+        <field name="view_id" ref="view_mrp_production_bom_create" />
         <field name="binding_model_id" ref="mrp.model_mrp_production" />
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>
 
