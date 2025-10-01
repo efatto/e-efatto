@@ -10,7 +10,7 @@ class ProductProduct(models.Model):
     _inherit = "product.product"
 
     last_purchase_line_id = fields.Many2one(
-        comodel_name="purchase.order.line", string="Last Purchase Line"
+        comodel_name="purchase.order.line", string="Last Purchase Line", copy=False
     )
     last_purchase_id = fields.Many2one(
         comodel_name="purchase.order",
@@ -27,7 +27,7 @@ class ProductProduct(models.Model):
     )
 
     last_supplier_invoice_line_id = fields.Many2one(
-        comodel_name="account.move.line", string="Last Invoice Line"
+        comodel_name="account.move.line", string="Last Invoice Line", copy=False
     )
     last_supplier_invoice_id = fields.Many2one(
         comodel_name="account.move",
