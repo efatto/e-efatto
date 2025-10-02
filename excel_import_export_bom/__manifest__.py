@@ -11,6 +11,7 @@
     "depends": [
         "excel_import_export",
         "mrp",
+        "mrp_routing",
     ],
     "data": [
         "import_export_mrp_bom/actions.xml",

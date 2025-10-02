@@ -13,14 +13,12 @@
                         '_HEAD_': {
                             'A2': 'product_tmpl_id${value and value.barcode or value.default_code or value.name or ""}#{style=text}',
                             'B2': 'product_qty${value or 0}#{style=number}',
-                            'C2': 'product_uom_id.name${value or ""}#{style=text}',
-                            'D2': 'routing_id.name${value or ""}#{style=text}',
+                            'C2': 'routing_id.name${value or ""}#{style=text}',
                         },
                         'bom_line_ids': {
-                            'E2': 'product_id.barcode${value or ""}#{style=text}',
-                            'F2': 'product_qty${value or 0}#{style=number}',
-                            'G2': 'product_uom_id.name${value or ""}#{style=text}',
-                            'J2': 'product_id.name${value or ""}#{style=text}',
+                            'D2': 'product_id.barcode${value or ""}#{style=text}',
+                            'E2': 'product_qty${value or 0}#{style=number}',
+                            'F2': 'product_id.name${value or ""}#{style=text}',
                         }
                     }
                 },
@@ -29,7 +27,6 @@
                         '_NODEL_bom_line_ids': {
                             'E2': 'product_id',
                             'F2': 'product_qty',
-                            'G2': 'product_uom_id',
                         }
                     }
                 },
@@ -54,16 +51,14 @@
                         '_HEAD_': {
                             'A2': 'product_id.product_tmpl_id${value and value.barcode or value.default_code or value.name or ""}#{style=text}',
                             'B2': '${1}#{style=number}',
-                            'C2': 'product_id.uom_id.name${value or ""}#{style=text}',
-                            'D2': 'routing_id.name${value or ""}#{style=text}',
+                            'C2': 'routing_id.name${value or ""}#{style=text}',
                         },
                         'move_raw_ids': {
-                            'E2': 'product_id.barcode${value or ""}#{style=text}',
-                            'F2': '${"=?(H2)/?(I2)"}#{style=number}',
-                            'G2': 'product_id.uom_id.name${value or ""}#{style=text}',
-                            'H2': 'quantity_done${value or 0}#{style=number}',
-                            'I2': 'raw_material_production_id${value.product_qty or 1}#{style=number}',
-                            'J2': 'product_id.name${value or ""}#{style=text}',
+                            'D2': 'product_id.barcode${value or ""}#{style=text}',
+                            'E2': '${"=?(H2)/?(I2)"}#{style=number}',
+                            'F2': 'quantity_done${value or 0}#{style=number}',
+                            'G2': 'raw_material_production_id${value.product_qty or 1}#{style=number}',
+                            'H2': 'product_id.name${value or ""}#{style=text}',
                         }
                     }
                 },

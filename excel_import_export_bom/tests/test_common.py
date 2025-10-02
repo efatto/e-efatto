@@ -16,13 +16,11 @@ class TestExcelImportExport(SingleTransactionCase):
                     "_HEAD_": {
                         "A2": 'product_tmpl_id${value and value.barcode or value.default_code or value.name or ""}#{style=text}',  # noqa
                         "B2": "product_qty${value or 0}#{style=number}",
-                        "C2": 'product_uom_id.name${value or ""}#{style=text}',
-                        "D2": 'routing_id.name${value or ""}#{style=text}',
+                        "C2": 'routing_id.name${value or ""}#{style=text}',
                     },
                     "bom_line_ids": {
                         "E2": 'product_id.barcode${value or ""}#{style=text}',
                         "F2": "product_qty${value or 0}#{style=number}",
-                        "G2": 'product_uom_id.name${value or ""}#{style=text}',
                     },
                 }
             },
@@ -31,7 +29,6 @@ class TestExcelImportExport(SingleTransactionCase):
                     "bom_line_ids": {
                         "E2": "product_id",
                         "F2": "product_qty",
-                        "G2": "product_uom_id",
                     }
                 }
             },
