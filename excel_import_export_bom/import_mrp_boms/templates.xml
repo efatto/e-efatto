@@ -14,13 +14,11 @@
                         '_HEAD_': {
                             'A2': 'product_tmpl_id',
                             'B2': 'product_qty',
-                            'C2': 'product_uom_id',
-                            'D2': 'routing_id',
+                            'C2': 'routing_id',
                         },
                         'bom_line_ids': {
-                            'E2': 'product_id',
-                            'F2': 'product_qty',
-                            'G2': 'product_uom_id',
+                            'D2': 'product_id',
+                            'E2': 'product_qty',
                         }
                     }
                 },
