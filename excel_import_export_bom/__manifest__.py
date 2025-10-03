@@ -8,6 +8,7 @@
     "license": "AGPL-3",
     "website": "https://github.com/efatto/e-efatto",
     "category": "Tools",
+    "development_status": "Alpha",
     "depends": [
         "excel_import_export",
         "mrp",
