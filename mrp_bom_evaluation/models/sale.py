@@ -71,7 +71,7 @@ class SaleOrderLine(models.Model):
     def _compute_mrp_production_total_amount(self):
         for line in self:
             line.analytic_cost = (
-                line.order_id.extra_cost
+                line.order_id.actual_cost_mrp
                 + line.order_id.internal_timesheet_cost
             ) * line.price_subtotal / (line.order_id.amount_untaxed or 1.0)
             line.mrp_production_total_amount = sum(
@@ -116,7 +116,7 @@ class SaleOrderLine(models.Model):
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    extra_cost = fields.Float(
+    actual_cost_mrp = fields.Float(
         string="Analytic Actual Cost",
         compute="_compute_analytic_cost",
         store=True,
@@ -129,7 +129,7 @@ class SaleOrder(models.Model):
 
     def _compute_analytic_cost(self):
         for sale in self:
-            extra_costs = self.env["account.analytic.line"].search([
+            actual_cost_mrps = self.env["account.analytic.line"].search([
                 ('project_id', '=', False),
                 ('account_id', '=', sale.analytic_account_id.id),
                 ('move_id.invoice_id.type', 'in', ['in_invoice', 'in_refund'])
@@ -145,14 +145,9 @@ class SaleOrder(models.Model):
             ])
             analytic_sale_revenue = sum(
                 analytic_sale_lines.mapped('price_subtotal') or [0])
-            sale.extra_cost = - sum(extra_costs.mapped('extra_cost') or [0]) * (
+            sale.actual_cost_mrp = - sum(actual_cost_mrps.mapped('actual_cost_mrp') or [0]) * (
                 sale.amount_untaxed / (analytic_sale_revenue or 1.0)
             )
-            # sale.extra_cost_no_product = - sum(
-            #     extra_costs.mapped('extra_cost_no_product') or [0]
-            # ) * (
-            #     sale.amount_untaxed / (analytic_sale_revenue or 1.0)
-            # )
             sale.internal_timesheet_cost = - sum(
                 internal_timesheet_costs.mapped('amount') or [0]) * (
                 sale.amount_untaxed / (analytic_sale_revenue or 1.0)

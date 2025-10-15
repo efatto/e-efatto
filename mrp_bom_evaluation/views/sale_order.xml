@@ -14,7 +14,7 @@
                         groups="sale_margin_security.group_sale_margin_security"/>
             </button>
             <xpath expr="//field[@name='partner_id']" position="after">
-                <field name="extra_cost" groups="base.group_system"/>
+                <field name="actual_cost_mrp" groups="base.group_system"/>
                 <field name="internal_timesheet_cost" groups="base.group_system"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree//field[@name='price_unit']" position="after">
