@@ -93,7 +93,7 @@ class BaseExternalDbsource(models.Model):
         # overridable method done after _get_insert_product_query in the WMS database
         return ""
 
-    def whs_update_products(self):
+    def whs_update_products(self, update_from_date=False):
         """
         Send to HOST_ARTICOLI table only the products changed from the last execution,
         which will be picked up by WMS software.
@@ -110,11 +110,17 @@ class BaseExternalDbsource(models.Model):
             )
             _logger.info(log_data)
             last_id = log_data and log_data[0]["ultimo_id"] or 0
-            last_date_dt = (
-                log_data
-                and log_data[0]["ultimo_invio"]
-                or (fields.Datetime.now() + relativedelta(years=-10))
-            )
+            if update_from_date:
+                last_date_dt = fields.Datetime.from_string(update_from_date)
+            elif dbsource.force_update_product_from_date:
+                last_date_dt = dbsource.force_update_product_from_date
+                dbsource.force_update_product_from_date = False
+            else:
+                last_date_dt = (
+                    log_data
+                    and log_data[0]["ultimo_invio"]
+                    or (fields.Datetime.now() + relativedelta(years=-10))
+                )
             last_date = fields.Datetime.to_string(last_date_dt)
             products = self.env["product.product"]._get_product_to_sync(last_date)
             new_last_update = fields.Datetime.now()
@@ -572,6 +578,11 @@ class BaseExternalDbsource(models.Model):
                 active_ids=dbsource.ids, active_model="base.external.dbsource"
             ).create(wizard_vals)
             wizard.apply()
+
+    @api.model
+    def _cron_whs_update_products(self, update_from_date=False):
+        for dbsource in self.search([]):
+            dbsource.whs_update_products(update_from_date)
 
     def whs_sync_stock(self):
         self.ensure_one()
