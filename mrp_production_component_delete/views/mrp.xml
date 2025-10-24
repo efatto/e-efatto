@@ -15,7 +15,7 @@
           type="object"
           name="delete_production_component"
           icon="fa-remove"
-          string="Delete component"
+          help="Delete component"
           groups="mrp.group_mrp_manager"
           attrs="{'invisible': [('is_locked', '=', True)]}"
           confirm="Are you sure?"
