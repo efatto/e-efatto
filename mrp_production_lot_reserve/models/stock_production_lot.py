@@ -37,7 +37,9 @@ class StockProductionLot(models.Model):
                 in (
                     lot.mapped("producing_production_ids.lot_producing_id")
                     | lot.mapped("reserved_production_ids.reserved_lot_ids")
-                    | lot.stock_move_line_ids.filtered("move_id.production_id").mapped("lot_id")
+                    | lot.stock_move_line_ids.filtered("move_id.production_id").mapped(
+                        "lot_id"
+                    )
                 )
             )
 
