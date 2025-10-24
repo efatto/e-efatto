@@ -11,5 +11,3 @@ class MrpProduction(models.Model):
         column1="mrp_production_id",
         column2="stock_production_lot_id",
     )
-
-    # todo forbid reservation of lots already present in other MO or reserved

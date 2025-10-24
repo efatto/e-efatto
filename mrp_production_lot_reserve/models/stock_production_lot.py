@@ -42,5 +42,3 @@ class StockProductionLot(models.Model):
                     )
                 )
             )
-
-    # todo check unique lot without product
