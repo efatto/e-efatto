@@ -1,13 +1,13 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# 	* mrp_production_dates
+# 	* mrp_production_lot_reserve
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-29 10:39+0000\n"
-"PO-Revision-Date: 2025-07-29 10:39+0000\n"
+"POT-Creation-Date: 2025-10-24 13:29+0000\n"
+"PO-Revision-Date: 2025-10-24 13:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -15,32 +15,70 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
-#. module: mrp_production_dates
-#: model:ir.model.fields,field_description:mrp_production_dates.field_mrp_production__assigned_attachment_ids
+#. module: mrp_production_lot_reserve
+#: model:ir.model.fields,field_description:mrp_production_lot_reserve.field_mrp_production__assigned_attachment_ids
+#: model:ir.model.fields,field_description:mrp_production_lot_reserve.field_stock_production_lot__assigned_attachment_ids
 msgid "Assigned Attachments"
 msgstr "Allegati assegnati"
 
-#. module: mrp_production_dates
-#: model:ir.model.fields,field_description:mrp_production_dates.field_mrp_production__date_planned_finished_computed
-msgid "Date Planned Finished Computed"
-msgstr "Data pianificata calcolata per terminare la produzione."
-
-#. module: mrp_production_dates
-#: model:ir.model.fields,field_description:mrp_production_dates.field_mrp_production__display_name
+#. module: mrp_production_lot_reserve
+#: model:ir.model.fields,field_description:mrp_production_lot_reserve.field_mrp_production__display_name
+#: model:ir.model.fields,field_description:mrp_production_lot_reserve.field_stock_production_lot__display_name
 msgid "Display Name"
 msgstr "Nome visualizzato"
 
-#. module: mrp_production_dates
-#: model:ir.model.fields,field_description:mrp_production_dates.field_mrp_production__id
+#. module: mrp_production_lot_reserve
+#: model:ir.model.fields,field_description:mrp_production_lot_reserve.field_mrp_production__id
+#: model:ir.model.fields,field_description:mrp_production_lot_reserve.field_stock_production_lot__id
 msgid "ID"
 msgstr ""
 
-#. module: mrp_production_dates
-#: model:ir.model.fields,field_description:mrp_production_dates.field_mrp_production____last_update
+#. module: mrp_production_lot_reserve
+#: model:ir.model.fields,field_description:mrp_production_lot_reserve.field_stock_production_lot__is_reserved_or_used
+msgid "Is Reserved Or Used"
+msgstr "È riservato o utilizzato"
+
+#. module: mrp_production_lot_reserve
+#: model:ir.model.fields,field_description:mrp_production_lot_reserve.field_mrp_production____last_update
+#: model:ir.model.fields,field_description:mrp_production_lot_reserve.field_stock_production_lot____last_update
 msgid "Last Modified on"
 msgstr "Ultima modifica il"
 
-#. module: mrp_production_dates
-#: model:ir.model,name:mrp_production_dates.model_mrp_production
+#. module: mrp_production_lot_reserve
+#: model:ir.model,name:mrp_production_lot_reserve.model_stock_production_lot
+msgid "Lot/Serial"
+msgstr "Lotto/Serie"
+
+#. module: mrp_production_lot_reserve
+#: model:ir.model.fields,field_description:mrp_production_lot_reserve.field_stock_production_lot__producing_production_ids
+msgid "Producing Production"
+msgstr "Produzioni per quantità in produzione"
+
+#. module: mrp_production_lot_reserve
+#: model:ir.model,name:mrp_production_lot_reserve.model_mrp_production
 msgid "Production Order"
 msgstr "Ordine di produzione"
+
+#. module: mrp_production_lot_reserve
+#: model:ir.model.fields,field_description:mrp_production_lot_reserve.field_mrp_production__reserved_lot_ids
+msgid "Reserved Lots"
+msgstr "Lotti riservati"
+
+#. module: mrp_production_lot_reserve
+#: model:ir.model.fields,field_description:mrp_production_lot_reserve.field_stock_production_lot__reserved_production_ids
+msgid "Reserved Production"
+msgstr "Produzioni riservate"
+
+#. module: mrp_production_lot_reserve
+#: model:ir.model.fields,field_description:mrp_production_lot_reserve.field_stock_production_lot__stock_move_line_ids
+msgid "Stock Move Line"
+msgstr "Riga movimento di magazzino"
+
+#. module: mrp_production_lot_reserve
+#: model:ir.model.fields,help:mrp_production_lot_reserve.field_stock_production_lot__is_reserved_or_used
+msgid ""
+"Technical field to forbid reservation of lots already present in other MOs "
+"or reserved"
+msgstr ""
+"Campo tecnico per inibire la riserva di lotti già presenti in altre produzioni "
+"o riservati"
