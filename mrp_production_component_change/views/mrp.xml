@@ -14,7 +14,7 @@
           type="action"
           name="%(action_change_production_component)d"
           icon="fa-exchange"
-          string="Change component"
+          help="Change component"
         />
             </xpath>
         </field>
