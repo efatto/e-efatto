@@ -1,4 +1,5 @@
-from odoo import api, fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 
 class MrpProduction(models.Model):
@@ -33,3 +34,15 @@ class MrpProduction(models.Model):
     def _set_qty_producing(self):
         if not self.is_parallel_production:
             super()._set_qty_producing()
+
+    def _check_reserved_lot_qty(self):
+        for record in self:
+            if record.reserved_lot_ids and record.product_qty != len(
+                record.reserved_lot_ids
+            ):
+                raise ValidationError(
+                    _(
+                        "The number of reserved lots must be equal to the quantity of "
+                        "finished products."
+                    )
+                )

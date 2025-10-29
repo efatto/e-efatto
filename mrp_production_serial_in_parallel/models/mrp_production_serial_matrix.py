@@ -6,6 +6,7 @@ class MrpProductionSerialMatrix(models.TransientModel):
 
     def button_validate(self):
         self.ensure_one()
+        self.production_id._check_reserved_lot_qty()
         parallel_production = False
         if self.production_id.is_parallel_production:
             parallel_production = self.production_id.copy(
@@ -21,7 +22,7 @@ class MrpProductionSerialMatrix(models.TransientModel):
             self.production_id.write(
                 {
                     "parallel_production_id": parallel_production.id,
-                    "reserved_lot_ids": False,
+                    "reserved_lot_ids": [(5,)],
                 }
             )
         res = super().button_validate()
