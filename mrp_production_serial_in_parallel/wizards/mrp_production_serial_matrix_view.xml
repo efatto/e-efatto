@@ -3,14 +3,18 @@
     <record id="mrp_production_serial_matrix_view_form" model="ir.ui.view">
         <field name="name">mrp.production.serial.matrix.form</field>
         <field name="model">mrp.production.serial.matrix</field>
-        <field name="inherit_id" ref="mrp_production_serial_matrix.mrp_production_serial_matrix_view_form"/>
+        <field
+      name="inherit_id"
+      ref="mrp_production_serial_matrix.mrp_production_serial_matrix_view_form"
+    />
         <field name="arch" type="xml">
             <button name="button_validate" position="after">
-                <button name="button_prepare"
-                        string="Prepare"
-                        type="object"
-                        class="oe_highlight"
-                />
+                <button
+          name="button_prepare"
+          string="Prepare"
+          type="object"
+          class="oe_highlight"
+        />
             </button>
         </field>
     </record>
