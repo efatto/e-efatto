@@ -7,9 +7,10 @@
     "category": "Manufacturing",
     "author": "Sergio Corato",
     "website": "https://github.com/efatto/e-efatto",
-    "summary": "Reserve lots for production.",
+    "summary": "Reserve lots for production and use in serial matrix.",
     "depends": [
         "mrp",
+        "mrp_production_serial_matrix",
     ],
     "data": [
         "views/stock_production_lot.xml",
