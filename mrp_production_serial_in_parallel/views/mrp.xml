@@ -34,6 +34,21 @@
           name="attrs"
         >{'invisible': ['|', ('is_parallel_production', '=', True), ('state', '=', 'draft')]}</attribute>
             </xpath>
+            <button name="button_mark_done" position="attributes">
+                <attribute name="attrs">
+                    {'invisible': ['|', '|', ('is_parallel_production', '=', True), ('state', 'in', ('draft', 'cancel', 'done', 'to_close')), ('qty_producing', '=', 0)]}</attribute>
+            </button>
+            <button name="button_mark_done" position="attributes">
+                <attribute name="attrs">{'invisible': [
+                '&amp;',
+                '|',
+                '|',
+                ('is_parallel_production', '=', True),
+                ('state', 'not in', ('confirmed', 'progress')),
+                ('qty_producing', '!=', 0),
+                ('state', '!=', 'to_close')]}
+                </attribute>
+            </button>
         </field>
     </record>
     <record id="mrp_production_form_view_reserve" model="ir.ui.view">
