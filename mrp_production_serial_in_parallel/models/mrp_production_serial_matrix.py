@@ -1,6 +1,8 @@
 from dateutil.relativedelta import relativedelta
 
-from odoo import models
+from odoo import _, models
+from odoo.exceptions import UserError
+from odoo.tools import float_is_zero
 
 
 class MrpProductionSerialMatrix(models.TransientModel):
@@ -44,9 +46,7 @@ class MrpProductionSerialMatrix(models.TransientModel):
             )
         return False
 
-    def button_validate(self):
-        self.ensure_one()
-        self.production_id._check_reserved_lot_qty()
+    def _set_parallel_production(self):
         parallel_production = False
         if self.production_id.is_parallel_production:
             parallel_production = self.production_id.copy(
@@ -65,18 +65,95 @@ class MrpProductionSerialMatrix(models.TransientModel):
                     "reserved_lot_ids": [(5,)],
                 }
             )
+        return parallel_production
+
+    def _set_parallel_production_times(self, parallel_production=False):
+        # parallel production is a copy without work times, the production with
+        # work times is the self.production_id, which is in the backorders too
+        backorder_ids = (
+            self.production_id.procurement_group_id.mrp_production_ids.filtered(
+                lambda mo: mo.state != "cancel"
+            )
+        )
+        backorder_ids.write({"parallel_production_id": parallel_production.id})
+        if self.production_id.workorder_ids.time_ids:
+            self._split_work_time(
+                self.production_id, backorder_ids - self.production_id
+            )
+
+    def button_validate(self):
+        self.ensure_one()
+        self.production_id._check_reserved_lot_qty()
+        parallel_production = self._set_parallel_production()
         res = super().button_validate()
         if parallel_production:
-            # parallel production is a copy without work times, the production with
-            # work times is the self.production_id, which is in the backorders too
-            backorder_ids = (
-                self.production_id.procurement_group_id.mrp_production_ids.filtered(
-                    lambda mo: mo.state != "cancel"
-                )
+            self._set_parallel_production_times(parallel_production)
+        return res
+
+    def button_prepare(self):
+        self.ensure_one()
+        self.production_id._check_reserved_lot_qty()
+        parallel_production = self._set_parallel_production()
+        if self.lot_selection_warning_count > 0:
+            raise UserError(
+                _("Some issues has been detected in your selection: %s")
+                % self.lot_selection_warning_msg
             )
-            backorder_ids.write({"parallel_production_id": parallel_production.id})
-            if self.production_id.workorder_ids.time_ids:
-                self._split_work_time(
-                    self.production_id, backorder_ids - self.production_id
-                )
+        mos = self.env["mrp.production"]
+        current_mo = self.production_id
+        for fp_lot in self.finished_lot_ids:
+            # Apply selected lots in matrix and set the qty producing
+            current_mo.lot_producing_id = fp_lot
+            current_mo.qty_producing = 1.0
+            current_mo._set_qty_producing()
+            for move in current_mo.move_raw_ids:
+                rounding = move.product_id.uom_id.rounding
+                if float_is_zero(move.product_qty, precision_rounding=rounding):
+                    # Component moves cannot be deleted in in-progress MO's; however,
+                    # they can be set to 0 units to consume. In such case, we ignore
+                    # the move.
+                    continue
+                if move.product_id.tracking in ["serial", "lot"]:
+                    # We filter using the lot nane because the ORM sometimes
+                    # is not storing correctly the finished_lot_id in the lines
+                    # after passing through the `_onchange_finished_lot_ids`
+                    # method.
+                    matrix_lines = self.line_ids.filtered(
+                        lambda l: (
+                            l.finished_lot_id == fp_lot
+                            or l.finished_lot_name == fp_lot.name
+                        )
+                        and l.component_id == move.product_id
+                    )
+                    if matrix_lines:
+                        self._amend_reservations(move, matrix_lines)
+                        self._consume_selected_lots(move, matrix_lines)
+
+            # Complete MO and create backorder if needed.
+            mos += current_mo
+            backorders = False
+            if current_mo.product_qty > 1:
+                backorders = current_mo._generate_backorder_productions(close_mo=False)
+                current_mo.write({"product_qty": current_mo.qty_producing})
+            if backorders:
+                current_mo = backorders[0]
+                current_mo.write({"parallel_production_id": parallel_production.id})
+            else:
+                break
+
+        # TODO: not specified lots: auto create lots?
+        if not mos:
+            mos = self.production_id
+        res = {
+            "domain": [("id", "in", mos.ids)],
+            "name": _("Manufacturing Orders"),
+            "binding_model_id": self.env["ir.model.data"].xmlid_to_res_id(
+                "mrp_production_serial_matrix.model_mrp_production_serial_matrix"
+            ),
+            "view_mode": "tree,form",
+            "view_id": False,
+            "views": False,
+            "res_model": "mrp.production",
+            "type": "ir.actions.act_window",
+        }
         return res
