@@ -10,4 +10,5 @@ class MrpProduction(models.Model):
         relation="mrp_production_stock_production_lot_rel",
         column1="mrp_production_id",
         column2="stock_production_lot_id",
+        copy=False,
     )
