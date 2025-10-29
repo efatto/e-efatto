@@ -388,9 +388,9 @@ ul.auto-toc {
 </div>
 <div class="section" id="configuration">
 <h2><a class="toc-backref" href="#toc-entry-1">Configuration</a></h2>
-<p>Questo modulo aggiunge un campo in cui indicare quali numeri di lotto seriali sono riservati per una produzione. Tali numeri di lotto non saranno utilizzabili in altre produzioni.</p>
-<img alt="Lotti riservati" src="https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_master/static/description/lotti_riservati.png" />
-<p>Inoltre questo modulo blocca la creazione di lotti univoci con lo stesso nome della sequenza standard dell’azienda anche se per prodotti diversi. Non ne blocca la creazione per nomi diversi (ricevuti quindi dall’esterno).</p>
+<p>Questo modulo introduce una logica di produzione master che contiene le produzioni figlie quando sono prodotti con numero di serie univoco. La produzione dei vari serialie viene quindi gestita da una produzione sola, in cui registrare le ore di lavorazione che saranno suddivise sulle lavorazioni figlie avviate.</p>
+<img alt="Produzione master" src="https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_master/static/description/produzione_master.png" />
+<p>Nelle produzioni figlie è possibile impostare i prodotti consumati singolarmente. Poi si possono completare tutte contemporaneamente dalla produzione padre.</p>
 </div>
 <div class="section" id="bug-tracker">
 <h2><a class="toc-backref" href="#toc-entry-2">Bug Tracker</a></h2>

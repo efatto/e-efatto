@@ -36,12 +36,12 @@ This module add ability to produce serial lots from a master production.
 Configuration
 =============
 
-Questo modulo aggiunge un campo in cui indicare quali numeri di lotto seriali sono riservati per una produzione. Tali numeri di lotto non saranno utilizzabili in altre produzioni.
+Questo modulo introduce una logica di produzione master che contiene le produzioni figlie quando sono prodotti con numero di serie univoco. La produzione dei vari serialie viene quindi gestita da una produzione sola, in cui registrare le ore di lavorazione che saranno suddivise sulle lavorazioni figlie avviate.
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_master/static/description/lotti_riservati.png
-    :alt: Lotti riservati
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_master/static/description/produzione_master.png
+    :alt: Produzione master
 
-Inoltre questo modulo blocca la creazione di lotti univoci con lo stesso nome della sequenza standard dell'azienda anche se per prodotti diversi. Non ne blocca la creazione per nomi diversi (ricevuti quindi dall'esterno).
+Nelle produzioni figlie è possibile impostare i prodotti consumati singolarmente. Poi si possono completare tutte contemporaneamente dalla produzione padre.
 
 Bug Tracker
 ===========

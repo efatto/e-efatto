@@ -8,6 +8,8 @@
         <field name="arch" type="xml">
             <field name="product_id" position="after">
                 <field name="is_master_production" invisible="1" />
+                <div class="oe_highlight" attrs="{'invisible': [('is_master_production', '=', False)]}">Master production</div>
+                <field name="master_production_id" attrs="{'invisible': [('master_production_id', '=', False)]}"/>
             </field>
             <xpath expr="//field[@name='qty_producing']/.." position="attributes">
                 <attribute
