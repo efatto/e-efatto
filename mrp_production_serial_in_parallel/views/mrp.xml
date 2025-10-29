@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="mrp_production_form_view" model="ir.ui.view">
+        <field name="name">mrp.production.form</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view" />
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <span
+          class="oe_highlight"
+          attrs="{'invisible': [('is_parallel_production', '=', False)]}"
+        >Production for serial in parallel</span>
+            </field>
+            <field name="product_id" position="after">
+                <field name="is_parallel_production" invisible="1" />
+                <field
+          name="parallel_production_id"
+          attrs="{'invisible': [('parallel_production_id', '=', False)]}"
+        />
+            </field>
+            <xpath expr="//field[@name='qty_producing']/.." position="attributes">
+                <attribute
+          name="attrs"
+        >{'invisible': ['|', ('is_parallel_production', '=', True), ('state', '=', 'draft')]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='lot_producing_id']/.." position="attributes">
+                <attribute
+          name="attrs"
+        >{'invisible': ['|', ('is_parallel_production', '=', True), ('state', '=', 'draft')]}</attribute>
+            </xpath>
+            <xpath expr="//label[@for='lot_producing_id']" position="attributes">
+                <attribute
+          name="attrs"
+        >{'invisible': ['|', ('is_parallel_production', '=', True), ('state', '=', 'draft')]}</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="mrp_production_form_view_reserve" model="ir.ui.view">
+        <field name="name">mrp.production.form.reserve</field>
+        <field name="model">mrp.production</field>
+        <field
+      name="inherit_id"
+      ref="mrp_production_lot_reserve.mrp_production_form_view"
+    />
+        <field name="arch" type="xml">
+            <field name="reserved_lot_ids" position="attributes">
+                <attribute
+          name="attrs"
+        >{'readonly': [('is_parallel_production', '!=', True), ('state', 'not in', ['draft', 'confirmed'])]}</attribute>
+            </field>
+        </field>
+    </record>
+
+</odoo>
