@@ -7,10 +7,10 @@
         <field name="inherit_id" ref="mrp.mrp_production_form_view" />
         <field name="arch" type="xml">
             <field name="name" position="after">
-                <span
-          class="oe_highlight"
+                <div
+          class="font-weight-bold"
           attrs="{'invisible': [('is_parallel_production', '=', False)]}"
-        >Production for serial in parallel</span>
+        >(Production for serial in parallel)</div>
             </field>
             <field name="product_id" position="after">
                 <field name="is_parallel_production" invisible="1" />
