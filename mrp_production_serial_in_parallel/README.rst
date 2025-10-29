@@ -2,9 +2,9 @@
    :target: https://odoo-community.org/get-involved?utm_source=readme
    :alt: Odoo Community Association
 
-=====================
-MRP Production Master
-=====================
+=================================
+MRP Production Serial in Parallel
+=================================
 
 .. 
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -21,7 +21,7 @@ MRP Production Master
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-efatto%2Fe--efatto-lightgray.png?logo=github
-    :target: https://github.com/efatto/e-efatto/tree/14.0/mrp_production_master
+    :target: https://github.com/efatto/e-efatto/tree/14.0/mrp_production_serial_in_parallel
     :alt: efatto/e-efatto
 
 |badge1| |badge2| |badge3|
@@ -36,10 +36,14 @@ This module add ability to produce serial lots from a master production.
 Configuration
 =============
 
-Questo modulo introduce una logica di produzione master che contiene le produzioni figlie quando sono prodotti con numero di serie univoco. La produzione dei vari serialie viene quindi gestita da una produzione sola, in cui registrare le ore di lavorazione che saranno suddivise sulle lavorazioni figlie avviate.
+Questo modulo introduce una logica di produzione in parallelo per prodotti con seriale univoco, che di default sono prodotti uno alla volta.
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_master/static/description/produzione_master.png
-    :alt: Produzione master
+La produzione di origine viene copiata per mantenerla come riferimento, rimuovendo i collegamenti ai trasferimenti e alle origini, che verranno collegati alle lavorazioni dei seriali.
+
+In questa produzione vanno registrati i tempi di lavorazione, che sono suddivisi all'interno delle lavorazioni figlie. È anche possibile registrare dei tempi specifici aggiuntivi all'interno delle lavorazioni figlie.
+
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_serial_in_parallel/static/description/produzione_seriale_in_parallelo.png
+    :alt: Produzione seriale in parallelo
 
 Nelle produzioni figlie è possibile impostare i prodotti consumati singolarmente. Poi si possono completare tutte contemporaneamente dalla produzione padre.
 
@@ -49,7 +53,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/efatto/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20mrp_production_master%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20mrp_production_serial_in_parallel%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -69,6 +73,6 @@ Contributors
 Maintainers
 ~~~~~~~~~~~
 
-This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/14.0/mrp_production_master>`_ project on GitHub.
+This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/14.0/mrp_production_serial_in_parallel>`_ project on GitHub.
 
 You are welcome to contribute.
