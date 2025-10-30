@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="mrp_production_workorder_form_view_inherit" model="ir.ui.view">
+        <field name="name">mrp.workorder.form</field>
+        <field name="model">mrp.workorder</field>
+        <field name="inherit_id" ref="mrp.mrp_production_workorder_form_view_inherit" />
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button
+          name="button_start"
+          type="object"
+          string="Start"
+          class="btn-success"
+          attrs="{'invisible': ['|', '|', '|', ('production_state','in', ('draft', 'done', 'cancel')), ('working_state', '=', 'blocked'), ('state', '=', 'done'), ('is_user_working', '!=', False)]}"
+        />
+                <button
+          name="button_pending"
+          type="object"
+          string="Pause"
+          class="btn-warning"
+          attrs="{'invisible': ['|', '|', ('production_state', 'in', ('draft', 'done', 'cancel')), ('working_state', '=', 'blocked'), ('is_user_working', '=', False)]}"
+        />
+                <button
+          name="button_finish"
+          type="object"
+          string="Done"
+          class="btn-success"
+          attrs="{'invisible': ['|', '|', ('production_state', 'in', ('draft', 'done', 'cancel')), ('working_state', '=', 'blocked'), ('is_user_working', '=', False)]}"
+        />
+                <button
+          name="%(mrp.act_mrp_block_workcenter_wo)d"
+          type="action"
+          string="Block"
+          context="{'default_workcenter_id': workcenter_id}"
+          class="btn-danger"
+          attrs="{'invisible': ['|', ('production_state', 'in', ('draft', 'done', 'cancel')), ('working_state', '=', 'blocked')]}"
+        />
+                <button
+          name="button_unblock"
+          type="object"
+          string="Unblock"
+          context="{'default_workcenter_id': workcenter_id}"
+          class="btn-danger"
+          attrs="{'invisible': ['|', ('production_state', 'in', ('draft', 'done', 'cancel')), ('working_state', '!=', 'blocked')]}"
+        />
+                <button
+          name="action_open_wizard"
+          type="object"
+          icon="fa-external-link"
+          class="oe_edit_only"
+          context="{'default_workcenter_id': workcenter_id}"
+        />
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,41 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* mrp_production_workorder_buttons
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-30 14:31+0000\n"
+"PO-Revision-Date: 2025-10-30 14:31+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: mrp_production_workorder_buttons
+#: model_terms:ir.ui.view,arch_db:mrp_production_workorder_buttons.mrp_production_workorder_form_view_inherit
+msgid "Block"
+msgstr "Blocca"
+
+#. module: mrp_production_workorder_buttons
+#: model_terms:ir.ui.view,arch_db:mrp_production_workorder_buttons.mrp_production_workorder_form_view_inherit
+msgid "Done"
+msgstr "Completato"
+
+#. module: mrp_production_workorder_buttons
+#: model_terms:ir.ui.view,arch_db:mrp_production_workorder_buttons.mrp_production_workorder_form_view_inherit
+msgid "Pause"
+msgstr "Sospendi"
+
+#. module: mrp_production_workorder_buttons
+#: model_terms:ir.ui.view,arch_db:mrp_production_workorder_buttons.mrp_production_workorder_form_view_inherit
+msgid "Start"
+msgstr "Avvia"
+
+#. module: mrp_production_workorder_buttons
+#: model_terms:ir.ui.view,arch_db:mrp_production_workorder_buttons.mrp_production_workorder_form_view_inherit
+msgid "Unblock"
+msgstr "Sblocca"
