@@ -135,7 +135,10 @@ class MrpWorkorder(models.Model):
                 ]
             )
             workorders_tobe_moved |= self.env["mrp.workorder"].search(
-                [("previous_work_order_ids", "in", self.ids)]
+                [
+                    ("previous_work_order_ids", "in", self.ids),
+                    ("date_planned_start", "!=", False),
+                ]
             )
         for workorder in workorders_tobe_moved:
             workorder.with_context(skip_move=True).write(
