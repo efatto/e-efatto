@@ -13,6 +13,7 @@
         "mrp",
         "mrp_production_lot_reserve",
         "mrp_production_serial_matrix",
+        "mrp_workorder_time",
         "mrp_workorder_sequence",
     ],
     "data": [
