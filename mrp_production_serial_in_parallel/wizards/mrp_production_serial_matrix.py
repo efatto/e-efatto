@@ -10,41 +10,43 @@ class MrpProductionSerialMatrix(models.TransientModel):
 
     @staticmethod
     def _split_work_time(production, backorder_ids):
-        for backorder in backorder_ids:
-            for workorder in production.workorder_ids:
-                if workorder.time_ids:
-                    back_workorder = backorder.workorder_ids.filtered(
-                        lambda w: w.sequence == workorder.sequence
-                        and w.name == workorder.name
-                        and w.workcenter_id == workorder.workcenter_id
+        workorders_number = len(backorder_ids) + 1
+        for time_id in production.workorder_ids.time_ids:
+            # split times in workorders of backorders
+            workorder = time_id.workorder_id
+            new_duration = time_id.duration / workorders_number
+            new_unit_amount = (
+                time_id.unit_amount and (time_id.unit_amount / workorders_number) or 0
+            )
+            date_start = False
+            for backorder in backorder_ids:
+                back_workorder = backorder.workorder_ids.filtered(
+                    lambda w: w.sequence == workorder.sequence
+                    and w.name == workorder.name
+                    and w.workcenter_id == workorder.workcenter_id
+                )
+                if not date_start:
+                    date_start = time_id.date_start + relativedelta(
+                        minutes=new_duration
                     )
-                    date_start = False
-                    for workorder_time in workorder.time_ids:  # todo check sort!
-                        new_duration = workorder_time.duration / (
-                            len(backorder_ids) + 1
-                        )
-                        if not date_start or workorder_time == workorder.time_ids[0]:
-                            date_start = workorder_time.date_start + relativedelta(
-                                minutes=new_duration
-                            )
-                            # todo usare un calcolatore di tempo dalle risorse? o è
-                            #  inutile essendo che sono tempi sempre all'interno di
-                            #  un orario di lavoro?
-                        new_workorder_time = workorder_time.copy(
-                            default={
-                                "workorder_id": back_workorder.id,
-                                "date_start": date_start,
-                                "duration": new_duration,
-                            }
-                        )
-                        date_start = new_workorder_time.date_end
+                new_workorder_time = time_id.copy(
+                    default={
+                        "workorder_id": back_workorder.id,
+                        "date_start": date_start,
+                        "duration": new_duration,
+                        "unit_amount": new_unit_amount,
+                    }
+                )
+                date_start = new_workorder_time.date_end
         for workorder_time in production.workorder_ids.time_ids:
             workorder_time.write(
                 {
-                    "duration": workorder_time.duration / (len(backorder_ids) + 1),
+                    "duration": workorder_time.duration / workorders_number,
+                    "unit_amount": workorder_time.unit_amount
+                    and (workorder_time.unit_amount / workorders_number)
+                    or 0,
                 }
             )
-        return False
 
     def _set_parallel_production(self):
         parallel_production = False
