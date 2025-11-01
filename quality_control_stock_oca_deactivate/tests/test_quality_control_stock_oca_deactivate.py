@@ -111,7 +111,7 @@ class QualityControlStockOcaDeactivate(SingleTransactionCase):
                 # check it is impossible to validate as product2 is linked to a draft
                 # check
                 Form(
-                    self.env[res["res_model"]].with_context(res["context"])
+                    self.env[res["res_model"]].with_context(**res["context"])
                 ).save().process()
             qc_inspection_form = Form(picking.qc_inspections_ids)
             qc_inspection_line_form = Form(picking.qc_inspections_ids.inspection_lines)
@@ -121,7 +121,7 @@ class QualityControlStockOcaDeactivate(SingleTransactionCase):
             qc_inspection.action_confirm()
             self.assertTrue(qc_inspection.success)
         res = picking.button_validate()
-        Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
+        Form(self.env[res["res_model"]].with_context(**res["context"])).save().process()
         backorder_picking = purchase_order.picking_ids - picking
         self.assertTrue(backorder_picking)
 
