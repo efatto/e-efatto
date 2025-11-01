@@ -13,4 +13,4 @@ class QcTriggerLine(models.AbstractModel):
     trigger_activation_number = fields.Integer(
         string="Trigger activation number",
     )
-    active = fields.Boolean(string="Active", default=True)
+    active = fields.Boolean(default=True)

@@ -4,19 +4,19 @@
         <field name="name">qc.trigger.product.line.tree</field>
         <field name="model">qc.trigger.product_line</field>
         <field name="arch" type="xml">
-            <tree string="QC Trigger Lines">
+            <list string="QC Trigger Lines">
                 <field name="active" />
                 <field
-          name="trigger"
-          options="{'no_create': True, 'no_edit': True, 'no_open': True}"
-        />
+                    name="trigger"
+                    options="{'no_create': True, 'no_edit': True, 'no_open': True}"
+                />
                 <field name="test" />
                 <field name="user" />
                 <field name="partners" widget="many2many_tags" />
                 <field name="success_number_to_deactivation" />
                 <field name="trigger_activation_number" />
                 <field name="trigger_activation_days" />
-            </tree>
+            </list>
         </field>
     </record>
     <record id="qc_trigger_product_line_search_view" model="ir.ui.view">
@@ -26,20 +26,20 @@
             <search string="Inactive QC Trigger Lines">
                 <field name="product" />
                 <filter
-          string="Inactive"
-          name="inactive"
-          domain="[('active', '=', False)]"
-        />
+                    string="Inactive"
+                    name="inactive"
+                    domain="[('active', '=', False)]"
+                />
             </search>
         </field>
     </record>
     <record model="ir.actions.act_window" id="action_qc_trigger_product_line_all">
         <field name="name">Inactive Trigger Lines</field>
         <field name="res_model">qc.trigger.product_line</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field
-      name="context"
-    >{'search_default_inactive': 1, 'search_default_product': active_id}</field>
+            name="context"
+        >{'search_default_inactive': 1, 'search_default_product': active_id}</field>
         <field name="domain">[('product', '=', active_id)]</field>
         <field name="search_view_id" ref="qc_trigger_product_line_search_view" />
     </record>
@@ -50,12 +50,12 @@
             <page name="inventory" position="inside">
                 <field name="product_has_inactive_triggers" invisible="1" />
                 <button
-          name="%(quality_control_stock_oca_deactivate.action_qc_trigger_product_line_all)d"
-          type="action"
-          string="Show inactive triggers"
-          class="oe_highlight"
-          attrs="{'invisible': [('product_has_inactive_triggers', '=', False)]}"
-        />
+                    name="%(quality_control_stock_oca_deactivate.action_qc_trigger_product_line_all)d"
+                    type="action"
+                    string="Show inactive triggers"
+                    class="oe_highlight"
+                    attrs="{'invisible': [('product_has_inactive_triggers', '=', False)]}"
+                />
             </page>
         </field>
     </record>
