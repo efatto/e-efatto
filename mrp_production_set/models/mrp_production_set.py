@@ -62,6 +62,16 @@ class MrpProductionSet(models.Model):
             and self.production_left_id == self.production_right_id
         )
 
+    @api.onchange("split_production")
+    def _onchange_split_production(self):
+        if self.split_production and (
+            self.production_right_id or self.production_left_id
+        ):
+            if self.production_right_id:
+                self.production_left_id = self.production_right_id
+            else:
+                self.production_right_id = self.production_left_id
+
     @api.onchange("qty_producing_left")
     def _onchange_qty_producing_left(self):
         self.qty_producing_right = self.qty_producing_left
