@@ -204,8 +204,74 @@ class MrpProduction(models.Model):
     def _get_num_lista(self):
         return self.env["ir.sequence"].next_by_code("hyddemo.whs.liste"), 0
 
-    def _generate_whs(self):
+    def _create_whs_list_raw_move(self, move, num_lista, riga, is_custom):
         whsliste_obj = self.env["hyddemo.whs.liste"]
+        if move.whs_list_ids and not all(x.stato == "3" for x in move.whs_list_ids):
+            return
+        if move.scrapped:
+            return
+        if move.state in ("done", "cancel") and move.whs_list_ids:
+            return
+        if move.product_uom_qty <= 0:
+            return
+        if (
+            move.product_id.type == "product"
+            and not move.product_id.exclude_from_whs
+            and move.location_id == self.location_src_id
+        ):
+            if not num_lista:
+                num_lista, riga = self._get_num_lista()
+            riga += 1
+            whsliste_data = dict(
+                num_lista=num_lista,
+                riga=riga,
+                stato="1",
+                data_lista=fields.Datetime.now(),
+                riferimento=self.name,
+                tipo=self._get_tipo(is_custom=is_custom),
+                product_id=move.product_id.id,
+                parent_product_id=self.product_id.id,
+                qta=move.product_uom_qty,
+                qtamov=move.quantity_done,
+                move_id=move._origin.id,
+                tipo_mov="mrpout",
+            )
+            whsliste_obj.create(whsliste_data)
+            whsliste_obj.flush()
+
+    def _create_whs_list_finished_move(self, move, num_lista, riga):
+        whsliste_obj = self.env["hyddemo.whs.liste"]
+        if move.whs_list_ids and not all(x.stato == "3" for x in move.whs_list_ids):
+            return
+        if move.scrapped or (move.product_id.id != self.product_id.id):
+            return
+        if move.state in ("done", "cancel") and move.whs_list_ids:
+            return
+        if move.product_uom_qty <= 0:
+            return
+        if move.location_dest_id == self.location_dest_id:
+            if move.custom_check_mrp():
+                return
+            if not num_lista:
+                num_lista = self.env["ir.sequence"].next_by_code("hyddemo.whs.liste")
+                riga = 0
+            riga += 1
+            whsliste_data = dict(
+                stato="1",
+                tipo="2",
+                num_lista=num_lista,
+                data_lista=fields.Datetime.now(),
+                riferimento=self.name,
+                product_id=move.product_id.id,
+                qta=move.product_uom_qty,
+                qtamov=self.qty_producing,
+                move_id=move._origin.id,
+                tipo_mov="mrpin",
+                riga=riga,
+            )
+            whsliste_obj.create(whsliste_data)
+
+    def _generate_whs(self):
         for production in self:
             # Create WMS lists for raw materials
             raw_dbsource = self.env["base.external.dbsource"].search(
@@ -230,40 +296,9 @@ class MrpProduction(models.Model):
                 riga = 0
                 # Location of raw material is linked to WMS
                 for move in production.move_raw_ids:
-                    if move.whs_list_ids and not all(
-                        x.stato == "3" for x in move.whs_list_ids
-                    ):
-                        continue
-                    if move.scrapped:
-                        continue
-                    if move.state in ("done", "cancel") and move.whs_list_ids:
-                        continue
-                    if move.product_uom_qty <= 0:
-                        continue
-                    if (
-                        move.product_id.type == "product"
-                        and not move.product_id.exclude_from_whs
-                        and move.location_id == production.location_src_id
-                    ):
-                        if not num_lista:
-                            num_lista, riga = production._get_num_lista()
-                        riga += 1
-                        whsliste_data = dict(
-                            num_lista=num_lista,
-                            riga=riga,
-                            stato="1",
-                            data_lista=fields.Datetime.now(),
-                            riferimento=production.name,
-                            tipo=production._get_tipo(is_custom=is_custom),
-                            product_id=move.product_id.id,
-                            parent_product_id=production.product_id.id,
-                            qta=move.product_uom_qty,
-                            qtamov=move.quantity_done,
-                            move_id=move._origin.id,
-                            tipo_mov="mrpout",
-                        )
-                        whsliste_obj.create(whsliste_data)
-                        whsliste_obj.flush()
+                    production._create_whs_list_raw_move(
+                        move, num_lista, riga, is_custom
+                    )
 
             # Create WMS list for finished products
             finished_dbsource = self.env["base.external.dbsource"].search(
@@ -284,38 +319,4 @@ class MrpProduction(models.Model):
                 num_lista = False
                 riga = 0
                 for move in production.move_finished_ids:
-                    if move.whs_list_ids and not all(
-                        x.stato == "3" for x in move.whs_list_ids
-                    ):
-                        continue
-                    if move.scrapped or (
-                        move.product_id.id != production.product_id.id
-                    ):
-                        continue
-                    if move.state in ("done", "cancel") and move.whs_list_ids:
-                        continue
-                    if move.product_uom_qty <= 0:
-                        continue
-                    if move.location_dest_id == production.location_dest_id:
-                        if move.custom_check_mrp():
-                            continue
-                        if not num_lista:
-                            num_lista = self.env["ir.sequence"].next_by_code(
-                                "hyddemo.whs.liste"
-                            )
-                            riga = 0
-                        riga += 1
-                        whsliste_data = dict(
-                            stato="1",
-                            tipo="2",
-                            num_lista=num_lista,
-                            data_lista=fields.Datetime.now(),
-                            riferimento=production.name,
-                            product_id=move.product_id.id,
-                            qta=move.product_uom_qty,
-                            qtamov=production.qty_producing,
-                            move_id=move._origin.id,
-                            tipo_mov="mrpin",
-                            riga=riga,
-                        )
-                        whsliste_obj.create(whsliste_data)
+                    production._create_whs_list_finished_move(move, num_lista, riga)
