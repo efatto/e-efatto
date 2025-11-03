@@ -62,6 +62,7 @@
                         <group string="Production Right">
                             <div
                 attrs="{'invisible': [('split_production', '!=', True)]}"
+                style="font-weight: bold;"
               >
                                 The same as Production Left
                             </div>
@@ -70,10 +71,7 @@
                 domain="[('id', 'in', compatible_mrp_production_ids)] "
                 attrs="{'invisible': [('split_production', '=', True)]}"
               />
-                            <field
-                name="qty_producing_right"
-                attrs="{'invisible': [('split_production', '=', True)]}"
-              />
+                            <field name="qty_producing_right" />
                         </group>
                     </group>
                 </sheet>
