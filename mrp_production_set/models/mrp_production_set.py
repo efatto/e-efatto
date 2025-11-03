@@ -125,9 +125,17 @@ class MrpProductionSet(models.Model):
 
     def button_update_qty_producing(self):
         for record in self:
-            record.production_left_id.write(
-                {"qty_producing": record.qty_producing_left}
-            )
-            record.production_right_id.write(
-                {"qty_producing": record.qty_producing_right}
-            )
+            if self.split_production:
+                record.production_left_id.write(
+                    {
+                        "qty_producing": record.qty_producing_left
+                        + record.qty_producing_right
+                    }
+                )
+            else:
+                record.production_left_id.write(
+                    {"qty_producing": record.qty_producing_left}
+                )
+                record.production_right_id.write(
+                    {"qty_producing": record.qty_producing_right}
+                )
