@@ -54,6 +54,14 @@ class MrpProductionSet(models.Model):
         help="If checked, the production will be splitted in two.",
     )
 
+    @api.onchange("production_right_id", "production_left_id")
+    def _onchange_production_right_id(self):
+        self.split_production = bool(
+            self.production_right_id
+            and self.production_left_id
+            and self.production_left_id == self.production_right_id
+        )
+
     @api.onchange("qty_producing_left")
     def _onchange_qty_producing_left(self):
         self.qty_producing_right = self.qty_producing_left
