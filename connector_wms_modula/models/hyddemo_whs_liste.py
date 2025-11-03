@@ -181,7 +181,8 @@ VALUES (
                     "ORD_DES": "%s - %s"
                     % (
                         lista.riferimento if lista.riferimento else "",
-                        lista.ragsoc[: 47 - len(lista.riferimento) or 47]
+                        lista.ragsoc[: 47 - (
+                            len(lista.riferimento) if lista.riferimento else 47)]
                         if lista.ragsoc
                         else "",
                     ),  # char 50
