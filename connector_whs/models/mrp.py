@@ -204,9 +204,12 @@ class MrpProduction(models.Model):
     def _get_num_lista(self):
         return self.env["ir.sequence"].next_by_code("hyddemo.whs.liste"), 0
 
-    def _create_whs_list_raw_move(self, move, num_lista, riga, is_custom):
+    def _create_whs_list_raw_move(
+            self, move, num_lista, riga, is_custom, qty_producing=0):
         whsliste_obj = self.env["hyddemo.whs.liste"]
-        if move.whs_list_ids and not all(x.stato == "3" for x in move.whs_list_ids):
+        if not qty_producing and (
+            move.whs_list_ids and not all(x.stato == "3" for x in move.whs_list_ids)
+        ):
             return
         if move.scrapped:
             return
@@ -222,6 +225,8 @@ class MrpProduction(models.Model):
             if not num_lista:
                 num_lista, riga = self._get_num_lista()
             riga += 1
+            if not qty_producing:
+                qty_producing = move.product_uom_qty
             whsliste_data = dict(
                 num_lista=num_lista,
                 riga=riga,
@@ -231,8 +236,8 @@ class MrpProduction(models.Model):
                 tipo=self._get_tipo(is_custom=is_custom),
                 product_id=move.product_id.id,
                 parent_product_id=self.product_id.id,
-                qta=move.product_uom_qty,
-                qtamov=move.quantity_done,
+                qta=qty_producing,
+                qtamov=qty_producing or move.quantity_done,
                 move_id=move._origin.id,
                 tipo_mov="mrpout",
             )
