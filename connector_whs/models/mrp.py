@@ -205,7 +205,8 @@ class MrpProduction(models.Model):
         return self.env["ir.sequence"].next_by_code("hyddemo.whs.liste"), 0
 
     def _create_whs_list_raw_move(
-            self, move, num_lista, riga, is_custom, qty_producing=0):
+        self, move, num_lista, riga, is_custom, qty_producing=0
+    ):
         whsliste_obj = self.env["hyddemo.whs.liste"]
         if not qty_producing and (
             move.whs_list_ids and not all(x.stato == "3" for x in move.whs_list_ids)
