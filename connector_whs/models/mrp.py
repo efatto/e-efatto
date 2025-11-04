@@ -269,8 +269,8 @@ class MrpProduction(models.Model):
                 data_lista=fields.Datetime.now(),
                 riferimento=self.name,
                 product_id=move.product_id.id,
-                qta=move.product_uom_qty,
-                qtamov=self.qty_producing,
+                qta=move.product_uom_qty,  # todo check correcteness
+                qtamov=self.qty_producing,  # todo check correcteness
                 move_id=move._origin.id,
                 tipo_mov="mrpin",
                 riga=riga,
