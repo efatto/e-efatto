@@ -8,7 +8,7 @@
     "license": "AGPL-3",
     "category": "other",
     "depends": [
-        "mrp",
+        "mrp_subcontracting",
     ],
     "summary": "Add logic to connect two production into a single execution order",
     "data": [
