@@ -9,12 +9,12 @@
                 <field
           name="production_left_set_ids"
           widget="many2many_tags"
-          context="{'default_production_left_id': active_id}"
+          attrs="{'invisible': [('production_left_set_ids', '=', False)], 'readonly': True}"
         />
                 <field
           name="production_right_set_ids"
           widget="many2many_tags"
-          context="{'default_production_right_id': active_id}"
+          attrs="{'invisible': [('production_right_set_ids', '=', False)], 'readonly': True}"
         />
             </xpath>
         </field>

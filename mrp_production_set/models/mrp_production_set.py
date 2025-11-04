@@ -14,13 +14,15 @@ class MrpProductionSet(models.Model):
     production_left_id = fields.Many2one(
         comodel_name="mrp.production",
         domain="[('is_compatible_for_set', '=', True), "
-        "('state', 'in', ['draft', 'confirmed'])]",
+        "('state', 'in', ['draft', 'confirmed']), "
+        "('bom_id.type', '!=', 'subcontract')]",
         string="Production Left",
     )
     production_right_id = fields.Many2one(
         comodel_name="mrp.production",
         domain="[('is_compatible_for_set', '=', True), "
-        "('state', 'in', ['draft', 'confirmed'])]",
+        "('state', 'in', ['draft', 'confirmed']), "
+        "('bom_id.type', '!=', 'subcontract')]",
         string="Production Right",
     )
     compatible_mrp_production_ids = fields.Many2many(
