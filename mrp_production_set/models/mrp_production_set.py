@@ -1,7 +1,6 @@
-from odoo.tests import Form
-
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
+from odoo.tests import Form
 
 
 class MrpProductionSet(models.Model):
@@ -130,9 +129,8 @@ class MrpProductionSet(models.Model):
     def action_confirm(self):
         for production_set in self:
             (
-                production_set.production_left_id |
-                production_set.production_right_id
-             ).action_confirm()
+                production_set.production_left_id | production_set.production_right_id
+            ).action_confirm()
 
     def button_update_qty_producing(self):
         for production_set in self:
