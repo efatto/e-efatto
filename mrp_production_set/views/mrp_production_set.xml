@@ -32,12 +32,12 @@
             <form string="Production Set">
                 <header>
                     <button
-                        name="action_confirm"
-                        type="object"
-                        string="Confirm"
-                        class="oe_highlight"
-                        attrs="{'invisible': [('state', '!=', 'draft')]}"
-                        />
+            name="action_confirm"
+            type="object"
+            string="Confirm"
+            class="oe_highlight"
+            attrs="{'invisible': [('state', '!=', 'draft')]}"
+          />
                     <button
             name="button_update_qty_producing"
             type="object"
