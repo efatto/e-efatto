@@ -10,7 +10,6 @@ class MrpProductionSet(models.Model):
     )
 
     def button_send_to_whs(self):
-        # todo add logic to split production if split_production is set
         self.production_left_id.button_send_to_whs()
         self.production_right_id.button_send_to_whs()
 
