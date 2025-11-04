@@ -35,7 +35,8 @@ class MrpProduction(models.Model):
         return num_lista, riga
 
     def _create_whs_list_raw_move(
-            self, move, num_lista, riga, is_custom, qty_producing=0):
+        self, move, num_lista, riga, is_custom, qty_producing=0
+    ):
         if (
             self.production_left_set_ids | self.production_right_set_ids
         ).split_production:
@@ -46,4 +47,5 @@ class MrpProduction(models.Model):
                 or self.production_right_set_ids.qty_producing_right
             )
         super()._create_whs_list_raw_move(
-            move, num_lista, riga, is_custom, qty_producing=qty_producing)
+            move, num_lista, riga, is_custom, qty_producing=qty_producing
+        )
