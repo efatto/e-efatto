@@ -1,3 +1,5 @@
+from odoo.tests import Form
+
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
@@ -80,64 +82,71 @@ class MrpProductionSet(models.Model):
 
     @api.depends("production_left_id", "production_right_id")
     def _compute_name(self):
-        for record in self:
-            record.name = "%(left)s - %(right)s" % dict(
-                left=record.production_left_id.name or "n.a.",
-                right=record.production_right_id.name or "n.a.",
+        for production_set in self:
+            production_set.name = "%(left)s - %(right)s" % dict(
+                left=production_set.production_left_id.name or "n.a.",
+                right=production_set.production_right_id.name or "n.a.",
             )
 
     @api.depends("production_left_id")
     def _compute_state(self):
-        for record in self:
-            record.state = record.production_left_id.state or "draft"
+        for production_set in self:
+            production_set.state = production_set.production_left_id.state or "draft"
             # The right production state is the same as it is the only accepted
 
     @api.constrains("production_left_id", "production_right_id")
     def _check_production_set_products(self):
-        for record in self:
+        for production_set in self:
             if (
-                record.production_left_id.move_raw_ids.product_id
-                != record.production_right_id.move_raw_ids.product_id
+                production_set.production_left_id.move_raw_ids.product_id
+                != production_set.production_right_id.move_raw_ids.product_id
             ):
                 raise ValidationError(
                     _("A production set must have the same components!")
                 )
             if (
-                len(record.production_left_id.move_raw_ids) != 1
-                or len(record.production_right_id.move_raw_ids) != 1
+                len(production_set.production_left_id.move_raw_ids) != 1
+                or len(production_set.production_right_id.move_raw_ids) != 1
             ):
                 raise ValidationError(_("A production set must have only 1 component!"))
 
     @api.depends("production_left_id.move_raw_ids")
     def _compute_compatible_mrp_production_ids(self):
-        for record in self:
+        for production_set in self:
             compatible_mrp_production_ids = self.env["mrp.production"].search(
                 [
                     ("state", "in", ["draft", "confirmed"]),
                     ("is_compatible_for_set", "=", True),
                 ]
             )
-            if record.production_left_id:
+            if production_set.production_left_id:
                 compatible_mrp_production_ids = compatible_mrp_production_ids.filtered(
                     lambda p: p.move_raw_ids.product_id
-                    == record.production_left_id.move_raw_ids.product_id
-                    and p.state == record.production_left_id.state
+                    == production_set.production_left_id.move_raw_ids.product_id
+                    and p.state == production_set.production_left_id.state
                 )
-            record.compatible_mrp_production_ids = compatible_mrp_production_ids
+            production_set.compatible_mrp_production_ids = compatible_mrp_production_ids
+
+    def action_confirm(self):
+        for production_set in self:
+            (
+                production_set.production_left_id |
+                production_set.production_right_id
+             ).action_confirm()
 
     def button_update_qty_producing(self):
-        for record in self:
+        for production_set in self:
             if self.split_production:
-                record.production_left_id.write(
-                    {
-                        "qty_producing": record.qty_producing_left
-                        + record.qty_producing_right
-                    }
+                production_left_form = Form(production_set.production_left_id)
+                production_left_form.qty_producing = (
+                    production_set.qty_producing_left
+                    + production_set.qty_producing_right
                 )
+                production_left_form.save()
             else:
-                record.production_left_id.write(
-                    {"qty_producing": record.qty_producing_left}
-                )
-                record.production_right_id.write(
-                    {"qty_producing": record.qty_producing_right}
-                )
+                production_left_form = Form(production_set.production_left_id)
+                production_left_form.qty_producing = production_set.qty_producing_left
+                production_left_form.save()
+                production_right_form = Form(production_set.production_right_id)
+                production_right_form.qty_producing = production_set.qty_producing_right
+                production_right_form.save()
