@@ -33,3 +33,17 @@ class MrpProduction(models.Model):
         if not num_lista:
             num_lista, riga = super()._get_num_lista()
         return num_lista, riga
+
+    def _create_whs_list_raw_move(
+            self, move, num_lista, riga, is_custom, qty_producing=0):
+        if (
+            self.production_left_set_ids | self.production_right_set_ids
+        ).split_production:
+            qty_producing = (
+                self.production_left_set_ids
+                and not self.production_left_set_ids.sent_to_whs
+                and self.production_left_set_ids.qty_producing_left
+                or self.production_right_set_ids.qty_producing_right
+            )
+        super()._create_whs_list_raw_move(
+            move, num_lista, riga, is_custom, qty_producing=qty_producing)
