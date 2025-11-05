@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-08 14:43+0000\n"
-"PO-Revision-Date: 2025-10-08 14:43+0000\n"
+"POT-Creation-Date: 2025-11-05 13:41+0000\n"
+"PO-Revision-Date: 2025-11-05 13:41+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -37,6 +37,11 @@ msgstr "Allegati assegnati"
 #: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__compatible_mrp_production_ids
 msgid "Compatible Mrp Production"
 msgstr "Produzione compatibile"
+
+#. module: mrp_production_set
+#: model_terms:ir.ui.view,arch_db:mrp_production_set.mrp_production_set_form
+msgid "Confirm"
+msgstr "Conferma"
 
 #. module: mrp_production_set
 #: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__create_uid
@@ -92,8 +97,8 @@ msgid ""
 "List only the productions with the same components. Do not matter on "
 "quantities."
 msgstr ""
-"Elenca solo le produzioni con gli stessi componenti. Non sono rilevanti "
-"le quantità."
+"Elenca solo le produzioni con gli stessi componenti. Non sono rilevanti le "
+"quantità."
 
 #. module: mrp_production_set
 #: model:ir.model,name:mrp_production_set.model_mrp_production_set
