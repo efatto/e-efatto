@@ -36,7 +36,13 @@ Replace xml string.
 Configuration
 =============
 
-Questo modulo modifica la descrizione del campo Costo sostituzione gestito in Landed con adeguamenti/ammortamenti/collaudo solo nella vista xml (non nei campi).
+Questo modulo modifica la descrizione dei campi:
+
+#. Costo sostituzione gestito, in: Landed con adeguamenti/ammortamenti/collaudo
+#. Costo, in: Landed con ammortamenti/collaudo
+
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_pricelist_replenishment_cost/static/description/costi_landed.png
+    :alt: Costi landed
 
 Bug Tracker
 ===========
