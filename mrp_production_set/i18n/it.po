@@ -152,7 +152,7 @@ msgstr "Set di Produzione"
 #: model:ir.actions.act_window,name:mrp_production_set.action_mrp_production_set
 #: model:ir.ui.menu,name:mrp_production_set.menu_mrp_production_set
 msgid "Production Sets"
-msgstr "Sets di Produzione"
+msgstr "Set di Produzioni"
 
 #. module: mrp_production_set
 #: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__qty_producing_left
