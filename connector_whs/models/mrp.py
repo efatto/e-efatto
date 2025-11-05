@@ -328,4 +328,5 @@ class MrpProduction(models.Model):
                 riga = 0
                 for move in production.move_finished_ids:
                     num_lista, riga = production._create_whs_list_finished_move(
-                        move, num_lista, riga)
+                        move, num_lista, riga
+                    )
