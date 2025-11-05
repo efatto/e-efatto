@@ -62,7 +62,7 @@
             <field name="reserved_lot_ids" position="attributes">
                 <attribute
           name="attrs"
-        >{'readonly': [('is_parallel_production', '!=', True), ('state', 'not in', ['draft', 'confirmed'])]}</attribute>
+        >{'readonly': [('is_parallel_production', '!=', True), ('state', 'not in', ['draft', 'confirmed', 'progress'])]}</attribute>
             </field>
         </field>
     </record>
