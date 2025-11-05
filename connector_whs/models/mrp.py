@@ -211,13 +211,13 @@ class MrpProduction(models.Model):
         if not qty_producing and (
             move.whs_list_ids and not all(x.stato == "3" for x in move.whs_list_ids)
         ):
-            return
+            return num_lista, riga
         if move.scrapped:
-            return
+            return num_lista, riga
         if move.state in ("done", "cancel") and move.whs_list_ids:
-            return
+            return num_lista, riga
         if move.product_uom_qty <= 0:
-            return
+            return num_lista, riga
         if (
             move.product_id.type == "product"
             and not move.product_id.exclude_from_whs
@@ -244,20 +244,21 @@ class MrpProduction(models.Model):
             )
             whsliste_obj.create(whsliste_data)
             whsliste_obj.flush()
+        return num_lista, riga
 
     def _create_whs_list_finished_move(self, move, num_lista, riga):
         whsliste_obj = self.env["hyddemo.whs.liste"]
         if move.whs_list_ids and not all(x.stato == "3" for x in move.whs_list_ids):
-            return
+            return num_lista, riga
         if move.scrapped or (move.product_id.id != self.product_id.id):
-            return
+            return num_lista, riga
         if move.state in ("done", "cancel") and move.whs_list_ids:
-            return
+            return num_lista, riga
         if move.product_uom_qty <= 0:
-            return
+            return num_lista, riga
         if move.location_dest_id == self.location_dest_id:
             if move.custom_check_mrp():
-                return
+                return num_lista, riga
             if not num_lista:
                 num_lista = self.env["ir.sequence"].next_by_code("hyddemo.whs.liste")
                 riga = 0
@@ -276,6 +277,7 @@ class MrpProduction(models.Model):
                 riga=riga,
             )
             whsliste_obj.create(whsliste_data)
+        return num_lista, riga
 
     def _generate_whs(self):
         for production in self:
@@ -302,7 +304,7 @@ class MrpProduction(models.Model):
                 riga = 0
                 # Location of raw material is linked to WMS
                 for move in production.move_raw_ids:
-                    production._create_whs_list_raw_move(
+                    num_lista, riga = production._create_whs_list_raw_move(
                         move, num_lista, riga, is_custom
                     )
 
@@ -325,4 +327,5 @@ class MrpProduction(models.Model):
                 num_lista = False
                 riga = 0
                 for move in production.move_finished_ids:
-                    production._create_whs_list_finished_move(move, num_lista, riga)
+                    num_lista, riga = production._create_whs_list_finished_move(
+                        move, num_lista, riga)
