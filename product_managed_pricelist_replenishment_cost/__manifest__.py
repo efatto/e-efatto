@@ -14,7 +14,7 @@
     "data": [
         "views/product_pricelist_views.xml",
     ],
-    "summary": "This module rename option 'based on managed replenishment cost' "
+    "summary": "This module rename options 'based on managed replenishment cost' and 'cost'"
     "to custom one",
     "installable": True,
     "auto_install": True,

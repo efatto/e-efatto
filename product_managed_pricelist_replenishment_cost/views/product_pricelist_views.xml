@@ -7,6 +7,19 @@
         <field name="inherit_id" ref="product.product_pricelist_item_form_view" />
         <field name="arch" type="xml">
             <xpath
+        expr="//group[@col='6']/div/span[2]"
+        position="attributes"
+      >
+                <attribute name="attrs">{'invisible': True}</attribute>
+            </xpath>
+            <xpath
+        expr="//group[@col='6']/div/span[2]"
+        position="after"
+      >
+                <span attrs="{'invisible':[('base', '!=', 'standard_price')]}">
+                    Landed with depreciation/testing - </span>
+            </xpath>
+            <xpath
         expr="//group[@col='6']/div/span[@id='pricelist_managed_replenishment_cost']"
         position="attributes"
       >
