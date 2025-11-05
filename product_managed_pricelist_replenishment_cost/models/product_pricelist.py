@@ -7,7 +7,10 @@ class PricelistItem(models.Model):
     base = fields.Selection(
         selection_add=[
             ("standard_price", "Landed with depreciation/testing"),
-            ("managed_replenishment_cost", "Landed with adjustment/depreciation/testing"),
+            (
+                "managed_replenishment_cost",
+                "Landed with adjustment/depreciation/testing",
+            ),
         ],
         help="Base price for computation.\n"
         "Sales Price: The base price will be the Sales Price.\n"
