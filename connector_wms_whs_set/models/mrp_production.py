@@ -46,6 +46,6 @@ class MrpProduction(models.Model):
                 and self.production_left_set_ids.qty_producing_left
                 or self.production_right_set_ids.qty_producing_right
             )
-        super()._create_whs_list_raw_move(
+        return super()._create_whs_list_raw_move(
             move, num_lista, riga, is_custom, qty_producing=qty_producing
         )
