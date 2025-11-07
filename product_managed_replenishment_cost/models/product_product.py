@@ -383,18 +383,30 @@ class ProductProduct(models.Model):
             else self.env["product.product"]
         )
         # update cost for products to be purchased first, then them to be manufactured
-        products_tobe_purchased = self.filtered(
-            lambda x: x.seller_ids and not x.bom_count
+        # The produce route prevails on the buy route
+        purchasable_products = self.filtered(
+            lambda x: self.env.ref("purchase_stock.route_warehouse0_buy") in x.route_ids
+            and self.env.ref("mrp.route_warehouse0_manufacture") not in x.route_ids
+        )
+        products_tobe_purchased = purchasable_products.filtered(
+            lambda x: x.seller_ids
+        )
+        products_tobe_purchased_without_seller = purchasable_products.filtered(
+            lambda x: not x.seller_ids
         )
         products_nottobe_purchased = self.filtered(
-            lambda x: not x.seller_ids and not x.bom_count
+            lambda x:
+            self.env.ref("purchase_stock.route_warehouse0_buy") not in x.route_ids
         )
-        products_tobe_manufactured = self - (
-            products_tobe_purchased + products_nottobe_purchased
-        )
+        products_tobe_manufactured = self.filtered(
+            lambda x: self.env.ref("mrp.route_warehouse0_manufacture") in x.route_ids)
+        products_tobe_manufactured_without_bom = products_tobe_manufactured.filtered(
+            lambda x: not x.bom_count)
         products_without_seller_price = (
             products_tobe_purchased.update_products_tobe_purchased()
         )
+        products_without_seller_price |= products_tobe_purchased_without_seller
+        products_without_seller_price |= products_tobe_manufactured_without_bom
         # compute replenishment cost for product without suppliers
         for product in products_nottobe_purchased:
             if update_managed_replenishment_cost:
