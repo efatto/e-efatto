@@ -222,7 +222,7 @@ msgstr "Prodotti senza fornitore"
 #. module: product_managed_replenishment_cost
 #: model_terms:ir.ui.view,arch_db:product_managed_replenishment_cost.view_replenishment_cost_form
 msgid "Products without seller price"
-msgstr "Prodotti senza prezzo"
+msgstr "Prodotti senza prezzo o non configurati correttamente"
 
 #. module: product_managed_replenishment_cost
 #: model:ir.ui.menu,name:product_managed_replenishment_cost.menu_replenishment_stock
