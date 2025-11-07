@@ -122,11 +122,13 @@ class HyddemoWhsListe(models.Model):
             metadata=None,
         )
         if deleting_lists[0]:
-            raise UserError(
-                _(
-                    "Trying to cancel lists already marked to be deleted in Odoo, "
-                    "please wait for WMS cron synchronization or force it."
-                )
+            # todo delete records with 'D' operation?
+            # hanno previsto che vada a cancellare io quei record? mi aspetterei che
+            # Modula dopo aver eseguito l'operazione vada ad eliminarseli, che senso
+            # ha che resti dentro?
+            _logger.info(
+                F"Deleted WMS list {num_lista} in Odoo already marked to be deleted "
+                f"in WMS. Records with 'D' operation found: {str(deleting_lists[0])}"
             )
 
     def check_list_state(self):
