@@ -127,7 +127,7 @@ class HyddemoWhsListe(models.Model):
             # Modula dopo aver eseguito l'operazione vada ad eliminarseli, che senso
             # ha che resti dentro?
             _logger.info(
-                F"Deleted WMS list {num_lista} in Odoo already marked to be deleted "
+                f"Deleted WMS list {num_lista} in Odoo already marked to be deleted "
                 f"in WMS. Records with 'D' operation found: {str(deleting_lists[0])}"
             )
 
