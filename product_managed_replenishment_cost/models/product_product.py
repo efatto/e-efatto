@@ -191,6 +191,9 @@ class ProductProduct(models.Model):
             bom = self.env["mrp.bom"]._bom_find(
                 product_tmpl=product.product_tmpl_id, product=product
             )
+            managed_replenishment_price = 0
+            managed_standard_price = 0
+            landed_price = 0
             if bom:
                 if any(x.child_bom_id for x in bom.bom_line_ids):
                     bom.bom_line_ids.filtered(lambda line: line.child_bom_id).mapped(
@@ -201,11 +204,11 @@ class ProductProduct(models.Model):
                     managed_standard_price,
                     landed_price,
                 ) = product._compute_bom_managed_price(bom)
-                if self.env.context.get("update_managed_replenishment_cost", False):
-                    product.managed_replenishment_cost = managed_replenishment_price
-                if self.env.context.get("update_standard_price", False):
-                    product.standard_price = managed_standard_price
-                    product.landed_cost = landed_price
+            if self.env.context.get("update_managed_replenishment_cost", False):
+                product.managed_replenishment_cost = managed_replenishment_price
+            if self.env.context.get("update_standard_price", False):
+                product.standard_price = managed_standard_price
+                product.landed_cost = landed_price
 
     def _compute_bom_managed_price(self, bom):
         self.ensure_one()
@@ -348,6 +351,10 @@ class ProductProduct(models.Model):
     def update_products_tobe_purchased(self):
         products_without_seller_price = self.env["product.product"]
         for product in self:
+            managed_replenishment_price = 0
+            managed_standard_price = 0
+            landed_cost = 0
+            direct_cost = 0
             if product.seller_ids and product.seller_ids[0].price:
                 direct_cost = product._get_price_unit_from_seller(direct_cost=True)
                 landed_cost = product._get_price_unit_from_seller()
@@ -359,14 +366,15 @@ class ProductProduct(models.Model):
                 managed_replenishment_price = (
                     managed_standard_price + product.adjustment_cost
                 )
-                if self.env.context.get("update_managed_replenishment_cost", False):
-                    product.managed_replenishment_cost = managed_replenishment_price
-                if self.env.context.get("update_standard_price", False):
-                    product.standard_price = managed_standard_price
-                    product.landed_cost = landed_cost
-                    product.direct_cost = direct_cost
             else:
                 products_without_seller_price |= product
+            if self.env.context.get("update_managed_replenishment_cost", False):
+                product.managed_replenishment_cost = managed_replenishment_price
+            if self.env.context.get("update_standard_price", False):
+                product.standard_price = managed_standard_price
+                product.landed_cost = landed_cost
+                product.direct_cost = direct_cost
+
         return products_without_seller_price
 
     def update_managed_replenishment_cost(self):
@@ -388,20 +396,20 @@ class ProductProduct(models.Model):
             lambda x: self.env.ref("purchase_stock.route_warehouse0_buy") in x.route_ids
             and self.env.ref("mrp.route_warehouse0_manufacture") not in x.route_ids
         )
-        products_tobe_purchased = purchasable_products.filtered(
-            lambda x: x.seller_ids
-        )
+        products_tobe_purchased = purchasable_products.filtered(lambda x: x.seller_ids)
         products_tobe_purchased_without_seller = purchasable_products.filtered(
             lambda x: not x.seller_ids
         )
         products_nottobe_purchased = self.filtered(
-            lambda x:
-            self.env.ref("purchase_stock.route_warehouse0_buy") not in x.route_ids
+            lambda x: self.env.ref("purchase_stock.route_warehouse0_buy")
+            not in x.route_ids
         )
         products_tobe_manufactured = self.filtered(
-            lambda x: self.env.ref("mrp.route_warehouse0_manufacture") in x.route_ids)
+            lambda x: self.env.ref("mrp.route_warehouse0_manufacture") in x.route_ids
+        )
         products_tobe_manufactured_without_bom = products_tobe_manufactured.filtered(
-            lambda x: not x.bom_count)
+            lambda x: not x.bom_count
+        )
         products_without_seller_price = (
             products_tobe_purchased.update_products_tobe_purchased()
         )
