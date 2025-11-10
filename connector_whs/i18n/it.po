@@ -197,7 +197,7 @@ msgstr "Prelevato"
 #. module: connector_whs
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_backorder_confirmation
 msgid "Create Backorder Bypassing WMS"
-msgstr "Crea Backorder Bypassando WMS"
+msgstr "Crea ordine residuo bypassando WMS"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__create_uid
