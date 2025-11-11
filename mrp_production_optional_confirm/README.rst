@@ -26,7 +26,7 @@ Stock Rule optional confirm MO
 
 |badge1| |badge2| |badge3|
 
-This module add ability to reserve lots in production.
+This module add ability to disable automatic validation of production generated from procurement.
 
 **Table of contents**
 
