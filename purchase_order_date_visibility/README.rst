@@ -36,7 +36,7 @@ Date order visibility in purchase orders as was in v. 12.0.
 Configuration
 =============
 
-Questo modulo rende la data ordine visibile sempre sull'ordine di acquisto, rimuovendo inoltre il widget giorni residui sulla vista tree e impostando la stringa a quella usuale.
+Questo modulo rende la data ordine visibile sempre sull'ordine di acquisto.
 
 Bug Tracker
 ===========
