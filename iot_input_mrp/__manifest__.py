@@ -9,7 +9,7 @@
     Add IOT input to produce remotely.
     """,
     "author": "Sergio Corato",
-    "website": "https://efatto.it",
+    "website": "https://github.com/efatto/e-efatto",
     "depends": [
         "iot",
         "iot_input_data",
