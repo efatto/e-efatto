@@ -246,36 +246,36 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                             ),
                         }
                     )
-                if weight:
-                    weight = stock_product_dict[stock_product]["weight"]
+                if stock_product_dict[stock_product].get("weight"):
+                    product_weight = stock_product_dict[stock_product]["weight"]
                     uom_kgm = self.env.ref("uom.product_uom_kgm")
                     if product.weight_uom_id != uom_kgm:
                         if product.weight_uom_id.category_id == self.env.ref(
                             "uom.product_uom_categ_kgm"
                         ):
-                            weight = uom_kgm._compute_quantity(
-                                weight, product.weight_uom_id
+                            product_weight = uom_kgm._compute_quantity(
+                                product_weight, product.weight_uom_id
                             )
                         else:
                             whs_log_line.update(
                                 {
                                     "product_id": product.id,
                                     "qty_wrong": product.qty_available,
-                                    "weight": weight,
+                                    "weight": product_weight,
                                     "weight_wrong": product.weight,
                                     "type": "mismatch",
                                 }
                             )
                     if float_compare(
                         product.weight,
-                        weight,
+                        product_weight,
                         precision_rounding=product.weight_uom_id.rounding,
                     ):
                         whs_log_line.update(
                             {
                                 "product_id": product.id,
                                 "qty_wrong": product.qty_available,
-                                "weight": weight,
+                                "weight": product_weight,
                                 "weight_wrong": product.weight,
                                 "type": "mismatch",
                             }
@@ -283,7 +283,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         if wizard.do_sync:
                             product.write(
                                 {
-                                    "weight": weight,
+                                    "weight": product_weight,
                                 }
                             )
             if whs_log_line.get("type"):
