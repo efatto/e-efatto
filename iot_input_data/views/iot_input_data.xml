@@ -40,7 +40,6 @@
         <field name="name">IoT Data Input</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">iot.input.data</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
           <p class="o_view_nocontent_smiling_face">
@@ -52,7 +51,7 @@
     <record id="iot_device_input_form" model="ir.ui.view">
         <field name="name">iot.device.input.form</field>
         <field name="model">iot.device.input</field>
-        <field name="inherit_id" ref="iot_input.iot_device_input_form" />
+        <field name="inherit_id" ref="iot_input_oca.iot_device_input_form" />
         <field name="arch" type="xml">
             <xpath expr="//sheet/div[@name='button_box']" position="inside">
                 <button
@@ -73,7 +72,7 @@
 
     <menuitem
     id="iot_input_data_menu"
-    parent="iot.iot_root_menu"
+    parent="iot_oca.iot_root_menu"
     action="iot_input_data_action"
     sequence="20"
   />
