@@ -2,16 +2,16 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     "name": "IOT Data Input",
-    "version": "12.0.1.0.1",
+    "version": "14.0.1.0.0",
     "category": "Manufacture",
     "license": "AGPL-3",
-    "description": """
+    "summary": """
     Add IOT input to ingest generic data.
     """,
     "author": "Sergio Corato, Pretecno",
     "website": "https://github.com/efatto/e-efatto",
     "depends": [
-        "iot_input",
+        "iot_input_oca",
     ],
     "data": [
         "security/ir.model.access.csv",

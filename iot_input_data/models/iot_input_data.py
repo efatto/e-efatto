@@ -1,5 +1,3 @@
-# Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from datetime import datetime
 
 from odoo import api, fields, models
@@ -24,6 +22,7 @@ class IotInputData(models.Model):
 
     @api.model
     def input_data(self, *args, **kwargs):
+        res = False
         iot_device_input_id = self.env.context.get("iot_device_input_id")
         log_msg = ""
         input_obj = self.env["iot.input.data"]
@@ -47,34 +46,3 @@ class IotInputData(models.Model):
         if not res:
             return {"status": "error", "message": log_msg}
         return {"status": "ok", "message": "Input data created"}
-
-
-class IotDeviceInput(models.Model):
-    _inherit = "iot.device.input"
-
-    iot_input_data_ids = fields.One2many(
-        comodel_name="iot.input.data",
-        inverse_name="iot_device_input_id",
-        string="Iot Input data",
-    )
-    iot_input_data_count = fields.Integer(
-        compute="_compute_iot_input_data_count", string="Input Data Count"
-    )
-
-    @api.multi
-    def _compute_iot_input_data_count(self):
-        for iot_device_input in self:
-            iot_device_input.iot_input_data_count = len(
-                iot_device_input.iot_input_data_ids
-            )
-
-    def action_view_iot_data_input(self):
-        self.ensure_one()
-        action = self.env.ref("iot_input_data.iot_input_data_action").read()[0]
-        action.update(
-            {
-                "domain": [("iot_device_input_id", "=", self.id)],
-                "context": {"default_iot_device_input_id": self.id},
-            }
-        )
-        return action
