@@ -9,7 +9,7 @@
     Add IOT input to ingest generic data.
     """,
     "author": "Sergio Corato, Pretecno",
-    "website": "https://efatto.it",
+    "website": "https://github.com/efatto/e-efatto",
     "depends": [
         "iot_input",
     ],
