@@ -183,7 +183,7 @@ WHERE UBI_ARTICOLO IS NOT NULL AND UBI_ARTICOLO <> ' '
         archived_used_in_wms_product_ids.write({"active": True})
         return True
 
-    def _post_insert_product_query(self, last_id):
+    def _post_insert_product_query(self, new_id):
         # overridable method done after _get_insert_product_query in the WMS database
         # remove products deactivated in Odoo and without ubication in Modula
         self.ensure_one()
@@ -216,7 +216,7 @@ WHERE UBI_ARTICOLO IS NULL OR UBI_ARTICOLO = ' '
         new_last_update = fields.Datetime.now()
         for product in archived_used_in_wms_product_ids:
             insert_product_params = self._prepare_host_articoli_values(
-                product, self.location_id.id, last_id, operation="D"
+                product, self.location_id.id, new_id, operation="D"
             )
             insert_product_query = self._get_insert_product_query()
             self.with_context(no_return=True).execute_mssql(
@@ -259,7 +259,7 @@ VALUES (
 """
 
     def _prepare_host_articoli_values(
-        self, product, location_id, last_id, operation="I"
+        self, product, location_id, new_id, operation="I"
     ):
         """
         Carica/aggiorna l'anagrafica articoli verso il WMS
@@ -268,7 +268,7 @@ VALUES (
         """
         # todo i PO sono caricati senza dati fornitore ecc.
         super()._prepare_host_articoli_values(
-            product, location_id, last_id, operation=operation
+            product, location_id, new_id, operation=operation
         )
         ops = self.env["stock.warehouse.orderpoint"].search(
             [
