@@ -27,6 +27,7 @@ class HyddemoMssqlLogLine(models.Model):
     _description = "Mssql Log Line"
 
     name = fields.Text()
+    product_name = fields.Text()
     qty_wrong = fields.Float(
         string="Odoo Q.ty (wrong)",
         help="This quantity is assumed as wrong and overriden by WMS quantity if "
@@ -46,6 +47,7 @@ class HyddemoMssqlLogLine(models.Model):
             ("ok", "Ok"),
             ("mismatch", "Mismatch"),
             ("service", "Service"),
+            ("info", "Info"),
         ],
         "Type",
     )
