@@ -6,8 +6,11 @@ from odoo.tests import Form
 class MrpProductionSet(models.Model):
     _name = "mrp.production.set"
     _description = "MRP Production Set"
+    _order = "id desc"
 
     name = fields.Char(compute="_compute_name", store=True)
+    create_date = fields.Datetime(string="Creation Date", readonly=True)
+    write_date = fields.Datetime(string="Update Date", readonly=True)
     state = fields.Selection(
         selection=lambda self: self.env["mrp.production"]._fields["state"].selection,
         compute="_compute_state",
