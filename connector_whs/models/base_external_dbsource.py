@@ -142,6 +142,14 @@ class BaseExternalDbsource(models.Model):
                         "ultimo_invio": new_last_update,
                         "errori": "Added/Updated %s products" % len(products),
                         "dbsource_id": dbsource.id,
+                        "hyddemo_mssql_log_line_ids": [(
+                            0, 0, {
+                                "product_id": product.id,
+                                "type": "info",
+                                "product_name": product.name,
+                            }
+                        ) for product in products
+                        ],
                     }
                 ]
             )
