@@ -71,7 +71,7 @@ class BaseExternalDbsource(models.Model):
                 record.conn_string_full = conn_string
 
     def _prepare_host_articoli_values(
-        self, product, location_id, last_id, operation=False
+        self, product, location_id, new_id, operation=False
     ):
         """
         Overridable method
@@ -89,7 +89,7 @@ class BaseExternalDbsource(models.Model):
         # _pre_insert_product_query method
         return ""
 
-    def _post_insert_product_query(self, last_id):
+    def _post_insert_product_query(self, new_id):
         # overridable method done after _get_insert_product_query in the WMS database
         return ""
 
@@ -110,6 +110,7 @@ class BaseExternalDbsource(models.Model):
             )
             _logger.info(log_data)
             last_id = log_data and log_data[0]["ultimo_id"] or 0
+            new_id = last_id + 1
             if update_from_date:
                 last_date_dt = fields.Datetime.from_string(update_from_date)
             elif dbsource.force_update_product_from_date:
@@ -126,7 +127,7 @@ class BaseExternalDbsource(models.Model):
             new_last_update = fields.Datetime.now()
             for product in products:
                 insert_product_params = self._prepare_host_articoli_values(
-                    product, dbsource.location_id.id, last_id
+                    product, dbsource.location_id.id, new_id
                 )
                 insert_product_query = dbsource._get_insert_product_query()
                 dbsource.with_context(no_return=True).execute_mssql(
@@ -134,21 +135,27 @@ class BaseExternalDbsource(models.Model):
                     sqlparams=insert_product_params,
                     metadata=None,
                 )
+                new_id += 1
 
-            dbsource._post_insert_product_query(last_id)
+            dbsource._post_insert_product_query(new_id)
             res = self.env["hyddemo.mssql.log"].create(
                 [
                     {
                         "ultimo_invio": new_last_update,
+                        "ultimo_id": new_id,
                         "errori": "Added/Updated %s products" % len(products),
                         "dbsource_id": dbsource.id,
-                        "hyddemo_mssql_log_line_ids": [(
-                            0, 0, {
-                                "product_id": product.id,
-                                "type": "info",
-                                "product_name": product.name,
-                            }
-                        ) for product in products
+                        "hyddemo_mssql_log_line_ids": [
+                            (
+                                0,
+                                0,
+                                {
+                                    "product_id": product.id,
+                                    "type": "info",
+                                    "product_name": product.name,
+                                },
+                            )
+                            for product in products
                         ],
                     }
                 ]
