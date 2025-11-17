@@ -19,6 +19,7 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="name" />
+                <field name="create_date" />
                 <field name="production_left_id" />
                 <field name="production_right_id" />
             </tree>
@@ -58,8 +59,13 @@
                     </div>
                     <field name="compatible_mrp_production_ids" invisible="1" />
                     <group>
-                        <field name="move_raw_product_id" readonly="1" />
-                        <field name="split_production" />
+                        <group>
+                            <field name="move_raw_product_id" readonly="1" />
+                            <field name="split_production" />
+                        </group>
+                        <group>
+                            <field name="create_date" />
+                        </group>
                     </group>
                     <group>
                         <group string="Production Left">
