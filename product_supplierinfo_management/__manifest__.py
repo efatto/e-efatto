@@ -16,13 +16,13 @@
         "purchase_last_price_info",
         "purchase_triple_discount",
         "sale_stock",
+        "supplier_invoice_last_price_info",
     ],
     "data": [
         "security/ir.model.access.csv",
         "security/replenishment_cost_security.xml",
         "views/product_pricelist.xml",
         "views/product_supplierinfo_check.xml",
-        "views/product_views.xml",
     ],
     "installable": True,
 }
