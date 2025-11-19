@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="https_system" model="iot.communication.system">
+        <field name="name">HTTPS</field>
+    </record>
+    <record id="https_system_action" model="iot.communication.system.action">
+        <field name="communication_system_id" ref="https_system" />
+        <field name="name">https</field>
+    </record>
+</odoo>
