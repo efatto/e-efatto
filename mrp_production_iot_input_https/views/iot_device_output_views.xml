@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="iot_device_input_form" model="ir.ui.view">
+        <field name="name">iot.device.input.form</field>
+        <field name="model">iot.device.input</field>
+        <field name="inherit_id" ref="iot_input_oca.iot_device_input_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button
+                    name="call_device"
+                    type="object"
+                    icon="fa-cogs"
+                    string="Run"
+                />
+            </xpath>
+        </field>
+    </record>
+</odoo>
