@@ -14,7 +14,8 @@
     ],
     "data": [
         "data/system_data.xml",
-        "views/iot_device_output_views.xml",
+        "views/iot_device_input.xml",
+        "views/mrp.xml",
     ],
     "installable": True,
 }
