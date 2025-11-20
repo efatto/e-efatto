@@ -1,6 +1,7 @@
-from odoo import fields, models, _
-from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
+from odoo import _, models
 from odoo.exceptions import UserError
+
+from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
 
 
 class ProductTemplate(models.Model):
@@ -16,19 +17,20 @@ class ProductTemplate(models.Model):
         if not connection:
             raise UserError(_("Failed to open connection!"))
         sql_result = dbsource.execute_mssql(
-            sqlquery=clean_sql_text(
-                "SELECT * FROM HOST_ARTICOLI WHERE Codice=:Codice"
-            ),
+            sqlquery=clean_sql_text("SELECT * FROM HOST_ARTICOLI WHERE Codice=:Codice"),
             sqlparams={"Codice": self.default_code},
-            metadata=None
+            metadata=None,
         )
         if sql_result[0]:
             contents = _(
                 "Product is going to be synchronized with WHS with record: %s."
-                % str(sql_result[0]))
+                % str(sql_result[0])
+            )
         else:
             contents = _("Product is going to be synchronized with WHS.")
-        res["params"].update({
-            "message": contents,
-        })
+        res["params"].update(
+            {
+                "message": contents,
+            }
+        )
         return res
