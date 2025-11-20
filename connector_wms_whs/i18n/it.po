@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-15 06:44+0000\n"
-"PO-Revision-Date: 2025-05-15 06:44+0000\n"
+"POT-Creation-Date: 2025-11-20 18:24+0000\n"
+"PO-Revision-Date: 2025-11-20 18:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,20 +18,24 @@ msgstr ""
 #. module: connector_wms_whs
 #: model:ir.model.fields,field_description:connector_wms_whs.field_base_external_dbsource__assigned_attachment_ids
 #: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_liste__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_wms_whs.field_product_template__assigned_attachment_ids
 #: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order__assigned_attachment_ids
 #: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order_line__assigned_attachment_ids
 #: model:ir.model.fields,field_description:connector_wms_whs.field_stock_move__assigned_attachment_ids
 #: model:ir.model.fields,field_description:connector_wms_whs.field_stock_picking__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_wms_whs.field_wizard_sync_stock_whs_mssql__assigned_attachment_ids
 msgid "Assigned Attachments"
 msgstr "Allegati assegnati"
 
 #. module: connector_wms_whs
 #: model:ir.model.fields,field_description:connector_wms_whs.field_base_external_dbsource__display_name
 #: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_liste__display_name
+#: model:ir.model.fields,field_description:connector_wms_whs.field_product_template__display_name
 #: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order__display_name
 #: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order_line__display_name
 #: model:ir.model.fields,field_description:connector_wms_whs.field_stock_move__display_name
 #: model:ir.model.fields,field_description:connector_wms_whs.field_stock_picking__display_name
+#: model:ir.model.fields,field_description:connector_wms_whs.field_wizard_sync_stock_whs_mssql__display_name
 msgid "Display Name"
 msgstr "Nome visualizzato"
 
@@ -45,6 +49,7 @@ msgstr "Sorgenti Database Esterne"
 #: code:addons/connector_wms_whs/models/hyddemo_whs_liste.py:0
 #: code:addons/connector_wms_whs/models/hyddemo_whs_liste.py:0
 #: code:addons/connector_wms_whs/models/hyddemo_whs_liste.py:0
+#: code:addons/connector_wms_whs/models/product.py:0
 #: code:addons/connector_wms_whs/wizard/wizard_sync_stock_whs_mssql.py:0
 #, python-format
 msgid "Failed to open connection!"
@@ -53,20 +58,24 @@ msgstr "Connessione fallita!"
 #. module: connector_wms_whs
 #: model:ir.model.fields,field_description:connector_wms_whs.field_base_external_dbsource__id
 #: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_liste__id
+#: model:ir.model.fields,field_description:connector_wms_whs.field_product_template__id
 #: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order__id
 #: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order_line__id
 #: model:ir.model.fields,field_description:connector_wms_whs.field_stock_move__id
 #: model:ir.model.fields,field_description:connector_wms_whs.field_stock_picking__id
+#: model:ir.model.fields,field_description:connector_wms_whs.field_wizard_sync_stock_whs_mssql__id
 msgid "ID"
 msgstr ""
 
 #. module: connector_wms_whs
 #: model:ir.model.fields,field_description:connector_wms_whs.field_base_external_dbsource____last_update
 #: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_liste____last_update
+#: model:ir.model.fields,field_description:connector_wms_whs.field_product_template____last_update
 #: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order____last_update
 #: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order_line____last_update
 #: model:ir.model.fields,field_description:connector_wms_whs.field_stock_move____last_update
 #: model:ir.model.fields,field_description:connector_wms_whs.field_stock_picking____last_update
+#: model:ir.model.fields,field_description:connector_wms_whs.field_wizard_sync_stock_whs_mssql____last_update
 msgid "Last Modified on"
 msgstr "Ultima modifica il"
 
@@ -104,6 +113,23 @@ msgstr ""
 "impostato anche in tutte le righe"
 
 #. module: connector_wms_whs
+#: model:ir.model,name:connector_wms_whs.model_product_template
+msgid "Product Template (Multi-Company)"
+msgstr "Modello prodotto (Multi-Company)"
+
+#. module: connector_wms_whs
+#: code:addons/connector_wms_whs/models/product.py:0
+#, python-format
+msgid "Product is going to be synchronized with WHS with record: %s."
+msgstr "Il prodotto è in corso di sincronizzazione con WHS con record: %s."
+
+#. module: connector_wms_whs
+#: code:addons/connector_wms_whs/models/product.py:0
+#, python-format
+msgid "Product is going to be synchronized with WHS."
+msgstr "Il prodotto non è in corso di sincronizzazione con WHS."
+
+#. module: connector_wms_whs
 #: model:ir.model.fields,help:connector_wms_whs.field_stock_picking__priority
 msgid ""
 "Products will be reserved first for the transfers with the highest "
@@ -128,6 +154,11 @@ msgid "Stock Move"
 msgstr "Movimento di magazzino"
 
 #. module: connector_wms_whs
+#: model:ir.model,name:connector_wms_whs.model_wizard_sync_stock_whs_mssql
+msgid "Synchronize stock inventory from the Remote Mssql DB to Odoo"
+msgstr "Sincronizza inventario dal Database remoto Mssql verso Odoo"
+
+#. module: connector_wms_whs
 #: model:ir.model,name:connector_wms_whs.model_stock_picking
 msgid "Transfer"
 msgstr "Trasferimento"
@@ -139,8 +170,8 @@ msgid ""
 "Trying to cancel lists elaborated from WHS, please wait for cron "
 "synchronization or force it."
 msgstr ""
-"Tentativo di annullamento liste elaborate dal WMS, si prega di attendere "
-"il cron di sincronizzazione o di forzarne l'avvio."
+"Tentativo di annullamento liste elaborate dal WMS, si prega di attendere il "
+"cron di sincronizzazione o di forzarne l'avvio."
 
 #. module: connector_wms_whs
 #: code:addons/connector_wms_whs/models/hyddemo_whs_liste.py:0
@@ -149,8 +180,8 @@ msgid ""
 "Trying to cancel lists launched in processing from user in WHS, please wait "
 "for order end processing."
 msgstr ""
-"Tentativo di annullamento liste avviate in esecuzione dall'utente nel WMS, si prega di attendere "
-"il completamento dell'ordine."
+"Tentativo di annullamento liste avviate in esecuzione dall'utente nel WMS, "
+"si prega di attendere il completamento dell'ordine."
 
 #. module: connector_wms_whs
 #: model:ir.model.fields.selection,name:connector_wms_whs.selection__sale_order__priority__2
