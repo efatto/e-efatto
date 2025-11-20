@@ -1,3 +1,4 @@
+import base64
 import logging
 
 import urllib3
@@ -13,9 +14,9 @@ class MrpProduction(models.Model):
     def get_data_from_iot_device_input(self):
         # usage example:
         # r = http.request('GET', "https://172.21.1.10/download_zip", headers={
-        #     "Content-Type": "application/zip",
-        #     },
-        #     fields={"wo": f"PR/2025/099"},
+        # "Content-Type": "application/zip",
+        # },
+        # fields={"wo": f"PR/2025/099"},
         # )
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         iot_device_input_id = self.env.context.get("iot_device_input_id")
@@ -61,7 +62,7 @@ class MrpProduction(models.Model):
                         attachment = self.env["ir.attachment"].create(
                             {
                                 "name": file_name,
-                                "datas": r.data,
+                                "datas": base64.b64encode(r.data),
                                 "res_model": "mrp.production",
                                 "res_id": production.id,
                             }
