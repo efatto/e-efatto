@@ -8,6 +8,13 @@ class ProductTemplate(models.Model):
     _inherit = "product.template"
 
     def show_whs_syncronization_records(self):
+        return self.product_variant_ids.show_whs_syncronization_records()
+
+
+class ProductProduct(models.Model):
+    _inherit = "product.product"
+
+    def show_whs_syncronization_records(self):
         res = super().show_whs_syncronization_records()
         contents = ""
         dbsource = self.env["base.external.dbsource"].search(
