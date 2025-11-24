@@ -10,6 +10,13 @@ class ProductTemplate(models.Model):
     exclude_from_whs = fields.Boolean(string="Exclude from WMS sync")
 
     def show_whs_syncronization_records(self):
+        return self.product_variant_ids.show_whs_syncronization_records()
+
+
+class ProductProduct(models.Model):
+    _inherit = "product.product"
+
+    def show_whs_syncronization_records(self):
         # reusable method to get current WMS name for this product
         self.ensure_one()
         contents = ""
@@ -24,10 +31,6 @@ class ProductTemplate(models.Model):
                 "sticky": True,
             },
         }
-
-
-class ProductProduct(models.Model):
-    _inherit = "product.product"
 
     @api.model
     def _get_product_to_sync(self, last_date):
