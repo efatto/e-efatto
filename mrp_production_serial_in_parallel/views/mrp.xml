@@ -35,9 +35,9 @@
         >{'invisible': ['|', ('is_parallel_production', '=', True), ('state', '=', 'draft')]}</attribute>
             </xpath>
             <xpath
-                expr="/form/header/button[@name='button_mark_done']"
-                position="attributes"
-              >
+        expr="/form/header/button[@name='button_mark_done']"
+        position="attributes"
+      >
                 <attribute name="attrs">
                     {'invisible': [
                         '|',
