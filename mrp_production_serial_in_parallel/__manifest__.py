@@ -10,6 +10,7 @@
     "summary": "Add the option to preserve initial production when creating backorder "
     "for serial lots.",
     "depends": [
+        "connector_whs",  # for button_mark_done visibility
         "mrp",
         "mrp_production_lot_reserve",
         "mrp_production_serial_matrix",
