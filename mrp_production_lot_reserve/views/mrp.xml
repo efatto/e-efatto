@@ -11,6 +11,7 @@
           name="reserved_lot_ids"
           widget="many2many_tags"
           options="{'no_create_edit': True, 'no_quick_create': True}"
+          attrs="{'invisible': [('product_tracking', 'in', ('none', False))]}"
           domain="[('product_id', '=', product_id), ('company_id', '=', company_id), ('is_reserved_or_used', '=', False)]"
         />
             </label>
