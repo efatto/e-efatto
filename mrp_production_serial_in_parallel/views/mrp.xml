@@ -27,12 +27,12 @@
             <xpath expr="//field[@name='lot_producing_id']/.." position="attributes">
                 <attribute
           name="attrs"
-        >{'invisible': ['|', ('is_parallel_production', '=', True), ('state', '=', 'draft')]}</attribute>
+        >{'invisible': ['|', '|', ('product_tracking', 'in', ('none', False)), ('is_parallel_production', '=', True), ('state', '=', 'draft')]}</attribute>
             </xpath>
             <xpath expr="//label[@for='lot_producing_id']" position="attributes">
                 <attribute
           name="attrs"
-        >{'invisible': ['|', ('is_parallel_production', '=', True), ('state', '=', 'draft')]}</attribute>
+        >{'invisible': ['|', '|', ('product_tracking', 'in', ('none', False)), ('is_parallel_production', '=', True), ('state', '=', 'draft')]}</attribute>
             </xpath>
             <xpath
         expr="/form/header/button[@name='button_mark_done']"
