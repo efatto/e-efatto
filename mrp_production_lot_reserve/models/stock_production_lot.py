@@ -44,8 +44,6 @@ class StockProductionLot(models.Model):
                     | lot.stock_move_line_ids.filtered(
                         lambda ml: ml.move_id.production_id
                         and ml.move_id.production_id.state != "cancel"
-                    ).mapped(
-                        "lot_id"
-                    )
+                    ).mapped("lot_id")
                 )
             )
