@@ -90,6 +90,7 @@ class BaseExternalDbsource(models.Model):
             ('A', 'aggiungi se non esiste, modifica se già inserito'),
             ('C', 'rimuovi il codice dal database WHS solo se non utilizzato'),
         """
+        product = product.with_context(lang="it_IT")
         super()._prepare_host_articoli_values(
             product, location_id, new_id, operation=operation
         )
