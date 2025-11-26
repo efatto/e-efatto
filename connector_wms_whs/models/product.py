@@ -16,7 +16,6 @@ class ProductProduct(models.Model):
 
     def show_whs_syncronization_records(self):
         res = super().show_whs_syncronization_records()
-        contents = ""
         dbsource = self.env["base.external.dbsource"].search(
             [("company_id", "=", self.company_id.id)], limit=1
         )
