@@ -35,9 +35,16 @@ class StockProductionLot(models.Model):
             lot.is_reserved_or_used = bool(
                 lot
                 in (
-                    lot.mapped("producing_production_ids.lot_producing_id")
-                    | lot.mapped("reserved_production_ids.reserved_lot_ids")
-                    | lot.stock_move_line_ids.filtered("move_id.production_id").mapped(
+                    lot.producing_production_ids.filtered(
+                        lambda prod: prod.state != "cancel"
+                    ).mapped("lot_producing_id")
+                    | lot.reserved_production_ids.filtered(
+                        lambda prod: prod.state != "cancel"
+                    ).mapped("reserved_lot_ids")
+                    | lot.stock_move_line_ids.filtered(
+                        lambda ml: ml.move_id.production_id
+                        and ml.move_id.production_id.state != "cancel"
+                    ).mapped(
                         "lot_id"
                     )
                 )
