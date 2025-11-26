@@ -99,8 +99,8 @@ class BaseExternalDbsource(models.Model):
                 ("product_id", "=", product.id),
             ]
         )
-        if len(ops) > 1:
-            pass
+        # if len(ops) > 1:
+        #     pass
         product_min_qty = ops[0].product_min_qty if ops else 0
         execute_params = {
             "Elaborato": 0,
