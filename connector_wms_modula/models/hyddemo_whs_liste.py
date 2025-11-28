@@ -82,17 +82,27 @@ class HyddemoWhsListe(models.Model):
                 # (this will unlink its rows too)
                 to_cancel_lists.whs_unlink_lists(dbsource)
             else:
-                # lista does not exist, so order to WMS to unlink it
-                # (this will unlink its rows too)
-                dbsource.with_context(no_return=True).execute_mssql(
+                # check if the deletion record exists
+                res = dbsource.execute_mssql(
                     sqlquery=clean_sql_text(
-                        "INSERT INTO IMP_ORDINI (ORD_OPERAZIONE, ORD_ORDINE) VALUES "
-                        "('D', :ORD_ORDINE)"
+                        "SELECT ORD_ORDINE FROM IMP_ORDINI WHERE ORD_OPERAZIONE='D' "
+                        "AND ORD_ORDINE=:ORD_ORDINE"
                     ),
                     sqlparams=dict(ORD_ORDINE=num_lista),
                     metadata=None,
                 )
-                _logger.info("WMS Modula LOG: delete Lista %s" % (num_lista))
+                if not res or not res[0]:
+                    # lista does not exist nor deletion record, so order to WMS to
+                    # unlink it (this will unlink its rows too)
+                    dbsource.with_context(no_return=True).execute_mssql(
+                        sqlquery=clean_sql_text(
+                            "INSERT INTO IMP_ORDINI (ORD_OPERAZIONE, ORD_ORDINE) VALUES"
+                            " ('D', :ORD_ORDINE)"
+                        ),
+                        sqlparams=dict(ORD_ORDINE=num_lista),
+                        metadata=None,
+                    )
+                    _logger.info("WMS Modula LOG: delete Lista %s" % num_lista)
                 to_cancel_lists.write({"stato": "3"})
 
     @api.model
