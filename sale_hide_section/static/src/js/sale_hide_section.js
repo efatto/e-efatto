@@ -63,7 +63,7 @@ odoo.define('sale_hide_section.hide_section_details', function (require) {
                         }
                     }
                 });
-                if (hide_details && row.className === 'o_data_row') {
+                if (hide_details && row.className === 'o_data_row text-info') {
                     row.hidden = true;
                 } else {
                     row.hidden = false;
