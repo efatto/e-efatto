@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="mrp_production_form_view" model="ir.ui.view">
+        <field name="name">mrp.production.form</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view" />
+        <field name="arch" type="xml">
+            <field name="user_id" position="before">
+                <field name="reservation_state" />
+            </field>
+            <field name="quantity_done" position="before">
+                <field
+          name="is_fully_reserved"
+          nolabel="1"
+          widget="bullet_state"
+          class="fa fa-check-circle"
+          attrs="{'invisible': [('is_fully_reserved', '=', False)]}"
+        />
+            </field>
+        </field>
+    </record>
+
+</odoo>
