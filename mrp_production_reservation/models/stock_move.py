@@ -7,7 +7,6 @@ class StockMove(models.Model):
     is_fully_reserved = fields.Boolean(
         compute="_compute_is_fully_reserved",
         store=True,
-        string=" ",
         help="This move is fully reserved.",
     )
 
