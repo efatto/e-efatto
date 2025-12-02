@@ -27,7 +27,7 @@ class MrpProduction(models.Model):
         if all(
             move.state == "assigned" and move.is_fully_reserved
             for move in self.move_raw_ids.filtered(
-                lambda m: m.product_id.type == 'product'
+                lambda m: m.product_id.type == "product"
             )
         ):
             return "assigned"
