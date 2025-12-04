@@ -1,94 +1,82 @@
-odoo.define("sale_hide_section.hide_section_details", function (require) {
+/* eslint-disable init-declarations */
+/* Copyright 2019 Tecnativa - Ernesto Tejeda
+/* Copyright 2022 Tecnativa - Víctor Martínez
+ * License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+ */
+odoo.define("sale_hide_section.sale_layout_category_hide_detail", function (require) {
   "use strict";
 
   var sectionAndNoteListRenderer = require("account.section_and_note_backend");
 
   var SectionAndNoteListRenderer = {
-        _renderBodyCell: function (record, node, index, options) {
-          var $cell = this._super.apply(this, arguments);
-
-          var field_info = this.state.fieldsInfo.list[node.attrs.name];
-          var show_in_line_section = field_info && field_info.options.show_in_line_section;
-
-          var isSection = record.data.display_type === "line_section";
-          var isNote = record.data.display_type === "line_note";
-          if (isSection || isNote) {
-            if (show_in_line_section) {
-              return $cell.removeClass("o_hidden");
-            } else if (node.attrs.name === "name") {
-              var nbrColumns = this._getNumberOfCols();
-              if (this.handleField) {
-                nbrColumns--;
-              }
-              if (this.addTrashIcon) {
-                nbrColumns--;
-              }
-              nbrColumns -= this._getNumberOfLineSectionFields();
-              $cell.attr("colspan", nbrColumns);
-            }
+    _getOptionValueFromField: function (name, option) {
+      if (name in this.state.fieldsInfo.list) {
+        return this.state.fieldsInfo.list[name].options[option];
+      }
+      return false;
+    },
+    _allowRemoveClassHidden: function (name) {
+      return this._getOptionValueFromField(name, "show_in_line_section");
+    },
+    _getColspanSectionName: function () {
+      var nbrColumns = this._getNumberOfCols();
+      if (this.handleField) {
+        nbrColumns--;
+      }
+      if (this.addTrashIcon) {
+        nbrColumns--;
+      }
+      nbrColumns -= this._getNumberOfLineSectionFields();
+      return nbrColumns;
+    },
+    _renderBodyCell: function (record, node) {
+      var $cell = this._super.apply(this, arguments);
+      if (record.data.display_type === "line_section") {
+        if (this._allowRemoveClassHidden(node.attrs.name)) {
+          return $cell.removeClass("o_hidden");
+        } else if (node.attrs.name === "name") {
+          $cell.attr("colspan", this._getColspanSectionName());
         }
-        return $cell;
+      }
+      return $cell;
     },
     _getNumberOfLineSectionFields: function () {
       var section_fields_count = 0;
       var self = this;
       this.columns.forEach(function (elem) {
-        var options;
-
-        if (elem.attrs.name in self.state.fieldsInfo.list) {
-            options = self.state.fieldsInfo.list[elem.attrs.name].options;
-            if (options.show_in_line_section) section_fields_count++;
+        if (self._getOptionValueFromField(elem.attrs.name, "show_in_line_section")) {
+          section_fields_count++;
         }
       });
       return section_fields_count;
     },
+    _getColumnWidth: function (column) {
+      var res = this._super.apply(this, arguments);
+      if (column.attrs.widget === "boolean_fa_icon") res = "15px";
+      return res;
+    },
     _renderHeaderCell: function (node) {
-        var $th = this._super.apply(this, arguments);
-        var options;
-        var show_in_line_section;
-
-        if (!(node.attrs.name in this.state.fieldsInfo.list)) {
-            return $th;
-            }
-        options = this.state.fieldsInfo.list[node.attrs.name].options;
-        show_in_line_section = options.show_in_line_section;
-        if (show_in_line_section) $th.text("").removeClass("o_column_sortable");
+      var $th = this._super.apply(this, arguments);
+      if (!(node.attrs.name in this.state.fieldsInfo.list)) {
+        return $th;
+      }
+      if (this._getOptionValueFromField(node.attrs.name, "show_in_line_section")) {
+        $th.text("").removeClass("o_column_sortable");
+      }
       return $th;
     },
-    _renderBody: function () {
-      var $body = this._super();
-      var hide_details = false;
-      // On clik on eye icon we hide/show the rows until next section
-      _.each($body[0].childNodes, function (row) {
-        _.each(row.childNodes, function (cell) {
-          for (var i = 0; i < cell.classList.length; i += 1) {
-            if (cell.classList[i] === "o_boolean_fa_icon_cell") {
-              if (
-                cell.firstChild &&
-                cell.firstChild.firstChild &&
-                cell.firstChild.firstChild.className === "fa fa-eye-slash"
-              ) {
-                hide_details = true;
-              } else if (
-                cell.firstChild &&
-                cell.firstChild.firstChild &&
-                cell.firstChild.firstChild.className === "fa fa-eye"
-              ) {
-                hide_details = false;
-              }
-            }
-          }
-        });
-        if (hide_details && row.className === "o_data_row text-info") {
-          row.hidden = true;
-        } else {
-          row.hidden = false;
-        }
-      });
-      return $body;
+    _renderRow: function (record) {
+      const data = record.data;
+      if (data.display_type === "line_section" && data.show_details !== undefined) {
+        this.show_next_row = record.data.show_details;
+      }
+      const $row = this._super.apply(this, arguments);
+      if (this.show_next_row === false && data.display_type !== "line_section") {
+        $row.addClass("o_hidden");
+      }
+      return $row;
     },
   };
 
-    sectionAndNoteListRenderer.include(SectionAndNoteListRenderer);
-  }
-);
+  sectionAndNoteListRenderer.include(SectionAndNoteListRenderer);
+});
