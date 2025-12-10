@@ -11,7 +11,6 @@ class ProductTemplate(models.Model):
 
     name = fields.Char(translate=False)
 
-    @api.multi
     @api.constrains("name", "categ_id")
     def _check_name_unique(self):
         for template in self.filtered(
