@@ -23,11 +23,11 @@ msgstr "Nome"
 
 #. module: product_name_unique
 #: sql_constraint:product.template:0
-msgid "Name must be unique across the database!"
-msgstr "Il nome deve essere unico sul database!"
+msgid "Product name must be unique for product category %s!"
+msgstr "Il nome del prodotto per la categoria prodotto %s deve essere unico!"
 
 #. module: product_name_unique
 #: model:ir.model,name:product_name_unique.model_product_template
 msgid "Product Template (Multi-Company)"
-msgstr ""
+msgstr "Modello Prodotto (Multi-Azienda)"
 

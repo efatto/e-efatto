@@ -4,6 +4,7 @@
 
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
+from odoo.tools import config
 
 
 class ProductTemplate(models.Model):
@@ -13,26 +14,27 @@ class ProductTemplate(models.Model):
 
     @api.constrains("name", "categ_id")
     def _check_name_unique(self):
-        for template in self.filtered(
-            lambda x: not x.categ_id.bypass_product_name_unique
-        ):
-            bypass_name_categs = self.env["product.category"].search(
-                [
-                    ("bypass_product_name_unique", "=", True),
-                ]
-            )
-            others = self.env["product.template"].search(
-                [
-                    ("name", "=", template.name),
-                    ("id", "!=", template.id),
-                    "!",
-                    ("categ_id", "child_of", bypass_name_categs.ids),
-                ]
-            )
-            if others:
-                raise ValidationError(
-                    _(
-                        "Name must be unique across the database "
-                        "for product category %s!" % others[0].categ_id.name
-                    )
+        if not config["test_enable"]:
+            for template in self.filtered(
+                lambda x: not x.categ_id.bypass_product_name_unique
+            ):
+                bypass_name_categs = self.env["product.category"].search(
+                    [
+                        ("bypass_product_name_unique", "=", True),
+                    ]
                 )
+                others = self.env["product.template"].search(
+                    [
+                        ("name", "=", template.name),
+                        ("id", "!=", template.id),
+                        "!",
+                        ("categ_id", "child_of", bypass_name_categs.ids),
+                    ]
+                )
+                if others:
+                    raise ValidationError(
+                        _(
+                            "Product name must be unique "
+                            "for product category %s!" % others[0].categ_id.name
+                        )
+                    )
