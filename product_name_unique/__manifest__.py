@@ -8,11 +8,11 @@
     "version": "12.0.1.0.1",
     "license": "AGPL-3",
     "author": "Open Source Integrators, Odoo Community Association (OCA), "
-              "Sergio Corato",
+    "Sergio Corato",
     "category": "Product",
     "website": "https://github.com/efatto/e-efatto",
     "depends": ["product"],
     "data": ["views/product.xml"],
-    "pre_init_hook": 'pre_init_product_name',
+    "pre_init_hook": "pre_init_product_name",
     "installable": True,
 }
