@@ -5,7 +5,7 @@
 {
     "name": "Unique Product Template Name",
     "summary": "Set product name as unique except for selected categories.",
-    "version": "12.0.1.0.1",
+    "version": "14.0.1.0.0",
     "license": "AGPL-3",
     "author": "Open Source Integrators, Odoo Community Association (OCA), "
     "Sergio Corato",
