@@ -4,10 +4,11 @@ from openupgradelib import openupgrade
 
 def drop_sql_constraint(env):
     openupgrade.logged_query(
-        env.cr, """
+        env.cr,
+        """
             ALTER TABLE product_template
                 DROP CONSTRAINT product_template_name_uniq;
-            """
+            """,
     )
 
 
