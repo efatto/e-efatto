@@ -11,10 +11,10 @@ class StockPicking(models.Model):
                 lambda x: x.state == "failed"
             )
             for qc_inspection_failed in qc_inspection_failed_ids:
-                if qc_inspection_failed.object_id._name == "stock.move":
+                if qc_inspection_failed.object_id._name == "stock.move":  # noqa
                     move = qc_inspection_failed.object_id
                     wh = qc_inspection_failed.picking_id.picking_type_id.warehouse_id
                     vals = {"location_dest_id": wh.wh_qc_stock_loc_id.id}
-                    move.move_line_ids.write(vals)
-                    move.write(vals)
+                    move.move_line_ids.write(vals)  # noqa
+                    move.write(vals)  # noqa
         return res
