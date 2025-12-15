@@ -155,7 +155,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 wh_qc_qty = product.with_context(
                     location=warehouse.wh_qc_stock_loc_id.id
                 ).qty_available
-                product_qty -= wh_qc_qty
+                product_qty += wh_qc_qty
                 if product_qty < 0:
                     # do not consider negative quantities in WHS
                     whs_log_line.update(
