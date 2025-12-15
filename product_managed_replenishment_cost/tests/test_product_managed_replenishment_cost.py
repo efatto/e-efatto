@@ -669,9 +669,21 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         self._test_06()
 
     def _test_06(self):
+        for bom in self.bom_parent | self.bom_parent_parent:
+            # subcontracted products have purchasing route, not manufacturing one
+            bom.product_tmpl_id.write(
+                {
+                    "route_ids": [
+                        (6, 0, self.env.ref("purchase_stock.route_warehouse0_buy").ids)
+                    ],
+                }
+            )
+            bom.type = "subcontract"
+            self.assertNotIn(
+                self.env.ref("mrp.route_warehouse0_manufacture"),
+                bom.product_tmpl_id.route_ids,
+            )
         self.product_bom_parent_parent.categ_id = self.test_categ
-        self.bom_parent.type = "subcontract"
-        self.bom_parent_parent.type = "subcontract"
         self.assertEqual(self.product_bom_parent_parent.managed_replenishment_cost, 0.0)
         self.assertEqual(self.product_bom_parent_parent.standard_price, 0.0)
         repl = self.env["replenishment.cost"].create(
