@@ -404,17 +404,12 @@ class ProductProduct(models.Model):
             lambda x: self.env.ref("purchase_stock.route_warehouse0_buy")
             not in x.route_ids
         )
-        products_tobe_manufactured = self.filtered(
-            lambda x: self.env.ref("mrp.route_warehouse0_manufacture") in x.route_ids
-        )
-        products_tobe_manufactured_without_bom = products_tobe_manufactured.filtered(
-            lambda x: not x.bom_count
-        )
+        # get product with bom as subcontracted haven't the manufacturing route
+        products_tobe_manufactured = self.filtered(lambda x: x.bom_count)
         products_without_seller_price = (
             products_tobe_purchased.update_products_tobe_purchased()
         )
         products_without_seller_price |= products_tobe_purchased_without_seller
-        products_without_seller_price |= products_tobe_manufactured_without_bom
         # compute replenishment cost for product without suppliers
         for product in products_nottobe_purchased:
             if update_managed_replenishment_cost:
