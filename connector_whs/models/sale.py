@@ -8,14 +8,14 @@ class SaleOrder(models.Model):
     _inherit = "sale.order"
 
     def action_confirm(self):
-        res = super(SaleOrder, self).action_confirm()
+        res = super().action_confirm()
         for order in self:
             # This method is executed after the creation of whs lists from picking
             # confirmation, generally automatically done.
             # This is used only to ensure some residual cases (some cron?) do not
             # confirm the pickings.
             order.picking_ids.filtered(lambda x: x.state != "cancel").mapped(
-                "move_lines"
+                "move_ids"
             ).filtered(
                 lambda move_line: not move_line.whs_list_ids
                 or all(x.stato == "3" for x in move_line.whs_list_ids)
@@ -23,7 +23,7 @@ class SaleOrder(models.Model):
         return res
 
     def action_cancel(self):
-        res = super(SaleOrder, self).action_cancel()
+        res = super().action_cancel()
         for order in self:
             order.picking_ids.cancel_whs_list()
         return res

@@ -8,15 +8,15 @@ class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
 
     def button_approve(self, force=False):
-        res = super(PurchaseOrder, self).button_approve(force=force)
+        res = super().button_approve(force=force)
         for order in self:
             order.picking_ids.filtered(lambda x: x.state != "cancel").mapped(
-                "move_lines"
+                "move_ids"
             ).create_whs_list()
         return res
 
     def button_cancel(self):
-        res = super(PurchaseOrder, self).button_cancel()
+        res = super().button_cancel()
         for order in self:
             order.picking_ids.cancel_whs_list()
         return res

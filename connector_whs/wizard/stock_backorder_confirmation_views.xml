@@ -7,11 +7,11 @@
         <field name="arch" type="xml">
             <button name="process" position="after">
                 <button
-          name="process_bypass_wms"
-          string="Create Backorder Bypassing WMS"
-          type="object"
-          class="oe_highlight"
-        />
+                    name="process_bypass_wms"
+                    string="Create Backorder Bypassing WMS"
+                    type="object"
+                    class="oe_highlight"
+                />
             </button>
         </field>
     </record>

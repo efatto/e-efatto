@@ -7,8 +7,8 @@
         <field name="arch" type="xml">
             <filter name="todo" position="attributes">
                 <attribute
-          name="domain"
-        >[('state', 'in', ('draft', 'consumed', 'confirmed', 'progress', 'to_close'))]</attribute>
+                    name="domain"
+                >[('state', 'in', ('draft', 'consumed', 'confirmed', 'progress', 'to_close'))]</attribute>
             </filter>
         </field>
     </record>
@@ -20,34 +20,34 @@
         <field name="arch" type="xml">
             <button name="%(mrp.action_mrp_production_moves)d" position="attributes">
                 <attribute
-          name="attrs"
-        >{'invisible': [('state', 'not in', ('consumed', 'progress', 'done'))]}</attribute>
+                    name="attrs"
+                >{'invisible': [('state', 'not in', ('consumed', 'progress', 'done'))]}</attribute>
             </button>
             <button name="button_mark_done" position="before">
                 <field name="sent_to_whs" invisible="1" />
                 <field name="bom_type" invisible="1" />
                 <button
-          name="button_send_to_whs"
-          type="object"
-          string="Send to WHS"
-          class="oe_highlight"
-          attrs="{'invisible': ['|', '|', ('bom_type', '=', 'subcontract'), ('state', '!=', 'progress'), ('sent_to_whs', '=', True)]}"
-        />
+                    name="button_send_to_whs"
+                    type="object"
+                    string="Send to WHS"
+                    class="oe_highlight"
+                    attrs="{'invisible': ['|', '|', ('bom_type', '=', 'subcontract'), ('state', '!=', 'progress'), ('sent_to_whs', '=', True)]}"
+                />
             </button>
             <xpath expr="//button[@name='button_mark_done']" position="before">
                 <field name="is_consumable" invisible="1" />
                 <button
-          name="button_consume"
-          type="object"
-          class="oe_highlight"
-          string="Consume components"
-          attrs="{'invisible': ['|', '|', '|', '|', ('bom_type', '=', 'subcontract'), ('is_consumable', '=', False), ('state', '!=', 'progress'), ('qty_producing', '=', 0), ('sent_to_whs', '=', False)]}"
-        />
+                    name="button_consume"
+                    type="object"
+                    class="oe_highlight"
+                    string="Consume components"
+                    attrs="{'invisible': ['|', '|', '|', '|', ('bom_type', '=', 'subcontract'), ('is_consumable', '=', False), ('state', '!=', 'progress'), ('qty_producing', '=', 0), ('sent_to_whs', '=', False)]}"
+                />
             </xpath>
             <xpath
-        expr="/form/header/button[@name='button_mark_done']"
-        position="attributes"
-      >
+                expr="/form/header/button[@name='button_mark_done']"
+                position="attributes"
+            >
                 <attribute name="string">Produce</attribute>
                 <attribute name="attrs">{'invisible': [
                     '|',
@@ -69,15 +69,15 @@
                 </attribute>
             </xpath>
             <xpath
-        expr="//button[@name='button_mark_done'][last()]"
-        position="attributes"
-      >
+                expr="//button[@name='button_mark_done'][last()]"
+                position="attributes"
+            >
                 <attribute name="attrs">{'invisible': True}</attribute>
             </xpath>
             <field name="qty_producing" position="attributes">
                 <attribute
-          name="attrs"
-        >{'readonly': [('qty_producing', '!=', 0), ('sent_to_whs', '=', True), ('state', 'not in', ['draft', 'confirmed', 'progress'])]}</attribute>
+                    name="attrs"
+                >{'readonly': [('qty_producing', '!=', 0), ('sent_to_whs', '=', True), ('state', 'not in', ['draft', 'confirmed', 'progress'])]}</attribute>
             </field>
         </field>
     </record>

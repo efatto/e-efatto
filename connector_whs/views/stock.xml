@@ -6,9 +6,9 @@
         <field name="inherit_id" ref="stock.view_picking_form" />
         <field name="arch" type="xml">
             <xpath
-        expr="//page[@name='operations']/field[@name='move_ids_without_package']/form/group/field[@name='description_picking']"
-        position="after"
-      >
+                expr="//page[@name='operations']/field[@name='move_ids_without_package']/form/group/field[@name='description_picking']"
+                position="after"
+            >
                 <field name="whs_list_ids" />
             </xpath>
         </field>
@@ -28,21 +28,21 @@
         <field name="arch" type="xml">
             <button name="button_validate" position="after">
                 <button
-          name="button_validate_bypass_wms"
-          attrs="{'invisible': ['|', ('state', 'in', ('waiting','confirmed')), ('show_validate', '=', False)]}"
-          string="Validate Bypassing WMS"
-          type="object"
-          class="oe_highlight"
-          groups="stock.group_stock_user"
-        />
+                    name="button_validate_bypass_wms"
+                    attrs="{'invisible': ['|', ('state', 'in', ('waiting','confirmed')), ('show_validate', '=', False)]}"
+                    string="Validate Bypassing WMS"
+                    type="object"
+                    class="oe_highlight"
+                    groups="stock.group_stock_user"
+                />
                 <button
-          name="button_validate_bypass_wms"
-          attrs="{'invisible': ['|', ('state', 'not in', ('waiting', 'confirmed')), ('show_validate', '=', False)]}"
-          string="Validate Bypassing WMS"
-          type="object"
-          groups="stock.group_stock_user"
-          class="o_btn_validate"
-        />
+                    name="button_validate_bypass_wms"
+                    attrs="{'invisible': ['|', ('state', 'not in', ('waiting', 'confirmed')), ('show_validate', '=', False)]}"
+                    string="Validate Bypassing WMS"
+                    type="object"
+                    groups="stock.group_stock_user"
+                    class="o_btn_validate"
+                />
             </button>
         </field>
     </record>

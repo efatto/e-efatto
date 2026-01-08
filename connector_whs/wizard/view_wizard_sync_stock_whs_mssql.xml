@@ -15,7 +15,7 @@
                     <div>
                         <span>Synchronize stock inventory. </span>
                         <span
-            >If 'Synchronize stock inventory' is not set, it creates and shows only a log saved in Log WMS.</span>
+                        >If 'Synchronize stock inventory' is not set, it creates and shows only a log saved in Log WMS.</span>
                     </div>
                     <group>
                         <field name="do_sync" />
@@ -24,11 +24,11 @@
                 </sheet>
                 <footer>
                     <button
-            name="apply"
-            string="Apply"
-            type="object"
-            class="oe_highlight"
-          />
+                        name="apply"
+                        string="Apply"
+                        type="object"
+                        class="oe_highlight"
+                    />
                     or
                     <button string="Cancel" class="oe_link" special="cancel" />
                 </footer>

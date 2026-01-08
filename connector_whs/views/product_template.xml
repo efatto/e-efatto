@@ -11,11 +11,11 @@
                     <label for="exclude_from_whs" />
                 </div>
                 <button
-          name="show_whs_syncronization_records"
-          type="object"
-          string="Get WMS syncronizing data"
-          attrs="{'invisible': [('exclude_from_whs', '=', True)]}"
-        />
+                    name="show_whs_syncronization_records"
+                    type="object"
+                    string="Get WMS syncronizing data"
+                    attrs="{'invisible': [('exclude_from_whs', '=', True)]}"
+                />
             </xpath>
         </field>
     </record>
