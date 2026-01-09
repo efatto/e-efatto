@@ -18,7 +18,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
             "AS rownum, Articolo, Qta, Peso, "
             "Lotto, Lotto2, Lotto3, Lotto4, Lotto5 "
             "FROM HOST_GIACENZE) as A "
-            "WHERE A.rownum BETWEEN %s AND %s" % (i, i + 2000)
+            f"WHERE A.rownum BETWEEN {i} AND {i + 2000}"
         )
         return query
 
@@ -57,8 +57,8 @@ class WizardSyncStockWhsMssql(models.TransientModel):
             if wizard.product_id:
                 giacenze_query = giacenze_query.replace(
                     "HOST_GIACENZE",
-                    "HOST_GIACENZE WHERE Articolo = '%s'"
-                    % wizard.product_id.default_code,
+                    "HOST_GIACENZE WHERE Articolo = "
+                    f"'{wizard.product_id.default_code}'",
                 )
             i += 2000
             esiti_liste = dbsource.execute_mssql(
@@ -313,8 +313,9 @@ class WizardSyncStockWhsMssql(models.TransientModel):
         hyddemo_mssql_log = hyddemo_mssql_log_obj.create(
             [
                 {
-                    "errori": "Stock inventory %s"
-                    % ("sync" if wizard.do_sync else "check"),
+                    "errori": "Stock inventory {}".format(
+                        "sync" if wizard.do_sync else "check"
+                    ),
                     "ultimo_invio": new_last_update,
                     "dbsource_id": dbsource.id,
                     "inventory_id": inventory.id,
