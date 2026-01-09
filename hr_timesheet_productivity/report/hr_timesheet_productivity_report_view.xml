@@ -4,7 +4,7 @@
         <field name="name">HR timesheet productivity report tree</field>
         <field name="model">hr.timesheet.productivity.report</field>
         <field name="arch" type="xml">
-            <tree string="timesheet productivity">
+            <tree>
                 <field name="date" />
                 <field name="name" />
                 <field name="employee_id" />
