@@ -48,9 +48,9 @@
     </record>
 
     <menuitem
-    id="menu_hr_timesheet_productivity_report"
-    parent="hr_timesheet.menu_timesheets_reports"
-    action="action_hr_timesheet_productivity_report"
-    name="Timesheet / Productivity"
-  />
+        id="menu_hr_timesheet_productivity_report"
+        parent="hr_timesheet.menu_timesheets_reports"
+        action="action_hr_timesheet_productivity_report"
+        name="Timesheet / Productivity"
+    />
 </odoo>
