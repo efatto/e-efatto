@@ -8,12 +8,12 @@
             <button name="button_update_qty_producing" position="after">
                 <field name="sent_to_whs" invisible="1" />
                 <button
-          name="button_send_to_whs"
-          type="object"
-          string="Send to WHS"
-          class="oe_highlight"
-          attrs="{'invisible': ['|', ('state', '!=', 'progress'), ('sent_to_whs', '=', True)]}"
-        />
+                    name="button_send_to_whs"
+                    type="object"
+                    string="Send to WHS"
+                    class="oe_highlight"
+                    attrs="{'invisible': ['|', ('state', '!=', 'progress'), ('sent_to_whs', '=', True)]}"
+                />
             </button>
         </field>
     </record>
