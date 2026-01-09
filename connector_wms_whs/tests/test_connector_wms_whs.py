@@ -108,7 +108,9 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         for whs_list in whs_lists_dict:
             whs_lists |= whs_list
         for num_lista in set(whs_lists.mapped("num_lista")):
-            current_whs_lists = whs_lists.filtered(lambda x: x.num_lista == num_lista)
+            current_whs_lists = whs_lists.filtered(
+                lambda x, nl=num_lista: x.num_lista == nl
+            )
             for whs_list in current_whs_lists:
                 set_liste_elaborated_query = (
                     "UPDATE HOST_LISTE SET Elaborato=:Elaborato, "
@@ -451,7 +453,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
 
         # simulate user partial validate of picking and check backorder exist
         res = picking.button_validate()
-        Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
+        Form(self.env[res["res_model"]].with_context(**res["context"])).save().process()
         backorder_picking = order1.picking_ids - picking
         # Simulate WMS user validation
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -537,7 +539,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
 
         # check backorder is not created without WMS list validation
         res = picking.button_validate()
-        Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
+        Form(self.env[res["res_model"]].with_context(**res["context"])).save().process()
         # User cannot create backorder if WMS list is not processed on WMS system
         # TODO: check backorder is created for residual
         self.assertNotEqual(picking.state, "done")
@@ -567,7 +569,8 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                 str(result_liste[0]),
                 f"[(Decimal('5.000'), Decimal('3.000'), 2, '{self.causali['out']}')]"
                 if whs_list.product_id == self.product1
-                else f"[(Decimal('20.000'), Decimal('20.000'), 2, '{self.causali['out']}')]",
+                else f"[(Decimal('20.000'), Decimal('20.000'), 2,"
+                f" '{self.causali['out']}')]",
             )
 
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -588,7 +591,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         # simulate user partial validate of picking and check backorder exist
         res = picking.button_validate()
         backorder_wiz = Form(
-            self.env[res["res_model"]].with_context(res["context"])
+            self.env[res["res_model"]].with_context(**res["context"])
         ).save()
         # User cannot create backorder if WMS list is not processed on WMS system
         # with self.assertRaises(UserError):
@@ -700,11 +703,14 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                 str(result_liste[0]),
                 f"[(Decimal('5.000'), Decimal('5.000'), 0, '{self.causali['out']}')]"
                 if whs_l.product_id == self.product1
-                else f"[(Decimal('10.000'), Decimal('5.000'), 0, '{self.causali['out']}')]"
+                else f"[(Decimal('10.000'), Decimal('5.000'), 0, "
+                f"'{self.causali['out']}')]"
                 if whs_l.product_id == self.product2
-                else f"[(Decimal('20.000'), Decimal('0.000'), 0, '{self.causali['out']}')]"
+                else f"[(Decimal('20.000'), Decimal('0.000'), 0, "
+                f"'{self.causali['out']}')]"
                 if whs_l.product_id == self.product3
-                else f"[(Decimal('20.000'), Decimal('5.000'), 0, '{self.causali['out']}')]",
+                else f"[(Decimal('20.000'), Decimal('5.000'), 0, "
+                f"'{self.causali['out']}')]",
             )
 
         self.dbsource.whs_insert_read_and_synchronize_list()
@@ -729,7 +735,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         # simulate user partial validate of picking and check backorder exist
         res = picking.button_validate()
         backorder_wiz = Form(
-            self.env[res["res_model"]].with_context(res["context"])
+            self.env[res["res_model"]].with_context(**res["context"])
         ).save()
         # User must set correctly quantity as set by WHS user, ignoring qty set
         # different by Odoo or a user, so set a qty different and check that error is
@@ -830,12 +836,9 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         lists = {x.riga: x.num_lista for x in hyddemo_whs_lists}
         # simulate launch from WMS user
         set_liste_elaborating_query = (
-            "UPDATE HOST_LISTE SET Elaborato=3 WHERE "
-            " %s "
-            % (
+            "UPDATE HOST_LISTE SET Elaborato=3 WHERE " " {} ".format(
                 " OR ".join(
-                    "(NumLista = '%s' AND NumRiga = '%s')" % (lists[y], y)
-                    for y in lists
+                    f"(NumLista = '{lists[y]}' AND NumRiga = '{y}')" for y in lists
                 )
             )
         )
@@ -928,7 +931,8 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                 str(result_liste[0]),
                 f"[(Decimal('17.000'), Decimal('2.000'), 0, '{self.causali['in']}')]"
                 if whs_list.product_id == self.product2
-                else f"[(Decimal('3.000'), Decimal('3.000'), 0, '{self.causali['in']}')]",
+                else f"[(Decimal('3.000'), Decimal('3.000'), 0, "
+                f"'{self.causali['in']}')]",
             )
 
         # this update Odoo from WHS
@@ -940,7 +944,8 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                 str(result_liste[0]),
                 f"[(Decimal('17.000'), Decimal('2.000'), 0, '{self.causali['in']}')]"
                 if whs_list.product_id == self.product2
-                else f"[(Decimal('3.000'), Decimal('3.000'), 0, '{self.causali['in']}')]",
+                else f"[(Decimal('3.000'), Decimal('3.000'), 0, "
+                f"'{self.causali['in']}')]",
             )
 
         # sync inventory to test this product is not considered even if the user
@@ -961,7 +966,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         picking.action_assign()
         self.assertEqual(picking.state, "assigned")
         res = picking.button_validate()
-        wiz = Form(self.env[res["res_model"]].with_context(res["context"])).save()
+        wiz = Form(self.env[res["res_model"]].with_context(**res["context"])).save()
         wiz.process()
         self.assertEqual(picking.state, "done")
 
@@ -1123,7 +1128,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         else:
             self.assertEqual(picking.state, "waiting")
         res = picking.button_validate()
-        picking_form = Form(self.env[res["res_model"]].with_context(res["context"]))
+        picking_form = Form(self.env[res["res_model"]].with_context(**res["context"]))
         picking_form.save().process_cancel_backorder()
         self.assertEqual(picking.state, "done")
         whs_lists = purchase.mapped("picking_ids.move_lines.whs_list_ids")
@@ -1269,7 +1274,8 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             elif whs_list.product_id == self.top_product:
                 self.assertEqual(
                     str(result_liste[0]),
-                    f"[(Decimal('20.000'), Decimal('5.000'), 0, '{self.causali['in']}')]",
+                    f"[(Decimal('20.000'), Decimal('5.000'), 0, "
+                    f"'{self.causali['in']}')]",
                 )
 
         # this update Odoo from WHS
@@ -1358,7 +1364,8 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             elif whs_list.product_id == self.top_product:
                 self.assertEqual(
                     str(result_liste[0]),
-                    f"[(Decimal('20.000'), Decimal('5.000'), 0, '{self.causali['in']}')]",
+                    f"[(Decimal('20.000'), Decimal('5.000'), 0,"
+                    f" '{self.causali['in']}')]",
                 )
 
         # this update Odoo from WHS

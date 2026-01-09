@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 class HyddemoWhsListe(models.Model):
     _inherit = "hyddemo.whs.liste"
 
-    priorita = fields.Integer("Priorita", default=0)  # 0=Bassa; 1=Media; 2=Urgente
+    priorita = fields.Integer(default=0)  # 0=Bassa; 1=Media; 2=Urgente
 
     def whs_unlink_lists(self, dbsource):
         # do no call super() and put specific code
@@ -28,7 +28,7 @@ class HyddemoWhsListe(models.Model):
                 metadata=None,
             )
             _logger.info(
-                "WHS LOG: unlink Lista %s Riga %s" % (whs_list.num_lista, whs_list.riga)
+                f"WHS LOG: unlink Lista {whs_list.num_lista} Riga {whs_list.riga}"
             )
             whs_list.unlink()
 
@@ -48,7 +48,7 @@ class HyddemoWhsListe(models.Model):
                 metadata=None,
             )
             _logger.info(
-                "WHS LOG: cancel Lista %s Riga %s" % (whs_list.num_lista, whs_list.riga)
+                f"WHS LOG: cancel Lista {whs_list.num_lista} Riga {whs_list.riga}"
             )
             whs_list.write({"stato": "3"})
 
@@ -92,7 +92,7 @@ class HyddemoWhsListe(models.Model):
             )
 
     def check_list_state(self):
-        super().check_list_state()
+        res = super().check_list_state()
         for whs_list in self:
             if whs_list.move_id:
                 dbsource = self.env["base.external.dbsource"].search(
@@ -145,10 +145,9 @@ class HyddemoWhsListe(models.Model):
                         whs_list.write(
                             {
                                 "whs_list_absent": True,
-                                "whs_list_log": "Query: %s result:\n [%s]\n"
-                                "Query simple: %s result:\n [%s]\n"
-                                "Query super simple: %s result:\n [%s]"
-                                % (
+                                "whs_list_log": "Query: {} result:\n [{}]\n"
+                                "Query simple: {} result:\n [{}]\n"
+                                "Query super simple: {} result:\n [{}]".format(
                                     whs_liste_query,
                                     str(esiti_liste),
                                     whs_liste_query_simple,
@@ -162,9 +161,8 @@ class HyddemoWhsListe(models.Model):
                         whs_list.write(
                             {
                                 "whs_list_absent": True,
-                                "whs_list_log": "Query: %s result:\n [%s]\n"
-                                "Query simple: %s result:\n [%s]"
-                                % (
+                                "whs_list_log": "Query: {} result:\n [{}]\n"
+                                "Query simple: {} result:\n [{}]".format(
                                     whs_liste_query,
                                     str(esiti_liste),
                                     whs_liste_query_simple,
@@ -180,7 +178,7 @@ class HyddemoWhsListe(models.Model):
                                 "whs_list_multiple": True,
                                 "whs_list_log": "Ok: (NumLista, NumRiga, Elaborato, "
                                 "DataLista, TipoOrdine, Stato, Articolo, Qta, "
-                                "QtaMovimentata) %s" % str(esiti_liste[0]),
+                                f"QtaMovimentata) {str(esiti_liste[0])}",
                             }
                         )
                     else:
@@ -190,7 +188,7 @@ class HyddemoWhsListe(models.Model):
                             {
                                 "whs_list_log": "Ok: (NumLista, NumRiga, Elaborato,"
                                 " DataLista, TipoOrdine, Stato, Articolo, Qta, "
-                                "QtaMovimentata) [lista singola] %s" % str(esito_lista),
+                                f"QtaMovimentata) [lista singola] {str(esito_lista)}",
                             }
                         )
                         # Nota le liste dei componenti della produzione restano disal-
@@ -202,6 +200,7 @@ class HyddemoWhsListe(models.Model):
                             whs_list.whs_not_passed = False
                         else:
                             whs_list.whs_not_passed = True
+        return res
 
     @staticmethod
     def _get_insert_host_liste_query(params):
@@ -396,12 +395,9 @@ VALUES (
     def _get_set_liste_to_elaborate_query(self):
         # overridable method
         set_liste_to_elaborate_query = (
-            "UPDATE HOST_LISTE SET Elaborato=1 WHERE Elaborato=0 "
-            "AND %s"
-            % (
+            "UPDATE HOST_LISTE SET Elaborato=1 WHERE Elaborato=0 " "AND {}".format(
                 " OR ".join(
-                    "(NumLista='%s' AND NumRiga='%s')" % (y.num_lista, y.riga)
-                    for y in self
+                    f"(NumLista='{y.num_lista}' AND NumRiga='{y.riga}')" for y in self
                 )
             )
         )
@@ -514,8 +510,9 @@ VALUES (
                     metadata=None,
                 )
                 _logger.info(
-                    "WHS LOG: deduplicated Lista %s Riga %s"
-                    % (whs_list.num_lista, whs_list.riga)
+                    "WHS LOG: deduplicated Lista {} Riga {}".format(
+                        whs_list.num_lista, whs_list.riga
+                    )
                 )
             # remove residual duplicates with qty moved
             residual_number_of_duplicates = dbsource.execute_mssql(
@@ -569,7 +566,8 @@ VALUES (
                         metadata=None,
                     )
                     _logger.info(
-                        "WHS LOG: deduplicated residual Lista %s Riga %s"
-                        % (whs_list.num_lista, whs_list.riga)
+                        "WHS LOG: deduplicated residual Lista {} Riga {}".format(
+                            whs_list.num_lista, whs_list.riga
+                        )
                     )
         return True
