@@ -203,7 +203,9 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         for whs_list in whs_lists_dict:
             whs_lists |= whs_list
         for num_lista in set(whs_lists.mapped("num_lista")):
-            current_whs_lists = whs_lists.filtered(lambda x: x.num_lista == num_lista)
+            current_whs_lists = whs_lists.filtered(
+                lambda x, nl=num_lista: x.num_lista == nl
+            )
             self.dbsource.with_context(no_return=True).execute_mssql(
                 sqlquery=clean_sql_text(
                     "INSERT INTO EXP_ORDINI "
@@ -436,7 +438,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
 
         # simulate user partial validate of picking and check backorder exist
         res = picking.button_validate()
-        Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
+        Form(self.env[res["res_model"]].with_context(**res["context"])).save().process()
         # Create backorder: 1 WMS list of 2 is partially processed
         if self.step_delivery == "one":
             backorder_picking = (
@@ -519,7 +521,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # User cannot create backorder if WMS list is not processed on WMS system
         if self.step_delivery == "one":
             Form(
-                self.env[res["res_model"]].with_context(res["context"])
+                self.env[res["res_model"]].with_context(**res["context"])
             ).save().process()
         self.assertNotEqual(picking.state, "done")
         if self.step_delivery == "one":
@@ -571,7 +573,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # simulate user partial validate of picking and check backorder exist
         res = picking.button_validate()
         backorder_wiz = Form(
-            self.env[res["res_model"]].with_context(res["context"])
+            self.env[res["res_model"]].with_context(**res["context"])
         ).save()
         # User cannot create backorder if WMS list is not processed on WMS system
         #
@@ -690,7 +692,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # simulate user partial validate of picking and check backorder exist
         res = picking.button_validate()
         backorder_wiz = Form(
-            self.env[res["res_model"]].with_context(res["context"])
+            self.env[res["res_model"]].with_context(**res["context"])
         ).save()
         # User must set correctly quantity as set by WMS user, ignoring qty set
         # different by Odoo or a user, so set a qty different and check that error is
@@ -939,7 +941,8 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         # sync inventory to test this product is not considered even if the user
         # hasn't completed the picking
         # WHSystem already has the 2 pc income from purchase order, so we add them
-        # self.simulate_whs_cron_inventory(self.product2, self.product2.qty_available + 2)
+        # self.simulate_whs_cron_inventory(
+        # self.product2, self.product2.qty_available + 2)
         new_qty_available_product2 = self.product2.qty_available
         self.assertAlmostEqual(qty_available_product2, new_qty_available_product2, 2)
 
@@ -954,7 +957,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         picking.action_assign()
         self.assertEqual(picking.state, "assigned")
         res = picking.button_validate()
-        wiz = Form(self.env[res["res_model"]].with_context(res["context"])).save()
+        wiz = Form(self.env[res["res_model"]].with_context(**res["context"])).save()
         wiz.process()
         self.assertEqual(picking.state, "done")
 
