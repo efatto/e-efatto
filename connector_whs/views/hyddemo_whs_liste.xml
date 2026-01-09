@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="view_whs_liste_search" model="ir.ui.view">
+        <field name="name">view.whsliste.search</field>
+        <field name="model">hyddemo.whs.liste</field>
+        <field name="arch" type="xml">
+            <search string="Liste prelievo, deposito e inventario">
+                <field name="num_lista" />
+                <field name="stato" />
+                <field name="data_lista" />
+                <field name="riferimento" />
+                <field name="tipo" />
+                <field name="cliente" />
+                <field name="product_id" />
+                <field name="lotto" />
+                <field name="lotto2" />
+                <field name="lotto3" />
+                <field name="lotto4" />
+                <field name="lotto5" />
+                <field name="qta" />
+                <field name="qtamov" />
+                <field name="move_id" />
+                <field name="tipo_mov" />
+                <field name="whs_list_absent" />
+                <field name="whs_list_multiple" />
+            </search>
+        </field>
+    </record>
+
+    <record id="view_whs_liste_tree" model="ir.ui.view">
+        <field name="name">view.whsliste.tree</field>
+        <field name="model">hyddemo.whs.liste</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="whs_list_absent" />
+                <field name="whs_list_multiple" />
+                <field name="whs_not_passed" />
+                <field name="num_lista" />
+                <field name="stato" />
+                <field name="data_lista" />
+                <field name="riferimento" />
+                <field name="tipo" />
+                <field name="cliente" />
+                <field name="product_id" />
+                <field name="lotto" />
+                <field name="lotto2" />
+                <field name="lotto3" />
+                <field name="qta" />
+                <field name="qtamov" />
+                <field name="move_id" />
+                <field name="tipo_mov" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_whs_liste_form" model="ir.ui.view">
+        <field name="name">view.whsliste.form</field>
+        <field name="model">hyddemo.whs.liste</field>
+        <field name="arch" type="xml">
+            <form string="Liste prelievo, deposito e inventario">
+                <header>
+                    <button
+                        name="check_list_state"
+                        string="Check list state"
+                        type="object"
+                    />
+                    <button
+                        name="whs_deduplicate_lists"
+                        string="Deduplicate list"
+                        type="object"
+                    />
+                    <button
+                        name="whs_recreate_db_lists"
+                        string="Recreate list in WMS"
+                        type="object"
+                    />
+                    <button
+                        name="whs_force_recreate_db_lists"
+                        string="Force list recreation in WMS"
+                        type="object"
+                    />
+                    <button name="whs_list_sync" string="Sync list" type="object" />
+                </header>
+                <sheet string="WMS Lists">
+                    <group>
+                        <group>
+                            <field name="product_id" />
+                            <field name="lotto" />
+                            <field name="lotto2" />
+                            <field name="lotto3" />
+                            <field name="lotto4" />
+                            <field name="lotto5" />
+                        </group>
+                        <group>
+                            <field name="move_id" />
+                            <field name="tipo_mov" />
+                            <field name="qta" />
+                            <field name="qtamov" />
+                            <field name="whs_list_absent" />
+                            <field name="whs_list_multiple" />
+                            <field name="whs_not_passed" />
+                            <field name="whs_list_log" />
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="num_lista" />
+                            <field name="riga" />
+                            <field name="stato" />
+                            <field name="data_lista" />
+                            <field name="riferimento" />
+                            <field name="client_order_ref" />
+                            <field name="product_customer_code" />
+                            <field name="parent_product_id" />
+                            <field name="tipo" />
+                        </group>
+                        <group>
+                            <field name="vettore" />
+                            <field name="cliente" />
+                            <field name="ragsoc" />
+                            <field name="indirizzo" />
+                            <field name="cap" />
+                            <field name="localita" />
+                            <field name="provincia" />
+                            <field name="nazione" />
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" />
+                    <field name="message_ids" />
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_whs_liste" model="ir.actions.act_window">
+        <field name="name">WMS Lists</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hyddemo.whs.liste</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+        action="action_whs_liste"
+        id="menu_whsliste"
+        parent="stock.menu_stock_warehouse_mgmt"
+        sequence="101"
+    />
+</odoo>
