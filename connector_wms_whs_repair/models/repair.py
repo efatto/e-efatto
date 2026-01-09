@@ -23,7 +23,7 @@ class RepairOrder(models.Model):
         )
 
     def action_repair_end(self):
-        res = super(RepairOrder, self).action_repair_end()
+        res = super().action_repair_end()
         whsliste_obj = self.env["hyddemo.whs.liste"]
         for repair in self:
             location_id = repair.location_id
