@@ -21,7 +21,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             conn_file = os.path.join(os.path.expanduser("~"), "connection_wms_whs.txt")
             if not os.path.isfile(conn_file):
                 raise UserError(_("Missing connection string!"))
-            with open(conn_file, "r") as file:
+            with open(conn_file) as file:
                 conn_string = file.read().replace("\n", "")
             # Enable WMS on picking types of Your Company only
             dbsource = self.dbsource_model.create(
