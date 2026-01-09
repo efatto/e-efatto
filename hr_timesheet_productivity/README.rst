@@ -21,7 +21,7 @@ Timesheets/productivity reporting
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-efatto%2Fe--efatto-lightgray.png?logo=github
-    :target: https://github.com/efatto/e-efatto/tree/14.0/hr_timesheet_productivity
+    :target: https://github.com/efatto/e-efatto/tree/16.0/hr_timesheet_productivity
     :alt: efatto/e-efatto
 
 |badge1| |badge2| |badge3|
@@ -39,19 +39,19 @@ Configuration
 
 Nell'app Fogli Ore c'è il menu per accedere al report:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/hr_timesheet_productivity/static/description/menu.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/16.0/hr_timesheet_productivity/static/description/menu.png
     :alt: Menu
 
 che combina le ore lavorate nei task dei progetti con quelle negli ordini di
 lavoro:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/hr_timesheet_productivity/static/description/report.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/16.0/hr_timesheet_productivity/static/description/report.png
     :alt: Report
 
 È possibile entrare nel dettaglio delle ore riportate e verificare l'origine:
 ordine di lavoro, produzione, attività e progetto:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/hr_timesheet_productivity/static/description/dettaglio.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/16.0/hr_timesheet_productivity/static/description/dettaglio.png
     :alt: Dettaglio
 
 Bug Tracker
@@ -60,7 +60,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/efatto/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20hr_timesheet_productivity%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20hr_timesheet_productivity%0Aversion:%2016.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -80,6 +80,6 @@ Contributors
 Maintainers
 ~~~~~~~~~~~
 
-This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/14.0/hr_timesheet_productivity>`_ project on GitHub.
+This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/16.0/hr_timesheet_productivity>`_ project on GitHub.
 
 You are welcome to contribute.
