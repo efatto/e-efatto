@@ -34,8 +34,8 @@ class ProjectTask(models.Model):
                     if any(
                         x in values
                         for x in [
-                            "date_start",
-                            "date_end",
+                            "planned_date_start",
+                            "planned_date_end",
                             "user_id",
                             "parent_id",
                             "name",

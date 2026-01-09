@@ -256,8 +256,8 @@ class MailActivity(models.Model):
                 elif activity.res_model == "project.task":
                     vals.update(
                         {
-                            "date_start": res_object.date_start,
-                            "date_end": res_object.date_end,
+                            "date_start": res_object.planned_date_start,
+                            "date_end": res_object.planned_date_end,
                             "info": "%s - %s - %s - %s"
                             % (
                                 activity.workcenter_id.name,
