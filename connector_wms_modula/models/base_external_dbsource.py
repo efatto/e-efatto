@@ -49,8 +49,11 @@ WHERE ART_ERRORE IS NOT NULL AND ART_ERRORE <> ' '
             )
             if product_id:
                 product_id.wms_modula_error = _(
-                    "Operation %s importing the product failed with error: '%s'"
-                ) % (OPERATIONS[operation], error)
+                    "Operation %(op)s importing the product failed with error: "
+                    "'%(er)s'",
+                    op=OPERATIONS[operation],
+                    er=error,
+                )
 
     def _check_import_list(self):
         self.ensure_one()
@@ -83,12 +86,18 @@ OR (IMP_OR.RIG_ERRORE IS NOT NULL AND IMP_OR.RIG_ERRORE <> ' ')
             if lista_id:
                 if lista_error:
                     lista_id.wms_modula_error = _(
-                        "Operation %s importing the list failed with error: '%s'"
-                    ) % (LISTE_OPERATIONS[operation], lista_error)
+                        "Operation %(op)s importing the list failed with error: "
+                        "'%(er)s'",
+                        op=LISTE_OPERATIONS[operation],
+                        er=lista_error,
+                    )
                 if riga_error:
                     lista_id.wms_modula_riga_error = _(
-                        "Operation %s importing the row failed with error: '%s'"
-                    ) % (LISTE_OPERATIONS[operation], riga_error)
+                        "Operation %(op)s importing the row failed with error: "
+                        "'%(er)s'",
+                        op=LISTE_OPERATIONS[operation],
+                        er=riga_error,
+                    )
                 # delete this record from Modula db - TODO WAIT CONFIRM!
                 # lista_id.whs_unlink_lists(self)
 
@@ -126,8 +135,10 @@ WHERE EOR.RIG_STARIORD = 'I'
             if lista_id:
                 lista_id.wms_modula_error = _(
                     "Lista executed partially (no more marked as 'To NOT elaborate')\n"
-                    "Quantity requested %s, quantity moved %s."
-                ) % (qta, qtamov)
+                    "Quantity requested %(qr)s, quantity moved %(qm)s.",
+                    qr=qta,
+                    qm=qtamov,
+                )
         return None
 
     def _pre_insert_product_query(self):
@@ -387,9 +398,8 @@ VALUES (
                         # ROADMAP: if the user want to create the list directly in WMS,
                         # do the reverse synchronization (not requested so far)
                         _logger.info(
-                            "WMS LOG: list num_riga %s num_lista %s not found in "
-                            "lists (found list %s but not row)"
-                            % (
+                            "WMS LOG: list num_riga {} num_lista {} not found in "
+                            "lists (found list {} but not row)".format(
                                 num_riga,
                                 num_lista,
                                 self.env["hyddemo.whs.liste"].search(
@@ -400,14 +410,14 @@ VALUES (
                         continue
                     if len(hyddemo_whs_lists) > 1:
                         _logger.info(
-                            "WMS LOG: More than 1 list found for lista %s"
-                            % hyddemo_whs_lists
+                            "WMS LOG: More than 1 list found for lista {}".format(
+                                hyddemo_whs_lists
+                            )
                         )
                     hyddemo_whs_list = hyddemo_whs_lists[0]
                     if hyddemo_whs_list.stato == "3":
                         _logger.debug(
-                            "WMS LOG: list not processable: %s-%s"
-                            % (
+                            "WMS LOG: list not processable: {}-{}".format(
                                 hyddemo_whs_list.num_lista,
                                 hyddemo_whs_list.riga,
                             )
@@ -432,9 +442,10 @@ VALUES (
                         # in or out differs from total qty
                         if qty_moved > hyddemo_whs_list.qta:
                             _logger.info(
-                                "WMS LOG: list %s: qty moved %s is bigger than"
-                                " initial qty %s!"
-                                % (hyddemo_whs_list.id, qty_moved, hyddemo_whs_list.qta)
+                                "WMS LOG: list {}: qty moved {} is bigger than"
+                                " initial qty {}!".format(
+                                    hyddemo_whs_list.id, qty_moved, hyddemo_whs_list.qta
+                                )
                             )
 
                     # set reserved availability on qty_moved if != 0.0 and with max of
@@ -453,15 +464,13 @@ VALUES (
                         if sum(move.move_line_ids.mapped("product_qty")) < qty_moved:
                             _logger.info(
                                 "WMS LOG: impossible to set qty done!\n"
-                                "Many stock move line found for Whs list %s-%s of "
-                                "move %s with product_qty %s lesser than qty moved %s."
-                                ""
-                                % (
+                                "Many stock move line found for Whs list {}-{} of "
+                                "move {} with product_qty %s lesser than qty moved {}."
+                                "".format(
                                     num_lista,
                                     num_riga,
                                     move.name,
                                     sum(move.move_line_ids.mapped("product_qty")),
-                                    qty_moved,
                                 )
                             )
                         else:
@@ -472,8 +481,8 @@ VALUES (
                                         qty_moved -= ml.qty_done
                             except UserError as error:
                                 _logger.info(
-                                    "WMS LOG: move line id %s is not writeable for %s"
-                                    % (move.id, error)
+                                    f"WMS LOG: move line id {move.id} is not writeable "
+                                    f"for {error}"
                                 )
                     else:
                         if move.state != "cancel":
@@ -481,8 +490,8 @@ VALUES (
                                 move.quantity_done = qty_moved
                             except UserError as error:
                                 _logger.info(
-                                    "WMS LOG: move id %s is not writeable for %s"
-                                    % (move.id, error)
+                                    f"WMS LOG: move id {move.id} is not writeable "
+                                    f"for {error}"
                                 )
                     if move.picking_id.mapped("move_lines").filtered(
                         lambda m: m.state not in ("draft", "cancel", "done")

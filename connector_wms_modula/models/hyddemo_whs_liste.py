@@ -36,7 +36,7 @@ class HyddemoWhsListe(models.Model):
     def whs_unlink_lists(self, dbsource, db_type="IMP"):
         # do no call super() and put specific code
         for num_lista in set(self.mapped("num_lista")):
-            current_whs_lists = self.filtered(lambda x: x.num_lista == num_lista)
+            current_whs_lists = self.filtered(lambda x, nl=num_lista: x.num_lista == nl)
             dbsource.with_context(no_return=True).execute_mssql(
                 sqlquery=clean_sql_text(
                     f"DELETE FROM {db_type}_ORDINI WHERE ORD_ORDINE=:ORD_ORDINE"
@@ -65,7 +65,9 @@ class HyddemoWhsListe(models.Model):
         num_lista_list = set(self.mapped("num_lista"))
         todo_lists = self
         for num_lista in num_lista_list:
-            to_cancel_lists = todo_lists.filtered(lambda x: x.num_lista == num_lista)
+            to_cancel_lists = todo_lists.filtered(
+                lambda x, nl=num_lista: x.num_lista == nl
+            )
             todo_lists -= to_cancel_lists
             res = dbsource.execute_mssql(
                 sqlquery=clean_sql_text(
@@ -190,8 +192,7 @@ VALUES (
                 execute_params_order[lista.num_lista] = {
                     "ORD_OPERAZIONE": "I",
                     "ORD_ORDINE": lista.num_lista[:20],  # char 20
-                    "ORD_DES": "%s - %s"
-                    % (
+                    "ORD_DES": "{} - {}".format(
                         lista.riferimento if lista.riferimento else "",
                         lista.ragsoc[
                             : 47 - (len(lista.riferimento) if lista.riferimento else 47)
