@@ -3,11 +3,8 @@
 
 {
     "name": "Italy - Country data",
-    "version": "14.0.1.0.0",
+    "version": "16.0.1.0.0",
     "category": "other",
-    "summary": """
-    With this module Italian country data will be displayed as usual in Italy.
-    """,
     "author": "Sergio Corato",
     "website": "https://github.com/efatto/e-efatto",
     "license": "AGPL-3",
