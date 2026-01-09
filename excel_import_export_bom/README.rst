@@ -21,7 +21,7 @@ Excel Import/Export Bom
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-efatto%2Fe--efatto-lightgray.png?logo=github
-    :target: https://github.com/efatto/e-efatto/tree/14.0/excel_import_export_bom
+    :target: https://github.com/efatto/e-efatto/tree/16.0/excel_import_export_bom
     :alt: efatto/e-efatto
 
 |badge1| |badge2| |badge3|
@@ -43,17 +43,17 @@ Configuration
 
 Nelle azioni della distinta base sono disponibili l'esportazione e l'importazione di Xlsx all'interno della distinta base stessa:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/excel_import_export_bom/static/description/azione_esporta_importa_da_diba.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/16.0/excel_import_export_bom/static/description/azione_esporta_importa_da_diba.png
     :alt: Esporta ed importa da Di.Ba.
 
 da cui la procedura di esportazione:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/excel_import_export_bom/static/description/esporta.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/16.0/excel_import_export_bom/static/description/esporta.png
     :alt: Esporta
 
 e quella di importazione:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/excel_import_export_bom/static/description/importa.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/16.0/excel_import_export_bom/static/description/importa.png
     :alt: Importa
 
 In base al tracciato creato di default, che può essere sostituito con un altro di propria preferenza.
@@ -61,7 +61,7 @@ N.B.: il tracciato è configurato per aggiungere le righe a quelle esistenti, co
 
 Nel menu `Anagrafica` della produzione è inoltre disponibile una voce per creare una nuova Di.Ba.:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/excel_import_export_bom/static/description/menu_importa_nuova_diba.png
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/16.0/excel_import_export_bom/static/description/menu_importa_nuova_diba.png
     :alt: Menu importa nuova Di.Ba.
 
 Bug Tracker
@@ -70,7 +70,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/efatto/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20excel_import_export_bom%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20excel_import_export_bom%0Aversion:%2016.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -90,6 +90,6 @@ Contributors
 Maintainers
 ~~~~~~~~~~~
 
-This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/14.0/excel_import_export_bom>`_ project on GitHub.
+This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/16.0/excel_import_export_bom>`_ project on GitHub.
 
 You are welcome to contribute.

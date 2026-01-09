@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     "name": "Excel Import/Export Bom",
-    "version": "14.0.1.0.0",
+    "version": "16.0.1.0.0",
     "summary": "Import/Export Bom from Excel",
     "author": "Sergio Corato",
     "license": "AGPL-3",
@@ -12,7 +12,6 @@
     "depends": [
         "excel_import_export",
         "mrp",
-        "mrp_routing",
     ],
     "data": [
         "import_export_mrp_bom/actions.xml",
