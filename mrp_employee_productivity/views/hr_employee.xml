@@ -17,15 +17,14 @@
         <field name="name">hr.employee</field>
         <field name="model">hr.employee</field>
         <field name="inherit_id" ref="hr.view_employee_form" />
-        <field name="priority">10</field>
-        <field name="groups_id" eval="[(4,ref('hr.group_hr_manager'))]" />
         <field name="arch" type="xml">
-            <xpath expr="//button[@id='hr_presence_button']" position="before">
+            <xpath expr="//div[@name='button_box']" position="inside">
                 <button
                     name="%(mrp_employee_productivity.action_mrp_workcenter_productivity_employee)d"
                     class="oe_stat_button"
                     type="action"
                     icon="fa-clock-o"
+                    groups="hr.group_hr_manager"
                 >
                     <field
                         name="productivity_count"

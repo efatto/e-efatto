@@ -34,18 +34,15 @@ def assign_employee_id(cr, registry):
     if not new_field_employee_id_added:
         # the field was already existing before the installation of the addon
         return
-    with Environment.manage():
-        env = Environment(cr, SUPERUSER_ID, {})
-        productivities = env["mrp.workcenter.productivity"].search([], order="id")
-        for productivity in productivities:
-            user_id = productivity.user_id and productivity.user_id.id or SUPERUSER_ID
+    env = Environment(cr, SUPERUSER_ID, {})
+    productivities = env["mrp.workcenter.productivity"].search([], order="id")
+    for productivity in productivities:
+        user_id = productivity.user_id and productivity.user_id.id or SUPERUSER_ID
+        employee_id = env["hr.employee"].search([("user_id", "=", user_id)], limit=1)
+        if not employee_id:
             employee_id = env["hr.employee"].search(
-                [("user_id", "=", user_id)], limit=1
+                [("name", "=", "Administrator")], limit=1
             )
-            if not employee_id:
-                employee_id = env["hr.employee"].search(
-                    [("name", "=", "Administrator")], limit=1
-                )
-            if not employee_id:
-                employee_id = env["hr.employee"].search([], limit=1)
-            productivity.employee_id = employee_id
+        if not employee_id:
+            employee_id = env["hr.employee"].search([], limit=1)
+        productivity.employee_id = employee_id
