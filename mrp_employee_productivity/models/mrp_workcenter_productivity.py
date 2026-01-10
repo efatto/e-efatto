@@ -14,7 +14,7 @@ class MrpWorkcenterProductivity(models.Model):
 
     @api.model
     def default_get(self, field_list):
-        result = super(MrpWorkcenterProductivity, self).default_get(field_list)
+        result = super().default_get(field_list)
         if (
             not self.env.context.get("default_employee_id")
             and "employee_id" in field_list
