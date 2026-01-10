@@ -391,9 +391,7 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         self.assertEqual(
             picking.mapped("move_ids.whs_list_ids")[0].ragsoc, order1.partner_id.name
         )
-        self.assertEqual(
-            len(set(picking.mapped("move_ids.whs_list_ids.num_lista"))), 1
-        )
+        self.assertEqual(len(set(picking.mapped("move_ids.whs_list_ids.num_lista"))), 1)
 
         # check WMS list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
