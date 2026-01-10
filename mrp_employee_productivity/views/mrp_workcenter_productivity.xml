@@ -21,7 +21,7 @@
         <field name="name">view.mrp.workcenter.productivity.tree</field>
         <field name="model">mrp.workcenter.productivity</field>
         <field name="arch" type="xml">
-            <tree string="Mrp Workcenter Productivity">
+            <tree>
                 <field name="employee_id" />
                 <field name="date_start" />
                 <field name="date_end" />
