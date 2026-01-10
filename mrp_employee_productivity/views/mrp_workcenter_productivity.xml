@@ -62,9 +62,9 @@
     </record>
 
     <menuitem
-    action="action_mrp_workcenter_productivity"
-    id="menu_mrp_workcenter_productivity"
-    parent="mrp.menu_mrp_manufacturing"
-    sequence="100"
-  />
+        action="action_mrp_workcenter_productivity"
+        id="menu_mrp_workcenter_productivity"
+        parent="mrp.menu_mrp_manufacturing"
+        sequence="100"
+    />
 </odoo>
