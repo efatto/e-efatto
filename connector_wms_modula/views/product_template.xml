@@ -28,6 +28,7 @@
                     name="action_wms_modula_error"
                     type="object"
                     icon="fa-warning"
+                    title="Open Modula error"
                 />
             </xpath>
         </field>
