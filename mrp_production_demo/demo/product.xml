@@ -80,7 +80,7 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
             eval="
                [
                    (0, 0, {
-                            'name': ref('base.res_partner_3'),
+                            'partner_id': ref('base.res_partner_3'),
                             'price': 5,
                             'min_qty': 0,
                             'sequence': 1,
