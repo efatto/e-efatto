@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="product_template_form_view" model="ir.ui.view">
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="connector_whs.product_template_form_view" />
+        <field name="arch" type="xml">
+            <xpath
+                expr="//label[@for='exclude_from_whs']/ancestor::*[1]"
+                position="attributes"
+            >
+                <attribute name="class">oe_inline</attribute>
+            </xpath>
+            <xpath expr="//label[@for='exclude_from_whs']" position="after">
+                <field name="is_name_too_long" invisible="1" />
+                <button
+                    attrs="{'invisible': ['|', ('exclude_from_whs', '=', True), ('is_name_too_long', '=', False)]}"
+                    name="action_name_is_too_long"
+                    type="object"
+                    icon="fa-exclamation-triangle"
+                />
+                <span attrs="{'invisible': [('exclude_from_whs', '=', True)]}">
+                    ( <field name="name_wms_modula" class="oe_inline" /> )
+                </span>
+                <field name="wms_modula_error" invisible="1" />
+                <button
+                    attrs="{'invisible': ['|', ('exclude_from_whs', '=', True), ('wms_modula_error', '=', False)]}"
+                    name="action_wms_modula_error"
+                    type="object"
+                    icon="fa-warning"
+                />
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
