@@ -14,10 +14,12 @@ class MailActivity(models.Model):
     date_start = fields.Datetime(
         compute="_compute_planner",
         store=True,
+        readonly=False,
     )
     date_end = fields.Datetime(
         compute="_compute_planner",
         store=True,
+        readonly=False,
     )
     parent_id = fields.Many2one(
         comodel_name="mail.activity",
@@ -158,9 +160,9 @@ class MailActivity(models.Model):
                         #     )
                     elif activity.res_model == "project.task":
                         if "date_start" in values:
-                            vals.update({"date_start": values["date_start"]})
+                            vals.update({"planned_date_start": values["date_start"]})
                         if "date_end" in values:
-                            vals.update({"date_end": values["date_end"]})
+                            vals.update({"planned_date_end": values["date_end"]})
                         # always update current write values for color
                         activity.color_active = self.get_color(
                             activity,
