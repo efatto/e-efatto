@@ -1,10 +1,10 @@
 # Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo.tests.common import SavepointCase
+from odoo.tests.common import TransactionCase
 
 
-class TestProductionData(SavepointCase):
+class TestProductionData(TransactionCase):
     @classmethod
     def setUpClass(cls):
         """
