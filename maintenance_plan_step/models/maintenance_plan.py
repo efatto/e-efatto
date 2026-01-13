@@ -93,3 +93,25 @@ class MaintenancePlan(models.Model):
             else:
                 plan.maintenance_plan_horizon = plan.maintenance_plan_horizon_max
                 plan.planning_step = plan.planning_step_max
+
+    @api.depends(
+        "interval",
+        "interval_step",
+        "start_maintenance_date",
+        "maintenance_ids.request_date",
+        "maintenance_ids.close_date",
+    )
+    def _compute_next_maintenance(self):
+        res = super()._compute_next_maintenance()
+        for plan in self.filtered(
+            lambda x: x.interval > 0 and x.next_maintenance_date < fields.Date.today()
+        ):
+            # if next maintenance date is in the past, set in the future
+            interval_timedelta = self.get_relativedelta(
+                plan.interval, plan.interval_step
+            )
+            next_date = plan.start_maintenance_date
+            while next_date < fields.Date.today():
+                next_date = next_date + interval_timedelta
+            plan.next_maintenance_date = next_date
+        return res
