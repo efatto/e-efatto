@@ -29,6 +29,20 @@ class MaintenanceEquipment(models.Model):
 
     def _create_new_request(self, mtn_plan):
         requests = super()._create_new_request(mtn_plan)
+        if not requests:
+            # Create anyway one request if the horizon date is too near
+            skip_notify_follower = mtn_plan.skip_notify_follower_on_requests
+            # Skip assigned mail + Activity mail
+            request_model = self.env["maintenance.request"].with_context(
+                mail_activity_quick_update=skip_notify_follower,
+                mail_auto_subscribe_no_notify=skip_notify_follower,
+            )
+            requests = request_model
+            # Create maintenance request until we reach planning horizon
+            next_maintenance_date = mtn_plan.next_maintenance_date
+            if next_maintenance_date >= fields.Date.today():
+                vals = self._prepare_requests_from_plan(mtn_plan, next_maintenance_date)
+                requests |= request_model.create(vals)
         for request in requests:
             request.name = "%s - %s" % (
                 request.equipment_id.name,
