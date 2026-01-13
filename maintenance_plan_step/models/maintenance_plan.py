@@ -106,7 +106,8 @@ class MaintenancePlan(models.Model):
         for plan in self.filtered(
             lambda x: x.interval > 0 and x.next_maintenance_date < fields.Date.today()
         ):
-            # if next maintenance date is in the past, set in the future
+            # if the next maintenance date is in the past, set it in the future at the
+            # first interval date
             interval_timedelta = self.get_relativedelta(
                 plan.interval, plan.interval_step
             )
