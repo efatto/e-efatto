@@ -47,9 +47,7 @@ class TestSaleOrderCostRecalculation(TransactionCase):
                         [
                             self.env.ref("base.group_user").id,
                             self.env.ref("sales_team.group_sale_salesman").id,
-                            self.env.ref(
-                                "sale_margin_security.group_sale_margin_security"
-                            ).id,
+                            self.env.ref("product_cost_security.group_product_cost").id,
                         ],
                     )
                 ],
@@ -69,7 +67,7 @@ class TestSaleOrderCostRecalculation(TransactionCase):
             order.order_line.margin / order.order_line.price_subtotal, 0.5
         )
         self.product1.standard_price = 60
-        order.recalculate_prices()
+        order._recalculate_prices()
         self.assertAlmostEqual(order.order_line.purchase_price, 60)
         self.assertAlmostEqual(
             order.order_line.margin / order.order_line.price_subtotal, 0.4

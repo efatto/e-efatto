@@ -12,7 +12,7 @@
             >
                 <field
                     name="purchase_date"
-                    groups="sale_margin_security.group_sale_margin_security"
+                    groups="product_cost_security.group_product_cost"
                 />
             </xpath>
         </field>
@@ -29,7 +29,7 @@
             >
                 <field
                     name="purchase_date"
-                    groups="sale_margin_security.group_sale_margin_security"
+                    groups="product_cost_security.group_product_cost"
                 />
             </xpath>
         </field>

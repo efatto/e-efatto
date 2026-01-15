@@ -9,4 +9,4 @@ class StockValuationLayer(models.Model):
     # extend digits to show anyway digits, in case product price precision is changed
     # during time, and change field from Monetary to Float, as Monetary does not
     # support arbitrary digits
-    unit_cost = fields.Float("Unit Cost", digits=(20, 8))
+    unit_cost = fields.Float(digits=(20, 8))

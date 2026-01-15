@@ -46,10 +46,9 @@ class SaleOrderLine(models.Model):
                 i += 1
                 total_time = time.time() - started_at
                 logging.info(
-                    "Updated purchase date in sale order line %s/%s. "
-                    "Elapsed time %.2f (minutes)"
-                    "Estimated residual time %.0f (minutes)"
-                    % (
+                    "Updated purchase date in sale order line {}/{}. "
+                    "Elapsed time {:2} (minutes)"
+                    "Estimated residual time {:0} (minutes)".format(
                         i,
                         imax,
                         total_time / 60,
@@ -61,7 +60,7 @@ class SaleOrderLine(models.Model):
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    def recalculate_prices(self):
-        res = super().recalculate_prices()
+    def _recalculate_prices(self):
+        res = super()._recalculate_prices()
         self.mapped("order_line")._compute_purchase_price()
         return res
