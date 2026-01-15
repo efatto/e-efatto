@@ -59,3 +59,12 @@ class StockPicking(models.Model):
                         % inspection.name
                     )
         return super()._action_done()
+
+    def write(self, vals):
+        res = super().write(vals)
+        if vals.get("ddt_supplier_number") or vals.get("ddt_supplier_date"):
+            draft_inspections = self.qc_inspections_ids.filtered(
+                lambda i: i.state == "draft"
+            )
+            draft_inspections.action_todo()
+        return res
