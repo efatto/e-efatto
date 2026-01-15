@@ -93,7 +93,7 @@ class ProductTemplate(models.Model):
     def _compute_last_supplier_invoice_line_id(self):
         for item in self:
             last_supplier_invoice_line_id = False
-            if item.last_supplier_invoice_line_id:
+            if item.last_supplier_invoice_line_ids:
                 last_supplier_invoice_line_id = (
                     item.last_supplier_invoice_line_ids.sorted(
                         key=lambda l: l.move_id.invoice_date, reverse=True
