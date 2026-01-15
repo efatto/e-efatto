@@ -7,13 +7,13 @@
         <field name="inherit_id" ref="sale_margin.sale_margin_sale_order_line" />
         <field name="arch" type="xml">
             <xpath
-        expr="//field[@name='order_line']/form//field[@name='purchase_price']"
-        position="after"
-      >
+                expr="//field[@name='order_line']/form//field[@name='purchase_price']"
+                position="after"
+            >
                 <field
-          name="purchase_date"
-          groups="sale_margin_security.group_sale_margin_security"
-        />
+                    name="purchase_date"
+                    groups="sale_margin_security.group_sale_margin_security"
+                />
             </xpath>
         </field>
     </record>
@@ -24,13 +24,13 @@
         <field name="inherit_id" ref="sale_margin.sale_margin_sale_order_line_form" />
         <field name="arch" type="xml">
            <xpath
-        expr="//field[@name='order_line']/tree//field[@name='purchase_price']"
-        position="after"
-      >
+                expr="//field[@name='order_line']/tree//field[@name='purchase_price']"
+                position="after"
+            >
                 <field
-          name="purchase_date"
-          groups="sale_margin_security.group_sale_margin_security"
-        />
+                    name="purchase_date"
+                    groups="sale_margin_security.group_sale_margin_security"
+                />
             </xpath>
         </field>
     </record>
