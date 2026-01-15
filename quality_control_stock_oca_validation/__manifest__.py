@@ -11,7 +11,10 @@
         "purchase_stock",
         "quality_control_mrp_oca",
         "quality_control_stock_oca",
+        "stock_picking_ddt_info",
     ],
-    "data": [],
+    "data": [
+        "views/inspection.xml",
+    ],
     "installable": True,
 }
