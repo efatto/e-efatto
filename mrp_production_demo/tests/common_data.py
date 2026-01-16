@@ -98,6 +98,7 @@ class TestProductionData(TransactionCase):
             {
                 "name": "Operation 1",
                 "workcenter_id": cls.workcenter1.id,
+                "bom_id": cls.main_bom.id,
                 "time_mode": "manual",
                 "time_cycle_manual": 90,
                 "sequence": 1,
