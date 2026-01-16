@@ -227,7 +227,7 @@ class CommonConnectorWMS(TransactionCase):
         self.workcenter1 = self.env["mrp.workcenter"].create(
             {
                 "name": "Base Workcenter",
-                "capacity": 1,
+                "default_capacity": 1,
                 "time_start": 10,
                 "time_stop": 5,
                 "time_efficiency": 80,
