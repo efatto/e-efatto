@@ -493,7 +493,7 @@ VALUES (
                                     f"WMS LOG: move id {move.id} is not writeable "
                                     f"for {error}"
                                 )
-                    if move.picking_id.mapped("move_lines").filtered(
+                    if move.picking_id.mapped("move_ids").filtered(
                         lambda m: m.state not in ("draft", "cancel", "done")
                     ):
                         # FIXME action_assign must assign on qty_done and not on
@@ -507,7 +507,7 @@ VALUES (
 
             if pickings_to_assign:
                 pickings_to_assign.filtered(
-                    lambda x: x.mapped("move_lines").filtered(
+                    lambda x: x.mapped("move_ids").filtered(
                         lambda m: m.state not in ("draft", "cancel", "done")
                     )
                 ).action_assign()
