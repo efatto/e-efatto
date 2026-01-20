@@ -37,6 +37,16 @@ class BaseExternalDbsource(models.Model):
         help="Set a custom date to refresh product info. This date will be removed "
         "after product process.",
     )
+    launching_option = fields.Selection(
+        selection=[
+            ("when_confirmed", "When Confirmed"),
+            ("when_done", "When Done"),
+        ],
+        default="when_confirmed",
+        help="Option to decide when activating the WMS lists creation:\n"
+        "- When Confirmed: the creation is active when the stock moves are set to-do.\n"
+        "- When Done: the creation is active when the stock moves are done.",
+    )
 
     @api.constrains("location_id")
     def _check_location_id(self):

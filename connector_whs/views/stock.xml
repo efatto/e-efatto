@@ -11,6 +11,19 @@
       >
                 <field name="whs_list_ids" />
             </xpath>
+            <xpath
+        expr="//page[@name='operations']/field[@name='move_ids_without_package']/tree/button[@name='action_show_details']"
+        position="after"
+      >
+                <field name="has_wms_lists" invisible="1" />
+                <button
+          name="action_show_wms_lists"
+          type="object"
+          icon="fa-list-alt"
+          string=" "
+          attrs="{'invisible': [('has_wms_lists', '=', False)]}"
+        />
+            </xpath>
         </field>
     </record>
     <record id="view_stock_move_operations" model="ir.ui.view">

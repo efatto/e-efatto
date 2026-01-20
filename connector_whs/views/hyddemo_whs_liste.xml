@@ -21,6 +21,7 @@
                 <field name="qta" />
                 <field name="qtamov" />
                 <field name="move_id" />
+                <field name="move_state" />
                 <field name="tipo_mov" />
                 <field name="whs_list_absent" />
                 <field name="whs_list_multiple" />
@@ -49,6 +50,7 @@
                 <field name="qta" />
                 <field name="qtamov" />
                 <field name="move_id" />
+                <field name="move_state" />
                 <field name="tipo_mov" />
             </tree>
         </field>
@@ -94,6 +96,7 @@
                         </group>
                         <group>
                             <field name="move_id" />
+                            <field name="move_state" />
                             <field name="tipo_mov" />
                             <field name="qta" />
                             <field name="qtamov" />
