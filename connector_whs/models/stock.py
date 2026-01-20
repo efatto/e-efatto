@@ -4,7 +4,7 @@
 
 import logging
 
-from odoo import _, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
@@ -21,6 +21,24 @@ class Picking(models.Model):
 
     def button_validate_bypass_wms(self):
         return self.with_context(bypass_wms=True).button_validate()
+
+    def _get_dbsource(self):
+        dbsource = self.env["base.external.dbsource"].search(
+            [
+                (
+                    "stock_picking_type_ids",
+                    "in",
+                    self.picking_type_id.ids,
+                ),
+                ("company_id", "=", self.company_id.id),
+            ]
+        )
+        if not dbsource:
+            _logger.info(
+                "WMS LOG: Picking type %s not linked to WMS System in "
+                "action_done" % self.picking_type_id.name
+            )
+        return dbsource
 
     def _action_done(self):
         # Set whs_list.qta equal to move quantity_done, to stop any possible error
@@ -131,21 +149,8 @@ class Picking(models.Model):
                         # presents here as only stato=4 is processable on Odoo,
                         # that equals to Elaborato=4
                         # Lists with stato=3 and quantity_done=0 are deleted here
-                        dbsource = self.env["base.external.dbsource"].search(
-                            [
-                                (
-                                    "stock_picking_type_ids",
-                                    "in",
-                                    pick.picking_type_id.ids,
-                                ),
-                                ("company_id", "=", pick.company_id.id),
-                            ]
-                        )
+                        dbsource = pick._get_dbsource()
                         if not dbsource:
-                            _logger.info(
-                                "WMS LOG: Picking type %s not linked to WMS System in "
-                                "action_done" % pick.picking_type_id.name
-                            )
                             continue
                         _logger.info(
                             "WMS LOG: unlink wms list in backorder process of "
@@ -153,6 +158,12 @@ class Picking(models.Model):
                         )
                         whs_list.unlink_lists(dbsource.id)
         super(Picking, self)._action_done()
+        for pick in self:
+            dbsource = pick._get_dbsource()
+            if not dbsource:
+                continue
+            if dbsource.launching_option == "when_done":
+                pick.picking_create_whs_list()
         return True
 
     def picking_create_whs_list(self):
@@ -230,6 +241,38 @@ class StockMove(models.Model):
     exclude_from_wms = fields.Boolean(
         string="Eclude from WMS",
     )
+    has_wms_lists = fields.Boolean(
+        compute="_compute_has_wms_lists",
+        store=True,
+    )
+
+    @api.depends("whs_list_ids")
+    def _compute_has_wms_lists(self):
+        for move in self:
+            move.has_wms_lists = bool(move.whs_list_ids)
+
+    def action_show_wms_lists(self):
+        self.ensure_one()
+        domain = [("id", "in", self.whs_list_ids.ids)]
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("WMS lists"),
+            "domain": domain,
+            "views": [(False, "tree"), (False, "form")],
+            "res_model": "hyddemo.whs.liste",
+        }
+
+    def _filter_by_wms_creation_state(self, dbsource):
+        # block WMS list creation if the move is not in an allowed state
+        if dbsource.launching_option:
+            launching_option = dbsource.launching_option
+            if launching_option == "when_confirmed":
+                return self
+            elif launching_option == "when_done":
+                # include only done moves
+                self = self.filtered(lambda x: x.state == "done")
+        # launching_option not filled, no filtering done
+        return self
 
     def _check_done_whs_list(self):
         if any(x.stato != "4" and x.qta for x in self.mapped("whs_list_ids")):
@@ -381,6 +424,10 @@ class StockMove(models.Model):
                 )
                 if not dbsource:
                     # Picking type is not linked to WMS System
+                    continue
+                move = move._filter_by_wms_creation_state(dbsource)
+                if not move:
+                    # the move is not in a state allowed for WMS list creation
                     continue
                 warehouse = move.picking_type_id.warehouse_id
                 reception_steps = warehouse.reception_steps
