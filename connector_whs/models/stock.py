@@ -13,6 +13,13 @@ _logger = logging.getLogger(__name__)
 class Picking(models.Model):
     _inherit = "stock.picking"
 
+    dbsource_id = fields.Many2one(
+        comodel_name="base.external.dbsource",
+        string="WMS System",
+        compute="_compute_dbsource_id",
+        store=True,
+    )
+
     def action_pack_operation_auto_fill(self):
         super(Picking, self).action_pack_operation_auto_fill()
         for op in self.mapped("move_line_ids"):
@@ -22,23 +29,23 @@ class Picking(models.Model):
     def button_validate_bypass_wms(self):
         return self.with_context(bypass_wms=True).button_validate()
 
-    def _get_dbsource(self):
-        dbsource = self.env["base.external.dbsource"].search(
-            [
-                (
-                    "stock_picking_type_ids",
-                    "in",
-                    self.picking_type_id.ids,
-                ),
-                ("company_id", "=", self.company_id.id),
-            ]
-        )
-        if not dbsource:
-            _logger.info(
-                "WMS LOG: Picking type %s not linked to WMS System in "
-                "action_done" % self.picking_type_id.name
+    def button_validate_immediate_wms(self):
+        return self.with_context(immediate_wms=True).button_validate()
+
+    @api.depends("picking_type_id", "company_id")
+    def _compute_dbsource_id(self):
+        for pick in self:
+            dbsource = self.env["base.external.dbsource"].search(
+                [
+                    (
+                        "stock_picking_type_ids",
+                        "in",
+                        pick.picking_type_id.ids,
+                    ),
+                    ("company_id", "=", pick.company_id.id),
+                ]
             )
-        return dbsource
+            pick.dbsource_id = dbsource
 
     def _action_done(self):
         # Set whs_list.qta equal to move quantity_done, to stop any possible error
@@ -149,8 +156,12 @@ class Picking(models.Model):
                         # presents here as only stato=4 is processable on Odoo,
                         # that equals to Elaborato=4
                         # Lists with stato=3 and quantity_done=0 are deleted here
-                        dbsource = pick._get_dbsource()
+                        dbsource = pick.dbsource_id
                         if not dbsource:
+                            _logger.info(
+                                "WMS LOG: Picking type %s not linked to WMS System in "
+                                "action_done" % pick.picking_type_id.name
+                            )
                             continue
                         _logger.info(
                             "WMS LOG: unlink wms list in backorder process of "
@@ -159,11 +170,21 @@ class Picking(models.Model):
                         whs_list.unlink_lists(dbsource.id)
         super(Picking, self)._action_done()
         for pick in self:
-            dbsource = pick._get_dbsource()
+            dbsource = pick.dbsource_id
             if not dbsource:
                 continue
             if dbsource.launching_option == "when_done":
                 pick.picking_create_whs_list()
+            if self.env.context.get("immediate_wms"):
+                try:
+                    dbsource.whs_insert_read_and_synchronize_list()
+                except Exception as e:
+                    _logger.exception(
+                        "WMS LOG: Error {} while synchronizing WMS list {} "
+                        "immediately. Wait for the normal cron execution.".format(
+                            e, pick.name
+                        )
+                    )
         return True
 
     def picking_create_whs_list(self):
@@ -195,12 +216,7 @@ class Picking(models.Model):
         for pick in self:
             whs_lists = pick.mapped("move_lines.whs_list_ids")
             if whs_lists:
-                dbsource = self.env["base.external.dbsource"].search(
-                    [
-                        ("stock_picking_type_ids", "in", pick.picking_type_id.ids),
-                        ("company_id", "=", pick.company_id.id),
-                    ]
-                )
+                dbsource = pick.dbsource_id
                 if not dbsource:
                     _logger.info(
                         "WMS LOG: Picking type %s not linked to WMS System in "
@@ -416,12 +432,7 @@ class StockMove(models.Model):
                     if move.procure_method == "make_to_order":
                         continue
 
-                dbsource = self.env["base.external.dbsource"].search(
-                    [
-                        ("stock_picking_type_ids", "in", move.picking_type_id.ids),
-                        ("company_id", "=", move.company_id.id),
-                    ]
-                )
+                dbsource = pick.dbsource_id
                 if not dbsource:
                     # Picking type is not linked to WMS System
                     continue
