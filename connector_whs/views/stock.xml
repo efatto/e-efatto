@@ -40,9 +40,10 @@
         <field name="inherit_id" ref="stock.view_picking_form" />
         <field name="arch" type="xml">
             <button name="button_validate" position="after">
+                <field name="dbsource_id" invisible="1" />
                 <button
           name="button_validate_bypass_wms"
-          attrs="{'invisible': ['|', ('state', 'in', ('waiting','confirmed')), ('show_validate', '=', False)]}"
+          attrs="{'invisible': ['|', '|', ('dbsource_id', '=', False), ('state', 'in', ('waiting','confirmed')), ('show_validate', '=', False)]}"
           string="Validate Bypassing WMS"
           type="object"
           class="oe_highlight"
@@ -50,8 +51,24 @@
         />
                 <button
           name="button_validate_bypass_wms"
-          attrs="{'invisible': ['|', ('state', 'not in', ('waiting', 'confirmed')), ('show_validate', '=', False)]}"
+          attrs="{'invisible': ['|', '|', ('dbsource_id', '=', False), ('state', 'not in', ('waiting', 'confirmed')), ('show_validate', '=', False)]}"
           string="Validate Bypassing WMS"
+          type="object"
+          groups="stock.group_stock_user"
+          class="o_btn_validate"
+        />
+                <button
+          name="button_validate_immediate_wms"
+          attrs="{'invisible': ['|', '|', ('dbsource_id', '=', False), ('state', 'in', ('waiting','confirmed')), ('show_validate', '=', False)]}"
+          string="Validate Immediate WMS"
+          type="object"
+          class="oe_highlight"
+          groups="stock.group_stock_user"
+        />
+                <button
+          name="button_validate_immediate_wms"
+          attrs="{'invisible': ['|', '|', ('dbsource_id', '=', False), ('state', 'not in', ('waiting', 'confirmed')), ('show_validate', '=', False)]}"
+          string="Validate Immediate WMS"
           type="object"
           groups="stock.group_stock_user"
           class="o_btn_validate"
