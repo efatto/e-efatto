@@ -428,7 +428,7 @@ class BaseExternalDbsource(models.Model):
             self.execute_query(dbsource, insert_query, insert_esiti_liste_params)
         return res
 
-    def whs_insert_read_and_synchronize_list(self):
+    def whs_insert_read_and_synchronize_list(self, insert_only=False, whs_lists=False):
         """
         Write on mssql the lists in stato 1 created from stock in
         hyddemo.whs.liste to be elaborated from WMS
@@ -438,18 +438,15 @@ class BaseExternalDbsource(models.Model):
             connection = dbsource.connection_open_mssql()
             if not connection:
                 raise UserError(_("Failed to open connection!"))
-
-            hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
-                [
-                    ("stato", "=", "1"),
-                ]
-            )
+            if not whs_lists:
+                whs_lists = self.env["hyddemo.whs.liste"].search(
+                    [
+                        ("stato", "=", "1"),
+                    ]
+                )
             # group and insert lists by num_lista
-            for num_lista in set(hyddemo_whs_lists.mapped("num_lista")):
-                (
-                    insert_order_params,
-                    insert_order_line_params,
-                ) = hyddemo_whs_lists.filtered(
+            for num_lista in set(whs_lists.mapped("num_lista")):
+                (insert_order_params, insert_order_line_params,) = whs_lists.filtered(
                     lambda x: x.num_lista == num_lista
                 ).whs_prepare_host_liste_values()
                 if insert_order_params:
@@ -502,9 +499,9 @@ class BaseExternalDbsource(models.Model):
                             )
             # Update lists on mssql from 0 to 1 to be elaborated from WMS all in the
             # same time
-            if hyddemo_whs_lists:
+            if whs_lists:
                 set_liste_to_elaborate_query = (
-                    hyddemo_whs_lists._get_set_liste_to_elaborate_query()
+                    whs_lists._get_set_liste_to_elaborate_query()
                 )
                 if set_liste_to_elaborate_query:
                     dbsource.with_context(no_return=True).execute_mssql(
@@ -513,10 +510,11 @@ class BaseExternalDbsource(models.Model):
                         metadata=None,
                     )
                 # set state to Elaborato even if query is not created
-                hyddemo_whs_lists.write({"stato": "2"})
+                whs_lists.write({"stato": "2"})
                 # commit to exclude rollback as mssql wouldn`t be rollbacked too
                 self._cr.commit()  # pylint: disable=E8102
-            dbsource.whs_read_and_synchronize_list()
+            if not insert_only:
+                dbsource.whs_read_and_synchronize_list()
 
         return True
 
