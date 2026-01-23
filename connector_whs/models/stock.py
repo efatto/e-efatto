@@ -177,7 +177,12 @@ class Picking(models.Model):
                 pick.picking_create_whs_list()
             if self.env.context.get("immediate_wms"):
                 try:
-                    dbsource.whs_insert_read_and_synchronize_list()
+                    dbsource.whs_insert_read_and_synchronize_list(
+                        insert_only=True,
+                        whs_lists=pick.mapped("move_lines.whs_list_ids").filtered(
+                            lambda whl: whl.stato == "1"
+                        ),
+                    )
                 except Exception as e:
                     _logger.exception(
                         "WMS LOG: Error {} while synchronizing WMS list {} "
