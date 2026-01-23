@@ -26,14 +26,3 @@ class StockMoveLine(models.Model):
 
                 move.price_unit = move.product_id.standard_price
         return move_lines
-
-    # todo eseguire _cal_price per far ricalcolare il costo totale dei finiti
-    #  questo metodo viene chiamato da _post_inventory() con la lista dei consumati
-    #  che viene chiamato a sua volta da button_mark_done(), quindi va aggiunta una
-    #  chiamata direi dal write() su stock.move.line intercettando qualsiasi modifica
-    #  sulle quantità consumate o sui price_unit
-
-    def write(self, vals):
-        res = super().write(vals)
-
-        return res
