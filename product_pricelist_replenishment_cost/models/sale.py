@@ -4,13 +4,19 @@ from odoo import api, fields, models
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    @api.depends("product_id", "company_id", "currency_id", "product_uom")
+    @api.depends(
+        "product_id",
+        "company_id",
+        "currency_id",
+        "product_uom",
+        "order_id.pricelist_id",
+    )
     def _compute_purchase_price(self):
         super()._compute_purchase_price()
         for line in self:
-            # find if exists a rule applicable on managed replenishment cost, then
-            # compute cost accordingly
-            if not line.product_id:
+            # find if it exists a rule applicable on managed replenishment cost, then
+            # compute the cost accordingly
+            if not line.product_id or not line.order_id.pricelist_id:
                 line.purchase_price = 0.0
                 continue
             line = line.with_company(line.company_id)
