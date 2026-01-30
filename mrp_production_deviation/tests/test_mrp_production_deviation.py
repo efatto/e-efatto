@@ -148,8 +148,9 @@ class TestMrpProductionDeviation(TestProductionData):
         self.assertEqual(deviation_data[1], deviation_data_1[1])
         # produce partially
         produced_qty = 2.0
-        man_order.qty_producing = produced_qty
-        self._auto_fill_consumed_qty(man_order.move_raw_ids)
+        man_order_form = Form(man_order)
+        man_order_form.qty_producing = produced_qty
+        man_order = man_order_form.save()
         action = man_order.button_mark_done()
         consume_warning_form = Form(
             self.env["mrp.consumption.warning"].with_context(**action["context"])
@@ -269,7 +270,6 @@ class TestMrpProductionDeviation(TestProductionData):
         mo_backorder_form = Form(mo_backorder)
         mo_backorder_form.qty_producing = produced_qty
         mo_backorder = mo_backorder_form.save()
-        self._auto_fill_consumed_qty(mo_backorder.move_raw_ids)
         action = mo_backorder.button_mark_done()
         move_raw = mo_backorder.move_raw_ids.filtered(
             lambda x: x.product_id == self.product_2
@@ -290,7 +290,9 @@ class TestMrpProductionDeviation(TestProductionData):
         # sml_ids.unlink()
         # self.assertAlmostEqual(move_raw_sub_2_1.quantity_done, 0.0)
         # end check removed
-        self._auto_fill_consumed_qty(man_order.move_raw_ids)
+        # FIXME questo codice dovrebbe essere inutile
+        # for move in man_order.move_raw_ids:
+        #     move.quantity_done = move.product_uom_qty
         consume_warning_form = Form(
             self.env["mrp.consumption.warning"].with_context(**action["context"])
         )
@@ -488,10 +490,11 @@ class TestMrpProductionDeviation(TestProductionData):
         self.assertEqual(deviation_data[1], deviation_data_1[1])
         # produce partially, serial will force qty to 1 anyway
         produced_qty = 1.0
-        man_order.qty_producing = produced_qty
+        man_order_form = Form(man_order)
+        man_order_form.qty_producing = produced_qty
+        man_order = man_order_form.save()
         man_order.action_generate_serial()
         self.assertTrue(man_order.lot_producing_id)
-        self._auto_fill_consumed_qty(man_order.move_raw_ids)
         action = man_order.button_mark_done()
         consume_warning_form = Form(
             self.env["mrp.consumption.warning"].with_context(**action["context"])
