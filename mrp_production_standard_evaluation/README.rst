@@ -2,9 +2,9 @@
    :target: https://odoo-community.org/get-involved?utm_source=readme
    :alt: Odoo Community Association
 
-======================================
-MRP Production done consume components
-======================================
+==================================
+MRP Production standard evaluation
+==================================
 
 .. 
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -21,19 +21,21 @@ MRP Production done consume components
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-efatto%2Fe--efatto-lightgray.png?logo=github
-    :target: https://github.com/efatto/e-efatto/tree/14.0/mrp_production_consume_done
+    :target: https://github.com/efatto/e-efatto/tree/14.0/mrp_production_standard_evaluation
     :alt: efatto/e-efatto
 
 |badge1| |badge2| |badge3|
 
-This module enable changes to consume quantity of components in done productions ensuring price are computed in stock moves.
+This module add ability to consume quantity of components in done productions.
 
 It does it by:
 
-#. ensuring added components have the unit price from the product standard price, as they were added at production creation
-#. adding an invisible field with the unit price to the mrp form view
+#. ensuring added components have the price, as they were added at production creation
 #. giving ability to add components if the production is unlocked (to the users with the required access)
 #. giving ability to add/change/remove timesheets in the production workorders
+
+This module change the cost generation method to apply this changes to the finished products.
+Moreover, it change the cost computation method to set cost on the finished products even if it is not set an evaluation method in product categories, using a "default" logic to standard price.
 
 **Table of contents**
 
@@ -51,7 +53,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/efatto/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20mrp_production_consume_done%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20mrp_production_standard_evaluation%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -71,6 +73,6 @@ Contributors
 Maintainers
 ~~~~~~~~~~~
 
-This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/14.0/mrp_production_consume_done>`_ project on GitHub.
+This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/14.0/mrp_production_standard_evaluation>`_ project on GitHub.
 
 You are welcome to contribute.
