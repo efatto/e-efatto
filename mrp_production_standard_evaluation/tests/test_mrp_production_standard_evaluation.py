@@ -30,7 +30,8 @@ class TestMrpProductionStandardEvaluation(TestProductionData):
         self.assertEqual(
             set(
                 man_order.move_raw_ids.filtered(
-                lambda x: x.product_id == self.subproduct_1_1).mapped("price_unit")
+                    lambda x: x.product_id == self.subproduct_1_1
+                ).mapped("price_unit")
             ),
             set(self.subproduct_1_1.mapped("standard_price")),
         )
@@ -48,8 +49,7 @@ class TestMrpProductionStandardEvaluation(TestProductionData):
         )
         backorder_form.save().action_backorder()
         self.assertEqual(man_order.state, "done")
-        raw_moves = man_order.move_raw_ids.filtered(
-            lambda x: x.state != "cancel")
+        raw_moves = man_order.move_raw_ids.filtered(lambda x: x.state != "cancel")
         for move in raw_moves:
             self.assertAlmostEqual(move.price_unit, move.product_id.standard_price)
         finished_moves = man_order.move_finished_ids.filtered(
@@ -60,13 +60,17 @@ class TestMrpProductionStandardEvaluation(TestProductionData):
         self.assertAlmostEqual(
             sum(
                 fin_move.quantity_done * fin_move.price_unit
-                for fin_move in finished_moves),
+                for fin_move in finished_moves
+            ),
             sum(move.quantity_done * move.price_unit for move in raw_moves)
-            + sum([
-                sum(wo.time_ids.mapped("duration")) / 60
-                * wo.workcenter_id.costs_hour
-                for wo in man_order.workorder_ids
-            ]),
+            + sum(
+                [
+                    sum(wo.time_ids.mapped("duration"))
+                    / 60
+                    * wo.workcenter_id.costs_hour
+                    for wo in man_order.workorder_ids
+                ]
+            ),
         )
 
     # def test_01_add_component_production_done(self):

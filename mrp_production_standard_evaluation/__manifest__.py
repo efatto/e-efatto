@@ -14,7 +14,6 @@
         "mrp_production_demo",
         "stock_account",
     ],
-    "data": [
-    ],
+    "data": [],
     "installable": True,
 }

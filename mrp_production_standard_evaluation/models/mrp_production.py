@@ -21,7 +21,8 @@ class MrpProduction(models.Model):
         """Set a price unit on the finished move according to `consumed_moves`.
         Original method has been overwritten to set costs of finished products to the
         registered costs on stock moves, using the price unit set on creation, instead
-        of the stock_valuation_layer, which is a fiscal value, not the best for an internal evaluation.
+        of the stock_valuation_layer, which is a fiscal value, not the best for an
+        internal evaluation.
         TODO: update the price unit of stock moves when moved?
         """
         res = super()._cal_price(consumed_moves)
@@ -33,12 +34,14 @@ class MrpProduction(models.Model):
         )
         if finished_move:
             finished_move.ensure_one()
+            # remove logic of already recorded to force rewrite of cost after updates
+            # TODO check this change does not reuse times of other mo
             for work_order in self.workorder_ids:
                 time_lines = work_order.time_ids.filtered(
-                    lambda x: x.date_end and not x.cost_already_recorded
+                    lambda x: x.date_end  # and not x.cost_already_recorded
                 )
                 duration = sum(time_lines.mapped("duration"))
-                time_lines.write({"cost_already_recorded": True})
+                # time_lines.write({"cost_already_recorded": True})
                 work_center_cost += (
                     duration / 60.0
                 ) * work_order.workcenter_id.costs_hour
@@ -51,7 +54,8 @@ class MrpProduction(models.Model):
                 finished_move.price_unit = (
                     sum(
                         move.quantity_done * move.price_unit
-                        for move in consumed_moves.sudo())
+                        for move in consumed_moves.sudo()
+                    )
                     + work_center_cost
                     + extra_cost
                 ) / qty_done

@@ -1,5 +1,4 @@
-from odoo import api, models
-from odoo.tools import float_is_zero
+from odoo import models
 
 
 class StockMove(models.Model):
