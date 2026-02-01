@@ -5,12 +5,8 @@ from odoo.tools import float_is_zero
 class StockMoveLine(models.Model):
     _inherit = "stock.move.line"
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        # reproduce the default behavior in mrp.production method at creation
-        # _get_move_raw_values for raw lines added after the done state of production
-        move_lines = super().create(vals_list)
-        for move_line in move_lines:
+    def assign_missing_prices(self):
+        for move_line in self:
             move = move_line.move_id
             if (
                 move_line.state == "done"
@@ -23,6 +19,12 @@ class StockMoveLine(models.Model):
                 )
                 if float_is_zero(diff, precision_rounding=rounding):
                     continue
-
                 move.price_unit = move.product_id.standard_price
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        # reproduce the default behavior in mrp.production method at creation
+        # _get_move_raw_values for raw lines added after the done state of production
+        move_lines = super().create(vals_list)
+        move_lines.assign_missing_prices()
         return move_lines
