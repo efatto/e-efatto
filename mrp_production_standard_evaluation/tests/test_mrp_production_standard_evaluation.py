@@ -17,8 +17,49 @@ class TestMrpProductionStandardEvaluation(TestProductionData):
                 }
             ]
         )
+        cls.workcenter_obj = cls.env["mrp.workcenter"]
+        cls.workcenter1 = cls.workcenter_obj.create(
+            {"name": "Workcenter 1"},
+        )
+        cls.workcenter2 = cls.workcenter_obj.create(
+            {"name": "Workcenter 2", "capacity": 2},
+        )
+        cls.workorder_obj = cls.env["mrp.workorder"]
+        cls.routing_tmpl_1 = cls.env["mrp.routing.workcenter.template"].create(
+            {
+                "name": "Operation template 1 in workcenter",
+                "workcenter_id": cls.workcenter1.id,
+                "time_mode": "manual",
+                "time_cycle_manual": 36,
+                "sequence": 1,
+            }
+        )
+        cls.routing_tmpl_2 = cls.env["mrp.routing.workcenter.template"].create(
+            {
+                "name": "Operation template 2 in workcenter",
+                "workcenter_id": cls.workcenter2.id,
+                "time_mode": "manual",
+                "time_cycle_manual": 22,
+                "sequence": 1,
+            }
+        )
+        cls.routing = cls.env["mrp.routing"].create(
+            {
+                "name": "Operation",
+                "operation_ids": [
+                    (
+                        6,
+                        0,
+                        (cls.routing_tmpl_1 | cls.routing_tmpl_2).ids,
+                    ),
+                ],
+            }
+        )
 
     def test_00_normal_production(self):
+        with Form(self.main_bom) as bom_form:
+            bom_form.routing_id = self.routing
+            bom_form.save()
         man_order_form = Form(self.env["mrp.production"])
         # put only product_id and product_qty in the wizard data to avoid the default
         # setting of product_qty to 1
@@ -43,6 +84,35 @@ class TestMrpProductionStandardEvaluation(TestProductionData):
         man_order_form.qty_producing = 2
         man_order = man_order_form.save()
         self.assertEqual(move_raw.quantity_done, 16)
+        for workorder in man_order.workorder_ids:
+            workorder.with_user(self.mrp_user).button_start()
+        last_workorder = man_order.workorder_ids.filtered(
+            lambda x: x.state == "progress"
+        )
+        last_workorder.with_user(self.mrp_user).button_finish()
+        for wo in man_order.workorder_ids:
+            wo.write(
+                {
+                    "time_ids": [
+                        (
+                            0,
+                            0,
+                            {
+                                "workcenter_id": wo.workcenter_id.id,
+                                "duration": 100,
+                                "loss_id": self.env["mrp.workcenter.productivity.loss"]
+                                .search(
+                                    [
+                                        ("loss_type", "=", "productive"),
+                                    ],
+                                    limit=1,
+                                )
+                                .id,
+                            },
+                        )
+                    ]
+                }
+            )
         action = man_order.button_mark_done()
         backorder_form = Form(
             self.env["mrp.production.backorder"].with_context(**action["context"])

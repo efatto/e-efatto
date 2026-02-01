@@ -12,6 +12,7 @@
         "mrp_account",
         "mrp_production_consume_done",
         "mrp_production_demo",
+        "mrp_routing",
         "stock_account",
     ],
     "data": [],

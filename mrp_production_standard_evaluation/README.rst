@@ -26,16 +26,17 @@ MRP Production standard evaluation
 
 |badge1| |badge2| |badge3|
 
-This module add ability to consume quantity of components in done productions.
+Questo modulo aggiorna i costi dei prodotti consumati e finiti a seguito delle modifiche fatte dopo il completamento, in parte permesse a seguito dell'installazione del modulo `mrp_production_consume_done`.
 
-It does it by:
+Quando una produzione viene sbloccata e vengono modificate possibilmente le quantità consumate dei componenti o le ore registrate negli ordini di lavoro, al successivo blocco vengono ricalcolati i costi.
 
-#. ensuring added components have the price, as they were added at production creation
-#. giving ability to add components if the production is unlocked (to the users with the required access)
-#. giving ability to add/change/remove timesheets in the production workorders
+Questo modulo inoltre imposta che i costi vengono assegnati, se non configurata una modalità di valorizzazione nelle categorie dei prodotti, al costo standard dei prodotti quando assegnati alla produzione.
 
-This module change the cost generation method to apply this changes to the finished products.
-Moreover, it change the cost computation method to set cost on the finished products even if it is not set an evaluation method in product categories, using a "default" logic to standard price.
+TODO aggiornare i costi dei componenti al momento della produzione?
+
+TODO aggiornare il costo se questo è un componente di eventuali produzioni da cui questa produzione ha avuto origine.
+
+N.B.: Modificando le quantità completate nella produzione, i costi vengono ricalcolati sulla base dei prezzi presenti nei movimenti di magazzino, già assegnati in precedenza.
 
 **Table of contents**
 
