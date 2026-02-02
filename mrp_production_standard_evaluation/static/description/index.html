@@ -378,9 +378,9 @@ ul.auto-toc {
 <p>Questo modulo aggiorna i costi dei prodotti consumati e finiti a seguito delle modifiche fatte dopo il completamento, in parte permesse a seguito dell’installazione del modulo <cite>mrp_production_consume_done</cite>.</p>
 <p>Quando una produzione viene sbloccata e vengono modificate possibilmente le quantità consumate dei componenti o le ore registrate negli ordini di lavoro, al successivo blocco vengono ricalcolati i costi.</p>
 <p>Questo modulo inoltre imposta che i costi vengono assegnati, se non configurata una modalità di valorizzazione nelle categorie dei prodotti, al costo standard dei prodotti quando assegnati alla produzione.</p>
-<p>TODO aggiornare i costi dei componenti al momento della produzione?</p>
-<p>TODO aggiornare il costo se questo è un componente di eventuali produzioni da cui questa produzione ha avuto origine.</p>
+<p>Infine questo modulo aggiorna il costo della produzione padre se la produzione che si sta modificando produce un componente della stessa, se la produzione è stata generata dalla produzione padre (quindi non aggiorna una qualsiasi produzione che usi quel componente).</p>
 <p>N.B.: Modificando le quantità completate nella produzione, i costi vengono ricalcolati sulla base dei prezzi presenti nei movimenti di magazzino, già assegnati in precedenza.</p>
+<p>TODO aggiornare i costi dei componenti al momento dell’avvio della produzione?</p>
 <p><strong>Table of contents</strong></p>
 <div class="contents local topic" id="contents">
 <ul class="simple">

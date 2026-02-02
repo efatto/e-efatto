@@ -4,29 +4,58 @@ from odoo import models
 class MrpProduction(models.Model):
     _inherit = "mrp.production"
 
-    # TODO va aggiornato
-    #  il costo di questo componente se fa parte di eventuali produzioni da cui questa
-    #  produzione ha avuto origine.
+    def _update_production_prices(self):
+        for prod in self:
+            if (
+                self.env.context.get("stop_recursive_update_price_production_id")
+                == prod.id
+            ):
+                continue
+            # recompute price for all the raw moves except the canceled ones, as the
+            # ones with quantity done = 0 could have been changed
+            moves_to_do = prod.move_raw_ids.filtered(lambda x: x.state != "cancel")
+            moves_to_do.mapped("move_line_ids").assign_missing_prices()
+            prod._cal_price(moves_to_do)
+            origin_move_ids = self.env["stock.move"].search(
+                [("created_production_id", "=", prod.id)]
+            )
+            if origin_move_ids:
+                raw_production_ids = origin_move_ids.mapped(
+                    "raw_material_production_id"
+                )
+                if raw_production_ids:
+                    # assign the cost of produced product to the stock move of generator
+                    # production component before it is updated
+                    origin_move_ids.write(
+                        {"price_unit": prod.move_finished_ids.price_unit}
+                    )
+                    raw_production_ids.with_context(
+                        stop_recursive_update_price_production_id=prod.id
+                    )._update_production_prices()
+
+    def button_mark_done(self):
+        res = super().button_mark_done()
+        for mo in self:
+            if mo.state != "done":
+                continue
+            mo._update_production_prices()
+        return res
 
     def write(self, vals):
         res = super().write(vals)
         if vals.get("is_locked"):
-            for prod in self:
-                # recompute price for all the raw moves except the canceled ones, as the
-                # ones with quantity done = 0 could have been changed
-                moves_to_do = prod.move_raw_ids.filtered(lambda x: x.state != "cancel")
-                moves_to_do.mapped("move_line_ids").assign_missing_prices()
-                prod._cal_price(moves_to_do)
+            self._update_production_prices()
         return res
 
     def _cal_price(self, consumed_moves):
         """Set a price unit on the finished move according to `consumed_moves`.
         Original method has been overwritten to set costs of finished products to the
         registered costs on stock moves, using the price unit set on creation, instead
-        of the stock_valuation_layer, which is a fiscal value, not the best for an
-        internal evaluation.
-        TODO: refresh the price unit of stock moves when moved? it could be different
-         for a production generated in a time and completed in another
+        of the stock_valuation_layer, which is a fiscal value.
+        TODO: refresh the price unit of stock moves when moved, only when the button
+         button_mark_done is called? the prices could be different
+         for a production generated in a time and completed in another. Or get the price
+         in the times the stock moves to the pre-production are done
         """
         res = super()._cal_price(consumed_moves)
         work_center_cost = 0
