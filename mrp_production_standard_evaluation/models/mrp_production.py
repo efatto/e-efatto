@@ -14,7 +14,6 @@ class MrpProduction(models.Model):
             # recompute price for all the raw moves except the canceled ones, as the
             # ones with quantity done = 0 could have been changed
             moves_to_do = prod.move_raw_ids.filtered(lambda x: x.state != "cancel")
-            moves_to_do.mapped("move_line_ids").assign_missing_prices()
             prod._cal_price(moves_to_do)
             origin_move_ids = self.env["stock.move"].search(
                 [("created_production_id", "=", prod.id)]

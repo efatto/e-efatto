@@ -59,6 +59,33 @@ class TestMrpProductionStandardEvaluation(TestProductionData):
             }
         )
 
+    def _register_times(self, man_order, duration):
+        for wo in man_order.workorder_ids:
+            wo.write(
+                {
+                    "time_ids": [
+                        (
+                            0,
+                            0,
+                            {
+                                "workcenter_id": wo.workcenter_id.id,
+                                "date_start": fields.Datetime.now(),
+                                "date_end": fields.Datetime.now()
+                                + relativedelta(minutes=duration),
+                                "loss_id": self.env["mrp.workcenter.productivity.loss"]
+                                .search(
+                                    [
+                                        ("loss_type", "=", "productive"),
+                                    ],
+                                    limit=1,
+                                )
+                                .id,
+                            },
+                        )
+                    ]
+                }
+            )
+
     def test_00_normal_production(self):
         with Form(self.main_bom) as bom_form:
             bom_form.routing_id = self.routing
@@ -93,31 +120,7 @@ class TestMrpProductionStandardEvaluation(TestProductionData):
             lambda x: x.state == "progress"
         )
         last_workorder.with_user(self.mrp_user).button_finish()
-        for wo in man_order.workorder_ids:
-            wo.write(
-                {
-                    "time_ids": [
-                        (
-                            0,
-                            0,
-                            {
-                                "workcenter_id": wo.workcenter_id.id,
-                                "date_start": fields.Datetime.now(),
-                                "date_end": fields.Datetime.now()
-                                + relativedelta(minutes=100),
-                                "loss_id": self.env["mrp.workcenter.productivity.loss"]
-                                .search(
-                                    [
-                                        ("loss_type", "=", "productive"),
-                                    ],
-                                    limit=1,
-                                )
-                                .id,
-                            },
-                        )
-                    ]
-                }
-            )
+        self._register_times(man_order, 100)
         action = man_order.button_mark_done()
         backorder_form = Form(
             self.env["mrp.production.backorder"].with_context(**action["context"])
@@ -154,6 +157,10 @@ class TestMrpProductionStandardEvaluation(TestProductionData):
         self.assertEqual(len(man_order.procurement_group_id.mrp_production_ids), 2)
         # switch checks on backorder production
         mo_backorder = man_order.procurement_group_id.mrp_production_ids[-1]
+        self._register_times(mo_backorder, 1000)
+        self.assertEqual(
+            sum(mo_backorder.mapped("workorder_ids.time_ids.duration")), 2000
+        )
         mo_backorder.button_mark_done()
         self.assertEqual(mo_backorder.state, "done")
         # check backorder costs
@@ -172,8 +179,25 @@ class TestMrpProductionStandardEvaluation(TestProductionData):
                 ]
             ),
         )
+        # add components to the main production done
+        man_order.action_toggle_is_locked()
+        man_order_form = Form(man_order)
+        with man_order_form.move_raw_ids.new() as move:
+            move.name = self.product_2.name
+            move.product_id = self.product_2
+            move.product_uom = self.product_2.uom_id
+            move.location_id = man_order.location_src_id
+            move.location_dest_id = man_order.location_dest_id
+            move.quantity_done = 6
+        man_order = man_order_form.save()
+        man_order.action_toggle_is_locked()
+        man_order.flush()
+        move_raw = man_order.move_raw_ids.filtered(
+            lambda x: x.product_id == self.product_2
+        )
+        self.assertEqual(move_raw.price_unit, self.product_2.standard_price)
 
-    # def test_01_add_component_production_done(self):
+    # def test_01_change_component_production_done(self):
     #     man_order_form = Form(self.env["mrp.production"])
     #     # put only product_id and product_qty in the wizard data to avoid the default
     #     # setting of product_qty to 1
