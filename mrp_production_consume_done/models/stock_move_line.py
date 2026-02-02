@@ -28,3 +28,8 @@ class StockMoveLine(models.Model):
         move_lines = super().create(vals_list)
         move_lines.assign_missing_prices()
         return move_lines
+
+    def write(self, vals):
+        res = super().write(vals)
+        self.assign_missing_prices()
+        return res
