@@ -8,4 +8,4 @@ Infine questo modulo aggiorna il costo della produzione padre se la produzione c
 
 N.B.: Modificando le quantità completate nella produzione, i costi vengono ricalcolati sulla base dei prezzi presenti nei movimenti di magazzino, già assegnati in precedenza.
 
-TODO aggiornare i costi dei componenti al momento dell'avvio della produzione?
+TODO aggiornare i costi dei componenti al momento dell'avvio della produzione? Oppure quando la produzione è completata? Non quando viene modificata a posteriori, eccetto per le righe modificate.

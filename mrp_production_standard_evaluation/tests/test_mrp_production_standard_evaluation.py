@@ -1,3 +1,6 @@
+from dateutil.relativedelta import relativedelta
+
+from odoo import fields
 from odoo.tests import Form
 
 from odoo.addons.mrp_production_demo.tests.common_data import TestProductionData
@@ -19,10 +22,10 @@ class TestMrpProductionStandardEvaluation(TestProductionData):
         )
         cls.workcenter_obj = cls.env["mrp.workcenter"]
         cls.workcenter1 = cls.workcenter_obj.create(
-            {"name": "Workcenter 1"},
+            {"name": "Workcenter 1", "costs_hour": 23},
         )
         cls.workcenter2 = cls.workcenter_obj.create(
-            {"name": "Workcenter 2", "capacity": 2},
+            {"name": "Workcenter 2", "capacity": 2, "costs_hour": 27},
         )
         cls.workorder_obj = cls.env["mrp.workorder"]
         cls.routing_tmpl_1 = cls.env["mrp.routing.workcenter.template"].create(
@@ -99,7 +102,9 @@ class TestMrpProductionStandardEvaluation(TestProductionData):
                             0,
                             {
                                 "workcenter_id": wo.workcenter_id.id,
-                                "duration": 100,
+                                "date_start": fields.Datetime.now(),
+                                "date_end": fields.Datetime.now()
+                                + relativedelta(minutes=100),
                                 "loss_id": self.env["mrp.workcenter.productivity.loss"]
                                 .search(
                                     [
@@ -127,6 +132,31 @@ class TestMrpProductionStandardEvaluation(TestProductionData):
             and x.state != "cancel"
             and x.quantity_done > 0
         )
+        self.assertEqual(sum(man_order.mapped("workorder_ids.time_ids.duration")), 200)
+        self.assertEqual(
+            sum(man_order.mapped("workorder_ids.workcenter_id.costs_hour")), 23 + 27
+        )
+        self.assertAlmostEqual(
+            sum(
+                fin_move.quantity_done * fin_move.price_unit
+                for fin_move in finished_moves
+            ),
+            sum(move.quantity_done * move.price_unit for move in raw_moves)
+            + sum(
+                [
+                    sum(wo.time_ids.mapped("duration"))
+                    / 60
+                    * wo.workcenter_id.costs_hour
+                    for wo in man_order.workorder_ids
+                ]
+            ),
+        )
+        self.assertEqual(len(man_order.procurement_group_id.mrp_production_ids), 2)
+        # switch checks on backorder production
+        mo_backorder = man_order.procurement_group_id.mrp_production_ids[-1]
+        mo_backorder.button_mark_done()
+        self.assertEqual(mo_backorder.state, "done")
+        # check backorder costs
         self.assertAlmostEqual(
             sum(
                 fin_move.quantity_done * fin_move.price_unit

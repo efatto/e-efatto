@@ -52,10 +52,6 @@ class MrpProduction(models.Model):
         Original method has been overwritten to set costs of finished products to the
         registered costs on stock moves, using the price unit set on creation, instead
         of the stock_valuation_layer, which is a fiscal value.
-        TODO: refresh the price unit of stock moves when moved, only when the button
-         button_mark_done is called? the prices could be different
-         for a production generated in a time and completed in another. Or get the price
-         in the times the stock moves to the pre-production are done
         """
         res = super()._cal_price(consumed_moves)
         work_center_cost = 0
@@ -66,14 +62,12 @@ class MrpProduction(models.Model):
         )
         if finished_move:
             finished_move.ensure_one()
-            # remove logic of already recorded to force rewrite of cost after updates
-            # TODO check this change does not reuse times of other mo
+            # remove logic of 'cost_already_recorded' to force rewrite of cost after
+            # every updates
+            # TODO check this change does not reuse times of other manufacturing orders
             for work_order in self.workorder_ids:
-                time_lines = work_order.time_ids.filtered(
-                    lambda x: x.date_end  # and not x.cost_already_recorded
-                )
+                time_lines = work_order.time_ids.filtered(lambda x: x.date_end)
                 duration = sum(time_lines.mapped("duration"))
-                # time_lines.write({"cost_already_recorded": True})
                 work_center_cost += (
                     duration / 60.0
                 ) * work_order.workcenter_id.costs_hour
