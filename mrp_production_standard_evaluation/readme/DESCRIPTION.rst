@@ -2,7 +2,9 @@ Questo modulo aggiorna i costi dei prodotti consumati e finiti a seguito delle m
 
 Quando una produzione viene sbloccata e vengono modificate possibilmente le quantità consumate dei componenti o le ore registrate negli ordini di lavoro, al successivo blocco vengono ricalcolati i costi.
 
-Questo modulo inoltre imposta che i costi vengono assegnati, se non configurata una modalità di valorizzazione nelle categorie dei prodotti, al costo standard dei prodotti quando assegnati alla produzione.
+Questo modulo imposta che i costi vengono assegnati, se non configurata una modalità di valorizzazione nelle categorie dei prodotti, al costo standard dei prodotti quando assegnati alla produzione.
+
+Inoltre questo modulo imposta il costo del prodotto finito pari al costo di produzione registrato nel movimento di carico, in modo da tenerlo sempre aggiornato. Attenzione: se venisse modificata una produzione in una data passata, quel costo andrebbe a sovrascrivere il costo del prodotto, anche se ci fossero delle produzioni posteriori.
 
 Infine questo modulo aggiorna il costo della produzione padre se la produzione che si sta modificando produce un componente della stessa, se la produzione è stata generata dalla produzione padre (quindi non aggiorna una qualsiasi produzione che usi quel componente).
 

@@ -188,6 +188,11 @@ class TestMrpProductionStandardEvaluation(TestProductionData):
             lambda x: x.product_id == self.product_2
         )
         self.assertEqual(move_raw.price_unit, self.product_2.standard_price)
+        self.assertAlmostEqual(
+            man_order.move_finished_ids.price_unit,
+            man_order.product_id.standard_price,
+            2,
+        )
 
     # def test_01_change_component_production_done(self):
     #     man_order_form = Form(self.env["mrp.production"])

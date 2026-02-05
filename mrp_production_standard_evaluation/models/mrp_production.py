@@ -76,7 +76,7 @@ class MrpProduction(models.Model):
                 )
                 # get actual cost from consumed_moves
                 extra_cost = self.extra_cost * qty_done
-                finished_move.price_unit = (
+                price_unit = (
                     sum(
                         move.quantity_done * move.price_unit
                         for move in consumed_moves.sudo()
@@ -84,4 +84,6 @@ class MrpProduction(models.Model):
                     + work_center_cost
                     + extra_cost
                 ) / qty_done
+                finished_move.price_unit = price_unit
+                finished_move.product_id.standard_price = price_unit
         return res
