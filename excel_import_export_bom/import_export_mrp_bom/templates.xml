@@ -56,7 +56,7 @@
                         '_HEAD_': {
                             'A2': 'product_id.product_tmpl_id${value and value.barcode or value.default_code or value.name or ""}#{style=text}',
                             'B2': '${1}#{style=number}',
-                            'C2': 'routing_id.name${value or ""}#{style=text}',
+                            'C2': 'bom_id.routing_id.name${value or ""}#{style=text}',
                         },
                         'move_raw_ids': {
                             'D2': 'product_id.barcode${value or ""}#{style=text}',
