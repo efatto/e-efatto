@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-20 18:26+0000\n"
-"PO-Revision-Date: 2025-11-20 18:26+0000\n"
+"POT-Creation-Date: 2026-01-23 16:44+0000\n"
+"PO-Revision-Date: 2026-01-23 16:44+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -33,6 +33,21 @@ msgstr ""
 " * Prelevato: OdP avviato, componenti prelevati e spostati nell'area di produzione.\n"
 " * Completato: OdP chiuso, i movimenti di magazzino vengono registrati. \n"
 " * Annullato: OdP annullato, non può più essere confermato."
+
+#. module: connector_whs
+#: model:ir.model.fields,help:connector_whs.field_hyddemo_whs_liste__move_state
+msgid ""
+"* New: When the stock move is created and not yet confirmed.\n"
+"* Waiting Another Move: This state can be seen when a move is waiting for another one, for example in a chained flow.\n"
+"* Waiting Availability: This state is reached when the procurement resolution is not straight forward. It may need the scheduler to run, a component to be manufactured...\n"
+"* Available: When products are reserved, it is set to 'Available'.\n"
+"* Done: When the shipment is processed, the state is 'Done'."
+msgstr ""
+"* Nuovo: movimento di magazzino creato ma non ancora confermato.\n"
+"* In attesa di altro movimento: stato visualizzato quando un movimento è in attesa di un altro, per esempio in un flusso concatenato.\n"
+"* In attesa di disponibilità: stato raggiunto quando la decisione sull'approvvigionamento non è chiara, perché è necessario eseguire il pianificatore, produrre un componente ecc...\n"
+"* Disponibile: impostato quando i prodotti sono prenotati.\n"
+"* Completato: stato raggiunto quando viene elaborata la spedizione."
 
 #. module: connector_whs
 #: model_terms:ir.ui.view,arch_db:connector_whs.view_wizard_sync_stock_whs_mssql
@@ -175,19 +190,8 @@ msgstr "Connettore WHS - rimuove le vecchie liste da Odoo e WHS"
 #: model:ir.actions.server,name:connector_whs.ir_cron_connector_whs_insert_list_ir_actions_server
 #: model:ir.cron,cron_name:connector_whs.ir_cron_connector_whs_insert_list
 #: model:ir.cron,name:connector_whs.ir_cron_connector_whs_insert_list
-msgid "Connector WHS - synchronize"
-msgstr "Connettore WHS - Sincronizza"
-
-#. module: connector_whs
-#: model:ir.actions.server,name:connector_whs.ir_cron_connector_whs_sync_stock_ir_actions_server
-#: model:ir.cron,cron_name:connector_whs.ir_cron_connector_whs_sync_stock
-#: model:ir.cron,name:connector_whs.ir_cron_connector_whs_sync_stock
-msgid ""
-"Connector WHS - synchronize stock (pass True to do inventory sync, else it "
-"will create only whs log)"
-msgstr ""
-"Connettore WHS - sincronizza il magazzino (passare la variabile True per "
-"sincronizzare il magazzino, altrimenti verrà solo creato il log WHS)"
+msgid "Connector WMS - synchronize"
+msgstr "Connettore WMS - Sincronizza"
 
 #. module: connector_whs
 #: model:ir.actions.server,name:connector_whs.ir_cron_connector_whs_sync_product_info_ir_actions_server
@@ -195,6 +199,17 @@ msgstr ""
 #: model:ir.cron,name:connector_whs.ir_cron_connector_whs_sync_product_info
 msgid "Connector WMS - synchronize all product info"
 msgstr "Connettore WMS - Sincronizza tutti i prodotti"
+
+#. module: connector_whs
+#: model:ir.actions.server,name:connector_whs.ir_cron_connector_whs_sync_stock_ir_actions_server
+#: model:ir.cron,cron_name:connector_whs.ir_cron_connector_whs_sync_stock
+#: model:ir.cron,name:connector_whs.ir_cron_connector_whs_sync_stock
+msgid ""
+"Connector WMS - synchronize stock (pass True to do inventory sync, else it "
+"will create only wms log)"
+msgstr ""
+"Connettore WMS - sincronizza il magazzino (passare la variabile True per "
+"sincronizzare il magazzino, altrimenti verrà solo creato il log WMS)"
 
 #. module: connector_whs
 #: model_terms:ir.ui.view,arch_db:connector_whs.mrp_production_form_view
@@ -308,7 +323,7 @@ msgstr "Sorgente Database Esterna"
 #. module: connector_whs
 #: model:ir.model,name:connector_whs.model_base_external_dbsource
 msgid "External Database Sources"
-msgstr "Sorgenti Database Esterne"
+msgstr "Origini database esterne"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__failed_message_ids
@@ -357,6 +372,11 @@ msgstr "Forza la ricreazione della lista in WMS"
 #: model_terms:ir.ui.view,arch_db:connector_whs.product_template_form_view
 msgid "Get WMS syncronizing data"
 msgstr "Recupera dati di sincronizzazione WMS"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_stock_move__has_wms_lists
+msgid "Has Wms Lists"
+msgstr "Ha liste WMS"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__hyddemo_mssql_log_id
@@ -467,6 +487,11 @@ msgstr "Ultima modifica di"
 #: model:ir.model.fields,field_description:connector_whs.field_wizard_sync_stock_whs_mssql__write_date
 msgid "Last Updated on"
 msgstr "Ultima modifica il"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_base_external_dbsource__launching_option
+msgid "Launching Option"
+msgstr "Opzione di avvio"
 
 #. module: connector_whs
 #: code:addons/connector_whs/models/product.py:0
@@ -649,6 +674,17 @@ msgid "Ok"
 msgstr ""
 
 #. module: connector_whs
+#: model:ir.model.fields,help:connector_whs.field_base_external_dbsource__launching_option
+msgid ""
+"Option to decide when activating the WMS lists creation:\n"
+"- When Confirmed: the creation is active when the stock moves are set to-do.\n"
+"- When Done: the creation is active when the stock moves are done."
+msgstr ""
+"Scegli quando attivare la creazione delle liste WMS:\n"
+"- Quando confermato: la creazione è attiva quando i movimenti di magazzino sono segnati da fare.\n"
+"- Quando completato: la creazione è attiva quando i movimenti di magazzino sono stati completati."
+
+#. module: connector_whs
 #: model:ir.model.fields.selection,name:connector_whs.selection__hyddemo_whs_liste__tipo__1
 msgid "Prelievo"
 msgstr ""
@@ -694,8 +730,8 @@ msgstr "Nome Prodotto"
 
 #. module: connector_whs
 #: model:ir.model,name:connector_whs.model_product_template
-msgid "Product Template (Multi-Company)"
-msgstr "Modello prodotto (Multi-Company)"
+msgid "Product Template"
+msgstr "Modello prodotto"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_wizard_sync_stock_whs_mssql__product_id
@@ -722,7 +758,7 @@ msgstr ""
 #. module: connector_whs
 #: model:ir.model,name:connector_whs.model_purchase_order
 msgid "Purchase Order"
-msgstr "Ordine di acquisto"
+msgstr "Ordine di Acquisto"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__qta
@@ -800,6 +836,11 @@ msgstr "Stato"
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__move_id
 msgid "Stock Move"
 msgstr "Movimento di magazzino"
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__move_state
+msgid "Stock Move State"
+msgstr "Stato del movimento di magazzino"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_base_external_dbsource__stock_picking_type_ids
@@ -944,6 +985,11 @@ msgid "Validate Bypassing WMS"
 msgstr "Valida Bypassando WMS"
 
 #. module: connector_whs
+#: model_terms:ir.ui.view,arch_db:connector_whs.view
+msgid "Validate Immediate WMS"
+msgstr "Valida e invia a WMS"
+
+#. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__vettore
 msgid "Vettore"
 msgstr ""
@@ -973,9 +1019,20 @@ msgid "WMS Q.ty"
 msgstr "Q.tà WMS"
 
 #. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_stock_picking__dbsource_id
+msgid "WMS System"
+msgstr "Connessione WMS"
+
+#. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__weight
 msgid "WMS Weight"
 msgstr "Peso WMS"
+
+#. module: connector_whs
+#: code:addons/connector_whs/models/stock.py:0
+#, python-format
+msgid "WMS lists"
+msgstr "Liste WMS"
 
 #. module: connector_whs
 #: code:addons/connector_whs/models/stock.py:0
@@ -1005,6 +1062,16 @@ msgstr "Messaggi sito web"
 #: model:ir.model.fields,help:connector_whs.field_hyddemo_whs_liste__website_message_ids
 msgid "Website communication history"
 msgstr "Cronologia comunicazioni sito web"
+
+#. module: connector_whs
+#: model:ir.model.fields.selection,name:connector_whs.selection__base_external_dbsource__launching_option__when_confirmed
+msgid "When Confirmed"
+msgstr "Quando confermato"
+
+#. module: connector_whs
+#: model:ir.model.fields.selection,name:connector_whs.selection__base_external_dbsource__launching_option__when_done
+msgid "When Done"
+msgstr "Quando completato"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__whs_list_absent
