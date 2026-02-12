@@ -60,7 +60,7 @@
                         },
                         'move_raw_ids': {
                             'D2': 'product_id.barcode${value or ""}#{style=text}',
-                            'E2': '${"=?(H2)/?(I2)"}#{style=number}',
+                            'E2': '${"=?(F2)/?(G2)"}#{style=number}',
                             'F2': 'quantity_done${value or 0}#{style=number}',
                             'G2': 'raw_material_production_id${value.product_qty or 1}#{style=number}',
                             'H2': 'product_id.name${value or ""}#{style=text}',
