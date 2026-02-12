@@ -40,24 +40,14 @@
       >
                 <attribute name="attrs">
                     {'invisible': [
+                        '&amp;',
                         '|',
-                            ('is_parallel_production', '=', True),
                         '|',
-                            '&amp;',
-                                ('bom_type', '=', 'subcontract'),
-                            '|',
-                                ('state', 'not in', ['progress', 'consumed']),
-                                ('qty_producing', '=', 0),
-                            '&amp;',
-                                ('bom_type', '!=', 'subcontract'),
-                            '|',
-                                ('is_consumable', '=', True),
-                            '|',
-                                ('state', 'not in', ['progress', 'consumed']),
-                            '|',
-                                ('qty_producing', '=', 0),
-                                ('sent_to_whs', '=', False),
-                            ]}
+                        ('is_parallel_production', '=', True),
+                        ('state', 'not in', ('confirmed', 'progress')),
+                        ('qty_producing', '!=', 0),
+                        ('state', '!=', 'to_close'),
+                    ]}
                 </attribute>
             </xpath>
         </field>
