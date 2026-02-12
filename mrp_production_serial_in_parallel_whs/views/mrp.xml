@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="mrp_production_form_view" model="ir.ui.view">
+        <field name="name">mrp.production.form</field>
+        <field name="model">mrp.production</field>
+        <field
+      name="inherit_id"
+      ref="mrp_production_serial_in_parallel.mrp_production_form_view"
+    />
+        <field name="arch" type="xml">
+            <xpath
+        expr="/form/header/button[@name='button_mark_done']"
+        position="attributes"
+      >
+                <attribute name="attrs">
+                    {'invisible': [
+                        '|',
+                            ('is_parallel_production', '=', True),
+                        '|',
+                            '&amp;',
+                                ('bom_type', '=', 'subcontract'),
+                            '|',
+                                ('state', 'not in', ['progress', 'consumed']),
+                                ('qty_producing', '=', 0),
+                            '&amp;',
+                                ('bom_type', '!=', 'subcontract'),
+                            '|',
+                                ('is_consumable', '=', True),
+                            '|',
+                                ('state', 'not in', ['progress', 'consumed']),
+                            '|',
+                                ('qty_producing', '=', 0),
+                                ('sent_to_whs', '=', False),
+                            ]}
+                </attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

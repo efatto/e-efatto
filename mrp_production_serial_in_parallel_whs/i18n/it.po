@@ -1,0 +1,92 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* mrp_production_serial_in_parallel
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-05 13:44+0000\n"
+"PO-Revision-Date: 2025-11-05 13:44+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: mrp_production_serial_in_parallel
+#: model_terms:ir.ui.view,arch_db:mrp_production_serial_in_parallel.mrp_production_form_view
+msgid "(Production for serial in parallel)"
+msgstr "(Produzione in parallelo per seriali)"
+
+#. module: mrp_production_serial_in_parallel
+#: model:ir.model.fields,field_description:mrp_production_serial_in_parallel.field_mrp_production__assigned_attachment_ids
+#: model:ir.model.fields,field_description:mrp_production_serial_in_parallel.field_mrp_production_serial_matrix__assigned_attachment_ids
+msgid "Assigned Attachments"
+msgstr "Allegati assegnati"
+
+#. module: mrp_production_serial_in_parallel
+#: model:ir.model.fields,field_description:mrp_production_serial_in_parallel.field_mrp_production__display_name
+#: model:ir.model.fields,field_description:mrp_production_serial_in_parallel.field_mrp_production_serial_matrix__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
+
+#. module: mrp_production_serial_in_parallel
+#: model:ir.model.fields,field_description:mrp_production_serial_in_parallel.field_mrp_production__id
+#: model:ir.model.fields,field_description:mrp_production_serial_in_parallel.field_mrp_production_serial_matrix__id
+msgid "ID"
+msgstr ""
+
+#. module: mrp_production_serial_in_parallel
+#: model:ir.model.fields,field_description:mrp_production_serial_in_parallel.field_mrp_production__is_parallel_production
+msgid "Is Parallel Production of Serial Products?"
+msgstr "È una produzione in parallelo per prodotti seriali?"
+
+#. module: mrp_production_serial_in_parallel
+#: model:ir.model.fields,field_description:mrp_production_serial_in_parallel.field_mrp_production____last_update
+#: model:ir.model.fields,field_description:mrp_production_serial_in_parallel.field_mrp_production_serial_matrix____last_update
+msgid "Last Modified on"
+msgstr "Ultima modifica il"
+
+#. module: mrp_production_serial_in_parallel
+#: code:addons/mrp_production_serial_in_parallel/wizards/mrp_production_serial_matrix.py:0
+#, python-format
+msgid "Manufacturing Orders"
+msgstr "Ordini di produzione"
+
+#. module: mrp_production_serial_in_parallel
+#: model:ir.model,name:mrp_production_serial_in_parallel.model_mrp_production_serial_matrix
+msgid "Mrp Production Serial Matrix"
+msgstr "Matrice seriali proiduzione MRP"
+
+#. module: mrp_production_serial_in_parallel
+#: model:ir.model.fields,field_description:mrp_production_serial_in_parallel.field_mrp_production__parallel_production_id
+msgid "Parallel Production"
+msgstr "Produzione in parallelo"
+
+#. module: mrp_production_serial_in_parallel
+#: model_terms:ir.ui.view,arch_db:mrp_production_serial_in_parallel.mrp_production_serial_matrix_view_form
+msgid "Prepare"
+msgstr "Prepara"
+
+#. module: mrp_production_serial_in_parallel
+#: model:ir.model,name:mrp_production_serial_in_parallel.model_mrp_production
+msgid "Production Order"
+msgstr "Ordine di produzione"
+
+#. module: mrp_production_serial_in_parallel
+#: code:addons/mrp_production_serial_in_parallel/wizards/mrp_production_serial_matrix.py:0
+#, python-format
+msgid "Some issues has been detected in your selection: %s"
+msgstr "Alcuni problemi sono stati rilevati nella tua selezione: %s"
+
+#. module: mrp_production_serial_in_parallel
+#: code:addons/mrp_production_serial_in_parallel/models/mrp_production.py:0
+#, python-format
+msgid ""
+"The number of reserved lots must be equal to the quantity of finished "
+"products."
+msgstr ""
+"Il numero di lotti riservati deve essere uguale alla quantità dei prodotti "
+"finiti."
