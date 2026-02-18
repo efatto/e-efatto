@@ -1,12 +1,24 @@
 import logging
 
-from odoo import models
+from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
 
 
 class StockBackorderConfirmation(models.TransientModel):
     _inherit = "stock.backorder.confirmation"
+
+    is_launching_option_when_done = fields.Boolean(
+        compute="_compute_launching_option", readonly=True, store=True
+    )
+
+    @api.depends("pick_ids.dbsource_id.launching_option")
+    def _compute_launching_option(self):
+        for wizard in self:
+            wizard.is_launching_option_when_done = bool(
+                wizard.pick_ids[:1].dbsource_id
+                and wizard.pick_ids[:1].dbsource_id.launching_option == "when_done"
+            )
 
     def process(self):
         res = super().process()

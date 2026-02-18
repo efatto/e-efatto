@@ -19,6 +19,9 @@ class Picking(models.Model):
         compute="_compute_dbsource_id",
         store=True,
     )
+    launching_option = fields.Selection(
+        related="dbsource_id.launching_option", readonly=True, store=True
+    )
 
     def action_pack_operation_auto_fill(self):
         super(Picking, self).action_pack_operation_auto_fill()
