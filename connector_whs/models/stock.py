@@ -35,7 +35,7 @@ class Picking(models.Model):
     def button_validate_immediate_wms(self):
         return self.with_context(immediate_wms=True).button_validate()
 
-    @api.depends("picking_type_id", "company_id")
+    @api.depends("picking_type_id", "company_id", "location_id", "location_dest_id")
     def _compute_dbsource_id(self):
         for pick in self:
             dbsource = self.env["base.external.dbsource"].search(
@@ -48,7 +48,18 @@ class Picking(models.Model):
                     ("company_id", "=", pick.company_id.id),
                 ]
             )
-            pick.dbsource_id = dbsource
+            if dbsource.location_id:
+                dbsource_location_ids = dbsource.location_id | (
+                    dbsource.location_id.location_id
+                    if dbsource.location_id.location_id.usage == "internal"
+                    else False
+                )
+                if (pick.location_id | pick.location_dest_id) & dbsource_location_ids:
+                    pick.dbsource_id = dbsource
+                else:
+                    pick.dbsource_id = False
+            else:
+                pick.dbsource_id = False
 
     def _action_done(self):
         # Set whs_list.qta equal to move quantity_done, to stop any possible error
