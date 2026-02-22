@@ -49,11 +49,9 @@ class Picking(models.Model):
                 ]
             )
             if dbsource.location_id:
-                dbsource_location_ids = dbsource.location_id | (
-                    dbsource.location_id.location_id
-                    if dbsource.location_id.location_id.usage == "internal"
-                    else False
-                )
+                dbsource_location_ids = dbsource.location_id
+                if dbsource.location_id.location_id.usage == "internal":
+                    dbsource_location_ids |= dbsource.location_id.location_id
                 if (pick.location_id | pick.location_dest_id) & dbsource_location_ids:
                     pick.dbsource_id = dbsource
                 else:
