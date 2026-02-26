@@ -1,10 +1,10 @@
 # Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo.tests.common import SavepointCase
+from odoo.addons.base.tests.common import BaseCommon
 
 
-class TestProductionData(SavepointCase):
+class TestProductionData(BaseCommon):
     @classmethod
     def setUpClass(cls):
         """
@@ -87,7 +87,7 @@ class TestProductionData(SavepointCase):
         cls.workcenter1 = cls.env["mrp.workcenter"].create(
             {
                 "name": "Base Workcenter",
-                "capacity": 1,
+                "default_capacity": 1,
                 "time_start": 10,
                 "time_stop": 5,
                 "time_efficiency": 80,
@@ -101,6 +101,7 @@ class TestProductionData(SavepointCase):
                 "time_mode": "manual",
                 "time_cycle_manual": 90,
                 "sequence": 1,
+                "bom_id": cls.main_bom.id,
             }
         )
         cls.mrp_user = cls.env.ref("base.user_demo")
