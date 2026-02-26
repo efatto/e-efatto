@@ -13,21 +13,28 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
     _description = "Wizard MRP BOM attachment export ZIP"
 
     def _get_product_ids(self):
-        product_ids = self.env["product.product"]
+        product_ids = []
+
+        def get_all_bom_children(bom_line):
+            product_ids.append(bom_line.product_id.id)
+            for child in bom_line.child_line_ids:
+                product_ids.append(child.product_id.id)
+                if child.child_line_ids:
+                    product_ids.extend(get_all_bom_children(child))
+            return product_ids
+
         if self.env.context["active_model"] == "mrp.production":
-            product_ids = (
-                self.env["mrp.production"]
-                .browse(self.env.context["active_ids"])
-                .mapped("move_raw_ids.product_id")
+            production_ids = self.env["mrp.production"].browse(
+                self.env.context["active_ids"]
             )
-            product_ids |= product_ids.mapped("bom_ids.bom_line_ids.product_id")
+            for production_id in production_ids:
+                for line in production_id.bom_id.bom_line_ids:
+                    product_ids.extend(get_all_bom_children(line))
         if self.env.context["active_model"] == "mrp.bom":
-            product_ids = (
-                self.env["mrp.bom"]
-                .browse(self.env.context["active_ids"])
-                .mapped("bom_line_ids.product_id")
-            )
-            product_ids |= product_ids.mapped("bom_ids.bom_line_ids.product_id")
+            bom_ids = self.env["mrp.bom"].browse(self.env.context["active_ids"])
+            for bom_id in bom_ids:
+                for line in bom_id.bom_line_ids:
+                    product_ids.extend(get_all_bom_children(line))
         return product_ids
 
     @api.model
@@ -63,7 +70,13 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
     def export_zip(self):
         self.ensure_one()
         product_ids = self._get_product_ids()
-        attachments = product_ids.mapped("product_tmpl_id.all_attachment_ids")
+        if not product_ids:
+            raise UserError(_("No product found!"))
+        attachments = (
+            self.env["product.product"]
+            .browse(product_ids)
+            .mapped("product_tmpl_id.all_attachment_ids")
+        )
         domain = []
         if self.or_attachment_ctg_ids:
             domain = expression.OR(
