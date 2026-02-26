@@ -1,4 +1,4 @@
-Questo modulo aggiunge un'azione per esportare gli allegati dei componenti (prodotto e relativo template) della bom dalla produzione o dalla bom:
+Questo modulo aggiunge un'azione per esportare gli allegati dei componenti (prodotto e relativo template ricorsivamente) della bom dalla produzione o dalla bom stessa:
 
 .. image:: ../static/description/azione.png
     :alt: Azione

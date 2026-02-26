@@ -36,7 +36,7 @@ This module add an action to mrp bom and mrp production to export a zip with all
 Configuration
 =============
 
-Questo modulo aggiunge un'azione per esportare gli allegati dei componenti (prodotto e relativo template) della bom dalla produzione o dalla bom:
+Questo modulo aggiunge un'azione per esportare gli allegati dei componenti (prodotto e relativo template ricorsivamente) della bom dalla produzione o dalla bom stessa:
 
 .. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_bom_attachment_export/static/description/azione.png
     :alt: Azione
