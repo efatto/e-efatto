@@ -20,12 +20,14 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
                 .browse(self.env.context["active_ids"])
                 .mapped("move_raw_ids.product_id")
             )
+            product_ids |= product_ids.mapped("bom_ids.bom_line_ids.product_id")
         if self.env.context["active_model"] == "mrp.bom":
             product_ids = (
                 self.env["mrp.bom"]
                 .browse(self.env.context["active_ids"])
                 .mapped("bom_line_ids.product_id")
             )
+            product_ids |= product_ids.mapped("bom_ids.bom_line_ids.product_id")
         return product_ids
 
     @api.model
