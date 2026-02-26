@@ -21,7 +21,7 @@ class ProductTemplate(models.Model):
                     ("res_id", "=", template.id),
                     "&",
                     ("res_model", "=", "product.product"),
-                    ("res_id", "=", template.product_variant_ids.ids),
+                    ("res_id", "in", template.product_variant_ids.ids),
                 ]
             )
             template.all_attachment_ids = all_attachment_ids
