@@ -22,17 +22,17 @@ MRP Workcenter Productivity Time
 
 |badge1| |badge2| |badge3|
 
-This module add a field to set worked time in hours in work order, and
-forbid the creation of worked productivity time before the work order is
-started.
+This module adds a field to set worked time in hours in work order, and
+forbids the creation of worked productivity time before the work order
+is started.
 
 **Table of contents**
 
 .. contents::
    :local:
 
-Configuration
-=============
+Usage
+=====
 
 Negli ordini di lavoro di default viene registrato il tempo dall'avvio
 alla fine tramite i bottoni di avvio/fine del lavoro.
@@ -78,6 +78,9 @@ Contributors
 
 - Sergio Corato
   <`https://github.com/sergiocorato\\> <https://github.com/sergiocorato\>>`__
+- `PyTech <https://www.pytech.it>`__:
+
+  - Simone Rubino <simone.rubino@pytech.it>
 
 Maintainers
 -----------
