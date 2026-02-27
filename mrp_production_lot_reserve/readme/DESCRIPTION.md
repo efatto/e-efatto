@@ -1,1 +1,1 @@
-This module add ability to reserve lots in production.
+This module allows to reserve lots in production.

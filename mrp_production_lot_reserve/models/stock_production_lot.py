@@ -2,7 +2,7 @@ from odoo import api, fields, models
 
 
 class StockProductionLot(models.Model):
-    _inherit = "stock.production.lot"
+    _inherit = "stock.lot"
 
     is_reserved_or_used = fields.Boolean(
         compute="_compute_is_reserved_or_used",

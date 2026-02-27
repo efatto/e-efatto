@@ -22,26 +22,21 @@ MRP Production Reserve Lots
 
 |badge1| |badge2| |badge3|
 
-This module add ability to reserve lots in production.
+This module allows to reserve lots in production.
 
 **Table of contents**
 
 .. contents::
    :local:
 
-Configuration
-=============
+Usage
+=====
 
 Questo modulo aggiunge un campo in cui indicare quali numeri di lotto
 seriali sono riservati per una produzione. Tali numeri di lotto non
 saranno utilizzabili in altre produzioni.
 
 |Lotti riservati|
-
-Inoltre questo modulo blocca la creazione di lotti univoci con lo stesso
-nome della sequenza standard dell'azienda anche se per prodotti diversi.
-Non ne blocca la creazione per nomi diversi (ricevuti quindi
-dall'esterno).
 
 .. |Lotti riservati| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_production_lot_reserve/static/description/lotti_riservati.png
 
@@ -68,6 +63,9 @@ Contributors
 
 - Sergio Corato
   <`https://github.com/sergiocorato\\> <https://github.com/sergiocorato\>>`__
+- `PyTech <https://www.pytech.it>`__:
+
+  - Simone Rubino <simone.rubino@pytech.it>
 
 Maintainers
 -----------

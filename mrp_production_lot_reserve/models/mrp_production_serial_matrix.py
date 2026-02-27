@@ -1,4 +1,4 @@
-from odoo import api, models
+from odoo import api, fields, models
 
 
 class MrpProductionSerialMatrix(models.TransientModel):
@@ -14,7 +14,7 @@ class MrpProductionSerialMatrix(models.TransientModel):
             res.update(
                 {
                     "finished_lot_ids": [
-                        (4, lot_id, 0) for lot_id in reserved_lot_ids.ids
+                        fields.Command.link(lot_id) for lot_id in reserved_lot_ids.ids
                     ],
                 }
             )
