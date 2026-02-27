@@ -1,1 +1,3 @@
 - Sergio Corato \<https://github.com/sergiocorato\>
+- [PyTech](https://www.pytech.it):
+  - Simone Rubino \<<simone.rubino@pytech.it>\>

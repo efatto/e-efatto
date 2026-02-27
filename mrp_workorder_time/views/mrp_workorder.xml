@@ -5,21 +5,19 @@
         <field name="inherit_id" ref="mrp.mrp_production_workorder_form_view_inherit" />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='time_ids']" position="attributes">
-                <attribute
-                    name="attrs"
-                >{'invisible': [('state', '=', 'ready')]}</attribute>
+                <attribute name="invisible">state == 'ready'</attribute>
             </xpath>
-            <xpath expr="//field[@name='time_ids']/tree" position="attributes">
+            <xpath expr="//field[@name='time_ids']/list" position="attributes">
                 <attribute name="editable">bottom</attribute>
             </xpath>
             <xpath
-                expr="//field[@name='time_ids']/tree/field[@name='workcenter_id']"
+                expr="//field[@name='time_ids']/list/field[@name='workcenter_id']"
                 position="attributes"
             >
-                <attribute name="invisible" eval="0" />
+                <attribute name="invisible">False</attribute>
             </xpath>
             <xpath
-                expr="//field[@name='time_ids']/tree/field[@name='date_start']"
+                expr="//field[@name='time_ids']/list/field[@name='date_start']"
                 position="after"
             >
                 <field name="unit_amount" />
