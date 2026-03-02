@@ -32,6 +32,8 @@ class MrpProduction(models.Model):
             )
 
     def _set_qty_producing(self):
+        # pylint: disable=missing-return
+        # Because `super` does not return anything, so neither should we
         if not self.is_parallel_production:
             super()._set_qty_producing()
 

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <record id="mrp_production_serial_matrix_view_form" model="ir.ui.view">
-        <field name="name">mrp.production.serial.matrix.form</field>
+    <record id="mrp_production_serial_matrix_view_final_form" model="ir.ui.view">
+        <field
+            name="name"
+        >Add parallel production actions to Serial Matrix final form view</field>
         <field name="model">mrp.production.serial.matrix</field>
         <field
             name="inherit_id"
-            ref="mrp_production_serial_matrix.mrp_production_serial_matrix_view_form"
+            ref="mrp_production_serial_matrix.mrp_production_serial_matrix_view_final_form"
         />
         <field name="arch" type="xml">
             <button name="button_validate" position="after">

@@ -1,6 +1,6 @@
 from dateutil.relativedelta import relativedelta
 
-from odoo import _, models
+from odoo import _, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import float_is_zero
 
@@ -10,9 +10,32 @@ class MrpProductionSerialMatrix(models.TransientModel):
 
     @staticmethod
     def _split_work_time(production, backorder_ids):
+        def match_workorder(original_wo, available_wos):
+            """
+            Find which workorder in `available_wos` corresponds to `original_wo`.
+
+            Corresponding workorders will have the same registered time.
+            """
+            return available_wos.filtered(
+                lambda available_wo, original_wo=original_wo: (
+                    available_wo.sequence == original_wo.sequence
+                    and available_wo.name == original_wo.name
+                    and available_wo.workcenter_id == original_wo.workcenter_id
+                )
+            )
+
+        # Remove default backorder times for involved workcenters
+        to_reset_workorders = production.workorder_ids.browse()
+        for time_id in production.workorder_ids.time_ids:
+            to_reset_workorders |= match_workorder(
+                time_id.workorder_id, backorder_ids.workorder_ids
+            )
+        if to_reset_workorders.time_ids:
+            to_reset_workorders.time_ids.unlink()
+
+        # Split times in workorders of backorders
         workorders_number = len(backorder_ids) + 1
         for time_id in production.workorder_ids.time_ids:
-            # split times in workorders of backorders
             workorder = time_id.workorder_id
             new_duration = time_id.duration / workorders_number
             new_unit_amount = (
@@ -20,11 +43,7 @@ class MrpProductionSerialMatrix(models.TransientModel):
             )
             date_start = False
             for backorder in backorder_ids:
-                back_workorder = backorder.workorder_ids.filtered(
-                    lambda w: w.sequence == workorder.sequence
-                    and w.name == workorder.name
-                    and w.workcenter_id == workorder.workcenter_id
-                )
+                back_workorder = match_workorder(workorder, backorder.workorder_ids)
                 if not date_start:
                     date_start = time_id.date_start + relativedelta(
                         minutes=new_duration
@@ -38,6 +57,8 @@ class MrpProductionSerialMatrix(models.TransientModel):
                     }
                 )
                 date_start = new_workorder_time.date_end
+
+        # Adjust time of original production that has become a backorder
         for workorder_time in production.workorder_ids.time_ids:
             workorder_time.write(
                 {
@@ -53,9 +74,10 @@ class MrpProductionSerialMatrix(models.TransientModel):
         if self.production_id.is_parallel_production:
             parallel_production = self.production_id.copy(
                 default={
-                    "name": "%s - serial in parallel" % self.production_id.name,
+                    "name": f"{self.production_id.name} - serial in parallel",
                     "reserved_lot_ids": [
-                        (4, lot.id) for lot in self.production_id.reserved_lot_ids
+                        fields.Command.link(lot.id)
+                        for lot in self.production_id.reserved_lot_ids
                     ],
                 }
             )
@@ -64,7 +86,7 @@ class MrpProductionSerialMatrix(models.TransientModel):
             self.production_id.write(
                 {
                     "parallel_production_id": parallel_production.id,
-                    "reserved_lot_ids": [(5,)],
+                    "reserved_lot_ids": [fields.Command.clear()],
                 }
             )
         return parallel_production
@@ -96,6 +118,7 @@ class MrpProductionSerialMatrix(models.TransientModel):
         self.ensure_one()
         self.production_id._check_reserved_lot_qty()
         parallel_production = self._set_parallel_production()
+        # Start copy/paste from super's button_validate
         if self.lot_selection_warning_count > 0:
             raise UserError(
                 _("Some issues has been detected in your selection: %s")
@@ -121,11 +144,11 @@ class MrpProductionSerialMatrix(models.TransientModel):
                     # after passing through the `_onchange_finished_lot_ids`
                     # method.
                     matrix_lines = self.line_ids.filtered(
-                        lambda l: (
-                            l.finished_lot_id == fp_lot
-                            or l.finished_lot_name == fp_lot.name
+                        lambda line: (
+                            line.finished_lot_id == fp_lot  # noqa: B023
+                            or line.finished_lot_name == fp_lot.name  # noqa: B023
                         )
-                        and l.component_id == move.product_id
+                        and line.component_id == move.product_id  # noqa: B023
                     )
                     if matrix_lines:
                         self._amend_reservations(move, matrix_lines)
@@ -133,9 +156,12 @@ class MrpProductionSerialMatrix(models.TransientModel):
 
             # Complete MO and create backorder if needed.
             mos += current_mo
+            # Stop copy/paste from super's button_validate
+            # because then `super` marks the production as done.
+
             backorders = False
             if current_mo.product_qty > 1:
-                backorders = current_mo._generate_backorder_productions(close_mo=False)
+                backorders = current_mo._split_productions()
                 current_mo.write({"product_qty": current_mo.qty_producing})
             if backorders:
                 current_mo = backorders[0]
@@ -143,16 +169,16 @@ class MrpProductionSerialMatrix(models.TransientModel):
             else:
                 break
 
+        # Return action copy/pasted from super's button_validate
         # TODO: not specified lots: auto create lots?
         if not mos:
             mos = self.production_id
         res = {
             "domain": [("id", "in", mos.ids)],
             "name": _("Manufacturing Orders"),
-            "binding_model_id": self.env["ir.model.data"].xmlid_to_res_id(
-                "mrp_production_serial_matrix.model_mrp_production_serial_matrix"
-            ),
-            "view_mode": "tree,form",
+            "src_model": "mrp.production.serial.matrix",
+            "view_type": "form",
+            "view_mode": "list,form",
             "view_id": False,
             "views": False,
             "res_model": "mrp.production",

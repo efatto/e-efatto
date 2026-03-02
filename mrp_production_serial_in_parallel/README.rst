@@ -29,8 +29,8 @@ This module add ability to produce serial lots from a master production.
 .. contents::
    :local:
 
-Configuration
-=============
+Usage
+=====
 
 Questo modulo introduce una logica di produzione in parallelo per
 prodotti con seriale univoco, che di default sono prodotti uno alla
