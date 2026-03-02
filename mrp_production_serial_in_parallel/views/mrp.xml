@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-
     <record id="mrp_production_form_view" model="ir.ui.view">
         <field name="name">mrp.production.form</field>
         <field name="model">mrp.production</field>
@@ -8,36 +7,36 @@
         <field name="arch" type="xml">
             <field name="name" position="after">
                 <div
-          class="font-weight-bold"
-          attrs="{'invisible': [('is_parallel_production', '=', False)]}"
-        >(Production for serial in parallel)</div>
+                    class="font-weight-bold"
+                    attrs="{'invisible': [('is_parallel_production', '=', False)]}"
+                >(Production for serial in parallel)</div>
             </field>
             <field name="product_id" position="after">
                 <field name="is_parallel_production" invisible="1" />
                 <field
-          name="parallel_production_id"
-          attrs="{'invisible': [('parallel_production_id', '=', False)]}"
-        />
+                    name="parallel_production_id"
+                    attrs="{'invisible': [('parallel_production_id', '=', False)]}"
+                />
             </field>
             <xpath expr="//field[@name='qty_producing']/.." position="attributes">
                 <attribute
-          name="attrs"
-        >{'invisible': ['|', ('is_parallel_production', '=', True), ('state', '=', 'draft')]}</attribute>
+                    name="attrs"
+                >{'invisible': ['|', ('is_parallel_production', '=', True), ('state', '=', 'draft')]}</attribute>
             </xpath>
             <xpath expr="//field[@name='lot_producing_id']/.." position="attributes">
                 <attribute
-          name="attrs"
-        >{'invisible': ['|', '|', ('product_tracking', 'in', ('none', False)), ('is_parallel_production', '=', True), ('state', '=', 'draft')]}</attribute>
+                    name="attrs"
+                >{'invisible': ['|', '|', ('product_tracking', 'in', ('none', False)), ('is_parallel_production', '=', True), ('state', '=', 'draft')]}</attribute>
             </xpath>
             <xpath expr="//label[@for='lot_producing_id']" position="attributes">
                 <attribute
-          name="attrs"
-        >{'invisible': ['|', '|', ('product_tracking', 'in', ('none', False)), ('is_parallel_production', '=', True), ('state', '=', 'draft')]}</attribute>
+                    name="attrs"
+                >{'invisible': ['|', '|', ('product_tracking', 'in', ('none', False)), ('is_parallel_production', '=', True), ('state', '=', 'draft')]}</attribute>
             </xpath>
             <xpath
-        expr="/form/header/button[@name='button_mark_done']"
-        position="attributes"
-      >
+                expr="/form/header/button[@name='button_mark_done']"
+                position="attributes"
+            >
                 <attribute name="attrs">
                     {'invisible': [
                         '&amp;',
@@ -56,17 +55,16 @@
         <field name="name">mrp.production.form.reserve</field>
         <field name="model">mrp.production</field>
         <field
-      name="inherit_id"
-      ref="mrp_production_lot_reserve.mrp_production_form_view"
-    />
+            name="inherit_id"
+            ref="mrp_production_lot_reserve.mrp_production_form_view"
+        />
         <field name="arch" type="xml">
             <field name="reserved_lot_ids" position="attributes">
                 <attribute
-          name="attrs"
-        >{'readonly': [('is_parallel_production', '!=', True), ('state', 'not in', ['draft', 'confirmed', 'progress'])],
+                    name="attrs"
+                >{'readonly': [('is_parallel_production', '!=', True), ('state', 'not in', ['draft', 'confirmed', 'progress'])],
           'invisible': [('product_tracking', 'in', ('none', False))]}</attribute>
             </field>
         </field>
     </record>
-
 </odoo>
