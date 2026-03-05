@@ -1,0 +1,6 @@
+# https://github.com/efatto/e-efatto/pull/93
+odoo-addon-mrp_production_lot_reserve @ git+https://github.com/efatto/e-efatto.git@refs/pull/93/head#subdirectory=mrp_production_lot_reserve
+# https://github.com/OCA/manufacture/pull/1742
+odoo-addon-mrp_production_serial_matrix @ git+https://github.com/OCA/manufacture.git@refs/pull/1742/head#subdirectory=mrp_production_serial_matrix
+# https://github.com/efatto/e-efatto/pull/92
+odoo-addon-mrp_workorder_time @ git+https://github.com/efatto/e-efatto.git@refs/pull/92/head#subdirectory=mrp_workorder_time
