@@ -76,11 +76,11 @@ Authors
 Contributors
 ------------
 
-- Sergio Corato
-  <`https://github.com/sergiocorato\\> <https://github.com/sergiocorato\>>`__
-- `PyTech <https://www.pytech.it>`__:
+-  Sergio Corato
+   <`https://github.com/sergiocorato\\> <https://github.com/sergiocorato\>>`__
+-  `PyTech <https://www.pytech.it>`__:
 
-  - Simone Rubino <simone.rubino@pytech.it>
+   -  Simone Rubino <simone.rubino@pytech.it>
 
 Maintainers
 -----------

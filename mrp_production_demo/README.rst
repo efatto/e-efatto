@@ -50,10 +50,10 @@ Authors
 Contributors
 ------------
 
-- Sergio Corato <sergiocorato@gmail.com>
-- `PyTech <https://www.pytech.it>`__:
+-  Sergio Corato <sergiocorato@gmail.com>
+-  `PyTech <https://www.pytech.it>`__:
 
-  - Simone Rubino <simone.rubino@pytech.it>
+   -  Simone Rubino <simone.rubino@pytech.it>
 
 Maintainers
 -----------

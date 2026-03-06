@@ -108,8 +108,8 @@ Authors
 Contributors
 ------------
 
-- Sergio Corato
-  <`https://github.com/sergiocorato\\> <https://github.com/sergiocorato\>>`__
+-  Sergio Corato
+   <`https://github.com/sergiocorato\\> <https://github.com/sergiocorato\>>`__
 
 Maintainers
 -----------
