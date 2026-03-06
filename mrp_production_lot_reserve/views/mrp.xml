@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="mrp_production_form_view" model="ir.ui.view">
+        <field name="name">mrp.production.form</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view" />
+        <field name="arch" type="xml">
+            <label for="lot_producing_id" position="before">
+                <field
+                    name="reserved_lot_ids"
+                    widget="many2many_tags"
+                    options="{'no_create_edit': True, 'no_quick_create': True}"
+                    domain="[
+                        ('product_id', '=', product_id),
+                        ('company_id', 'in', (company_id, False)),
+                        ('is_reserved_or_used', '=', False),
+                    ]"
+                    invisible="product_tracking in ('none', False)"
+                />
+            </label>
+            <field name="lot_producing_id" position="attributes">
+                <attribute name="domain">
+                   [('id', 'in', reserved_lot_ids)]
+                </attribute>
+            </field>
+            <button name="action_generate_serial" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </button>
+        </field>
+    </record>
+</odoo>

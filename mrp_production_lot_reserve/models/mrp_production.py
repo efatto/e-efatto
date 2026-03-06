@@ -1,0 +1,14 @@
+from odoo import fields, models
+
+
+class MrpProduction(models.Model):
+    _inherit = "mrp.production"
+
+    reserved_lot_ids = fields.Many2many(
+        comodel_name="stock.lot",
+        string="Reserved Lots",
+        relation="mrp_production_stock_production_lot_rel",
+        column1="mrp_production_id",
+        column2="stock_production_lot_id",
+        copy=False,
+    )
