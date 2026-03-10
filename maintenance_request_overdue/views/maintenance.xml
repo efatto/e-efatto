@@ -9,7 +9,10 @@
                 <filter
           string="Overdue Maintenance Requests"
           name="maintenance_requests_overdue"
-          domain="[('schedule_date', '&lt;', context_today().strftime('%Y-%m-%d'))]"
+          domain="[
+              ('schedule_date', '&lt;', context_today().strftime('%Y-%m-%d')),
+              ('stage_id.done', '=', False),
+          ]"
           help="Show all records which has scheduled date before today"
         />
             </filter>
