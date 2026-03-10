@@ -122,50 +122,32 @@ class MrpWorkorder(models.Model):
 
     def _move_workorder(self, time_moved):
         workorders_tobe_moved = self.env["mrp.workorder"].browse()
-        # workorders_moved = self.env["mrp.workorder"].browse()
-        for workorder in self:
-            # move the workorders for the moved time for the same workcenter
+        for workcenter in self.mapped("workcenter_id"):
+            # dates in mo are used to replan, so we simply "move" the workorders for
+            # the moved time, instead of doing a complete replanning
             workorders_tobe_moved |= self.env["mrp.workorder"].search(
                 [
-                    ("workcenter_id", "=", workorder.workcenter_id.id),
+                    ("workcenter_id", "=", workcenter.id),
                     ("state", "in", ["pending", "ready"]),
-                    ("date_planned_start", ">=", workorder.date_planned_start),
+                    ("date_planned_start", ">=", self.date_planned_start),
                     ("date_planned_finished", "!=", False),
-                    ("id", "!=", workorder.id),
+                    ("id", "!=", self.id),
                 ]
             )
-            # move the children's workorders for the moved time
             workorders_tobe_moved |= self.env["mrp.workorder"].search(
                 [
-                    ("previous_work_order_ids", "in", workorder.ids),
+                    ("previous_work_order_ids", "in", self.ids),
                     ("date_planned_start", "!=", False),
                 ]
             )
-            for workorder_tobe_moved in workorders_tobe_moved:
-                workorder_tobe_moved.with_context(skip_move=True).write(
-                    {
-                        "date_planned_start": workorder_tobe_moved.date_planned_start
-                        + time_moved,
-                        "date_planned_finished": workorder_tobe_moved.date_planned_finished
-                        + time_moved,
-                    }
-                )
-            # TODO then replan all the involved workcenters
-        #
-        # # add recursively previous_work_order_ids of the workorders
-        # seen_ids = set(workorders_tobe_moved.ids)
-        # to_process = workorders_tobe_moved
-        # while to_process:
-        #     prevs = to_process.mapped("previous_work_order_ids").filtered(
-        #         "date_planned_start"
-        #     )
-        #     new_prevs = prevs.filtered(lambda w: w.id not in seen_ids)
-        #     if not new_prevs:
-        #         break
-        #     workorders_tobe_moved |= new_prevs
-        #     seen_ids.update(new_prevs.ids)
-        #     to_process = new_prevs
-
+        for workorder in workorders_tobe_moved:
+            workorder.with_context(skip_move=True).write(
+                {
+                    "date_planned_start": workorder.date_planned_start + time_moved,
+                    "date_planned_finished": workorder.date_planned_finished
+                    + time_moved,
+                }
+            )
         # TODO do not replan, check if the method can be used
         # for production in workorders_tobe_moved.mapped("production_id"):
         #     production.with_context(skip_move=True)._plan_workorders(replan=True)
@@ -181,9 +163,6 @@ class MrpWorkorder(models.Model):
         # Enable changing the duration of a workorder. It will change the end date of
         # the production if it's the last workorder (default behavior).
         initial_date_planned_finished = self and self[0].date_planned_finished
-        production_to_replan = self.mapped("production_id").filtered(
-            lambda p: p.is_planned
-        )
         if "date_planned_start" in values or "date_planned_finished" in values:
             for workorder in self:
                 start_date = fields.Datetime.to_datetime(
@@ -222,8 +201,8 @@ class MrpWorkorder(models.Model):
             time_moved_finished = (
                 self[0].date_planned_finished - initial_date_planned_finished
             )
-            if time_moved_finished and production_to_replan:
-                production_to_replan._plan_workorders(replan=True)
+            if time_moved_finished:
+                self._move_workorder(time_moved_finished)
         return res
 
     def _get_duration_expected(self, alternative_workcenter=False, ratio=1):
