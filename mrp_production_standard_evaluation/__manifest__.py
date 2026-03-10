@@ -7,6 +7,7 @@
     "category": "Manufacturing",
     "author": "Sergio Corato",
     "website": "https://github.com/efatto/e-efatto",
+    "development_status": "Alpha",
     "depends": [
         "mrp",
         "mrp_account",

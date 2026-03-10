@@ -374,7 +374,7 @@ ul.auto-toc {
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !! source digest: sha256:c576b0a96e77d43902c664f34e0ab8ffaf005d23846e22a74f5a125f960e7bbf
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
-<p><a class="reference external image-reference" href="https://odoo-community.org/page/development-status"><img alt="Beta" src="https://img.shields.io/badge/maturity-Beta-yellow.png" /></a> <a class="reference external image-reference" href="http://www.gnu.org/licenses/agpl-3.0-standalone.html"><img alt="License: AGPL-3" src="https://img.shields.io/badge/license-AGPL--3-blue.png" /></a> <a class="reference external image-reference" href="https://github.com/efatto/e-efatto/tree/14.0/mrp_production_standard_evaluation"><img alt="efatto/e-efatto" src="https://img.shields.io/badge/github-efatto%2Fe--efatto-lightgray.png?logo=github" /></a></p>
+<p><a class="reference external image-reference" href="https://odoo-community.org/page/development-status"><img alt="Alpha" src="https://img.shields.io/badge/maturity-Alpha-red.png" /></a> <a class="reference external image-reference" href="http://www.gnu.org/licenses/agpl-3.0-standalone.html"><img alt="License: AGPL-3" src="https://img.shields.io/badge/license-AGPL--3-blue.png" /></a> <a class="reference external image-reference" href="https://github.com/efatto/e-efatto/tree/14.0/mrp_production_standard_evaluation"><img alt="efatto/e-efatto" src="https://img.shields.io/badge/github-efatto%2Fe--efatto-lightgray.png?logo=github" /></a></p>
 <p>Questo modulo aggiorna i costi dei prodotti consumati e finiti a seguito delle modifiche fatte dopo il completamento, in parte permesse a seguito dell’installazione del modulo <cite>mrp_production_consume_done</cite>.</p>
 <p>Quando una produzione viene sbloccata e vengono modificate possibilmente le quantità consumate dei componenti o le ore registrate negli ordini di lavoro, al successivo blocco vengono ricalcolati i costi.</p>
 <p>Questo modulo imposta che i costi vengono assegnati, se non configurata una modalità di valorizzazione nelle categorie dei prodotti, al costo standard dei prodotti quando assegnati alla produzione.</p>
@@ -382,6 +382,12 @@ ul.auto-toc {
 <p>Infine questo modulo aggiorna il costo della produzione padre se la produzione che si sta modificando produce un componente della stessa, se la produzione è stata generata dalla produzione padre (quindi non aggiorna una qualsiasi produzione che usi quel componente).</p>
 <p>N.B.: Modificando le quantità completate nella produzione, i costi vengono ricalcolati sulla base dei prezzi presenti nei movimenti di magazzino, già assegnati in precedenza.</p>
 <p>TODO aggiornare i costi dei componenti al momento dell’avvio della produzione? Oppure quando la produzione è completata? Non quando viene modificata a posteriori, eccetto per le righe modificate.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">This is an alpha version, the data model and design can change at any time without warning.
+Only for development or testing purpose, do not use in production.
+<a class="reference external" href="https://odoo-community.org/page/development-status">More details on development status</a></p>
+</div>
 <p><strong>Table of contents</strong></p>
 <div class="contents local topic" id="contents">
 <ul class="simple">

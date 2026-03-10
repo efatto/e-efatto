@@ -14,9 +14,9 @@ MRP Production standard evaluation
    !! source digest: sha256:c576b0a96e77d43902c664f34e0ab8ffaf005d23846e22a74f5a125f960e7bbf
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-.. |badge1| image:: https://img.shields.io/badge/maturity-Beta-yellow.png
+.. |badge1| image:: https://img.shields.io/badge/maturity-Alpha-red.png
     :target: https://odoo-community.org/page/development-status
-    :alt: Beta
+    :alt: Alpha
 .. |badge2| image:: https://img.shields.io/badge/license-AGPL--3-blue.png
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
@@ -39,6 +39,11 @@ Infine questo modulo aggiorna il costo della produzione padre se la produzione c
 N.B.: Modificando le quantità completate nella produzione, i costi vengono ricalcolati sulla base dei prezzi presenti nei movimenti di magazzino, già assegnati in precedenza.
 
 TODO aggiornare i costi dei componenti al momento dell'avvio della produzione? Oppure quando la produzione è completata? Non quando viene modificata a posteriori, eccetto per le righe modificate.
+
+.. IMPORTANT::
+   This is an alpha version, the data model and design can change at any time without warning.
+   Only for development or testing purpose, do not use in production.
+   `More details on development status <https://odoo-community.org/page/development-status>`_
 
 **Table of contents**
 
