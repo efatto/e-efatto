@@ -29,14 +29,15 @@ class HyddemoMssqlLogLine(models.Model):
     name = fields.Text()
     product_name = fields.Text()
     qty_wrong = fields.Float(
-        string="Odoo Q.ty (wrong)",
+        string="Odoo Q.ty",
         help="This quantity is assumed as wrong and overriden by WMS quantity if "
         "'Synchronize stock inventory' is set.",
     )
+    ongoing_qty = fields.Float(string="(of which ongoing)")
     qty = fields.Float(string="WMS Q.ty")
     weight = fields.Float(string="WMS Weight")
     weight_wrong = fields.Float(
-        string="Odoo Weight (wrong)",
+        string="Odoo Weight",
         help="This weight is assumed as wrong and overriden by WMS weight if "
         "'Synchronize stock inventory' is set.",
     )
