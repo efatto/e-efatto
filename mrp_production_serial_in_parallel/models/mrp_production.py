@@ -37,7 +37,7 @@ class MrpProduction(models.Model):
 
     def _check_reserved_lot_qty(self):
         for record in self:
-            if record.reserved_lot_ids and record.product_qty != len(
+            if record.reserved_lot_ids and record.qty_producing != len(
                 record.reserved_lot_ids
             ):
                 raise ValidationError(
