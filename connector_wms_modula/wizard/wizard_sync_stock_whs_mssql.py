@@ -128,11 +128,12 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     continue
                 # Remove from product_qty stock.move which whs lists
                 # are on stato 'ricevuto esito' but not done in Odoo
+                ongoing_qty = 0
                 open_whs_list_ids = self.env["hyddemo.whs.liste"].search(
                     [
                         ("product_id", "=", product.id),
                         ("stato", "=", "4"),
-                        ("move_id.state", "!=", "done"),
+                        ("move_id.state", "not in", ["done", "cancel"]),
                     ]
                 )
                 if open_whs_list_ids:
@@ -141,13 +142,14 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     # Ignore MRP moves.
                     # `tipo`: "1"=out "2"=in "3"=inventory
                     # `tipo_mov`: mrpin mrpout move (unused: noback ripin ripout)
-                    product_qty += sum(
+                    ongoing_qty = sum(
                         [
                             x.qtamov * (1 if x.tipo == "1" else -1)
                             for x in open_whs_list_ids
                             if "mrp" not in x.tipo_mov
                         ]
                     )
+                    product_qty += ongoing_qty
                 # Remove (positive quantities) or add (negative quantities) availability
                 # in the warehouse wh_qc_stock_loc_id (Quality control) location, which
                 # is not available until the quality control ends.
@@ -162,6 +164,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         {
                             "product_id": product.id,
                             "qty_wrong": product.qty_available,
+                            "ongoing_qty": ongoing_qty,
                             "qty": product_qty,
                             "type": "mismatch",
                         }
@@ -176,6 +179,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         {
                             "product_id": product.id,
                             "qty_wrong": product.qty_available,
+                            "ongoing_qty": ongoing_qty,
                             "qty": product_qty,
                             "type": "mismatch",
                         }
@@ -195,6 +199,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         {
                             "product_id": product.id,
                             "qty_wrong": product.qty_available,
+                            "ongoing_qty": ongoing_qty,
                             "qty": product_qty,
                             "type": "ok",
                         }
