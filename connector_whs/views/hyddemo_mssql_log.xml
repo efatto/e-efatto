@@ -29,6 +29,7 @@
                         <field name="type" />
                         <field name="qty_wrong" />
                         <field name="qty" />
+                        <field name="ongoing_qty" />
                         <field name="weight_wrong" />
                         <field name="weight" />
                     </tree>

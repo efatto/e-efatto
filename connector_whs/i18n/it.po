@@ -660,13 +660,13 @@ msgstr ""
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__qty_wrong
-msgid "Odoo Q.ty (wrong)"
-msgstr "Q.tà in Odoo (errata)"
+msgid "Odoo Q.ty"
+msgstr "Q.tà in Odoo"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__weight_wrong
-msgid "Odoo Weight (wrong)"
-msgstr "Peso in Odoo (errato)"
+msgid "Odoo Weight"
+msgstr "Peso in Odoo"
 
 #. module: connector_whs
 #: model:ir.model.fields.selection,name:connector_whs.selection__hyddemo_mssql_log_line__type__ok
