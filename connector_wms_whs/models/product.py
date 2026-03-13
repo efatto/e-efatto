@@ -4,13 +4,6 @@ from odoo.exceptions import UserError
 from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
 
 
-class ProductTemplate(models.Model):
-    _inherit = "product.template"
-
-    def show_whs_syncronization_records(self):
-        return self.product_variant_ids.show_whs_syncronization_records()
-
-
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
