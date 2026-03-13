@@ -20,7 +20,7 @@
             </label>
             <field name="lot_producing_id" position="attributes">
                 <attribute name="domain">
-                   [('id', 'in', reserved_lot_ids)]
+                   ['&amp;', '|', ('product_id', '=', product_id), ('id', 'in', reserved_lot_ids), ('is_reserved_or_used', '=', False)]
                 </attribute>
             </field>
             <button name="action_generate_serial" position="attributes">
