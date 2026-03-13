@@ -45,7 +45,7 @@
                         '|',
                         ('is_parallel_production', '=', True),
                         ('state', 'not in', ('confirmed', 'progress')),
-                        ('qty_producing', '!=', 1),
+                        ('qty_producing', '&gt;', 1),
                         ('state', '!=', 'to_close'),
                     ]}
                 </attribute>
