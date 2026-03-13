@@ -20,14 +20,12 @@ class MrpProduction(models.Model):
         "product_id.tracking",
         "product_qty",
         "parallel_production_id",
-        "mrp_production_source_count",
     )
     def _compute_is_parallel_production(self):
         for record in self:
             record.is_parallel_production = bool(
                 record.product_id.tracking == "serial"
                 and record.product_qty != 1
-                and not record.mrp_production_source_count
                 and not record.parallel_production_id
             )
 
@@ -37,7 +35,7 @@ class MrpProduction(models.Model):
 
     def _check_reserved_lot_qty(self):
         for record in self:
-            if record.reserved_lot_ids and record.qty_producing != len(
+            if record.reserved_lot_ids and record.product_qty != len(
                 record.reserved_lot_ids
             ):
                 raise ValidationError(
@@ -46,3 +44,10 @@ class MrpProduction(models.Model):
                         "finished products."
                     )
                 )
+
+    def _compute_show_serial_matrix(self):
+        for rec in self:
+            # show whenever qty to produce or producing is not 1
+            rec.show_serial_matrix = rec.product_id.tracking == "serial" and (
+                rec.product_qty != 1 or rec.qty_producing != 1
+            )
