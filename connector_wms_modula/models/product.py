@@ -1,6 +1,8 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
+from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
+
 
 class ProductTemplate(models.Model):
     _inherit = "product.template"
@@ -97,3 +99,53 @@ class ProductProduct(models.Model):
         raise UserError(
             _("Error importing product on WMS Modula: %s" % self.wms_modula_error)
         )
+
+    def show_whs_syncronization_records(self):
+        res = super().show_whs_syncronization_records()
+        dbsource = self.env["base.external.dbsource"].search(
+            [("company_id", "=", (self.company_id or self.env.user.company_id).id)],
+            limit=1,
+        )
+        connection = dbsource.connection_open_mssql()
+        if not connection:
+            raise UserError(_("Failed to open connection!"))
+        sql_result = dbsource.execute_mssql(
+            sqlquery=clean_sql_text(
+                """
+SELECT * FROM EXP_GIACENZE ha
+INNER JOIN (
+    SELECT hg.UBI_ARTICOLO
+    FROM (
+        SELECT *, ROW_NUMBER() OVER(PARTITION BY UBI_ARTICOLO ORDER BY UBI_DATAORAS1 DESC) Corr
+        FROM EXP_UBICAZIONI
+    ) hg
+    WHERE hg.Corr = 1
+) hglast
+ON ha.GIA_ARTICOLO = hglast.UBI_ARTICOLO
+INNER JOIN (
+    SELECT hap.UBI_ARTICOLO
+    FROM (
+        SELECT *, ROW_NUMBER() OVER(PARTITION BY UBI_ARTICOLO ORDER BY UBI_DATAORAS1 DESC) Corr1
+        FROM EXP_UBICAZIONI
+    ) hap
+    WHERE hap.Corr1 = 1
+) hglasta
+ON ha.GIA_ARTICOLO = hglasta.UBI_ARTICOLO
+WHERE ha.GIA_ARTICOLO=:Codice
+                """
+            ),
+            sqlparams={"Codice": self.default_code},
+            metadata=True,
+        )
+        if sql_result[0]:
+            cols = sql_result[1]
+            rows_with_headers = [dict(zip(cols, row)) for row in sql_result[0]]
+            contents = _("Product stock in WMS info: %s." % str(rows_with_headers))
+        else:
+            contents = _("Product stock in WMS info not found.")
+        res["params"].update(
+            {
+                "message": contents,
+            }
+        )
+        return res
