@@ -11,28 +11,16 @@
         <field name="arch" type="xml">
             <xpath
         expr="/form/header/button[@name='button_mark_done']"
+        position="before"
+      >
+                    <field name="hide_mark_done" invisible="1" />
+            </xpath>
+            <xpath
+        expr="/form/header/button[@name='button_mark_done']"
         position="attributes"
       >
                 <attribute name="attrs">
-                    {'invisible': [
-                        '|',
-                            ('is_parallel_production', '=', True),
-                        '|',
-                            '&amp;',
-                                ('bom_type', '=', 'subcontract'),
-                            '|',
-                                ('state', 'not in', ['progress', 'consumed']),
-                                ('qty_producing', '=', 0),
-                            '&amp;',
-                                ('bom_type', '!=', 'subcontract'),
-                            '|',
-                                ('is_consumable', '=', True),
-                            '|',
-                                ('state', 'not in', ['progress', 'consumed']),
-                            '|',
-                                ('qty_producing', '=', 0),
-                                ('sent_to_whs', '=', False),
-                            ]}
+                    {'invisible': [('hide_mark_done', '!=', False)]}
                 </attribute>
             </xpath>
         </field>
