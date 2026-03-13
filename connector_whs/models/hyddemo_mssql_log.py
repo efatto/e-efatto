@@ -29,7 +29,7 @@ class HyddemoMssqlLogLine(models.Model):
     name = fields.Text()
     product_name = fields.Text()
     qty_wrong = fields.Float(
-        string="Odoo Q.ty",
+        string="Odoo Q.ty in WMS location",
         help="This quantity is assumed as wrong and overriden by WMS quantity if "
         "'Synchronize stock inventory' is set.",
     )
