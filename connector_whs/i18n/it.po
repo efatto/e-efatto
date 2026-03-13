@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-23 16:44+0000\n"
-"PO-Revision-Date: 2026-01-23 16:44+0000\n"
+"POT-Creation-Date: 2026-03-13 10:39+0000\n"
+"PO-Revision-Date: 2026-03-13 10:39+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -33,6 +33,11 @@ msgstr ""
 " * Prelevato: OdP avviato, componenti prelevati e spostati nell'area di produzione.\n"
 " * Completato: OdP chiuso, i movimenti di magazzino vengono registrati. \n"
 " * Annullato: OdP annullato, non può più essere confermato."
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__ongoing_qty
+msgid "(of which ongoing)"
+msgstr "(di cui in corso di spostamento)"
 
 #. module: connector_whs
 #: model:ir.model.fields,help:connector_whs.field_hyddemo_whs_liste__move_state
@@ -190,8 +195,19 @@ msgstr "Connettore WHS - rimuove le vecchie liste da Odoo e WHS"
 #: model:ir.actions.server,name:connector_whs.ir_cron_connector_whs_insert_list_ir_actions_server
 #: model:ir.cron,cron_name:connector_whs.ir_cron_connector_whs_insert_list
 #: model:ir.cron,name:connector_whs.ir_cron_connector_whs_insert_list
-msgid "Connector WMS - synchronize"
-msgstr "Connettore WMS - Sincronizza"
+msgid "Connector WHS - synchronize"
+msgstr "Connettore WHS - Sincronizza"
+
+#. module: connector_whs
+#: model:ir.actions.server,name:connector_whs.ir_cron_connector_whs_sync_stock_ir_actions_server
+#: model:ir.cron,cron_name:connector_whs.ir_cron_connector_whs_sync_stock
+#: model:ir.cron,name:connector_whs.ir_cron_connector_whs_sync_stock
+msgid ""
+"Connector WHS - synchronize stock (pass True to do inventory sync, else it "
+"will create only whs log)"
+msgstr ""
+"Connettore WHS - sincronizza il magazzino (passare la variabile True per "
+"sincronizzare il magazzino, altrimenti verrà solo creato il log WHS)"
 
 #. module: connector_whs
 #: model:ir.actions.server,name:connector_whs.ir_cron_connector_whs_sync_product_info_ir_actions_server
@@ -199,17 +215,6 @@ msgstr "Connettore WMS - Sincronizza"
 #: model:ir.cron,name:connector_whs.ir_cron_connector_whs_sync_product_info
 msgid "Connector WMS - synchronize all product info"
 msgstr "Connettore WMS - Sincronizza tutti i prodotti"
-
-#. module: connector_whs
-#: model:ir.actions.server,name:connector_whs.ir_cron_connector_whs_sync_stock_ir_actions_server
-#: model:ir.cron,cron_name:connector_whs.ir_cron_connector_whs_sync_stock
-#: model:ir.cron,name:connector_whs.ir_cron_connector_whs_sync_stock
-msgid ""
-"Connector WMS - synchronize stock (pass True to do inventory sync, else it "
-"will create only wms log)"
-msgstr ""
-"Connettore WMS - sincronizza il magazzino (passare la variabile True per "
-"sincronizzare il magazzino, altrimenti verrà solo creato il log WMS)"
 
 #. module: connector_whs
 #: model_terms:ir.ui.view,arch_db:connector_whs.mrp_production_form_view
@@ -323,7 +328,7 @@ msgstr "Sorgente Database Esterna"
 #. module: connector_whs
 #: model:ir.model,name:connector_whs.model_base_external_dbsource
 msgid "External Database Sources"
-msgstr "Origini database esterne"
+msgstr "Sorgenti Database Esterne"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__failed_message_ids
@@ -446,6 +451,11 @@ msgid "Is Follower"
 msgstr "Segue"
 
 #. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_stock_backorder_confirmation__is_launching_option_when_done
+msgid "Is Launching Option When Done"
+msgstr "L'opzione di avvio è 'Quando completato'"
+
+#. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__ultimo_id
 msgid "Last ID in WMS"
 msgstr "Ultimo ID in WMS"
@@ -490,6 +500,7 @@ msgstr "Ultima modifica il"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_base_external_dbsource__launching_option
+#: model:ir.model.fields,field_description:connector_whs.field_stock_picking__launching_option
 msgid "Launching Option"
 msgstr "Opzione di avvio"
 
@@ -660,8 +671,8 @@ msgstr ""
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__qty_wrong
-msgid "Odoo Q.ty"
-msgstr "Q.tà in Odoo"
+msgid "Odoo Q.ty in WMS location"
+msgstr "Q.tà in Odoo nell'ubicazione WMS"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__weight_wrong
@@ -675,6 +686,7 @@ msgstr ""
 
 #. module: connector_whs
 #: model:ir.model.fields,help:connector_whs.field_base_external_dbsource__launching_option
+#: model:ir.model.fields,help:connector_whs.field_stock_picking__launching_option
 msgid ""
 "Option to decide when activating the WMS lists creation:\n"
 "- When Confirmed: the creation is active when the stock moves are set to-do.\n"
@@ -730,8 +742,8 @@ msgstr "Nome Prodotto"
 
 #. module: connector_whs
 #: model:ir.model,name:connector_whs.model_product_template
-msgid "Product Template"
-msgstr "Modello prodotto"
+msgid "Product Template (Multi-Company)"
+msgstr "Modello prodotto (Multi-Company)"
 
 #. module: connector_whs
 #: model:ir.model.fields,field_description:connector_whs.field_wizard_sync_stock_whs_mssql__product_id
@@ -818,6 +830,23 @@ msgid ""
 msgstr ""
 "Imposta una data personalizzata per aggiornare i prodotti. Questa data verrà"
 " cancellata dopo il processo di aggiornamento."
+
+#. module: connector_whs
+#: model:ir.model.fields,field_description:connector_whs.field_base_external_dbsource__smart_search
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log__smart_search
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_mssql_log_line__smart_search
+#: model:ir.model.fields,field_description:connector_whs.field_hyddemo_whs_liste__smart_search
+#: model:ir.model.fields,field_description:connector_whs.field_mrp_production__smart_search
+#: model:ir.model.fields,field_description:connector_whs.field_product_product__smart_search
+#: model:ir.model.fields,field_description:connector_whs.field_product_template__smart_search
+#: model:ir.model.fields,field_description:connector_whs.field_purchase_order__smart_search
+#: model:ir.model.fields,field_description:connector_whs.field_sale_order__smart_search
+#: model:ir.model.fields,field_description:connector_whs.field_stock_backorder_confirmation__smart_search
+#: model:ir.model.fields,field_description:connector_whs.field_stock_move__smart_search
+#: model:ir.model.fields,field_description:connector_whs.field_stock_picking__smart_search
+#: model:ir.model.fields,field_description:connector_whs.field_wizard_sync_stock_whs_mssql__smart_search
+msgid "Smart Search"
+msgstr "Ricerca intelligente"
 
 #. module: connector_whs
 #: code:addons/connector_whs/models/mrp.py:0
