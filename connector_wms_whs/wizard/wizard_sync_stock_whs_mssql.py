@@ -192,12 +192,15 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     location=warehouse.wh_qc_stock_loc_id.id
                 ).qty_available
                 product_qty -= wh_qc_qty
+                qty_wrong = product.with_context(
+                    location=dbsource.location_id.id
+                ).qty_available
                 if product_qty < 0:
                     # do not consider negative quantities in WHS
                     whs_log_line.update(
                         {
                             "product_id": product.id,
-                            "qty_wrong": product.qty_available,
+                            "qty_wrong": qty_wrong,
                             "ongoing_qty": ongoing_qty,
                             "qty": product_qty,
                             "type": "mismatch",
@@ -213,13 +216,13 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     continue
                 if float_compare(
                     product_qty,
-                    product.qty_available,
+                    qty_wrong,
                     precision_rounding=product.uom_id.rounding,
                 ):
                     whs_log_line.update(
                         {
                             "product_id": product.id,
-                            "qty_wrong": product.qty_available,
+                            "qty_wrong": qty_wrong,
                             "ongoing_qty": ongoing_qty,
                             "qty": product_qty,
                             "type": "mismatch",
@@ -246,7 +249,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     whs_log_line.update(
                         {
                             "product_id": product.id,
-                            "qty_wrong": product.qty_available,
+                            "qty_wrong": qty_wrong,
                             "ongoing_qty": ongoing_qty,
                             "qty": product_qty,
                             "type": "ok",
@@ -273,7 +276,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                             whs_log_line.update(
                                 {
                                     "product_id": product.id,
-                                    "qty_wrong": product.qty_available,
+                                    "qty_wrong": qty_wrong,
                                     "weight": product_weight,
                                     "weight_wrong": product.weight,
                                     "type": "mismatch",
@@ -287,7 +290,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         whs_log_line.update(
                             {
                                 "product_id": product.id,
-                                "qty_wrong": product.qty_available,
+                                "qty_wrong": qty_wrong,
                                 "weight": product_weight,
                                 "weight_wrong": product.weight,
                                 "type": "mismatch",
