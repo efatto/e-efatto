@@ -129,3 +129,10 @@ class TestMaintenancePlan(test_common.TransactionCase):
                 generated_request.maintenance_kind_id.name,
             ),
         )
+        # test don't generate other requests
+        self.cron.method_direct_trigger()
+        generated_requests = self.maintenance_request_obj.search(
+            [("maintenance_plan_id", "=", self.maintenance_plan_1.id)],
+            order="schedule_date asc",
+        )
+        self.assertEqual(len(generated_requests), 2)
