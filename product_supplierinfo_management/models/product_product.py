@@ -111,7 +111,13 @@ class ProductProduct(models.Model):
                     # -> fare una segnalazione per fattura diversa da
                     #  fornitore abituale, ma usare il prezzo del fornitore abituale
                     products_seller_mismatch |= product
-                if product.last_purchase_date > seller.write_date:
+                if (
+                    not product.last_supplier_invoice_price
+                    or (
+                        product.last_supplier_invoice_date
+                        < product.last_purchase_date.date()
+                    )
+                ) and product.last_purchase_date > seller.write_date:
                     purchase_price_unit = (
                         product.last_purchase_price
                         * (1 - product.last_purchase_discount / 100.0)
