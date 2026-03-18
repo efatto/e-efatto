@@ -1,6 +1,7 @@
 import time
 
 from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class ProductSupplierinfoCheck(models.Model):
@@ -154,6 +155,16 @@ class ProductSupplierinfoCheck(models.Model):
 
     def update_products_cost(self):
         for supplierinfo_check in self:
+            if (
+                supplierinfo_check.listprice_id
+                and not supplierinfo_check.listprice_id.active
+            ):
+                raise ValidationError(
+                    _(
+                        "The pricelist selected is not active. "
+                        "Please select an active pricelist."
+                    )
+                )
             domain = [("purchase_ok", "=", True)]
             if supplierinfo_check.product_ctg_ids:
                 domain.append(
