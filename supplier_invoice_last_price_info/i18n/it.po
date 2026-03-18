@@ -42,8 +42,8 @@ msgstr "Sconto Fattura (%)"
 #. module: supplier_invoice_last_price_info
 #: model:ir.model.fields,field_description:supplier_invoice_last_price_info.field_product_product__last_supplier_invoice_price
 #: model:ir.model.fields,field_description:supplier_invoice_last_price_info.field_product_template__last_supplier_invoice_price
-msgid "Invoice Unit Price"
-msgstr "Prezzo Unitario Fattura"
+msgid "Last Invoice Price"
+msgstr "Ultimo Prezzo Fattura"
 
 #. module: supplier_invoice_last_price_info
 #: model:ir.model.fields,field_description:supplier_invoice_last_price_info.field_product_product__last_supplier_invoice_id

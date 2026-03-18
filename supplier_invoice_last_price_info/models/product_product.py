@@ -46,7 +46,7 @@ class ProductProduct(models.Model):
     )
     last_supplier_invoice_price = fields.Float(
         compute="_compute_last_supplier_invoice_line_id_info",
-        string="Invoice Unit Price",
+        string="Last Invoice Price",
     )
     last_supplier_invoice_discount = fields.Float(
         compute="_compute_last_supplier_invoice_line_id_info",
