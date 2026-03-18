@@ -160,7 +160,7 @@ class ProductProduct(models.Model):
                     # -> fare una segnalazione per fattura diversa da
                     #  fornitore abituale, ma usare il prezzo del fornitore abituale
                     products_seller_mismatch |= product
-                if product.last_supplier_invoice_date > fields.Date.from_string(
+                if product.last_supplier_invoice_date >= fields.Date.from_string(
                     seller.write_date
                 ):
                     invoice_price_unit = (

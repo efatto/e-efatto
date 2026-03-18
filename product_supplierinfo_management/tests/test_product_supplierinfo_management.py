@@ -299,7 +299,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         purchase_order_form.partner_id = self.vendor
         with purchase_order_form.order_line.new() as purchase_order_line_form:
             purchase_order_line_form.product_id = self.product
-            purchase_order_line_form.product_qty = 5.0
+            purchase_order_line_form.product_qty = 5
             purchase_order_line_form.price_unit = 77.55
             purchase_order_line_form.name = self.product.name
             purchase_order_line_form.date_planned = date.today()
@@ -309,6 +309,46 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         self.assertAlmostEqual(
             self.product.managed_replenishment_cost,
             77.55
+            * (
+                1.1
+                if not check.date_validity_supplierinfo
+                or (today + relativedelta(days=-59)) <= check.date_validity_supplierinfo
+                else 1.15
+                if (today + relativedelta(days=-60))
+                >= check.date_validity_supplierinfo
+                >= (today + relativedelta(days=-90))
+                else 1.2
+                if check.date_validity_supplierinfo <= (today + relativedelta(days=-91))
+                else 1
+            ),
+            places=2,
+        )
+        # create the invoice and change the product price to check if it is used
+        purchase_order.order_line.qty_received = 5
+        vendor_invoice_id = purchase_order.action_create_invoice()["res_id"]
+        vendor_invoice = self.env["account.move"].browse(vendor_invoice_id)
+        self.assertEqual(
+            vendor_invoice.invoice_line_ids.product_id,
+            self.product,
+        )
+        self.assertEqual(
+            vendor_invoice.invoice_line_ids.price_unit,
+            purchase_order.order_line.price_unit,
+        )
+        vendor_invoice_form = Form(vendor_invoice)
+        with vendor_invoice_form.invoice_line_ids.edit(0) as invoice_line_form:
+            invoice_line_form.price_unit = 100
+        vendor_invoice_form.invoice_date = date.today()
+        vendor_invoice = vendor_invoice_form.save()
+        vendor_invoice.action_post()
+        self.assertEqual(
+            vendor_invoice.invoice_line_ids.price_unit,
+            100,
+        )
+        check.update_products_replenishment_cost()
+        self.assertAlmostEqual(
+            self.product.managed_replenishment_cost,
+            100
             * (
                 1.1
                 if not check.date_validity_supplierinfo
