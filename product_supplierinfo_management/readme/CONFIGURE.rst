@@ -32,7 +32,7 @@ La seconda esegue l'aggiornamento del costo di sostituzione:
 
 N.B.: Non è possibile ripristinare questa operazione, per cui il campo costo di sostituzione da ora in poi sarà questo.
 
-N.B.: Nel caso sia installato il modulo https://github.com/sergiocorato/e-efatto/tree/12.0/product_pricelist_replenishment_cost è possibile impostare i listini di vendita sulla base del costo di sostituzione, su cui sarà calcolato il margine di vendita, senza andare a toccare il costo del prodotto.
+N.B.: Nel caso sia installato il modulo https://github.com/sergiocorato/e-efatto/tree/14.0/product_pricelist_replenishment_cost è possibile impostare i listini di vendita sulla base del costo di sostituzione, su cui sarà calcolato il margine di vendita, senza andare a toccare il costo del prodotto.
 
 Dettaglio del funzionamento
 ===========================
