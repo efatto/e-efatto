@@ -19,6 +19,12 @@
         <field name="arch" type="xml">
             <field name="base" position="before">
                 <field name="enable_supplierinfo_management" invisible="True" />
+                <span
+          class="oe_grey"
+          attrs="{'invisible': [('enable_supplierinfo_management', '=', False)]}"
+        >
+                    The base price in this pricelist is not visible as it is used the cost price found in purchase, invoice, seller or product by default. So you only have to set the formula or discount (or fixed price by product) to apply to these automatically selected costs.
+                </span>
             </field>
             <field name="base" position="attributes">
                 <attribute
