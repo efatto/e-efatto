@@ -120,49 +120,13 @@ class MrpWorkorder(models.Model):
                 )
         return res
 
-    def _move_workorder(self, time_moved):
-        workorders_tobe_moved = self.env["mrp.workorder"].browse()
-        for workcenter in self.mapped("workcenter_id"):
-            # dates in mo are used to replan, so we simply "move" the workorders for
-            # the moved time, instead of doing a complete replanning
-            workorders_tobe_moved |= self.env["mrp.workorder"].search(
-                [
-                    ("workcenter_id", "=", workcenter.id),
-                    ("state", "in", ["pending", "ready"]),
-                    ("date_planned_start", ">=", self.date_planned_start),
-                    ("date_planned_finished", "!=", False),
-                    ("id", "!=", self.id),
-                ]
-            )
-            workorders_tobe_moved |= self.env["mrp.workorder"].search(
-                [
-                    ("previous_work_order_ids", "in", self.ids),
-                    ("date_planned_start", "!=", False),
-                ]
-            )
-        for workorder in workorders_tobe_moved:
-            workorder.with_context(skip_move=True).write(
-                {
-                    "date_planned_start": workorder.date_planned_start + time_moved,
-                    "date_planned_finished": workorder.date_planned_finished
-                    + time_moved,
-                }
-            )
-        # TODO do not replan, check if the method can be used
-        # for production in workorders_tobe_moved.mapped("production_id"):
-        #     production.with_context(skip_move=True)._plan_workorders(replan=True)
-        #     # We replan children workorders too, as we call this action at
-        #     # mrp.production level (btw, even calling from mrp.workorder to
-        #     # the same, but we call directly from the production to minimize
-        #     # method calls
-        # todo check if workorders in other workcenters which were planned
-        #  after these ones are replanned correctly, to avoid holes in
-        #  workcenter planners
-
     def write(self, values):
         # Enable changing the duration of a workorder. It will change the end date of
         # the production if it's the last workorder (default behavior).
         initial_date_planned_finished = self and self[0].date_planned_finished
+        production_to_replan = self.mapped("production_id").filtered(
+            lambda p: p.is_planned
+        )
         if "date_planned_start" in values or "date_planned_finished" in values:
             for workorder in self:
                 start_date = fields.Datetime.to_datetime(
@@ -195,14 +159,17 @@ class MrpWorkorder(models.Model):
         if (
             initial_date_planned_finished
             and not self.env.context.get("skip_move")
+            and not self.env.context.get("force_date")
+            and "leave_id" not in values
             and self
             and self[0].date_planned_finished
         ):
             time_moved_finished = (
                 self[0].date_planned_finished - initial_date_planned_finished
             )
-            if time_moved_finished:
-                self._move_workorder(time_moved_finished)
+            if time_moved_finished and production_to_replan:
+                # this method replans only pending and ready workorders
+                production_to_replan._plan_workorders(replan=True)
         return res
 
     def _get_duration_expected(self, alternative_workcenter=False, ratio=1):
