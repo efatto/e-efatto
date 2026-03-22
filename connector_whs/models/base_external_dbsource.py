@@ -59,14 +59,14 @@ class BaseExternalDbsource(models.Model):
             if server_running_state not in ["prod", "migr"]:
                 conn_string = record.conn_string_sandbox
             if record.password:
-                if "%s" not in conn_string:
+                if "{password}" not in conn_string:
                     pwd_string = getattr(
                         record,
-                        "PWD_STRING_%s" % record.connector.upper(),
+                        f"PWD_STRING_{record.connector.upper()}",
                         record.PWD_STRING,
                     )
                     conn_string += pwd_string
-                record.conn_string_full = conn_string % record.password
+                record.conn_string_full = conn_string.format(password=record.password)
             else:
                 record.conn_string_full = conn_string
 
@@ -143,7 +143,7 @@ class BaseExternalDbsource(models.Model):
                     {
                         "ultimo_invio": new_last_update,
                         "ultimo_id": new_id,
-                        "errori": "Added/Updated %s products" % len(products),
+                        "errori": f"Added/Updated {len(products)} products",
                         "dbsource_id": dbsource.id,
                         "hyddemo_mssql_log_line_ids": [
                             (
@@ -367,7 +367,7 @@ class BaseExternalDbsource(models.Model):
                                     ml.qty_done = qty_to_move
                                     qty_moved -= qty_to_move
                             else:
-                                move.quantity_done = qty_moved
+                                move.quantity = qty_moved
                         except UserError as error:
                             _logger.info(
                                 f"WMS LOG: move id {move.id} is not writeable for "
@@ -545,8 +545,9 @@ class BaseExternalDbsource(models.Model):
         #     whs_liste_query = (
         #         "SELECT NumLista, NumRiga, Qta, QtaMovimentata, Elaborato "
         #         "FROM HOST_LISTE "
-        #         "WHERE NumLista = '%s' AND NumRiga = '%s' "
-        #         "AND Elaborato = 5" % (whs_list.num_lista, whs_list.riga)
+        #         f"WHERE NumLista = '{whs_list.num_lista}' AND NumRiga =
+        #         '{whs_list.riga}' "
+        #         "AND Elaborato = 5"
         #     )
         #     esiti_liste = dbsource.execute_mssql(
         #         sqlquery=clean_sql_text(whs_liste_query),
@@ -562,7 +563,7 @@ class BaseExternalDbsource(models.Model):
         #         whs_list.whs_not_passed = False
         #     i += 1
         #     if i * 100.0 / imax > step:
-        #         _logger.info("WHS LOG: Execution {}% ".format(int(i * 100.0 / imax)))
+        #         _logger.info(f"WHS LOG: Execution {int(i * 100.0 / imax)}% ")
         #         step += 1
 
     @api.model
@@ -746,11 +747,9 @@ class BaseExternalDbsource(models.Model):
         for dbsource in self:
             for i in range(0, len(hyddemo_whs_lists), 1000):
                 whs_lists = hyddemo_whs_lists[i : i + 1000]
-                delete_query = "DELETE FROM HOST_LISTE WHERE (%s)" % (
-                    " OR ".join(
-                        f"(NumLista='{y.num_lista}' AND NumRiga='{y.riga}')"
-                        for y in whs_lists
-                    )
+                delete_query = "DELETE FROM HOST_LISTE WHERE " + " OR ".join(
+                    f"(NumLista='{y.num_lista}' AND NumRiga='{y.riga}')"
+                    for y in whs_lists
                 )
                 _logger.info(
                     f"WHS LOG: delete old record from HOST_LISTE "

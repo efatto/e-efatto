@@ -1,7 +1,3 @@
-.. image:: https://odoo-community.org/readme-banner-image
-   :target: https://odoo-community.org/get-involved?utm_source=readme
-   :alt: Odoo Community Association
-
 ===================
 Connector WHS MSSQL
 ===================
@@ -17,18 +13,16 @@ Connector WHS MSSQL
 .. |badge1| image:: https://img.shields.io/badge/maturity-Beta-yellow.png
     :target: https://odoo-community.org/page/development-status
     :alt: Beta
-.. |badge2| image:: https://img.shields.io/badge/license-AGPL--3-blue.png
+.. |badge2| image:: https://img.shields.io/badge/licence-AGPL--3-blue.png
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-efatto%2Fe--efatto-lightgray.png?logo=github
-    :target: https://github.com/efatto/e-efatto/tree/16.0/connector_whs
+    :target: https://github.com/efatto/e-efatto/tree/18.0/connector_whs
     :alt: efatto/e-efatto
 
 |badge1| |badge2| |badge3|
 
 This module add a bi-directional connection from Odoo to WMS software.
-
-
 
 **Table of contents**
 
@@ -38,32 +32,41 @@ This module add a bi-directional connection from Odoo to WMS software.
 Configuration
 =============
 
-La connessione con il database del software del magazzino viene configurata nelle sorgenti database:
+La connessione con il database del software del magazzino viene
+configurata nelle sorgenti database:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/16.0/connector_whs/static/description/sorgenti_database.png
-    :alt: Sorgenti database
+|Sorgenti database|
 
-In questa maschera vanno indicati i dati per la connessione con la stringa e l'eventuale stringa per la connessione al database di test, il magazzino collegato e altri:
+In questa maschera vanno indicati i dati per la connessione con la
+stringa e l'eventuale stringa per la connessione al database di test, il
+magazzino collegato e altri:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/16.0/connector_whs/static/description/configurazione_sorgente_dati.png
-    :alt: Configurazione sorgente dati
+|Configurazione sorgente dati|
 
-Dalla sorgente dati sono disponibile alcune azioni. La seguente va a caricare nella tabella di scambio i prodotti modificati dall'ultima esecuzione, che verranno prelevati e aggiornati nel software collegato:
+Dalla sorgente dati sono disponibile alcune azioni. La seguente va a
+caricare nella tabella di scambio i prodotti modificati dall'ultima
+esecuzione, che verranno prelevati e aggiornati nel software collegato:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/16.0/connector_whs/static/description/aggiorna_prodotti.png
-    :alt: Aggiorna prodotti
+|Aggiorna prodotti|
 
 Questa azione forza l'aggiornamento delle liste:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/16.0/connector_whs/static/description/sincronizza_liste.png
-    :alt: Sincronizza liste
+|Sincronizza liste|
 
 Quest'ultima l'inventario dei prodotti:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/16.0/connector_whs/static/description/sincronizza_magazzino.png
-    :alt: Sincronizza magazzino
+|Sincronizza magazzino|
 
-Nella sorgente dati è necessario configurare quali tipi di movimento sono gestiti tramite il WMS. In caso di configurazione tramite 2 step, vanno solitamente esclusi i trasferimenti dalle posizioni di Output e Input, per evitare un doppio scarico/carico dal WMS.
+Nella sorgente dati è necessario configurare quali tipi di movimento
+sono gestiti tramite il WMS. In caso di configurazione tramite 2 step,
+vanno solitamente esclusi i trasferimenti dalle posizioni di Output e
+Input, per evitare un doppio scarico/carico dal WMS.
+
+.. |Sorgenti database| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/connector_whs/static/description/sorgenti_database.png
+.. |Configurazione sorgente dati| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/connector_whs/static/description/configurazione_sorgente_dati.png
+.. |Aggiorna prodotti| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/connector_whs/static/description/aggiorna_prodotti.png
+.. |Sincronizza liste| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/connector_whs/static/description/sincronizza_liste.png
+.. |Sincronizza magazzino| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/connector_whs/static/description/sincronizza_magazzino.png
 
 Bug Tracker
 ===========
@@ -71,7 +74,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/efatto/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20connector_whs%0Aversion:%2016.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20connector_whs%0Aversion:%2018.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -79,18 +82,18 @@ Credits
 =======
 
 Authors
-~~~~~~~
+-------
 
 * Sergio Corato
 
 Contributors
-~~~~~~~~~~~~
+------------
 
-* Sergio Corato <https://github.com/sergiocorato>
+-  Sergio Corato <https://github.com/sergiocorato>
 
 Maintainers
-~~~~~~~~~~~
+-----------
 
-This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/16.0/connector_whs>`_ project on GitHub.
+This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/18.0/connector_whs>`_ project on GitHub.
 
 You are welcome to contribute.

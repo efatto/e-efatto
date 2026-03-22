@@ -1,0 +1,2 @@
+# generated from manifests external_dependencies
+sqlalchemy==2.0.48

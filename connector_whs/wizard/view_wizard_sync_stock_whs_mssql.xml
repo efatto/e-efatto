@@ -4,7 +4,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 -->
 <odoo>
-
     <record id="view_wizard_sync_stock_whs_mssql" model="ir.ui.view">
         <field name="name">Synchronize stock inventory</field>
         <field name="model">wizard.sync.stock.whs.mssql</field>
@@ -14,8 +13,9 @@
                 <sheet>
                     <div>
                         <span>Synchronize stock inventory. </span>
-                        <span
-                        >If 'Synchronize stock inventory' is not set, it creates and shows only a log saved in Log WMS.</span>
+                        <span>If 'Synchronize stock inventory' is not set, it
+                            creates and shows only a log saved in Log
+                            WMS.</span>
                     </div>
                     <group>
                         <field name="do_sync" />
@@ -24,16 +24,15 @@
                 </sheet>
                 <footer>
                     <button
-                        name="apply"
-                        string="Apply"
-                        type="object"
-                        class="oe_highlight"
-                    />
+                    name="apply"
+                    string="Apply"
+                    type="object"
+                    class="oe_highlight"
+                />
                     or
                     <button string="Cancel" class="oe_link" special="cancel" />
                 </footer>
-           </form>
+            </form>
         </field>
     </record>
-
 </odoo>
