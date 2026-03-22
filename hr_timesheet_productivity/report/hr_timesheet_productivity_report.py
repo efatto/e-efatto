@@ -1,3 +1,5 @@
+from psycopg2._psycopg import AsIs
+
 from odoo import fields, models, tools
 
 
@@ -17,10 +19,8 @@ class TimesheetProductivity(models.Model):
     task_id = fields.Many2one("project.task")
     project_id = fields.Many2one("project.project")
 
-    def init(self):
-        tools.drop_view_if_exists(self.env.cr, self._table)
-        self._cr.execute(
-            """CREATE OR REPLACE VIEW %s AS (
+    def _select(self):
+        select_str = """
             SELECT
                 t.id AS id,
                 t.employee_id,
@@ -68,7 +68,16 @@ class TimesheetProductivity(models.Model):
             ) AS t
             GROUP BY t.employee_id, t.date, t.name, t.id
             ORDER BY t.date
-        )
         """
-            % self._table
+        return select_str
+
+    def init(self):
+        """Initialize the report."""
+        tools.drop_view_if_exists(self.env.cr, self._table)
+        self.env.cr.execute(
+            """
+            CREATE OR REPLACE VIEW %s AS (
+                %s
+            )""",
+            (AsIs(self._table), AsIs(self._select())),
         )
