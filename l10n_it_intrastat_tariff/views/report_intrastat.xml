@@ -14,14 +14,14 @@
     </record>
 
     <record id="view_tree_report_intrastat_tariff" model="ir.ui.view">
-        <field name="name">views.tree.report.intrastat.tariff</field>
+        <field name="name">views.list.report.intrastat.tariff</field>
         <field name="model">report.intrastat.tariff</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="active" />
                 <field name="name" />
                 <field name="tariff_percentage" />
-            </tree>
+            </list>
         </field>
     </record>
 

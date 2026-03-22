@@ -1,0 +1,7 @@
+[project]
+name = "e-efatto18-0"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = "==3.12.12"
+dependencies = []
