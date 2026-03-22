@@ -13,18 +13,18 @@ _logger = logging.getLogger(__name__)
 class Picking(models.Model):
     _inherit = "stock.picking"
 
-    def action_pack_operation_auto_fill(self):
-        res = super().action_pack_operation_auto_fill()
-        for op in self.mapped("move_line_ids"):
-            if op.product_id.type == "product" and op.move_id.whs_list_ids:
-                op.qty_done = op.move_id.whs_list_ids[0].qtamov
-        return res
+    # def action_pack_operation_auto_fill(self):
+    #     res = super().action_pack_operation_auto_fill()
+    #     for op in self.mapped("move_line_ids"):
+    #         if op.product_id.type == "consu" and op.move_id.whs_list_ids:
+    #             op.qty_done = op.move_id.whs_list_ids[0].qtamov
+    #     return res
 
     def button_validate_bypass_wms(self):
         return self.with_context(bypass_wms=True).button_validate()
 
     def _action_done(self):
-        # Set whs_list.qta equal to move quantity_done, to stop any possible error
+        # Set whs_list.qta equal to move quantity, to stop any possible error
         # from wms user, if not elaborated from wms, else raise an error
         for pick in self:
             if self.env.context.get("bypass_wms"):
@@ -36,7 +36,7 @@ class Picking(models.Model):
             # more workable from WMS
             # stato == "3" the wms list is no more processable, so ignored
             mismatch_lists = pick.mapped("move_ids.whs_list_ids").filtered(
-                lambda x: x.stato == "4" and x.qtamov != x.move_id.quantity_done
+                lambda x: x.stato == "4" and x.qtamov != x.move_id.quantity
             )
             if mismatch_lists:
                 raise UserError(
@@ -52,7 +52,7 @@ class Picking(models.Model):
                                 li=m.num_lista,
                                 ro=m.riga,
                                 qm=m.qtamov,
-                                qd=m.move_id.quantity_done,
+                                qd=m.move_id.quantity,
                             )
                             for m in mismatch_lists
                         ),
@@ -77,14 +77,14 @@ class Picking(models.Model):
                                 li=m.num_lista,
                                 ro=m.riga,
                                 qm=m.qtamov,
-                                qd=m.move_id.quantity_done,
+                                qd=m.move_id.quantity,
                             )
                             for m in not_processable_lists
                         ),
                     )
                 )
             moved_list_without_wms = pick.mapped("move_ids.whs_list_ids").filtered(
-                lambda x: x.stato not in ("3", "4") and x.move_id.quantity_done != 0
+                lambda x: x.stato not in ("3", "4") and x.move_id.quantity != 0
             )
             if moved_list_without_wms:
                 raise UserError(
@@ -100,7 +100,7 @@ class Picking(models.Model):
                                 li=m.num_lista,
                                 ro=m.riga,
                                 qm=m.qtamov,
-                                qd=m.move_id.quantity_done,
+                                qd=m.move_id.quantity,
                             )
                             for m in moved_list_without_wms
                         ),
@@ -108,9 +108,9 @@ class Picking(models.Model):
                 )
             for move in pick.move_ids:
                 for whs_list in move.whs_list_ids:
-                    if whs_list.qtamov != move.quantity_done != 0:
-                        whs_list.qtamov = move.quantity_done
-                    if whs_list.qtamov == 0 == move.quantity_done:
+                    if whs_list.qtamov != move.quantity != 0:
+                        whs_list.qtamov = move.quantity
+                    if whs_list.qtamov == 0 == move.quantity:
                         # When transfer is completed, the rows that have 0 qty are
                         # deleted, so they are re-created where the system create the
                         # backorder.
@@ -120,7 +120,7 @@ class Picking(models.Model):
                         # working on the order, so it is not possible that them are
                         # presents here as only stato=4 is processable on Odoo,
                         # that equals to Elaborato=4
-                        # Lists with stato=3 and quantity_done=0 are deleted here
+                        # Lists with stato=3 and quantity=0 are deleted here
                         dbsource = self.env["base.external.dbsource"].search(
                             [
                                 (
@@ -133,13 +133,13 @@ class Picking(models.Model):
                         )
                         if not dbsource:
                             _logger.info(
-                                "WMS LOG: Picking type %s not linked to WMS System in "
-                                "action_done" % pick.picking_type_id.name
+                                f"WMS LOG: Picking type {pick.picking_type_id.name} "
+                                f"not linked to WMS System in action_done"
                             )
                             continue
                         _logger.info(
-                            "WMS LOG: unlink wms list in backorder process of "
-                            "move %s" % move.name
+                            f"WMS LOG: unlink wms list in backorder process of "
+                            f"move {move.name}"
                         )
                         whs_list.unlink_lists(dbsource.id)
         super()._action_done()
@@ -182,14 +182,14 @@ class Picking(models.Model):
                 )
                 if not dbsource:
                     _logger.info(
-                        "WMS LOG: Picking type %s not linked to WMS System in "
-                        "cancel_whs_list, nothing todo." % pick.picking_type_id.name
+                        f"WMS LOG: Picking type {pick.picking_type_id.name} not linked "
+                        f"to WMS System in cancel_whs_list, nothing todo."
                     )
                     continue
                 if any([x.stato != "1" and x.qtamov != 0 for x in whs_lists]):
                     raise UserError(_("Some moves already elaborated from WMS!"))
                 if unlink:
-                    _logger.info("WMS LOG: unlink lists for picking %s" % pick.name)
+                    _logger.info(f"WMS LOG: unlink lists for picking {pick.name}")
                     whs_lists.unlink_lists(dbsource.id)
                 else:
                     whs_lists.cancel_lists(dbsource.id)
@@ -253,7 +253,7 @@ class StockMove(models.Model):
                             "requested quantity."
                         )
                     )
-                if valid_whs_list and move.quantity_done != valid_whs_list.qtamov:
+                if valid_whs_list and move.quantity != valid_whs_list.qtamov:
                     raise UserError(
                         _(
                             "A WMS valid list exists and qty moved is different "
@@ -463,8 +463,8 @@ class StockMove(models.Model):
                     cliente = (
                         partner_id.ref
                         if partner_id.ref
-                        else partner_id.parent_id.ref
-                        if partner_id.parent_id.ref
+                        else partner_id.commercial_partner_id.ref
+                        if partner_id.commercial_partner_id.ref
                         else False
                     )
                     indirizzo = partner_id.street if partner_id.street else False
@@ -481,7 +481,8 @@ class StockMove(models.Model):
                     # ROADMAP check phantom products that generates only out moves
                     if (
                         move.state != "cancel"
-                        and move.product_id.type == "product"
+                        and move.product_id.type == "consu"
+                        and move.product_id.is_storable
                         and (
                             (
                                 tipo == "2"
@@ -496,10 +497,9 @@ class StockMove(models.Model):
                             x.stato != "3" for x in move.whs_list_ids
                         ):
                             _logger.info(
-                                "WMS LOG: Ignored creation of WMS list %s as it "
-                                "already exists and is processable!"
-                                % str(
-                                    [
+                                "WMS LOG: Ignored creation of WMS list {whs_list} "
+                                "as it already exists and is processable!".format(
+                                    whs_list=[
                                         f"{x.riga}-{x.num_lista}"
                                         for x in move.whs_list_ids
                                         if x.stato != "3"
@@ -524,8 +524,8 @@ class StockMove(models.Model):
                         customer = (
                             partner_id
                             and move.product_id.customer_ids.filtered(
-                                lambda x, p=partner_id: x.partner_id
-                                == p.commercial_partner_id
+                                lambda x, partner=partner_id: x.partner_id
+                                == partner.commercial_partner_id
                             )
                             or False
                         )
@@ -578,12 +578,15 @@ class StockMove(models.Model):
                             whsliste_data["nazione"] = nazione[0:50]
                         whsliste_obj.create(whsliste_data)
                         _logger.info(
-                            "WMS LOG: create list with data:\n %s"
-                            % (str(whsliste_data))
+                            f"WMS LOG: create list with data:\n {whsliste_data}"
                         )
                 else:
                     raise UserError(
-                        _("WMS LOG: list tipo not found for stock move ID %s") % move.id
+                        _(
+                            "WMS LOG: list tipo not found for stock move ID "
+                            "%(move_id)s",
+                            move_id=move.id,
+                        )
                     )
         return True
 

@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     "name": "Connector WHS MSSQL",
-    "version": "16.0.1.0.0",
+    "version": "18.0.1.0.0",
     "author": "Sergio Corato",
     "website": "https://github.com/efatto/e-efatto",
     "category": "other",
@@ -14,12 +14,12 @@
         "mrp_subcontracting",
         "product_is_kit",
         "product_logistics_uom",
-        "product_supplierinfo_for_customer",
+        "product_customerinfo",
         "purchase_delivery_split_date",
         "purchase_stock",
         "sale_delivery_split_date",
         "stock_change_qty_reason",
-        "stock_move_line_auto_fill",
+        "stock_inventory",
         "stock_picking_back2draft",
     ],
     "license": "AGPL-3",
@@ -37,5 +37,5 @@
         "data/cron.xml",
     ],
     "installable": True,
-    "external_dependencies": {"python": ["sqlalchemy==1.3.24"]},
+    "external_dependencies": {"python": ["sqlalchemy==2.0.48"]},
 }

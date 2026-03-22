@@ -123,7 +123,10 @@ class MrpProduction(models.Model):
                 ]
             ):
                 raise UserError(
-                    _("Production %s has not been sent to WHS!") % production.name
+                    _(
+                        "Production %(production_name)s has not been sent to WHS!",
+                        production_name=production.name,
+                    )
                 )
             production.move_raw_ids._check_done_whs_list()
             if production.state == "progress":
@@ -131,9 +134,9 @@ class MrpProduction(models.Model):
                     lambda x: x.state not in ("done", "cancel")
                 )
                 for move in moves_to_do.filtered(
-                    lambda m: m.product_qty == 0.0 and m.quantity_done > 0
+                    lambda m: m.product_qty == 0.0 and m.quantity > 0
                 ):
-                    move.product_uom_qty = move.quantity_done
+                    move.product_uom_qty = move.quantity
                 # MRP do not merge move, catch the result of _action_done
                 # to get extra moves.
                 moves_to_do = moves_to_do._action_done()
@@ -156,7 +159,10 @@ class MrpProduction(models.Model):
                 ]
             ):
                 raise UserError(
-                    _("Production %s has not been sent to WHS!") % production.name
+                    _(
+                        "Production %(production_name)s has not been sent to WHS!",
+                        production_name=production.name,
+                    )
                 )
             (
                 production.move_raw_ids | production.move_finished_ids
@@ -178,7 +184,7 @@ class MrpProduction(models.Model):
 
     @api.depends(
         "move_raw_ids.state",
-        "move_raw_ids.quantity_done",
+        "move_raw_ids.quantity",
         "move_finished_ids.state",
         "workorder_ids",
         "workorder_ids.state",
@@ -220,7 +226,8 @@ class MrpProduction(models.Model):
         if move.product_uom_qty <= 0:
             return num_lista, riga
         if (
-            move.product_id.type == "product"
+            move.product_id.type == "consu"
+            and move.product_id.is_storable
             and not move.product_id.exclude_from_whs
             and move.location_id == self.location_src_id
         ):
@@ -239,12 +246,12 @@ class MrpProduction(models.Model):
                 product_id=move.product_id.id,
                 parent_product_id=self.product_id.id,
                 qta=qty_producing,
-                qtamov=qty_producing or move.quantity_done,
+                qtamov=qty_producing or move.quantity,
                 move_id=move._origin.id,
                 tipo_mov="mrpout",
             )
             whsliste_obj.create(whsliste_data)
-            whsliste_obj.flush()
+            whsliste_obj.flush_model()
         return num_lista, riga
 
     def _create_whs_list_finished_move(self, move, num_lista, riga):

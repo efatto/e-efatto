@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-
     <record id="view_whs_liste_search" model="ir.ui.view">
         <field name="name">view.whsliste.search</field>
         <field name="model">hyddemo.whs.liste</field>
@@ -29,10 +28,10 @@
     </record>
 
     <record id="view_whs_liste_tree" model="ir.ui.view">
-        <field name="name">view.whsliste.tree</field>
+        <field name="name">view.whsliste.list</field>
         <field name="model">hyddemo.whs.liste</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="whs_list_absent" />
                 <field name="whs_list_multiple" />
                 <field name="whs_not_passed" />
@@ -50,7 +49,7 @@
                 <field name="qtamov" />
                 <field name="move_id" />
                 <field name="tipo_mov" />
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -127,10 +126,7 @@
                         </group>
                     </group>
                 </sheet>
-                <div class="oe_chatter">
-                    <field name="message_follower_ids" />
-                    <field name="message_ids" />
-                </div>
+                <chatter />
             </form>
         </field>
     </record>
@@ -139,7 +135,7 @@
         <field name="name">WMS Lists</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">hyddemo.whs.liste</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <menuitem
