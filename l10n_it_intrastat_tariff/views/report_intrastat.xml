@@ -3,9 +3,9 @@
     <record id="view_form_report_intrastat_code" model="ir.ui.view">
         <field name="model">report.intrastat.code</field>
         <field
-      name="inherit_id"
-      ref="l10n_it_intrastat.view_form_report_intrastat_code"
-    />
+            name="inherit_id"
+            ref="l10n_it_intrastat.view_form_report_intrastat_code"
+        />
         <field name="arch" type="xml">
             <field name="active" position="before">
                 <field name="tariff_id" />
@@ -52,11 +52,11 @@
     </record>
 
     <menuitem
-    id="menu_report_intrastat_tariff"
-    name="Customs Tariff"
-    action="action_report_intrastat_tariff"
-    parent="l10n_it_intrastat.menu_account_intrastat_configuration"
-    groups="account.group_account_user"
-    sequence="21"
-  />
+        id="menu_report_intrastat_tariff"
+        name="Customs Tariff"
+        action="action_report_intrastat_tariff"
+        parent="l10n_it_intrastat.menu_account_intrastat_configuration"
+        groups="account.group_account_user"
+        sequence="21"
+    />
 </odoo>
