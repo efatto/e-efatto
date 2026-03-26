@@ -10,10 +10,41 @@ class Common(SavepointCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.stock_location = cls.env.ref("stock.stock_location_stock")
-
+        cls.component = cls.env["product.product"].create(
+            {
+                "name": "Test Component",
+                "type": "product",
+                "tracking": "none",
+            }
+        )
+        cls.env["stock.quant"].create(
+            [
+                {
+                    "product_id": cls.component.id,
+                    "location_id": cls.stock_location.id,
+                    "quantity": 10,
+                }
+            ]
+        )
+        cls.other_component = cls.env["product.product"].create(
+            {
+                "name": "Test Other Component",
+                "type": "product",
+                "tracking": "none",
+            }
+        )
+        cls.env["stock.quant"].create(
+            [
+                {
+                    "product_id": cls.other_component.id,
+                    "location_id": cls.stock_location.id,
+                    "quantity": 10,
+                }
+            ]
+        )
         cls.serial_product = cls.env["product.product"].create(
             {
-                "name": "Test Product",
+                "name": "Test Serial Product",
                 "type": "product",
                 "tracking": "serial",
             }
@@ -29,7 +60,7 @@ class Common(SavepointCase):
         )
         cls.serial_component = cls.env["product.product"].create(
             {
-                "name": "Test Component",
+                "name": "Test Serial Component",
                 "type": "product",
                 "tracking": "serial",
             }
@@ -66,6 +97,9 @@ class Common(SavepointCase):
         bom_form.product_id = cls.serial_product
         with bom_form.bom_line_ids.new() as line:
             line.product_id = cls.serial_component
+        with bom_form.bom_line_ids.new() as line:
+            line.product_id = cls.component
+            line.product_qty = 2
         with bom_form.operation_ids.new() as operation:
             operation.name = "Test operation"
             operation.workcenter_id = cls.workcenter
