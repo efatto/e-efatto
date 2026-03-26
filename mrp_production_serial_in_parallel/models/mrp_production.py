@@ -49,5 +49,5 @@ class MrpProduction(models.Model):
         for rec in self:
             # show whenever qty to produce or producing is not 1
             rec.show_serial_matrix = rec.product_id.tracking == "serial" and (
-                rec.product_qty != 1 or rec.qty_producing != 1
+                rec.product_qty > 1 or rec.qty_producing > 1
             )
