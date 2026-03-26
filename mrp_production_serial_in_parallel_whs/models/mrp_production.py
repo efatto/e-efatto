@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class MrpProduction(models.Model):
@@ -6,8 +6,17 @@ class MrpProduction(models.Model):
 
     hide_mark_done = fields.Boolean(
         compute="_compute_hide_mark_done",
+        store=True,
     )
 
+    @api.depends(
+        "state",
+        "is_parallel_production",
+        "qty_producing",
+        "bom_type",
+        "is_consumable",
+        "sent_to_whs",
+    )
     def _compute_hide_mark_done(self):
         for rec in self:
             rec.hide_mark_done = (
