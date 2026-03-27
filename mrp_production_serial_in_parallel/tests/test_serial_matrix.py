@@ -7,6 +7,12 @@ from .common import Common
 
 
 class TestSerialMatrix(Common):
+    def _confirm_production(self):
+        self.production.action_confirm()
+        with Form(self.production) as production_form:
+            with production_form.workorder_ids.edit(0) as workorder:
+                workorder.duration = 15
+
     def test_00_validate(self):
         """
         When a serial production is produced with the matrix,
@@ -14,6 +20,7 @@ class TestSerialMatrix(Common):
         """
         # Arrange
         production = self.production
+        self._confirm_production()
         serial_matrix_wizard = self._init_matrix(production)
         # pre-condition
         self.assertTrue(production.is_parallel_production)
@@ -80,6 +87,7 @@ class TestSerialMatrix(Common):
         """
         # Arrange
         production = self.production
+        self._confirm_production()
         serial_matrix_wizard = self._init_matrix(production)
         # pre-condition
         self.assertTrue(production.is_parallel_production)
@@ -106,6 +114,7 @@ class TestSerialMatrix(Common):
         """
         # Arrange
         production = self.production
+        self._confirm_production()
         component_move = production.move_raw_ids.filtered(
             lambda x: x.product_id == self.component
         )
@@ -189,7 +198,7 @@ class TestSerialMatrix(Common):
         #     ],
         # )
 
-    def test_03_validate_removing_and_adding_component(self):
+    def _test_validate_removing_and_adding_component(self, confirmed=False):
         """
         Modify the quantity of components to:
             - serial component: untouched (3 total, 1 for each backorder)
@@ -199,13 +208,16 @@ class TestSerialMatrix(Common):
         """
         # Arrange
         production = self.production
+        if confirmed:
+            self._confirm_production()
         component_move = production.move_raw_ids.filtered(
             lambda x: x.product_id == self.component
         )
         self.assertEqual(component_move.product_qty, 6)
-        if production.is_locked:
-            production.action_toggle_is_locked()
-        self.assertFalse(production.is_locked)
+        if confirmed:
+            if production.is_locked:
+                production.action_toggle_is_locked()
+            self.assertFalse(production.is_locked)
         production_form = Form(production)
         with production_form.move_raw_ids.edit(1) as m_form:
             m_form.product_uom_qty = 0
@@ -220,6 +232,8 @@ class TestSerialMatrix(Common):
         with production_form.move_raw_ids.new() as move_form:
             move_form.product_id = self.other_component
         production_form.save()
+        if not confirmed:
+            self._confirm_production()
         other_component_move = production.move_raw_ids.filtered(
             lambda x: x.product_id == self.other_component
         )
@@ -292,3 +306,9 @@ class TestSerialMatrix(Common):
                 },
             ],
         )
+
+    def test_03_validate_removing_and_adding_component_draft(self):
+        self._test_validate_removing_and_adding_component(confirmed=False)
+
+    def test_03_validate_removing_and_adding_component_confirmed(self):
+        self._test_validate_removing_and_adding_component(confirmed=True)

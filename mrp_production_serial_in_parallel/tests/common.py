@@ -110,10 +110,6 @@ class Common(SavepointCase):
         production_form.product_qty = 3
         cls.production = production_form.save()
         cls.production.write({"reserved_lot_ids": [(6, 0, cls.product_serials.ids)]})
-        cls.production.action_confirm()
-        with tests.Form(cls.production) as production_form:
-            with production_form.workorder_ids.edit(0) as workorder:
-                workorder.duration = 15
 
     @classmethod
     def _init_matrix(cls, production):
