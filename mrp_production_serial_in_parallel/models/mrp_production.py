@@ -64,8 +64,8 @@ class MrpProduction(models.Model):
                                 / self.parallel_production_id.product_qty
                             )
                         else:
-                            # 2. it's created from scratch, so we use the production total
-                            # qty as division's factor
+                            # 2. it's created from scratch, so we use the production
+                            # total qty as division's factor
                             current_qty = (
                                 move.quantity_done
                                 / self.parallel_production_id.product_qty
@@ -75,17 +75,10 @@ class MrpProduction(models.Model):
                         current_qty = move.quantity_done
                 else:
                     if move.bom_line_id:
-                        if (
-                            move.quantity_done
-                            and move.should_consume_qty != move.quantity_done
-                        ):
-                            # 0. it's been changed and bom_line_id is copied!!!
-                            current_qty = move.quantity_done
-                        else:
-                            # 1. it's linked to a bom line, then we use default compute
-                            current_qty = (
-                                self.qty_producing - self.qty_produced
-                            ) * move.unit_factor
+                        # 1. it's linked to a bom line, then we use default compute
+                        current_qty = (
+                            self.qty_producing - self.qty_produced
+                        ) * move.unit_factor
                     else:
                         # 2. it's created from scratch
                         if self.env.context.get("first_production_serial_matrix"):
@@ -136,7 +129,9 @@ class MrpProduction(models.Model):
                                                 "product_uom_id": move.product_uom.id,
                                                 "product_id": move.product_id.id,
                                                 "location_id": move.location_id.id,
-                                                "location_dest_id": move.location_dest_id.id,
+                                                "location_dest_id": (
+                                                    move.location_dest_id.id
+                                                ),
                                             },
                                         )
                                     ]
@@ -161,7 +156,7 @@ class MrpProduction(models.Model):
                                         "company_id": move.company_id.id,
                                         "product_id": move.product_id.id,
                                         "product_uom": move.product_uom.id,
-                                        "product_uom_qty": move.product_uom_qty,  # set to 0?
+                                        "product_uom_qty": move.product_uom_qty,
                                         "quantity_done": move.quantity_done,
                                         "raw_material_production_id": backorders.id,
                                         "reference": backorders.name,

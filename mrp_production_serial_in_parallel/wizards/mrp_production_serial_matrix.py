@@ -128,12 +128,6 @@ class MrpProductionSerialMatrix(models.TransientModel):
                     # they can be set to 0 units to consume. In such case, we ignore
                     # the move.
                     continue
-                if float_is_zero(move.product_qty, precision_rounding=rounding) and (
-                    float_is_zero(move.quantity_done, precision_rounding=rounding)
-                ):
-                    # We remove bom line id to avoid consumption in backorders
-                    move.bom_line_id = False
-                    continue
                 if move.product_id.tracking in ["serial", "lot"]:
                     # We filter using the lot nane because the ORM sometimes
                     # is not storing correctly the finished_lot_id in the lines
@@ -155,7 +149,8 @@ class MrpProductionSerialMatrix(models.TransientModel):
             res = current_mo.button_mark_done()
             if isinstance(res, dict) and res.get("context"):
                 res["context"].update(
-                    production_serial_matrix=True, backorder_serial_matrix=True
+                    production_serial_matrix=True,
+                    backorder_serial_matrix=True,
                 )
             # default backorder's wizard creates mos from selected bom, ignoring changes
             # done by the user
