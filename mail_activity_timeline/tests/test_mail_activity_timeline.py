@@ -17,7 +17,9 @@ class TestMrpWorkorderTime(TestProductionData):
         )
 
     def test_00_create_mo(self):
-        date_start = fields.Datetime.now() + relativedelta(days=25)
+        date_start = fields.Datetime.now().replace(
+            hour=8, minute=0, second=0, microsecond=0
+        ) + relativedelta(days=25)
         man_order_form = Form(self.env["mrp.production"])
         man_order_form.product_id = self.top_product
         man_order_form.product_uom_id = self.top_product.uom_id
