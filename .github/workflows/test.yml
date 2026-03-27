@@ -55,8 +55,6 @@ jobs:
           persist-credentials: false
       - name: Install addons and dependencies
         run: oca_install_addons
-      - name: Force install of mrp_production_serial_matrix from fork
-        run: pip3 install -e "git+https://github.com/efatto/manufacture@14.0#egg=odoo14-addon-mrp_production_serial_matrix&subdirectory=setup/mrp_production_serial_matrix"
       - name: Check licenses
         run: manifestoo -d . check-licenses
       - name: Check development status
