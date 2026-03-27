@@ -150,7 +150,6 @@ class MrpProductionSerialMatrix(models.TransientModel):
             if isinstance(res, dict) and res.get("context"):
                 res["context"].update(
                     production_serial_matrix=True,
-                    backorder_serial_matrix=True,
                 )
             # default backorder's wizard creates mos from selected bom, ignoring changes
             # done by the user
@@ -180,7 +179,6 @@ class MrpProductionSerialMatrix(models.TransientModel):
                 ):
                     res["context"].update(
                         production_serial_matrix=True,
-                        # backorder_serial_matrix=True,
                     )
                     self._complete_consumption_wizard(res)
                 backorder_ids = (

@@ -56,8 +56,9 @@ class MrpProduction(models.Model):
                     move.product_uom_qty,
                     precision_rounding=move.product_uom.rounding,
                 ):
+                    # qty done is set but was not expected
                     if self.env.context.get("first_production_serial_matrix"):
-                        if move.bom_line_id:
+                        if move.bom_line_id:  # fixme è uguale alla condizione sotto
                             # 1. it's linked to a bom line, then we fix the value
                             current_qty = (
                                 move.quantity_done
@@ -71,8 +72,11 @@ class MrpProduction(models.Model):
                                 / self.parallel_production_id.product_qty
                             )
                     else:
+                        if move.additional:
+                            current_qty = move.quantity_done
                         # 3. it's already been corrected
-                        current_qty = move.quantity_done
+                        else:
+                            current_qty = move.quantity_done
                 else:
                     if move.bom_line_id:
                         # 1. it's linked to a bom line, then we use default compute
@@ -90,7 +94,7 @@ class MrpProduction(models.Model):
                             )
                         else:
                             # 3. it's already been corrected
-                            current_qty = move.quantity_done
+                            current_qty = move.quantity_done or move.product_uom_qty
                 new_qty = float_round(
                     current_qty, precision_rounding=move.product_uom.rounding
                 )
@@ -112,11 +116,10 @@ class MrpProduction(models.Model):
                     lambda m, raw_move=move: m.bom_line_id
                     and m.bom_line_id == raw_move.bom_line_id
                 )
-                if boml_bo_move:
-                    if (
-                        move.quantity_done
-                        and move.product_uom_qty != move.quantity_done
-                        and boml_bo_move.quantity_done != move.quantity_done
+                if boml_bo_move and not move.additional:
+                    if move.quantity_done and (
+                        move.product_uom_qty != move.quantity_done
+                        or boml_bo_move.quantity_done != move.quantity_done
                     ):
                         if not boml_bo_move.move_line_ids:
                             boml_bo_move.write(
@@ -143,6 +146,14 @@ class MrpProduction(models.Model):
                             )
                         )
                 elif move.quantity_done:
+                    if move.move_orig_ids.move_dest_ids:
+                        if any(
+                            [
+                                x in move.move_orig_ids.move_dest_ids
+                                for x in self.move_raw_ids
+                            ]
+                        ):
+                            continue
                     # create a new line as it was created by hand and not linked to a
                     # bom line
                     backorders.write(
