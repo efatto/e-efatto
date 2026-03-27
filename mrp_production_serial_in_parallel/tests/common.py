@@ -22,7 +22,7 @@ class Common(SavepointCase):
                 {
                     "product_id": cls.component.id,
                     "location_id": cls.stock_location.id,
-                    "quantity": 10,
+                    "quantity": 15,
                 }
             ]
         )
@@ -38,7 +38,7 @@ class Common(SavepointCase):
                 {
                     "product_id": cls.other_component.id,
                     "location_id": cls.stock_location.id,
-                    "quantity": 10,
+                    "quantity": 15,
                 }
             ]
         )
@@ -55,7 +55,7 @@ class Common(SavepointCase):
                     "name": f"Test Serial {index} for Product",
                     "product_id": cls.serial_product.id,
                 }
-                for index in range(2)
+                for index in range(3)
             ]
         )
         cls.serial_component = cls.env["product.product"].create(
@@ -71,7 +71,7 @@ class Common(SavepointCase):
                     "name": f"Test Serial {index} for Component",
                     "product_id": cls.serial_component.id,
                 }
-                for index in range(2)
+                for index in range(3)
             ]
         )
         cls.env["stock.quant"].create(
@@ -107,13 +107,13 @@ class Common(SavepointCase):
 
         production_form = tests.Form(cls.env["mrp.production"])
         production_form.product_id = cls.serial_product
-        production_form.product_qty = 2
+        production_form.product_qty = 3
         cls.production = production_form.save()
         cls.production.write({"reserved_lot_ids": [(6, 0, cls.product_serials.ids)]})
         cls.production.action_confirm()
         with tests.Form(cls.production) as production_form:
             with production_form.workorder_ids.edit(0) as workorder:
-                workorder.duration = 10
+                workorder.duration = 15
 
     @classmethod
     def _init_matrix(cls, production):

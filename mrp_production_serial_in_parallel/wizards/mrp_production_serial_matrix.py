@@ -2,6 +2,7 @@ from dateutil.relativedelta import relativedelta
 
 from odoo import _, models
 from odoo.exceptions import UserError
+from odoo.tests import Form
 from odoo.tools import float_is_zero
 
 
@@ -37,6 +38,7 @@ class MrpProductionSerialMatrix(models.TransientModel):
                         "unit_amount": new_unit_amount,
                     }
                 )
+                new_workorder_time.duration = new_duration
                 date_start = new_workorder_time.date_end
         for workorder_time in production.workorder_ids.time_ids:
             workorder_time.write(
@@ -50,7 +52,10 @@ class MrpProductionSerialMatrix(models.TransientModel):
 
     def _set_parallel_production(self):
         parallel_production = False
+        if self.production_id.parallel_production_id:
+            return self.production_id.parallel_production_id
         if self.production_id.is_parallel_production:
+            # create a copy of current production and set as parallel production
             parallel_production = self.production_id.copy(
                 default={
                     "name": "%s - serial in parallel" % self.production_id.name,
@@ -83,11 +88,132 @@ class MrpProductionSerialMatrix(models.TransientModel):
                 self.production_id, backorder_ids - self.production_id
             )
 
+    def _complete_consumption_wizard(self, res):
+        consume_warning_form = Form(
+            self.env["mrp.consumption.warning"].with_context(
+                bypass_check_state=True, **res["context"]  # todo verificare senza
+            )
+        )
+        return consume_warning_form.save().action_confirm()
+
     def button_validate(self):
         self.ensure_one()
         self.production_id._check_reserved_lot_qty()
         parallel_production = self._set_parallel_production()
-        res = super().button_validate()
+        if self.lot_selection_warning_count > 0:
+            raise UserError(
+                _("Some issues has been detected in your selection: %s")
+                % self.lot_selection_warning_msg
+            )
+        mos = self.env["mrp.production"]
+        current_mo = self.production_id
+        for fp_lot in self.finished_lot_ids:
+            # Apply selected lots in matrix and set the qty producing
+            current_mo.lot_producing_id = fp_lot
+            current_mo.qty_producing = 1.0
+            current_mo = current_mo.with_context(
+                production_serial_matrix=True,
+                first_production_serial_matrix=False,
+            )
+            if current_mo == self.production_id:
+                # the first MO needs a different recomputation in quantities consumed
+                current_mo = current_mo.with_context(
+                    first_production_serial_matrix=True
+                )
+            current_mo._set_qty_producing()
+            for move in current_mo.move_raw_ids:
+                rounding = move.product_id.uom_id.rounding
+                if float_is_zero(move.product_qty, precision_rounding=rounding):
+                    # Component moves cannot be deleted in in-progress MO's; however,
+                    # they can be set to 0 units to consume. In such case, we ignore
+                    # the move.
+                    continue
+                if float_is_zero(move.product_qty, precision_rounding=rounding) and (
+                    float_is_zero(move.quantity_done, precision_rounding=rounding)
+                ):
+                    # We remove bom line id to avoid consumption in backorders
+                    move.bom_line_id = False
+                    continue
+                if move.product_id.tracking in ["serial", "lot"]:
+                    # We filter using the lot nane because the ORM sometimes
+                    # is not storing correctly the finished_lot_id in the lines
+                    # after passing through the `_onchange_finished_lot_ids`
+                    # method.
+                    matrix_lines = self.line_ids.filtered(
+                        lambda l: (
+                            l.finished_lot_id == fp_lot
+                            or l.finished_lot_name == fp_lot.name
+                        )
+                        and l.component_id == move.product_id
+                    )
+                    if matrix_lines:
+                        self._amend_reservations(move, matrix_lines)
+                        self._consume_selected_lots(move, matrix_lines)
+
+            # Complete MO and create backorder if needed.
+            mos += current_mo
+            res = current_mo.button_mark_done()
+            if isinstance(res, dict) and res.get("context"):
+                res["context"].update(
+                    production_serial_matrix=True, backorder_serial_matrix=True
+                )
+            # default backorder's wizard creates mos from selected bom, ignoring changes
+            # done by the user
+            backorder_wizard = self.env["mrp.production.backorder"].with_context(
+                backorder_serial_matrix=True
+            )
+            if (
+                isinstance(res, dict)
+                and res.get("res_model") == "mrp.consumption.warning"
+            ):
+                res = self._complete_consumption_wizard(res)
+            if isinstance(res, dict) and res.get("res_model") == backorder_wizard._name:
+                # create backorders...
+                lines = res.get("context", {}).get(
+                    "default_mrp_production_backorder_line_ids"
+                )
+                wizard = backorder_wizard.create(
+                    {
+                        "mrp_production_ids": current_mo.ids,
+                        "mrp_production_backorder_line_ids": lines,
+                    }
+                )
+                res = wizard.action_backorder()
+                if (
+                    isinstance(res, dict)
+                    and res.get("res_model") == "mrp.consumption.warning"
+                ):
+                    res["context"].update(
+                        production_serial_matrix=True,
+                        # backorder_serial_matrix=True,
+                    )
+                    self._complete_consumption_wizard(res)
+                backorder_ids = (
+                    current_mo.procurement_group_id.mrp_production_ids.filtered(
+                        lambda mo: mo.state not in ["done", "cancel"]
+                    )
+                )
+                current_mo = backorder_ids[0] if backorder_ids else False
+                if not current_mo:
+                    break
+                current_mo.parallel_production_id = parallel_production
+            else:
+                break
+
+        # TODO: not specified lots: auto create lots?
+        if not mos:
+            mos = self.production_id
+        res = {
+            "domain": [("id", "in", mos.ids)],
+            "name": _("Manufacturing Orders"),
+            "src_model": "mrp.production.serial.matrix",
+            "view_type": "form",
+            "view_mode": "tree,form",
+            "view_id": False,
+            "views": False,
+            "res_model": "mrp.production",
+            "type": "ir.actions.act_window",
+        }
         if parallel_production:
             self._set_parallel_production_times(parallel_production)
         return res
