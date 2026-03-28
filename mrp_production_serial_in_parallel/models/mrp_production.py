@@ -93,8 +93,14 @@ class MrpProduction(models.Model):
                                 / self.parallel_production_id.product_qty
                             )
                         else:
-                            # 3. it's already been corrected
-                            current_qty = move.quantity_done or move.product_uom_qty
+                            if move.quantity_done:
+                                # 3. it's already been corrected
+                                current_qty = move.quantity_done
+                            else:
+                                # 4. it's not been corrected, so we use default compute
+                                current_qty = (
+                                    self.qty_producing - self.qty_produced
+                                ) * move.unit_factor
                 new_qty = float_round(
                     current_qty, precision_rounding=move.product_uom.rounding
                 )
@@ -179,6 +185,16 @@ class MrpProduction(models.Model):
                             ]
                         }
                     )
+        for backorder in backorders:
+            if sum(backorder.move_raw_ids.mapped("quantity_done")) != sum(
+                self.move_raw_ids.mapped("quantity_done")
+            ):
+                raise ValidationError(
+                    _(
+                        "The number of components used in the backorder must be equal "
+                        "to the quantity of the original production."
+                    )
+                )
         return backorders
 
     def _check_reserved_lot_qty(self):
