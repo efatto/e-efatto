@@ -91,7 +91,8 @@ class MrpProductionSerialMatrix(models.TransientModel):
     def _complete_consumption_wizard(self, res):
         consume_warning_form = Form(
             self.env["mrp.consumption.warning"].with_context(
-                bypass_check_state=True, **res["context"]  # todo verificare senza
+                # bypass_check_state=True,   # todo verificare senza
+                **res["context"]
             )
         )
         return consume_warning_form.save().action_confirm()
