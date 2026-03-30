@@ -191,8 +191,13 @@ class MrpProduction(models.Model):
             ):
                 raise ValidationError(
                     _(
-                        "The number of components used in the backorder must be equal "
-                        "to the quantity of the original production."
+                        "The number of components {} used in the backorder {} must be equal "
+                        "to the quantity {} of the original production {}."
+                    ).format(
+                        sum(backorder.move_raw_ids.mapped("quantity_done")),
+                        backorder.name,
+                        sum(self.move_raw_ids.mapped("quantity_done")),
+                        self.name,
                     )
                 )
         return backorders
