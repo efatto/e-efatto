@@ -35,6 +35,7 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
             for bom_id in bom_ids:
                 for line in bom_id.bom_line_ids:
                     product_ids.extend(get_all_bom_children(line))
+        product_ids = list(set(product_ids))
         return product_ids
 
     @api.model
