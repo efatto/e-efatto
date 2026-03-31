@@ -21,7 +21,7 @@ class WizardMrpBomAttachmentExport(models.TransientModel):
                 product_ids.append(child.product_id.id)
                 if child.child_line_ids:
                     product_ids.extend(get_all_bom_children(child))
-            return product_ids
+            return list(set(product_ids))
 
         if self.env.context["active_model"] == "mrp.production":
             production_ids = self.env["mrp.production"].browse(
