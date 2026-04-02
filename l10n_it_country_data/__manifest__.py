@@ -3,7 +3,7 @@
 
 {
     "name": "Italy - Country data",
-    "version": "16.0.1.0.0",
+    "version": "18.0.1.0.0",
     "category": "other",
     "author": "Sergio Corato",
     "website": "https://github.com/efatto/e-efatto",
