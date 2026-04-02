@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-
     <record id="view_mrp_workcenter_productivity_search" model="ir.ui.view">
         <field name="name">view.mrp.workcenter.productivity.search</field>
         <field name="model">mrp.workcenter.productivity</field>
@@ -42,7 +41,7 @@
                 <field name="employee_id" />
             </field>
             <field name="workorder_id" position="attributes">
-                <attribute name="attrs">{'required': True}</attribute>
+                <attribute name="required">True</attribute>
             </field>
             <field name="date_start" position="before">
                 <field name="unit_amount" />

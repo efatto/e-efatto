@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-
     <record model="ir.ui.view" id="mrp_production_workorder_form_view_inherit">
         <field name="model">mrp.workorder</field>
         <field name="inherit_id" ref="mrp.mrp_production_workorder_form_view_inherit" />
@@ -15,8 +14,7 @@
             <xpath
                 expr="//field[@name='time_ids']/list/field[@name='user_id']"
                 position="before"
-            >
-            </xpath>
+            />
             <xpath
                 expr="//field[@name='time_ids']/form//field[@name='workcenter_id']"
                 position="before"
@@ -28,9 +26,8 @@
                 expr="//field[@name='time_ids']/form//field[@name='user_id']"
                 position="attributes"
             >
-                <attribute name="attrs">{'invisible': True}</attribute>
+                <attribute name="invisible">True</attribute>
             </xpath>
         </field>
     </record>
-
 </odoo>

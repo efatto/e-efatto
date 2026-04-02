@@ -4,24 +4,23 @@
 import logging
 
 from odoo import SUPERUSER_ID
-from odoo.api import Environment
 
 _logger = logging.getLogger(__name__)
 
 new_field_employee_id_added = False
 
 
-def create_employee_id_equal_to_first_employee(cr):
-    cr.execute(
+def create_employee_id_equal_to_first_employee(env):
+    env.cr.execute(
         "SELECT column_name FROM information_schema.columns "
         "WHERE table_name = 'mrp_workcenter_productivity' "
         "AND column_name = 'employee_id'"
     )
-    if not cr.fetchone():
-        cr.execute(
+    if not env.cr.fetchone():
+        env.cr.execute(
             "ALTER TABLE mrp_workcenter_productivity " "ADD COLUMN employee_id INTEGER;"
         )
-        cr.execute(
+        env.cr.execute(
             "UPDATE mrp_workcenter_productivity "
             "SET employee_id = ("
             "SELECT id from hr_employee order by id limit 1);"
@@ -30,11 +29,10 @@ def create_employee_id_equal_to_first_employee(cr):
         new_field_employee_id_added = True
 
 
-def assign_employee_id(cr, registry):
+def assign_employee_id(env):
     if not new_field_employee_id_added:
         # the field was already existing before the installation of the addon
         return
-    env = Environment(cr, SUPERUSER_ID, {})
     productivities = env["mrp.workcenter.productivity"].search([], order="id")
     for productivity in productivities:
         user_id = productivity.user_id and productivity.user_id.id or SUPERUSER_ID
