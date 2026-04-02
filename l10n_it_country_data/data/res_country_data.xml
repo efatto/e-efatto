@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo noupdate="1">
-
     <record id="base.lang_it" model="res.lang">
         <field name="grouping">[3,3]</field>
     </record>
@@ -10,5 +9,4 @@
             eval="'%(street)s\n%(street2)s\n %(zip)s %(city)s (%(state_code)s)'"
         />
     </record>
-
 </odoo>
