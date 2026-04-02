@@ -6,14 +6,14 @@
         <field name="inherit_id" ref="mrp.mrp_production_workorder_form_view_inherit" />
         <field name="arch" type="xml">
             <xpath
-                expr="//field[@name='time_ids']/tree/field[@name='date_start']"
+                expr="//field[@name='time_ids']/list/field[@name='date_start']"
                 position="before"
             >
                 <field name="employee_id" />
                 <field name="description" />
             </xpath>
             <xpath
-                expr="//field[@name='time_ids']/tree/field[@name='user_id']"
+                expr="//field[@name='time_ids']/list/field[@name='user_id']"
                 position="before"
             >
             </xpath>
