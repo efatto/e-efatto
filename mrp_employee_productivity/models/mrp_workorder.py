@@ -1,31 +1,30 @@
 from odoo import api, models
+from odoo.osv import expression
 
 
 class MrpWorkorder(models.Model):
     _inherit = "mrp.workorder"
 
     @api.model
-    def _name_search(
-        self, name, args=None, operator="ilike", limit=100, name_get_uid=None
-    ):
-        if not name == "" and operator in ("ilike", "like", "=", "=like", "=ilike"):
-            args = [] if args is None else args.copy()
-            args += [
-                "|",
-                "|",
-                "|",
-                ("name", operator, name),
-                ("production_id.name", operator, name),
-                ("product_id.product_tmpl_id.name", operator, name),
-                ("sale_id.name", operator, name),
-            ]
-            if operator == "ilike":
-                # to exclude extension of args with and & domain
-                name = ""
-        return super()._name_search(
-            name=name,
-            args=args,
-            operator=operator,
-            limit=limit,
-            name_get_uid=name_get_uid,
-        )
+    def _search_display_name(self, operator, value):
+        domain = super()._search_display_name(operator, value)
+        if (
+            value
+            and value != ""
+            and operator in ("ilike", "like", "=", "=like", "=ilike")
+        ):
+            domain = expression.OR(
+                [
+                    [
+                        ("name", operator, value),
+                        ("production_id.name", operator, value),
+                        ("product_id.product_tmpl_id.name", operator, value),
+                        ("sale_id.name", operator, value),
+                    ],
+                    domain,
+                ]
+            )
+            # if operator == "ilike":
+            #     # to exclude extension of args with and & domain
+            #     value = ""
+        return domain
