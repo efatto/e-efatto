@@ -11,10 +11,14 @@
                     widget="many2many_tags"
                     options="{'no_create_edit': True, 'no_quick_create': True}"
                     domain="[
-                        ('product_id', '=', product_id),
-                        ('company_id', 'in', (company_id, False)),
-                        ('is_reserved_or_used', '=', False),
-                    ]"
+                        '&amp;',
+                            ('product_id', '=', product_id),
+                            '|',
+                                ('is_reserved_or_used', '=', False),
+                            '&amp;',
+                                ('id', '=', lot_producing_id),
+                                ('is_reserved_or_used', '=', True)
+                            ]"
                     invisible="product_tracking in ('none', False)"
                 />
             </label>
