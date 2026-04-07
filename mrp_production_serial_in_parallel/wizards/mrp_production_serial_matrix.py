@@ -99,6 +99,9 @@ class MrpProductionSerialMatrix(models.TransientModel):
 
     def button_validate(self):
         self.ensure_one()
+        # ensure no mess is coming from previous MOs writing 0 into producing qty
+        self.production_id.qty_producing = 0
+        self.production_id._onchange_product_qty()
         self.production_id._check_reserved_lot_qty()
         parallel_production = self._set_parallel_production()
         if self.lot_selection_warning_count > 0:
@@ -215,7 +218,8 @@ class MrpProductionSerialMatrix(models.TransientModel):
     def button_prepare(self):
         self.ensure_one()
         # ensure no mess is coming from previous MOs writing 0 into producing qty
-        self.production_id.write({"qty_producing": 0})
+        self.production_id.qty_producing = 0
+        self.production_id._onchange_product_qty()
         self.production_id._check_reserved_lot_qty()
         parallel_production = self._set_parallel_production()
         if self.lot_selection_warning_count > 0:
