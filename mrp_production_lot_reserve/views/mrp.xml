@@ -12,7 +12,15 @@
           widget="many2many_tags"
           options="{'no_create_edit': True, 'no_quick_create': True}"
           attrs="{'invisible': [('product_tracking', 'in', ('none', False))]}"
-          domain="[('product_id', '=', product_id), ('is_reserved_or_used', '=', False)]"
+          domain="[
+            '&amp;',
+                ('product_id', '=', product_id),
+                '|',
+                    ('is_reserved_or_used', '=', False),
+                '&amp;',
+                    ('id', '=', lot_producing_id),
+                    ('is_reserved_or_used', '=', True)
+                ]"
         />
             </label>
             <field name="lot_producing_id" position="attributes">
