@@ -12,6 +12,7 @@ class TestSerialMatrix(Common):
         with Form(self.production) as production_form:
             with production_form.workorder_ids.edit(0) as workorder:
                 workorder.duration = 15
+        self.assertTrue(self.production.state, "confirmed")
 
     def test_00_validate(self):
         """
@@ -125,78 +126,6 @@ class TestSerialMatrix(Common):
         with self.assertRaises(ValidationError):
             with component_move_form.move_line_ids.new() as ml_form:
                 ml_form.qty_done = 12
-        # component_move_form.save()
-        # self.assertEqual(component_move.quantity_done, 12)
-        # serial_matrix_wizard = self._init_matrix(production)
-        # # pre-condition
-        # self.assertTrue(production.is_parallel_production)
-        # self.assertTrue(production.workorder_ids.time_ids.duration, 15)
-        #
-        # # Act
-        # serial_matrix_wizard.button_validate()
-        #
-        # # Assert
-        # parallel_production = production.parallel_production_id
-        # parallel_productions = production.search(
-        #     [
-        #         ("parallel_production_id", "=", parallel_production.id),
-        #     ]
-        # )
-        # self.assertRecordValues(
-        #     parallel_productions.workorder_ids,
-        #     [
-        #         {
-        #             "duration": 5,
-        #         },
-        #         {
-        #             "duration": 5,
-        #         },
-        #         {
-        #             "duration": 5,
-        #         },
-        #     ],
-        # )
-        # self.assertRecordValues(
-        #     parallel_productions.move_raw_ids,
-        #     [
-        #         {
-        #             "product_id": self.serial_component.id,
-        #             "quantity_done": 1,
-        #         },
-        #         {
-        #             "product_id": self.component.id,
-        #             "quantity_done": 2,
-        #         },
-        #         {
-        #             "product_id": self.component.id,
-        #             "quantity_done": 2,
-        #         },
-        #         {
-        #             "product_id": self.serial_component.id,
-        #             "quantity_done": 1,
-        #         },
-        #         {
-        #             "product_id": self.component.id,
-        #             "quantity_done": 2,
-        #         },
-        #         {
-        #             "product_id": self.component.id,
-        #             "quantity_done": 2,
-        #         },
-        #         {
-        #             "product_id": self.serial_component.id,
-        #             "quantity_done": 1,
-        #         },
-        #         {
-        #             "product_id": self.component.id,
-        #             "quantity_done": 2,
-        #         },
-        #         {
-        #             "product_id": self.component.id,
-        #             "quantity_done": 2,
-        #         },
-        #     ],
-        # )
 
     def _test_validate_removing_and_adding_component(self, confirmed=False):
         """
@@ -231,19 +160,21 @@ class TestSerialMatrix(Common):
         production_form = Form(production)
         with production_form.move_raw_ids.new() as move_form:
             move_form.product_id = self.other_component
+            move_form.product_uom_qty = 9
         production_form.save()
         if not confirmed:
             self._confirm_production()
+        # check that is not possible to change production qty done
         other_component_move = production.move_raw_ids.filtered(
             lambda x: x.product_id == self.other_component
         )
-        production_form = Form(
+        component_move_form = Form(
             other_component_move, view="mrp.view_stock_move_operations_raw"
         )
-        with production_form.move_line_ids.new() as ml_form:
-            ml_form.qty_done = 9
-        production_form.save()
-        self.assertEqual(other_component_move.quantity_done, 9)
+        with self.assertRaises(ValidationError):
+            with component_move_form.move_line_ids.new() as ml_form:
+                ml_form.qty_done = 17
+        self.assertEqual(other_component_move.product_uom_qty, 9)
         serial_matrix_wizard = self._init_matrix(production)
         # pre-condition
         self.assertTrue(production.is_parallel_production)
