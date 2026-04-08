@@ -151,7 +151,9 @@ class MrpProduction(models.Model):
                                 move.quantity_done
                             )
                         )
-                elif move.quantity_done:
+                elif move.quantity_done and move.additional:
+                    # only when is added after production is done, it shouldn't be a
+                    # possible case
                     if move.move_orig_ids.move_dest_ids:
                         if any(
                             [
