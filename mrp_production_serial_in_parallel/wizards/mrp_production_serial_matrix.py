@@ -96,6 +96,10 @@ class MrpProductionSerialMatrix(models.TransientModel):
 
     def button_validate(self):
         self.ensure_one()
+        if self.production_id.state != "confirmed":
+            raise UserError(
+                _("Only productions in confirmed state can be produced serially!")
+            )
         self.production_id._check_reserved_lot_qty()
         parallel_production = self._set_parallel_production()
         if self.lot_selection_warning_count > 0:
@@ -211,6 +215,10 @@ class MrpProductionSerialMatrix(models.TransientModel):
 
     def button_prepare(self):
         self.ensure_one()
+        if self.production_id.state != "confirmed":
+            raise UserError(
+                _("Only productions in confirmed state can be produced serially!")
+            )
         self.production_id._check_reserved_lot_qty()
         parallel_production = self._set_parallel_production()
         if self.lot_selection_warning_count > 0:
