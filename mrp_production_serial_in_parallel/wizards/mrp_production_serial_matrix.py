@@ -98,7 +98,11 @@ class MrpProductionSerialMatrix(models.TransientModel):
         self.ensure_one()
         if self.production_id.state != "confirmed":
             raise UserError(
-                _("Only productions in confirmed state can be produced serially!")
+                _(
+                    "Only productions in confirmed state can be produced serially!\n"
+                    "This is a state normally not reachable with this module installed,"
+                    " so force the production to 'confirmed' and then proceed."
+                )
             )
         self.production_id._check_reserved_lot_qty()
         parallel_production = self._set_parallel_production()
@@ -217,7 +221,11 @@ class MrpProductionSerialMatrix(models.TransientModel):
         self.ensure_one()
         if self.production_id.state != "confirmed":
             raise UserError(
-                _("Only productions in confirmed state can be produced serially!")
+                _(
+                    "Only productions in confirmed state can be produced serially!\n"
+                    "This is a state normally not reachable with this module installed,"
+                    " so force the production to 'confirmed' and then proceed."
+                )
             )
         self.production_id._check_reserved_lot_qty()
         parallel_production = self._set_parallel_production()
