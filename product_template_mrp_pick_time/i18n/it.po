@@ -1,0 +1,138 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* product_template_mrp_pick_time
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-10 06:56+0000\n"
+"PO-Revision-Date: 2026-04-10 06:56+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: product_template_mrp_pick_time
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_mrp_pick_time__assigned_attachment_ids
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_template__assigned_attachment_ids
+msgid "Assigned Attachments"
+msgstr "Allegati assegnati"
+
+#. module: product_template_mrp_pick_time
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_mrp_pick_time__create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: product_template_mrp_pick_time
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_mrp_pick_time__create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: product_template_mrp_pick_time
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_mrp_pick_time__display_name
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_template__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
+
+#. module: product_template_mrp_pick_time
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_mrp_pick_time__duration
+msgid "Duration (minutes:seconds) for unit"
+msgstr "Durata (minuti:secondi) per pezzo"
+
+#. module: product_template_mrp_pick_time
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_mrp_pick_time__id
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_template__id
+msgid "ID"
+msgstr ""
+
+#. module: product_template_mrp_pick_time
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_mrp_pick_time____last_update
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_template____last_update
+msgid "Last Modified on"
+msgstr "Ultima modifica il"
+
+#. module: product_template_mrp_pick_time
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_mrp_pick_time__write_uid
+msgid "Last Updated by"
+msgstr "Ultima modifica da"
+
+#. module: product_template_mrp_pick_time
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_mrp_pick_time__write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: product_template_mrp_pick_time
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_product__mrp_pick_time_ids
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_template__mrp_pick_time_ids
+msgid "MRP Pick Time"
+msgstr "Tempi di prelievo Produzione"
+
+#. module: product_template_mrp_pick_time
+#: model:ir.actions.act_window,name:product_template_mrp_pick_time.action_mrp_product_pick_time
+#: model_terms:ir.ui.view,arch_db:product_template_mrp_pick_time.view_product_mrp_pick_time_form
+#: model:ir.ui.menu,name:product_template_mrp_pick_time.menu_mrp_product_pick_time
+msgid "MRP Product Pick Times"
+msgstr "Tempi di prelievo prodotto"
+
+#. module: product_template_mrp_pick_time
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_mrp_pick_time__maximum_qty
+msgid "Maximum Quantity"
+msgstr "Quantità massima"
+
+#. module: product_template_mrp_pick_time
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_mrp_pick_time__minimum_qty
+msgid "Minimum Quantity"
+msgstr "Quantità minima"
+
+#. module: product_template_mrp_pick_time
+#: code:addons/product_template_mrp_pick_time/models/product_pick_time.py:0
+#, python-format
+msgid "Minimum quantity must be less than or equal to maximum quantity"
+msgstr "La quantità minima deve essere minore o uguale alla quantità massima"
+
+#. module: product_template_mrp_pick_time
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_mrp_pick_time__name
+msgid "Name"
+msgstr "Nome"
+
+#. module: product_template_mrp_pick_time
+#: code:addons/product_template_mrp_pick_time/models/product.py:0
+#, python-format
+msgid "Pick times must not overlap"
+msgstr "I tempi di prelievo non possono sovrapporsi"
+
+#. module: product_template_mrp_pick_time
+#: model:ir.model,name:product_template_mrp_pick_time.model_product_mrp_pick_time
+msgid "Product MRP Pick Time"
+msgstr "Tempo di prelievo MRP prodotto"
+
+#. module: product_template_mrp_pick_time
+#: model:ir.model,name:product_template_mrp_pick_time.model_product_template
+msgid "Product Template (Multi-Company)"
+msgstr "Modello prodotto (Multi-Azienda)"
+
+#. module: product_template_mrp_pick_time
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_mrp_pick_time__smart_search
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_template__smart_search
+msgid "Smart Search"
+msgstr "Ricerca intelligente"
+
+#. module: product_template_mrp_pick_time
+#: model:ir.model.fields,help:product_template_mrp_pick_time.field_product_product__mrp_pick_time_ids
+#: model:ir.model.fields,help:product_template_mrp_pick_time.field_product_template__mrp_pick_time_ids
+msgid ""
+"The amount of time to pick this product and put on the manufacturing "
+"location. Select one or more pick times for this product for each of the "
+"possible quantities moved."
+msgstr ""
+"Il tempo necessario per prelevare questo prodotto e metterlo sul posto di "
+"produzione. Seleziona uno o più tempi di prelievo per questo prodotto per ognuna "
+"delle possibili quantità movimentate."
+
+#. module: product_template_mrp_pick_time
+#: model:ir.model.fields,field_description:product_template_mrp_pick_time.field_product_mrp_pick_time__workcenter_id
+msgid "Workcenter"
+msgstr "Centro di lavoro"

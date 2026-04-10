@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="view_mrp_product_template_form_inherited" model="ir.ui.view">
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="mrp.view_mrp_product_template_form_inherited" />
+        <field name="arch" type="xml">
+            <xpath expr="//label[@for='produce_delay']" position="before">
+                <field name="mrp_pick_time_ids" widget="many2many_tags" />
+            </xpath>
+        </field>
+    </record>
+</odoo>

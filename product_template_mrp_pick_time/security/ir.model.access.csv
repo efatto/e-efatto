@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_product_mrp_pick_time_all,product_mrp_pick_time all,model_product_mrp_pick_time,base.group_user,1,1,1,0
+access_product_mrp_pick_time_manager,product_mrp_pick_time manager,model_product_mrp_pick_time,mrp.group_mrp_manager,1,1,1,1

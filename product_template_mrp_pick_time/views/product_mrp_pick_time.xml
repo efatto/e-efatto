@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_product_mrp_pick_time_search" model="ir.ui.view">
+        <field name="name">product.mrp.pick.time.search</field>
+        <field name="model">product.mrp.pick.time</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+                <field name="minimum_qty" />
+                <field name="maximum_qty" />
+                <field name="duration" />
+                <field name="workcenter_id" />
+            </search>
+        </field>
+    </record>
+    <record id="view_product_mrp_pick_time_tree" model="ir.ui.view">
+        <field name="name">product.mrp.pick.time.tree</field>
+        <field name="model">product.mrp.pick.time</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="minimum_qty" />
+                <field name="maximum_qty" />
+                <field name="duration" widget="float_time" />
+                <field name="workcenter_id" />
+            </tree>
+        </field>
+    </record>
+    <record id="view_product_mrp_pick_time_form" model="ir.ui.view">
+        <field name="name">product.mrp.pick.time.form</field>
+        <field name="model">product.mrp.pick.time</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet string="MRP Product Pick Times">
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only" />
+                        <h1><field name="name" /></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="minimum_qty" />
+                            <field name="maximum_qty" />
+                        </group>
+                        <group>
+                            <field name="duration" widget="float_time" />
+                            <field name="workcenter_id" />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_mrp_product_pick_time" model="ir.actions.act_window">
+        <field name="name">MRP Product Pick Times</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.mrp.pick.time</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem
+    action="action_mrp_product_pick_time"
+    id="menu_mrp_product_pick_time"
+    parent="mrp.menu_mrp_bom"
+    sequence="16"
+  />
+
+</odoo>
