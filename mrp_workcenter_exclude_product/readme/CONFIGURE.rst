@@ -1,6 +1,6 @@
-Questo modulo aggiunge un bottone nelle righe dell'ordine di produzione:
+Questo modulo aggiunge una lista di prodotti che non possono essere lavorati in un centro di lavoro:
 
-.. image:: ../static/description/bottone.png
-    :alt: Bottone
+.. image:: ../static/description/prodotti_esclusi.png
+    :alt: Prodotti esclusi
 
-che elimina la riga, se non ancora trasferita nel magazzino.
+Quando viene pianificata la produzione, nei vari ordini di lavoro non verranno proposti i centri di lavoro che hanno il prodotto principale da produrre tra quelli esclusi da quei centri di lavoro.
