@@ -31,6 +31,7 @@ class MrpProduction(models.Model):
                 lambda wo: not wo.date_planned_start
             )
         for workorder in workorder_ids:
+            # code change from the original
             workcenters = (
                 workorder.workcenter_id
                 | workorder.workcenter_id.alternative_workcenter_ids
@@ -38,6 +39,7 @@ class MrpProduction(models.Model):
                 lambda wc, product=self.product_id: product
                 not in wc.excluded_product_ids
             )
+            # end code change
 
             best_finished_date = datetime.datetime.max
             vals = {}
