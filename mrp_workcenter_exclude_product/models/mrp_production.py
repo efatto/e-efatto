@@ -10,6 +10,7 @@ class MrpProduction(models.Model):
     def _plan_workorders(self, replan=False):
         res = super()._plan_workorders(replan)
         # Replan the workorders restricting to the workcenter not escluded products.
+        replan = True
         self.ensure_one()
         if not self.workorder_ids:
             return None
