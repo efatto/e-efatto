@@ -219,10 +219,10 @@ class MrpProductionSerialMatrix(models.TransientModel):
 
     def button_prepare(self):
         self.ensure_one()
-        if self.production_id.state != "confirmed":
+        if self.production_id.qty_producing != 0:
             raise UserError(
                 _(
-                    "Only productions in confirmed state can be produced serially!\n"
+                    "Only productions with 0 qty_producing can be produced serially!\n"
                     "This is a state normally not reachable with this module installed,"
                     " so force the production to 'confirmed' and then proceed."
                 )
