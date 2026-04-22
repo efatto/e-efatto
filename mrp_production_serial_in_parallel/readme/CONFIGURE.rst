@@ -7,7 +7,8 @@ In questa produzione vanno registrati i tempi di lavorazione, che sono suddivisi
 .. image:: ../static/description/produzione_seriale_in_parallelo.png
     :alt: Produzione seriale in parallelo
 
-Nelle produzioni figlie è possibile impostare i prodotti consumati singolarmente. Poi si possono completare tutte contemporaneamente dalla produzione padre.
+RIMOSSO IN QUANTO NON USATO: Nelle produzioni figlie è possibile impostare i prodotti consumati singolarmente. Poi si possono completare tutte contemporaneamente dalla produzione padre.
+N.B. Attualmente si può solo eseguire la produzione in parallelo direttamente, in seguito è comunque possibile sbloccare le produzioni figlie completate per modificare o azzerare le quantità dei componenti consumati oppure aggiungerne di nuovi.
 
 I passaggi da eseguire per la produzione in parallelo sono:
 
@@ -22,7 +23,6 @@ I passaggi da eseguire per la produzione in parallelo sono:
 
 #. registra le ore lavorate sulla produzione: verranno poi suddivise equamente tra le produzioni singole generate per ogni seriale
 
-
 #. completa la produzione padre, che completerà tutte le produzioni figlie, con il bottone:
 
 .. image:: ../static/description/matrice_numeri_seriali.png
@@ -35,7 +35,9 @@ che apre una maschera precompilata con i seriali da produrre, in cui usare il bo
 
 In questa maschera verranno richiesti eventuali seriali per i componenti utilizzati, se necessari.
 
-#.a facoltatimente, prepara le produzioni figlie e registra le ore singolarmente, che verranno aggiunte a quelle suddivise inserite dalla produzione padre
+#.a POSSIBILITÀ RIMOSSA IN QUANTO NON USATA E NON TESTATA: facoltatimente, prepara le produzioni figlie e registra le ore singolarmente, che verranno aggiunte a quelle suddivise inserite dalla produzione padre
 
 .. image:: ../static/description/prepara.png
     :alt: Prepara
+
+IMPORTANTE: se il trasferimento alla produzione è impostato con l'opzione di "Annullare movimento successivo", nel caso in cui sia impostato nel magazzino l'opzione "Prelievo componenti e produzione (2 fasi)", se il trasferimento verso l'ubicazione della produzione viene annullato, verranno annullati anche i movimenti di scarico dei componenti, bloccando la produzione in parallelo. Si raccomanda quindi di togliere questa opzione, oppure di eseguire i trasferimenti in maniera completa, oppure di completare la produzione prima di annullare i trasferimenti.

@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     "name": "MRP Production Serial in Parallel",
-    "version": "14.0.1.1.0",
+    "version": "14.0.1.1.1",
     "license": "AGPL-3",
     "category": "Manufacturing",
     "author": "Sergio Corato",
