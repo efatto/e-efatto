@@ -18,7 +18,6 @@
     ],
     "data": [
         "views/mrp.xml",
-        # "wizards/mrp_production_serial_matrix_view.xml",
     ],
     "installable": True,
 }
