@@ -12,6 +12,7 @@ class TestSerialMatrix(Common):
         with Form(self.production) as production_form:
             with production_form.workorder_ids.edit(0) as workorder:
                 workorder.duration = 15
+        self.assertEqual(len(self.production.workorder_ids), 1)
         self.assertTrue(self.production.state, "confirmed")
 
     def test_00_validate(self):
@@ -25,7 +26,7 @@ class TestSerialMatrix(Common):
         serial_matrix_wizard = self._init_matrix(production)
         # pre-condition
         self.assertTrue(production.is_parallel_production)
-        self.assertTrue(production.workorder_ids.time_ids.duration, 15)
+        self.assertTrue(sum(production.workorder_ids.mapped("time_ids.duration")), 15)
 
         # Act
         serial_matrix_wizard.button_validate()
@@ -127,7 +128,9 @@ class TestSerialMatrix(Common):
             with component_move_form.move_line_ids.new() as ml_form:
                 ml_form.qty_done = 12
 
-    def _test_validate_removing_and_adding_component(self, confirmed=False):
+    def _test_validate_removing_and_adding_component(
+        self, confirmed=False, start_wo=False
+    ):
         """
         Modify the quantity of components to:
             - serial component: untouched (3 total, 1 for each backorder)
@@ -164,6 +167,10 @@ class TestSerialMatrix(Common):
         production_form.save()
         if not confirmed:
             self._confirm_production()
+        if start_wo:
+            production.button_plan()
+            production.workorder_ids[0].button_start()
+            production.workorder_ids[0].button_finish()
         # check that is not possible to change production qty done
         other_component_move = production.move_raw_ids.filtered(
             lambda x: x.product_id == self.other_component
@@ -178,7 +185,7 @@ class TestSerialMatrix(Common):
         serial_matrix_wizard = self._init_matrix(production)
         # pre-condition
         self.assertTrue(production.is_parallel_production)
-        self.assertTrue(production.workorder_ids.time_ids.duration, 15)
+        self.assertTrue(sum(production.workorder_ids.mapped("time_ids.duration")), 15)
 
         # Act
         serial_matrix_wizard.button_validate()
@@ -239,7 +246,10 @@ class TestSerialMatrix(Common):
         )
 
     def test_03_validate_removing_and_adding_component_draft(self):
-        self._test_validate_removing_and_adding_component(confirmed=False)
+        self._test_validate_removing_and_adding_component()
 
     def test_03_validate_removing_and_adding_component_confirmed(self):
         self._test_validate_removing_and_adding_component(confirmed=True)
+
+    def test_03_validate_removing_and_adding_component_starting_wo(self):
+        self._test_validate_removing_and_adding_component(start_wo=True)
