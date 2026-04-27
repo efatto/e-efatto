@@ -3,18 +3,25 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 
-def pre_init_product_name(cr):
-    cr.execute(
+def pre_init_product_name(env):
+    env.cr.execute(
+        "SELECT 1 FROM pg_class WHERE relkind = 'S' AND relname = 'ir_default_id_seq'"
+    )
+    if not env.cr.fetchone():
+        env.cr.execute("CREATE SEQUENCE ir_default_id_seq INCREMENT BY 1 START WITH 1")
+    env.cr.execute(
         """UPDATE product_template
-        SET name = CONCAT(name, '_', nextval('ir_default_id_seq'))
+        SET name = jsonb_set(
+            name, '{en_US}', to_jsonb(
+                COALESCE(name->>'en_US', '') || '_' || nextval('ir_default_id_seq')))
         WHERE id in (SELECT distinct(pt.id)
                      FROM product_template pt
-                     INNER JOIN (SELECT name, COUNT(*)
-                                 FROM product_template
-                                 GROUP BY name
-                                 HAVING COUNT(*)>1
-                                 )pt1 on pt.name=pt1.name
-                                  or pt.name is NULL
-                                  or LENGTH(pt.name) = 0)"""
+                     INNER JOIN (
+                        SELECT COALESCE(name->>'en_US', '') as name_en, COUNT(*)
+                        FROM product_template
+                        GROUP BY COALESCE(name->>'en_US', '')
+                        HAVING COUNT(*)>1
+                     ) pt1 on COALESCE(pt.name->>'en_US', '') = pt1.name_en)
+        """
     )
     return True
