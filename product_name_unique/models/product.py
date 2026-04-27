@@ -35,6 +35,7 @@ class ProductTemplate(models.Model):
                     raise ValidationError(
                         _(
                             "Product name must be unique "
-                            "for product category %s!" % others[0].categ_id.name
+                            "for product category %(category_name)s!",
+                            category_name=others[0].categ_id.name,
                         )
                     )
