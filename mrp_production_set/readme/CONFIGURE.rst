@@ -1,4 +1,5 @@
-Questo modulo crea un oggetto Set di produzioni per collegare due produzioni (oppure la stessa produzione vista come due) per inviarle in maniera coordinata ad una macchina operatrice.
+Questo modulo crea un oggetto Set di produzioni per collegare due produzioni (oppure la stessa produzione vista come due) per inviarle in maniera coordinata ad una macchina operatrice. La produzione di sinistra sarà inviata al centro di lavoro che è impostato come "sinistro" mentre quella di destra come "destro".
+È anche possibile inviare solo la produzione di sinistra o la produzione di destra.
 
 Dal menu si crea un nuovo record:
 
@@ -14,6 +15,8 @@ oppure 1 produzione e impostare il chech su "Suddividere la produzione":
 
 .. image:: ../static/description/produzione_suddivisa.png
     :alt: Produzione suddivisa
+
+oppure inviare la sola produzione destra o la sola produzione sinistra.
 
 Se una delle produzioni selezionate è in stato "Bozza", è visibile il bottone "Conferma" per confermarle:
 
