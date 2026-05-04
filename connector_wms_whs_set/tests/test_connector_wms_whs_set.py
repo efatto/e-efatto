@@ -21,6 +21,20 @@ class TestConnectorWmsWhsSet(TestConnectorWmsWhs):
             ]
         )
         if not self.product_for_set:
+            self.workcenter1.mrp_set_position = "left"
+            self.workcenter2 = self.env["mrp.workcenter"].create(
+                {
+                    "name": "Base Workcenter 2",
+                    "capacity": 1,
+                    "time_start": 10,
+                    "time_stop": 5,
+                    "time_efficiency": 80,
+                    "costs_hour": 23.0,
+                    "mrp_set_position": "right",
+                    "alternative_workcenter_ids": [(6, 0, self.workcenter1.ids)],
+                }
+            )
+            self.workcenter1.alternative_workcenter_ids = self.workcenter2.ids
             product_form = Form(self.env["product.product"])
             product_form.name = "Product for set"
             product_form.default_code = "PRODUCT_FOR_SET"
@@ -49,12 +63,10 @@ class TestConnectorWmsWhsSet(TestConnectorWmsWhs):
                 }
             )
 
-    def _mrp_partial_from_sale_set(self, man_orders, wrong_products=False):
-        man_order = man_orders[0]
-        man_order1 = man_orders[1]
+    def _mrp_partial_from_sale_set(self, left_order, right_order, wrong_products=False):
         production_set_form = Form(self.env["mrp.production.set"])
-        production_set_form.production_left_id = man_order
-        production_set_form.production_right_id = man_order1
+        production_set_form.production_left_id = left_order
+        production_set_form.production_right_id = right_order
         if wrong_products:
             with self.assertRaises(ValidationError):
                 production_set_form.save()
@@ -68,16 +80,16 @@ class TestConnectorWmsWhsSet(TestConnectorWmsWhs):
         self.assertEqual(production_set.state, "progress")
         production_set.button_send_to_whs()
         self.assertEqual(production_set.sent_to_whs, True)
-        self.assertEqual(man_order.sent_to_whs, True)
-        self.assertEqual(man_order1.sent_to_whs, True)
-        self.assertEqual(man_order.qty_producing, production_set.qty_producing_left)
-        self.assertEqual(man_order1.qty_producing, production_set.qty_producing_right)
+        self.assertEqual(left_order.sent_to_whs, True)
+        self.assertEqual(right_order.sent_to_whs, True)
+        self.assertEqual(left_order.qty_producing, production_set.qty_producing_left)
+        self.assertEqual(right_order.qty_producing, production_set.qty_producing_right)
         self.assertEqual(
-            man_order.move_raw_ids.whs_list_ids.num_lista,
-            man_order1.move_raw_ids.whs_list_ids.num_lista,
+            left_order.move_raw_ids.whs_list_ids.num_lista,
+            right_order.move_raw_ids.whs_list_ids.num_lista,
         )
-        self.assertEqual(man_order.move_raw_ids.whs_list_ids.riga, 1)
-        self.assertEqual(man_order1.move_raw_ids.whs_list_ids.riga, 2)
+        self.assertEqual(left_order.move_raw_ids.whs_list_ids.riga, 1)
+        self.assertEqual(right_order.move_raw_ids.whs_list_ids.riga, 2)
         return True
 
     def test_00_mrp_partial_from_sale_set(self):
@@ -85,12 +97,16 @@ class TestConnectorWmsWhsSet(TestConnectorWmsWhs):
         # the row number 1, the right will be the row number 2
         self.top_product.categ_id = self.categ_id
         self.assertNotEqual(self.top_product.categ_id.name, "CUSTOM")
-        man_order = self._create_sale_order_with_mrp(self.top_product)
-        man_order1 = self._create_sale_order_with_mrp(self.top_product)
-        self._mrp_partial_from_sale_set((man_order | man_order1), wrong_products=True)
-        man_order = self._create_sale_order_with_mrp(self.product_for_set)
-        man_order1 = self._create_sale_order_with_mrp(self.product_for_set)
-        self._mrp_partial_from_sale_set(man_order | man_order1)
+        left_order = self._create_sale_order_with_mrp(self.top_product)
+        right_order = self._create_sale_order_with_mrp(self.top_product)
+        self._mrp_partial_from_sale_set(left_order, right_order, wrong_products=True)
+        left_order = self._create_sale_order_with_mrp(self.product_for_set)
+        right_order = self._create_sale_order_with_mrp(self.product_for_set)
+        self.assertEqual(left_order.state, "confirmed")
+        self.assertEqual(right_order.state, "confirmed")
+        left_order.button_plan()
+        right_order.button_plan()
+        self._mrp_partial_from_sale_set(left_order, right_order)
 
     # def test_08_mrp_partial_from_sale_custom(self):
     #     # todo productions in set must share the same lista, the left will be
