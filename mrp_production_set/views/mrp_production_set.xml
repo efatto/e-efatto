@@ -40,11 +40,18 @@
             attrs="{'invisible': [('state', '!=', 'draft')]}"
           />
                     <button
+            name="button_plan"
+            type="object"
+            string="Plan workorders"
+            class="oe_highlight"
+            attrs="{'invisible': [('state', '!=', 'confirmed')]}"
+          />
+                    <button
             name="button_update_qty_producing"
             type="object"
             string="Update qty producing"
             class="oe_highlight"
-            attrs="{'invisible': [('state', '!=', 'confirmed')]}"
+            attrs="{'invisible': ['|', '|', ('state', '!=', 'confirmed'), ('production_left_id', '=', False), ('production_right_id', '=', False)]}"
           />
                     <field
             name="state"
