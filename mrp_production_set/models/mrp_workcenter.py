@@ -1,4 +1,4 @@
-from odoo import api, fields, models, _
+from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
 
@@ -18,10 +18,15 @@ class MrpWorkcenter(models.Model):
             if record.mrp_set_position and record.alternative_workcenter_ids:
                 if len(record.alternative_workcenter_ids) > 1:
                     raise ValidationError(
-                        _("Workcenter with a set position can only have one "
-                          "alternative workcenter with a different set position.")
+                        _(
+                            "Workcenter with a set position can only have one "
+                            "alternative workcenter with a different set position."
+                        )
                     )
-                if record.mrp_set_position == record.alternative_workcenter_ids.mrp_set_position:
+                if (
+                    record.mrp_set_position
+                    == record.alternative_workcenter_ids.mrp_set_position
+                ):
                     raise ValidationError(
                         _("Alternative workcenter must have a different set position.")
                     )

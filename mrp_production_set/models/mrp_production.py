@@ -25,3 +25,32 @@ class MrpProduction(models.Model):
             record.is_compatible_for_set = bool(
                 len(record.move_raw_ids.mapped("product_id")) == 1
             )
+
+    def _get_workcenter_id(self, workorder):
+        workcenters = super()._get_workcenter_id(workorder)
+        production_set_id = (
+            workorder.production_id.production_left_set_ids
+            | workorder.production_id.production_right_set_ids
+        )
+        if production_set_id:
+            # ensure that production left has only workcenter without or with left
+            # mrp_position_set and viceversa
+            workcenters = (
+                workorder.workcenter_id
+                | workorder.workcenter_id.alternative_workcenter_ids
+            ).filtered(
+                lambda wc, product=self.product_id, wo=workorder: product
+                not in wc.excluded_product_ids
+                and wc.mrp_set_position == "left"
+                if (
+                    wc.mrp_set_position
+                    and workorder.production_id.production_left_set_ids
+                )
+                else wc.mrp_set_position == "right"
+                if (
+                    wc.mrp_set_position
+                    and workorder.production_id.production_right_set_ids
+                )
+                else True
+            )
+        return workcenters

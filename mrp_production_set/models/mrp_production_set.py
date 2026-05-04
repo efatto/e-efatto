@@ -59,6 +59,10 @@ class MrpProductionSet(models.Model):
         string="Split Production",
         help="If checked, the production will be splitted in two.",
     )
+    is_planned = fields.Boolean(
+        compute="_compute_is_planned",
+        store=True,
+    )
 
     @api.onchange("production_right_id", "production_left_id")
     def _onchange_production_right_id(self):
@@ -80,7 +84,8 @@ class MrpProductionSet(models.Model):
 
     @api.onchange("qty_producing_left")
     def _onchange_qty_producing_left(self):
-        self.qty_producing_right = self.qty_producing_left
+        if self.production_right_id:
+            self.qty_producing_right = self.qty_producing_left
 
     @api.depends("production_left_id", "production_right_id")
     def _compute_name(self):
@@ -90,24 +95,48 @@ class MrpProductionSet(models.Model):
                 right=production_set.production_right_id.name or "n.a.",
             )
 
-    @api.depends("production_left_id")
+    @api.depends("production_left_id", "production_right_id")
     def _compute_state(self):
         for production_set in self:
-            production_set.state = production_set.production_left_id.state or "draft"
-            # The right production state is the same as it is the only accepted
+            if production_set.production_left_id:
+                production_set.state = (
+                    production_set.production_left_id.state or "draft"
+                )
+            elif production_set.production_right_id:
+                production_set.state = (
+                    production_set.production_right_id.state or "draft"
+                )
+            else:
+                production_set.state = "draft"
+
+    @api.depends("production_left_id.is_planned", "production_right_id.is_planned")
+    def _compute_is_planned(self):
+        for production_set in self:
+            if production_set.production_left_id:
+                production_set.is_planned = production_set.production_left_id.is_planned
+            elif production_set.production_right_id:
+                production_set.is_planned = (
+                    production_set.production_right_id.is_planned
+                )
+            else:
+                production_set.is_planned = False
 
     @api.constrains("production_left_id", "production_right_id")
     def _check_production_set_products(self):
         for production_set in self:
             if (
-                production_set.production_left_id.move_raw_ids.product_id
+                production_set.production_left_id
+                and production_set.production_right_id
+                and production_set.production_left_id.move_raw_ids.product_id
                 != production_set.production_right_id.move_raw_ids.product_id
             ):
                 raise ValidationError(
                     _("A production set must have the same components!")
                 )
             if (
-                len(production_set.production_left_id.move_raw_ids) != 1
+                production_set.production_left_id
+                and production_set.production_right_id
+                and len(production_set.production_left_id.move_raw_ids) != 1
                 or len(production_set.production_right_id.move_raw_ids) != 1
             ):
                 raise ValidationError(_("A production set must have only 1 component!"))
@@ -135,9 +164,15 @@ class MrpProductionSet(models.Model):
                 production_set.production_left_id | production_set.production_right_id
             ).action_confirm()
 
+    def button_plan(self):
+        for production_set in self:
+            (
+                production_set.production_left_id | production_set.production_right_id
+            ).button_plan()
+
     def button_update_qty_producing(self):
         for production_set in self:
-            if self.split_production:
+            if production_set.split_production:
                 production_left_form = Form(production_set.production_left_id)
                 production_left_form.qty_producing = (
                     production_set.qty_producing_left
