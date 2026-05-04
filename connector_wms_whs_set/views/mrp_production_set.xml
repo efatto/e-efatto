@@ -7,12 +7,13 @@
         <field name="arch" type="xml">
             <button name="button_update_qty_producing" position="after">
                 <field name="sent_to_whs" invisible="1" />
+                <field name="is_planned" invisible="1" />
                 <button
           name="button_send_to_whs"
           type="object"
           string="Send to WHS"
           class="oe_highlight"
-          attrs="{'invisible': ['|', ('state', '!=', 'progress'), ('sent_to_whs', '=', True)]}"
+          attrs="{'invisible': ['|', '|', ('state', '!=', 'progress'), ('sent_to_whs', '=', True), ('is_planned', '=', False)]}"
         />
             </button>
         </field>
