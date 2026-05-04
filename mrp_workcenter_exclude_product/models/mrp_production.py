@@ -7,6 +7,14 @@ from odoo.exceptions import UserError
 class MrpProduction(models.Model):
     _inherit = "mrp.production"
 
+    def _get_workcenter_id(self, workorder):
+        workcenters = (
+            workorder.workcenter_id | workorder.workcenter_id.alternative_workcenter_ids
+        ).filtered(
+            lambda wc, product=self.product_id: product not in wc.excluded_product_ids
+        )
+        return workcenters
+
     def _plan_workorders(self, replan=False):
         res = super()._plan_workorders(replan)
         # Replan the workorders restricting to the workcenter not escluded products.
@@ -33,13 +41,7 @@ class MrpProduction(models.Model):
             )
         for workorder in workorder_ids:
             # code change from the original
-            workcenters = (
-                workorder.workcenter_id
-                | workorder.workcenter_id.alternative_workcenter_ids
-            ).filtered(
-                lambda wc, product=self.product_id: product
-                not in wc.excluded_product_ids
-            )
+            workcenters = self._get_workcenter_id(workorder)
             # end code change
 
             best_finished_date = datetime.datetime.max
