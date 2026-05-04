@@ -125,8 +125,10 @@ class MrpProductionSet(models.Model):
     def _check_production_set_products(self):
         for production_set in self:
             if (
-                production_set.production_left_id
-                and production_set.production_right_id
+                (
+                    production_set.production_left_id
+                    and production_set.production_right_id
+                )
                 and production_set.production_left_id.move_raw_ids.product_id
                 != production_set.production_right_id.move_raw_ids.product_id
             ):
@@ -135,9 +137,10 @@ class MrpProductionSet(models.Model):
                 )
             if (
                 production_set.production_left_id
-                and production_set.production_right_id
                 and len(production_set.production_left_id.move_raw_ids) != 1
-                or len(production_set.production_right_id.move_raw_ids) != 1
+            ) or (
+                production_set.production_right_id
+                and len(production_set.production_right_id.move_raw_ids) != 1
             ):
                 raise ValidationError(_("A production set must have only 1 component!"))
 
@@ -170,6 +173,12 @@ class MrpProductionSet(models.Model):
                 production_set.production_left_id | production_set.production_right_id
             ).button_plan()
 
+    def button_unplan(self):
+        for production_set in self:
+            (
+                production_set.production_left_id | production_set.production_right_id
+            ).button_unplan()
+
     def button_update_qty_producing(self):
         for production_set in self:
             if production_set.split_production:
@@ -180,9 +189,15 @@ class MrpProductionSet(models.Model):
                 )
                 production_left_form.save()
             else:
-                production_left_form = Form(production_set.production_left_id)
-                production_left_form.qty_producing = production_set.qty_producing_left
-                production_left_form.save()
-                production_right_form = Form(production_set.production_right_id)
-                production_right_form.qty_producing = production_set.qty_producing_right
-                production_right_form.save()
+                if production_set.production_left_id:
+                    production_left_form = Form(production_set.production_left_id)
+                    production_left_form.qty_producing = (
+                        production_set.qty_producing_left
+                    )
+                    production_left_form.save()
+                if production_set.production_right_id:
+                    production_right_form = Form(production_set.production_right_id)
+                    production_right_form.qty_producing = (
+                        production_set.qty_producing_right
+                    )
+                    production_right_form.save()

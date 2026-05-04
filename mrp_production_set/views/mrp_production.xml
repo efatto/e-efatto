@@ -9,13 +9,19 @@
                 <field
           name="production_left_set_ids"
           widget="many2many_tags"
-          attrs="{'invisible': [('production_left_set_ids', '=', False)], 'readonly': True}"
+          attrs="{'invisible': True}"
         />
                 <field
           name="production_right_set_ids"
           widget="many2many_tags"
-          attrs="{'invisible': [('production_right_set_ids', '=', False)], 'readonly': True}"
+          attrs="{'invisible': True}"
         />
+                <p
+          class="warning-text"
+          attrs="{'invisible': [('production_right_set_ids', '=', False), ('production_left_set_ids', '=', False)]}"
+        >
+                    This production is part of a Production SET
+                </p>
             </xpath>
         </field>
     </record>
