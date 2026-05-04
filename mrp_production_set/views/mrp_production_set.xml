@@ -39,19 +39,25 @@
             class="oe_highlight"
             attrs="{'invisible': [('state', '!=', 'draft')]}"
           />
-                    <button
+                <button
             name="button_plan"
+            attrs="{'invisible': ['|', ('state', 'not in', ('confirmed', 'progress', 'to_close')), ('is_planned', '=', True)]}"
             type="object"
-            string="Plan workorders"
+            string="Plan"
             class="oe_highlight"
-            attrs="{'invisible': [('state', '!=', 'confirmed')]}"
+          />
+                <button
+            name="button_unplan"
+            type="object"
+            string="Unplan"
+            attrs="{'invisible': [('is_planned', '=', False)]}"
           />
                     <button
             name="button_update_qty_producing"
             type="object"
             string="Update qty producing"
             class="oe_highlight"
-            attrs="{'invisible': ['|', '|', ('state', '!=', 'confirmed'), ('production_left_id', '=', False), ('production_right_id', '=', False)]}"
+            attrs="{'invisible': ['|', ('state', '!=', 'confirmed'), '&amp;', ('production_left_id', '=', False), ('production_right_id', '=', False)]}"
           />
                     <field
             name="state"
