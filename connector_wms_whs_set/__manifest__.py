@@ -11,6 +11,7 @@
     "author": "Sergio Corato",
     "website": "https://github.com/efatto/e-efatto",
     "depends": [
+        "connector_whs",
         "connector_wms_whs",
         "mrp_production_set",
     ],

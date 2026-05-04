@@ -29,7 +29,7 @@ class MrpProduction(models.Model):
                 riga = 1
             elif right.move_raw_ids.whs_list_ids:
                 num_lista = right.move_raw_ids.whs_list_ids.num_lista
-                riga = 1
+                riga = 2
         if not num_lista:
             num_lista, riga = super()._get_num_lista()
         return num_lista, riga
