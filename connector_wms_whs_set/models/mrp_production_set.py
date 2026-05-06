@@ -11,7 +11,7 @@ class MrpProductionSet(models.Model):
     )
 
     def button_send_to_whs(self):
-        if self.production_left_id:
+        if self.production_left_id and not self.split_production:
             if any(
                 [
                     wo.workcenter_id.mrp_set_position != "left"
@@ -21,7 +21,7 @@ class MrpProductionSet(models.Model):
                 raise ValidationError(
                     _("Only 'left' workcenter can be used in 'left' position")
                 )
-        if self.production_right_id:
+        if self.production_right_id and not self.split_production:
             if any(
                 [
                     wo.workcenter_id.mrp_set_position != "right"
