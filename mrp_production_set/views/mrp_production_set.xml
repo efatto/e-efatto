@@ -32,6 +32,7 @@
         <field name="arch" type="xml">
             <form string="Production Set">
                 <header>
+                    <field name="is_planned" invisible="1" />
                     <button
             name="action_confirm"
             type="object"
