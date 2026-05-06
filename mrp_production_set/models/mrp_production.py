@@ -19,11 +19,12 @@ class MrpProduction(models.Model):
         store=True,
     )
 
-    @api.depends("move_raw_ids.product_id")
+    @api.depends("move_raw_ids.product_id", "workorder_ids")
     def _compute_is_compatible_for_set(self):
-        for record in self:
-            record.is_compatible_for_set = bool(
-                len(record.move_raw_ids.mapped("product_id")) == 1
+        for production in self:
+            production.is_compatible_for_set = bool(
+                len(production.move_raw_ids.mapped("product_id")) == 1
+                and production.workorder_ids
             )
 
     def _get_workcenter_id(self, workorder):
