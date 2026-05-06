@@ -44,12 +44,12 @@ Dal menu si crea un nuovo record:
 .. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_set/static/description/menu.png
     :alt: Menu set produzioni
 
-in cui è possibile selezionare 2 distinte produzioni
+in cui è possibile selezionare 2 distinte produzioni:
 
 .. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_set/static/description/produzioni.png
     :alt: Produzioni
 
-oppure 1 produzione e impostare il chech su "Suddividere la produzione":
+oppure 1 produzione e impostare il chech su "Suddividere la produzione" (in questo caso la produzione occuperà entrambi i centri di lavoro):
 
 .. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_set/static/description/produzione_suddivisa.png
     :alt: Produzione suddivisa
@@ -71,7 +71,20 @@ aggiornando la quantità nelle produzioni con il tasto "Aggiorna Q.tà in Produz
 .. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_set/static/description/aggiorna_quantita.png
     :alt: Aggiorna quantità
 
-Si può infine inviare le produzioni al macchinario tramite il bottone aggiunto dal connettore installato.
+È necessario quindi pianificare il set di produzioni, che andrà a impostare la data di avvio sugli ordini di lavoro delle produzioni collegate, verificando che siano correttamente impostati rispettivamente sul lato sinistro e sul lato destro. Se è una produzione splittata, la lavorazione verrà suddivisa su entrambi i centri di lavoro.
+
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_set/static/description/pianifica.png
+    :alt: Pianifica
+
+È eventualmente possibile annullare la pianificazione e ripianificarla.
+
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_set/static/description/annulla_pianificazione.png
+    :alt: Annulla la pianificazione
+
+Si può infine inviare le produzioni al macchinario tramite il bottone aggiunto dal connettore installato (attualmente l'unico modulo esistente aggiunge il bottone sotto):
+
+.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_set/static/description/invia.png
+    :alt: Invia
 
 Bug Tracker
 ===========
