@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-05 13:41+0000\n"
-"PO-Revision-Date: 2025-11-05 13:41+0000\n"
+"POT-Creation-Date: 2026-05-06 14:28+0000\n"
+"PO-Revision-Date: 2026-05-06 14:28+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -28,8 +28,15 @@ msgid "A production set must have the same components!"
 msgstr "Un set di produzione deve avere gli stessi componenti!"
 
 #. module: mrp_production_set
+#: code:addons/mrp_production_set/models/mrp_workcenter.py:0
+#, python-format
+msgid "Alternative workcenter must have a different set position."
+msgstr "Il centro di lavoro alternativo deve avere una posizione diversa."
+
+#. module: mrp_production_set
 #: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production__assigned_attachment_ids
 #: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__assigned_attachment_ids
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_workcenter__assigned_attachment_ids
 msgid "Assigned Attachments"
 msgstr "Allegati assegnati"
 
@@ -50,18 +57,20 @@ msgstr "Creato da"
 
 #. module: mrp_production_set
 #: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__create_date
-msgid "Created on"
-msgstr "Creato il"
+msgid "Creation Date"
+msgstr "Data di creazione"
 
 #. module: mrp_production_set
 #: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production__display_name
 #: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__display_name
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_workcenter__display_name
 msgid "Display Name"
 msgstr "Nome visualizzato"
 
 #. module: mrp_production_set
 #: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production__id
 #: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__id
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_workcenter__id
 msgid "ID"
 msgstr ""
 
@@ -76,8 +85,14 @@ msgid "Is Compatible For Set"
 msgstr "È compatibile per Set di Produzione"
 
 #. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__is_planned
+msgid "Is Planned"
+msgstr "È pianificata"
+
+#. module: mrp_production_set
 #: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production____last_update
 #: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set____last_update
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_workcenter____last_update
 msgid "Last Modified on"
 msgstr "Ultima modifica il"
 
@@ -87,9 +102,9 @@ msgid "Last Updated by"
 msgstr "Ultima modifica da"
 
 #. module: mrp_production_set
-#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__write_date
-msgid "Last Updated on"
-msgstr "Ultima modifica il"
+#: model:ir.model.fields.selection,name:mrp_production_set.selection__mrp_workcenter__mrp_set_position__left
+msgid "Left"
+msgstr "Sinistra"
 
 #. module: mrp_production_set
 #: model:ir.model.fields,help:mrp_production_set.field_mrp_production_set__compatible_mrp_production_ids
@@ -106,9 +121,19 @@ msgid "MRP Production Set"
 msgstr "Set Ordini Produzione"
 
 #. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_workcenter__mrp_set_position
+msgid "Mrp Set Position"
+msgstr "Posizione Set di Produzione"
+
+#. module: mrp_production_set
 #: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__name
 msgid "Name"
 msgstr "Nome"
+
+#. module: mrp_production_set
+#: model_terms:ir.ui.view,arch_db:mrp_production_set.mrp_production_set_form
+msgid "Plan"
+msgstr "Pianifica"
 
 #. module: mrp_production_set
 #: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__move_raw_product_id
@@ -165,6 +190,11 @@ msgid "Quantity Producing Right"
 msgstr "Quantità in Produzione Destra"
 
 #. module: mrp_production_set
+#: model:ir.model.fields.selection,name:mrp_production_set.selection__mrp_workcenter__mrp_set_position__right
+msgid "Right"
+msgstr "Destra"
+
+#. module: mrp_production_set
 #: model:ir.model.fields,help:mrp_production_set.field_mrp_production_set__qty_producing_left
 msgid "Set the quantity producing in the left production."
 msgstr "Imposta la quantità di produzione nella produzione sinistra."
@@ -173,6 +203,13 @@ msgstr "Imposta la quantità di produzione nella produzione sinistra."
 #: model:ir.model.fields,help:mrp_production_set.field_mrp_production_set__qty_producing_right
 msgid "Set the quantity producing in the right production."
 msgstr "Imposta la quantità di produzione nella produzione destra."
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production__smart_search
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__smart_search
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_workcenter__smart_search
+msgid "Smart Search"
+msgstr "Ricerca intelligente"
 
 #. module: mrp_production_set
 #: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__split_production
@@ -190,6 +227,36 @@ msgid "The same as Production Left"
 msgstr "Uguale a Produzione Sinistra"
 
 #. module: mrp_production_set
+#: model_terms:ir.ui.view,arch_db:mrp_production_set.mrp_production_form_view
+msgid "This production is part of a Production SET"
+msgstr "Questa produzione fa parte di un Set di Produzioni"
+
+#. module: mrp_production_set
+#: model_terms:ir.ui.view,arch_db:mrp_production_set.mrp_production_set_form
+msgid "Unplan"
+msgstr "Annulla Pianificazione"
+
+#. module: mrp_production_set
+#: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__write_date
+msgid "Update Date"
+msgstr "Data di aggiornamento"
+
+#. module: mrp_production_set
 #: model_terms:ir.ui.view,arch_db:mrp_production_set.mrp_production_set_form
 msgid "Update qty producing"
 msgstr "Aggiorna Q.tà in Produzione"
+
+#. module: mrp_production_set
+#: model:ir.model,name:mrp_production_set.model_mrp_workcenter
+msgid "Work Center"
+msgstr "Centro di lavoro"
+
+#. module: mrp_production_set
+#: code:addons/mrp_production_set/models/mrp_workcenter.py:0
+#, python-format
+msgid ""
+"Workcenter with a set position can only have one alternative workcenter with"
+" a different set position."
+msgstr ""
+"Un centro di lavoro con una posizione set di produzione può avere solo un "
+"centro di lavoro alternativo con una posizione set di produzione diversa."
