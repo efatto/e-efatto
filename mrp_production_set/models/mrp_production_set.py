@@ -169,6 +169,29 @@ class MrpProductionSet(models.Model):
 
     def button_plan(self):
         for production_set in self:
+            if production_set.split_production:
+                # duplicate only the workorder with a workcenter with mrp set position,
+                # splitting time and set the alternative workcenter, if not already done
+                for (
+                    workorder
+                ) in production_set.production_left_id.workorder_ids.filtered(
+                    "workcenter_id.alternative_workcenter_ids.mrp_set_position"
+                ):
+                    if not production_set.production_left_id.workorder_ids.filtered(
+                        lambda wo: wo != workorder
+                        and wo.workcenter_id.mrp_set_position
+                        and wo.workcenter_id.mrp_set_position
+                        != workorder.workcenter_id.mrp_set_position
+                    ):
+                        workorder.copy(
+                            default={
+                                "workcenter_id": workorder.workcenter_id.alternative_workcenter_ids[  # noqa B950
+                                    0
+                                ].id,
+                                "duration_expected": workorder.duration_expected / 2,
+                            }
+                        )
+                        workorder.duration_expected = workorder.duration_expected / 2
             (
                 production_set.production_left_id | production_set.production_right_id
             ).button_plan()

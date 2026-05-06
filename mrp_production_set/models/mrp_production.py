@@ -36,22 +36,41 @@ class MrpProduction(models.Model):
         if production_set_id:
             # ensure that production left has only workcenter without or with left
             # mrp_position_set and viceversa
-            workcenters = (
-                workorder.workcenter_id
-                | workorder.workcenter_id.alternative_workcenter_ids
-            ).filtered(
-                lambda wc, product=self.product_id, wo=workorder: product
-                not in wc.excluded_product_ids
-                and wc.mrp_set_position == "left"
-                if (
-                    wc.mrp_set_position
-                    and workorder.production_id.production_left_set_ids
+            # and that 2 workorders have different mrp position set workcenter
+            if production_set_id.split_production:
+                other_workorder_with_set_positions = (
+                    workorder.production_id.workorder_ids.filtered(
+                        lambda wo: wo != workorder and wo.workcenter_id.mrp_set_position
+                    )
                 )
-                else wc.mrp_set_position == "right"
-                if (
-                    wc.mrp_set_position
-                    and workorder.production_id.production_right_set_ids
+                workcenters = (
+                    workorder.workcenter_id
+                    | workorder.workcenter_id.alternative_workcenter_ids
+                ).filtered(
+                    lambda wc, product=self.product_id, wo=workorder: product
+                    not in wc.excluded_product_ids
+                    and wc.mrp_set_position
+                    not in other_workorder_with_set_positions.mapped(
+                        "workcenter_id.mrp_set_position"
+                    )
                 )
-                else True
-            )
+            else:
+                workcenters = (
+                    workorder.workcenter_id
+                    | workorder.workcenter_id.alternative_workcenter_ids
+                ).filtered(
+                    lambda wc, product=self.product_id, wo=workorder: product
+                    not in wc.excluded_product_ids
+                    and wc.mrp_set_position == "left"
+                    if (
+                        wc.mrp_set_position
+                        and workorder.production_id.production_left_set_ids
+                    )
+                    else wc.mrp_set_position == "right"
+                    if (
+                        wc.mrp_set_position
+                        and workorder.production_id.production_right_set_ids
+                    )
+                    else True
+                )
         return workcenters
