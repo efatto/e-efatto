@@ -114,6 +114,7 @@ class MrpProduction(models.Model):
 
     def _generate_backorder_productions(self, close_mo=True):
         backorders = super()._generate_backorder_productions(close_mo=close_mo)
+        backorders._set_qty_producing()
         if self.env.context.get("backorder_serial_matrix"):
             # align moves of backorder if it's a serial matrix:
             # - create lines if added by hand
