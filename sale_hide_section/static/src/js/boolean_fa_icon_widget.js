@@ -38,6 +38,16 @@ odoo.define("sale_layout_category_hide_detail.boolean_fa_icon_widget", function 
     // --------------------------------------------------------------------------
 
     _allowEdit: function () {
+      if (this.nodeOptions.readonly || this.attrs.readonly || this.mode === "readonly") {
+        return false;
+      }
+      var record = this.record;
+      if (record && record.getParent) {
+        var parent = record.getParent();
+        if (parent && parent.state && (parent.state.active === false || parent.state.state === "cancel")) {
+          return false;
+        }
+      }
       return true;
     },
 
@@ -80,7 +90,43 @@ odoo.define("sale_layout_category_hide_detail.boolean_fa_icon_widget", function 
     _toggleValue: function (event) {
       event.preventDefault();
       event.stopPropagation();
-      if (this._allowEdit()) this._setValue(!this.value);
+      var newValue = !this.value;
+      if (this._allowEdit()) {
+        this._setValue(newValue);
+      } else {
+        // If readonly, we only update the UI state
+        this.value = newValue;
+        this._render();
+
+        // Also update record data so if renderer re-renders, it uses the new value
+        this.record.data.show_details = newValue;
+
+        // Force write to database if possible
+        if (this.record.id && !this.record.isDirty()) {
+          this._rpc({
+            model: "sale.order.line",
+            method: "write",
+            args: [[this.record.data.id || this.record.res_id], {show_details: newValue}],
+          });
+        }
+      }
+
+      // UI feedback for row visibility
+      if (this.record.data.display_type === "line_section") {
+        var $row = this.$el.closest("tr");
+        var $nextRows = $row.nextAll();
+        for (var i = 0; i < $nextRows.length; i++) {
+          var $nextRow = $($nextRows[i]);
+          if ($nextRow.hasClass("o_is_line_section")) {
+            break;
+          }
+          if (newValue) {
+            $nextRow.removeClass("o_hidden");
+          } else {
+            $nextRow.addClass("o_hidden");
+          }
+        }
+      }
     },
   });
 

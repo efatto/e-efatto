@@ -66,12 +66,11 @@ odoo.define("sale_hide_section.sale_layout_category_hide_detail", function (requ
       return $th;
     },
     _renderRow: function (record) {
-      const data = record.data;
-      if (data.display_type === "line_section" && data.show_details !== undefined) {
-        this.show_next_row = record.data.show_details;
+      if (record.data.display_type === "line_section") {
+        this.show_next_row = record.data.show_details !== false;
       }
-      const $row = this._super.apply(this, arguments);
-      if (this.show_next_row === false && data.display_type !== "line_section") {
+      var $row = this._super.apply(this, arguments);
+      if (this.show_next_row === false && record.data.display_type !== "line_section") {
         $row.addClass("o_hidden");
       }
       return $row;
