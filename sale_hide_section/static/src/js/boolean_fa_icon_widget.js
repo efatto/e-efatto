@@ -38,13 +38,21 @@ odoo.define("sale_layout_category_hide_detail.boolean_fa_icon_widget", function 
     // --------------------------------------------------------------------------
 
     _allowEdit: function () {
-      if (this.nodeOptions.readonly || this.attrs.readonly || this.mode === "readonly") {
+      if (
+        this.nodeOptions.readonly ||
+        this.attrs.readonly ||
+        this.mode === "readonly"
+      ) {
         return false;
       }
       var record = this.record;
       if (record && record.getParent) {
         var parent = record.getParent();
-        if (parent && parent.state && (parent.state.active === false || parent.state.state === "cancel")) {
+        if (
+          parent &&
+          parent.state &&
+          (parent.state.active === false || parent.state.state === "cancel")
+        ) {
           return false;
         }
       }
@@ -106,7 +114,10 @@ odoo.define("sale_layout_category_hide_detail.boolean_fa_icon_widget", function 
           this._rpc({
             model: "sale.order.line",
             method: "write",
-            args: [[this.record.data.id || this.record.res_id], {show_details: newValue}],
+            args: [
+              [this.record.data.id || this.record.res_id],
+              {show_details: newValue},
+            ],
           });
         }
       }
