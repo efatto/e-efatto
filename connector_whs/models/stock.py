@@ -383,9 +383,12 @@ class StockMove(models.Model):
             # never merge stock moves linked to WMS lists
             move_to_create_whs_list = self
             for move in self:
-                if merge and merge_into:
-                    # this move will be deleted, so do not create a whs list
-                    move_to_create_whs_list -= move
+                if merge:
+                    if merge_into:
+                        # this move will be deleted, so do not create a whs list
+                        move_to_create_whs_list -= move
+                    elif move.picking_code == "incoming":
+                        merge = False
             move_to_create_whs_list.create_whs_list()
         return super()._action_confirm(merge, merge_into)
 
