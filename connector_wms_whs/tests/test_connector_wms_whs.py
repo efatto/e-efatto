@@ -1059,11 +1059,12 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         po_line_to_change.write({"product_qty": 27})
         pickings = purchase.picking_ids.filtered(lambda x: x.state == "assigned")
         pickings.action_assign()
-        po_whs_list = po_line_to_change.mapped("move_ids.whs_list_ids").filtered(
+        extra_po_whs_list = po_line_to_change.mapped("move_ids.whs_list_ids").filtered(
             lambda x: x.qta == 7
         )
+        self.assertTrue(extra_po_whs_list, "Missing extra PO whs list!")
         self.dbsource.whs_insert_read_and_synchronize_list()
-        result_liste = self._select_whs_liste(po_whs_list)
+        result_liste = self._select_whs_liste(extra_po_whs_list)
         # WMS list is created for the increased qty
         self.assertEqual(
             str(result_liste[0]),
