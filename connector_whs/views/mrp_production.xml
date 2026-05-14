@@ -26,6 +26,8 @@
             <button name="button_mark_done" position="before">
                 <field name="sent_to_whs" invisible="1" />
                 <field name="bom_type" invisible="1" />
+                <field name="is_consumable" invisible="1" />
+                <field name="hide_mark_done" invisible="1" />
                 <button
           name="button_send_to_whs"
           type="object"
@@ -35,7 +37,6 @@
         />
             </button>
             <xpath expr="//button[@name='button_mark_done']" position="before">
-                <field name="is_consumable" invisible="1" />
                 <button
           name="button_consume"
           type="object"
@@ -43,33 +44,24 @@
           string="Consume components"
           attrs="{'invisible': ['|', '|', '|', '|', ('bom_type', '=', 'subcontract'), ('is_consumable', '=', False), ('state', '!=', 'progress'), ('qty_producing', '=', 0), ('sent_to_whs', '=', False)]}"
         />
+                <button
+          name="button_consume"
+          type="object"
+          string="Consume components"
+          attrs="{'invisible': ['|', '|', '|', ('bom_type', '=', 'subcontract'), ('is_consumable', '=', False), ('state', '!=', 'consumed'), ('qty_producing', '=', 0)]}"
+        />
             </xpath>
             <xpath
-        expr="/form/header/button[@name='button_mark_done']"
+        expr="/form/header/button[@name='button_mark_done'][1]"
         position="attributes"
       >
                 <attribute name="string">Produce</attribute>
-                <attribute name="attrs">{'invisible': [
-                    '|',
-                        '&amp;',
-                            ('bom_type', '=', 'subcontract'),
-                        '|',
-                            ('state', 'not in', ['progress', 'consumed']),
-                            ('qty_producing', '=', 0),
-                        '&amp;',
-                            ('bom_type', '!=', 'subcontract'),
-                        '|',
-                            ('is_consumable', '=', True),
-                        '|',
-                            ('state', 'not in', ['progress', 'consumed']),
-                        '|',
-                            ('qty_producing', '=', 0),
-                            ('sent_to_whs', '=', False)
-                ]}
+                <attribute name="attrs">
+                    {'invisible': [('hide_mark_done', '!=', False)]}
                 </attribute>
             </xpath>
             <xpath
-        expr="//button[@name='button_mark_done'][last()]"
+        expr="/form/header/button[@name='button_mark_done'][2]"
         position="attributes"
       >
                 <attribute name="attrs">{'invisible': True}</attribute>

@@ -44,6 +44,10 @@ class MrpProduction(models.Model):
         related="bom_id.type",
         string="BOM Type",
     )
+    hide_mark_done = fields.Boolean(
+        compute="_compute_hide_mark_done",
+        store=True,
+    )
 
     @api.depends(
         "move_raw_ids.whs_list_ids",
@@ -72,12 +76,32 @@ class MrpProduction(models.Model):
         for production in self.filtered(lambda mo: mo.state in ["done", "cancel"]):
             production.sent_to_whs = False
 
-    @api.depends("product_qty", "qty_producing", "state")
+    @api.depends("product_qty", "qty_producing", "state", "move_raw_ids.state")
     def _compute_is_consumable(self):
         for production in self:
             production.is_consumable = bool(
                 production.product_qty == production.qty_producing
-                and not production.state == "consumed"
+                and any(move.state not in ["done", "cancel"] for move in production.move_raw_ids)
+            )
+
+    @api.depends(
+        "state",
+        "qty_producing",
+        "bom_type",
+        "sent_to_whs",
+    )
+    def _compute_hide_mark_done(self):
+        for rec in self:
+            rec.hide_mark_done = (
+                rec.state not in ["progress", "consumed"]
+                or rec.qty_producing == 0
+                or (
+                    rec.bom_type == "subcontract"
+                    or (
+                        rec.bom_type != "subcontract"
+                        and not rec.sent_to_whs
+                    )
+                )
             )
 
     def action_cancel(self):
@@ -126,10 +150,14 @@ class MrpProduction(models.Model):
                     _("Production %s has not been sent to WHS!") % production.name
                 )
             production.move_raw_ids._check_done_whs_list()
-            if production.state == "progress":
+            if production.state in ["progress", "consumed"]:
                 moves_to_do = production.move_raw_ids.filtered(
                     lambda x: x.state not in ("done", "cancel")
                 )
+                moves_to_do_with_sn = moves_to_do.filtered(
+                    lambda m: m.has_tracking == "serial"
+                )
+                moves_to_do -= moves_to_do_with_sn
                 for move in moves_to_do.filtered(
                     lambda m: m.product_qty == 0.0 and m.quantity_done > 0
                 ):
@@ -139,8 +167,8 @@ class MrpProduction(models.Model):
                 moves_to_do = moves_to_do._action_done()
                 production._cal_price(moves_to_do)
                 production.action_assign()
-                production.moves_to_do_ids = [(6, 0, moves_to_do.ids)]
-            production.write({"state": "consumed"})
+                production.moves_to_do_ids = [
+                    (6, 0, (moves_to_do | moves_to_do_with_sn).ids)]
 
     def button_mark_done(self):
         for production in self:
@@ -191,6 +219,11 @@ class MrpProduction(models.Model):
         for production in self:
             if production.state == "to_close":
                 production.state = "progress"
+            if (
+                production.state == "progress"
+                and any(move.state == "done" for move in production.move_raw_ids)
+            ):
+                production.state = "consumed"
 
     def _post_inventory(self, cancel_backorder=False):
         (self.move_raw_ids | self.move_finished_ids)._check_done_whs_list()
