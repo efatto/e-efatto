@@ -20,10 +20,7 @@ class MrpProduction(models.Model):
                 or rec.qty_producing == 0
                 or (
                     rec.bom_type == "subcontract"
-                    or (
-                        rec.bom_type != "subcontract"
-                        and not rec.sent_to_whs
-                    )
+                    or (rec.bom_type != "subcontract" and not rec.sent_to_whs)
                 )
             )
         return res

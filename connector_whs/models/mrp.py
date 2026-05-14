@@ -76,12 +76,21 @@ class MrpProduction(models.Model):
         for production in self.filtered(lambda mo: mo.state in ["done", "cancel"]):
             production.sent_to_whs = False
 
-    @api.depends("product_qty", "qty_producing", "state", "move_raw_ids.state")
+    @api.depends(
+        "product_qty",
+        "qty_producing",
+        "state",
+        "move_raw_ids.state",
+        "move_raw_ids.quantity_done",
+    )
     def _compute_is_consumable(self):
         for production in self:
             production.is_consumable = bool(
                 production.product_qty == production.qty_producing
-                and any(move.state not in ["done", "cancel"] for move in production.move_raw_ids)
+                and any(
+                    move.state not in ["done", "cancel"] and move.quantity_done
+                    for move in production.move_raw_ids
+                )
             )
 
     @api.depends(
@@ -97,10 +106,7 @@ class MrpProduction(models.Model):
                 or rec.qty_producing == 0
                 or (
                     rec.bom_type == "subcontract"
-                    or (
-                        rec.bom_type != "subcontract"
-                        and not rec.sent_to_whs
-                    )
+                    or (rec.bom_type != "subcontract" and not rec.sent_to_whs)
                 )
             )
 
@@ -168,7 +174,8 @@ class MrpProduction(models.Model):
                 production._cal_price(moves_to_do)
                 production.action_assign()
                 production.moves_to_do_ids = [
-                    (6, 0, (moves_to_do | moves_to_do_with_sn).ids)]
+                    (6, 0, (moves_to_do | moves_to_do_with_sn).ids)
+                ]
 
     def button_mark_done(self):
         for production in self:
@@ -219,9 +226,8 @@ class MrpProduction(models.Model):
         for production in self:
             if production.state == "to_close":
                 production.state = "progress"
-            if (
-                production.state == "progress"
-                and any(move.state == "done" for move in production.move_raw_ids)
+            if production.state == "progress" and any(
+                move.state == "done" for move in production.move_raw_ids
             ):
                 production.state = "consumed"
 
