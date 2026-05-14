@@ -669,23 +669,3 @@ class StockMove(models.Model):
         # Overridable method for custom check, return True will exclude this move from
         # WMS process
         return False
-
-
-class StockQuant(models.Model):
-    _inherit = "stock.quant"
-
-    @api.constrains("quantity")
-    def check_quantity(self):
-        exclude_sn_check_ids = self.env.context.get("exclude_sn_check_ids")
-        if not exclude_sn_check_ids:
-            return super(
-                StockQuant,
-                self,
-            ).check_quantity()
-        quants_todo = self.filtered(
-            lambda quant: quant.lot_id.id not in exclude_sn_check_ids
-        )
-        return super(
-            StockQuant,
-            quants_todo,
-        ).check_quantity()
