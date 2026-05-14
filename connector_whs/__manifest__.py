@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     "name": "Connector WHS MSSQL",
-    "version": "14.0.2.0.2",
+    "version": "14.0.2.0.3",
     "author": "Sergio Corato",
     "website": "https://github.com/efatto/e-efatto",
     "category": "other",
