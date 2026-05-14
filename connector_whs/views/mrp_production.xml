@@ -43,12 +43,6 @@
           string="Consume components"
           attrs="{'invisible': ['|', '|', '|', '|', ('bom_type', '=', 'subcontract'), ('is_consumable', '=', False), ('state', '!=', 'progress'), ('qty_producing', '=', 0), ('sent_to_whs', '=', False)]}"
         />
-                <button
-          name="button_consume"
-          type="object"
-          string="Consume components"
-          attrs="{'invisible': ['|', '|', '|', ('bom_type', '=', 'subcontract'), ('is_consumable', '=', False), ('state', '!=', 'consumed'), ('qty_producing', '=', 0)]}"
-        />
             </xpath>
             <xpath
         expr="/form/header/button[@name='button_mark_done']"

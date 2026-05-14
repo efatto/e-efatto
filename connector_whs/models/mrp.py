@@ -72,22 +72,12 @@ class MrpProduction(models.Model):
         for production in self.filtered(lambda mo: mo.state in ["done", "cancel"]):
             production.sent_to_whs = False
 
-    @api.depends(
-        "product_qty",
-        "qty_producing",
-        "state",
-        "move_raw_ids.product_uom_qty",
-        "move_raw_ids.state",
-    )
+    @api.depends("product_qty", "qty_producing", "state")
     def _compute_is_consumable(self):
         for production in self:
             production.is_consumable = bool(
                 production.product_qty == production.qty_producing
-                and production.state not in ["done", "cancel"]
-                and any(
-                    move.product_uom_qty > 0 and move.state != "done"
-                    for move in production.move_raw_ids
-                )
+                and not production.state == "consumed"
             )
 
     def action_cancel(self):
@@ -144,13 +134,6 @@ class MrpProduction(models.Model):
                     lambda m: m.product_qty == 0.0 and m.quantity_done > 0
                 ):
                     move.product_uom_qty = move.quantity_done
-                for move in moves_to_do.filtered(
-                    lambda x: x._should_bypass_set_qty_producing()
-                    and not x.quantity_done
-                    and x.product_uom_qty
-                ):
-                    # force quantity done for serial products
-                    move.quantity_done = move.product_uom_qty
                 # MRP do not merge move, catch the result of _action_done
                 # to get extra moves.
                 moves_to_do = moves_to_do._action_done()
@@ -160,7 +143,6 @@ class MrpProduction(models.Model):
             production.write({"state": "consumed"})
 
     def button_mark_done(self):
-        exclude_sn_check_ids = []
         for production in self:
             if (
                 not config["test_enable"] or self.env.context.get("test_connector_whs")
@@ -179,20 +161,9 @@ class MrpProduction(models.Model):
             (
                 production.move_raw_ids | production.move_finished_ids
             )._check_done_whs_list()
-            # force state to 'confirmed' to avoid the check on serial number already
-            # done only, leaving other checks working
-            # n.b. process changes state to 'done' automatically
-            for move in production.move_raw_ids.filtered(
-                lambda x: x.state == "done" and x.has_tracking == "serial"
-            ):
-                move.write({"state": "confirmed"})
-                exclude_sn_check_ids.extend(move.lot_ids.ids)
             if production.state == "consumed":
                 production.write({"state": "progress"})
-        res = super(
-            MrpProduction,
-            self.with_context(exclude_sn_check_ids=exclude_sn_check_ids),
-        ).button_mark_done()
+        res = super().button_mark_done()
         for production in self:
             if not production.move_finished_ids.move_line_ids.consume_line_ids:
                 production.move_finished_ids.move_line_ids.consume_line_ids = [
