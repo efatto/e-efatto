@@ -1,23 +1,18 @@
-from odoo import api, fields, models
+from odoo import api, models
 
 
 class MrpProduction(models.Model):
     _inherit = "mrp.production"
-
-    hide_mark_done = fields.Boolean(
-        compute="_compute_hide_mark_done",
-        store=True,
-    )
 
     @api.depends(
         "state",
         "is_parallel_production",
         "qty_producing",
         "bom_type",
-        "is_consumable",
         "sent_to_whs",
     )
     def _compute_hide_mark_done(self):
+        res = super()._compute_hide_mark_done()
         for rec in self:
             rec.hide_mark_done = (
                 rec.is_parallel_production
@@ -27,7 +22,8 @@ class MrpProduction(models.Model):
                     rec.bom_type == "subcontract"
                     or (
                         rec.bom_type != "subcontract"
-                        and (rec.is_consumable or not rec.sent_to_whs)
+                        and not rec.sent_to_whs
                     )
                 )
             )
+        return res
