@@ -22,6 +22,18 @@ class MrpProductionSet(models.Model):
         "('bom_id.type', '!=', 'subcontract')]",
         string="Production Left",
     )
+    workcenter_left_ids = fields.Many2many(
+        comodel_name="mrp.workcenter",
+        relation="mrp_production_set_workcenter_left",
+        compute="_compute_workcenter_left_ids",
+        store=True,
+    )
+    workcenter_right_ids = fields.Many2many(
+        comodel_name="mrp.workcenter",
+        relation="mrp_production_set_workcenter_right",
+        compute="_compute_workcenter_right_ids",
+        store=True,
+    )
     production_right_id = fields.Many2one(
         comodel_name="mrp.production",
         domain="[('is_compatible_for_set', '=', True), "
@@ -120,6 +132,31 @@ class MrpProductionSet(models.Model):
                 )
             else:
                 production_set.is_planned = False
+
+    @api.depends(
+        "production_left_id.workorder_ids.workcenter_id",
+    )
+    def _compute_workcenter_left_ids(self):
+        for production_set in self:
+            production_set.workcenter_left_ids = (
+                production_set.production_left_id.mapped(
+                    "workorder_ids.workcenter_id"
+                ).filtered(lambda x: x.mrp_set_position == "left")
+            )
+
+    @api.depends(
+        "production_left_id.workorder_ids.workcenter_id",
+        "production_right_id.workorder_ids.workcenter_id",
+    )
+    def _compute_workcenter_right_ids(self):
+        for production_set in self:
+            if production_set.production_right_id:
+                production_set_mo = production_set.production_right_id
+            else:
+                production_set_mo = production_set.production_left_id
+            production_set.workcenter_right_ids = production_set_mo.mapped(
+                "workorder_ids.workcenter_id"
+            ).filtered(lambda x: x.mrp_set_position == "right")
 
     @api.constrains("production_left_id", "production_right_id")
     def _check_production_set_products(self):

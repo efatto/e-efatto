@@ -84,6 +84,7 @@
                     <group>
                         <group string="Production Left">
                             <field name="production_left_id" />
+                            <field name="workcenter_left_ids" widget="many2many_tags" />
                             <field name="qty_producing_left" />
                         </group>
                         <group string="Production Right">
@@ -97,6 +98,10 @@
                 name="production_right_id"
                 domain="[('id', 'in', compatible_mrp_production_ids)] "
                 attrs="{'invisible': [('split_production', '=', True)]}"
+              />
+                            <field
+                name="workcenter_right_ids"
+                widget="many2many_tags"
               />
                             <field name="qty_producing_right" />
                         </group>
