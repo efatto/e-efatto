@@ -17,7 +17,11 @@
           widget="many2many_tags"
           attrs="{'invisible': True}"
         />
-                <label for="has_production_set" string="" attrs="{'invisible': [('has_production_set', '=', False)]}"/>
+                <label
+          for="has_production_set"
+          string=""
+          attrs="{'invisible': [('has_production_set', '=', False)]}"
+        />
                 <div
           class="alert alert-info"
           role="alert"
