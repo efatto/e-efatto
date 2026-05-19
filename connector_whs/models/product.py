@@ -37,8 +37,8 @@ class ProductProduct(models.Model):
         return self.search(
             [
                 "|",
-                ("write_date", ">", last_date),
-                ("product_tmpl_id.write_date", ">", last_date),
+                ("write_date", ">=", last_date),
+                ("product_tmpl_id.write_date", ">=", last_date),
                 ("type", "=", "product"),
                 ("exclude_from_whs", "!=", True),
             ]
