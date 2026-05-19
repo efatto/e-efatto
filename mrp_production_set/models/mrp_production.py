@@ -18,6 +18,17 @@ class MrpProduction(models.Model):
         compute="_compute_is_compatible_for_set",
         store=True,
     )
+    has_production_set = fields.Boolean(
+        compute="_compute_has_production_set",
+        store=True,
+    )
+
+    @api.depends("production_left_set_ids", "production_right_set_ids")
+    def _compute_has_production_set(self):
+        for production in self:
+            production.has_production_set = bool(
+                production.production_left_set_ids
+            ) or bool(production.production_right_set_ids)
 
     @api.depends("move_raw_ids.product_id", "workorder_ids")
     def _compute_is_compatible_for_set(self):

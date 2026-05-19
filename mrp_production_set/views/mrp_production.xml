@@ -6,6 +6,7 @@
         <field name="inherit_id" ref="mrp.mrp_production_form_view" />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='bom_id']" position="after">
+                <field name="has_production_set" invisible="1" />
                 <field
           name="production_left_set_ids"
           widget="many2many_tags"
@@ -16,12 +17,15 @@
           widget="many2many_tags"
           attrs="{'invisible': True}"
         />
-                <p
-          class="warning-text"
-          attrs="{'invisible': [('production_right_set_ids', '=', False), ('production_left_set_ids', '=', False)]}"
+                <label for="has_production_set" string="" attrs="{'invisible': [('has_production_set', '=', False)]}"/>
+                <div
+          class="alert alert-info"
+          role="alert"
+          style="margin-bottom:0px;"
+          attrs="{'invisible': [('has_production_set', '=', False)]}"
         >
                     This production is part of a Production SET
-                </p>
+                </div>
             </xpath>
         </field>
     </record>
