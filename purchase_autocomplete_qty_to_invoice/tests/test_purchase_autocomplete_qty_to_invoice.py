@@ -21,7 +21,10 @@ class PurchaseAutocompleteQtyToInvoice(PurchaseInvoiceNoReference):
             {
                 "name": cls.user.name + " & purchaseman!",
                 "groups_id": [
-                    Command.link(cls.env.ref("purchase.group_purchase_user").id)
+                    Command.link(cls.env.ref("purchase.group_purchase_user").id),
+                    Command.link(
+                        cls.env.ref("product_cost_security.group_product_cost").id
+                    ),
                 ],
             }
         )
