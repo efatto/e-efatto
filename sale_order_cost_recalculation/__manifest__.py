@@ -2,16 +2,18 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     "name": "Sale order cost recalculation",
-    "version": "14.0.1.0.0",
+    "version": "18.0.1.0.0",
     "category": "other",
     "author": "Sergio Corato",
     "license": "AGPL-3",
     "summary": "Add recalculation of cost when recalculating prices on sale order.",
     "website": "https://github.com/efatto/e-efatto",
     "depends": [
+        "purchase_stock",
         "sale_margin",
         "sale_margin_security",
         "sale_order_price_recalculation",
+        "sale_stock_margin",
         "stock_account",
     ],
     "data": [

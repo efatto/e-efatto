@@ -1,5 +1,3 @@
-# Copyright 2022 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 import logging
 import time
 
@@ -10,8 +8,6 @@ class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     purchase_date = fields.Datetime(compute="_compute_purchase_date", store=True)
-    # Extend digits of existing purchase_price field
-    purchase_price = fields.Float(digits=(20, 8), copy=False)
 
     @api.depends("purchase_price")
     def _compute_purchase_date(self):
@@ -46,22 +42,18 @@ class SaleOrderLine(models.Model):
                 i += 1
                 total_time = time.time() - started_at
                 logging.info(
-                    "Updated purchase date in sale order line %s/%s. "
-                    "Elapsed time %.2f (minutes)"
-                    "Estimated residual time %.0f (minutes)"
-                    % (
-                        i,
-                        imax,
-                        total_time / 60,
-                        (total_time / i) * (imax - i) / 60,
-                    )
+                    f"Updated purchase date in sale order line {i}/{imax}. "
+                    f"Elapsed time {total_time / 60:.2f} (minutes)"
+                    f"Estimated residual time {(total_time / i) * (imax - i) / 60:.0f}"
+                    f" (minutes)"
                 )
 
 
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    def recalculate_prices(self):
-        res = super().recalculate_prices()
-        self.mapped("order_line")._compute_purchase_price()
+    def _recompute_prices(self):
+        res = super()._recompute_prices()
+        lines_to_recompute = self._get_update_prices_lines()
+        lines_to_recompute._compute_purchase_price()
         return res
