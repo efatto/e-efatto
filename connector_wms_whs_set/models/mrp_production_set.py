@@ -22,6 +22,18 @@ class MrpProductionSet(models.Model):
                 raise ValidationError(
                     _("Only 'left' workcenter can be used in 'left' position")
                 )
+            if any(
+                whs_list.riga == 2
+                for whs_list in self.production_left_id.move_raw_ids.whs_list_ids
+            ):
+                raise ValidationError(
+                    _(
+                        "Only whs list with riga #1 can be used in 'left' position of "
+                        "not split production (maybe this production was split and then "
+                        "unsplit).\nRemove whs list with riga #2 and restore total qty "
+                        "in residual whs list to continue."
+                    )
+                )
         if self.production_right_id and not self.split_production:
             if any(
                 [

@@ -24,11 +24,13 @@ class MrpProduction(models.Model):
             production_set_ids.ensure_one()
             left = production_set_ids.production_left_id
             right = production_set_ids.production_right_id
+            # get num_lista from the first whs_list_ids as they must be the same
+            # (there could be more than one whs_list_ids if the production is split)
             if left.move_raw_ids.whs_list_ids:
-                num_lista = left.move_raw_ids.whs_list_ids.num_lista
+                num_lista = left.move_raw_ids.whs_list_ids[0].num_lista
                 riga = 1
             elif right.move_raw_ids.whs_list_ids:
-                num_lista = right.move_raw_ids.whs_list_ids.num_lista
+                num_lista = right.move_raw_ids.whs_list_ids[0].num_lista
                 riga = 2
         if not num_lista:
             num_lista, riga = super()._get_num_lista()
