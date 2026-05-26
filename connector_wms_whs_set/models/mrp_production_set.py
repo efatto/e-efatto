@@ -14,7 +14,8 @@ class MrpProductionSet(models.Model):
         if self.production_left_id and not self.split_production:
             if any(
                 [
-                    wo.workcenter_id.mrp_set_position != "left"
+                    wo.workcenter_id.mrp_set_position
+                    and wo.workcenter_id.mrp_set_position != "left"
                     for wo in self.production_left_id.workorder_ids
                 ]
             ):
@@ -24,7 +25,8 @@ class MrpProductionSet(models.Model):
         if self.production_right_id and not self.split_production:
             if any(
                 [
-                    wo.workcenter_id.mrp_set_position != "right"
+                    wo.workcenter_id.mrp_set_position
+                    and wo.workcenter_id.mrp_set_position != "right"
                     for wo in self.production_right_id.workorder_ids
                 ]
             ):
