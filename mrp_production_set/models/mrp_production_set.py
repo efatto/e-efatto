@@ -194,7 +194,7 @@ class MrpProductionSet(models.Model):
                 compatible_mrp_production_ids = compatible_mrp_production_ids.filtered(
                     lambda p: p.move_raw_ids.product_id
                     == production_set.production_left_id.move_raw_ids.product_id
-                    and p.state == production_set.production_left_id.state
+                    and p.state in ["draft", "confirmed", "progress"]
                 )
             production_set.compatible_mrp_production_ids = compatible_mrp_production_ids
 
