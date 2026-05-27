@@ -11,41 +11,58 @@ class SaleOrderLine(models.Model):
 
     @api.depends("purchase_price")
     def _compute_purchase_date(self):
-        # Removed depends on product_id.standard_price as lead to eternal
-        # recompute.
-        # Added function to show estimated time for old databases with big datas
-        started_at = time.time()
+        # Optimized compute function to avoid slow searches in stock.valuation.layer
+        # and handle multiple products at once.
         lines = self.filtered(lambda x: x.product_id and x.purchase_price)
-        residual_lines = self - lines
-        for residual_line in residual_lines:
-            residual_line.purchase_date = False
-        imax = len(lines)
-        i = 0
+        (self - lines).purchase_date = False
+        if not lines:
+            return
+
+        products = lines.mapped("product_id")
+
+        # Pre-fetch the latest valuation layer for each product to optimize speed
+        # using ORM read_group instead of direct SQL
+        last_svl_data = self.env["stock.valuation.layer"].sudo().read_group(
+            [("product_id", "in", products.ids)],
+            ["product_id", "create_date:max"],
+            ["product_id"]
+        )
+        last_svl_dates = {
+            d["product_id"][0]: d["create_date"]
+            for d in last_svl_data
+            if d["product_id"]
+        }
+
         for line in lines:
-            purchase_date = self.env["stock.valuation.layer"].search(
+            # If purchase price matches standard_price, use the latest svl date
+            if line.purchase_price == line.product_id.standard_price:
+                line.purchase_date = last_svl_dates.get(
+                    line.product_id.id, line.product_id.standard_price_write_date
+                )
+                continue
+
+            # Otherwise, try to find a specific layer with that unit_cost (old logic, but limited)
+            # This is still needed if purchase_price was set to an old cost.
+            # We use stock_move_id.date if available as it represents the business date.
+            svl = self.env["stock.valuation.layer"].sudo().search(
                 [
                     ("product_id", "=", line.product_id.id),
                     ("unit_cost", "=", line.purchase_price),
-                    (
-                        "stock_move_id.date",
-                        "<=",
-                        line.write_date or fields.Datetime.now(),
-                    ),
                 ],
                 limit=1,
+                order="id desc",
             )
-            if purchase_date:
-                line.purchase_date = purchase_date.stock_move_id.date
+            if svl:
+                line.purchase_date = svl.stock_move_id.date or svl.create_date
             else:
                 line.purchase_date = line.product_id.standard_price_write_date
-            if imax > 1000:
-                i += 1
-                total_time = time.time() - started_at
-                logging.info(
-                    f"Updated purchase date in sale order line {i}/{imax}. "
-                    f"Elapsed time {total_time / 60:.2f} (minutes)"
-                    f"Estimated residual time {(total_time / i) * (imax - i) / 60:.0f}"
-                    f" (minutes)"
+
+            # Debug log to investigate test failures
+            if self.env.registry.test_mode:
+                import logging
+                logging.getLogger("sale_order_cost_recalculation").info(
+                    "Line %s (product %s, price %s): purchase_date %s",
+                    line.id, line.product_id.name, line.purchase_price, line.purchase_date
                 )
 
 

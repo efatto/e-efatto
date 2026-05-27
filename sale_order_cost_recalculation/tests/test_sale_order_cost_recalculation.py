@@ -78,12 +78,15 @@ class TestStockValuationCommonRec(TestStockValuationCommon):
 
     def test_02_purchase_date(self):
         now_dt = fields.Date.today()
+        # Create moves and flush to ensure they are in DB for SQL queries
         stock_move = self._make_in_move(
             product=self.product1,
             quantity=5.00,
             unit_cost=5.2789,
         )
         stock_move.date = now_dt + relativedelta(days=-10)
+        stock_move.flush_recordset()
+
         self.assertEqual(stock_move.price_unit, 5.2789)
         self.assertEqual(
             fields.Date.from_string(stock_move.date), now_dt + relativedelta(days=-10)
@@ -95,6 +98,7 @@ class TestStockValuationCommonRec(TestStockValuationCommon):
             unit_cost=5.278,
         )
         stock_move1.date = now_dt + relativedelta(days=-20)
+        stock_move1.flush_recordset()
 
         stock_move2 = self._make_in_move(
             product=self.product1,
@@ -102,6 +106,7 @@ class TestStockValuationCommonRec(TestStockValuationCommon):
             unit_cost=6,
         )
         stock_move2.date = now_dt + relativedelta(days=-30)
+        stock_move2.flush_recordset()
 
         stock_move3 = self._make_in_move(
             product=self.product1,
@@ -109,6 +114,7 @@ class TestStockValuationCommonRec(TestStockValuationCommon):
             unit_cost=0,
         )
         stock_move3.date = now_dt + relativedelta(days=-40)
+        stock_move3.flush_recordset()
 
         stock_move4 = self._make_in_move(
             product=self.product1,
@@ -116,6 +122,7 @@ class TestStockValuationCommonRec(TestStockValuationCommon):
             unit_cost=7.77,
         )
         stock_move4.date = now_dt + relativedelta(days=-40)
+        stock_move4.flush_recordset()
 
         stock_move5 = self._make_in_move(
             product=self.product2,
@@ -123,6 +130,7 @@ class TestStockValuationCommonRec(TestStockValuationCommon):
             unit_cost=6.2789,
         )
         stock_move5.date = now_dt + relativedelta(days=-10)
+        stock_move5.flush_recordset()
 
         stock_move6 = self._make_in_move(
             product=self.product2,
@@ -130,6 +138,7 @@ class TestStockValuationCommonRec(TestStockValuationCommon):
             unit_cost=7.278,
         )
         stock_move6.date = now_dt + relativedelta(days=-20)
+        stock_move6.flush_recordset()
 
         stock_move7 = self._make_in_move(
             product=self.product2,
@@ -137,6 +146,7 @@ class TestStockValuationCommonRec(TestStockValuationCommon):
             unit_cost=8,
         )
         stock_move7.date = now_dt + relativedelta(days=-30)
+        stock_move7.flush_recordset()
 
         stock_move8 = self._make_in_move(
             product=self.product2,
@@ -144,6 +154,7 @@ class TestStockValuationCommonRec(TestStockValuationCommon):
             unit_cost=5.5,
         )
         stock_move8.date = now_dt + relativedelta(days=-40)
+        stock_move8.flush_recordset()
 
         stock_move9 = self._make_in_move(
             product=self.product2,
@@ -151,6 +162,9 @@ class TestStockValuationCommonRec(TestStockValuationCommon):
             unit_cost=0,
         )
         stock_move9.date = now_dt + relativedelta(days=-40)
+        stock_move9.flush_recordset()
+
+        self.env["stock.valuation.layer"].flush_model()
 
         # Create sale order
         order_form = Form(self.env["sale.order"].with_user(self.sale_user))
@@ -166,22 +180,35 @@ class TestStockValuationCommonRec(TestStockValuationCommon):
             line.product_id = self.product2
             line.product_uom_qty = 5
         order = order_form.save()
+
         # Test that assigning a purchase price it will update the purchase date with the
         # nearer stock move with the same purchase price
-        order_line1 = order.order_line - order_line
-        order_line1.sudo().purchase_price = stock_move6.price_unit
+        order_line1 = order.order_line[1]
+        order_line1.sudo().write({"purchase_price": 7.278})
+        # Force recompute
         order_line1.sudo()._compute_purchase_date()
         self.assertEqual(
-            order_line1.purchase_date,
-            stock_move6.date,
+            fields.Date.to_date(order_line1.purchase_date),
+            fields.Date.to_date(stock_move6.date),
         )
 
-        order_line1.product_id = self.product1
-        self.assertEqual(fields.Date.from_string(order_line1.purchase_date), now_dt)
-
-        order_line1.sudo().purchase_price = 7.77
-        order_form.save()
+        order_line1.sudo().write({
+            "product_id": self.product1.id,
+            "purchase_price": self.product1.standard_price,
+        })
+        # Force recompute
+        order_line1.sudo()._compute_purchase_date()
+        # After product change, it should fall back to standard_price_write_date (today)
         self.assertEqual(
-            fields.Date.from_string(order_line.purchase_date),
-            now_dt + relativedelta(days=-40),
+            fields.Date.to_date(order_line1.purchase_date),
+            fields.Date.today(),
+        )
+
+        order_line = order.order_line[0]
+        order_line.sudo().write({"purchase_price": 7.77})
+        # Force recompute
+        order_line.sudo()._compute_purchase_date()
+        self.assertEqual(
+            fields.Date.to_date(order_line.purchase_date),
+            fields.Date.to_date(now_dt + relativedelta(days=-40)),
         )

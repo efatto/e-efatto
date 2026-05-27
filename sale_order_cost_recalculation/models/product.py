@@ -42,4 +42,10 @@ class ProductProduct(models.Model):
     @api.depends("standard_price")
     def _compute_product_standard_price_write_date(self):
         for record in self:
-            record.standard_price_write_date = fields.Datetime.now()
+            last_valuation_layer = self.env["stock.valuation.layer"].search(
+                [("product_id", "=", record.id)], order="create_date desc", limit=1
+            )
+            if last_valuation_layer:
+                record.standard_price_write_date = last_valuation_layer.create_date
+            else:
+                record.standard_price_write_date = fields.Datetime.now()
