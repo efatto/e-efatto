@@ -11,23 +11,6 @@ from odoo.addons.stock_account.tests.test_stockvaluationlayer import (
 
 
 class TestStockValuationCommonRec(TestStockValuationCommon):
-    def _create_stock_move(
-        self, location_id, location_dest_id, product_id, qty, price_unit, date
-    ):
-        standard_price = product_id.standard_price
-        product_id.standard_price = price_unit
-        stock_move_form = Form(self.env["stock.move"])
-        stock_move_form.location_id = location_id
-        stock_move_form.location_dest_id = location_dest_id
-        stock_move_form.product_id = product_id
-        stock_move_form.product_uom_qty = qty
-        stock_move = stock_move_form.save()
-        stock_move.quantity = qty
-        stock_move._action_done()
-        stock_move.date = date
-        product_id.standard_price = standard_price
-        return stock_move
-
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
