@@ -9,7 +9,9 @@ _logger = logging.getLogger(__name__)
 def migrate(env, version):
     _logger.info("Running l10n_it_country_data pre-migration")
     l10n_it_module = env["ir.module.module"].search([("name", "=", "l10n_it")])
-    if l10n_it_module.state == "uninstalled":
+    if not l10n_it_module or l10n_it_module.state == "uninstalled":
+        if not l10n_it_module:
+            _logger.info("l10n_it module not found, skipping pre-migration")
         _logger.info("l10n_it module is uninstalled, searching and installing "
                      "l10n_it_account_xmlid_fix")
         module_fix = env["ir.module.module"].search(
@@ -26,3 +28,5 @@ def migrate(env, version):
             _logger.info(
                 "l10n_it_account_xmlid_fix not present or in unexpected state: %s",
                 module_fix.state)
+    else:
+        _logger.info("l10n_it module is %s", l10n_it_module.state)
