@@ -1,7 +1,3 @@
-.. image:: https://odoo-community.org/readme-banner-image
-   :target: https://odoo-community.org/get-involved?utm_source=readme
-   :alt: Odoo Community Association
-
 =======================================================
 Invoice autocomplete filter purchases by qty to invoice
 =======================================================
@@ -17,16 +13,19 @@ Invoice autocomplete filter purchases by qty to invoice
 .. |badge1| image:: https://img.shields.io/badge/maturity-Beta-yellow.png
     :target: https://odoo-community.org/page/development-status
     :alt: Beta
-.. |badge2| image:: https://img.shields.io/badge/license-AGPL--3-blue.png
+.. |badge2| image:: https://img.shields.io/badge/licence-AGPL--3-blue.png
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-efatto%2Fe--efatto-lightgray.png?logo=github
-    :target: https://github.com/efatto/e-efatto/tree/14.0/purchase_autocomplete_qty_to_invoice
+    :target: https://github.com/efatto/e-efatto/tree/18.0/purchase_autocomplete_qty_to_invoice
     :alt: efatto/e-efatto
 
 |badge1| |badge2| |badge3|
 
-This module restrict autocomplete selection in vendors invoices only to purchase orders in state 'purchase' or 'done', with invoice status 'to invoice' or 'no', and with purchase order line with quantity to invoice different from zero.
+This module restrict autocomplete selection in vendors invoices only to
+purchase orders in state 'purchase' or 'done', with invoice status 'to
+invoice' or 'no', and with purchase order line with quantity to invoice
+different from zero.
 
 **Table of contents**
 
@@ -38,12 +37,16 @@ Usage
 
 Non è necessaria alcuna configurazione.
 
-Quando viene usato il campo autocompletamento per inserire degli ordini di acquisto nella fattura del fornitore:
+Quando viene usato il campo autocompletamento per inserire degli ordini
+di acquisto nella fattura del fornitore:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/purchase_autocomplete_qty_to_invoice/static/description/autocompletamento.png
-    :alt: Autocompletamento
+|Autocompletamento|
 
-verranno resi visibili solo gli ordini d'acquisto con righe da fatturare ed inserite nella fattura solo le righe con quantità da fatturare diversa da zero.
+verranno resi visibili solo gli ordini d'acquisto con righe da fatturare
+ed inserite nella fattura solo le righe con quantità da fatturare
+diversa da zero.
+
+.. |Autocompletamento| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/purchase_autocomplete_qty_to_invoice/static/description/autocompletamento.png
 
 Bug Tracker
 ===========
@@ -51,7 +54,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/efatto/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20purchase_autocomplete_qty_to_invoice%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20purchase_autocomplete_qty_to_invoice%0Aversion:%2018.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -59,18 +62,18 @@ Credits
 =======
 
 Authors
-~~~~~~~
+-------
 
 * Sergio Corato
 
 Contributors
-~~~~~~~~~~~~
+------------
 
-* Sergio Corato <https://github.com/sergiocorato>
+-  Sergio Corato <https://github.com/sergiocorato>
 
 Maintainers
-~~~~~~~~~~~
+-----------
 
-This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/14.0/purchase_autocomplete_qty_to_invoice>`_ project on GitHub.
+This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/18.0/purchase_autocomplete_qty_to_invoice>`_ project on GitHub.
 
 You are welcome to contribute.
