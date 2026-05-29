@@ -1,37 +1,18 @@
-# Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
-# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-
 from datetime import timedelta
 
 from odoo import fields
-from odoo.tests.common import Form, SavepointCase
+from odoo.tests import Form
+
+from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 
 
-class PurchaseInvoiceNoReference(SavepointCase):
+class PurchaseInvoiceNoReference(AccountTestInvoicingCommon):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
-        cls.user_model = cls.env["res.users"].with_context(no_reset_password=True)
         cls.vendor = cls.env.ref("base.res_partner_3")
         cls.product = cls.env.ref("product.product_product_1")
-        cls.purchase_journal = (
-            cls.env["account.journal"]
-            .with_company(cls.env.user.company_id.id)
-            .search(
-                [
-                    ("type", "=", "purchase"),
-                ],
-                limit=1,
-            )
-        )
-        cls.expense_account = cls.env["account.account"].create(
-            {
-                "code": "TEST_EXPENSE",
-                "name": "Expenses account",
-                "user_type_id": cls.env.ref("account.data_account_type_expenses").id,
-            }
-        )
+        cls.purchase_journal = cls.company_data["default_journal_purchase"]
 
     def test_purchase_order(self):
         purchase_form = Form(self.env["purchase.order"])
@@ -50,25 +31,21 @@ class PurchaseInvoiceNoReference(SavepointCase):
         self.assertEqual(
             len(purchase_order.order_line), 1, msg="Order line was not created"
         )
-        invoice_form = Form(
-            self.env["account.move"].with_context(
-                check_move_validity=False,
-                company_id=self.env.user.company_id.id,
-                default_move_type="in_invoice",
-            )
+        invoice = self._create_invoice(
+            move_type="in_invoice",
+            journal_id=self.purchase_journal,
+            partner_id=self.vendor,
+            ref="Invoice Reference",
+            post=False,
+            invoice_line_ids=[
+                self._prepare_invoice_line(
+                    product_id=self.env.ref("product.product_product_5"),
+                    quantity=5.0,
+                    price_unit=6,
+                    discount=10,
+                )
+            ],
         )
-        invoice_form.date = fields.Date.today()
-        invoice_form.invoice_date = fields.Date.today()
-        invoice_form.partner_id = self.vendor
-        invoice_form.ref = "Invoice Reference"
-        with invoice_form.invoice_line_ids.new() as invoice_line_form:
-            invoice_line_form.product_id = self.env.ref("product.product_product_5")
-            invoice_line_form.quantity = 5
-            invoice_line_form.account_id = self.expense_account
-            invoice_line_form.name = "product test 5"
-            invoice_line_form.price_unit = 6
-            invoice_line_form.currency_id = self.env.ref("base.EUR")
-        invoice = invoice_form.save()
         invoice.action_post()
         vendor_bill_purchase_id = self.env["purchase.bill.union"].search(
             [("reference", "=", "Vendor Reference")]
