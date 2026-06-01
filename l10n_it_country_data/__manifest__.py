@@ -8,7 +8,6 @@
     "website": "https://github.com/efatto/e-efatto",
     "license": "AGPL-3",
     "depends": [
-        "account",
         "sale",
     ],
     "data": [
