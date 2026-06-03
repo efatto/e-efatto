@@ -175,10 +175,12 @@ class TestStockValuationCommonRec(TestStockValuationCommon):
             fields.Date.to_date(stock_move6.date),
         )
 
-        order_line1.sudo().write({
-            "product_id": self.product1.id,
-            "purchase_price": self.product1.standard_price,
-        })
+        order_line1.sudo().write(
+            {
+                "product_id": self.product1.id,
+                "purchase_price": self.product1.standard_price,
+            }
+        )
         # Force recompute
         order_line1.sudo()._compute_purchase_date()
         # After product change, it should fall back to standard_price_write_date (today)
