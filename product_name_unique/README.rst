@@ -50,7 +50,6 @@ Credits
 Authors
 -------
 
-* Open Source Integrators
 * Sergio Corato
 
 Contributors
