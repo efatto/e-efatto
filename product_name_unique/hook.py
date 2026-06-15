@@ -6,7 +6,8 @@ def pre_init_product_name(env):
             """UPDATE product_template
             SET name = jsonb_set(
                 name, %s, to_jsonb(
-                    COALESCE(name->>%s, '') || '_' || nextval('ir_default_id_seq')))
+                    COALESCE(name->>%s, name->>'it_IT', name->>'en_US', '')
+                     || '_' || nextval('ir_default_id_seq')))
             WHERE id in (SELECT distinct(pt.id)
                          FROM product_template pt
                          INNER JOIN (
