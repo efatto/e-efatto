@@ -207,8 +207,8 @@ class MrpProduction(models.Model):
                 production.moves_to_do_ids = [(5,)]
         return res
 
-    def button_send_to_whs(self):
-        self._generate_whs()
+    def button_send_to_whs(self, start_num_riga_raw_move=0):
+        self._generate_whs(start_num_riga_raw_move=start_num_riga_raw_move)
         self._compute_sent_to_whs()
 
     @api.depends(
@@ -318,7 +318,7 @@ class MrpProduction(models.Model):
             whsliste_obj.create(whsliste_data)
         return num_lista, riga
 
-    def _generate_whs(self):
+    def _generate_whs(self, start_num_riga_raw_move=0):
         for production in self:
             # Create WMS lists for raw materials
             raw_dbsource = self.env["base.external.dbsource"].search(
@@ -340,7 +340,7 @@ class MrpProduction(models.Model):
                 # create directly whs lists
             ):
                 num_lista = False
-                riga = 0
+                riga = start_num_riga_raw_move
                 # Location of raw material is linked to WMS
                 for move in production.move_raw_ids:
                     num_lista, riga = production._create_whs_list_raw_move(
