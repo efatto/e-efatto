@@ -45,8 +45,8 @@ class MrpProductionSet(models.Model):
                 raise ValidationError(
                     _("Only 'right' workcenter can be used in 'right' position")
                 )
-        self.production_left_id.button_send_to_whs(start_num_riga_raw_move=1)
-        self.production_right_id.button_send_to_whs(start_num_riga_raw_move=2)
+        self.production_left_id.button_send_to_whs()
+        self.production_right_id.button_send_to_whs(start_num_riga_raw_move=1)
 
     @api.depends("production_left_id.sent_to_whs", "production_right_id.sent_to_whs")
     def _compute_sent_to_whs(self):
