@@ -263,7 +263,10 @@ class MrpProduction(models.Model):
             and move.location_id == self.location_src_id
         ):
             if not num_lista:
-                num_lista, riga = self._get_num_lista()
+                num_lista, new_riga = self._get_num_lista()
+                # do not ovveride riga if it is present
+                if not riga:
+                    riga = new_riga
             riga += 1
             if not qty_producing:
                 qty_producing = move.product_uom_qty
