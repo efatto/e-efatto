@@ -14,7 +14,8 @@ class SaleOrder(models.Model):
     )
     def _compute_mrp_date_planned_finished(self):
         for order in self:
-            order.mrp_date_planned_finished = max(
-                order.mapped("production_ids.workorder_ids.date_planned_finished")
-                or [False]
-            )
+            dates = order.mapped("production_ids.workorder_ids.date_planned_finished")
+            if dates:
+                order.mrp_date_planned_finished = max(dates)
+            else:
+                order.mrp_date_planned_finished = False
