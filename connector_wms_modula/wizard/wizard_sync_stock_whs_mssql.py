@@ -85,7 +85,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
             product = product_obj.search(
                 [
                     ("default_code", "=", stock_product),
-                    ("type", "in", ["product", "consu"]),
+                    ("type", "=", "product"),
                     ("exclude_from_whs", "!=", True),
                     ("is_kit", "!=", True),
                 ]
@@ -95,7 +95,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 product = product_obj.search(
                     [
                         ("default_code", "=", stock_product),
-                        ("type", "=", "service"),
+                        ("type", "!=", "product"),
                         ("exclude_from_whs", "!=", True),
                         ("is_kit", "!=", True),
                     ]
