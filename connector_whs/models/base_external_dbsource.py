@@ -116,7 +116,8 @@ class BaseExternalDbsource(models.Model):
             # or interrupted (bad) records (Elaborato=0)
             dbsource._pre_insert_product_query()
             log_data = self.env["hyddemo.mssql.log"].search_read(
-                [], ["ultimo_invio", "ultimo_id"], order="ultimo_id desc", limit=1
+                [("dbsource_id", "=", dbsource.id)], ["ultimo_invio", "ultimo_id"],
+                order="ultimo_id desc", limit=1
             )
             _logger.info(log_data)
             last_id = log_data and log_data[0]["ultimo_id"] or 0
