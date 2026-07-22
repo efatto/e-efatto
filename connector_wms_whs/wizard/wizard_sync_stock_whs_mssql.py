@@ -24,7 +24,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
         )
         return query
 
-    def apply(self):  # flake8: noqa: C901
+    def apply(self):  # noqa: C901
         fields_pos_dict = {
             "rownum": 0,
             "Articolo": 1,
