@@ -127,6 +127,10 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                 )
 
     def simulate_whs_cron_inventory(self, product, quantity):
+        self.update_product_qty_on_host_giacenze(product, quantity)
+        self.wizard_sync_stock_from_wms_to_odoo(product)
+
+    def update_product_qty_on_host_giacenze(self, product, quantity):
         # check if there is a row with this product and update it, otherwise create one
         res = self.dbsource.execute_mssql(
             sqlquery=clean_sql_text(
@@ -137,14 +141,21 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             ),
             metadata=None,
         )
-        if res and res[0] and len(res[0]) == 1:
-            giacenze_query = (
-                "UPDATE HOST_GIACENZE SET Qta=:Qta WHERE Articolo=:Articolo"
-            )
-        else:
-            giacenze_query = (
-                "INSERT INTO HOST_GIACENZE (Articolo, Qta) VALUES (:Articolo, :Qta)"
-            )
+        giacenze_query = (
+            "INSERT INTO HOST_GIACENZE (Articolo, Qta) VALUES (:Articolo, :Qta)"
+        )
+        if res and res[0]:
+            if len(res[0]) == 1:
+                giacenze_query = (
+                    "UPDATE HOST_GIACENZE SET Qta=:Qta WHERE Articolo=:Articolo"
+                )
+            elif len(res[0]) > 1:
+                current_quantity = sum([float(x[1]) for x in res[0]])
+                # Add a record with only the delta to reach target qty
+                # Note: wizard sums rows by product, so adding (target-current)
+                # aligns the aggregated quantity.
+                quantity = quantity - current_quantity
+
         self.dbsource.with_context(no_return=True).execute_mssql(
             sqlquery=clean_sql_text(giacenze_query),
             sqlparams=dict(
@@ -153,6 +164,8 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
             ),
             metadata=None,
         )
+
+    def wizard_sync_stock_from_wms_to_odoo(self, product):
         sync_stock_form = Form(
             self.env["wizard.sync.stock.whs.mssql"].with_context(
                 active_id=self.dbsource.id,
@@ -1378,3 +1391,158 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         self.top_product.categ_id = self.custom_categ_id
         self.assertEqual(self.top_product.categ_id.name, "CUSTOM")
         self._mrp_total_from_sale(is_custom=True)
+
+    def test_10_sync_inventory_wizard(self):
+        """Ensure MSSQL stock sync aligns Odoo qty and creates a log.
+
+        Reuse the helper that writes into HOST_GIACENZE and runs the wizard
+        with do_sync=True, then verify that the product quantity at the WMS
+        base location matches the target quantity and that a log entry is
+        created for the product.
+        """
+        product = self.product1
+        base_loc = self.dbsource.location_id
+
+        # Current qty in WMS base location
+        start_qty = product.with_context(
+            location=base_loc.id,
+            compute_child=True,
+        ).qty_available
+        target_qty = start_qty + 5
+        # Write HOST_GIACENZE and run the wizard (do_sync=True)
+        self.simulate_whs_cron_inventory(product, target_qty)
+        log = self.env["hyddemo.mssql.log"].search(
+            [("dbsource_id", "=", self.dbsource.id)],
+            order="id desc",
+            limit=1,
+        )
+
+        # After sync, compare qty without QC to WMS target + ongoing.
+        # The wizard sets inventory on base location excluding QC quantity.
+        line = log.hyddemo_mssql_log_line_ids.filtered(
+            lambda l: l.name == product.default_code
+        )
+        self.assertTrue(len(line), 1)
+        self.assertEqual(line.qty_wrong, start_qty)
+        self.assertEqual(line.qty, target_qty)
+        ongoing = line.ongoing_qty or 0.0
+        expected_wo_qc = target_qty + ongoing
+
+        # Qty over base location + children (wizard excludes QC).
+        qty_after = product.with_context(
+            location=base_loc.id, compute_child=True
+        ).qty_available
+        warehouse = base_loc.get_warehouse()
+        qc_loc = warehouse.wh_qc_stock_loc_id
+        qc_qty = 0.0
+        if qc_loc and self.env["stock.location"].search(
+            [
+                ("id", "=", qc_loc.id),
+                ("id", "child_of", base_loc.id),
+            ]
+        ):
+            qc_qty = product.with_context(
+                location=qc_loc.id, compute_child=True
+            ).qty_available
+        qty_after_wo_qc = qty_after - qc_qty
+
+        self.assertAlmostEqual(qty_after_wo_qc, expected_wo_qc, 3)
+
+        # A log must be generated and reference an inventory
+        log = self.env["hyddemo.mssql.log"].search(
+            [("dbsource_id", "=", self.dbsource.id)],
+            order="id desc",
+            limit=1,
+        )
+        self.assertTrue(log)
+        self.assertTrue(log.inventory_id)
+
+        # Check a line exists for the product (usually type 'mismatch')
+        lines = log.hyddemo_mssql_log_line_ids.filtered(
+            lambda l: l.name == product.default_code
+        )
+        self.assertTrue(lines)
+        # Depending on timing it can be 'mismatch' (before inventory) or 'ok'.
+        self.assertIn(lines[0].type, ["mismatch", "ok"])
+
+    def test_11_product_master_roundtrip_no_loop(self):
+        """Create product -> export to WMS -> WMS inventory -> sync back.
+
+        Ensure product export via HOST_ARTICOLI uses existing method and
+        that inventory sync from WMS (HOST_GIACENZE) does not trigger a
+        new product export (no loop).
+        """
+        with self.assertRaises(ValidationError):
+            self.dbsource.connection_test()
+
+        # Create a new storable product
+        prod_form = Form(self.env["product.product"])
+        prod_form.name = "WMS Loop Test"
+        prod_form.default_code = "WMS-LOOP-001"
+        prod_form.type = "product"
+        product = prod_form.save()
+        code = product.default_code
+
+        # Helper: count rows for this code in HOST_ARTICOLI
+        count_sql = "SELECT COUNT(*) FROM HOST_ARTICOLI WHERE Codice=:Codice"
+        rows = self.dbsource.execute_mssql(
+            sqlquery=clean_sql_text(count_sql),
+            sqlparams=dict(Codice=code),
+            metadata=None,
+        )[0]
+        count_before = rows[0][0]
+
+        # Export product master to WMS (writes HOST_ARTICOLI)
+        self.dbsource.whs_update_products()
+
+        rows = self.dbsource.execute_mssql(
+            sqlquery=clean_sql_text(
+                "SELECT Codice, Descrizione, UM, Elaborato "
+                "FROM HOST_ARTICOLI WHERE Codice=:Codice"
+            ),
+            sqlparams=dict(Codice=code),
+            metadata=None,
+        )[0]
+        # One new row must exist and be consistent
+        self.assertTrue(rows)
+        rec = rows[-1]
+        self.assertEqual(rec[0], code)
+        # UM is 'PZ' for Unit(s), else truncated to 10 chars
+        expected_um = (
+            "PZ" if product.uom_id.name == "Unit(s)" else product.uom_id.name[:10]
+        )
+        self.assertEqual(rec[2], expected_um)
+        self.assertIn(rec[3], [0, 1])
+
+        # Verify count increased by 1
+        rows = self.dbsource.execute_mssql(
+            sqlquery=clean_sql_text(count_sql),
+            sqlparams=dict(Codice=code),
+            metadata=None,
+        )[0]
+        self.assertEqual(rows[0][0], count_before + 1)
+
+        # Change stock in WMS and sync to Odoo (writes HOST_GIACENZE)
+        base_loc = self.dbsource.location_id
+        target_qty = 7.0
+        self.simulate_whs_cron_inventory(product, target_qty)
+        qty_after = product.with_context(
+            location=base_loc.id,
+            compute_child=True,
+        ).qty_available
+        self.assertAlmostEqual(qty_after, target_qty, 3)
+
+        # Ensure no loop: second export must not add new records
+        rows = self.dbsource.execute_mssql(
+            sqlquery=clean_sql_text(count_sql),
+            sqlparams=dict(Codice=code),
+            metadata=None,
+        )[0]
+        count_mid = rows[0][0]
+        self.dbsource.whs_update_products()
+        rows = self.dbsource.execute_mssql(
+            sqlquery=clean_sql_text(count_sql),
+            sqlparams=dict(Codice=code),
+            metadata=None,
+        )[0]
+        self.assertEqual(rows[0][0], count_mid)
