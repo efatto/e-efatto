@@ -15,30 +15,67 @@ class ProductProduct(models.Model):
         connection = dbsource.connection_open_mssql()
         if not connection:
             raise UserError(_("Failed to open connection!"))
-        sql_result = dbsource.execute_mssql(
+        sql_result_host_articoli = dbsource.execute_mssql(
             sqlquery=clean_sql_text(
                 """
-SELECT ha.Codice, ha.Descrizione AS Descrizione, ha.id AS id_articoli, 0 AS id_giacenza,
- ha.Peso AS peso_articoli, 0 AS peso_giacenza, 0 AS qta FROM HOST_ARTICOLI ha
-WHERE ha.Codice=:Codice
-UNION
-SELECT hg.Articolo, '' AS Descrizione, 0 AS id_articoli, hg.id AS id_giacenza,
- 0 AS peso_articoli, hg.Peso AS peso_giacenza, hg.Qta AS qta FROM HOST_GIACENZE hg
-WHERE hg.Articolo=:Codice
+                    SELECT Descrizione, id, Peso FROM HOST_ARTICOLI
+                    WHERE Codice=:Codice
                 """
             ),
             sqlparams={"Codice": self.default_code},
             metadata=True,
         )
-        if sql_result[0]:
-            cols = sql_result[1]
-            rows_with_headers = [dict(zip(cols, row)) for row in sql_result[0]]
-            contents = _(
-                "Product info in table HOST_ARTICOLI and HOST_GIACENZE: %s."
-                % str(rows_with_headers)
+        sql_result_host_giacenze = dbsource.execute_mssql(
+            sqlquery=clean_sql_text(
+                """
+                    SELECT id, Peso, Qta FROM HOST_GIACENZE
+                    WHERE Articolo=:Codice
+                """
+            ),
+            sqlparams={"Codice": self.default_code},
+            metadata=True,
+        )
+        product_info = {
+            "description": "",
+            "weight_host_articoli": "",
+            "weight_host_giacenze": "",
+            "quantity": 0,
+        }
+        if sql_result_host_articoli[0]:
+            cols = sql_result_host_articoli[1]
+            rows_with_headers = [
+                dict(zip(cols, row)) for row in sql_result_host_articoli[0]
+            ]
+            product_info["description"] = rows_with_headers[1]["Descrizione"]
+            product_info["weight_host_articoli"] = str(
+                {
+                    float((rows_with_headers[i])["Peso"])
+                    for i, x in enumerate(rows_with_headers)
+                    if i > 0
+                }
             )
-        else:
-            contents = _("No info found for this product.")
+        if sql_result_host_giacenze[0]:
+            cols = sql_result_host_giacenze[1]
+            rows_with_headers = [
+                dict(zip(cols, row)) for row in sql_result_host_giacenze[0]
+            ]
+            product_info["weight_host_giacenze"] = str(
+                {
+                    float((rows_with_headers[i])["Peso"])
+                    for i, x in enumerate(rows_with_headers)
+                    if i > 0
+                }
+            )
+            product_info["quantity"] = sum(
+                float(x["Qta"]) for i, x in enumerate(rows_with_headers) if i > 0
+            )
+        contents = _(
+            "Product info in table HOST_ARTICOLI and HOST_GIACENZE: "
+            "Description: %(description)s,\n"
+            "Weights host_articoli: %(weight_host_articoli)s,\n"
+            "Weight host giacenze: %(weight_host_giacenze)s,\n "
+            "Quantity: %(quantity)s." % product_info
+        )
         res["params"].update(
             {
                 "message": contents,
