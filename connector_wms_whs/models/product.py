@@ -18,10 +18,12 @@ class ProductProduct(models.Model):
         sql_result = dbsource.execute_mssql(
             sqlquery=clean_sql_text(
                 """
-SELECT ha.Codice, ha.Descrizione AS Descrizione, ha.id AS id_articoli, 0 AS id_giacenza, ha.Peso AS peso_articoli, 0 AS peso_giacenza, 0 AS qta FROM HOST_ARTICOLI ha
+SELECT ha.Codice, ha.Descrizione AS Descrizione, ha.id AS id_articoli, 0 AS id_giacenza,
+ ha.Peso AS peso_articoli, 0 AS peso_giacenza, 0 AS qta FROM HOST_ARTICOLI ha
 WHERE ha.Codice=:Codice
 UNION
-SELECT hg.Articolo, '' AS Descrizione, 0 AS id_articoli, hg.id AS id_giacenza, 0 AS peso_articoli, hg.Peso AS peso_giacenza, hg.Qta AS qta FROM HOST_GIACENZE hg
+SELECT hg.Articolo, '' AS Descrizione, 0 AS id_articoli, hg.id AS id_giacenza,
+ 0 AS peso_articoli, hg.Peso AS peso_giacenza, hg.Qta AS qta FROM HOST_GIACENZE hg
 WHERE hg.Articolo=:Codice
                 """
             ),
