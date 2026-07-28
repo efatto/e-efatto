@@ -46,7 +46,7 @@ class ProductProduct(models.Model):
             rows_with_headers = [
                 dict(zip(cols, row)) for row in sql_result_host_articoli[0]
             ]
-            product_info["description"] = rows_with_headers[1]["Descrizione"]
+            product_info["description"] = rows_with_headers[0]["Descrizione"]
             product_info["weight_host_articoli"] = str(
                 {
                     float((rows_with_headers[i])["Peso"])
