@@ -58,7 +58,17 @@ class StockPicking(models.Model):
                         )
                         % inspection.name
                     )
-        return super()._action_done()
+        res = super()._action_done()
+        # fix picking_id linked to inspection if it is no more linked to the same
+        # picking, after _action_done execution
+        for picking in self.sudo():
+            for inspection in picking.qc_inspections_ids:
+                if (
+                    inspection.object_id._name in ["stock.move", "stock.move.line"]
+                    and inspection.object_id.picking_id != picking
+                ):
+                    inspection.picking_id = inspection.object_id.picking_id
+        return res
 
     def write(self, vals):
         res = super().write(vals)
