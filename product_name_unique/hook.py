@@ -1,4 +1,11 @@
+from odoo.tools import sql
+
+
 def pre_init_product_name(cr):
+    # set field product_template as not translatable
+    table = "product_template"
+    column = "name"
+    sql.convert_column_translatable(cr, table, column, "char")
     cr.execute(
         """UPDATE product_template
         SET name = CONCAT(name, '_', nextval('ir_default_id_seq'))
