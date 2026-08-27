@@ -6,6 +6,7 @@ def pre_init_product_name(env):
     cr = env.cr
     table = "product_template"
     column = "name"
+    sql.drop_index(cr, "product_template_name_index", table)
     sql.convert_column_translatable(cr, table, column, "VARCHAR")
     cr.execute(
         SQL(
