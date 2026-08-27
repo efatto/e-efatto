@@ -1,4 +1,4 @@
-from odoo.tools import sql
+from odoo.tools import SQL, sql
 
 
 def pre_init_product_name(env):
@@ -8,23 +8,28 @@ def pre_init_product_name(env):
     column = "name"
     sql.convert_column_translatable(cr, table, column, "VARCHAR")
     cr.execute(
-        f"""
-        UPDATE {table}
-        SET {column} = CONCAT(
-            {column}, '_', nextval('ir_default_id_seq')
+        SQL(
+            """
+        UPDATE %(table)s
+        SET %(column)s = CONCAT(
+            %(column)s, '_', nextval(%(sequence)s)
         )
         WHERE id in (
             SELECT distinct(pt.id)
-            FROM {table} pt
+            FROM %(table)s pt
             INNER JOIN (
-                SELECT {column}, COUNT(*)
-                FROM {table}
-                GROUP BY {column}
+                SELECT %(column)s, COUNT(*)
+                FROM %(table)s
+                GROUP BY %(column)s
                 HAVING COUNT(*)>1
             ) pt1
-            on pt.{column}=pt1.{column}
-            or pt.{column} is NULL
-            or LENGTH(pt.{column}) = 0)
-        """
+            on pt.%(column)s=pt1.%(column)s
+            or pt.%(column)s is NULL
+            or LENGTH(pt.%(column)s) = 0)
+        """,
+            table=SQL.identifier(table),
+            column=SQL.identifier(column),
+            sequence="ir_default_id_seq",
+        )
     )
     return True
