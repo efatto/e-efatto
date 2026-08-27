@@ -28,6 +28,17 @@ class TestSerialMatrix(Common):
             ]
         )
         self.assertRecordValues(
+            parallel_productions.workorder_ids.time_ids,
+            [
+                {
+                    "duration": 5,
+                },
+                {
+                    "duration": 5,
+                },
+            ],
+        )
+        self.assertRecordValues(
             parallel_productions.workorder_ids,
             [
                 {

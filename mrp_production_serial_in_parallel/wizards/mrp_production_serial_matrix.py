@@ -59,15 +59,24 @@ class MrpProductionSerialMatrix(models.TransientModel):
                 date_start = new_workorder_time.date_end
 
         # Adjust time of original production that has become a backorder
-        for workorder_time in production.workorder_ids.time_ids:
-            workorder_time.write(
+        # and in workorders
+        for workorder in production.workorder_ids:
+            workorder.write(
                 {
-                    "duration": workorder_time.duration / workorders_number,
-                    "unit_amount": workorder_time.unit_amount
-                    and (workorder_time.unit_amount / workorders_number)
-                    or 0,
+                    "duration": sum(workorder.time_ids.mapped("duration"))
+                    / workorders_number,
                 }
             )
+            for workorder_time in workorder.time_ids:
+                workorder_time.write(
+                    {
+                        # duration is already modified writing in workorder
+                        # "duration": workorder_time.duration / workorders_number,
+                        "unit_amount": workorder_time.unit_amount
+                        and (workorder_time.unit_amount / workorders_number)
+                        or 0,
+                    }
+                )
 
     def _set_parallel_production(self):
         parallel_production = False
