@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record model="ir.ui.view" id="sale_margin_sale_order_line">
+        <field name="name">sale.order.line.margin.view.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_margin.sale_margin_sale_order_line" />
+        <field name="arch" type="xml">
+            <xpath
+                expr="//field[@name='order_line']/form//field[@name='purchase_price']"
+                position="after"
+            >
+                <field
+                    name="purchase_date"
+                    groups="product_cost_security.group_product_cost"
+                />
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="sale_margin_sale_order_line_form">
+        <field name="name">sale.order.line.list.margin.view.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_margin.sale_margin_sale_order_line_form" />
+        <field name="arch" type="xml">
+            <xpath
+                expr="//field[@name='order_line']/list//field[@name='purchase_price']"
+                position="after"
+            >
+                <field
+                    name="purchase_date"
+                    groups="product_cost_security.group_product_cost"
+                />
+            </xpath>
+        </field>
+    </record>
+</odoo>
