@@ -10,39 +10,40 @@ from odoo.tools import mute_logger
 
 @tagged("-standard", "test_wms")
 class CommonConnectorWMS(TransactionCase):
-    def setUp(self):
-        super().setUp()
-        self.dbsource_model = self.env["base.external.dbsource"]
-        self.stock_location_model = self.env["stock.location"]
-        self.product_model = self.env["product.product"]
-        self.dest_location = self.env.ref("stock.stock_location_customers")
-        self.src_location = self.env.ref("stock.stock_location_stock")  # noqa
-        self.wms_location = self.stock_location_model.search(
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.dbsource_model = cls.env["base.external.dbsource"]
+        cls.stock_location_model = cls.env["stock.location"]
+        cls.product_model = cls.env["product.product"]
+        cls.dest_location = cls.env.ref("stock.stock_location_customers")
+        cls.src_location = cls.env.ref("stock.stock_location_stock")  # noqa
+        cls.wms_location = cls.stock_location_model.search(
             [
                 ("name", "=", "WMS Location (child of default internal location)"),
             ]
         )
-        if not self.wms_location:
-            self.wms_location = self.stock_location_model.create(
+        if not cls.wms_location:
+            cls.wms_location = cls.stock_location_model.create(
                 {
                     "name": "WMS Location (child of default internal location)",
-                    "location_id": self.src_location.id,
+                    "location_id": cls.src_location.id,
                 }
             )
-        self.manufacture_location = self.stock_location_model.search(
+        cls.manufacture_location = cls.stock_location_model.search(
             [("usage", "=", "production")], limit=1
         )[0]
-        self.procurement_model = self.env["procurement.group"]
-        self.partner = self.env.ref("base.res_partner_2")
+        cls.procurement_model = cls.env["procurement.group"]
+        cls.partner = cls.env.ref("base.res_partner_2")
         # Create product with 11 on hand on WMS location and 5 in default Stock location
         # Odoo gets products from all internal locations in the warehouse by default
-        self.product1 = self.product_model.search(
+        cls.product1 = cls.product_model.search(
             [
                 ("default_code", "=", "PRODUCT1"),
             ]
         )
-        if not self.product1:
-            self.product1 = self.product_model.create(
+        if not cls.product1:
+            cls.product1 = cls.product_model.create(
                 [
                     {
                         "name": "test product1",
@@ -51,47 +52,47 @@ class CommonConnectorWMS(TransactionCase):
                     }
                 ]
             )
-        self.StockQuant = self.env["stock.quant"]
-        self.quant_product1 = self.StockQuant.search(
+        cls.StockQuant = cls.env["stock.quant"]
+        cls.quant_product1 = cls.StockQuant.search(
             [
-                ("product_id", "=", self.product1.id),
+                ("product_id", "=", cls.product1.id),
                 ("quantity", "=", 11.0),
             ]
         )
-        if not self.quant_product1:
-            self.quant_product1 = self.StockQuant.create(
+        if not cls.quant_product1:
+            cls.quant_product1 = cls.StockQuant.create(
                 [
                     {
-                        "product_id": self.product1.id,
-                        "location_id": self.wms_location.id,
+                        "product_id": cls.product1.id,
+                        "location_id": cls.wms_location.id,
                         "quantity": 11.0,
                     }
                 ]
             )
-        self.quant_product1_1 = self.StockQuant.search(
+        cls.quant_product1_1 = cls.StockQuant.search(
             [
-                ("product_id", "=", self.product1.id),
+                ("product_id", "=", cls.product1.id),
                 ("quantity", "=", 5.0),
             ]
         )
-        if not self.quant_product1_1:
-            self.quant_product1_1 = self.StockQuant.create(
+        if not cls.quant_product1_1:
+            cls.quant_product1_1 = cls.StockQuant.create(
                 [
                     {
-                        "product_id": self.product1.id,
-                        "location_id": self.src_location.id,
+                        "product_id": cls.product1.id,
+                        "location_id": cls.src_location.id,
                         "quantity": 5.0,
                     }
                 ]
             )
         # Create product with 8 on hand
-        self.product2 = self.product_model.search(
+        cls.product2 = cls.product_model.search(
             [
                 ("default_code", "=", "PRODUCT2"),
             ]
         )
-        if not self.product2:
-            self.product2 = self.product_model.create(
+        if not cls.product2:
+            cls.product2 = cls.product_model.create(
                 [
                     {
                         "name": "test product2",
@@ -100,30 +101,30 @@ class CommonConnectorWMS(TransactionCase):
                     }
                 ]
             )
-        self.quant_product2 = self.StockQuant.search(
+        cls.quant_product2 = cls.StockQuant.search(
             [
-                ("product_id", "=", self.product2.id),
+                ("product_id", "=", cls.product2.id),
                 ("quantity", "=", 8.0),
             ]
         )
-        if not self.quant_product2:
-            self.quant_product2 = self.StockQuant.create(
+        if not cls.quant_product2:
+            cls.quant_product2 = cls.StockQuant.create(
                 [
                     {
-                        "product_id": self.product2.id,
-                        "location_id": self.wms_location.id,
+                        "product_id": cls.product2.id,
+                        "location_id": cls.wms_location.id,
                         "quantity": 8.0,
                     }
                 ]
             )
         # create product excluded from WMS with 10 on hand
-        self.product_excluded = self.product_model.search(
+        cls.product_excluded = cls.product_model.search(
             [
                 ("default_code", "=", "PRODUCTEX"),
             ]
         )
-        if not self.product_excluded:
-            self.product_excluded = self.product_model.create(
+        if not cls.product_excluded:
+            cls.product_excluded = cls.product_model.create(
                 [
                     {
                         "name": "test product excluded from WMS",
@@ -133,36 +134,36 @@ class CommonConnectorWMS(TransactionCase):
                     }
                 ]
             )
-        self.quant_product_excluded = self.StockQuant.search(
+        cls.quant_product_excluded = cls.StockQuant.search(
             [
-                ("product_id", "=", self.product_excluded.id),
+                ("product_id", "=", cls.product_excluded.id),
                 ("quantity", "=", 10.0),
             ]
         )
-        if not self.quant_product_excluded:
-            self.quant_product_excluded = self.StockQuant.create(
+        if not cls.quant_product_excluded:
+            cls.quant_product_excluded = cls.StockQuant.create(
                 [
                     {
-                        "product_id": self.product_excluded.id,
-                        "location_id": self.src_location.id,
+                        "product_id": cls.product_excluded.id,
+                        "location_id": cls.src_location.id,
                         "quantity": 10.0,
                     }
                 ]
             )
         # Large Cabinet, 250 on hand
-        self.product3 = self.env.ref("product.product_product_6")
+        cls.product3 = cls.env.ref("product.product_product_6")
         # Drawer Black, 0 on hand
-        self.product4 = self.env.ref("product.product_product_16")
-        self.product5 = self.env.ref("product.product_product_20")
-        self.product1.invoice_policy = "order"
-        self.product1.write(
+        cls.product4 = cls.env.ref("product.product_product_16")
+        cls.product5 = cls.env.ref("product.product_product_20")
+        cls.product1.invoice_policy = "order"
+        cls.product1.write(
             {
                 "customer_ids": [
                     (
                         0,
                         0,
                         {
-                            "name": self.partner.id,
+                            "name": cls.partner.id,
                             "product_code": "CUSTOMERCODE",
                             "product_name": "Product customer name",
                         },
@@ -170,90 +171,90 @@ class CommonConnectorWMS(TransactionCase):
                 ]
             }
         )
-        self.product2.invoice_policy = "order"
+        cls.product2.invoice_policy = "order"
         # MRP data
-        self.top_product = self.env.ref(
+        cls.top_product = cls.env.ref(
             "mrp_production_demo.product_product_manufacture_1"
         )
-        self.warehouse = self.env["stock.warehouse"].search(
-            [("company_id", "=", self.env.user.company_id.id)],
+        cls.warehouse = cls.env["stock.warehouse"].search(
+            [("company_id", "=", cls.env.user.company_id.id)],
             limit=1,
         )
-        self.warehouse.mto_pull_id.route_id.active = True
-        self.top_product.write(
+        cls.warehouse.mto_pull_id.route_id.active = True
+        cls.top_product.write(
             dict(
                 route_ids=[
                     (
                         6,
                         0,
                         [
-                            self.warehouse.mto_pull_id.route_id.id,
-                            self.warehouse.manufacture_pull_id.route_id.id,
+                            cls.warehouse.mto_pull_id.route_id.id,
+                            cls.warehouse.manufacture_pull_id.route_id.id,
                         ],
                     ),
                 ]
             )
         )
-        self.subproduct1 = self.env.ref(
+        cls.subproduct1 = cls.env.ref(
             "mrp_production_demo.product_product_manufacture_1_1"
         )
-        self.subproduct2 = self.env.ref(
+        cls.subproduct2 = cls.env.ref(
             "mrp_production_demo.product_product_manufacture_1_2"
         )
-        self.subproduct_1_1 = self.env.ref(
+        cls.subproduct_1_1 = cls.env.ref(
             "mrp_production_demo.product_product_manufacture_1_1_1"
         )
-        self.subproduct_1_1.write(
+        cls.subproduct_1_1.write(
             dict(
                 route_ids=[
                     (
                         6,
                         0,
                         [
-                            self.warehouse.mto_pull_id.route_id.id,
-                            self.env.ref("purchase_stock.route_warehouse0_buy").id,
+                            cls.warehouse.mto_pull_id.route_id.id,
+                            cls.env.ref("purchase_stock.route_warehouse0_buy").id,
                         ],
                     ),
                 ]
             )
         )
-        self.subproduct_2_1 = self.env.ref(
+        cls.subproduct_2_1 = cls.env.ref(
             "mrp_production_demo.product_product_manufacture_1_2_1"
         )
-        self.main_bom = self.env.ref("mrp_production_demo.mrp_bom_manuf_1")
-        self.sub_bom_phantom_1 = self.env.ref("mrp_production_demo.mrp_bom_manuf_1_1")
-        self.sub_bom_phantom_2 = self.env.ref("mrp_production_demo.mrp_bom_manuf_1_2")
-        self.sub_bom_normal_1 = self.env.ref("mrp_production_demo.mrp_bom_manuf_1_3")
-        self.workcenter1 = self.env["mrp.workcenter"].create(
+        cls.main_bom = cls.env.ref("mrp_production_demo.mrp_bom_manuf_1")
+        cls.sub_bom_phantom_1 = cls.env.ref("mrp_production_demo.mrp_bom_manuf_1_1")
+        cls.sub_bom_phantom_2 = cls.env.ref("mrp_production_demo.mrp_bom_manuf_1_2")
+        cls.sub_bom_normal_1 = cls.env.ref("mrp_production_demo.mrp_bom_manuf_1_3")
+        cls.workcenter1 = cls.env["mrp.workcenter"].create(
             {
                 "name": "Base Workcenter",
-                "capacity": 1,
+                "default_capacity": 1,
                 "time_start": 10,
                 "time_stop": 5,
                 "time_efficiency": 80,
                 "costs_hour": 23.0,
             }
         )
-        self.operation1 = self.env["mrp.routing.workcenter"].search(
+        cls.operation1 = cls.env["mrp.routing.workcenter"].search(
             [
                 ("name", "=", "Operation 1"),
-                ("workcenter_id", "=", self.workcenter1.id),
+                ("workcenter_id", "=", cls.workcenter1.id),
             ]
         )
-        if not self.operation1:
-            self.operation1 = self.env["mrp.routing.workcenter"].create(
+        if not cls.operation1:
+            cls.operation1 = cls.env["mrp.routing.workcenter"].create(
                 {
                     "name": "Operation 1",
-                    "workcenter_id": self.workcenter1.id,
+                    "workcenter_id": cls.workcenter1.id,
                     "time_mode": "manual",
                     "time_cycle_manual": 90,
                     "sequence": 1,
                 }
             )
-        self.mrp_user = self.env.ref("base.user_demo")
-        self.mrp_user.write(
+        cls.mrp_user = cls.env.ref("base.user_demo")
+        cls.mrp_user.write(
             {
-                "groups_id": [(4, self.env.ref("mrp.group_mrp_user").id)],
+                "groups_id": [(4, cls.env.ref("mrp.group_mrp_user").id)],
             }
         )
 
