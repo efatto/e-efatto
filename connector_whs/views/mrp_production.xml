@@ -20,8 +20,8 @@
         <field name="arch" type="xml">
             <button name="%(mrp.action_mrp_production_moves)d" position="attributes">
                 <attribute
-          name="attrs"
-        >{'invisible': [('state', 'not in', ('consumed', 'progress', 'done'))]}</attribute>
+          name="invisible"
+        >state not in ('consumed', 'progress', 'done')</attribute>
             </button>
             <button name="button_mark_done" position="before">
                 <field name="sent_to_whs" invisible="1" />
@@ -33,7 +33,7 @@
           type="object"
           string="Send to WHS"
           class="oe_highlight"
-          attrs="{'invisible': ['|', '|', ('bom_type', '=', 'subcontract'), ('state', '!=', 'progress'), ('sent_to_whs', '=', True)]}"
+          invisible="bom_type == 'subcontract' or state != 'progress' or sent_to_whs"
         />
             </button>
             <xpath expr="//button[@name='button_mark_done']" position="before">
@@ -42,13 +42,13 @@
           type="object"
           class="oe_highlight"
           string="Consume components"
-          attrs="{'invisible': ['|', '|', '|', '|', ('bom_type', '=', 'subcontract'), ('is_consumable', '=', False), ('state', '!=', 'progress'), ('qty_producing', '=', 0), ('sent_to_whs', '=', False)]}"
+          invisible="bom_type == 'subcontract' or not is_consumable or state != 'progress' or not qty_producing or not sent_to_whs"
         />
                 <button
           name="button_consume"
           type="object"
           string="Consume components"
-          attrs="{'invisible': ['|', '|', '|', ('bom_type', '=', 'subcontract'), ('is_consumable', '=', False), ('state', '!=', 'consumed'), ('qty_producing', '=', 0)]}"
+          invisible="bom_type == 'subcontract' or not is_consumable or state != 'consumed' or not qty_producing"
         />
             </xpath>
             <xpath
@@ -56,20 +56,28 @@
         position="attributes"
       >
                 <attribute name="string">Produce</attribute>
-                <attribute name="attrs">
-                    {'invisible': [('hide_mark_done', '!=', False)]}
+                <attribute name="invisible">
+                    (
+                        state not in ['progress', 'consumed']
+                        or not qty_producing
+                    ) if bom_type == 'subcontract' else (
+                        is_consumable
+                        or state not in ['progress', 'consumed']
+                        or not qty_producing
+                        or not sent_to_whs
+                    )
                 </attribute>
             </xpath>
             <xpath
         expr="/form/header/button[@name='button_mark_done'][2]"
         position="attributes"
       >
-                <attribute name="attrs">{'invisible': True}</attribute>
+                <attribute name="invisible">True</attribute>
             </xpath>
             <field name="qty_producing" position="attributes">
                 <attribute
-          name="attrs"
-        >{'readonly': [('qty_producing', '!=', 0), ('sent_to_whs', '=', True), ('state', 'not in', ['draft', 'confirmed', 'progress'])]}</attribute>
+          name="readonly"
+        >qty_producing or sent_to_whs or state not in ['draft', 'confirmed', 'progress']</attribute>
             </field>
         </field>
     </record>

@@ -53,12 +53,9 @@ class StockBackorderConfirmation(models.TransientModel):
                     # 2. the move from input location to stock *
                     # * only this one is usually managed in WMS
                     _logger.info(
-                        "WMS restored backorder %s pick dest loc from %s to %s"
-                        % (
-                            backorder_pick.name,
-                            backorder_pick.location_dest_id.name,
-                            backorder_pick.picking_type_id.default_location_dest_id.name,
-                        )
+                        f"WMS restored backorder {backorder_pick.name} pick dest loc "
+                        f"from {backorder_pick.location_dest_id.name} to "
+                        f"{backorder_pick.picking_type_id.default_location_dest_id.name}"
                     )
                     backorder_pick.location_dest_id = (
                         backorder_pick.picking_type_id.default_location_dest_id

@@ -6,13 +6,7 @@
         <field name="inherit_id" ref="stock.view_picking_form" />
         <field name="arch" type="xml">
             <xpath
-        expr="//page[@name='operations']/field[@name='move_ids_without_package']/form/group/field[@name='description_picking']"
-        position="after"
-      >
-                <field name="whs_list_ids" />
-            </xpath>
-            <xpath
-        expr="//page[@name='operations']/field[@name='move_ids_without_package']/tree/button[@name='action_show_details']"
+        expr="//page[@name='operations']/field[@name='move_ids_without_package']/list/field[@name='lot_ids']"
         position="after"
       >
                 <field name="has_wms_lists" invisible="1" />
@@ -21,7 +15,7 @@
           type="object"
           icon="fa-list-alt"
           string=" "
-          attrs="{'invisible': [('has_wms_lists', '=', False)]}"
+          invisible="not has_wms_lists"
         />
             </xpath>
         </field>
@@ -52,7 +46,7 @@
                 <field name="dbsource_id" invisible="1" />
                 <button
           name="button_validate_bypass_wms"
-          attrs="{'invisible': ['|', '|', ('dbsource_id', '=', False), ('state', 'in', ('waiting','confirmed')), ('show_validate', '=', False)]}"
+          invisible="not dbsource_id or state in ('waiting','confirmed')"
           string="Validate Bypassing WMS"
           type="object"
           class="oe_highlight"
@@ -60,7 +54,7 @@
         />
                 <button
           name="button_validate_bypass_wms"
-          attrs="{'invisible': ['|', '|', ('dbsource_id', '=', False), ('state', 'not in', ('waiting', 'confirmed')), ('show_validate', '=', False)]}"
+          invisible="not dbsource_id or state not in ('waiting','confirmed')"
           string="Validate Bypassing WMS"
           type="object"
           groups="stock.group_stock_user"

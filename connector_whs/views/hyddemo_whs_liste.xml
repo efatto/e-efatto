@@ -33,7 +33,7 @@
         <field name="name">view.whsliste.tree</field>
         <field name="model">hyddemo.whs.liste</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="whs_list_absent" />
                 <field name="whs_list_multiple" />
                 <field name="whs_not_passed" />
@@ -52,7 +52,7 @@
                 <field name="move_id" />
                 <field name="move_state" />
                 <field name="tipo_mov" />
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -130,10 +130,7 @@
                         </group>
                     </group>
                 </sheet>
-                <div class="oe_chatter">
-                    <field name="message_follower_ids" />
-                    <field name="message_ids" />
-                </div>
+                <chatter />
             </form>
         </field>
     </record>
@@ -142,7 +139,7 @@
         <field name="name">WMS Lists</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">hyddemo.whs.liste</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <menuitem

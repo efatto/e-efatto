@@ -70,12 +70,12 @@ class HyddemoWhsListe(models.Model):
     product_id = fields.Many2one(
         "product.product",
         string="Prodotto",
-        domain=[("type", "=", "product")],
+        domain=[("type", "=", "consu"), ("is_storable", "=", True)],
         help="If it is a kit, this is the product sold to the customer. When it is "
         "produced, this is the product produced.",
     )
     parent_product_id = fields.Many2one(
-        "product.product", string="Prodotto Padre", domain=[("type", "=", "product")]
+        "product.product", string="Prodotto Padre", domain=[("type", "=", "consu")]
     )
     lotto = fields.Text("Lotto")  # , size=20)
     lotto2 = fields.Char(size=20)

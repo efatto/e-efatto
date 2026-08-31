@@ -39,7 +39,8 @@ class ProductProduct(models.Model):
                 "|",
                 ("write_date", ">=", last_date),
                 ("product_tmpl_id.write_date", ">=", last_date),
-                ("type", "=", "product"),
+                ("type", "=", "consu"),
+                ("is_storable", "=", True),
                 ("exclude_from_whs", "!=", True),
             ]
         )

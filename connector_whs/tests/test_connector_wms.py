@@ -48,7 +48,8 @@ class CommonConnectorWMS(TransactionCase):
                     {
                         "name": "test product1",
                         "default_code": "PRODUCT1",
-                        "type": "product",
+                        "type": "consu",
+                        "is_storable": True,
                     }
                 ]
             )
@@ -97,7 +98,8 @@ class CommonConnectorWMS(TransactionCase):
                     {
                         "name": "test product2",
                         "default_code": "PRODUCT2",
-                        "type": "product",
+                        "type": "consu",
+                        "is_storable": True,
                     }
                 ]
             )
@@ -129,7 +131,8 @@ class CommonConnectorWMS(TransactionCase):
                     {
                         "name": "test product excluded from WMS",
                         "default_code": "PRODUCTEX",
-                        "type": "product",
+                        "type": "consu",
+                        "is_storable": True,
                         "exclude_from_whs": True,
                     }
                 ]
@@ -266,4 +269,4 @@ class CommonConnectorWMS(TransactionCase):
     @staticmethod
     def _auto_fill_consumed_qty(moves):
         for move in moves:
-            move.quantity_done = move.product_uom_qty
+            move.quantity = move.product_uom_qty

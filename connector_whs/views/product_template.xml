@@ -14,7 +14,7 @@
           name="show_whs_syncronization_records"
           type="object"
           string="Get WMS syncronizing data"
-          attrs="{'invisible': [('exclude_from_whs', '=', True)]}"
+          invisible="exclude_from_whs"
         />
             </xpath>
         </field>
