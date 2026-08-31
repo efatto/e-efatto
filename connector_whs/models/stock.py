@@ -71,22 +71,18 @@ class Picking(models.Model):
             if mismatch_lists:
                 raise UserError(
                     _(
-                        "Trying to validate picking %s which is "
-                        "already elaborated on WMS with different qty for lists %s"
-                    )
-                    % (
-                        pick.name,
-                        "\n".join(
+                        "Trying to validate picking %(pn)s which is "
+                        "already elaborated on WMS with different qty for lists %(li)s",
+                        pn=pick.name,
+                        li="\n".join(
                             _(
-                                "Product %s - List/row: %s/%s - "
-                                "WMS/Stock moved qty %s/%s"
-                            )
-                            % (
-                                m.product_id.display_name,
-                                m.num_lista,
-                                m.riga,
-                                m.qtamov,
-                                m.move_id.quantity,
+                                "Product %(pr)s - List/row: %(li)s/%(ro)s - "
+                                "WMS/Stock moved qty %(qm)s/%(qd)s",
+                                pr=m.product_id.display_name,
+                                li=m.num_lista,
+                                ro=m.riga,
+                                qm=m.qtamov,
+                                qd=m.move_id.quantity,
                             )
                             for m in mismatch_lists
                         ),
@@ -100,22 +96,18 @@ class Picking(models.Model):
             if not_processable_lists:
                 raise UserError(
                     _(
-                        "Trying to validate picking %s which is not processable in Odoo "
-                        "but elaborated on WMS: %s"
-                    )
-                    % (
-                        pick.name,
-                        "\n".join(
+                        "Trying to validate picking %(pn)s which is not processable in "
+                        "Odoo but elaborated on WMS: %(wms)s",
+                        pn=pick.name,
+                        wms="\n".join(
                             _(
-                                "Product %s - List/row: %s/%s - "
-                                "WMS/Stock moved qty %s/%s"
-                            )
-                            % (
-                                m.product_id.display_name,
-                                m.num_lista,
-                                m.riga,
-                                m.qtamov,
-                                m.move_id.quantity,
+                                "Product %(pr)s - List/row: %(li)s/%(ro)s - "
+                                "WMS/Stock moved qty %(qm)s/%(qd)s",
+                                pr=m.product_id.display_name,
+                                li=m.num_lista,
+                                ro=m.riga,
+                                qm=m.qtamov,
+                                qd=m.move_id.quantity,
                             )
                             for m in not_processable_lists
                         ),
@@ -127,21 +119,18 @@ class Picking(models.Model):
             if moved_list_without_wms:
                 raise UserError(
                     _(
-                        "Trying to validate picking %s which is not elaborated on WMS: %s"
-                    )
-                    % (
-                        pick.name,
-                        "\n".join(
+                        "Trying to validate picking %(pic)s which is not elaborated on "
+                        "WMS: %(wms)s",
+                        pic=pick.name,
+                        wms="\n".join(
                             _(
-                                "Product %s - List/row: %s/%s - "
-                                "WMS/Stock moved qty %s/%s"
-                            )
-                            % (
-                                m.product_id.display_name,
-                                m.num_lista,
-                                m.riga,
-                                m.qtamov,
-                                m.move_id.quantity,
+                                "Product %(pr)s - List/row: %(li)s/%(ro)s - "
+                                "WMS/Stock moved qty %(qm)s/%(qd)s",
+                                pr=m.product_id.display_name,
+                                li=m.num_lista,
+                                ro=m.riga,
+                                qm=m.qtamov,
+                                qd=m.move_id.quantity,
                             )
                             for m in moved_list_without_wms
                         ),
@@ -174,7 +163,7 @@ class Picking(models.Model):
                             f"move {move.name}"
                         )
                         whs_list.unlink_lists(dbsource.id)
-        super(Picking, self)._action_done()
+        super()._action_done()
         for pick in self:
             dbsource = pick.dbsource_id
             if not dbsource:
@@ -191,10 +180,8 @@ class Picking(models.Model):
                     )
                 except Exception as e:
                     _logger.exception(
-                        "WMS LOG: Error {} while synchronizing WMS list {} "
-                        "immediately. Wait for the normal cron execution.".format(
-                            e, pick.name
-                        )
+                        f"WMS LOG: Error {e} while synchronizing WMS list {pick.name} "
+                        "immediately. Wait for the normal cron execution."
                     )
         return True
 
@@ -206,22 +193,22 @@ class Picking(models.Model):
             ).create_whs_list()
 
     def action_confirm(self):
-        res = super(Picking, self).action_confirm()
+        res = super().action_confirm()
         self.picking_create_whs_list()
         return res
 
     def action_assign(self):
-        res = super(Picking, self).action_assign()
+        res = super().action_assign()
         self.picking_create_whs_list()
         return res
 
     def unlink(self):
         self.cancel_whs_list(unlink=True)
-        return super(Picking, self).unlink()
+        return super().unlink()
 
     def action_cancel(self):
         self.cancel_whs_list()
-        return super(Picking, self).action_cancel()
+        return super().action_cancel()
 
     def cancel_whs_list(self, unlink=False):
         for pick in self:
@@ -409,13 +396,18 @@ class StockMove(models.Model):
             if list_numbers:
                 if len(list_numbers) > 1:
                     raise UserError(
-                        _("More than one list number found for picking %s: %s")
-                        % (pick.name, "|".join(list_numbers))
+                        _(
+                            "More than one list number found for picking %(pn)s: "
+                            "%(nu)s",
+                            pn=pick.name,
+                            nu="|".join(list_numbers),
+                        )
                     )
                 if len(list_numbers) == 1:
                     list_number = list_numbers[0]
             for move in moves_todo.filtered(
-                lambda x: x.picking_id == pick and not x.product_id.exclude_from_whs
+                lambda x, p=pick: x.picking_id == p
+                and not x.product_id.exclude_from_whs
             ):
                 tipo = False
                 ragsoc = False
@@ -601,7 +593,8 @@ class StockMove(models.Model):
                         customer = (
                             partner_id
                             and move.product_id.customer_ids.filtered(
-                                lambda x, partner=partner_id: x.partner_id == partner.commercial_partner_id
+                                lambda x, partner=partner_id: x.partner_id
+                                == partner.commercial_partner_id
                             )
                             or False
                         )
@@ -615,12 +608,16 @@ class StockMove(models.Model):
                             "move_id": move.id,
                             "tipo_mov": "move",
                             "riga": riga,
-                            "client_order_ref": move.sale_line_id.order_id.client_order_ref,
+                            "client_order_ref": (
+                                move.sale_line_id.order_id.client_order_ref
+                            ),
                         }
                         if move.sale_line_id.product_id != move.product_id:
                             whsliste_data.update(
                                 {
-                                    "parent_product_id": move.sale_line_id.product_id.id,
+                                    "parent_product_id": (
+                                        move.sale_line_id.product_id.id
+                                    ),
                                 }
                             )
                         if customer:

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo noupdate="1">
-
     <record id="ir_cron_connector_whs_insert_list" model="ir.cron">
         <field name="name">Connector WMS - synchronize</field>
         <field name="interval_number">3</field>
@@ -13,8 +12,8 @@
 
     <record id="ir_cron_connector_whs_sync_stock" model="ir.cron">
         <field
-      name="name"
-    >Connector WMS - synchronize stock (pass True to do inventory sync, else it will create only WMS log)</field>
+            name="name"
+        >Connector WMS - synchronize stock (pass True to do inventory sync, else it will create only WMS log)</field>
         <field name="interval_number">1</field>
         <field name="interval_type">days</field>
         <field name="active" eval="False" />
@@ -25,8 +24,8 @@
 
     <record id="ir_cron_connector_whs_clean_lists" model="ir.cron">
         <field
-      name="name"
-    >Connector WMS - remove old lists from Odoo and from WHS</field>
+            name="name"
+        >Connector WMS - remove old lists from Odoo and from WHS</field>
         <field name="interval_number">1</field>
         <field name="interval_type">months</field>
         <field name="active" eval="False" />
@@ -44,5 +43,4 @@
         <field name="state">code</field>
         <field name="code">model._cron_whs_update_products("2000-01-01")</field>
     </record>
-
 </odoo>

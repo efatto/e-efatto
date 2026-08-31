@@ -91,23 +91,17 @@ class StockBackorderConfirmation(models.TransientModel):
                     if self.env.context.get("bypass_wms"):
                         if backorder_pick.location_id != warehouse.lot_stock_id:
                             _logger.info(
-                                "WMS restored backorder %s pick loc from %s to %s"
-                                % (
-                                    backorder_pick.name,
-                                    backorder_pick.location_id.name,
-                                    warehouse.lot_stock_id.name,
-                                )
+                                f"WMS restored backorder {backorder_pick.name} pick "
+                                f"loc from {backorder_pick.location_id.name} to "
+                                f"{warehouse.lot_stock_id.name}"
                             )
                             backorder_pick.location_id = warehouse.lot_stock_id
                         for ml in backorder_pick.mapped("move_line_ids"):
                             if ml.location_id != backorder_pick.location_id:
                                 _logger.info(
-                                    "WMS restored move line %s loc from %s to %s"
-                                    % (
-                                        ml.display_name,
-                                        ml.location_id.name,
-                                        backorder_pick.location_id.name,
-                                    )
+                                    f"WMS restored move line {ml.display_name} loc "
+                                    f"from {ml.location_id.name} to "
+                                    f"{backorder_pick.location_id.name}"
                                 )
                                 ml.location_id = backorder_pick.location_id
                     # if needed, this is the reverse option of backorder without WMS
@@ -116,9 +110,7 @@ class StockBackorderConfirmation(models.TransientModel):
                     #         backorder_pick.picking_type_id.default_location_src_id)
                 if self.env.context.get("bypass_wms"):
                     # Exclude this stock.move from wms list creation
-                    backorder_pick.mapped("move_lines").write(
-                        {"exclude_from_wms": True}
-                    )
+                    backorder_pick.mapped("move_ids").write({"exclude_from_wms": True})
                 # restore stock.move.line destinations
                 backorder_pick.move_line_ids.write(
                     {

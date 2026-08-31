@@ -44,9 +44,9 @@
         <field name="view_mode">list,form</field>
     </record>
     <menuitem
-    action="action_whslog"
-    id="menu_whslog"
-    parent="stock.menu_stock_warehouse_mgmt"
-    sequence="100"
-  />
+        action="action_whslog"
+        id="menu_whslog"
+        parent="stock.menu_stock_warehouse_mgmt"
+        sequence="100"
+    />
 </odoo>

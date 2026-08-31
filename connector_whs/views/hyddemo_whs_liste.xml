@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-
     <record id="view_whs_liste_search" model="ir.ui.view">
         <field name="name">view.whsliste.search</field>
         <field name="model">hyddemo.whs.liste</field>
@@ -63,25 +62,25 @@
             <form string="Liste prelievo, deposito e inventario">
                 <header>
                     <button
-            name="check_list_state"
-            string="Check list state"
-            type="object"
-          />
+                        name="check_list_state"
+                        string="Check list state"
+                        type="object"
+                    />
                     <button
-            name="whs_deduplicate_lists"
-            string="Deduplicate list"
-            type="object"
-          />
+                        name="whs_deduplicate_lists"
+                        string="Deduplicate list"
+                        type="object"
+                    />
                     <button
-            name="whs_recreate_db_lists"
-            string="Recreate list in WMS"
-            type="object"
-          />
+                        name="whs_recreate_db_lists"
+                        string="Recreate list in WMS"
+                        type="object"
+                    />
                     <button
-            name="whs_force_recreate_db_lists"
-            string="Force list recreation in WMS"
-            type="object"
-          />
+                        name="whs_force_recreate_db_lists"
+                        string="Force list recreation in WMS"
+                        type="object"
+                    />
                     <button name="whs_list_sync" string="Sync list" type="object" />
                 </header>
                 <sheet string="WMS Lists">
@@ -143,9 +142,9 @@
     </record>
 
     <menuitem
-    action="action_whs_liste"
-    id="menu_whsliste"
-    parent="stock.menu_stock_warehouse_mgmt"
-    sequence="101"
-  />
+        action="action_whs_liste"
+        id="menu_whsliste"
+        parent="stock.menu_stock_warehouse_mgmt"
+        sequence="101"
+    />
 </odoo>

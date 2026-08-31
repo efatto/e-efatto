@@ -166,7 +166,7 @@ class CommonConnectorWMS(TransactionCase):
                         0,
                         0,
                         {
-                            "name": cls.partner.id,
+                            "partner_id": cls.partner.id,
                             "product_code": "CUSTOMERCODE",
                             "product_name": "Product customer name",
                         },

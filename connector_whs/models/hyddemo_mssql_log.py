@@ -50,7 +50,6 @@ class HyddemoMssqlLogLine(models.Model):
             ("service", "Service"),
             ("info", "Info"),
         ],
-        "Type",
     )
     lot = fields.Text()
     hyddemo_mssql_log_id = fields.Many2one("hyddemo.mssql.log")

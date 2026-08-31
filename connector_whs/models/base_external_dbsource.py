@@ -22,7 +22,7 @@ class BaseExternalDbsource(models.Model):
 
     location_id = fields.Many2one("stock.location", "Location linked to WMS")
     conn_string_sandbox = fields.Text("Connection string sandbox")
-    active = fields.Boolean(string="Active", default=True)
+    active = fields.Boolean(default=True)
     stock_picking_type_ids = fields.Many2many(
         comodel_name="stock.picking.type",
         string="Stock picking types enabled",
@@ -156,7 +156,7 @@ class BaseExternalDbsource(models.Model):
                     {
                         "ultimo_invio": new_last_update,
                         "ultimo_id": new_id,
-                        "errori":  f"Added/Updated {len(products)} products",
+                        "errori": f"Added/Updated {len(products)} products",
                         "dbsource_id": dbsource.id,
                         "hyddemo_mssql_log_line_ids": [
                             (
@@ -177,7 +177,7 @@ class BaseExternalDbsource(models.Model):
             dbsource.connection_close_mssql(connection)
         return True
 
-    def whs_read_and_synchronize_list(self, whs_lists=False):  # noqa: pylint C901
+    def whs_read_and_synchronize_list(self, whs_lists=False):  # noqa: C901
         """
         Funzione lanciabile tramite cron per aggiornare i movimenti dalle liste create
         per WMS da Odoo nei vari moduli collegati (mrp, stock, ecc.)
@@ -253,21 +253,20 @@ class BaseExternalDbsource(models.Model):
                         num_riga = 0
                     if not (num_riga and num_lista):
                         _logger.info(
-                            "WMS LOG: list %s in db without NumLista or NumRiga"
-                            % esito_lista
+                            f"WMS LOG: list {esito_lista} in db without NumLista or "
+                            f"NumRiga"
                         )
                         continue
                     _logger.debug(
-                        "WHS LOG: synchronizing list %s row %s in db"
-                        % (num_lista, num_riga)
+                        f"WHS LOG: synchronizing list {num_lista} row {num_riga} in db"
                     )
                     whs_lista = self.env["hyddemo.whs.liste"].search(
                         [("num_lista", "=", num_lista)]
                     )
                     if not whs_lista:
                         _logger.info(
-                            "WHS LOG: deleting orphan db list number %s row %s "
-                            "as does not more exist in Odoo." % (num_lista, num_riga)
+                            f"WHS LOG: deleting orphan db list number {num_lista} "
+                            f"row {num_riga} as does not more exist in Odoo."
                         )
                         # hyddemo_mssql_log_obj._clean_orphan_db_list(
                         #     dbsource, num_lista, num_riga
@@ -281,33 +280,26 @@ class BaseExternalDbsource(models.Model):
                         # ROADMAP: if the user want to create the list directly in WMS,
                         # do the reverse synchronization (not requested so far)
                         _logger.info(
-                            "WMS LOG: list num_riga %s num_lista %s not found in Odoo "
-                            "(found list %s but not row)"
-                            % (
-                                num_riga,
-                                num_lista,
-                                whs_lista,
-                            )
+                            f"WMS LOG: list num_riga {num_riga} num_lista {num_lista} "
+                            f"not found in Odoo (found list {whs_lista} but not row)"
                         )
                         _logger.info(
-                            "WHS LOG: deleting orphan db list number %s "
-                            "as does not more exist in Odoo." % num_lista
+                            f"WHS LOG: deleting orphan db list number {num_lista} "
+                            "as does not more exist in Odoo."
                         )
-                        # hyddemo_mssql_log_obj._clean_orphan_db_list(dbsource, num_lista)
+                        # hyddemo_mssql_log_obj._clean_orphan_db_list(
+                        # dbsource, num_lista)
                         continue
                     if len(hyddemo_whs_lists) > 1:
                         _logger.info(
-                            "WMS LOG: More than 1 list found for lista %s"
-                            % hyddemo_whs_lists
+                            f"WMS LOG: More than 1 list found for lista "
+                            f"{hyddemo_whs_lists}"
                         )
                     hyddemo_whs_list = hyddemo_whs_lists[0]
                     if hyddemo_whs_list.stato == "3":
                         _logger.debug(
-                            "WMS LOG: list not processable: %s-%s"
-                            % (
-                                hyddemo_whs_list.num_lista,
-                                hyddemo_whs_list.riga,
-                            )
+                            f"WMS LOG: list not processable: "
+                            f"{hyddemo_whs_list.num_lista}-{hyddemo_whs_list.riga}"
                         )
                         continue
                     move = hyddemo_whs_list.move_id
@@ -352,9 +344,9 @@ class BaseExternalDbsource(models.Model):
                         # in or out differs from total qty
                         if qty_moved > hyddemo_whs_list.qta:
                             _logger.info(
-                                "WMS LOG: list %s: qty moved %s is bigger than "
-                                "initial qty %s!"
-                                % (hyddemo_whs_list.id, qty_moved, hyddemo_whs_list.qta)
+                                f"WMS LOG: list {hyddemo_whs_list.id}: qty moved "
+                                f"{qty_moved} is bigger "
+                                f"than initial qty {hyddemo_whs_list.qta}!"
                             )
 
                     # set reserved availability on qty_moved if != 0.0 and with max of
@@ -380,8 +372,8 @@ class BaseExternalDbsource(models.Model):
                             if len(move.move_line_ids) > 1:
                                 _logger.info(
                                     "WMS LOG: many stock move line found for Whs list "
-                                    "%s-%s of move %s, set qty done for each one"
-                                    % (num_lista, num_riga, move.name)
+                                    f"{num_lista}-{num_riga} of move {move.name}, "
+                                    f"set qty done for each one"
                                 )
                                 for ml in move.move_line_ids:
                                     qty_to_move = min(qty_moved, ml.product_uom_qty)
@@ -391,8 +383,8 @@ class BaseExternalDbsource(models.Model):
                                 move.quantity = qty_moved
                         except UserError as error:
                             _logger.info(
-                                "WMS LOG: move id %s is not writeable for %s"
-                                % (move.id, error)
+                                f"WMS LOG: move id {move.id} is not writeable for "
+                                f"{error}"
                             )
                     if move.picking_id.mapped("move_ids").filtered(
                         lambda m: m.state not in ("draft", "cancel", "done")
@@ -404,8 +396,8 @@ class BaseExternalDbsource(models.Model):
                     # Set mssql list done from host, they are not deleted from HOST to
                     # preserve history, but it is a possible implementation to do
                     set_liste_to_done_query = (
-                        "UPDATE HOST_LISTE SET Elaborato=5 WHERE NumLista=:NumLista AND "
-                        "NumRiga=:NumRiga"
+                        "UPDATE HOST_LISTE SET Elaborato=5 WHERE "
+                        "NumLista=:NumLista AND NumRiga=:NumRiga"
                     )
                     dbsource.with_context(no_return=True).execute_mssql(
                         sqlquery=clean_sql_text(set_liste_to_done_query),
@@ -417,7 +409,7 @@ class BaseExternalDbsource(models.Model):
                     )
             if pickings_to_assign:
                 pickings_to_assign.filtered(
-                    lambda x: x.mapped("move_lines").filtered(
+                    lambda x: x.mapped("move_ids").filtered(
                         lambda m: m.state not in ("draft", "cancel", "done")
                     )
                 ).action_assign()
@@ -449,8 +441,11 @@ class BaseExternalDbsource(models.Model):
                 )
             # group and insert lists by num_lista
             for num_lista in set(whs_lists.mapped("num_lista")):
-                (insert_order_params, insert_order_line_params,) = whs_lists.filtered(
-                    lambda x: x.num_lista == num_lista
+                (
+                    insert_order_params,
+                    insert_order_line_params,
+                ) = whs_lists.filtered(
+                    lambda x, nl=num_lista: x.num_lista == nl
                 ).whs_prepare_host_liste_values()
                 if insert_order_params:
                     if not insert_order_line_params:
@@ -568,12 +563,14 @@ class BaseExternalDbsource(models.Model):
         #         "AND Elaborato = 5" % (whs_list.num_lista, whs_list.riga)
         #     )
         #     esiti_liste = dbsource.execute_mssql(
-        #         sqlquery=clean_sql_text(whs_liste_query), sqlparams=None, metadata=None
+        #         sqlquery=clean_sql_text(whs_liste_query),
+        #         sqlparams=None, metadata=None
         #     )
         #     # esiti_liste[0] contains result
         #     if esiti_liste[0] and not whs_list.move_id.raw_material_production_id:
         #         whs_list.whs_not_passed = True
-        #         # update this check as it exists, but not possible to know if it doesn't
+        #         # update this check as it exists, but not possible to know if it
+        #         doesn't
         #         whs_list.whs_list_absent = False
         #     else:
         #         whs_list.whs_not_passed = False
@@ -670,9 +667,7 @@ class BaseExternalDbsource(models.Model):
                         whs_list.whs_list_multiple = False
                 i += 1
                 if i * 100.0 / imax > step:
-                    _logger.info(
-                        "WHS LOG: Execution {}% ".format(int(i * 100.0 / imax))
-                    )
+                    _logger.info(f"WHS LOG: Execution {int(i * 100.0 / imax)}% ")
                     step += 1
 
     def whs_clean_lists(self):
@@ -770,8 +765,8 @@ class BaseExternalDbsource(models.Model):
                     for y in whs_lists
                 )
                 _logger.info(
-                    "WHS LOG: delete old record from HOST_LISTE [query: %s]"
-                    % delete_query
+                    f"WHS LOG: delete old record from HOST_LISTE "
+                    f"[query: {delete_query}]"
                 )
                 dbsource.with_context(no_return=True).execute_mssql(
                     sqlquery=clean_sql_text(delete_query),
@@ -784,13 +779,13 @@ class BaseExternalDbsource(models.Model):
     def _clean_orphan_db_list(dbsource, num_lista, num_riga=False):
         if num_riga:
             delete_query = (
-                "DELETE FROM HOST_LISTE WHERE NumLista='%s' AND NumRiga='%s'"
-                % (num_lista, num_riga)
+                f"DELETE FROM HOST_LISTE WHERE NumLista='{num_lista}' "
+                f"AND NumRiga='{num_riga}'"
             )
         else:
-            delete_query = "DELETE FROM HOST_LISTE WHERE NumLista='%s'" % num_lista
+            delete_query = f"DELETE FROM HOST_LISTE WHERE NumLista='{num_lista}'"
         _logger.info(
-            "WHS LOG: delete orphan record from HOST_LISTE [query: %s]" % delete_query
+            f"WHS LOG: delete orphan record from HOST_LISTE [query: {delete_query}]"
         )
         dbsource.with_context(no_return=True).execute_mssql(
             sqlquery=clean_sql_text(delete_query),

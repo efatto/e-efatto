@@ -129,13 +129,13 @@ class MrpProduction(models.Model):
                 )
                 if not dbsource:
                     _logger.info(
-                        "WMS LOG: Location %s is not linked to WMS System"
-                        % location.name
+                        f"WMS LOG: Location {location.name} is not linked to WMS System"
                     )
                     continue
                 _logger.info(
-                    "WMS LOG: unlink lists for product %s of production %s"
-                    % (whs_list_id.move_id.product_id.name, production.name)
+                    f"WMS LOG: unlink lists for product "
+                    f"{whs_list_id.move_id.product_id.name} of production "
+                    f"{production.name}"
                 )
                 whs_list_id.whs_unlink_lists(dbsource.id)
         return res
@@ -228,7 +228,7 @@ class MrpProduction(models.Model):
     )
     def _compute_state(self):
         # replace 'to_close' state with 'progress' to simplify flow
-        super()._compute_state()
+        res = super()._compute_state()
         for production in self:
             if production.state == "to_close":
                 production.state = "progress"
@@ -236,6 +236,7 @@ class MrpProduction(models.Model):
                 move.state == "done" for move in production.move_raw_ids
             ):
                 production.state = "consumed"
+        return res
 
     def _post_inventory(self, cancel_backorder=False):
         (self.move_raw_ids | self.move_finished_ids)._check_done_whs_list()
@@ -343,8 +344,7 @@ class MrpProduction(models.Model):
                 and production.product_id.categ_id.name == "CUSTOM"
             )
             if (
-                raw_dbsource
-                and len(raw_dbsource) == 1
+                raw_dbsource and len(raw_dbsource) == 1
                 # and production.picking_type_id in raw_dbsource.stock_picking_type_ids
                 # bypass check on locations, as this button is called from the user to
                 # create directly whs lists

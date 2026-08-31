@@ -8,12 +8,12 @@
             <button name="process" position="after">
                 <field name="is_launching_option_when_done" invisible="1" />
                 <button
-          name="process_bypass_wms"
-          string="Create Backorder Bypassing WMS"
-          type="object"
-          class="oe_highlight"
-          attrs="{'invisible': [('is_launching_option_when_done', '=', True)]}"
-        />
+                    name="process_bypass_wms"
+                    string="Create Backorder Bypassing WMS"
+                    type="object"
+                    class="oe_highlight"
+                    invisible="is_launching_option_when_done"
+                />
             </button>
         </field>
     </record>

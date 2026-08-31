@@ -1,22 +1,21 @@
 <?xml version="1.0" ?>
 <odoo>
-
     <record id="view_picking_form" model="ir.ui.view">
         <field name="model">stock.picking</field>
         <field name="inherit_id" ref="stock.view_picking_form" />
         <field name="arch" type="xml">
             <xpath
-        expr="//page[@name='operations']/field[@name='move_ids_without_package']/list/field[@name='lot_ids']"
-        position="after"
-      >
+                expr="//page[@name='operations']/field[@name='move_ids_without_package']/list/field[@name='lot_ids']"
+                position="after"
+            >
                 <field name="has_wms_lists" invisible="1" />
                 <button
-          name="action_show_wms_lists"
-          type="object"
-          icon="fa-list-alt"
-          string=" "
-          invisible="not has_wms_lists"
-        />
+                    name="action_show_wms_lists"
+                    type="object"
+                    icon="fa-list-alt"
+                    string=" "
+                    invisible="not has_wms_lists"
+                />
             </xpath>
         </field>
     </record>
@@ -45,39 +44,38 @@
             <button name="button_validate" position="after">
                 <field name="dbsource_id" invisible="1" />
                 <button
-          name="button_validate_bypass_wms"
-          invisible="not dbsource_id or state in ('waiting','confirmed')"
-          string="Validate Bypassing WMS"
-          type="object"
-          class="oe_highlight"
-          groups="stock.group_stock_user"
-        />
+                    name="button_validate_bypass_wms"
+                    invisible="not dbsource_id or state in ('waiting','confirmed')"
+                    string="Validate Bypassing WMS"
+                    type="object"
+                    class="oe_highlight"
+                    groups="stock.group_stock_user"
+                />
                 <button
-          name="button_validate_bypass_wms"
-          invisible="not dbsource_id or state not in ('waiting','confirmed')"
-          string="Validate Bypassing WMS"
-          type="object"
-          groups="stock.group_stock_user"
-          class="o_btn_validate"
-        />
+                    name="button_validate_bypass_wms"
+                    invisible="not dbsource_id or state not in ('waiting','confirmed')"
+                    string="Validate Bypassing WMS"
+                    type="object"
+                    groups="stock.group_stock_user"
+                    class="o_btn_validate"
+                />
                 <button
-          name="button_validate_immediate_wms"
-          attrs="{'invisible': ['|', '|', ('dbsource_id', '=', False), ('state', 'in', ('waiting','confirmed')), ('show_validate', '=', False)]}"
-          string="Validate Immediate WMS"
-          type="object"
-          class="oe_highlight"
-          groups="stock.group_stock_user"
-        />
+                    name="button_validate_immediate_wms"
+                    invisible="not dbsource_id or state in ('waiting','confirmed')"
+                    string="Validate Immediate WMS"
+                    type="object"
+                    class="oe_highlight"
+                    groups="stock.group_stock_user"
+                />
                 <button
-          name="button_validate_immediate_wms"
-          attrs="{'invisible': ['|', '|', ('dbsource_id', '=', False), ('state', 'not in', ('waiting', 'confirmed')), ('show_validate', '=', False)]}"
-          string="Validate Immediate WMS"
-          type="object"
-          groups="stock.group_stock_user"
-          class="o_btn_validate"
-        />
+                    name="button_validate_immediate_wms"
+                    invisible="not dbsource_id or state not in ('waiting', 'confirmed')"
+                    string="Validate Immediate WMS"
+                    type="object"
+                    groups="stock.group_stock_user"
+                    class="o_btn_validate"
+                />
             </button>
         </field>
     </record>
-
 </odoo>

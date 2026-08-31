@@ -7,8 +7,8 @@
         <field name="arch" type="xml">
             <filter name="todo" position="attributes">
                 <attribute
-          name="domain"
-        >[('state', 'in', ('draft', 'consumed', 'confirmed', 'progress', 'to_close'))]</attribute>
+                    name="domain"
+                >[('state', 'in', ('draft', 'consumed', 'confirmed', 'progress', 'to_close'))]</attribute>
             </filter>
         </field>
     </record>
@@ -20,8 +20,8 @@
         <field name="arch" type="xml">
             <button name="%(mrp.action_mrp_production_moves)d" position="attributes">
                 <attribute
-          name="invisible"
-        >state not in ('consumed', 'progress', 'done')</attribute>
+                    name="invisible"
+                >state not in ('consumed', 'progress', 'done')</attribute>
             </button>
             <button name="button_mark_done" position="before">
                 <field name="sent_to_whs" invisible="1" />
@@ -29,32 +29,32 @@
                 <field name="is_consumable" invisible="1" />
                 <field name="hide_mark_done" invisible="1" />
                 <button
-          name="button_send_to_whs"
-          type="object"
-          string="Send to WHS"
-          class="oe_highlight"
-          invisible="bom_type == 'subcontract' or state != 'progress' or sent_to_whs"
-        />
+                    name="button_send_to_whs"
+                    type="object"
+                    string="Send to WHS"
+                    class="oe_highlight"
+                    invisible="bom_type == 'subcontract' or state != 'progress' or sent_to_whs"
+                />
             </button>
             <xpath expr="//button[@name='button_mark_done']" position="before">
                 <button
-          name="button_consume"
-          type="object"
-          class="oe_highlight"
-          string="Consume components"
-          invisible="bom_type == 'subcontract' or not is_consumable or state != 'progress' or not qty_producing or not sent_to_whs"
-        />
+                    name="button_consume"
+                    type="object"
+                    class="oe_highlight"
+                    string="Consume components"
+                    invisible="bom_type == 'subcontract' or not is_consumable or state != 'progress' or not qty_producing or not sent_to_whs"
+                />
                 <button
-          name="button_consume"
-          type="object"
-          string="Consume components"
-          invisible="bom_type == 'subcontract' or not is_consumable or state != 'consumed' or not qty_producing"
-        />
+                    name="button_consume"
+                    type="object"
+                    string="Consume components"
+                    invisible="bom_type == 'subcontract' or not is_consumable or state != 'consumed' or not qty_producing"
+                />
             </xpath>
             <xpath
-        expr="/form/header/button[@name='button_mark_done'][1]"
-        position="attributes"
-      >
+                expr="/form/header/button[@name='button_mark_done'][1]"
+                position="attributes"
+            >
                 <attribute name="string">Produce</attribute>
                 <attribute name="invisible">
                     (
@@ -69,15 +69,15 @@
                 </attribute>
             </xpath>
             <xpath
-        expr="/form/header/button[@name='button_mark_done'][2]"
-        position="attributes"
-      >
+                expr="/form/header/button[@name='button_mark_done'][2]"
+                position="attributes"
+            >
                 <attribute name="invisible">True</attribute>
             </xpath>
             <field name="qty_producing" position="attributes">
                 <attribute
-          name="readonly"
-        >qty_producing or sent_to_whs or state not in ['draft', 'confirmed', 'progress']</attribute>
+                    name="readonly"
+                >qty_producing or sent_to_whs or state not in ['draft', 'confirmed', 'progress']</attribute>
             </field>
         </field>
     </record>

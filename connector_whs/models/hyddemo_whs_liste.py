@@ -1,6 +1,6 @@
 # Copyright 2013 Maryam Noorbakhsh - creativiquadrati snc
 # Copyright 2020 Alex Comba - Agile Business Group
-# Copyright 2020-2021 Sergio Corato <https://github.com/sergiocorato>
+# Copyright 2020 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 import logging
 
@@ -43,8 +43,8 @@ class HyddemoWhsListe(models.Model):
     # [3]      [5 = Elaborato da host]                 Nel caso in cui l`utente in Odoo
     #                                                  annulla un trasferimento
     # 4        5 = Elaborato da host                   Il cron di Odoo importa gli esiti
-    data_lista = fields.Datetime("Data lista")
-    riferimento = fields.Text("Riferimento")  # , size=50)
+    data_lista = fields.Datetime()
+    riferimento = fields.Text()
     tipo = fields.Selection(
         [
             ("1", "Prelievo"),  # causale 10 scarico
@@ -56,17 +56,17 @@ class HyddemoWhsListe(models.Model):
         ],
         string="Tipo lista",
     )
-    vettore = fields.Text("Vettore")  # , size=30)
+    vettore = fields.Text()
     cliente = fields.Text(
         "Codice cliente",
         help="Used as unique code in outher db, so spaces are not admitted.",
     )  # size=30,
     ragsoc = fields.Text("Ragione sociale")  # , size=100)
-    indirizzo = fields.Text("Indirizzo")  # , size=50)
-    cap = fields.Text("Cap")  # , size=10)
-    localita = fields.Text("Località")  # , size=50)
-    provincia = fields.Text("Provincia")  # , size=2)
-    nazione = fields.Text("Nazione")  # , size=50)
+    indirizzo = fields.Text()
+    cap = fields.Text()
+    localita = fields.Text()
+    provincia = fields.Text()
+    nazione = fields.Text()
     product_id = fields.Many2one(
         "product.product",
         string="Prodotto",
@@ -77,7 +77,7 @@ class HyddemoWhsListe(models.Model):
     parent_product_id = fields.Many2one(
         "product.product", string="Prodotto Padre", domain=[("type", "=", "consu")]
     )
-    lotto = fields.Text("Lotto")  # , size=20)
+    lotto = fields.Text()
     lotto2 = fields.Char(size=20)
     lotto3 = fields.Char(size=20)
     lotto4 = fields.Char(size=20)
