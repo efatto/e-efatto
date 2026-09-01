@@ -44,7 +44,8 @@ class ProductProduct(models.Model):
         if sql_result_host_articoli[0]:
             cols = sql_result_host_articoli[1]
             rows_with_headers = [
-                dict(zip(cols, row)) for row in sql_result_host_articoli[0]
+                dict(zip(cols, row, strict=False))
+                for row in sql_result_host_articoli[0]
             ]
             product_info["description"] = rows_with_headers[0]["Descrizione"]
             product_info["weight_host_articoli"] = str(
@@ -57,7 +58,8 @@ class ProductProduct(models.Model):
         if sql_result_host_giacenze[0]:
             cols = sql_result_host_giacenze[1]
             rows_with_headers = [
-                dict(zip(cols, row)) for row in sql_result_host_giacenze[0]
+                dict(zip(cols, row, strict=False))
+                for row in sql_result_host_giacenze[0]
             ]
             product_info["weight_host_giacenze"] = str(
                 {

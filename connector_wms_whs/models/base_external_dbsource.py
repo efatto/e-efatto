@@ -168,8 +168,6 @@ class BaseExternalDbsource(models.Model):
                     whs_list.whs_list_absent = False
                 i += 1
                 if i * 100.0 / imax > step:
-                    _logger.info(
-                        "WMS LOG: Execution {}% ".format(int(i * 100.0 / imax))
-                    )
+                    _logger.info(f"WMS LOG: Execution {int(i * 100.0 / imax)}% ")
                     step += 1
         return res
