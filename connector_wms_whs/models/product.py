@@ -76,7 +76,8 @@ class ProductProduct(models.Model):
             "Description: %(description)s,\n"
             "Weights host_articoli: %(weight_host_articoli)s,\n"
             "Weight host giacenze: %(weight_host_giacenze)s,\n "
-            "Quantity: %(quantity)s." % product_info
+            "Quantity: %(quantity)s.",
+            product_info,
         )
         res["params"].update(
             {

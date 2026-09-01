@@ -20,7 +20,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
             "AS rownum, Articolo, Qta, Peso, "
             "Lotto, Lotto2, Lotto3, Lotto4, Lotto5 "
             "FROM HOST_GIACENZE) as A "
-            "WHERE A.rownum BETWEEN %s AND %s" % (i, i + 2000)
+            f"WHERE A.rownum BETWEEN {i} AND {i + 2000}"
         )
         return query
 
@@ -59,8 +59,8 @@ class WizardSyncStockWhsMssql(models.TransientModel):
             if wizard.product_id:
                 giacenze_query = giacenze_query.replace(
                     "HOST_GIACENZE",
-                    "HOST_GIACENZE WHERE Articolo = '%s'"
-                    % wizard.product_id.default_code,
+                    "HOST_GIACENZE WHERE Articolo = "
+                    f"'{wizard.product_id.default_code}'",
                 )
             i += 2000
             esiti_liste = dbsource.execute_mssql(
@@ -111,7 +111,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
             product = product_obj.search(
                 [
                     ("default_code", "=", stock_product),
-                    ("type", "=", "product"),
+                    ("type", "=", "consu"),
                     ("exclude_from_whs", "!=", True),
                     ("is_kit", "!=", True),
                 ]
@@ -121,7 +121,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 product = product_obj.search(
                     [
                         ("default_code", "=", stock_product),
-                        ("type", "!=", "product"),
+                        ("type", "!=", "consu"),
                         ("exclude_from_whs", "!=", True),
                         ("is_kit", "!=", True),
                     ]
@@ -187,7 +187,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 # in the warehouse wh_qc_stock_loc_id (Quality control) location, which
                 # is not available until the quality control ends, from the qty got from
                 # WMS.
-                warehouse = dbsource.location_id.get_warehouse()
+                warehouse = dbsource.location_id.warehouse_id
                 wh_qc_qty = product.with_context(
                     location=warehouse.wh_qc_stock_loc_id.id
                 ).qty_available
@@ -237,7 +237,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                             if warehouse
                             else self.env["stock.location"]
                         )
-                        quant_groups = self.env["stock.quant"].read_group(
+                        quant_groups = self.env["stock.quant"]._read_group(
                             domain=[
                                 ("product_id", "=", product.id),
                                 (
@@ -246,32 +246,27 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                                     dbsource_loc.id,
                                 ),
                             ],
-                            fields=[
-                                "location_id",
-                                "quantity",
-                            ],
                             groupby=["location_id"],
+                            aggregates=["quantity:sum"],
                         )
                         dbsource_loc_quant = [
-                            x
-                            for x in quant_groups
-                            if x.get("location_id")[0] == dbsource_loc.id
+                            x for x in quant_groups if x[0] == dbsource_loc
                         ]
                         if dbsource_loc_quant:
-                            base_loc_qty = dbsource_loc_quant[0]["quantity"]
+                            base_loc_qty = dbsource_loc_quant[0][1]
                         else:
                             base_loc_qty = 0.0
                         neg_recovery = 0.0
                         pos_recovery = 0.0
                         for grp in quant_groups:
-                            loc_id = grp["location_id"][0]
-                            loc_qty = grp["quantity"]
-                            if loc_id == dbsource_loc.id:
+                            location = grp[0]
+                            loc_qty = grp[1]
+                            if location == dbsource_loc:
                                 base_loc_qty = loc_qty
                                 continue
                             # Skip QC location (anyway this is usually a virtual
                             # location, so this check should be skipped by default)
-                            if qc_loc and loc_id == qc_loc.id:
+                            if qc_loc and location == qc_loc:
                                 continue
                             if loc_qty < 0 or loc_qty > 0 > base_loc_qty:
                                 if loc_qty < 0:
@@ -287,8 +282,9 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                                     pos_recovery += abs(recovery)
                                 inventory_lines_data.append(
                                     {
-                                        "product_qty": prod_qty,
-                                        "location_id": loc_id,
+                                        "quantity": prod_qty,
+                                        "location_id": location.id,
+                                        "company_id": dbsource.company_id.id,
                                         "product_id": product.id,
                                         "product_uom_id": product.uom_id.id,
                                         "reason": "WMS synchronize",
@@ -302,8 +298,9 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                             base_new = 0.0
                         inventory_lines_data.append(
                             {
-                                "product_qty": base_new,
+                                "quantity": base_new,
                                 "location_id": dbsource_loc.id,
+                                "company_id": dbsource.company_id.id,
                                 "product_id": product.id,
                                 "product_uom_id": product.uom_id.id,
                                 "reason": "WMS synchronize",
@@ -364,24 +361,64 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 whs_log_lines.append(whs_log_line)
 
         if wizard.do_sync and inventory_lines_data:
+            # stock.inventory only includes existing quants.  Ensure a quant
+            # exists for every exact product/location target (notably for a new
+            # product whose first stock comes from WMS).
+            quant_obj = self.env["stock.quant"]
+            for line_data in inventory_lines_data:
+                product = product_obj.browse(line_data["product_id"])
+                location = self.env["stock.location"].browse(line_data["location_id"])
+                if not quant_obj._gather(product, location, strict=True):
+                    quant_obj.create(
+                        {
+                            "product_id": product.id,
+                            "location_id": location.id,
+                            "company_id": line_data["company_id"],
+                        }
+                    )
             # Inventory get by default children locations
             inventory = inventory_obj.create(
                 {
                     "name": "WMS sync inventory "
                     + new_last_update.strftime("%Y-%m-%d"),
+                    "product_selection": "manual",
                     "location_ids": [(6, 0, dbsource.location_id.ids)],
+                    "exclude_sublocation": False,
                     "company_id": dbsource.company_id.id,
-                    "line_ids": [(0, 0, x) for x in inventory_lines_data],
+                    "product_ids": [
+                        (6, 0, [x["product_id"] for x in inventory_lines_data])
+                    ],
                 }
             )
-            inventory.action_start()
-            inventory.action_validate()
+            inventory.action_state_to_in_progress()
+            quants_to_apply = self.env["stock.quant"]
+            for line_data in inventory_lines_data:
+                stock_quant = inventory.stock_quant_ids.filtered(
+                    lambda quant, data=line_data: (
+                        quant.product_id.id == data["product_id"]
+                        and quant.location_id.id == data["location_id"]
+                        and not quant.lot_id
+                        and not quant.package_id
+                        and not quant.owner_id
+                    )
+                )[:1]
+                stock_quant.write(
+                    {
+                        "reason": line_data["reason"],
+                        "inventory_quantity": line_data["quantity"],
+                    }
+                )
+                quants_to_apply |= stock_quant
+            quants_to_apply.action_apply_inventory()
+            if inventory.state != "done":
+                inventory.action_state_to_done()
 
         hyddemo_mssql_log = hyddemo_mssql_log_obj.create(
             [
                 {
-                    "errori": "Stock inventory %s"
-                    % ("sync" if wizard.do_sync else "check"),
+                    "errori": "Stock inventory {}".format(
+                        "sync" if wizard.do_sync else "check"
+                    ),
                     "ultimo_invio": new_last_update,
                     "dbsource_id": dbsource.id,
                     "inventory_id": inventory.id,

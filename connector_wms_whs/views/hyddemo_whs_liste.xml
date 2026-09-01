@@ -12,7 +12,7 @@
     </record>
 
     <record id="view_whs_liste_tree" model="ir.ui.view">
-        <field name="name">view.whsliste.tree</field>
+        <field name="name">view.whsliste.list</field>
         <field name="model">hyddemo.whs.liste</field>
         <field name="inherit_id" ref="connector_whs.view_whs_liste_tree" />
         <field name="arch" type="xml">

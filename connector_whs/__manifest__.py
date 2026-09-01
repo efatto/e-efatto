@@ -38,4 +38,7 @@
     ],
     "installable": True,
     "external_dependencies": {"python": ["sqlalchemy==2.0.48"]},
+    "demo": [
+        "demo/base_external_dbsource.xml",
+    ],
 }

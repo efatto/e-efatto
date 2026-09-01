@@ -88,7 +88,7 @@ class MrpProduction(models.Model):
             production.is_consumable = bool(
                 production.product_qty == production.qty_producing
                 and any(
-                    move.state not in ["done", "cancel"] and move.quantity_done
+                    move.state not in ["done", "cancel"] and move.quantity
                     for move in production.move_raw_ids
                 )
             )
@@ -173,9 +173,8 @@ class MrpProduction(models.Model):
                     move.product_uom_qty = move.quantity
                 # MRP do not merge move, catch the result of _action_done
                 # to get extra moves.
-                moves_to_do = moves_to_do._action_done()
+                moves_to_do = moves_to_do._action_done(cancel_backorder=True)
                 production._cal_price(moves_to_do)
-                production.action_assign()
                 production.moves_to_do_ids = [
                     (6, 0, (moves_to_do | moves_to_do_with_sn).ids)
                 ]
@@ -240,6 +239,12 @@ class MrpProduction(models.Model):
 
     def _post_inventory(self, cancel_backorder=False):
         (self.move_raw_ids | self.move_finished_ids)._check_done_whs_list()
+        for order in self:
+            for move in order.move_finished_ids:
+                # complete the finished moves with current assigned quantity to avoid
+                # recomputazione in overriden method
+                move.picked = True
+                move._action_done(cancel_backorder=True)
         res = super()._post_inventory(cancel_backorder=cancel_backorder)
         return res
 
