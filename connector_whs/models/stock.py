@@ -66,23 +66,24 @@ class Picking(models.Model):
             # more workable from WMS
             # stato == "3" the wms list is no more processable, so ignored
             mismatch_lists = pick.mapped("move_ids.whs_list_ids").filtered(
-                lambda x: x.stato == "4" and x.qtamov != x.move_id.quantity
+                lambda x: x.stato == "4"
+                and x.qtamov != x.move_id._get_picked_quantity()
             )
             if mismatch_lists:
                 raise UserError(
-                    _(
+                    self.env._(
                         "Trying to validate picking %(pn)s which is "
                         "already elaborated on WMS with different qty for lists %(li)s",
                         pn=pick.name,
                         li="\n".join(
-                            _(
+                            self.env._(
                                 "Product %(pr)s - List/row: %(li)s/%(ro)s - "
                                 "WMS/Stock moved qty %(qm)s/%(qd)s",
                                 pr=m.product_id.display_name,
                                 li=m.num_lista,
                                 ro=m.riga,
                                 qm=m.qtamov,
-                                qd=m.move_id.quantity,
+                                qd=m.move_id._get_picked_quantity(),
                             )
                             for m in mismatch_lists
                         ),
@@ -95,12 +96,12 @@ class Picking(models.Model):
             )
             if not_processable_lists:
                 raise UserError(
-                    _(
+                    self.env._(
                         "Trying to validate picking %(pn)s which is not processable in "
                         "Odoo but elaborated on WMS: %(wms)s",
                         pn=pick.name,
                         wms="\n".join(
-                            _(
+                            self.env._(
                                 "Product %(pr)s - List/row: %(li)s/%(ro)s - "
                                 "WMS/Stock moved qty %(qm)s/%(qd)s",
                                 pr=m.product_id.display_name,
@@ -114,33 +115,35 @@ class Picking(models.Model):
                     )
                 )
             moved_list_without_wms = pick.mapped("move_ids.whs_list_ids").filtered(
-                lambda x: x.stato not in ("3", "4") and x.move_id.quantity != 0
+                lambda x: x.stato not in ("3", "4")
+                and x.move_id._get_picked_quantity() != 0
             )
             if moved_list_without_wms:
                 raise UserError(
-                    _(
+                    self.env._(
                         "Trying to validate picking %(pic)s which is not elaborated on "
                         "WMS: %(wms)s",
                         pic=pick.name,
                         wms="\n".join(
-                            _(
+                            self.env._(
                                 "Product %(pr)s - List/row: %(li)s/%(ro)s - "
                                 "WMS/Stock moved qty %(qm)s/%(qd)s",
                                 pr=m.product_id.display_name,
                                 li=m.num_lista,
                                 ro=m.riga,
                                 qm=m.qtamov,
-                                qd=m.move_id.quantity,
+                                qd=m.move_id._get_picked_quantity(),
                             )
                             for m in moved_list_without_wms
                         ),
                     )
                 )
             for move in pick.move_ids:
+                moved_qty = move._get_picked_quantity()
                 for whs_list in move.whs_list_ids:
-                    if whs_list.qtamov != move.quantity != 0:
-                        whs_list.qtamov = move.quantity
-                    if whs_list.qtamov == 0 == move.quantity:
+                    if whs_list.qtamov != moved_qty != 0:
+                        whs_list.qtamov = moved_qty
+                    if whs_list.qtamov == 0 == moved_qty:
                         # When transfer is completed, the rows that have 0 qty are
                         # deleted, so they are re-created where the system create the
                         # backorder.

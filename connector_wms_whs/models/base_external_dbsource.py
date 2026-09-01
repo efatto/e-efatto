@@ -90,7 +90,14 @@ class BaseExternalDbsource(models.Model):
             ('A', 'aggiungi se non esiste, modifica se già inserito'),
             ('C', 'rimuovi il codice dal database WHS solo se non utilizzato'),
         """
-        product = product.with_context(lang="it_IT")
+        active_langs = self.env["res.lang"].search(
+            [
+                ("code", "=", "it_IT"),
+                ("active", "=", True),
+            ]
+        )
+        lang = "it_IT" if active_langs else "en_US"
+        product = product.with_context(lang=lang)
         super()._prepare_host_articoli_values(
             product, location_id, new_id, operation=operation
         )

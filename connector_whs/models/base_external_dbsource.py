@@ -3,8 +3,6 @@
 import logging
 import time
 
-from sqlalchemy import text as sql_text
-
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools.config import config as system_base_config
@@ -14,7 +12,7 @@ _logger = logging.getLogger(__name__)
 
 
 def clean_sql_text(text):
-    return sql_text(text.replace("\n", " "))
+    return text.replace("\n", " ")
 
 
 class BaseExternalDbsource(models.Model):
@@ -189,7 +187,6 @@ class BaseExternalDbsource(models.Model):
             if not connection:
                 raise UserError(_("Failed to open connection!"))
             i = 0
-            pickings_to_assign = self.env["stock.picking"]
             db_fields = [
                 "NumLista",
                 "NumRiga",
@@ -310,9 +307,14 @@ class BaseExternalDbsource(models.Model):
                         qty_moved = False
                     except TypeError:
                         qty_moved = False
-                    if not qty_moved or qty_moved == 0.0:
+                    if qty_moved is False:
                         # nothing to-do as not moved
                         continue
+                    elif not qty_moved:
+                        # Assign 0 to avoid the reserved quantity being interpreted
+                        # as processed. Keep processing the result so the WMS list
+                        # is moved to stato 4 and HOST_LISTE to Elaborato=5.
+                        move.quantity = 0
 
                     lotto = (
                         esito_lista[esiti_pos["Lotto"]].strip()
@@ -351,7 +353,7 @@ class BaseExternalDbsource(models.Model):
 
                     # set reserved availability on qty_moved if != 0.0 and with max of
                     # wms list qta
-                    move.reserved_availability = min(qty_moved, hyddemo_whs_list.qta)
+                    # move.reserved_availability = min(qty_moved, hyddemo_whs_list.qta)
 
                     # Set move qty_moved user can create a backorder
                     # Picking become automatically done if all moves are done
@@ -376,22 +378,22 @@ class BaseExternalDbsource(models.Model):
                                     f"set qty done for each one"
                                 )
                                 for ml in move.move_line_ids:
-                                    qty_to_move = min(qty_moved, ml.product_uom_qty)
-                                    ml.qty_done = qty_to_move
+                                    qty_to_move = min(qty_moved, ml.quantity)
+                                    ml.quantity = qty_to_move
                                     qty_moved -= qty_to_move
                             else:
                                 move.quantity = qty_moved
+                            # In Odoo 18 ``quantity`` includes both picked and merely
+                            # reserved move lines.  Mark the WMS result as picked so a
+                            # later action_assign can reserve the remainder without
+                            # changing the quantity actually processed by the WMS.
+                            if not move.production_id:
+                                move.picked = True
                         except UserError as error:
                             _logger.info(
                                 f"WMS LOG: move id {move.id} is not writeable for "
                                 f"{error}"
                             )
-                    if move.picking_id.mapped("move_ids").filtered(
-                        lambda m: m.state not in ("draft", "cancel", "done")
-                    ):
-                        # FIXME action_assign must assign on qty_done and not on
-                        #  available
-                        pickings_to_assign |= move.picking_id
 
                     # Set mssql list done from host, they are not deleted from HOST to
                     # preserve history, but it is a possible implementation to do
@@ -407,12 +409,6 @@ class BaseExternalDbsource(models.Model):
                         ),
                         metadata=None,
                     )
-            if pickings_to_assign:
-                pickings_to_assign.filtered(
-                    lambda x: x.mapped("move_ids").filtered(
-                        lambda m: m.state not in ("draft", "cancel", "done")
-                    )
-                ).action_assign()
 
     def execute_query(self, dbsource, insert_query, insert_esiti_liste_params):
         res = dbsource.with_context(no_return=True).execute_mssql(
@@ -510,7 +506,7 @@ class BaseExternalDbsource(models.Model):
                 # set state to Elaborato even if query is not created
                 whs_lists.write({"stato": "2"})
                 # commit to exclude rollback as mssql wouldn`t be rollbacked too
-                self._cr.commit()  # pylint: disable=E8102
+                # self._cr.commit()  # pylint: disable=E8102
             if not insert_only:
                 dbsource.whs_read_and_synchronize_list()
 

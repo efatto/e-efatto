@@ -13,6 +13,8 @@ class CommonConnectorWMS(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        # to mimic TransactionCase for mssql connector, use function like the example
+        # below _delete_all_sql_records to delete all created rows after each test
         cls.dbsource_model = cls.env["base.external.dbsource"]
         cls.stock_location_model = cls.env["stock.location"]
         cls.product_model = cls.env["product.product"]
@@ -249,6 +251,7 @@ class CommonConnectorWMS(TransactionCase):
                 {
                     "name": "Operation 1",
                     "workcenter_id": cls.workcenter1.id,
+                    "bom_id": cls.main_bom.id,
                     "time_mode": "manual",
                     "time_cycle_manual": 90,
                     "sequence": 1,
@@ -270,3 +273,7 @@ class CommonConnectorWMS(TransactionCase):
     def _auto_fill_consumed_qty(moves):
         for move in moves:
             move.quantity = move.product_uom_qty
+
+    def _delete_all_sql_records(self):
+        # method to be implemented in child classes
+        return

@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 {
     "name": "Connector WHS WMS",
-    "version": "14.0.1.0.2",
+    "version": "18.0.1.0.0",
     "category": "Warehouse Management",
     "license": "AGPL-3",
     "summary": """
@@ -13,11 +13,12 @@
     "depends": [
         "connector_whs",
         "sale_order_priority",
+        "stock_change_qty_reason",
     ],
     "data": [
         "views/hyddemo_whs_liste.xml",
     ],
     "installable": True,
     "excludes": "connector_wms_modula",
-    "external_dependencies": {"python": ["sqlalchemy"]},  # "sqlalchemy==1.3.24"
+    "external_dependencies": {"python": ["sqlalchemy==2.0.48"]},
 }
