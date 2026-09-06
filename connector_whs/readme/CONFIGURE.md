@@ -57,3 +57,19 @@ Nelle righe dei trasferimenti è presente questa icona per accedere alle
 liste del WMS, visibile solo se ci sono:
 
 ![Opzione avvio WMS](../static/description/icona_liste.png)
+
+![Processo di produzione]
+
+Il processo di produzione è modificato rispetto al default:
+
+#. alla conferma della produzione vengono create le liste che poi verranno
+inviate al WMS per la sincronizzazione
+#. nel WMS l'operatore procederà quindi all'elaborazione delle liste
+#. solo da questo momento in Odoo sarà possibile "consumare" i componenti
+utilizzati dalla produzione, la cui quantità sarà stata inserita
+automaticamente dal sincronizzatore. Il bottone "Consuma" completa i movimenti
+di magazzino, che saranno quindi quelli effettivamente eseguiti nel WMS.
+#. a questo punto sarà possibile generare i prodotti finiti con il bottone
+"Produci", la cui quantità sarà calcolata in base alla quantità da produrre
+impostata nella produzione (per eventuali scarti va utilizzata l'apposita
+procedura).
