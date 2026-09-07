@@ -134,7 +134,7 @@ class QualityControlStockOcaValidation(SingleTransactionCase):
         with self.assertRaises(ValidationError):
             # check it is impossible to validate as product2 is linked to a draft check
             Form(
-                self.env[res["res_model"]].with_context(res["context"])
+                self.env[res["res_model"]].with_context(**res["context"])
             ).save().process()
         qc_inspection_form = Form(picking.qc_inspections_ids)
         qc_inspection_line_form = Form(picking.qc_inspections_ids.inspection_lines)
@@ -143,7 +143,7 @@ class QualityControlStockOcaValidation(SingleTransactionCase):
         qc_inspection = qc_inspection_form.save()
         qc_inspection.action_confirm()
         res = picking.button_validate()
-        Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
+        Form(self.env[res["res_model"]].with_context(**res["context"])).save().process()
         backorder_picking = purchase_order.picking_ids - picking
         self.assertTrue(backorder_picking)
 
@@ -236,6 +236,6 @@ class QualityControlStockOcaValidation(SingleTransactionCase):
 
     def test_qc_inspection_mo(self):
         self.inspection1.write(
-            {"object_id": "%s,%d" % (self.production1._name, self.production1.id)}
+            {"object_id": f"{self.production1._name},{self.production1.id}"}
         )
         self.assertEqual(self.inspection1.production_id, self.production1)
