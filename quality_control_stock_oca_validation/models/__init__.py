@@ -1,3 +1,4 @@
+from . import mrp_production
 from . import qc_inspection
-from . import stock_move
+from . import qc_trigger_line
 from . import stock_picking
