@@ -41,6 +41,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
         connection = dbsource.connection_open_mssql()
         if not connection:
             _logger.info("Failed to open connection!")
+            return None
         new_last_update = fields.Datetime.now()
         product_obj = self.env["product.product"]
         i = 0
@@ -117,7 +118,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
             # it is a product or consumable, create log and align only if qty is
             # different and do_sync is True
             else:
-                product_qty = stock_product_dict[stock_product]
+                wms_product_qty = stock_product_dict[stock_product]
                 # it product is traceable, inventory cannot be done without lot info
                 if product.tracking != "none":
                     whs_log_line.update(
@@ -126,7 +127,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         }
                     )
                     continue
-                # Remove from product_qty stock.move which whs lists
+                # Remove from wms_product_qty stock.move which whs lists
                 # are on stato 'ricevuto esito' but not done in Odoo
                 ongoing_qty = 0
                 open_whs_list_ids = self.env["hyddemo.whs.liste"].search(
@@ -149,48 +150,51 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                             if "mrp" not in x.tipo_mov
                         ]
                     )
-                    product_qty += ongoing_qty
+                    wms_product_qty += ongoing_qty
                 # Remove (positive quantities) or add (negative quantities) availability
                 # in the warehouse wh_qc_stock_loc_id (Quality control) location, which
-                # is not available until the quality control ends.
+                # is not available until the quality control ends, from the qty got from
+                # WMS.
                 warehouse = dbsource.location_id.get_warehouse()
                 wh_qc_qty = product.with_context(
                     location=warehouse.wh_qc_stock_loc_id.id
                 ).qty_available
-                product_qty -= wh_qc_qty
-                qty_wrong = product.with_context(
+                wms_product_qty -= wh_qc_qty
+                # Quality control location is a virtual location, so it is not computed
+                # in this case.
+                odoo_qty = product.with_context(
                     location=dbsource.location_id.id
                 ).qty_available
-                if product_qty < 0:
+                if wms_product_qty < 0:
                     # do not consider negative quantities in WHS
                     whs_log_line.update(
                         {
                             "product_id": product.id,
-                            "qty_wrong": qty_wrong,
+                            "qty_wrong": odoo_qty,
                             "ongoing_qty": ongoing_qty,
-                            "qty": product_qty,
+                            "qty": wms_product_qty,
                             "type": "mismatch",
                         }
                     )
                     continue
                 if float_compare(
-                    product_qty,
-                    qty_wrong,
+                    wms_product_qty,
+                    odoo_qty,
                     precision_rounding=product.uom_id.rounding,
                 ):
                     whs_log_line.update(
                         {
                             "product_id": product.id,
-                            "qty_wrong": qty_wrong,
+                            "qty_wrong": odoo_qty,
                             "ongoing_qty": ongoing_qty,
-                            "qty": product_qty,
+                            "qty": wms_product_qty,
                             "type": "mismatch",
                         }
                     )
                     if wizard.do_sync:
                         inventory_lines_data.append(
                             {
-                                "product_qty": product_qty,
+                                "product_qty": wms_product_qty,
                                 "location_id": dbsource.location_id.id,
                                 "product_id": product.id,
                                 "product_uom_id": product.uom_id.id,
@@ -201,9 +205,9 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     whs_log_line.update(
                         {
                             "product_id": product.id,
-                            "qty_wrong": qty_wrong,
+                            "qty_wrong": odoo_qty,
                             "ongoing_qty": ongoing_qty,
-                            "qty": product_qty,
+                            "qty": wms_product_qty,
                             "type": "ok",
                         }
                     )
@@ -211,6 +215,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 whs_log_lines.append(whs_log_line)
 
         if wizard.do_sync and inventory_lines_data:
+            # Inventory get by default children locations
             inventory = inventory_obj.create(
                 {
                     "name": "WMS sync inventory "
