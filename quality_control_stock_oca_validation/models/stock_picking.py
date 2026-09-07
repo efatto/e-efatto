@@ -72,7 +72,7 @@ class StockPicking(models.Model):
 
     def write(self, vals):
         res = super().write(vals)
-        if vals.get("ddt_supplier_number") or vals.get("ddt_supplier_date"):
+        if vals.get("dn_supplier_number") or vals.get("dn_supplier_date"):
             draft_inspections = self.qc_inspections_ids.filtered(
                 lambda i: i.state == "draft"
             )
