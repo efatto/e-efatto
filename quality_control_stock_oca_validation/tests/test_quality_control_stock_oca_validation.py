@@ -2,26 +2,27 @@ from datetime import timedelta
 
 from odoo import fields
 from odoo.exceptions import ValidationError
-from odoo.tests.common import Form, SingleTransactionCase
+from odoo.tests import Form
+
+from odoo.addons.base.tests.common import BaseCommon
 
 
-class QualityControlStockOcaValidation(SingleTransactionCase):
-    def setUp(self):
-        super().setUp()
-        self.env = self.env(context=dict(self.env.context, tracking_disable=True))
-        self.user_model = self.env["res.users"].with_context(no_reset_password=True)
-        self.vendor = self.env.ref("base.res_partner_3")
-        self.product1 = self.env.ref("product.product_delivery_01")
-        self.product2 = self.env.ref("product.product_delivery_02")
-        self.picking_type_in = self.env.ref("stock.picking_type_in")
-        self.in_trigger = self.env["qc.trigger"].search(
+class QualityControlStockOcaValidation(BaseCommon):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
+        cls.vendor = cls.env.ref("base.res_partner_3")
+        cls.product1 = cls.env.ref("product.product_delivery_01")
+        cls.product2 = cls.env.ref("product.product_delivery_02")
+        cls.picking_type_in = cls.env.ref("stock.picking_type_in")  # noqa
+        cls.in_trigger = cls.env["qc.trigger"].search(
             [
-                ("picking_type_id", "=", self.picking_type_in.id),
+                ("picking_type_id", "=", cls.picking_type_in.id),
             ]
         )
-        qc_test_form = Form(self.env["qc.test"])
+        qc_test_form = Form(cls.env["qc.test"])
         qc_test_form.name = "Quality check"
-        qc_test_form.type = "generic"
         with qc_test_form.test_lines.new() as test_line:
             test_line.name = "Quality check"
             test_line.type = "qualitative"
@@ -30,52 +31,59 @@ class QualityControlStockOcaValidation(SingleTransactionCase):
                 test_question.ok = True
             with test_line.ql_values.new() as test_question:
                 test_question.name = "Is Not OK"
-        self.qc_test = qc_test_form.save()
-        self.inspection_model = self.env["qc.inspection"]
-        self.qc_trigger_model = self.env["qc.trigger"]
-        self.test = self.env.ref("quality_control_oca.qc_test_1")
-        self.trigger = self.env.ref("quality_control_mrp_oca.qc_trigger_mrp")
+        cls.qc_test = qc_test_form.save()
+        cls.inspection_model = cls.env["qc.inspection"]
+        cls.qc_trigger_model = cls.env["qc.trigger"]
+        cls.test = cls.env.ref("quality_control_oca.qc_test_1")
+        cls.trigger = cls.qc_trigger_model.create(
+            {
+                "name": "Production confirmed trigger",
+            }
+        )
         # Category
-        category_form = Form(self.env["product.category"])
+        category_form = Form(cls.env["product.category"])
         category_form.name = "Test category"
-        self.category = category_form.save()
+        cls.category = category_form.save()
         # Product
-        product_form = Form(self.env["product.template"])
+        product_form = Form(cls.env["product.template"])
         product_form.name = "Test Product"
-        product_form.type = "product"
-        self.product = product_form.save()
+        product_form.type = "consu"
+        product_form.is_storable = True
+        cls.product = product_form.save()
         # Materials
-        product_form = Form(self.env["product.product"])
+        product_form = Form(cls.env["product.product"])
         product_form.name = "Part 1 Product"
-        product_form.type = "product"
-        self.mat1 = product_form.save()
-        product_form = Form(self.env["product.product"])
+        product_form.type = "consu"
+        product_form.is_storable = True
+        cls.mat1 = product_form.save()
+        product_form = Form(cls.env["product.product"])
         product_form.name = "Part 2 Product"
-        product_form.type = "product"
-        self.mat2 = product_form.save()
+        product_form.type = "consu"
+        product_form.is_storable = True
+        cls.mat2 = product_form.save()
         # Bom
-        bom_form = Form(self.env["mrp.bom"])
-        bom_form.product_tmpl_id = self.product
+        bom_form = Form(cls.env["mrp.bom"])
+        bom_form.product_tmpl_id = cls.product
         bom_form.product_qty = 1.0
         bom_form.type = "normal"
         with bom_form.bom_line_ids.new() as material_form:
-            material_form.product_id = self.mat1
+            material_form.product_id = cls.mat1
             material_form.product_qty = 1
         with bom_form.bom_line_ids.new() as material_form:
-            material_form.product_id = self.mat2
+            material_form.product_id = cls.mat2
             material_form.product_qty = 1
-        self.bom = bom_form.save()
+        cls.bom = bom_form.save()
         # Production
-        production_form = Form(self.env["mrp.production"])
-        production_form.product_id = self.product.product_variant_id
-        production_form.bom_id = self.bom
+        production_form = Form(cls.env["mrp.production"])
+        production_form.product_id = cls.product.product_variant_id
+        production_form.bom_id = cls.bom
         production_form.product_qty = 2.0
-        self.production1 = production_form.save()
-        self.production1.action_confirm()
-        self.production1.action_assign()
+        cls.production1 = production_form.save()
+        cls.picking_type_mrp = cls.production1.picking_type_id
+        cls.trigger.picking_type_id = cls.picking_type_mrp
         # Inspection
-        inspection_lines = self.inspection_model._prepare_inspection_lines(self.test)
-        self.inspection1 = self.inspection_model.create(
+        inspection_lines = cls.inspection_model._prepare_inspection_lines(cls.test)
+        cls.inspection1 = cls.inspection_model.create(
             {"name": "Test Inspection", "inspection_lines": inspection_lines}
         )
 
@@ -111,16 +119,14 @@ class QualityControlStockOcaValidation(SingleTransactionCase):
             qc_trigger.trigger = self.in_trigger
             qc_trigger.test = self.qc_test
         product2_form.save()
-
+        self.assertEqual(self.product2.qc_triggers.timing, "before")
         purchase_order = self._create_purchase_order(20, 40, "Vendor Reference")
         picking = purchase_order.picking_ids
         # set done 10 pc of product2, which has generated a check
-        for sml in picking.move_lines.mapped("move_line_ids").filtered(
-            lambda x: x.product_id == self.product2
-        ):
-            sml.qty_done = sml.product_uom_qty / 2.0
+        for sm in picking.move_ids.filtered(lambda x: x.product_id == self.product2):
+            sm.quantity = sm.product_uom_qty / 2.0
         self.assertEqual(len(picking.qc_inspections_ids), 1)
-        res = picking.button_validate()
+        wizard = Form.from_action(self.env, picking.button_validate()).save()
         ok_ql = (
             self.env["qc.inspection.line"]
             .search(
@@ -131,11 +137,10 @@ class QualityControlStockOcaValidation(SingleTransactionCase):
             )
             .possible_ql_values.filtered("ok")
         )
+        self.assertEqual(wizard._name, "stock.backorder.confirmation")
         with self.assertRaises(ValidationError):
             # check it is impossible to validate as product2 is linked to a draft check
-            Form(
-                self.env[res["res_model"]].with_context(res["context"])
-            ).save().process()
+            wizard.process()
         qc_inspection_form = Form(picking.qc_inspections_ids)
         qc_inspection_line_form = Form(picking.qc_inspections_ids.inspection_lines)
         qc_inspection_line_form.qualitative_value = ok_ql
@@ -143,35 +148,42 @@ class QualityControlStockOcaValidation(SingleTransactionCase):
         qc_inspection = qc_inspection_form.save()
         qc_inspection.action_confirm()
         res = picking.button_validate()
-        Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
+        Form(self.env[res["res_model"]].with_context(**res["context"])).save().process()
         backorder_picking = purchase_order.picking_ids - picking
         self.assertTrue(backorder_picking)
 
     @staticmethod
     def _auto_fill_consumed_qty(moves):
         for move in moves:
-            move.quantity_done = move.product_uom_qty
+            move.quantity = move.product_uom_qty
 
     def test_inspection_create_for_product(self):
         self.product.product_variant_id.qc_triggers = [
             (0, 0, {"trigger": self.trigger.id, "test": self.test.id})
         ]
-        self.production1.qty_producing = self.production1.product_qty
-        self._auto_fill_consumed_qty(self.production1.move_raw_ids)
-        self.production1.button_mark_done()
+        self.assertEqual(self.product.product_variant_id.qc_triggers.timing, "before")
+        self.production1.action_confirm()
         self.assertEqual(
             self.production1.created_inspections,
             1,
             "Only one inspection must be created",
         )
+        self.production1.action_assign()
+        mo_form = Form(self.production1)
+        mo_form.qty_producing = self.production1.product_qty
+        for i in range(len(self.production1.move_raw_ids)):
+            with mo_form.move_raw_ids.edit(i) as move_raw_line:
+                move_raw_line.quantity = move_raw_line.product_uom_qty
+        mo_form.save()
+        # self.production1.button_mark_done()
 
     def test_inspection_create_for_template(self):
+        self.assertFalse(self.production1.qc_inspections_ids)
         self.product.qc_triggers = [
             (0, 0, {"trigger": self.trigger.id, "test": self.test.id})
         ]
-        self.production1.qty_producing = self.production1.product_qty
-        self._auto_fill_consumed_qty(self.production1.move_raw_ids)
-        self.production1.button_mark_done()
+        self.assertEqual(self.product.qc_triggers.timing, "before")
+        self.production1.action_confirm()
         self.assertEqual(
             self.production1.created_inspections,
             1,
@@ -182,9 +194,7 @@ class QualityControlStockOcaValidation(SingleTransactionCase):
         self.product.categ_id.qc_triggers = [
             (0, 0, {"trigger": self.trigger.id, "test": self.test.id})
         ]
-        self.production1.qty_producing = self.production1.product_qty
-        self._auto_fill_consumed_qty(self.production1.move_raw_ids)
-        self.production1.button_mark_done()
+        self.production1.action_confirm()
         self.assertEqual(
             self.production1.created_inspections,
             1,
@@ -198,44 +208,79 @@ class QualityControlStockOcaValidation(SingleTransactionCase):
         self.product.categ_id.qc_triggers = [
             (0, 0, {"trigger": self.trigger.id, "test": self.test.id})
         ]
-        self.production1.qty_producing = self.production1.product_qty
-        self._auto_fill_consumed_qty(self.production1.move_raw_ids)
-        self.production1.button_mark_done()
+        self.production1.action_confirm()
         self.assertEqual(
             self.production1.created_inspections,
             1,
             "Only one inspection must be created",
         )
 
-    def test_inspection_with_partial_fabrication(self):
+    def test_inspection_with_partial_fabrication_before(self):
         self.product.qc_triggers = [
             (0, 0, {"trigger": self.trigger.id, "test": self.test.id})
         ]
+        self.assertEqual(self.product.qc_triggers.timing, "before")
+        self.production1.action_confirm()
+        self.assertEqual(
+            self.production1.created_inspections,
+            1,
+            "Only one inspection must be created.",
+        )
         self.production1.qty_producing = 1.0
         self._auto_fill_consumed_qty(self.production1.move_raw_ids)
-        action = self.production1.button_mark_done()
-        backorder_form = Form(
-            self.env["mrp.production.backorder"].with_context(**action["context"])
+        with self.assertRaises(ValidationError):
+            # check it is impossible to validate as production 1 is linked to a draft
+            # check
+            Form.from_action(self.env, self.production1.button_mark_done()).save()
+        # do the qc tests with success
+        ok_ql = (
+            self.env["qc.inspection.line"]
+            .search(
+                [
+                    ("inspection_id", "in", self.production1.qc_inspections_ids.ids),
+                    ("possible_ql_values.ok", "=", True),
+                ]
+            )
+            .possible_ql_values.filtered("ok")
         )
-        backorder_form.save().action_backorder()
-        self.assertEqual(self.production1.state, "progress")
+        qc_inspection = self.production1.qc_inspections_ids
+        qc_inspection.action_todo()
+        for inspection in qc_inspection.inspection_lines:
+            if inspection.test_line.type == "qualitative":
+                with Form(inspection) as insp_line_form:
+                    insp_line_form.qualitative_value = ok_ql
+                    insp_line_form.save()
+            if inspection.test_line.type == "quantitative":
+                with Form(inspection) as insp_line_form:
+                    insp_line_form.quantitative_value = 5
+                    insp_line_form.save()
+        qc_inspection.action_confirm()
+        qc_inspection.action_approve()
+        self.assertTrue(qc_inspection.success)
+        warning_form = Form.from_action(
+            self.env, self.production1.button_mark_done()
+        ).save()
+        self.assertEqual(warning_form._name, "mrp.consumption.warning")
+        backorder_form = Form.from_action(
+            self.env, warning_form.action_confirm()
+        ).save()
+        backorder_form.action_backorder()
+        self.assertEqual(self.production1.state, "done")
         self.assertEqual(
             self.production1.created_inspections,
             1,
             "Only one inspection must be created.",
         )
         mo_backorder = self.production1.procurement_group_id.mrp_production_ids[-1]
-        self.assertEqual(mo_backorder.state, "progress")
-        mo_backorder.qty_producing = self.production1.product_qty
-        self._auto_fill_consumed_qty(self.production1.move_raw_ids)
-        mo_backorder.button_mark_done()
-        self.assertEqual(mo_backorder.state, "done")
+        self.assertEqual(mo_backorder.state, "confirmed")
         self.assertEqual(
-            mo_backorder.created_inspections, 1, "There must be only 1 inspection."
+            mo_backorder.created_inspections,
+            1,
+            "Only one inspection must be created.",
         )
 
     def test_qc_inspection_mo(self):
         self.inspection1.write(
-            {"object_id": "%s,%d" % (self.production1._name, self.production1.id)}
+            {"object_id": f"{self.production1._name},{self.production1.id}"}
         )
         self.assertEqual(self.inspection1.production_id, self.production1)
