@@ -44,10 +44,7 @@ class StockPicking(models.Model):
                         inspection.env.cr.commit()
             for inspection in picking.qc_inspections_ids:
                 if inspection.state not in ["success", "failed"] and (
-                    inspection.object_id._name == "stock.move"  # noqa
-                    and inspection.object_id.quantity_done > 0  # noqa
-                    or inspection.object_id._name == "stock.move.line"  # noqa
-                    and inspection.object_id.qty_done > 0  # noqa
+                    inspection.object_id.quantity > 0
                 ):
                     raise ValidationError(
                         _(
