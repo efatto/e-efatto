@@ -5,10 +5,13 @@ from odoo.tools.date_utils import relativedelta
 class QcTriggerProductLine(models.Model):
     _inherit = "qc.trigger.product_line"
 
-    def get_trigger_line_for_product(self, trigger, product, partner=False):
+    def get_trigger_line_for_product(self, trigger, timings, product, partner=False):
         # get not active test too, to check if they need to be re-activated
         trigger_lines = super().get_trigger_line_for_product(
-            trigger, product.with_context(active_test=False), partner=partner
+            trigger=trigger,
+            timings=timings,
+            product=product.with_context(active_test=False),
+            partner=partner,
         )
         inspection_obj = self.env["qc.inspection"].sudo()
         # deactivate trigger line when success number of tests is reached
@@ -62,7 +65,7 @@ class QcTriggerProductLine(models.Model):
                     .search(
                         [
                             ("picking_type_id", "=", trigger.picking_type_id.id),
-                            ("move_lines.product_id", "=", product.id),
+                            ("move_ids.product_id", "=", product.id),
                             ("qc_inspections_ids", "!=", False),
                         ],
                         order="date desc",
@@ -76,7 +79,7 @@ class QcTriggerProductLine(models.Model):
                         .search(
                             [
                                 ("picking_type_id", "=", trigger.picking_type_id.id),
-                                ("move_lines.product_id", "=", product.id),
+                                ("move_ids.product_id", "=", product.id),
                                 ("qc_inspections_ids", "=", False),
                                 ("id", "not in", inspected_pickings.ids),
                                 ("date", ">=", inspected_pickings.date),
