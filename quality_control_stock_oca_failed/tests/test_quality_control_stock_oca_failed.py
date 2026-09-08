@@ -2,26 +2,28 @@ from datetime import timedelta
 
 from odoo import fields
 from odoo.exceptions import ValidationError
-from odoo.tests.common import Form, SingleTransactionCase
+from odoo.tests import Form
+
+from odoo.addons.base.tests.common import BaseCommon
 
 
-class QualityControlStockOcaFailed(SingleTransactionCase):
-    def setUp(self):
-        super().setUp()
-        self.env = self.env(context=dict(self.env.context, tracking_disable=True))
-        self.user_model = self.env["res.users"].with_context(no_reset_password=True)
-        self.vendor = self.env.ref("base.res_partner_3")
-        self.product = self.env.ref("product.product_delivery_01")
-        self.product2 = self.env.ref("product.product_delivery_02")
-        self.picking_type_in = self.env.ref("stock.picking_type_in")
-        self.in_trigger = self.env["qc.trigger"].search(
+class QualityControlStockOcaFailed(BaseCommon):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
+        cls.user_model = cls.env["res.users"].with_context(no_reset_password=True)
+        cls.vendor = cls.env.ref("base.res_partner_3")
+        cls.product = cls.env.ref("product.product_delivery_01")
+        cls.product2 = cls.env.ref("product.product_delivery_02")
+        cls.picking_type_in = cls.env.ref("stock.picking_type_in")
+        cls.in_trigger = cls.env["qc.trigger"].search(
             [
-                ("picking_type_id", "=", self.picking_type_in.id),
+                ("picking_type_id", "=", cls.picking_type_in.id),
             ]
         )
-        qc_test_form = Form(self.env["qc.test"])
+        qc_test_form = Form(cls.env["qc.test"])
         qc_test_form.name = "Quality check"
-        qc_test_form.type = "generic"
         with qc_test_form.test_lines.new() as test_line:
             test_line.name = "Quality check"
             test_line.type = "qualitative"
@@ -30,7 +32,7 @@ class QualityControlStockOcaFailed(SingleTransactionCase):
                 test_question.ok = True
             with test_line.ql_values.new() as test_question:
                 test_question.name = "Is Not OK"
-        self.qc_test = qc_test_form.save()
+        cls.qc_test = qc_test_form.save()
 
     def _create_purchase_order(self, qty, qty1, ref):
         purchase_form = Form(self.env["purchase.order"])
@@ -63,6 +65,7 @@ class QualityControlStockOcaFailed(SingleTransactionCase):
         with product2_form.qc_triggers.new() as qc_trigger:
             qc_trigger.trigger = self.in_trigger
             qc_trigger.test = self.qc_test
+            qc_trigger.timing = "before"
         product2_form.save()
 
         purchase_order = self._create_purchase_order(20, 40, "Vendor Reference")
@@ -74,14 +77,14 @@ class QualityControlStockOcaFailed(SingleTransactionCase):
             )
         )
         # set done 20 pc of product2
-        for sml in picking.move_lines.mapped("move_line_ids").filtered(
+        for sml in picking.move_ids.mapped("move_line_ids").filtered(
             lambda x: x.product_id == self.product2
         ):
-            sml.qty_done = sml.product_uom_qty / 2.0
+            sml.quantity = sml.quantity_product_uom / 2.0
         self.assertEqual(len(picking.qc_inspections_ids), 1)
         self.assertEqual(
             picking.qc_inspections_ids.object_id,
-            picking.move_lines.filtered(lambda x: x.product_id == self.product2),
+            picking.move_ids.filtered(lambda x: x.product_id == self.product2),
         )
         failed_ql = (
             self.env["qc.inspection.line"]
@@ -95,7 +98,7 @@ class QualityControlStockOcaFailed(SingleTransactionCase):
         res = picking.button_validate()
         with self.assertRaises(ValidationError):
             Form(
-                self.env[res["res_model"]].with_context(res["context"])
+                self.env[res["res_model"]].with_context(**res["context"])
             ).save().process()
         qc_inspection_form = Form(picking.qc_inspections_ids)
         qc_inspection_line_form = Form(picking.qc_inspections_ids.inspection_lines)
@@ -104,15 +107,15 @@ class QualityControlStockOcaFailed(SingleTransactionCase):
         qc_inspection = qc_inspection_form.save()
         qc_inspection.action_confirm()
         qc_inspection.action_approve()
-        Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
+        Form(self.env[res["res_model"]].with_context(**res["context"])).save().process()
         backorder_picking = purchase_order.picking_ids - picking
         self.assertTrue(backorder_picking)
-        self.assertEqual(picking.move_lines, picking.qc_inspections_ids.object_id)
+        self.assertEqual(picking.move_ids, picking.qc_inspections_ids.object_id)
         self.assertEqual(
-            picking.move_lines.move_line_ids.mapped("location_dest_id"),
+            picking.move_ids.move_line_ids.mapped("location_dest_id"),
             picking.picking_type_id.warehouse_id.wh_qc_stock_loc_id,
         )
         self.assertEqual(
-            backorder_picking.move_lines.move_line_ids.mapped("location_dest_id"),
+            backorder_picking.move_ids.move_line_ids.mapped("location_dest_id"),
             picking.picking_type_id.default_location_dest_id,
         )
