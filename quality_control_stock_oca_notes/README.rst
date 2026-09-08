@@ -1,7 +1,3 @@
-.. image:: https://odoo-community.org/readme-banner-image
-   :target: https://odoo-community.org/get-involved?utm_source=readme
-   :alt: Odoo Community Association
-
 ===================================
 Quality Control Stock OCA Set Notes
 ===================================
@@ -17,11 +13,11 @@ Quality Control Stock OCA Set Notes
 .. |badge1| image:: https://img.shields.io/badge/maturity-Beta-yellow.png
     :target: https://odoo-community.org/page/development-status
     :alt: Beta
-.. |badge2| image:: https://img.shields.io/badge/license-AGPL--3-blue.png
+.. |badge2| image:: https://img.shields.io/badge/licence-AGPL--3-blue.png
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-efatto%2Fe--efatto-lightgray.png?logo=github
-    :target: https://github.com/efatto/e-efatto/tree/14.0/quality_control_stock_oca_notes
+    :target: https://github.com/efatto/e-efatto/tree/18.0/quality_control_stock_oca_notes
     :alt: efatto/e-efatto
 
 |badge1| |badge2| |badge3|
@@ -38,23 +34,26 @@ Configuration
 
 Nel prodotto o nel template si può indicare una nota:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/quality_control_stock_oca_notes/static/description/nota.png
-    :alt: Nota sul prodotto
+|Nota sul prodotto|
 
 che verrà riportata nella nota interna dell'ispezione:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/quality_control_stock_oca_notes/static/description/nota_interna.png
-    :alt: Nota interna sull'ispezione
+|Nota interna sull'ispezione|
 
-Lo stesso si può fare per altri due campi aggiuntivi a solo scopo informativo: lotto interno e lotto fornitore:
+Lo stesso si può fare per altri due campi aggiuntivi a solo scopo
+informativo: lotto interno e lotto fornitore:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/quality_control_stock_oca_notes/static/description/lotti.png
-    :alt: Lotti
+|Lotti|
 
-Sono stati infine aggiunti altri due campi, sempre a scopo informativo: quantità controllata e quantità non conforme:
+Sono stati infine aggiunti altri due campi, sempre a scopo informativo:
+quantità controllata e quantità non conforme:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/quality_control_stock_oca_notes/static/description/quantita_controllata_e_non_conforme.png
-    :alt: Quantita controllata e non conforme
+|Quantita controllata e non conforme|
+
+.. |Nota sul prodotto| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/quality_control_stock_oca_notes/static/description/nota.png
+.. |Nota interna sull'ispezione| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/quality_control_stock_oca_notes/static/description/nota_interna.png
+.. |Lotti| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/quality_control_stock_oca_notes/static/description/lotti.png
+.. |Quantita controllata e non conforme| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/quality_control_stock_oca_notes/static/description/quantita_controllata_e_non_conforme.png
 
 Bug Tracker
 ===========
@@ -62,7 +61,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/efatto/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20quality_control_stock_oca_notes%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20quality_control_stock_oca_notes%0Aversion:%2018.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -70,18 +69,18 @@ Credits
 =======
 
 Authors
-~~~~~~~
+-------
 
 * Sergio Corato
 
 Contributors
-~~~~~~~~~~~~
+------------
 
-* Sergio Corato <https://github.com/sergiocorato>
+-  Sergio Corato <https://github.com/sergiocorato>
 
 Maintainers
-~~~~~~~~~~~
+-----------
 
-This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/14.0/quality_control_stock_oca_notes>`_ project on GitHub.
+This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/18.0/quality_control_stock_oca_notes>`_ project on GitHub.
 
 You are welcome to contribute.
