@@ -54,7 +54,7 @@
                     type="action"
                     string="Show inactive triggers"
                     class="oe_highlight"
-                    attrs="{'invisible': [('product_has_inactive_triggers', '=', False)]}"
+                    invisible="not product_has_inactive_triggers"
                 />
             </page>
         </field>

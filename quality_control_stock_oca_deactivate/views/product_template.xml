@@ -66,7 +66,7 @@
                     type="action"
                     string="Show inactive triggers"
                     class="oe_highlight"
-                    attrs="{'invisible': [('has_inactive_triggers', '=', False)]}"
+                    invisible="not has_inactive_triggers"
                 />
             </group>
         </field>
