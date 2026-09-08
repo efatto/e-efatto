@@ -5,7 +5,6 @@ class StockPicking(models.Model):
     _inherit = "stock.picking"
 
     def _action_done(self):
-        res = super()._action_done()
         if self.sudo().qc_inspections_ids:
             qc_inspection_failed_ids = self.sudo().qc_inspections_ids.filtered(
                 lambda x: x.state == "failed"
@@ -17,4 +16,4 @@ class StockPicking(models.Model):
                     vals = {"location_dest_id": wh.wh_qc_stock_loc_id.id}
                     move.move_line_ids.write(vals)  # noqa
                     move.write(vals)  # noqa
-        return res
+        return super()._action_done()
