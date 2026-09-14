@@ -275,7 +275,7 @@ class StockMove(models.Model):
             "type": "ir.actions.act_window",
             "name": _("WMS lists"),
             "domain": domain,
-            "views": [(False, "tree"), (False, "form")],
+            "views": [(False, "list"), (False, "form")],
             "res_model": "hyddemo.whs.liste",
         }
 
