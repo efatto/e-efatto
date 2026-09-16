@@ -90,8 +90,20 @@ class HyddemoWhsListe(models.Model):
     move_state = fields.Selection(
         related="move_id.state", readonly=True, string="Stock Move State"
     )
-    tipo_mov = fields.Text("tipo movimento")  # , size=16)
-    # mrpin mrpout move noback ripin ripout
+    tipo_mov = fields.Text("tipo movimento", required=True)
+
+    @api.constrains("tipo_mov")
+    def _check_tipo_mov(self):
+        if self.tipo_mov not in [
+            "mrpin",
+            "mrpout",
+            "move",
+            "noback",
+            "ripin",
+            "ripout",
+        ]:
+            raise UserError(_("Invalid tipo_mov value"))
+
     client_order_ref = fields.Text()  # size=50)
     product_customer_code = fields.Char(size=250)
     whs_list_absent = fields.Boolean()
