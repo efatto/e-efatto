@@ -71,6 +71,7 @@ class MrpProduction(models.Model):
                 for x in moves.filtered(
                     lambda move: move.state not in ["done", "cancel"]
                     and move.product_uom_qty > 0
+                    and not move.product_id.exclude_from_whs
                 )
             )
         for production in self.filtered(lambda mo: mo.state in ["done", "cancel"]):
@@ -262,6 +263,7 @@ class MrpProduction(models.Model):
         if not qty_producing and (
             move.whs_list_ids and not all(x.stato == "3" for x in move.whs_list_ids)
         ):
+            # do not create a whs list if the existing one is valid
             return num_lista, riga
         if move.scrapped:
             return num_lista, riga
