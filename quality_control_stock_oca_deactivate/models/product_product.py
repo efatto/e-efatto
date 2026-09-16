@@ -18,7 +18,7 @@ class ProductProduct(models.Model):
                 .search(
                     [
                         ("active", "=", False),
-                        ("product", "=", record.id),
+                        ("product", "in", record.ids),
                     ]
                 )
             )

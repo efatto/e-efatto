@@ -18,7 +18,7 @@ class ProductTemplate(models.Model):
                 .search(
                     [
                         ("active", "=", False),
-                        ("product_template", "=", record.id),
+                        ("product_template", "in", record.ids),
                     ]
                 )
             )
