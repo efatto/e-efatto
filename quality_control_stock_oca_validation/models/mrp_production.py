@@ -15,7 +15,6 @@ class MrpProduction(models.Model):
                 if (
                     inspection.state not in ["success", "failed"]
                     and inspection.object_id.quantity > 0
-                    # and inspection.qc_trigger_id.timing == "before"
                 ):
                     raise ValidationError(
                         _(
