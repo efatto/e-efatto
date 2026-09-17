@@ -26,15 +26,3 @@ class MrpProduction(models.Model):
                         % inspection.name
                     )
         return super().button_mark_done()
-
-    def _action_confirm_mo_backorders(self):
-        # TODO remove this method if https://github.com/OCA/manufacture/pull/1867 is
-        #  merged
-        # intercept backorders, which don't pass through stock.move _action_confirm for
-        # trigger with timings before and plan_ahead
-        moves = (
-            self.mapped("move_finished_ids") | self.mapped("move_raw_ids")
-        ).filtered(lambda r: r.state != "cancel")
-        for move in moves:
-            move.trigger_inspection(["before", "plan_ahead"])
-        return super()._action_confirm_mo_backorders()
