@@ -55,6 +55,20 @@ class MrpProductionSet(models.Model):
         store=True,
         copy=False,
     )
+    left_finished_product_id = fields.Many2one(
+        comodel_name="product.product",
+        related="production_left_id.product_id",
+        string="Left Manufactured Product",
+        store=True,
+        copy=False,
+    )
+    right_finished_product_id = fields.Many2one(
+        comodel_name="product.product",
+        related="production_right_id.product_id",
+        string="Right Manufactured Product",
+        store=True,
+        copy=False,
+    )
     qty_producing_left = fields.Float(
         string="Quantity Producing Left",
         digits="Product Unit of Measure",
