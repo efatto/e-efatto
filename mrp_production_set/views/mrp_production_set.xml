@@ -83,7 +83,7 @@
                     </group>
                     <group>
                         <group string="Production Left">
-                            <field name="production_left_id" />
+                            <field name="production_left_id" context="{'mrp_production_set_display_name': True}"/>
                             <field name="left_finished_product_id" readonly="1" />
                             <field name="workcenter_left_ids" widget="many2many_tags" />
                             <field name="qty_producing_left" />
@@ -97,6 +97,7 @@
                             </div>
                             <field
                 name="production_right_id"
+                context="{'mrp_production_set_display_name': True}"
                 domain="[('id', 'in', compatible_mrp_production_ids)] "
                 attrs="{'invisible': [('split_production', '=', True)]}"
               />

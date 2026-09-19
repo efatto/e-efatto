@@ -85,3 +85,13 @@ class MrpProduction(models.Model):
                     else True
                 )
         return workcenters
+
+    def name_get(self):
+        if self.env.context.get('mrp_production_set_display_name'):
+            res = []
+            for record in self:
+                name = f"{record.name} - {record.product_id.name}"
+                res.append((record.id, name))
+            return res
+
+        return super().name_get()
