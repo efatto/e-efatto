@@ -3,7 +3,7 @@
 {
     "name": "Purchase Order Date Visibility",
     "summary": "Always show date order in purchase order.",
-    "version": "14.0.1.0.1",
+    "version": "18.0.1.0.0",
     "category": "Purchases",
     "website": "https://github.com/efatto/e-efatto",
     "author": "Sergio Corato",
