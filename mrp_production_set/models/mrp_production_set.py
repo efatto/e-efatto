@@ -14,13 +14,18 @@ class MrpProductionSet(models.Model):
     state = fields.Selection(
         selection=lambda self: self.env["mrp.production"]._fields["state"].selection,
         compute="_compute_state",
+        copy=False,
+        index=True,
+        readonly=True,
+        store=True,
+        required=True,
     )
     production_left_id = fields.Many2one(
         comodel_name="mrp.production",
         domain="[('is_compatible_for_set', '=', True), "
         "('state', 'in', ['draft', 'confirmed', 'progress']), "
         "('bom_id.type', '!=', 'subcontract')]",
-        states={'done': [('readonly', True)], 'cancel': [('readonly', True)]},
+        states={"done": [("readonly", True)], "cancel": [("readonly", True)]},
         string="Production Left",
     )
     workcenter_left_ids = fields.Many2many(
@@ -40,7 +45,7 @@ class MrpProductionSet(models.Model):
         domain="[('is_compatible_for_set', '=', True), "
         "('state', 'in', ['draft', 'confirmed', 'progress']), "
         "('bom_id.type', '!=', 'subcontract')]",
-        states={'done': [('readonly', True)], 'cancel': [('readonly', True)]},
+        states={"done": [("readonly", True)], "cancel": [("readonly", True)]},
         string="Production Right",
     )
     compatible_mrp_production_ids = fields.Many2many(
@@ -75,19 +80,19 @@ class MrpProductionSet(models.Model):
         string="Quantity Producing Left",
         digits="Product Unit of Measure",
         copy=False,
-        states={'done': [('readonly', True)], 'cancel': [('readonly', True)]},
+        states={"done": [("readonly", True)], "cancel": [("readonly", True)]},
         help="Set the quantity producing in the left production.",
     )
     qty_producing_right = fields.Float(
         string="Quantity Producing Right",
         digits="Product Unit of Measure",
         copy=False,
-        states={'done': [('readonly', True)], 'cancel': [('readonly', True)]},
+        states={"done": [("readonly", True)], "cancel": [("readonly", True)]},
         help="Set the quantity producing in the right production.",
     )
     split_production = fields.Boolean(
         string="Split Production",
-        states={'done': [('readonly', True)], 'cancel': [('readonly', True)]},
+        states={"done": [("readonly", True)], "cancel": [("readonly", True)]},
         help="If checked, the production will be splitted in two.",
     )
     is_planned = fields.Boolean(
