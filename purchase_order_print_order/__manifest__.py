@@ -3,7 +3,7 @@
 {
     "name": "Purchase Print Always Order",
     "summary": "Replase print RfQ button with print Order.",
-    "version": "14.0.1.0.0",
+    "version": "18.0.1.0.0",
     "category": "Purchases",
     "website": "https://github.com/efatto/e-efatto",
     "author": "Sergio Corato",
