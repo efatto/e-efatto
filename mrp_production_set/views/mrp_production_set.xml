@@ -22,6 +22,7 @@
                 <field name="create_date" />
                 <field name="production_left_id" />
                 <field name="production_right_id" />
+                <field name="state" widget="badge" />
             </tree>
         </field>
     </record>
@@ -40,14 +41,14 @@
             class="oe_highlight"
             attrs="{'invisible': [('state', '!=', 'draft')]}"
           />
-                <button
+                    <button
             name="button_plan"
             attrs="{'invisible': ['|', ('state', 'not in', ('confirmed', 'progress', 'to_close')), ('is_planned', '=', True)]}"
             type="object"
             string="Plan"
             class="oe_highlight"
           />
-                <button
+                    <button
             name="button_unplan"
             type="object"
             string="Unplan"
@@ -83,7 +84,10 @@
                     </group>
                     <group>
                         <group string="Production Left">
-                            <field name="production_left_id" context="{'mrp_production_set_display_name': True}"/>
+                            <field
+                name="production_left_id"
+                context="{'mrp_production_set_display_name': True}"
+              />
                             <field name="left_finished_product_id" readonly="1" />
                             <field name="workcenter_left_ids" widget="many2many_tags" />
                             <field name="qty_producing_left" />
@@ -101,7 +105,11 @@
                 domain="[('id', 'in', compatible_mrp_production_ids)] "
                 attrs="{'invisible': [('split_production', '=', True)]}"
               />
-                            <field name="right_finished_product_id" readonly="1" attrs="{'invisible': [('split_production', '=', True)]}"/>
+                            <field
+                name="right_finished_product_id"
+                readonly="1"
+                attrs="{'invisible': [('split_production', '=', True)]}"
+              />
                             <field
                 name="workcenter_right_ids"
                 widget="many2many_tags"

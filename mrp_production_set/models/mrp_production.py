@@ -87,7 +87,7 @@ class MrpProduction(models.Model):
         return workcenters
 
     def name_get(self):
-        if self.env.context.get('mrp_production_set_display_name'):
+        if self.env.context.get("mrp_production_set_display_name"):
             res = []
             for record in self:
                 name = f"{record.name} - {record.product_id.name}"
