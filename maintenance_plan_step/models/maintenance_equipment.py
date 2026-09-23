@@ -56,8 +56,7 @@ class MaintenanceEquipment(models.Model):
                     )
                     requests |= request_model.create(vals)
         for request in requests:
-            request.name = "%s - %s" % (
-                request.equipment_id.name,
-                request.maintenance_kind_id.name,
+            request.name = (
+                f"{request.equipment_id.name} - " f"{request.maintenance_kind_id.name}"
             )
         return requests
