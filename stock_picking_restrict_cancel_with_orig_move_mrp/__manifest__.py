@@ -3,7 +3,7 @@
 {
     "name": "Stock Picking Restrict Cancel in MRP with Original Moves",
     "summary": "Restrict cancellation of dest moves according to origin for MRP.",
-    "version": "14.0.1.0.0",
+    "version": "18.0.1.0.0",
     "category": "Warehouse",
     "website": "https://github.com/efatto/e-efatto",
     "author": "Sergio Corato",

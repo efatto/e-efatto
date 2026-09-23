@@ -1,47 +1,52 @@
-from odoo.tests.common import Form, TransactionCase
+from odoo.tests import Form
+
+from odoo.addons.base.tests.common import BaseCommon
 
 
-class TestRestrictCancelStockMove(TransactionCase):
-    def setUp(self):
-        super().setUp()
-        self.warehouse = self.env.ref("stock.warehouse0")
-        route_manufacture = self.warehouse.manufacture_pull_id.route_id
-        self.warehouse.mto_pull_id.route_id.active = True
-        route_mto = self.warehouse.mto_pull_id.route_id
-        self.uom_unit = self.env.ref("uom.product_uom_unit")
-        self.dummy_product = (
-            self.env["product.template"]
+class TestRestrictCancelStockMove(BaseCommon):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.warehouse = cls.env.ref("stock.warehouse0")
+        route_manufacture = cls.warehouse.manufacture_pull_id.route_id
+        cls.warehouse.mto_pull_id.route_id.active = True
+        route_mto = cls.warehouse.mto_pull_id.route_id
+        cls.uom_unit = cls.env.ref("uom.product_uom_unit")
+        cls.dummy_product = (
+            cls.env["product.template"]
             .create(
                 {
                     "name": "Dummy manufactured product",
-                    "type": "product",
+                    "type": "consu",
+                    "is_storable": True,
                     "sale_ok": True,
-                    "uom_id": self.uom_unit.id,
+                    "uom_id": cls.uom_unit.id,
                     "route_ids": [(6, 0, [route_manufacture.id, route_mto.id])],
                 }
             )
             .product_variant_ids
         )
-        self.product_raw_material = self.env["product.product"].create(
+        cls.product_raw_material = cls.env["product.product"].create(
             {
                 "name": "Raw Material",
-                "type": "product",
-                "uom_id": self.uom_unit.id,
+                "type": "consu",
+                "is_storable": True,
+                "uom_id": cls.uom_unit.id,
             }
         )
-        self.bom = self.env["mrp.bom"].create(
+        cls.bom = cls.env["mrp.bom"].create(
             {
-                "product_id": self.dummy_product.id,
-                "product_tmpl_id": self.dummy_product.product_tmpl_id.id,
+                "product_id": cls.dummy_product.id,
+                "product_tmpl_id": cls.dummy_product.product_tmpl_id.id,
                 "bom_line_ids": (
                     [
                         (
                             0,
                             0,
                             {
-                                "product_id": self.product_raw_material.id,
+                                "product_id": cls.product_raw_material.id,
                                 "product_qty": 1,
-                                "product_uom_id": self.uom_unit.id,
+                                "product_uom_id": cls.uom_unit.id,
                             },
                         ),
                     ]
@@ -65,7 +70,10 @@ class TestRestrictCancelStockMove(TransactionCase):
         self.assertTrue(production)
         production.action_confirm()
         self.assertEqual(production.state, "confirmed")
-        sale_order.action_cancel()
+        wizard = Form.from_action(self.env, sale_order.action_cancel()).save()
+        self.assertEqual(wizard._name, "sale.order.cancel")
+        wizard.action_cancel()
+        self.assertEqual(sale_order.state, "cancel")
         self.assertEqual(production.mapped("move_finished_ids.state")[0], "cancel")
         self.assertEqual(production.mapped("move_raw_ids.state")[0], "cancel")
         self.assertEqual(production.state, "cancel")
