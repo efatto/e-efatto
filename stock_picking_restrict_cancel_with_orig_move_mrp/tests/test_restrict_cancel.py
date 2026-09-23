@@ -3,7 +3,7 @@ from odoo.tests.common import Form, TransactionCase
 
 class TestRestrictCancelStockMove(TransactionCase):
     def setUp(self):
-        super(TestRestrictCancelStockMove, self).setUp()
+        super().setUp()
         self.warehouse = self.env.ref("stock.warehouse0")
         route_manufacture = self.warehouse.manufacture_pull_id.route_id
         self.warehouse.mto_pull_id.route_id.active = True
