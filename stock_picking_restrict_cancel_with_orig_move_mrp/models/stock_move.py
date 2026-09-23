@@ -5,7 +5,7 @@ class StockMove(models.Model):
     _inherit = "stock.move"
 
     def _action_cancel(self):
-        orig_moves = self.mapped("move_orig_ids")
+        orig_moves = self.move_orig_ids
         productions = orig_moves.mapped("production_id")
         if productions and all(
             production.state in ["cancel", "confirmed"] for production in productions
