@@ -6,7 +6,8 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-def pre_init_hook(cr):
+def pre_init_hook(env):
+    cr = env.cr
     _logger.info(
         "Store field maintenance_plan_horizon on maintenance.plan in "
         "maintenance_plan_horizon_max"

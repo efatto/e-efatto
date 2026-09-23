@@ -15,19 +15,19 @@
         <field name="model">maintenance.equipment</field>
         <field name="arch" type="xml">
             <xpath
-                expr="//field[@name='maintenance_plan_ids']/tree/field[@name='maintenance_plan_horizon']"
+                expr="//field[@name='maintenance_plan_ids']/list/field[@name='maintenance_plan_horizon']"
                 position="attributes"
             >
                 <attribute name="invisible">True</attribute>
             </xpath>
             <xpath
-                expr="//field[@name='maintenance_plan_ids']/tree/field[@name='planning_step']"
+                expr="//field[@name='maintenance_plan_ids']/list/field[@name='planning_step']"
                 position="attributes"
             >
                 <attribute name="invisible">True</attribute>
             </xpath>
             <xpath
-                expr="//field[@name='maintenance_plan_ids']/tree/field[@name='next_maintenance_date']"
+                expr="//field[@name='maintenance_plan_ids']/list/field[@name='next_maintenance_date']"
                 position="after"
             >
                 <field name="maintenance_plan_horizon_max" />
@@ -41,13 +41,13 @@
         <field name="model">maintenance.plan</field>
         <field name="arch" type="xml">
             <field name="maintenance_plan_horizon" position="attributes">
-                <attribute name="attrs">{'invisible': True}</attribute>
+                <attribute name="invisible">1</attribute>
             </field>
             <field name="planning_step" position="attributes">
-                <attribute name="attrs">{'invisible': True}</attribute>
+                <attribute name="invisible">1</attribute>
             </field>
             <label for="maintenance_plan_horizon" position="attributes">
-                <attribute name="attrs">{'invisible': True}</attribute>
+                <attribute name="invisible">1</attribute>
             </label>
             <xpath
                 expr="//field[@name='maintenance_plan_horizon']/ancestor::div"

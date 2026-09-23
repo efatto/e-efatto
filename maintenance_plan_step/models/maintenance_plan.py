@@ -1,20 +1,7 @@
 # Copyright 2021 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from dateutil.relativedelta import relativedelta
-
 from odoo import api, fields, models
-
-
-def get_relativedelta(interval, step):
-    if step == "day":
-        return relativedelta(days=interval)
-    elif step == "week":
-        return relativedelta(weeks=interval)
-    elif step == "month":
-        return relativedelta(months=interval)
-    elif step == "year":
-        return relativedelta(years=interval)
 
 
 class MaintenancePlan(models.Model):
@@ -69,16 +56,15 @@ class MaintenancePlan(models.Model):
             equipment = plan.equipment_id
             if equipment.maintenance_plan_horizon and equipment.maintenance_plan_step:
                 if plan.maintenance_plan_horizon_max and plan.planning_step_max:
-                    plan_horizon_date = fields.Date.from_string(
-                        fields.Date.today()
-                    ) + get_relativedelta(
+                    plan_horizon_date = fields.Date.today() + plan.get_relativedelta(
                         plan.maintenance_plan_horizon_max, plan.planning_step_max
                     )
-                    equipment_horizon_date = fields.Date.from_string(
+                    equipment_horizon_date = (
                         fields.Date.today()
-                    ) + get_relativedelta(
-                        equipment.maintenance_plan_horizon,
-                        equipment.maintenance_plan_step,
+                        + plan.get_relativedelta(
+                            equipment.maintenance_plan_horizon,
+                            equipment.maintenance_plan_step,
+                        )
                     )
                     if plan_horizon_date <= equipment_horizon_date:
                         plan.maintenance_plan_horizon = (
@@ -108,7 +94,7 @@ class MaintenancePlan(models.Model):
         ):
             # if the next maintenance date is in the past, set it in the future at the
             # first interval date
-            interval_timedelta = self.get_relativedelta(
+            interval_timedelta = plan.get_relativedelta(
                 plan.interval, plan.interval_step
             )
             next_date = plan.start_maintenance_date
