@@ -8,7 +8,10 @@
                 <field name="generic_date" />
                 <field name="generic_confirmation_date" />
             </xpath>
-            <xpath expr="/search/group/filter[@name='date']" position="after">
+            <xpath
+                expr="/search/group/filter[@name='group_by_date_day']"
+                position="after"
+            >
                 <filter
                     string="Order Date (with current year)"
                     name="generic_date"
