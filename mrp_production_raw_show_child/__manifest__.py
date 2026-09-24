@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 {
     "name": "Mrp production show created production in raw",
-    "version": "14.0.1.0.0",
+    "version": "18.0.1.0.0",
     "category": "Manufacture",
     "license": "AGPL-3",
     "summary": "Show created production on raw products.",
