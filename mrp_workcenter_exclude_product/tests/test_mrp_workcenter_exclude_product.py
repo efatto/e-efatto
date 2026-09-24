@@ -19,7 +19,7 @@ class TestMrpWorkcenterExcludeProduct(TestProductionData):
             workcenter = cls.env["mrp.workcenter"].create(
                 {
                     "name": f"Base Workcenter {i+1}",
-                    "capacity": 1,
+                    "default_capacity": 1,
                     "time_start": 10,
                     "time_stop": 5,
                     "time_efficiency": 80,
@@ -41,7 +41,7 @@ class TestMrpWorkcenterExcludeProduct(TestProductionData):
             mo_form.product_id = self.top_product
             mo_form.bom_id = self.main_bom
             mo_form.product_qty = 1
-            mo_form.date_planned_start = planned_date
+            mo_form.date_start = planned_date
             mo = mo_form.save()
             mo.action_confirm()
             mo.button_plan()
@@ -52,8 +52,8 @@ class TestMrpWorkcenterExcludeProduct(TestProductionData):
                 f"wrong workcenter {i}",
             )
             self.assertAlmostEqual(
-                mo.date_planned_start,
-                mo.workorder_ids.date_planned_start,
+                mo.date_start,
+                mo.workorder_ids.date_start,
                 delta=timedelta(seconds=10),
             )
 
@@ -67,7 +67,7 @@ class TestMrpWorkcenterExcludeProduct(TestProductionData):
             mo_form.product_id = self.top_product
             mo_form.bom_id = self.main_bom
             mo_form.product_qty = 1
-            mo_form.date_planned_start = planned_date
+            mo_form.date_start = planned_date
             mo = mo_form.save()
             mo.action_confirm()
             if wc == self.wc_alt_2:
@@ -85,7 +85,7 @@ class TestMrpWorkcenterExcludeProduct(TestProductionData):
                 f"wrong workcenter {i}",
             )
             self.assertAlmostEqual(
-                mo.date_planned_start,
-                mo.workorder_ids.date_planned_start,
+                mo.date_start,
+                mo.workorder_ids.date_start,
                 delta=timedelta(seconds=10),
             )
