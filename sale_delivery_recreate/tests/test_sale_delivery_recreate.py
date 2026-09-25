@@ -1,9 +1,11 @@
+from odoo import Command
 from odoo.tests import Form
-from odoo.tests.common import SavepointCase
 from odoo.tools import mute_logger
 
+from odoo.addons.base.tests.common import BaseCommon
 
-class TestSaleDeliveryRecreate(SavepointCase):
+
+class TestSaleDeliveryRecreate(BaseCommon):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -18,7 +20,7 @@ class TestSaleDeliveryRecreate(SavepointCase):
             {"name": "AAA", "email": "from.test@example.com"}
         )
         supplier_info_form = Form(cls.env["product.supplierinfo"])
-        supplier_info_form.name = vendor
+        supplier_info_form.partner_id = vendor
         supplier_info_form.price = 50
         supplier_info = supplier_info_form.save()
         route_buy = cls.env.ref("purchase_stock.route_warehouse0_buy")
@@ -28,9 +30,10 @@ class TestSaleDeliveryRecreate(SavepointCase):
         cls.product2 = cls.env["product.product"].create(
             {
                 "name": "Test Cabinet",
-                "type": "product",
-                "seller_ids": [(6, 0, [supplier_info.id])],
-                "route_ids": [(6, 0, [route_buy.id, route_mto.id])],
+                "type": "consu",
+                "is_storable": True,
+                "seller_ids": [Command.set(supplier_info.ids)],
+                "route_ids": [Command.set((route_buy | route_mto).ids)],
             }
         )
 
@@ -59,6 +62,8 @@ class TestSaleDeliveryRecreate(SavepointCase):
         order.delivery_recreate()
         self.assertEqual(len(order.picking_ids), 1)
         po = self.env["purchase.order"].search([("origin", "=", order.name)])
+        self.assertEqual(len(po.order_line), 1)
+        self.assertEqual(sum(po.mapped("order_line.product_uom_qty")), 10)
         self.assertEqual(sum(po.mapped("order_line.product_qty")), 10)
 
     def test_partial_picking_from_sale(self):
@@ -75,13 +80,13 @@ class TestSaleDeliveryRecreate(SavepointCase):
         order1 = order_form.save()
         order1.action_confirm()
         self.assertEqual(order1.state, "sale")
-        po1 = self.env["purchase.order"].search([("origin", "=", order1.name)])
-        self.assertEqual(sum(po1.mapped("order_line.product_qty")), 10)
+        po = self.env["purchase.order"].search([("origin", "=", order1.name)])
+        self.assertEqual(sum(po.mapped("order_line.product_qty")), 10)
         picking = order1.picking_ids[0]
-        self.assertEqual(sum(picking.mapped("move_lines.product_uom_qty")), 15)
-        picking.move_lines[0].move_line_ids[0].qty_done = 3
+        self.assertEqual(sum(picking.mapped("move_ids.product_qty")), 15)
+        picking.move_ids[0].quantity = 3
         res = picking.button_validate()
-        Form(self.env[res["res_model"]].with_context(res["context"])).save().process()
+        Form(self.env[res["res_model"]].with_context(**res["context"])).save().process()
         self.assertEqual(len(order1.picking_ids), 2)
         picking1 = order1.picking_ids - picking
         picking1.action_cancel()
@@ -89,8 +94,8 @@ class TestSaleDeliveryRecreate(SavepointCase):
         self.assertEqual(len(order1.picking_ids), 1)
         order1.delivery_recreate()
         self.assertEqual(len(order1.picking_ids), 2)
-        self.assertEqual(
-            sum(order1.picking_ids.mapped("move_lines.product_uom_qty")), 15
-        )
-        po1 = self.env["purchase.order"].search([("origin", "=", order1.name)])
-        self.assertEqual(sum(po1.mapped("order_line.product_qty")), 10)
+        self.assertEqual(sum(order1.picking_ids.mapped("move_ids.product_qty")), 15)
+        po = self.env["purchase.order"].search([("origin", "=", order1.name)])
+        self.assertEqual(len(po.order_line), 1)
+        self.assertEqual(sum(po.mapped("order_line.product_uom_qty")), 10)
+        self.assertEqual(sum(po.mapped("order_line.product_qty")), 10)
