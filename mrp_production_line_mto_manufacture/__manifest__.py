@@ -3,7 +3,7 @@
 {
     "name": "Production Group Line to Produce MTO",
     "summary": "Highlight line to produce MTO on MO components",
-    "version": "14.0.1.0.0",
+    "version": "18.0.1.0.0",
     "category": "MRP",
     "author": "Sergio Corato",
     "website": "https://github.com/efatto/e-efatto",
