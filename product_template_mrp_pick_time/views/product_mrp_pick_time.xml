@@ -34,7 +34,9 @@
                 <sheet string="MRP Product Pick Times">
                     <div class="oe_title">
                         <label for="name" class="oe_edit_only" />
-                        <h1><field name="name" /></h1>
+                        <h1>
+                            <field name="name" />
+                        </h1>
                     </div>
                     <group>
                         <group>
@@ -57,10 +59,9 @@
         <field name="view_mode">tree,form</field>
     </record>
     <menuitem
-    action="action_mrp_product_pick_time"
-    id="menu_mrp_product_pick_time"
-    parent="mrp.menu_mrp_bom"
-    sequence="16"
-  />
-
+        action="action_mrp_product_pick_time"
+        id="menu_mrp_product_pick_time"
+        parent="mrp.menu_mrp_bom"
+        sequence="16"
+    />
 </odoo>
