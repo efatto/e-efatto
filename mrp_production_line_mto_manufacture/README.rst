@@ -1,7 +1,3 @@
-.. image:: https://odoo-community.org/readme-banner-image
-   :target: https://odoo-community.org/get-involved?utm_source=readme
-   :alt: Odoo Community Association
-
 ====================================
 Production Group Line to Produce MTO
 ====================================
@@ -21,12 +17,13 @@ Production Group Line to Produce MTO
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-efatto%2Fe--efatto-lightgray.png?logo=github
-    :target: https://github.com/efatto/e-efatto/tree/14.0/mrp_production_line_mto_manufacture
+    :target: https://github.com/efatto/e-efatto/tree/18.0/mrp_production_line_mto_manufacture
     :alt: efatto/e-efatto
 
 |badge1| |badge2| |badge3|
 
-This module highlight production component when they are to produce and make to order.
+This module highlight production component when they are to produce and
+make to order.
 
 **Table of contents**
 
@@ -36,7 +33,8 @@ This module highlight production component when they are to produce and make to 
 Configuration
 =============
 
-Le righe della produzione sono evidenziate in grassetto quando il componente è da produrre su ordine e deve essere prodotto.
+Le righe della produzione sono evidenziate in grassetto quando il
+componente è da produrre su ordine e deve essere prodotto.
 
 Bug Tracker
 ===========
@@ -44,7 +42,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/efatto/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20mrp_production_line_mto_manufacture%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20mrp_production_line_mto_manufacture%0Aversion:%2018.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -52,17 +50,17 @@ Credits
 =======
 
 Authors
-~~~~~~~
+-------
 
 * Sergio Corato
 
 Contributors
-~~~~~~~~~~~~
+------------
 
-* Sergio Corato <https://github.com/sergiocorato>
+-  Sergio Corato <https://github.com/sergiocorato>
 
 Maintainers
-~~~~~~~~~~~
+-----------
 
 .. |maintainer-sergiocorato| image:: https://github.com/sergiocorato.png?size=40px
     :target: https://github.com/sergiocorato
@@ -72,6 +70,6 @@ Current maintainer:
 
 |maintainer-sergiocorato| 
 
-This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/14.0/mrp_production_line_mto_manufacture>`_ project on GitHub.
+This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/18.0/mrp_production_line_mto_manufacture>`_ project on GitHub.
 
 You are welcome to contribute.
