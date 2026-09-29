@@ -1,7 +1,3 @@
-.. image:: https://odoo-community.org/readme-banner-image
-   :target: https://odoo-community.org/get-involved?utm_source=readme
-   :alt: Odoo Community Association
-
 =======================
 MRP Production Calendar
 =======================
@@ -21,7 +17,7 @@ MRP Production Calendar
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-efatto%2Fe--efatto-lightgray.png?logo=github
-    :target: https://github.com/efatto/e-efatto/tree/14.0/mrp_production_calendar
+    :target: https://github.com/efatto/e-efatto/tree/18.0/mrp_production_calendar
     :alt: efatto/e-efatto
 
 |badge1| |badge2| |badge3|
@@ -41,26 +37,50 @@ This module add multiple views with calendar and timeline to production.
 Configuration
 =============
 
-Questo modulo permette di eseguire diversi ordini di lavoro in parallelo su diversi centri di lavoro.
-Non permette di farli sullo stesso centro di lavoro, come è previsto di default dal sistema originale.
+Questo modulo permette di eseguire diversi ordini di lavoro in parallelo
+su diversi centri di lavoro. Non permette di farli sullo stesso centro
+di lavoro, come è previsto di default dal sistema originale.
 
-La pianificazione degli ordini in parallelo parte dallo stesso momento e comunque prende la prima data disponibile presso il centro di lavoro dove è previsto vengano eseguiti. Il lavoro successivo viene pianificato alla fine dell'esecuzione dell'ultimo ordine di lavoro da eseguire in parallelo.
+La pianificazione degli ordini in parallelo parte dallo stesso momento e
+comunque prende la prima data disponibile presso il centro di lavoro
+dove è previsto vengano eseguiti. Il lavoro successivo viene pianificato
+alla fine dell'esecuzione dell'ultimo ordine di lavoro da eseguire in
+parallelo.
 
-Le quantità lavorate sugli ordini di lavoro in parallelo si intendono suddivise in maniera proporzionale, quindi se ci sono 2 lavorazioni parallele, si presume che lavorino il 50% dei prodotti ciascuna e il calcolo del tempo per lavorarli sarà il 50% della lavorazione totale. È possibile modificare nell'ordine di lavoro la quantità da eseguire, la cui somma dovrà comunque essere sempre il totale da lavorare.
+Le quantità lavorate sugli ordini di lavoro in parallelo si intendono
+suddivise in maniera proporzionale, quindi se ci sono 2 lavorazioni
+parallele, si presume che lavorino il 50% dei prodotti ciascuna e il
+calcolo del tempo per lavorarli sarà il 50% della lavorazione totale. È
+possibile modificare nell'ordine di lavoro la quantità da eseguire, la
+cui somma dovrà comunque essere sempre il totale da lavorare.
 
-Non c'è quindi bisogno di impostare ciascuno centro di lavoro con capacità 2 oppure con efficienza 200%, in quanto lo stesso centro di lavoro potrebbe essere utilizzato per altre attività non in parallelo, oppure in parallelo con un valore diverso (ad es. 3 lavorazioni in parallelo).
+Non c'è quindi bisogno di impostare ciascuno centro di lavoro con
+capacità 2 oppure con efficienza 200%, in quanto lo stesso centro di
+lavoro potrebbe essere utilizzato per altre attività non in parallelo,
+oppure in parallelo con un valore diverso (ad es. 3 lavorazioni in
+parallelo).
 
-Impostando il check `Lavorazione parallela` si abilita il campo `Centri di lavoro in parallelo` su cui, in base al numero di centri di lavoro scelti, verrà suddivisa la lavorazione. Nel caso in cui venga scelto un solo centro di lavoro, l'effetto sarà che la lavorazione verrà eseguita singolarmente, ma senza essere pianificata in maniera sequenziale con la lavorazione precedente.
+Impostando il check Lavorazione parallela si abilita il campo Centri di
+lavoro in parallelo su cui, in base al numero di centri di lavoro
+scelti, verrà suddivisa la lavorazione. Nel caso in cui venga scelto un
+solo centro di lavoro, l'effetto sarà che la lavorazione verrà eseguita
+singolarmente, ma senza essere pianificata in maniera sequenziale con la
+lavorazione precedente.
 
-Questo modulo aggiunge la vista timeline e il collegamento tra gli ordini di lavoro padri e quelli figli con una freccia visibile a video:
+Questo modulo aggiunge la vista timeline e il collegamento tra gli
+ordini di lavoro padri e quelli figli con una freccia visibile a video:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_calendar/static/description/timeline_ordini_lavoro.png
-    :alt: Timeline ordini di lavoro
+|Timeline ordini di lavoro|
 
-Aggiunge il campo data pianificata finale sulla produzione, calcolata dalla massima data pianificata finale sugli ordini di lavoro. Se non sono stati pianificati gli ordini di lavoro, la data finale non è impostata.
+Aggiunge il campo data pianificata finale sulla produzione, calcolata
+dalla massima data pianificata finale sugli ordini di lavoro. Se non
+sono stati pianificati gli ordini di lavoro, la data finale non è
+impostata.
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_calendar/static/description/timeline_produzione.png
-    :alt: Timeline produzioni
+|Timeline produzioni|
+
+.. |Timeline ordini di lavoro| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_production_calendar/static/description/timeline_ordini_lavoro.png
+.. |Timeline produzioni| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_production_calendar/static/description/timeline_produzione.png
 
 Bug Tracker
 ===========
@@ -68,7 +88,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/efatto/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20mrp_production_calendar%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20mrp_production_calendar%0Aversion:%2018.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -76,18 +96,18 @@ Credits
 =======
 
 Authors
-~~~~~~~
+-------
 
 * Sergio Corato
 
 Contributors
-~~~~~~~~~~~~
+------------
 
-* Sergio Corato <https://github.com/sergiocorato>
+-  Sergio Corato <https://github.com/sergiocorato>
 
 Maintainers
-~~~~~~~~~~~
+-----------
 
-This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/14.0/mrp_production_calendar>`_ project on GitHub.
+This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/18.0/mrp_production_calendar>`_ project on GitHub.
 
 You are welcome to contribute.

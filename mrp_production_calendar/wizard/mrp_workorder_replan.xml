@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-
     <record id="mrp_workorder_replan" model="ir.ui.view">
         <field name="name">mrp.workorder.replan.wizard</field>
         <field name="model">mrp.workorder.replan</field>
@@ -11,11 +10,11 @@
                 </div>
                 <footer>
                     <button
-            name="action_done"
-            string="Confirm"
-            type="object"
-            class="btn-primary"
-          />
+                        name="action_done"
+                        string="Confirm"
+                        type="object"
+                        class="btn-primary"
+                    />
                     <button string="Discard" special="cancel" class="btn-secondary" />
                 </footer>
             </form>
@@ -28,5 +27,4 @@
         <field name="binding_model_id" ref="mrp.model_mrp_workorder" />
         <field name="target">new</field>
     </record>
-
 </odoo>

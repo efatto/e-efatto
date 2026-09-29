@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-
     <record id="mrp_production_kanban_view" model="ir.ui.view">
         <field name="name">mrp.production.kanban</field>
         <field name="model">mrp.production</field>
@@ -29,18 +28,17 @@
         <field name="type">timeline</field>
         <field name="arch" type="xml">
             <timeline
-        date_start="date_planned_start"
-        date_stop="date_planned_finished_computed"
-        default_group_by="user_id"
-        event_open_popup="true"
-        mode="month"
-        dependency_arrow="previous_production_ids"
-      />
+                date_start="date_planned_start"
+                date_stop="date_planned_finished_computed"
+                default_group_by="user_id"
+                event_open_popup="true"
+                mode="month"
+                dependency_arrow="previous_production_ids"
+            />
         </field>
     </record>
 
     <record id="mrp.mrp_production_action" model="ir.actions.act_window">
         <field name="view_mode">tree,kanban,form,timeline,calendar,pivot,graph</field>
     </record>
-
 </odoo>
