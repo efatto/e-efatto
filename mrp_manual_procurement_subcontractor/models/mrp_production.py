@@ -80,7 +80,7 @@ class MrpProduction(models.Model):
 
     def action_confirm(self):
         # Block subcontractable productions.
-        # Make them only when proceed_to_production key is passed throught the context.
+        # Make them only when proceed_to_production key is passed through the context.
         # The bool is_subcontractable is changed to false when needed.
         self._check_company()
         production_todo = self
@@ -90,29 +90,10 @@ class MrpProduction(models.Model):
             production_todo = production_todo.filtered(
                 lambda x: not x.is_subcontractable
             )
+        res = True
         if production_todo:
-            # do only when subproduction is not confirmed
-            # proceed_to_production = self.env.context.get("proceed_to_production")
-            # changed_move = self.env["stock.move"]
-            # if not proceed_to_production:
-            #     # change the location of components to the default, to do not trigger
-            #     # the move to subcontracting location
-            #     for production in production_todo:
-            #         for move in production.move_raw_ids.filtered(
-            #             lambda x: x.location_id ==
-            #             production.company_id.subcontracting_location_id
-            #         ):
-            #             changed_move |= move
-            #             move.location_id = (
-            #                 production.picking_type_id.warehouse_id.lot_stock_id
-            #             )
-            super(MrpProduction, production_todo).action_confirm()
-            # if not proceed_to_production:
-            #     for production in production_todo:
-            #         for move in changed_move:
-            #             move.location_id = \
-            #             production.company_id.subcontracting_location_id
-        return True
+            res = super(MrpProduction, production_todo).action_confirm()
+        return res
 
     def button_proceed_to_production(self):
         self.write({"proceed_to_production": True})
@@ -134,20 +115,17 @@ class MrpProduction(models.Model):
                 "type": "ir.actions.act_window",
                 "name": "Mrp production",
                 "view_mode": "form",
-                "view_type": "form",
                 "res_id": mo_ids[0].id,
                 "views": [(False, "form")],
                 "res_model": "mrp.production",
                 "target": "current",
             }
-        else:
-            return {
-                "type": "ir.actions.act_window",
-                "name": "Mrp production",
-                "domain": [("id", "in", mo_ids.ids)],
-                "view_mode": "form",
-                "view_type": "tree",
-                "views": [(False, "tree")],
-                "res_model": "mrp.production",
-                "target": "current",
-            }
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Mrp production",
+            "domain": [("id", "in", mo_ids.ids)],
+            "view_mode": "list",
+            "views": [(False, "list")],
+            "res_model": "mrp.production",
+            "target": "current",
+        }

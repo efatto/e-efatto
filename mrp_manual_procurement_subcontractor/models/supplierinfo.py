@@ -5,7 +5,7 @@ class SupplierInfo(models.Model):
     _inherit = "product.supplierinfo"
 
     autoconfirm_purchase = fields.Boolean(
-        string="Autoconfirm Subc. PO",
-        help="Select this option to make the RdP for the subcontracted product directly"
-        " confirmed.",
+        string="Autoconfirm Subcontractor PO",
+        help="Select this option to confirm directly the request for quotation "
+        "generated for the subcontracted product.",
     )

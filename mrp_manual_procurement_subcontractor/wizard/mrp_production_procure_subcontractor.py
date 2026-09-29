@@ -12,7 +12,6 @@ class MrpProductionProcureSubcontractor(models.TransientModel):
     subcontractor_id = fields.Many2one(
         string="Subcontractor", comodel_name="res.partner"
     )
-    route_id = fields.Many2one(comodel_name="stock.location.route")
 
     @api.model
     def default_get(self, fields_list):
@@ -43,7 +42,7 @@ class MrpProductionProcureSubcontractor(models.TransientModel):
         replenish_wizard = (
             self.env["product.replenish"]
             .with_context(
-                subcontractor_id=self.subcontractor_id,
+                subcontractor_id=self.subcontractor_id.id,
                 origin=mo.name,
                 proceed_to_production=True,
             )
@@ -54,7 +53,7 @@ class MrpProductionProcureSubcontractor(models.TransientModel):
                     "product_uom_id": mo.product_uom_id.id,
                     "quantity": mo.product_qty,
                     "warehouse_id": mo.picking_type_id.warehouse_id.id,
-                    "route_ids": [(6, 0, buy_route.ids)],
+                    "route_id": buy_route.id,
                 }
             )
         )

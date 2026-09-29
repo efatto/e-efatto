@@ -13,13 +13,13 @@
                     name="button_proceed_to_production"
                     type="object"
                     string="Proceed To Production"
-                    attrs="{'invisible': ['|', ('is_subcontractable', '!=', True), ('state', '!=', 'draft')]}"
+                    invisible="(not is_subcontractable or state != 'draft')"
                 />
                 <button
                     name="%(action_procure_subcontractor)d"
                     type="action"
                     string="Procure from subcontractor"
-                    attrs="{'invisible': ['|', ('is_subcontractable', '!=', True), ('state', '!=', 'draft')]}"
+                    invisible="(not is_subcontractable or state != 'draft')"
                 />
             </xpath>
             <div class="oe_button_box" position="inside">
@@ -28,14 +28,14 @@
                     name="action_view_subcontracted_production_ids"
                     type="object"
                     icon="fa-wrench"
-                    attrs="{'invisible': [('subcontracted_production_count', '=', 0)]}"
+                    invisible="subcontracted_production_count == 0"
                 >
                     <field name="subcontracted_production_ids" invisible="1" />
                     <field
                         name="subcontracted_production_count"
                         widget="statinfo"
                         string="Subcontracted MO"
-                        help="Generated subcontrated productions"
+                        help="Generated subcontracted productions"
                     />
                 </button>
             </div>
