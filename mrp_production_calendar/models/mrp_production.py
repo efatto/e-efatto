@@ -1,4 +1,4 @@
-from odoo import _, api, fields, models
+from odoo import Command, _, api, fields, models
 from odoo.tools import float_compare
 
 
@@ -21,7 +21,7 @@ class MrpProduction(models.Model):
         for production in self:
             for operation in production.workorder_ids.mapped("operation_id"):
                 workorders = production.workorder_ids.filtered(
-                    lambda x: x.operation_id == operation
+                    lambda x, op=operation: x.operation_id == op
                     and x.operation_id.parallel_execution
                 )
                 workorders_qty_production = production.product_uom_id._compute_quantity(
@@ -35,14 +35,13 @@ class MrpProduction(models.Model):
                 ):
                     raise models.ValidationError(
                         _(
-                            "The sum of parallel qty production %s of all workorders "
-                            "created from operation %s of the production must be equal "
-                            "to the production original quantity %s."
-                        )
-                        % (
-                            workorders_qty_production,
-                            operation.name,
-                            production.product_qty,
+                            "The sum of parallel qty production %(wo)s of all "
+                            "workorders created from operation %(op)s of the "
+                            "production must be equal to the production original "
+                            "quantity %(qty)s.",
+                            wo=workorders_qty_production,
+                            op=operation.name,
+                            qty=production.product_qty,
                         )
                     )
 
@@ -56,46 +55,70 @@ class MrpProduction(models.Model):
         for production in self:
             production.previous_production_ids = production._get_children()
 
-    def _create_workorder(self):
-        # extend this method to create additional parallel workorders
-        res = super()._create_workorder()
-        workorders_values = []
+    @api.depends(
+        "bom_id.operation_ids.parallel_execution",
+        "bom_id.operation_ids.optional_parallel_workcenter_ids",
+    )
+    def _compute_workorder_ids(self):
+        # From 18.0 workorders are created by this computed field, so extend it
+        # to create an additional workorder for each optional parallel workcenter.
+        res = super()._compute_workorder_ids()
         for production in self:
-            if not production.bom_id:
+            if production.state != "draft" or not production.bom_id:
                 continue
-            for workorder in production.workorder_ids.filtered(
-                lambda x: x.operation_id.parallel_execution
-                and len(x.operation_id.optional_parallel_workcenter_ids) > 1
-            ):
-                workorder.write(
-                    {
-                        "workcenter_id": (
-                            workorder.operation_id.optional_parallel_workcenter_ids
-                        )[0].id,
-                        "parallel_qty_production": production.product_qty
-                        / len(workorder.operation_id.optional_parallel_workcenter_ids),
-                    }
+            commands = []
+            operations = production.workorder_ids.mapped("operation_id").filtered(
+                lambda op: op.parallel_execution
+                and len(op.optional_parallel_workcenter_ids) > 1
+            )
+            for operation in operations:
+                workcenters = operation.optional_parallel_workcenter_ids
+                workorders = production.workorder_ids.filtered(
+                    lambda wo, op=operation: wo.operation_id == op
                 )
-                for workcenter in (
-                    workorder.operation_id.optional_parallel_workcenter_ids
-                )[1:]:
-                    workorders_values += [
-                        {
-                            "name": workorder.operation_id.name,
-                            "sequence": workorder.sequence,
-                            "production_id": production.id,
-                            "workcenter_id": workcenter.id,
-                            "product_uom_id": production.product_uom_id.id,
-                            "operation_id": workorder.operation_id.id,
-                            "state": "pending",
-                            "consumption": production.consumption,
-                            "parallel_qty_production": production.product_qty
-                            / len(
-                                workorder.operation_id.optional_parallel_workcenter_ids
-                            ),
-                        }
-                    ]
-            production.workorder_ids = [(0, 0, value) for value in workorders_values]
+                qty = production.product_qty / len(workcenters)
+                used_workorders = self.env["mrp.workorder"].browse()
+                for workcenter in workcenters:
+                    workorder = (workorders - used_workorders).filtered(
+                        lambda wo, wc=workcenter: wo.workcenter_id == wc
+                    )[:1]
+                    if not workorder:
+                        # reuse a workorder whose workcenter is not in the
+                        # optional list, avoiding duplicates on recompute
+                        workorder = (workorders - used_workorders)[:1]
+                    if workorder:
+                        used_workorders |= workorder
+                        commands += [
+                            Command.update(
+                                workorder.id,
+                                {
+                                    "workcenter_id": workcenter.id,
+                                    "parallel_qty_production": qty,
+                                },
+                            )
+                        ]
+                    else:
+                        commands += [
+                            Command.create(
+                                {
+                                    "name": operation.name,
+                                    "sequence": workorders[:1].sequence or 1,
+                                    "production_id": production.id,
+                                    "workcenter_id": workcenter.id,
+                                    "product_uom_id": production.product_uom_id.id,
+                                    "operation_id": operation.id,
+                                    "state": "pending",
+                                    "consumption": production.consumption,
+                                    "parallel_qty_production": qty,
+                                }
+                            )
+                        ]
+                # drop possible surplus workorders of the same operation
+                commands += [
+                    Command.delete(wo.id) for wo in (workorders - used_workorders)
+                ]
+            if commands:
+                production.workorder_ids = commands
             for workorder in production.workorder_ids.filtered(
                 "parallel_qty_production"
             ):
@@ -116,16 +139,19 @@ class MrpProduction(models.Model):
             )._get_duration_expected()
 
     def _plan_workorders(self, replan=False):
-        parallel_workorders = self.workorder_ids.filtered(
-            lambda x: x.parallel_qty_production
-        )
+        res = super()._plan_workorders(replan=replan)
+        # From 18.0 the workorder dependencies are stored in `blocked_by_workorder_ids`
+        # / `needed_by_workorder_ids` and core links only one workorder per operation.
+        # Propagate the successors of the operation to every parallel workorder.
+        parallel_workorders = self.workorder_ids.filtered("parallel_qty_production")
         for operation_id in parallel_workorders.mapped("operation_id"):
-            # set the next_work_order_id to all parallel workorders
             operation_workorder_ids = parallel_workorders.filtered(
-                lambda x: x.operation_id == operation_id
+                lambda x, op=operation_id: x.operation_id == op
             )
-            next_workorder_id = operation_workorder_ids.mapped(
-                "next_work_order_id"
-            ).filtered(lambda x: x not in operation_workorder_ids)
-            operation_workorder_ids.write({"next_work_order_id": next_workorder_id.id})
-        return super()._plan_workorders(replan=replan)
+            next_workorder_ids = operation_workorder_ids.mapped(
+                "needed_by_workorder_ids"
+            ).filtered(lambda x, wp=operation_workorder_ids: x not in wp)
+            operation_workorder_ids.write(
+                {"needed_by_workorder_ids": [Command.set(next_workorder_ids.ids)]}
+            )
+        return res

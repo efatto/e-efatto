@@ -5,10 +5,10 @@ from odoo.tools import float_round
 
 class MrpWorkorder(models.Model):
     _inherit = "mrp.workorder"
-    _order = (
-        "sequence ASC, next_work_order_id DESC, date_planned_start ASC, "
-        "date_planned_finished ASC"
-    )
+    # _order = (
+    #     "sequence ASC, date_start ASC, "
+    #     "date_finished ASC"
+    # )
 
     previous_work_order_ids = fields.Many2many(
         comodel_name="mrp.workorder",
@@ -38,7 +38,7 @@ class MrpWorkorder(models.Model):
         "the expected duration of the workorder.",
     )
 
-    @api.depends("date_planned_finished", "date_planned_start", "state")
+    @api.depends("date_finished", "date_start", "state")
     def _compute_to_be_replanned(self):
         # todo 1: other logic depending on previous or next jobs?
         conflicted_dict = {}
@@ -46,14 +46,14 @@ class MrpWorkorder(models.Model):
             conflicted_dict = self._get_conflicted_workorder_ids()
         for wo in self:
             if (
-                wo.date_planned_finished
-                and wo.date_planned_finished < fields.Datetime.now()
+                wo.date_finished
+                and wo.date_finished < fields.Datetime.now()
                 and wo.state not in ["progress", "done", "cancel"]
             ):
                 wo.to_be_replanned = True
             elif (
-                wo.date_planned_start
-                and wo.date_planned_start < fields.Datetime.now()
+                wo.date_start
+                and wo.date_start < fields.Datetime.now()
                 and wo.state not in ["progress", "done", "cancel"]
             ):
                 wo.to_be_replanned = True
@@ -63,77 +63,61 @@ class MrpWorkorder(models.Model):
                 wo.to_be_replanned = False
 
     @api.depends(
-        "production_id.workorder_ids.next_work_order_id",
+        "production_id.workorder_ids.blocked_by_workorder_ids",
+        "production_id.workorder_ids.needed_by_workorder_ids",
         "production_id.workorder_ids.operation_id.parallel_execution",
     )
     def _compute_previous_work_order_ids(self):
         for workorder in self:
-            previous_work_order_ids = workorder.production_id.workorder_ids.filtered(
-                lambda w: w.next_work_order_id == workorder
-            )
+            previous_work_order_ids = workorder.blocked_by_workorder_ids
             for operation_id in previous_work_order_ids.mapped("operation_id").filtered(
                 "parallel_execution"
             ):
                 previous_work_order_ids |= (
                     workorder.production_id.workorder_ids.filtered(
-                        lambda w: w.operation_id == operation_id
+                        lambda w, op=operation_id: w.operation_id == op
                     )
                 )
             parallel_workorders = workorder.production_id.workorder_ids.filtered(
-                lambda wo: wo.operation_id == workorder.operation_id
+                lambda wo, work=workorder: wo.operation_id == work.operation_id
             )
             previous_work_order_ids |= workorder.production_id.workorder_ids.filtered(
-                lambda w: w.next_work_order_id in parallel_workorders
+                lambda w, pw=parallel_workorders: bool(w.needed_by_workorder_ids & pw)
             )
             workorder.previous_work_order_ids = previous_work_order_ids
 
-    def name_get(self):
+    @api.depends("production_id.workorder_ids")
+    def _compute_display_name(self):
         # call without super() as it is completely rewritten
-        res = []
         for wo in self:
             if len(wo.production_id.workorder_ids) == 1:
-                res.append(
-                    (
-                        wo.id,
-                        "%s [%s] [qty %s] %s"
-                        % (
-                            wo.production_id.name,
-                            wo.product_id.default_code,
-                            wo.production_id.product_qty,
-                            wo.name,
-                        ),
-                    )
+                wo.display_name = (
+                    f"{wo.production_id.name} [{wo.product_id.default_code}] "
+                    f"[qty {wo.production_id.product_qty}] {wo.name}"
                 )
             else:
-                res.append(
-                    (
-                        wo.id,
-                        "%s - %s [%s] [qty: %s] %s"
-                        % (
-                            wo.production_id.workorder_ids.ids.index(wo._origin.id) + 1,
-                            wo.production_id.name,
-                            wo.product_id.default_code,
-                            wo.production_id.product_qty,
-                            wo.name,
-                        ),
-                    )
+                wo.display_name = (
+                    f"{wo.production_id.workorder_ids.ids.index(wo._origin.id) + 1}"
+                    f" - {wo.production_id.name} "
+                    f"[{wo.product_id.default_code}] "
+                    f"[qty: {wo.production_id.product_qty}] "
+                    f"{wo.name}"
                 )
-        return res
 
     def write(self, values):
         # Enable changing the duration of a workorder. It will change the end date of
         # the production if it's the last workorder (default behavior).
-        initial_date_planned_finished = self and self[0].date_planned_finished
+        initial_date_finished = self and self[0].date_finished
         production_to_replan = self.mapped("production_id").filtered(
             lambda p: p.is_planned
         )
-        if "date_planned_start" in values or "date_planned_finished" in values:
+        if "date_start" in values or "date_finished" in values:
             for workorder in self:
                 start_date = fields.Datetime.to_datetime(
-                    values.get("date_planned_start", workorder.date_planned_start)
+                    values.get("date_start", workorder.date_start)
                 )
                 end_date = fields.Datetime.to_datetime(
-                    values.get("date_planned_finished", workorder.date_planned_finished)
+                    values.get("date_finished", workorder.date_finished)
                 )
                 if start_date and end_date and start_date > end_date:
                     raise UserError(
@@ -147,7 +131,7 @@ class MrpWorkorder(models.Model):
                 # todo without this code the user has some problems?
                 # if start_date and end_date:
                 #     computed_duration = workorder._calculate_duration_expected(
-                #         date_planned_start=start_date, date_planned_finished=end_date
+                #         date_start=start_date, date_finished=end_date
                 #     )
                 #     values["duration_expected"] = computed_duration
         res = super().write(values)
@@ -157,16 +141,14 @@ class MrpWorkorder(models.Model):
                 if values.get("parallel_qty_production"):
                     workorder.duration_expected = workorder._get_duration_expected()
         if (
-            initial_date_planned_finished
+            initial_date_finished
             and not self.env.context.get("skip_move")
             and not self.env.context.get("force_date")
             and "leave_id" not in values
             and self
-            and self[0].date_planned_finished
+            and self[0].date_finished
         ):
-            time_moved_finished = (
-                self[0].date_planned_finished - initial_date_planned_finished
-            )
+            time_moved_finished = self[0].date_finished - initial_date_finished
             if time_moved_finished and production_to_replan:
                 # this method replans only pending and ready workorders
                 production_to_replan._plan_workorders(replan=True)
@@ -195,7 +177,7 @@ class MrpWorkorder(models.Model):
             qty_production = self.env.context.get("parallel_qty_production")
         elif self.parallel_qty_production:
             qty_production = self.parallel_qty_production
-        cycle_number = qty_production / self.workcenter_id.capacity
+        cycle_number = qty_production / self.workcenter_id.default_capacity
         if alternative_workcenter:
             duration_expected_working = (
                 (
@@ -208,7 +190,9 @@ class MrpWorkorder(models.Model):
             )
             if duration_expected_working < 0:
                 duration_expected_working = 0
-            alternative_wc_cycle_nb = qty_production / alternative_workcenter.capacity
+            alternative_wc_cycle_nb = (
+                qty_production / alternative_workcenter.default_capacity
+            )
             return float_round(
                 alternative_workcenter.time_start
                 + alternative_workcenter.time_stop
