@@ -1,7 +1,3 @@
-.. image:: https://odoo-community.org/readme-banner-image
-   :target: https://odoo-community.org/get-involved?utm_source=readme
-   :alt: Odoo Community Association
-
 ====================================
 MRP Manual Procurement Subcontractor
 ====================================
@@ -21,12 +17,14 @@ MRP Manual Procurement Subcontractor
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-efatto%2Fe--efatto-lightgray.png?logo=github
-    :target: https://github.com/efatto/e-efatto/tree/14.0/mrp_manual_procurement_subcontractor
+    :target: https://github.com/efatto/e-efatto/tree/18.0/mrp_manual_procurement_subcontractor
     :alt: efatto/e-efatto
 
 |badge1| |badge2| |badge3|
 
-This module add the ability to choose if a production is done in-house or at a subcontractor, in case a product have a bom of type `subcontracted` and `Buy` and `Produce` route.
+This module add the ability to choose if a production is done in-house
+or at a subcontractor, in case a product have a bom of type
+subcontracted and Buy and Produce route.
 
 **Table of contents**
 
@@ -36,66 +34,87 @@ This module add the ability to choose if a production is done in-house or at a s
 Configuration
 =============
 
-Questo modulo permette di scegliere se continuare la produzione creata per un prodotto oppure rifornirlo presso un subappaltatore.
-Il prodotto richiesto deve avere sia il percorso di produzione (con una priorità superiore) che quello di acquisto (con una priorità inferiore), con una distinta base di produzione e una di subappalto oppure con una sola distinta di tipo subappalto con almeno due possibili subappaltatori.
-Alla creazione della produzione di un prodotto che ha queste caratteristiche non vengono più avviati gli approvvigionamenti dei componenti.
+Questo modulo permette di scegliere se continuare la produzione creata
+per un prodotto oppure rifornirlo presso un subappaltatore. Il prodotto
+richiesto deve avere sia il percorso di produzione (con una priorità
+superiore) che quello di acquisto (con una priorità inferiore), con una
+distinta base di produzione e una di subappalto oppure con una sola
+distinta di tipo subappalto con almeno due possibili subappaltatori.
+Alla creazione della produzione di un prodotto che ha queste
+caratteristiche non vengono più avviati gli approvvigionamenti dei
+componenti.
 
-Vengono quindi resi visibili due bottoni, che permettono, in alternativa, di proseguire con la produzione o di fermare la produzione e avviare l'acquisto presso un subappaltatore a scelta.
+Vengono quindi resi visibili due bottoni, che permettono, in
+alternativa, di proseguire con la produzione o di fermare la produzione
+e avviare l'acquisto presso un subappaltatore a scelta.
 
 Il primo bottone permette di proseguire normalmente la produzione:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/prosegui_la_produzione.png
-    :alt: Prosegui la produzione
+|Prosegui la produzione|
 
-Il secondo bottone permette di scegliere un subappaltatore a cui ordinare il prodotto, chiudendo contemporaneamente questa produzione:
+Il secondo bottone permette di scegliere un subappaltatore a cui
+ordinare il prodotto, chiudendo contemporaneamente questa produzione:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/acquista_da_subappaltatore.png
-    :alt: Acquista da subappaltatore
+|Acquista da subappaltatore|
 
-Si apre quindi una procedura che permette di scegliere tra i possibili subappaltatori. Alla conferma, la presente produzione sarà chiusa e sarà generato un ordine d'acquisto e una produzione verso il subappaltatore selezionato.
+Si apre quindi una procedura che permette di scegliere tra i possibili
+subappaltatori. Alla conferma, la presente produzione sarà chiusa e sarà
+generato un ordine d'acquisto e una produzione verso il subappaltatore
+selezionato.
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/scelta_subappaltatore.png
-    :alt: Scelta subappaltatore
+|Scelta subappaltatore|
 
-Nel caso ci siano prodotti subappaltati presso un singolo subappaltore, l'ordine di acquisto generato viene automaticamente confermato, sia che sia generato dalla rotta `Procura su Ordine` che da una regola di riordino.
+Nel caso ci siano prodotti subappaltati presso un singolo subappaltore,
+l'ordine di acquisto generato viene automaticamente confermato, sia che
+sia generato dalla rotta Procura su Ordine che da una regola di
+riordino.
 
-Il subappalto generato sarà quindi raggiungibile da un bottone sulla produzione annullata:
+Il subappalto generato sarà quindi raggiungibile da un bottone sulla
+produzione annullata:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/mo_in_subappalto.png
-    :alt: MO subappaltato
+|MO subappaltato|
 
-È stato aggiunto un bottone per aprire i trasferimenti da fare verso il subappaltatore direttamente dall'ordine di acquisto:
+È stato aggiunto un bottone per aprire i trasferimenti da fare verso il
+subappaltatore direttamente dall'ordine di acquisto:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/bottone_trasferimenti_subappaltatore.png
-    :alt: Bottone trasferimenti subappaltatore
+|Bottone trasferimenti subappaltatore|
 
-È stato inoltre aggiunto nel fornitore di un prodotto da acquistare tramite subappalto la possibilità di decidere se l'RdP generato debba essere o meno confermato automaticamente:
+È stato inoltre aggiunto nel fornitore di un prodotto da acquistare
+tramite subappalto la possibilità di decidere se l'RdP generato debba
+essere o meno confermato automaticamente:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/autoconferma_po_subappalto.png
-    :alt: Autoconferma acquisto da subappaltatore
+|Autoconferma acquisto da subappaltatore|
 
-La tipica procedura da seguire per modificare un prodotto da produrre internamente ad un prodotto che può avere entrambe le opzioni è:
+La tipica procedura da seguire per modificare un prodotto da produrre
+internamente ad un prodotto che può avere entrambe le opzioni è:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/1_duplicare_bom.png
-    :alt: 1_duplicare_bom
+|1_duplicare_bom|
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/2_inserire_percorsi_acquisto.png
-    :alt: 2_inserire_percorsi_acquisto
+|2_inserire_percorsi_acquisto|
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/3_aggiungere_acquistabile.png
-    :alt: 3_aggiungere_acquistabile
+|3_aggiungere_acquistabile|
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/4_forzare_ricalcolo.png
-    :alt: 4_forzare_ricalcolo
+|4_forzare_ricalcolo|
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/5_bottone_subappalto.png
-    :alt: 5_bottone_subappalto
+|5_bottone_subappalto|
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/6_acquisto_subappalto.png
-    :alt: 6_acquisto_subappalto
+|6_acquisto_subappalto|
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_manual_procurement_subcontractor/static/description/7_produzione_subappalto.png
-    :alt: 7_produzione_subappalto
+|7_produzione_subappalto|
+
+.. |Prosegui la produzione| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_manual_procurement_subcontractor/static/description/prosegui_la_produzione.png
+.. |Acquista da subappaltatore| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_manual_procurement_subcontractor/static/description/acquista_da_subappaltatore.png
+.. |Scelta subappaltatore| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_manual_procurement_subcontractor/static/description/scelta_subappaltatore.png
+.. |MO subappaltato| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_manual_procurement_subcontractor/static/description/mo_in_subappalto.png
+.. |Bottone trasferimenti subappaltatore| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_manual_procurement_subcontractor/static/description/bottone_trasferimenti_subappaltatore.png
+.. |Autoconferma acquisto da subappaltatore| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_manual_procurement_subcontractor/static/description/autoconferma_po_subappalto.png
+.. |1_duplicare_bom| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_manual_procurement_subcontractor/static/description/1_duplicare_bom.png
+.. |2_inserire_percorsi_acquisto| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_manual_procurement_subcontractor/static/description/2_inserire_percorsi_acquisto.png
+.. |3_aggiungere_acquistabile| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_manual_procurement_subcontractor/static/description/3_aggiungere_acquistabile.png
+.. |4_forzare_ricalcolo| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_manual_procurement_subcontractor/static/description/4_forzare_ricalcolo.png
+.. |5_bottone_subappalto| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_manual_procurement_subcontractor/static/description/5_bottone_subappalto.png
+.. |6_acquisto_subappalto| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_manual_procurement_subcontractor/static/description/6_acquisto_subappalto.png
+.. |7_produzione_subappalto| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_manual_procurement_subcontractor/static/description/7_produzione_subappalto.png
 
 Bug Tracker
 ===========
@@ -103,7 +122,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/efatto/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20mrp_manual_procurement_subcontractor%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20mrp_manual_procurement_subcontractor%0Aversion:%2018.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -111,18 +130,18 @@ Credits
 =======
 
 Authors
-~~~~~~~
+-------
 
 * Sergio Corato
 
 Contributors
-~~~~~~~~~~~~
+------------
 
-* Sergio Corato <https://github.com/sergiocorato>
+-  Sergio Corato <https://github.com/sergiocorato>
 
 Maintainers
-~~~~~~~~~~~
+-----------
 
-This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/14.0/mrp_manual_procurement_subcontractor>`_ project on GitHub.
+This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/18.0/mrp_manual_procurement_subcontractor>`_ project on GitHub.
 
 You are welcome to contribute.

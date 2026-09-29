@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-
     <record id="mrp_production_procure_subcontractor" model="ir.ui.view">
         <field name="name">mrp.production.procure.subcontractor</field>
         <field name="model">mrp.production.procure.subcontractor</field>
@@ -9,15 +8,15 @@
                 <div>
                     <group>
                         <field
-              name="subcontractor_ids"
-              widget="many2many_tags"
-              invisible="1"
-            />
+                            name="subcontractor_ids"
+                            widget="many2many_tags"
+                            invisible="1"
+                        />
                         <field
-              name="subcontractor_id"
-              domain="[('id', 'in', subcontractor_ids)]"
-              options="{'no_create_edit': True, 'no_quick_create': True}"
-            />
+                            name="subcontractor_id"
+                            domain="[('id', 'in', subcontractor_ids)]"
+                            options="{'no_create_edit': True, 'no_quick_create': True}"
+                        />
                     </group>
                 </div>
                 <div>
@@ -25,11 +24,11 @@
                 </div>
                 <footer>
                     <button
-            name="action_done"
-            string="Confirm"
-            type="object"
-            class="btn-primary"
-          />
+                        name="action_done"
+                        string="Confirm"
+                        type="object"
+                        class="btn-primary"
+                    />
                     <button string="Discard" special="cancel" class="btn-secondary" />
                 </footer>
             </form>
@@ -41,5 +40,4 @@
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>
-
 </odoo>
