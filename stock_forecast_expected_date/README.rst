@@ -1,7 +1,3 @@
-.. image:: https://odoo-community.org/readme-banner-image
-   :target: https://odoo-community.org/get-involved?utm_source=readme
-   :alt: Odoo Community Association
-
 ============================================
 Make stock forecast expected date searchable
 ============================================
@@ -21,7 +17,7 @@ Make stock forecast expected date searchable
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-efatto%2Fe--efatto-lightgray.png?logo=github
-    :target: https://github.com/efatto/e-efatto/tree/14.0/stock_forecast_expected_date
+    :target: https://github.com/efatto/e-efatto/tree/18.0/stock_forecast_expected_date
     :alt: efatto/e-efatto
 
 |badge1| |badge2| |badge3|
@@ -36,20 +32,30 @@ This module add searchable forecast date in picking and moves.
 Configuration
 =============
 
-Questo modulo aggiunge un filtro *Previsto in ritardo* sulla ricerca dei trasferimenti che mostra quelli in cui c'è almeno un movimento la cui data programmata sarà sforata in base al previsto arrivo del prodotto in magazzino:
+Questo modulo aggiunge un filtro *Previsto in ritardo* sulla ricerca dei
+trasferimenti che mostra quelli in cui c'è almeno un movimento la cui
+data programmata sarà sforata in base al previsto arrivo del prodotto in
+magazzino:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/stock_forecast_expected_date/static/description/filtro_previsto_ritardo.png
-    :alt: Filtro previsto ritardo
+|Filtro previsto ritardo|
 
-Aggiunge inoltre due campi: il primo è *Previsto arrivo in ritardo* che può essere usato negli oggetti *Trasferimento*, *Movimento di magazzino* e in oggetti superiori, tipo ordini di vendita, di acquisto, di produzione, ecc., tramite il filtro avanzato:
+Aggiunge inoltre due campi: il primo è *Previsto arrivo in ritardo* che
+può essere usato negli oggetti *Trasferimento*, *Movimento di magazzino*
+e in oggetti superiori, tipo ordini di vendita, di acquisto, di
+produzione, ecc., tramite il filtro avanzato:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/stock_forecast_expected_date/static/description/previsto_arrivo_ritardo.png
-    :alt: Filtro avanzato previsto arrivo in ritardo
+|Filtro avanzato previsto arrivo in ritardo|
 
-Il secondo è *Data attesa prevista* che può essere usato come il precedente negli oggetti *Trasferimento*, *Movimento di magazzino* e in oggetti superiori, tipo ordini di vendita, di acquisto, di produzione, ecc., tramite il filtro avanzato:
+Il secondo è *Data attesa prevista* che può essere usato come il
+precedente negli oggetti *Trasferimento*, *Movimento di magazzino* e in
+oggetti superiori, tipo ordini di vendita, di acquisto, di produzione,
+ecc., tramite il filtro avanzato:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/stock_forecast_expected_date/static/description/data_attesa_prevista.png
-    :alt: Filtro avanzato data attesa prevista
+|Filtro avanzato data attesa prevista|
+
+.. |Filtro previsto ritardo| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/stock_forecast_expected_date/static/description/filtro_previsto_ritardo.png
+.. |Filtro avanzato previsto arrivo in ritardo| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/stock_forecast_expected_date/static/description/previsto_arrivo_ritardo.png
+.. |Filtro avanzato data attesa prevista| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/stock_forecast_expected_date/static/description/data_attesa_prevista.png
 
 Bug Tracker
 ===========
@@ -57,7 +63,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/efatto/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20stock_forecast_expected_date%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20stock_forecast_expected_date%0Aversion:%2018.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -65,18 +71,18 @@ Credits
 =======
 
 Authors
-~~~~~~~
+-------
 
 * Sergio Corato
 
 Contributors
-~~~~~~~~~~~~
+------------
 
-* Sergio Corato <https://github.com/sergiocorato>
+-  Sergio Corato <https://github.com/sergiocorato>
 
 Maintainers
-~~~~~~~~~~~
+-----------
 
-This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/14.0/stock_forecast_expected_date>`_ project on GitHub.
+This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/18.0/stock_forecast_expected_date>`_ project on GitHub.
 
 You are welcome to contribute.
