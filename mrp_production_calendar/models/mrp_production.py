@@ -1,4 +1,4 @@
-from odoo import _, api, fields, models
+from odoo import Command, _, api, fields, models
 from odoo.tools import float_compare
 
 
@@ -21,7 +21,7 @@ class MrpProduction(models.Model):
         for production in self:
             for operation in production.workorder_ids.mapped("operation_id"):
                 workorders = production.workorder_ids.filtered(
-                    lambda x: x.operation_id == operation
+                    lambda x, op=operation: x.operation_id == op
                     and x.operation_id.parallel_execution
                 )
                 workorders_qty_production = production.product_uom_id._compute_quantity(
@@ -35,14 +35,13 @@ class MrpProduction(models.Model):
                 ):
                     raise models.ValidationError(
                         _(
-                            "The sum of parallel qty production %s of all workorders "
-                            "created from operation %s of the production must be equal "
-                            "to the production original quantity %s."
-                        )
-                        % (
-                            workorders_qty_production,
-                            operation.name,
-                            production.product_qty,
+                            "The sum of parallel qty production %(wo)s of all "
+                            "workorders created from operation %(op)s of the "
+                            "production must be equal to the production original "
+                            "quantity %(qty)s.",
+                            wo=workorders_qty_production,
+                            op=operation.name,
+                            qty=production.product_qty,
                         )
                     )
 
@@ -122,10 +121,12 @@ class MrpProduction(models.Model):
         for operation_id in parallel_workorders.mapped("operation_id"):
             # set the next_work_order_id to all parallel workorders
             operation_workorder_ids = parallel_workorders.filtered(
-                lambda x: x.operation_id == operation_id
+                lambda x, op=operation_id: x.operation_id == op
             )
-            next_workorder_id = operation_workorder_ids.mapped(
-                "next_work_order_id"
-            ).filtered(lambda x: x not in operation_workorder_ids)
-            operation_workorder_ids.write({"next_work_order_id": next_workorder_id.id})
+            next_workorder_ids = operation_workorder_ids.mapped(
+                "needed_by_workorder_ids"
+            ).filtered(lambda x, wp=operation_workorder_ids: x not in wp)
+            operation_workorder_ids.write(
+                {"blocked_by_workorder_ids": [Command.set(next_workorder_ids.ids)]}
+            )
         return super()._plan_workorders(replan=replan)

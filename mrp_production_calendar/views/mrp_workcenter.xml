@@ -1,31 +1,25 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <record id="mrp_routing_workcenter_template_form_view" model="ir.ui.view">
+    <record id="mrp_workcenter_form_view" model="ir.ui.view">
         <field name="name">mrp.routing.workcenter.form</field>
-        <field name="model">mrp.routing.workcenter.template</field>
-        <field
-            name="inherit_id"
-            ref="mrp_routing.mrp_routing_workcenter_template_form_view"
-        />
+        <field name="model">mrp.routing.workcenter</field>
+        <field name="inherit_id" ref="mrp.mrp_routing_workcenter_form_view" />
         <field name="arch" type="xml">
             <field name="workcenter_id" position="before">
                 <field name="parallel_execution" widget="boolean_toggle" />
                 <field
                     name="optional_parallel_workcenter_ids"
                     widget="many2many_tags"
-                    attrs="{'invisible': [('parallel_execution', '=', False)]}"
+                    invisible="not parallel_execution"
                 />
             </field>
         </field>
     </record>
 
-    <record id="mrp_routing_workcenter_template_tree_view" model="ir.ui.view">
-        <field name="name">mrp.routing.workcenter.tree</field>
-        <field name="model">mrp.routing.workcenter.template</field>
-        <field
-            name="inherit_id"
-            ref="mrp_routing.mrp_routing_workcenter_template_tree_view"
-        />
+    <record id="mrp_workcenter_tree_view" model="ir.ui.view">
+        <field name="name">mrp.routing.workcenter.list</field>
+        <field name="model">mrp.routing.workcenter</field>
+        <field name="inherit_id" ref="mrp.mrp_routing_workcenter_tree_view" />
         <field name="arch" type="xml">
             <field name="workcenter_id" position="before">
                 <field name="parallel_execution" widget="boolean_toggle" />
@@ -53,7 +47,7 @@
     </record>
 
     <record id="mrp_routing_workcenter_tree_view" model="ir.ui.view">
-        <field name="name">mrp.routing.workcenter.tree</field>
+        <field name="name">mrp.routing.workcenter.list</field>
         <field name="model">mrp.routing.workcenter</field>
         <field name="inherit_id" ref="mrp.mrp_routing_workcenter_tree_view" />
         <field name="arch" type="xml">
@@ -80,29 +74,23 @@
                     <a
                         name="action_compute_to_be_replanned"
                         type="object"
-                    >Check To Replan Orders</a>
+                    >Replan Orders</a>
                 </div>
             </div>
-            <xpath
-                expr="//div[hasclass('col-6', 'o_kanban_primary_right')]"
-                position="inside"
-            >
+            <xpath expr="//a[@name='action_work_order']/../.." position="inside">
                 <div
                     class="row"
                     t-if="record.wo_to_be_replanned_count.raw_value &gt; 0"
                 >
-                    <div class="col-8">
-                        <a
-                            name="action_work_order"
-                            type="object"
-                            context="{'search_default_to_be_replanned': 1}"
-                        >
-                            To Be Replanned
-                        </a>
-                    </div>
-                    <div class="col-4 text-right">
-                        <field name="wo_to_be_replanned_count" />
-                    </div>
+                    <a
+                        name="action_work_order"
+                        class="col-8"
+                        type="object"
+                        context="{'search_default_to_be_replanned': 1, 'desktop_list_view': 1}"
+                    >
+                        To Be Replanned
+                    </a>
+                    <field name="wo_to_be_replanned_count" />
                 </div>
             </xpath>
         </field>
