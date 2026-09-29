@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-
     <record id="mrp_production_form_view" model="ir.ui.view">
         <field name="name">mrp.production.form</field>
         <field name="model">mrp.production</field>
@@ -11,36 +10,35 @@
             </field>
             <xpath expr="//button[@name='button_mark_done']" position="before">
                 <button
-          name="button_proceed_to_production"
-          type="object"
-          string="Proceed To Production"
-          attrs="{'invisible': ['|', ('is_subcontractable', '!=', True), ('state', '!=', 'draft')]}"
-        />
+                    name="button_proceed_to_production"
+                    type="object"
+                    string="Proceed To Production"
+                    attrs="{'invisible': ['|', ('is_subcontractable', '!=', True), ('state', '!=', 'draft')]}"
+                />
                 <button
-          name="%(action_procure_subcontractor)d"
-          type="action"
-          string="Procure from subcontractor"
-          attrs="{'invisible': ['|', ('is_subcontractable', '!=', True), ('state', '!=', 'draft')]}"
-        />
+                    name="%(action_procure_subcontractor)d"
+                    type="action"
+                    string="Procure from subcontractor"
+                    attrs="{'invisible': ['|', ('is_subcontractable', '!=', True), ('state', '!=', 'draft')]}"
+                />
             </xpath>
             <div class="oe_button_box" position="inside">
                 <button
-          class="oe_stat_button"
-          name="action_view_subcontracted_production_ids"
-          type="object"
-          icon="fa-wrench"
-          attrs="{'invisible': [('subcontracted_production_count', '=', 0)]}"
-        >
+                    class="oe_stat_button"
+                    name="action_view_subcontracted_production_ids"
+                    type="object"
+                    icon="fa-wrench"
+                    attrs="{'invisible': [('subcontracted_production_count', '=', 0)]}"
+                >
                     <field name="subcontracted_production_ids" invisible="1" />
                     <field
-            name="subcontracted_production_count"
-            widget="statinfo"
-            string="Subcontracted MO"
-            help="Generated subcontrated productions"
-          />
+                        name="subcontracted_production_count"
+                        widget="statinfo"
+                        string="Subcontracted MO"
+                        help="Generated subcontrated productions"
+                    />
                 </button>
             </div>
         </field>
     </record>
-
 </odoo>
