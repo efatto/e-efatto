@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-
     <record id="view_picking_internal_search" model="ir.ui.view">
         <field name="name">view.picking.search.forecast</field>
         <field name="model">stock.picking</field>
@@ -12,13 +11,12 @@
             </field>
             <filter name="late" position="after">
                 <filter
-          name="expected_late"
-          string="Expected Late"
-          help="Scheduled date is not respected"
-          domain="[('forecast_expected_late', '=', True)]"
-        />
+                    name="expected_late"
+                    string="Expected Late"
+                    help="Scheduled date is not respected"
+                    domain="[('forecast_expected_late', '=', True)]"
+                />
             </filter>
         </field>
     </record>
-
 </odoo>
