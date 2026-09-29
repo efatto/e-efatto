@@ -21,7 +21,9 @@ class PurchaseOrder(models.Model):
 
     def action_view_subcontract_picking(self):
         pickings = self.mapped("subcontract_production_picking_ids")
-        action = self.env.ref("stock.action_picking_tree_all").read()[0]
+        action = self.env["ir.actions.act_window"]._for_xml_id(
+            "stock.action_picking_tree_all"
+        )
         if len(pickings) > 1:
             action["domain"] = [("id", "in", pickings.ids)]
         elif len(pickings) == 1:

@@ -10,7 +10,7 @@
                     type="object"
                     class="oe_stat_button"
                     icon="fa-truck"
-                    attrs="{'invisible': [('subcontract_production_picking_count', '=', 0)]}"
+                    invisible="subcontract_production_picking_count == 0"
                 >
                     <field name="subcontract_production_picking_ids" invisible="1" />
                     <field
