@@ -12,10 +12,10 @@ class StockPicking(models.Model):
     _inherit = "stock.picking"
 
     forecast_expected_date = fields.Datetime(
-        related="move_lines.forecast_expected_date",
+        related="move_ids.forecast_expected_date",
     )
     forecast_expected_late = fields.Boolean(
-        related="move_lines.forecast_expected_late",
+        related="move_ids.forecast_expected_late",
     )
 
 
@@ -24,7 +24,6 @@ class StockMove(models.Model):
 
     forecast_expected_date = fields.Datetime(search="_search_forecast_expected_date")
     forecast_expected_late = fields.Boolean(
-        string="Forecast Expected Late",
         compute="_compute_forecast_information",
         compute_sudo=True,
         search="_search_forecast_expected_late",
@@ -51,11 +50,11 @@ class StockMove(models.Model):
         product_moves = self.search(
             [
                 ("state", "not in", ["cancel", "done"]),
-                ("product_id.type", "=", "product"),
+                ("product_id.type", "=", "consu"),
             ]
         )
         warehouse_by_location = {
-            loc: loc.get_warehouse() for loc in product_moves.location_id
+            loc: loc.warehouse_id for loc in product_moves.location_id
         }
 
         outgoing_unreserved_moves_per_warehouse = defaultdict(
