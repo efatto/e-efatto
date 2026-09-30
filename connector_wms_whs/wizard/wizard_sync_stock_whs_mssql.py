@@ -113,7 +113,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     ("default_code", "=", stock_product),
                     ("type", "=", "consu"),
                     ("exclude_from_whs", "!=", True),
-                    ("is_kit", "!=", True),
+                    ("is_kits", "!=", True),
                 ]
             )
             # if it is a service, only log but do not create inventory line
@@ -123,7 +123,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         ("default_code", "=", stock_product),
                         ("type", "!=", "consu"),
                         ("exclude_from_whs", "!=", True),
-                        ("is_kit", "!=", True),
+                        ("is_kits", "!=", True),
                     ]
                 )
                 if not product:
