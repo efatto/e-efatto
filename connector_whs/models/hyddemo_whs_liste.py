@@ -94,15 +94,16 @@ class HyddemoWhsListe(models.Model):
 
     @api.constrains("tipo_mov")
     def _check_tipo_mov(self):
-        if self.tipo_mov not in [
-            "mrpin",
-            "mrpout",
-            "move",
-            "noback",
-            "ripin",
-            "ripout",
-        ]:
-            raise UserError(_("Invalid tipo_mov value"))
+        for rec in self:
+            if rec.tipo_mov not in [
+                "mrpin",
+                "mrpout",
+                "move",
+                "noback",
+                "ripin",
+                "ripout",
+            ]:
+                raise UserError(_("Invalid tipo_mov value"))
 
     client_order_ref = fields.Text()  # size=50)
     product_customer_code = fields.Char(size=250)
