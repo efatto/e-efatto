@@ -12,7 +12,7 @@
                     name="managed_replenishment_cost"
                     widget="monetary"
                     options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
-                    attrs="{'invisible': [('product_variant_count', '>', 1), ('is_product_variant', '=', False)]}"
+                    invisible="product_variant_count &gt; 1 and not is_product_variant"
                 />
             </xpath>
         </field>
