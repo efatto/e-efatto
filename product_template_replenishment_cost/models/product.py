@@ -8,7 +8,6 @@ class ProductTemplate(models.Model):
     _inherit = "product.template"
 
     managed_replenishment_cost = fields.Float(
-        string="Managed replenishment cost",
         digits="Product Price",
         compute="_compute_managed_replenishment_cost",
         inverse="_inverse_managed_replenishment_cost",
