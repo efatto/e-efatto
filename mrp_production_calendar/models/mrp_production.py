@@ -1,0 +1,132 @@
+from odoo import Command, _, api, fields, models
+from odoo.tools import float_compare
+
+
+class MrpProduction(models.Model):
+    _inherit = "mrp.production"
+
+    previous_production_ids = fields.Many2many(
+        comodel_name="mrp.production",
+        relation="mrp_production_previous_rel",
+        column1="production_id",
+        column2="previous_production_id",
+        compute="_compute_previous_production_ids",
+        store=True,
+        help="Previous production of the current one, which are the children as the "
+        "components are created before the current one.",
+    )
+
+    @api.constrains("workorder_ids")
+    def check_parallel_qty_production(self):
+        for production in self:
+            for operation in production.workorder_ids.mapped("operation_id"):
+                workorders = production.workorder_ids.filtered(
+                    lambda x, op=operation: x.operation_id == op
+                    and x.operation_id.parallel_execution
+                )
+                workorders_qty_production = production.product_uom_id._compute_quantity(
+                    sum(workorders.mapped("parallel_qty_production")),
+                    production.product_id.uom_id,
+                )
+                if workorders and float_compare(
+                    workorders_qty_production,
+                    production.product_qty,
+                    precision_digits=0,
+                ):
+                    raise models.ValidationError(
+                        _(
+                            "The sum of parallel qty production %(wo)s of all "
+                            "workorders created from operation %(op)s of the "
+                            "production must be equal to the production original "
+                            "quantity %(qty)s.",
+                            wo=workorders_qty_production,
+                            op=operation.name,
+                            qty=production.product_qty,
+                        )
+                    )
+
+    @api.depends(
+        "procurement_group_id.stock_move_ids.created_production_id.procurement_group_id.mrp_production_ids",  # noqa: B950
+        "procurement_group_id.stock_move_ids.move_orig_ids.created_production_id.procurement_group_id.mrp_production_ids",  # noqa: B950
+    )
+    def _compute_previous_production_ids(self):
+        # Productions are generated from the more external to the more internal, so the
+        # children are the previous ones.
+        for production in self:
+            production.previous_production_ids = production._get_children()
+
+    def _create_workorder(self):
+        # extend this method to create additional parallel workorders
+        res = super()._create_workorder()
+        workorders_values = []
+        for production in self:
+            if not production.bom_id:
+                continue
+            for workorder in production.workorder_ids.filtered(
+                lambda x: x.operation_id.parallel_execution
+                and len(x.operation_id.optional_parallel_workcenter_ids) > 1
+            ):
+                workorder.write(
+                    {
+                        "workcenter_id": (
+                            workorder.operation_id.optional_parallel_workcenter_ids
+                        )[0].id,
+                        "parallel_qty_production": production.product_qty
+                        / len(workorder.operation_id.optional_parallel_workcenter_ids),
+                    }
+                )
+                for workcenter in (
+                    workorder.operation_id.optional_parallel_workcenter_ids
+                )[1:]:
+                    workorders_values += [
+                        {
+                            "name": workorder.operation_id.name,
+                            "sequence": workorder.sequence,
+                            "production_id": production.id,
+                            "workcenter_id": workcenter.id,
+                            "product_uom_id": production.product_uom_id.id,
+                            "operation_id": workorder.operation_id.id,
+                            "state": "pending",
+                            "consumption": production.consumption,
+                            "parallel_qty_production": production.product_qty
+                            / len(
+                                workorder.operation_id.optional_parallel_workcenter_ids
+                            ),
+                        }
+                    ]
+            production.workorder_ids = [(0, 0, value) for value in workorders_values]
+            for workorder in production.workorder_ids.filtered(
+                "parallel_qty_production"
+            ):
+                workorder.duration_expected = workorder._get_duration_expected()
+        return res
+
+    @api.onchange("product_qty")
+    def _onchange_product_qty_for_workorder(self):
+        for workorder in self.workorder_ids.filtered(
+            lambda x: x.parallel_qty_production
+            and len(x.operation_id.optional_parallel_workcenter_ids) > 1
+        ):
+            workorder.parallel_qty_production = workorder.qty_production / len(
+                workorder.operation_id.optional_parallel_workcenter_ids
+            )
+            workorder.duration_expected = workorder.with_context(
+                parallel_qty_production=workorder.parallel_qty_production
+            )._get_duration_expected()
+
+    def _plan_workorders(self, replan=False):
+        parallel_workorders = self.workorder_ids.filtered(
+            lambda x: x.parallel_qty_production
+        )
+        for operation_id in parallel_workorders.mapped("operation_id"):
+            # set the next_work_order_id to all parallel workorders
+            operation_workorder_ids = parallel_workorders.filtered(
+                lambda x, op=operation_id: x.operation_id == op
+            )
+            next_workorder_ids = operation_workorder_ids.mapped(
+                "needed_by_workorder_ids"
+            ).filtered(lambda x, wp=operation_workorder_ids: x not in wp)
+            operation_workorder_ids.write(
+                {"blocked_by_workorder_ids": [Command.set(next_workorder_ids.ids)]}
+            )
+        return super()._plan_workorders(replan=replan)

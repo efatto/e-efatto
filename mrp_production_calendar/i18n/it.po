@@ -1,0 +1,273 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* mrp_production_calendar
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-29 10:36+0000\n"
+"PO-Revision-Date: 2025-07-29 10:36+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workcenter__wo_to_be_replanned_count
+msgid "# Workorder To Be Replanned"
+msgstr "# Ordini da Ripianificare"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_routing_workcenter__parallel_execution
+#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_routing_workcenter_template__parallel_execution
+msgid "Allows to execute the workorder in parallel with other workorders."
+msgstr "Esegue l'ordine di lavoro in parallelo con altri ordini di lavoro."
+
+#. module: mrp_production_calendar
+#: model_terms:ir.ui.view,arch_db:mrp_production_calendar.mrp_workorder_replan
+msgid "Are you sure you want to replan all selected workorders?"
+msgstr "Sei sicuro di voler ripianificare tutti gli ordini di lavoro selezionati?"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_production__assigned_attachment_ids
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing_workcenter__assigned_attachment_ids
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing_workcenter_template__assigned_attachment_ids
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workcenter__assigned_attachment_ids
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder__assigned_attachment_ids
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder_replan__assigned_attachment_ids
+msgid "Assigned Attachments"
+msgstr "Allegati assegnati"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_workorder__to_be_replanned
+msgid ""
+"Cases:\n"
+" 1. the estimated finished date has been overcome and the workorder is not 'in progress' or 'done' or 'cancelled'; 2. the planned start date has been overcome and the workorder is not 'in progress' or 'done' or 'cancelled'; 3. the workorder is planned to be done in the same time of other workorders and is in state 'pending' or 'ready'."
+msgstr ""
+"Casi:\n"
+" 1. la data di fine prevista è stata superata e l'ordine di lavoro non è 'in corso' o 'completato' o 'cancellato'; 2. la data di inizio prevista è stata superata e l'ordine di lavoro non è in stato 'in corso' o 'completato' o 'cancellato'; 3. l'ordine di lavoro è pianificato per l'esecuzione in contemporanea con altri ordini di lavoro ed è in stato 'in attesa' o 'pronto'."
+
+#. module: mrp_production_calendar
+#: model_terms:ir.ui.view,arch_db:mrp_production_calendar.mrp_workcenter_kanban
+msgid "Check To Replan Orders"
+msgstr "Controlla Piano Ordini"
+
+#. module: mrp_production_calendar
+#: model_terms:ir.ui.view,arch_db:mrp_production_calendar.mrp_workorder_replan
+msgid "Confirm"
+msgstr "Conferma"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder_replan__create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder_replan__create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: mrp_production_calendar
+#: model_terms:ir.ui.view,arch_db:mrp_production_calendar.mrp_workorder_replan
+msgid "Discard"
+msgstr "Annulla"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_production__display_name
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing_workcenter__display_name
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing_workcenter_template__display_name
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workcenter__display_name
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder__display_name
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder_replan__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing_workcenter__parallel_execution
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing_workcenter_template__parallel_execution
+msgid "Enable Parallel Execution"
+msgstr "Abilita esecuzione in parallelo"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_production__id
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing_workcenter__id
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing_workcenter_template__id
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workcenter__id
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder__id
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder_replan__id
+msgid "ID"
+msgstr ""
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_production____last_update
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing_workcenter____last_update
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing_workcenter_template____last_update
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workcenter____last_update
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder____last_update
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder_replan____last_update
+msgid "Last Modified on"
+msgstr "Ultima modifica il"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder_replan__write_uid
+msgid "Last Updated by"
+msgstr "Ultimo aggiornamento da"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder_replan__write_date
+msgid "Last Updated on"
+msgstr "Ultimo aggiornamento il"
+
+#. module: mrp_production_calendar
+#: model:ir.ui.menu,name:mrp_production_calendar.menu_mrp_workcenter_dashboard
+msgid "MRP Overview"
+msgstr "Panoramica"
+
+#. module: mrp_production_calendar
+#: model:ir.model,name:mrp_production_calendar.model_mrp_workorder_replan
+msgid "Mrp Workorder Replan"
+msgstr "Ripianifica ordini di lavoro"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_workcenter__wo_to_be_replanned_count
+msgid "Number of workorders that have to be replanned."
+msgstr "Numero di ordini di lavoro che devono essere ripianificati."
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing_workcenter__optional_parallel_workcenter_ids
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_routing_workcenter_template__optional_parallel_workcenter_ids
+msgid "Optional Parallel Workcenters"
+msgstr "Centri di lavoro in parallelo opzionali"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder__parallel_qty_production
+msgid "Parallel Quantity"
+msgstr "Quantità in parallelo"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_production__previous_production_ids
+msgid "Previous Production"
+msgstr "Produzioni precedenti"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder__previous_work_order_ids
+msgid "Previous Work Order"
+msgstr "Ordini di lavoro precedenti"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_production__previous_production_ids
+msgid ""
+"Previous production of the current one, which are the children as the "
+"components are created before the current one."
+msgstr ""
+"Le produzioni precedenti a quella corrente, che sono i figli dato che i "
+"componenti sono creati prima di quella corrente."
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_workorder__previous_work_order_ids
+msgid "Previous workorder of the current one"
+msgstr "Ordini di lavoro precedenti di quello corrente"
+
+#. module: mrp_production_calendar
+#: model:ir.actions.server,name:mrp_production_calendar.ir_cron_mrp_production_calendar_ir_actions_server
+#: model:ir.cron,cron_name:mrp_production_calendar.ir_cron_mrp_production_calendar
+#: model:ir.cron,name:mrp_production_calendar.ir_cron_mrp_production_calendar
+msgid "Production Calendar - update to be replanned workorders"
+msgstr "Calendario produzione - aggiorna per ripianificare gli ordini di lavoro"
+
+#. module: mrp_production_calendar
+#: model:ir.model,name:mrp_production_calendar.model_mrp_production
+msgid "Production Order"
+msgstr "Ordine di produzione"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_workorder__origin
+msgid ""
+"Reference of the document that generated this production order request."
+msgstr ""
+"Riferimento del documento che ha generato la richiesta ordine di questa "
+"produzione."
+
+#. module: mrp_production_calendar
+#: model:ir.actions.act_window,name:mrp_production_calendar.action_replan_workorder
+msgid "Replan workorder"
+msgstr "Ripianifica ordini di lavoro"
+
+#. module: mrp_production_calendar
+#: model_terms:ir.ui.view,arch_db:mrp_production_calendar.mrp_workorder_replan
+msgid "Replan workorders"
+msgstr "Ripianifica ordini di lavoro"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder__origin
+msgid "Source"
+msgstr "Origine"
+
+#. module: mrp_production_calendar
+#: model:ir.model,name:mrp_production_calendar.model_mrp_routing_workcenter_template
+msgid "Template Work Center Usage"
+msgstr "Modello uso centri di lavoro"
+
+#. module: mrp_production_calendar
+#: code:addons/mrp_production_calendar/models/mrp_workorder.py:0
+#, python-format
+msgid ""
+"The planned end date of the work order cannot be prior to the planned start "
+"date, please correct this to save the work order."
+msgstr ""
+"La data di fine pianificata dell'ordine di lavoro non può essere precedente "
+"alla data pianificata di inizio, si prega di correggere per proseguire."
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,help:mrp_production_calendar.field_mrp_workorder__parallel_qty_production
+msgid ""
+"The quantity of the product to be produced in parallel with other "
+"workorders. The sum of all parallel production quantities must be equal to "
+"the production original quantity. This field is only used to compute the "
+"expected duration of the workorder."
+msgstr ""
+"La quantità del prodotto da produrre in parallelo con altri ordini di "
+"lavoro. La somma di tutte le quantità prodotte in parallelo deve essere "
+"uguale alla quantità da produrre originaria. Questo campo è usato solo per "
+"calcolare la durata prevista dell'ordine di lavoro."
+
+#. module: mrp_production_calendar
+#: code:addons/mrp_production_calendar/models/mrp_production.py:0
+#, python-format
+msgid ""
+"The sum of parallel qty production %s of all workorders created from "
+"operation %s of the production must be equal to the production original "
+"quantity %s."
+msgstr ""
+"La somma delle quantità da produrre in parallelo %s di tutti gli ordini di "
+"lavoro creati dall'operazione %s della produzione, deve essere uguale alla "
+"quantità originale della produzione %s."
+
+#. module: mrp_production_calendar
+#: model_terms:ir.ui.view,arch_db:mrp_production_calendar.mrp_workcenter_kanban
+#: model_terms:ir.ui.view,arch_db:mrp_production_calendar.view_mrp_production_work_order_search
+msgid "To Be Replanned"
+msgstr "Da Ripianificare"
+
+#. module: mrp_production_calendar
+#: model:ir.model.fields,field_description:mrp_production_calendar.field_mrp_workorder__to_be_replanned
+msgid "To be replanned or set to done."
+msgstr "Da ripianificare o marcare completato."
+
+#. module: mrp_production_calendar
+#: model:ir.model,name:mrp_production_calendar.model_mrp_workcenter
+msgid "Work Center"
+msgstr "Centro di lavoro"
+
+#. module: mrp_production_calendar
+#: model:ir.model,name:mrp_production_calendar.model_mrp_routing_workcenter
+msgid "Work Center Usage"
+msgstr "Uso centro di lavoro"
+
+#. module: mrp_production_calendar
+#: model:ir.model,name:mrp_production_calendar.model_mrp_workorder
+msgid "Work Order"
+msgstr "Ordine di lavoro"
