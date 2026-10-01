@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_product_template_form" model="ir.ui.view">
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view" />
+        <field name="arch" type="xml">
+            <xpath
+                expr="//group[@name='group_standard_price']/label[@for='standard_price']"
+                position="before"
+            >
+                <field
+                    name="direct_cost"
+                    widget="monetary"
+                    options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
+                    invisible="product_variant_count &gt; 1"
+                />
+                <field
+                    name="adjustment_cost"
+                    widget="monetary"
+                    options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
+                    invisible="product_variant_count &gt; 1"
+                />
+                <field
+                    name="testing_cost"
+                    widget="monetary"
+                    options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
+                    invisible="product_variant_count &gt; 1"
+                />
+                <field
+                    name="landed_cost"
+                    widget="monetary"
+                    options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
+                    invisible="product_variant_count &gt; 1"
+                />
+            </xpath>
+            <xpath expr="//label[@for='standard_price']" position="attributes">
+                <attribute name="string">Landed with depreciation/testing</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="product_template_tree_view" model="ir.ui.view">
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_tree_view" />
+        <field name="arch" type="xml">
+            <field name="standard_price" position="after">
+                <field name="direct_cost" optional="show" />
+                <field name="landed_cost" optional="show" />
+            </field>
+        </field>
+    </record>
+</odoo>
