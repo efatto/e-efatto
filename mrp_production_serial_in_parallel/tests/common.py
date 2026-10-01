@@ -1,7 +1,7 @@
 # Copyright 2026 Simone Rubino - PyTech
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import tests
+from odoo import Command, tests
 
 from odoo.addons.base.tests.common import BaseCommon
 
@@ -10,7 +10,7 @@ class Common(BaseCommon):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.stock_location = cls.env.ref("stock.stock_location_stock")
+        cls.stock_location = cls.env.ref("stock.stock_location_stock")  # noqa
 
         cls.serial_product = cls.env["product.product"].create(
             {
@@ -67,10 +67,16 @@ class Common(BaseCommon):
         bom_form.product_id = cls.serial_product
         with bom_form.bom_line_ids.new() as line:
             line.product_id = cls.serial_component
-        with bom_form.operation_ids.new() as operation:
-            operation.name = "Test operation"
-            operation.workcenter_id = cls.workcenter
         cls.bom = bom_form.save()
+        cls.bom.write(
+            {
+                "operation_ids": [
+                    Command.create(
+                        {"name": "Test operation", "workcenter_id": cls.workcenter.id}
+                    )
+                ]
+            }
+        )
 
         production_form = tests.Form(cls.env["mrp.production"])
         production_form.product_id = cls.serial_product
