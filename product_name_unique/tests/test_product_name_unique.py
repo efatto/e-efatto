@@ -1,14 +1,19 @@
 from odoo.exceptions import ValidationError
 from odoo.tests import Form
+from odoo.tests.common import TransactionCase
 
-from odoo.addons.base.tests.common import BaseCommon
+from odoo.addons.base.tests.common import DISABLED_MAIL_CONTEXT
 
 
-class TestProductNameUnique(BaseCommon):
+class TestProductNameUnique(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.env = cls.env(context=dict(cls.env.context, test_product_name_unique=True))
+        cls.env = cls.env(
+            context=dict(
+                cls.env.context, test_product_name_unique=True, **DISABLED_MAIL_CONTEXT
+            )
+        )
         cls.product2 = cls.env.ref("product.product_product_5")
         cls.product2_name = cls.product2.name
         cls.product2_new_name = "New Product Name"
