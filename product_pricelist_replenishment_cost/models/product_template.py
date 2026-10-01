@@ -1,12 +1,14 @@
-from odoo import fields, models
+from odoo import models
 
 
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
-    def price_compute(self, price_type, uom=False, currency=False, company=None):
+    def _price_compute(
+        self, price_type, uom=False, currency=False, company=None, date=False
+    ):
         if price_type == "managed_replenishment_cost":
-            prices = super().price_compute("list_price", uom, currency, company)
+            prices = super()._price_compute("list_price", uom, currency, company, date)
             templates = self.with_company(company or self.env.company).sudo()
             for template in templates:
                 price = template.managed_replenishment_cost
@@ -24,9 +26,8 @@ class ProductTemplate(models.Model):
                         prices[template.id], uom
                     )
                 if currency:
-                    date = self.env.context.get("date", fields.Date.today())
                     prices[template.id] = template.currency_id._convert(
                         prices[template.id], currency, company, date
                     )
             return prices
-        return super().price_compute(price_type, uom, currency, company)
+        return super()._price_compute(price_type, uom, currency, company, date)
