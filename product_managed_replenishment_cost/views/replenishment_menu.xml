@@ -19,62 +19,62 @@
                 <sheet>
                     <div class="oe_button_box" name="button_box">
                         <button
-              type="object"
-              name="action_view_product_ids"
-              class="oe_stat_button"
-              icon="fa-database"
-            >
+                            type="object"
+                            name="action_view_product_ids"
+                            class="oe_stat_button"
+                            icon="fa-database"
+                        >
                             <field
-                string="Products"
-                name="products_count"
-                widget="statinfo"
-              />
+                                string="Products"
+                                name="products_count"
+                                widget="statinfo"
+                            />
                         </button>
                     </div>
                     <group>
                         <group>
                             <field name="name" />
                             <field
-                name="company_id"
-                groups="base.group_multi_company"
-                options="{'no_create': True}"
-              />
+                                name="company_id"
+                                groups="base.group_multi_company"
+                                options="{'no_create': True}"
+                            />
                         </group>
                         <group>
                             <field name="product_ctg_ids" widget="many2many_tags" />
                         </group>
                         <group>
                             <button
-                name="update_products_replenishment_cost_only"
-                string="Update Landed with adjustment/depreciation/testing"
-                type="object"
-                confirm="WARNING: UPDATE ONLY WHEN LAUNCHING GROSS PRICELIST"
-              />
+                                name="update_products_replenishment_cost_only"
+                                string="Update Landed with adjustment/depreciation/testing"
+                                type="object"
+                                confirm="WARNING: UPDATE ONLY WHEN LAUNCHING GROSS PRICELIST"
+                            />
                         </group>
                         <group />
                         <group>
                             <button
-                name="update_products_standard_price_only"
-                string="Update Direct Cost, Landed Cost and Landed with depreciation/testing"
-                type="object"
-              />
+                                name="update_products_standard_price_only"
+                                string="Update Direct Cost, Landed Cost and Landed with depreciation/testing"
+                                type="object"
+                            />
                         </group>
                         <group />
                         <group>
                             <button
-                name="update_products_standard_price_and_replenishment_cost"
-                string="Update All Costs"
-                type="object"
-                confirm="WARNING: UPDATE ONLY WHEN LAUNCHING GROSS PRICELIST"
-              />
+                                name="update_products_standard_price_and_replenishment_cost"
+                                string="Update All Costs"
+                                type="object"
+                                confirm="WARNING: UPDATE ONLY WHEN LAUNCHING GROSS PRICELIST"
+                            />
                         </group>
                         <group />
                         <group>
                             <button
-                name="update_bom_products_list_price_weight"
-                string="Update BOM Products List Price and Weight"
-                type="object"
-              />
+                                name="update_bom_products_list_price_weight"
+                                string="Update BOM Products List Price and Weight"
+                                type="object"
+                            />
                         </group>
                         <group />
                         <group>
@@ -110,9 +110,9 @@
         <field name="view_id" ref="view_replenishment_cost_tree" />
     </record>
     <menuitem
-    name="Replenishment Cost"
-    id="menu_replenishment_stock"
-    parent="stock.menu_warehouse_config"
-    action="action_replenishment_cost"
-  />
+        name="Replenishment Cost"
+        id="menu_replenishment_stock"
+        parent="stock.menu_warehouse_config"
+        action="action_replenishment_cost"
+    />
 </odoo>

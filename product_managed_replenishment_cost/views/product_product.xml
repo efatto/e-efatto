@@ -1,38 +1,37 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-
     <record id="view_product_product_form" model="ir.ui.view">
         <field name="model">product.product</field>
         <field name="inherit_id" ref="product.product_normal_form_view" />
         <field name="arch" type="xml">
             <xpath
-        expr="//group[@name='group_standard_price']/label[@for='standard_price']"
-        position="before"
-      >
+                expr="//group[@name='group_standard_price']/label[@for='standard_price']"
+                position="before"
+            >
                 <field
-          name="direct_cost"
-          widget="monetary"
-          options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
-          attrs="{'invisible': [('product_variant_count', '>', 1), ('is_product_variant', '=', False)]}"
-        />
+                    name="direct_cost"
+                    widget="monetary"
+                    options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
+                    attrs="{'invisible': [('product_variant_count', '>', 1), ('is_product_variant', '=', False)]}"
+                />
                 <field
-          name="adjustment_cost"
-          widget="monetary"
-          options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
-          attrs="{'invisible': [('product_variant_count', '>', 1), ('is_product_variant', '=', False)]}"
-        />
+                    name="adjustment_cost"
+                    widget="monetary"
+                    options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
+                    attrs="{'invisible': [('product_variant_count', '>', 1), ('is_product_variant', '=', False)]}"
+                />
                 <field
-          name="testing_cost"
-          widget="monetary"
-          options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
-          attrs="{'invisible': [('product_variant_count', '>', 1), ('is_product_variant', '=', False)]}"
-        />
+                    name="testing_cost"
+                    widget="monetary"
+                    options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
+                    attrs="{'invisible': [('product_variant_count', '>', 1), ('is_product_variant', '=', False)]}"
+                />
                 <field
-          name="landed_cost"
-          widget="monetary"
-          options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
-          attrs="{'invisible': [('product_variant_count', '>', 1), ('is_product_variant', '=', False)]}"
-        />
+                    name="landed_cost"
+                    widget="monetary"
+                    options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
+                    attrs="{'invisible': [('product_variant_count', '>', 1), ('is_product_variant', '=', False)]}"
+                />
             </xpath>
             <xpath expr="//label[@for='standard_price']" position="attributes">
                 <attribute name="string">Landed with depreciation/testing</attribute>
@@ -46,25 +45,25 @@
         <field name="arch" type="xml">
             <field name="standard_price" position="before">
                 <field
-          name="direct_cost"
-          widget="monetary"
-          options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
-        />
+                    name="direct_cost"
+                    widget="monetary"
+                    options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
+                />
                 <field
-          name="adjustment_cost"
-          widget="monetary"
-          options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
-        />
+                    name="adjustment_cost"
+                    widget="monetary"
+                    options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
+                />
                 <field
-          name="testing_cost"
-          widget="monetary"
-          options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
-        />
+                    name="testing_cost"
+                    widget="monetary"
+                    options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
+                />
                 <field
-          name="landed_cost"
-          widget="monetary"
-          options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
-        />
+                    name="landed_cost"
+                    widget="monetary"
+                    options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
+                />
             </field>
             <field name="standard_price" position="attributes">
                 <attribute name="string">Landed with depreciation/testing</attribute>
@@ -80,5 +79,4 @@
             </field>
         </field>
     </record>
-
 </odoo>

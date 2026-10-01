@@ -1,7 +1,3 @@
-.. image:: https://odoo-community.org/readme-banner-image
-   :target: https://odoo-community.org/get-involved?utm_source=readme
-   :alt: Odoo Community Association
-
 ==================================
 Product Managed Replenishment Cost
 ==================================
@@ -21,16 +17,15 @@ Product Managed Replenishment Cost
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-efatto%2Fe--efatto-lightgray.png?logo=github
-    :target: https://github.com/efatto/e-efatto/tree/14.0/product_managed_replenishment_cost
+    :target: https://github.com/efatto/e-efatto/tree/18.0/product_managed_replenishment_cost
     :alt: efatto/e-efatto
 
 |badge1| |badge2| |badge3|
 
-Compute replenishment cost from Customs Tariff and Country Group of Seller.
-Cost is computed:
-- from BOM if product has a bom;
-- from sellers if product does not have a bom and has sellers.
-In other cases (without BOM and sellers) it isn't recomputed.
+Compute replenishment cost from Customs Tariff and Country Group of
+Seller. Cost is computed: - from BOM if product has a bom; - from
+sellers if product does not have a bom and has sellers. In other cases
+(without BOM and sellers) it isn't recomputed.
 
 **Table of contents**
 
@@ -40,64 +35,104 @@ In other cases (without BOM and sellers) it isn't recomputed.
 Configuration
 =============
 
-È possibile calcolare un costo di sostituzione del prodotto con dei supplementi calcolati in maniera automatica.
+È possibile calcolare un costo di sostituzione del prodotto con dei
+supplementi calcolati in maniera automatica.
 
-Per i prodotti che hanno un fornitore impostato nel tab Acquisti e non hanno una distinta di produzione, se nel prodotto è impostata la Nomenclatura Combinata, si può:
- #. Creare una Tariffa Doganale con la % del costo della tariffa
- #. Impostare nella Nomenclatura Combinata una Tariffa Doganale
+Per i prodotti che hanno un fornitore impostato nel tab Acquisti e non
+hanno una distinta di produzione, se nel prodotto è impostata la
+Nomenclatura Combinata, si può:
+
+1. Creare una Tariffa Doganale con la % del costo della tariffa
+2. Impostare nella Nomenclatura Combinata una Tariffa Doganale
 
 Inoltre se la nazione del fornitore è in un gruppo di nazioni, si può:
- #. Inserire nel gruppo di nazioni una % di costo per logistica
 
-I prodotti che hanno una distinta di produzione verranno ricalcolati sulla base del costo di sostituzione ricalcolato sopra.
+1. Inserire nel gruppo di nazioni una % di costo per logistica
+
+I prodotti che hanno una distinta di produzione verranno ricalcolati
+sulla base del costo di sostituzione ricalcolato sopra.
 
 La formula applicata è:
- #. costo del primo fornitore nel tab acquisti del prodotto convertito in € dalla valuta del fornitore al tasso più recente disponibile => Costo Diretto
- #. somma il totale delle maggiorazioni per: Maggiorazione cambio (indicato nella valuta del fornitore), Margine di logistica (indicato nel gruppo di paesi del fornitore) e Tariffa dazio doganale (indicato nel codice doganale prodotto) e le aggiunge al Costo Diretto (se è un fornitore extra europeo e se il Tipo intrastat del prodotto è indicato) => Landed senza ammortamenti/collaudo
- #. somma il Costo Collaudo (€/pz) e il Costo Ammortamento (€/pz) al Landed senza ammortamenti/collaudo => Landed con Ammortamento e Collaudo
- #. somma il Costo Adeguamento (€/pz) al Landed con Ammortamento e Collaudo => Landed con Ammortamento, Collaudo e Adeguamento
 
-È possibile impostare il costo collaudo nella categoria del prodotto, oppure direttamente nel prodotto nel caso serva un valore specifico per quel prodotto. Il costo collaudo nel prodotto prevale su quello impostato nella categoria, è sufficiente impostarlo a 0 per far riprendere al prodotto il costo collaudo della categoria.
+1. costo del primo fornitore nel tab acquisti del prodotto convertito in
+   € dalla valuta del fornitore al tasso più recente disponibile =>
+   Costo Diretto
+2. somma il totale delle maggiorazioni per: Maggiorazione cambio
+   (indicato nella valuta del fornitore), Margine di logistica (indicato
+   nel gruppo di paesi del fornitore) e Tariffa dazio doganale (indicato
+   nel codice doganale prodotto) e le aggiunge al Costo Diretto (se è un
+   fornitore extra europeo e se il Tipo intrastat del prodotto è
+   indicato) => Landed senza ammortamenti/collaudo
+3. somma il Costo Collaudo (€/pz) e il Costo Ammortamento (€/pz) al
+   Landed senza ammortamenti/collaudo => Landed con Ammortamento e
+   Collaudo
+4. somma il Costo Adeguamento (€/pz) al Landed con Ammortamento e
+   Collaudo => Landed con Ammortamento, Collaudo e Adeguamento
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_replenishment_cost/static/description/costo_collaudo_categoria.png
-    :alt: Costo collaudo nella categoria
+È possibile impostare il costo collaudo nella categoria del prodotto,
+oppure direttamente nel prodotto nel caso serva un valore specifico per
+quel prodotto. Il costo collaudo nel prodotto prevale su quello
+impostato nella categoria, è sufficiente impostarlo a 0 per far
+riprendere al prodotto il costo collaudo della categoria.
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_replenishment_cost/static/description/costo_collaudo_prodotto.png
-    :alt: Costo collaudo nel prodotto
+|Costo collaudo nella categoria|
 
-I prodotti che non hanno né fornitori né una distinta di produzione non verranno modificati.
+|Costo collaudo nel prodotto|
+
+I prodotti che non hanno né fornitori né una distinta di produzione non
+verranno modificati.
 
 Questo calcolo è possibile farlo in maniera indipendente dal menu:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_replenishment_cost/static/description/menu.png
-    :alt: Menu in impostazioni Magazzino
+|Menu in impostazioni Magazzino|
 
-tramite quattro azioni: la prima esegue l'aggiornamento del *Landed con adeguamenti/ammortamenti/collaudo* solamente:
+tramite quattro azioni: la prima esegue l'aggiornamento del *Landed con
+adeguamenti/ammortamenti/collaudo* solamente:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_replenishment_cost/static/description/aggiorna_sostituzione.png
-    :alt: Aggiorna il Landed con adeguamenti/ammortamenti/collaudo
+|Aggiorna il Landed con adeguamenti/ammortamenti/collaudo|
 
-la seconda esegue l'aggiornamento di 3 campi: *Costo diretto*, *Landed senza ammortamenti/collaudo* e *Landed con ammortamenti/collaudo*:
+la seconda esegue l'aggiornamento di 3 campi: *Costo diretto*, *Landed
+senza ammortamenti/collaudo* e *Landed con ammortamenti/collaudo*:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_replenishment_cost/static/description/aggiorna_costi_landed.png
-    :alt: Aggiorna Costo diretto, Landed senza ammortamenti/collaudo e Landed con ammortamenti/collaudo
+|Aggiorna Costo diretto, Landed senza ammortamenti/collaudo e Landed con
+ammortamenti/collaudo|
 
 la terza esegue l'aggiornamento di tutti i costi:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_replenishment_cost/static/description/aggiorna_tutti.png
-    :alt: Aggiorna tutti i costi
+|Aggiorna tutti i costi|
 
-La quarta esegue l'aggiornamento del prezzo di vendita e del peso dei prodotti con distinta base, calcolando i valori solo sulla distinta base direttamente collegata al prodotto (senza quindi ricorsività). Se si desidera aggiornare i valori delle distinte figlie prima di aggiornare questo valore, assicurarsi di avviare un aggiornamento con i metodi precedenti e poi di avviare questo aggiornamento su tutte le distinte base. Per come è stato richiesto questo metodo, non assicura comunque un aggiornamento ricorsivo completo.
+La quarta esegue l'aggiornamento del prezzo di vendita e del peso dei
+prodotti con distinta base, calcolando i valori solo sulla distinta base
+direttamente collegata al prodotto (senza quindi ricorsività). Se si
+desidera aggiornare i valori delle distinte figlie prima di aggiornare
+questo valore, assicurarsi di avviare un aggiornamento con i metodi
+precedenti e poi di avviare questo aggiornamento su tutte le distinte
+base. Per come è stato richiesto questo metodo, non assicura comunque un
+aggiornamento ricorsivo completo.
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_replenishment_cost/static/description/aggiorna_prezzi_da_diba.png
-    :alt: Aggiorna il prezzo e il peso di prodotti con distinta base
+|Aggiorna il prezzo e il peso di prodotti con distinta base|
 
-Nota bene: non è possibile ripristinare nessuna di queste operazioni, in quanto vanno a sovrascrivere i campi citati. Tenere conto inoltre che i campi del prezzo di vendita e del costo landed senza adeguamento/ammortamento (costo standard rinominato) potrebbero essere modificati in maniera automatica dal sistema in base alla configurazione.
+Nota bene: non è possibile ripristinare nessuna di queste operazioni, in
+quanto vanno a sovrascrivere i campi citati. Tenere conto inoltre che i
+campi del prezzo di vendita e del costo landed senza
+adeguamento/ammortamento (costo standard rinominato) potrebbero essere
+modificati in maniera automatica dal sistema in base alla
+configurazione.
 
-In seguito è utile creare un listino a partire dal costo per generare un'esportazione (reimportabile) per effettuare un cambio di listino di vendita programmato:
+In seguito è utile creare un listino a partire dal costo per generare
+un'esportazione (reimportabile) per effettuare un cambio di listino di
+vendita programmato:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/product_managed_replenishment_cost/static/description/listino.png
-    :alt: Esporta un listino
+|Esporta un listino|
+
+.. |Costo collaudo nella categoria| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/product_managed_replenishment_cost/static/description/costo_collaudo_categoria.png
+.. |Costo collaudo nel prodotto| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/product_managed_replenishment_cost/static/description/costo_collaudo_prodotto.png
+.. |Menu in impostazioni Magazzino| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/product_managed_replenishment_cost/static/description/menu.png
+.. |Aggiorna il Landed con adeguamenti/ammortamenti/collaudo| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/product_managed_replenishment_cost/static/description/aggiorna_sostituzione.png
+.. |Aggiorna Costo diretto, Landed senza ammortamenti/collaudo e Landed con ammortamenti/collaudo| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/product_managed_replenishment_cost/static/description/aggiorna_costi_landed.png
+.. |Aggiorna tutti i costi| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/product_managed_replenishment_cost/static/description/aggiorna_tutti.png
+.. |Aggiorna il prezzo e il peso di prodotti con distinta base| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/product_managed_replenishment_cost/static/description/aggiorna_prezzi_da_diba.png
+.. |Esporta un listino| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/product_managed_replenishment_cost/static/description/listino.png
 
 Bug Tracker
 ===========
@@ -105,7 +140,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/efatto/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20product_managed_replenishment_cost%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20product_managed_replenishment_cost%0Aversion:%2018.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -113,18 +148,18 @@ Credits
 =======
 
 Authors
-~~~~~~~
+-------
 
 * Sergio Corato
 
 Contributors
-~~~~~~~~~~~~
+------------
 
-* Sergio Corato <https://github.com/sergiocorato>
+-  Sergio Corato <https://github.com/sergiocorato>
 
 Maintainers
-~~~~~~~~~~~
+-----------
 
-This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/14.0/product_managed_replenishment_cost>`_ project on GitHub.
+This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/18.0/product_managed_replenishment_cost>`_ project on GitHub.
 
 You are welcome to contribute.
