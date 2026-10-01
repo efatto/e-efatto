@@ -17,7 +17,6 @@ class SaleOrderLine(models.Model):
             # find if it exists a rule applicable on managed replenishment cost, then
             # compute the cost accordingly
             if not line.product_id or not line.order_id.pricelist_id:
-                line.purchase_price = 0.0
                 continue
             line = line.with_company(line.company_id)
             order = line.order_id
