@@ -30,7 +30,7 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
                 "conn_string_sandbox": conn_string,
                 "conn_string": conn_string,
                 "password": False,
-                "location_id": cls.env.ref("stock.stock_location_stock").id,
+                "location_id": cls.env.ref("stock.stock_location_stock").id,  # noqa
                 "stock_picking_type_ids": [
                     (
                         6,
