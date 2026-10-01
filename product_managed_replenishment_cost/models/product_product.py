@@ -9,7 +9,6 @@ class ProductTemplate(models.Model):
 
     standard_price = fields.Float(string="Landed with depreciation/testing")
     direct_cost = fields.Float(
-        string="Direct Cost",
         help="Cost of the first supplier converted in company currency",
         digits="Product Price",
         compute="_compute_direct_cost",
@@ -33,7 +32,6 @@ class ProductTemplate(models.Model):
         groups="base.group_user",
     )
     landed_cost = fields.Float(
-        string="Landed cost",
         digits="Product Price",
         compute="_compute_landed_cost",
         inverse="_inverse_landed_cost",
@@ -122,7 +120,6 @@ class ProductProduct(models.Model):
 
     standard_price = fields.Float(string="Landed with depreciation/testing")
     direct_cost = fields.Float(
-        string="Direct Cost",
         help="Cost of the first supplier converted in company currency",
         groups="base.group_user",
         digits="Product Price",
@@ -148,7 +145,6 @@ class ProductProduct(models.Model):
         digits="Product Price",
     )
     landed_cost = fields.Float(
-        string="Landed cost",
         company_dependent=True,
         groups="base.group_user",
         digits="Product Price",
@@ -184,17 +180,14 @@ class ProductProduct(models.Model):
             else:
                 product.direct_cost = 0
 
-    def _update_manufactured_prices(
-        self,
-    ):
+    def _update_manufactured_prices(self):
         for product in self:
-            bom = self.env["mrp.bom"]._bom_find(
-                product_tmpl=product.product_tmpl_id, product=product
-            )
+            bom_by_product = self.env["mrp.bom"]._bom_find(product)
             managed_replenishment_price = 0
             managed_standard_price = 0
             landed_price = 0
-            if bom:
+            if product in bom_by_product:
+                bom = bom_by_product[product]
                 if any(x.child_bom_id for x in bom.bom_line_ids):
                     bom.bom_line_ids.filtered(lambda line: line.child_bom_id).mapped(
                         "product_id"
@@ -332,7 +325,7 @@ class ProductProduct(models.Model):
             return price_unit
         # add tariff cost on country group
         margin_percentage += sum(
-            seller.name.country_id.mapped(
+            seller.partner_id.country_id.mapped(
                 "country_group_ids.logistic_charge_percentage"
             )
         )
@@ -341,7 +334,7 @@ class ProductProduct(models.Model):
         if (
             self.intrastat_code_id.tariff_id
             and self.intrastat_type
-            and seller.name.country_id not in europe_country_group.country_ids
+            and seller.partner_id.country_id not in europe_country_group.country_ids
         ):
             margin_percentage += self.intrastat_code_id.tariff_id.tariff_percentage
         if margin_percentage:

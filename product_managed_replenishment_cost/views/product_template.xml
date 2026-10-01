@@ -12,25 +12,25 @@
                     name="direct_cost"
                     widget="monetary"
                     options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
-                    attrs="{'invisible': [('product_variant_count', '>', 1)]}"
+                    invisible="product_variant_count &gt; 1"
                 />
                 <field
                     name="adjustment_cost"
                     widget="monetary"
                     options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
-                    attrs="{'invisible': [('product_variant_count', '>', 1)]}"
+                    invisible="product_variant_count &gt; 1"
                 />
                 <field
                     name="testing_cost"
                     widget="monetary"
                     options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
-                    attrs="{'invisible': [('product_variant_count', '>', 1)]}"
+                    invisible="product_variant_count &gt; 1"
                 />
                 <field
                     name="landed_cost"
                     widget="monetary"
                     options="{'currency_field': 'cost_currency_id', 'field_digits': True}"
-                    attrs="{'invisible': [('product_variant_count', '>', 1)]}"
+                    invisible="product_variant_count &gt; 1"
                 />
             </xpath>
             <xpath expr="//label[@for='standard_price']" position="attributes">

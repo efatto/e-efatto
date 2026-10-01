@@ -1,15 +1,14 @@
 # Copyright 2021-2023 Sergio Corato <https://github.com/sergiocorato>
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+from odoo import Command
 
-from odoo.tests.common import SavepointCase
+from odoo.addons.base.tests.common import BaseCommon
 
 
-class TestProductManagedReplenishmentCost(SavepointCase):
+class TestProductManagedReplenishmentCost(BaseCommon):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.env = cls.env(context=dict(cls.env.context, tracking_disable=True))
-        cls.user_model = cls.env["res.users"].with_context(no_reset_password=True)
         cls.test_all = False
         cls.vendor = cls.env.ref("base.res_partner_3")
         cls.vendor.country_id = cls.env.ref("base.cn")
@@ -28,7 +27,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         )
         supplierinfo = cls.env["product.supplierinfo"].create(
             {
-                "name": cls.vendor.id,
+                "partner_id": cls.vendor.id,
             }
         )
         mto = cls.env.ref("stock.route_warehouse0_mto")
@@ -58,11 +57,9 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 "weight": 3.44,
                 "categ_id": cls.default_category.id,
                 "seller_ids": [
-                    (
-                        0,
-                        0,
+                    Command.create(
                         {
-                            "name": cls.vendor.id,
+                            "partner_id": cls.vendor.id,
                             "price": cls.product1_vendor_price,
                         },
                     )
@@ -79,11 +76,9 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 "weight": 18.4,
                 "categ_id": cls.test_categ.id,
                 "seller_ids": [
-                    (
-                        0,
-                        0,
+                    Command.create(
                         {
-                            "name": cls.vendor.id,
+                            "partner_id": cls.vendor.id,
                             "price": cls.product2_vendor_price,
                         },
                     )
@@ -100,11 +95,9 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 "weight": 4.4,
                 "categ_id": cls.default_category.id,
                 "seller_ids": [
-                    (
-                        0,
-                        0,
+                    Command.create(
                         {
-                            "name": cls.vendor.id,
+                            "partner_id": cls.vendor.id,
                             "price": cls.product3_vendor_price,
                         },
                     )
@@ -121,7 +114,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                 "list_price": 1283.0,
                 "weight": 11.14,
                 "default_code": "PRODUCED1",
-                "type": "product",
+                "type": "consu",
                 "sale_ok": True,
                 "categ_id": cls.default_category.id,
             }
@@ -132,17 +125,15 @@ class TestProductManagedReplenishmentCost(SavepointCase):
             {
                 "name": "Component 4",
                 "default_code": "COMP4",
-                "type": "product",
+                "type": "consu",
                 "purchase_ok": True,
                 "list_price": 3.33,
                 "weight": 7.79,
                 "categ_id": cls.default_category.id,
                 "seller_ids": [
-                    (
-                        0,
-                        0,
+                    Command.create(
                         {
-                            "name": cls.vendor.id,
+                            "partner_id": cls.vendor.id,
                             "price": cls.product4_vendor_price,
                         },
                     )
@@ -204,7 +195,7 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                     (4, cls.env.ref("stock.route_warehouse0_mto").id),
                 ],
                 "default_code": "PRODUCED",
-                "type": "product",
+                "type": "consu",
                 "sale_ok": True,
             }
         )
@@ -217,15 +208,13 @@ class TestProductManagedReplenishmentCost(SavepointCase):
                     (4, cls.env.ref("stock.route_warehouse0_mto").id),
                 ],
                 "default_code": "PRODUCED2",
-                "type": "product",
+                "type": "consu",
                 "sale_ok": True,
                 "categ_id": cls.default_category.id,
                 "seller_ids": [
-                    (
-                        0,
-                        0,
+                    Command.create(
                         {
-                            "name": cls.vendor.id,
+                            "partner_id": cls.vendor.id,
                             "price": cls.product_bom_parent_vendor_price,
                         },
                     )
@@ -732,11 +721,9 @@ class TestProductManagedReplenishmentCost(SavepointCase):
         self.product_bom_parent_parent.write(
             {
                 "seller_ids": [
-                    (
-                        0,
-                        0,
+                    Command.create(
                         {
-                            "name": self.vendor.id,
+                            "partner_id": self.vendor.id,
                             "price": product_bom_parent_parent_vendor_price,
                         },
                     )

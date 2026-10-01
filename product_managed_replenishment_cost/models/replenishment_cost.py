@@ -14,7 +14,6 @@ class ReplenishmentCost(models.Model):
     last_update = fields.Datetime()
     company_id = fields.Many2one(
         comodel_name="res.company",
-        string="Company",
         default=lambda self: self.env.company,
     )
     product_ctg_ids = fields.Many2many(
@@ -71,9 +70,9 @@ class ReplenishmentCost(models.Model):
 
     def update_products_replenishment_cost(self):
         for repl in self:
-            domain = [("type", "in", ["product", "consu", "service"])]
+            domain = [("type", "in", ["consu", "service"])]
             if self._context.get("update_bom_products_list_price_weight"):
-                domain = [("type", "=", "product"), ("bom_ids", "!=", False)]
+                domain = [("type", "=", "consu"), ("bom_ids", "!=", False)]
             if repl.product_ctg_ids:
                 domain.append(("categ_id", "in", repl.product_ctg_ids.ids))
             products = self.env["product.product"].search(domain)
@@ -85,27 +84,28 @@ class ReplenishmentCost(models.Model):
             duration = time.time() - started_at
             last_update = fields.Datetime.now()
             if not repl.name:
-                repl.name = _("Update of %s" % last_update)
+                repl.name = _("Update of %(up)s", up=last_update)
             repl.write(
                 dict(
                     last_update=last_update,
-                    log=_("Updated %s %s %s %s for %s products in %.2f minutes.")
-                    % (
-                        _("standard price, landed cost, direct cost")
+                    log=_(
+                        "Updated %(price_type)s %(and_type)s %(cost_type)s "
+                        "%(bom_type)s for %(p_len)s products in %(dur).2f minutes.",
+                        price_type=_("standard price, landed cost, direct cost")
                         if self.env.context.get("update_standard_price")
                         else "",
-                        _("and")
+                        and_type=_("and")
                         if self.env.context.get("update_standard_price")
                         and self.env.context.get("update_managed_replenishment_cost")
                         else "",
-                        _("managed replenishment cost")
+                        cost_type=_("managed replenishment cost")
                         if self.env.context.get("update_managed_replenishment_cost")
                         else "",
-                        _("bom products list price and weight")
+                        bom_type=_("bom products list price and weight")
                         if self.env.context.get("update_bom_products_list_price_weight")
                         else "",
-                        len(products),
-                        duration / 60,
+                        p_len=len(products),
+                        dur=duration / 60,
                     ),
                 )
             )
