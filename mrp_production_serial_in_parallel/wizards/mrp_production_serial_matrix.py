@@ -17,10 +17,10 @@ class MrpProductionSerialMatrix(models.TransientModel):
             Corresponding workorders will have the same registered time.
             """
             return available_wos.filtered(
-                lambda available_wo, original_wo=original_wo: (
-                    available_wo.sequence == original_wo.sequence
-                    and available_wo.name == original_wo.name
-                    and available_wo.workcenter_id == original_wo.workcenter_id
+                lambda available_wo, or_wo=original_wo: (
+                    available_wo.sequence == or_wo.sequence
+                    and available_wo.name == or_wo.name
+                    and available_wo.workcenter_id == or_wo.workcenter_id
                 )
             )
 
@@ -79,7 +79,7 @@ class MrpProductionSerialMatrix(models.TransientModel):
                 )
 
     def _set_parallel_production(self):
-        parallel_production = False
+        parallel_production = self.env["mrp.production"]
         if self.production_id.is_parallel_production:
             parallel_production = self.production_id.copy(
                 default={
@@ -168,7 +168,7 @@ class MrpProductionSerialMatrix(models.TransientModel):
             # Stop copy/paste from super's button_validate
             # because then `super` marks the production as done.
 
-            backorders = False
+            backorders = []
             if current_mo.product_qty > 1:
                 backorders = current_mo._split_productions()
                 current_mo.write({"product_qty": current_mo.qty_producing})
@@ -185,7 +185,6 @@ class MrpProductionSerialMatrix(models.TransientModel):
         res = {
             "domain": [("id", "in", mos.ids)],
             "name": _("Manufacturing Orders"),
-            "src_model": "mrp.production.serial.matrix",
             "view_type": "form",
             "view_mode": "list,form",
             "view_id": False,

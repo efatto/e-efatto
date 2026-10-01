@@ -31,11 +31,11 @@ class MrpProduction(models.Model):
                 and not record.parallel_production_id
             )
 
-    def _set_qty_producing(self):
+    def _set_qty_producing(self, pick_manual_consumption_moves=True):
         # pylint: disable=missing-return
         # Because `super` does not return anything, so neither should we
         if not self.is_parallel_production:
-            super()._set_qty_producing()
+            super()._set_qty_producing(pick_manual_consumption_moves)
 
     def _check_reserved_lot_qty(self):
         for record in self:
