@@ -12,7 +12,7 @@ class SaleOrderLine(models.Model):
         "order_id.pricelist_id",
     )
     def _compute_purchase_price(self):
-        super()._compute_purchase_price()
+        res = super()._compute_purchase_price()
         for line in self:
             # find if it exists a rule applicable on managed replenishment cost, then
             # compute the cost accordingly
@@ -30,8 +30,8 @@ class SaleOrderLine(models.Model):
             )
             # compute on qty 1 as qty is not available here
             fake_price, rule_id = order.pricelist_id.with_context(
-                product_context
-            ).get_product_price_rule(
+                **product_context
+            )._get_product_price_rule(
                 product=product, quantity=1, partner=order.partner_id
             )
             rule = self.env["product.pricelist.item"].browse(rule_id)
@@ -62,5 +62,7 @@ class SaleOrderLine(models.Model):
                     if to_cur and product_cost
                     else product_cost
                 )
-                # The pricelist may not have been set, therefore no conversion
+                # The pricelist may not have been set, so no conversion
                 # is needed because we don't know the target currency.
+
+        return res
