@@ -21,7 +21,7 @@ class TestProductionData(BaseCommon):
         cls.production_model = cls.env["mrp.production"]
         cls.procurement_model = cls.env["procurement.group"]
         cls.bom_model = cls.env["mrp.bom"]
-        cls.stock_location_stock = cls.env.ref("stock.stock_location_stock")
+        cls.stock_location_stock = cls.env.ref("stock.stock_location_stock")  # noqa
         cls.manufacture_route = cls.env.ref("mrp.route_warehouse0_manufacture")
         cls.uom_unit = cls.env.ref("uom.product_uom_unit")
         cls.warehouse = cls.env["stock.warehouse"].search(

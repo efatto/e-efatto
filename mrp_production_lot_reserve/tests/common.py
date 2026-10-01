@@ -11,7 +11,7 @@ class Common(BaseCommon):
     def setUpClass(cls):
         super().setUpClass()
         cls.supplier_location = cls.env.ref("stock.stock_location_suppliers")
-        cls.stock_location = cls.env.ref("stock.stock_location_stock")
+        cls.stock_location = cls.env.ref("stock.stock_location_stock")  # noqa
 
         cls.product = cls.env["product.product"].create(
             {
