@@ -10,8 +10,13 @@ class ProductTemplate(models.Model):
 
     @api.constrains("name", "categ_id")
     def _check_name_unique(self):
-        if not config["test_enable"] or self.env.context.get(
-            "test_product_name_unique"
+        if self.env.context.get("install_mode"):
+            # avoid collision with demo data installation, done without 'test_enable'
+            return
+        if (
+            not config["test_enable"]
+            or config["test_enable"]
+            and self.env.context.get("test_product_name_unique")
         ):
             for template in self.filtered(
                 lambda x: not x.categ_id.bypass_product_name_unique
