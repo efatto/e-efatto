@@ -205,7 +205,12 @@ class MrpProductionSet(models.Model):
             ):
                 raise ValidationError(_("A production set must have only 1 component!"))
 
-    @api.depends("production_left_id.move_raw_ids")
+    @api.depends(
+        "production_left_id",
+        "production_left_id.move_raw_ids",
+        "production_left_id.move_raw_ids.product_id",
+        "production_left_id.move_raw_ids.product_id.is_not_compatible_in_set",
+    )
     def _compute_compatible_mrp_production_ids(self):
         for production_set in self:
             compatible_mrp_production_ids = self.env["mrp.production"].search(
@@ -215,11 +220,16 @@ class MrpProductionSet(models.Model):
                 ]
             )
             if production_set.production_left_id:
+                raw_component_left_id = production_set.production_left_id.move_raw_ids.product_id
                 compatible_mrp_production_ids = compatible_mrp_production_ids.filtered(
-                    lambda p: p.move_raw_ids.product_id
-                    == production_set.production_left_id.move_raw_ids.product_id
-                    and p.state in ["draft", "confirmed", "progress"]
+                    lambda p:
+                    p.state in ["draft", "confirmed", "progress"]
                 )
+                if raw_component_left_id.is_not_compatible_in_set:
+                    compatible_mrp_production_ids = compatible_mrp_production_ids.filtered(
+                        lambda p, raw_comp_left=raw_component_left_id:
+                        p.move_raw_ids.product_id == raw_comp_left
+                    )
             production_set.compatible_mrp_production_ids = compatible_mrp_production_ids
 
     def action_confirm(self):
