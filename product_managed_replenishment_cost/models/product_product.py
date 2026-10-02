@@ -362,7 +362,7 @@ class ProductProduct(models.Model):
         # update cost for products to be purchased first, then them to be manufactured
         # The produce route prevails on the buy route
         purchasable_products = self.filtered(
-            lambda p: p.product_tmpl_id._get_buy_route() in p.route_ids
+            lambda p: p.product_tmpl_id._get_buy_route() in p.route_ids.ids
             and self.env.ref("mrp.route_warehouse0_manufacture") not in p.route_ids
         )
         products_tobe_purchased = purchasable_products.filtered(lambda x: x.seller_ids)
@@ -370,7 +370,7 @@ class ProductProduct(models.Model):
             lambda x: not x.seller_ids
         )
         products_nottobe_purchased = self.filtered(
-            lambda p: p.product_tmpl_id._get_buy_route() not in p.route_ids
+            lambda p: p.product_tmpl_id._get_buy_route() not in p.route_ids.ids
         )
         # get product with bom as subcontracted haven't the manufacturing route
         products_tobe_manufactured = self.filtered(lambda x: x.bom_count)
