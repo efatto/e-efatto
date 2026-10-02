@@ -24,6 +24,7 @@
     "license": "AGPL-3",
     "data": [
         "security/ir.model.access.csv",
+        "security/connector_whs_security.xml",
         "data/sequence_data.xml",
         "views/dbsource.xml",
         "views/hyddemo_mssql_log.xml",
