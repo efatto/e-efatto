@@ -44,75 +44,46 @@ class ProductTemplate(models.Model):
         string="Landed with adjustment/depreciation/testing"
     )
 
+    @api.depends_context("company")
+    @api.depends("product_variant_ids.direct_cost")
     def _compute_direct_cost(self):
-        unique_variants = self.filtered(lambda tmpl: len(tmpl.product_variant_ids) == 1)
-        for template in unique_variants:
-            template.direct_cost = template.product_variant_ids.direct_cost
-        for template in self - unique_variants:
-            template.direct_cost = 0.0
+        self._compute_template_field_from_variant_field("direct_cost")
 
     def _search_direct_cost(self, operator, value):
-        products = self.env["product.product"].search(
-            [("direct_cost", operator, value)], limit=None
-        )
-        return [("id", "in", products.mapped("product_tmpl_id").ids)]
+        return [("product_variant_ids.direct_cost", operator, value)]
 
-    @api.depends("product_variant_ids", "product_variant_ids.adjustment_cost")
+    @api.depends_context("company")
+    @api.depends("product_variant_ids.adjustment_cost")
     def _compute_adjustment_cost(self):
-        unique_variants = self.filtered(lambda tmpl: len(tmpl.product_variant_ids) == 1)
-        for template in unique_variants:
-            template.adjustment_cost = template.product_variant_ids.adjustment_cost
-        for template in self - unique_variants:
-            template.adjustment_cost = 0.0
+        self._compute_template_field_from_variant_field("adjustment_cost")
 
     def _inverse_adjustment_cost(self):
-        if len(self.product_variant_ids) == 1:
-            self.product_variant_ids.adjustment_cost = self.adjustment_cost
+        self._set_product_variant_field("adjustment_cost")
 
     def _search_adjustment_cost(self, operator, value):
-        products = self.env["product.product"].search(
-            [("adjustment_cost", operator, value)], limit=None
-        )
-        return [("id", "in", products.mapped("product_tmpl_id").ids)]
+        return [("product_variant_ids.adjustment_cost", operator, value)]
 
-    @api.depends("product_variant_ids", "product_variant_ids.testing_cost")
+    # testing_cost is not company dependent
+    @api.depends("product_variant_ids.testing_cost")
     def _compute_testing_cost(self):
-        unique_variants = self.filtered(lambda tmpl: len(tmpl.product_variant_ids) == 1)
-        for template in unique_variants:
-            template.testing_cost = template.product_variant_ids.testing_cost
-        for template in self - unique_variants:
-            template.testing_cost = 0.0
+        self._compute_template_field_from_variant_field("testing_cost")
 
     def _inverse_testing_cost(self):
-        if len(self.product_variant_ids) == 1:
-            self.product_variant_ids.custom_testing_cost = self.testing_cost
+        self._set_product_variant_field("testing_cost")
 
     def _search_testing_cost(self, operator, value):
-        products = self.env["product.product"].search(
-            [("testing_cost", operator, value)], limit=None
-        )
-        return [("id", "in", products.mapped("product_tmpl_id").ids)]
+        return [("product_variant_ids.testing_cost", operator, value)]
 
-    @api.depends("product_variant_ids", "product_variant_ids.landed_cost")
+    @api.depends_context("company")
+    @api.depends("product_variant_ids.landed_cost")
     def _compute_landed_cost(self):
-        unique_variants = self.filtered(
-            lambda templ: len(templ.product_variant_ids) == 1
-        )
-        for template in unique_variants:
-            template.landed_cost = template.product_variant_ids.landed_cost
-        for template in self - unique_variants:
-            template.landed_cost = 0.0
+        self._compute_template_field_from_variant_field("landed_cost")
 
     def _inverse_landed_cost(self):
-        self.ensure_one()
-        if len(self.product_variant_ids) == 1:
-            self.product_variant_ids.landed_cost = self.landed_cost
+        self._set_product_variant_field("landed_cost")
 
     def _search_landed_cost(self, operator, value):
-        products = self.env["product.product"].search(
-            [("landed_cost", operator, value)]
-        )
-        return [("id", "in", products.mapped("product_tmpl_id").ids)]
+        return [("product_variant_ids.landed_cost", operator, value)]
 
 
 class ProductProduct(models.Model):
@@ -125,6 +96,7 @@ class ProductProduct(models.Model):
         digits="Product Price",
         compute="_compute_direct_cost",
         store=True,
+        company_dependent=True,
     )
     adjustment_cost = fields.Float(
         string="Adjustment Cost (€/pz)",
@@ -182,7 +154,9 @@ class ProductProduct(models.Model):
 
     def _update_manufactured_prices(self):
         for product in self:
-            bom_by_product = self.env["mrp.bom"]._bom_find(product)
+            bom_by_product = self.env["mrp.bom"]._bom_find(
+                product, company_id=product.company_id.id
+            )
             managed_replenishment_price = 0
             managed_standard_price = 0
             landed_price = 0
@@ -301,7 +275,9 @@ class ProductProduct(models.Model):
         return managed_replenishment_price, managed_standard_price, landed_price
 
     def _get_price_unit_from_seller(self, direct_cost=False):
-        seller = self.seller_ids[0]
+        seller = self.seller_ids.filtered(
+            lambda s: not s.company_id or s.company_id == self.env.company
+        )[:1]
         price_unit = 0.0
         margin_percentage = 0.0
         if seller.price:
@@ -386,16 +362,15 @@ class ProductProduct(models.Model):
         # update cost for products to be purchased first, then them to be manufactured
         # The produce route prevails on the buy route
         purchasable_products = self.filtered(
-            lambda x: self.env.ref("purchase_stock.route_warehouse0_buy") in x.route_ids
-            and self.env.ref("mrp.route_warehouse0_manufacture") not in x.route_ids
+            lambda p: p.product_tmpl_id._get_buy_route() in p.route_ids
+            and self.env.ref("mrp.route_warehouse0_manufacture") not in p.route_ids
         )
         products_tobe_purchased = purchasable_products.filtered(lambda x: x.seller_ids)
         products_tobe_purchased_without_seller = purchasable_products.filtered(
             lambda x: not x.seller_ids
         )
         products_nottobe_purchased = self.filtered(
-            lambda x: self.env.ref("purchase_stock.route_warehouse0_buy")
-            not in x.route_ids
+            lambda p: p.product_tmpl_id._get_buy_route() not in p.route_ids
         )
         # get product with bom as subcontracted haven't the manufacturing route
         products_tobe_manufactured = self.filtered(lambda x: x.bom_count)
