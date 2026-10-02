@@ -2,15 +2,13 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import fields
-from odoo.tests import Form
+from odoo.tests import Form, new_test_user, users
 from odoo.tools.date_utils import relativedelta
 
-from odoo.addons.stock_account.tests.test_stockvaluationlayer import (
-    TestStockValuationCommon,
-)
+from odoo.addons.base.tests.common import BaseCommon
 
 
-class TestStockValuationCommonRec(TestStockValuationCommon):
+class TestStockValuationCommonRec(BaseCommon):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -20,26 +18,49 @@ class TestStockValuationCommonRec(TestStockValuationCommon):
         cls.product1.standard_price = 50
         cls.product1.list_price = 100
         cls.stock_location_stock = cls.env.ref("stock.stock_location_stock")  # noqa
-        cls.user_model = cls.env["res.users"].with_context(no_reset_password=True)
-        cls.sale_user = cls.user_model.create(
+        cls.in_picking_type_id = cls.env.ref("stock.picking_type_in")  # noqa
+        cls.sale_user = new_test_user(
+            cls.env,
+            login="sale_user",
+            email="sale_user@somemail.com",
+            name="Test Sale User",
+            groups="base.group_user,"
+            "sales_team.group_sale_salesman,"
+            "product_cost_security.group_product_edit_cost",
+        )
+
+    def _make_in_move(
+        self,
+        product,
+        quantity,
+        unit_cost=None,
+        location_dest_id=False,
+        picking_type_id=False,
+    ):
+        """Helper to create and validate a receipt move."""
+        unit_cost = unit_cost or product.standard_price
+        in_move = self.env["stock.move"].create(
             {
-                "login": "sale_user@somemail.com",
-                "email": "sale_user@somemail.com",
-                "partner_id": cls.env["res.partner"].create({"name": "User 1"}).id,
-                "groups_id": [
-                    (
-                        6,
-                        0,
-                        [
-                            cls.env.ref("base.group_user").id,
-                            cls.env.ref("sales_team.group_sale_salesman").id,
-                            cls.env.ref("product_cost_security.group_product_cost").id,
-                        ],
-                    )
-                ],
+                "name": f"in {str(quantity)} units @ {str(unit_cost)} per unit",
+                "product_id": product.id,
+                "location_id": self.env.ref("stock.stock_location_suppliers").id,
+                "location_dest_id": location_dest_id or self.stock_location_stock.id,
+                "product_uom": self.env.ref("uom.product_uom_unit").id,
+                "product_uom_qty": quantity,
+                "price_unit": unit_cost,
+                "picking_type_id": picking_type_id or self.in_picking_type_id.id,
             }
         )
 
+        in_move._action_confirm()
+        in_move._action_assign()
+        in_move.move_line_ids.quantity = quantity
+        in_move.picked = True
+        in_move._action_done()
+
+        return in_move.with_context(svl=True)
+
+    @users("sale_user")
     def test_01_recalculate_cost(self):
         order_form = Form(self.env["sale.order"])
         order_form.partner_id = self.partner
@@ -52,13 +73,16 @@ class TestStockValuationCommonRec(TestStockValuationCommon):
         self.assertAlmostEqual(
             order.order_line.margin / order.order_line.price_subtotal, 0.5
         )
-        self.product1.standard_price = 60
-        order._recompute_prices()
+        product1_form = Form(self.product1)
+        product1_form.standard_price = 60
+        product1_form.save()
+        order.action_update_prices()
         self.assertAlmostEqual(order.order_line.purchase_price, 60)
         self.assertAlmostEqual(
             order.order_line.margin / order.order_line.price_subtotal, 0.4
         )
 
+    @users("sale_user")
     def test_02_purchase_date(self):
         now_dt = fields.Date.today()
         # Create moves and flush to ensure they are in DB for SQL queries
@@ -67,7 +91,7 @@ class TestStockValuationCommonRec(TestStockValuationCommon):
             quantity=5.00,
             unit_cost=5.2789,
         )
-        stock_move.date = now_dt + relativedelta(days=-10)
+        stock_move.date = now_dt + relativedelta(days=-10)  # date is readonly in view
         stock_move.flush_recordset()
 
         self.assertEqual(stock_move.price_unit, 5.2789)
@@ -166,9 +190,9 @@ class TestStockValuationCommonRec(TestStockValuationCommon):
         # Test that assigning a purchase price it will update the purchase date with the
         # nearer stock move with the same purchase price
         order_line1 = order.order_line[1]
-        order_line1.sudo().write({"purchase_price": 7.278})
+        order_line1.purchase_price = 7.278
         # Force recompute
-        order_line1.sudo()._compute_purchase_date()
+        order.action_update_prices()
         self.assertEqual(
             fields.Date.to_date(order_line1.purchase_date),
             fields.Date.to_date(stock_move6.date),
@@ -181,7 +205,8 @@ class TestStockValuationCommonRec(TestStockValuationCommon):
             }
         )
         # Force recompute
-        order_line1.sudo()._compute_purchase_date()
+        order_line1 = order_line1.with_user(self.sale_user)
+        order_line1._compute_purchase_date()
         # After product change, it should fall back to standard_price_write_date (today)
         self.assertEqual(
             fields.Date.to_date(order_line1.purchase_date),
