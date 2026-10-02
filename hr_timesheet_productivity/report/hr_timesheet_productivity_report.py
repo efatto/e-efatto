@@ -18,11 +18,13 @@ class TimesheetProductivity(models.Model):
     production_id = fields.Many2one("mrp.production")
     task_id = fields.Many2one("project.task")
     project_id = fields.Many2one("project.project")
+    company_id = fields.Many2one("res.company")
 
     def _select(self):
         select_str = """
             SELECT
                 t.id AS id,
+                t.company_id,
                 t.employee_id,
                 t.date::date AS date,
                 coalesce(sum(t.productivity), 0) AS total_productivity,
@@ -37,6 +39,7 @@ class TimesheetProductivity(models.Model):
             FROM (
                 SELECT
                     -mrp_workcenter_productivity.id AS id,
+                    mrp_workcenter_productivity.company_id,
                     mrp_workcenter_productivity.employee_id AS employee_id,
                     (mrp_workcenter_productivity.duration / 60) AS productivity,
                     NULL AS timesheet,
@@ -54,6 +57,7 @@ class TimesheetProductivity(models.Model):
             UNION ALL
                 SELECT
                     ts.id AS id,
+                    ts.company_id,
                     ts.employee_id AS employee_id,
                     NULL AS productivity,
                     ts.unit_amount AS timesheet,
@@ -66,7 +70,7 @@ class TimesheetProductivity(models.Model):
                 FROM account_analytic_line AS ts
                 WHERE ts.project_id IS NOT NULL
             ) AS t
-            GROUP BY t.employee_id, t.date, t.name, t.id
+            GROUP BY t.employee_id, t.date, t.name, t.id, t.company_id
             ORDER BY t.date
         """
         return select_str

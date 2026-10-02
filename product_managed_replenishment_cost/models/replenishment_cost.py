@@ -3,6 +3,7 @@
 import time
 
 from odoo import _, api, fields, models
+from odoo.osv import expression
 
 
 class ReplenishmentCost(models.Model):
@@ -70,11 +71,21 @@ class ReplenishmentCost(models.Model):
 
     def update_products_replenishment_cost(self):
         for repl in self:
+            repl = repl.with_company(repl.company_id)
             domain = [("type", "in", ["consu", "service"])]
             if self._context.get("update_bom_products_list_price_weight"):
                 domain = [("type", "=", "consu"), ("bom_ids", "!=", False)]
             if repl.product_ctg_ids:
                 domain.append(("categ_id", "in", repl.product_ctg_ids.ids))
+            domain = expression.OR(
+                [
+                    domain,
+                    [
+                        ("company_id", "=", False),
+                        ("company_id", "=", repl.company_id.id),
+                    ],
+                ]
+            )
             products = self.env["product.product"].search(domain)
             started_at = time.time()
             (

@@ -15,6 +15,7 @@ class HyddemoWhsListe(models.Model):
     _inherit = ["mail.thread"]
     _description = "Lists to synchronize with WMS"
     _order = "id desc"
+    _check_company_auto = True
 
     num_lista = fields.Text("Numero Lista")  # , size=50)
     riga = fields.Integer("Numero riga")
@@ -70,6 +71,7 @@ class HyddemoWhsListe(models.Model):
     product_id = fields.Many2one(
         "product.product",
         string="Prodotto",
+        check_company=True,
         domain=[("type", "=", "consu"), ("is_storable", "=", True)],
         help="If it is a kit, this is the product sold to the customer. When it is "
         "produced, this is the product produced.",
@@ -85,8 +87,13 @@ class HyddemoWhsListe(models.Model):
     qta = fields.Float("Quantità")
     qtamov = fields.Float("Quantità movimentata", tracking=True)
     move_id = fields.Many2one(
-        "stock.move", required=True, ondelete="cascade", string="Stock Move"
+        "stock.move",
+        check_company=True,
+        required=True,
+        ondelete="cascade",
+        string="Stock Move",
     )
+    company_id = fields.Many2one(related="move_id.company_id", index=True)
     move_state = fields.Selection(
         related="move_id.state", readonly=True, string="Stock Move State"
     )

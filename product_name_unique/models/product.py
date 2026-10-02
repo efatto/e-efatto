@@ -30,6 +30,7 @@ class ProductTemplate(models.Model):
                     [
                         ("name", "=", template.name),
                         ("id", "!=", template.id),
+                        ("company_id", "=", template.company_id.id),
                         "!",
                         ("categ_id", "child_of", bypass_name_categs.ids),
                     ]

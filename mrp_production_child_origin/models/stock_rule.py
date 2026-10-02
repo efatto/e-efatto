@@ -27,7 +27,12 @@ class StockRule(models.Model):
             values,
             bom,
         )
-        mo = self.env["mrp.production"].search([("name", "=", origin)])
+        mo = self.env["mrp.production"].search(
+            [
+                ("name", "=", origin),
+                ("company_id", "=", company_id.id),
+            ]
+        )
         if mo and mo.origin and mo.origin not in res["origin"]:
             res["origin"] = "/".join([res["origin"], mo.origin])
         return res
