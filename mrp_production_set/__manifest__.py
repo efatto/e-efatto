@@ -17,6 +17,7 @@
         "views/mrp_production_set.xml",
         "views/mrp_production.xml",
         "views/mrp_workcenter.xml",
+        "views/product.xml",
     ],
     "installable": True,
 }
