@@ -7,6 +7,7 @@ class HyddemoMssqlLog(models.Model):
     _name = "hyddemo.mssql.log"
     _description = "Synchronization with Remote Mssql DB"
     _order = "ultimo_invio desc"
+    _check_company_auto = True
 
     ultimo_id = fields.Integer("Last ID in WMS", default=1)
     ultimo_invio = fields.Datetime("Last Processing", readonly=True)
@@ -14,17 +15,24 @@ class HyddemoMssqlLog(models.Model):
     dbsource_id = fields.Many2one(
         "base.external.dbsource", "External DB Source Origin", readonly=True
     )
+    company_id = fields.Many2one(related="dbsource_id.company_id")
     inventory_id = fields.Many2one(
-        "stock.inventory", "Created inventory", readonly=True
+        comodel_name="stock.inventory",
+        string="Created inventory",
+        readonly=True,
+        check_company=True,
     )
     hyddemo_mssql_log_line_ids = fields.One2many(
-        "hyddemo.mssql.log.line", "hyddemo_mssql_log_id", "Log lines"
+        comodel_name="hyddemo.mssql.log.line",
+        inverse_name="hyddemo_mssql_log_id",
+        string="Log lines",
     )
 
 
 class HyddemoMssqlLogLine(models.Model):
     _name = "hyddemo.mssql.log.line"
     _description = "Mssql Log Line"
+    _check_company_auto = True
 
     name = fields.Text()
     product_name = fields.Text()
@@ -43,7 +51,7 @@ class HyddemoMssqlLogLine(models.Model):
     )
     product_id = fields.Many2one("product.product")
     type = fields.Selection(
-        [
+        selection=[
             ("not_found", "Not found"),
             ("ok", "Ok"),
             ("mismatch", "Mismatch"),
@@ -52,4 +60,5 @@ class HyddemoMssqlLogLine(models.Model):
         ],
     )
     lot = fields.Text()
-    hyddemo_mssql_log_id = fields.Many2one("hyddemo.mssql.log")
+    hyddemo_mssql_log_id = fields.Many2one(comodel_name="hyddemo.mssql.log")
+    company_id = fields.Many2one(related="hyddemo_mssql_log_id.company_id")

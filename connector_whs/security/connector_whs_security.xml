@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo noupdate="1">
+    <record id="hyddemo_mssql_log_company_rule" model="ir.rule">
+        <field name="name">Mssql Log Multicompany</field>
+        <field name="model_id" ref="model_hyddemo_mssql_log" />
+        <field
+            name="domain_force"
+        >['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="hyddemo_mssql_log_line_company_rule" model="ir.rule">
+        <field name="name">Mssql Log Line Multicompany</field>
+        <field name="model_id" ref="model_hyddemo_mssql_log_line" />
+        <field
+            name="domain_force"
+        >['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>
