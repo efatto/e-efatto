@@ -86,6 +86,17 @@ class MrpProduction(models.Model):
                 )
         return workcenters
 
+    def action_confirm(self):
+        res = super().action_confirm()
+        # force compute state of production set when they are added after a production
+        # is already confirmed
+        for production in self:
+            if production.production_left_set_ids or production.production_right_set_ids:
+                (
+                    production.production_left_set_ids | production.production_right_set_ids
+                )._compute_state()
+        return res
+
     def name_get(self):
         if self.env.context.get("mrp_production_set_display_name"):
             res = []
