@@ -8,6 +8,7 @@
     "license": "AGPL-3",
     "category": "other",
     "depends": [
+        "mrp_routing",
         "mrp_subcontracting",
         "mrp_workcenter_exclude_product",
     ],
