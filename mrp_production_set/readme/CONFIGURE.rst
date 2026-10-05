@@ -33,7 +33,7 @@ aggiornando la quantità nelle produzioni con il tasto "Aggiorna Q.tà in Produz
 .. image:: ../static/description/aggiorna_quantita.png
     :alt: Aggiorna quantità
 
-È necessario quindi pianificare il set di produzioni, che andrà a impostare la data di avvio sugli ordini di lavoro delle produzioni collegate, verificando che siano correttamente impostati rispettivamente sul lato sinistro e sul lato destro. Se è una produzione splittata, la lavorazione verrà suddivisa su entrambi i centri di lavoro.
+È necessario quindi pianificare il set di produzioni, che andrà a impostare la data di avvio sugli ordini di lavoro delle produzioni collegate, verificando che siano correttamente impostati rispettivamente sul lato sinistro e sul lato destro. Se è una produzione splittata, la lavorazione verrà suddivisa su entrambi i centri di lavoro, creando un duplicato dell'ordine di lavoro sul centro di lavoro collegato ad una macchina operatrice sul banco non occupato (quindi destro se è occupato il sinistro e viceversa). In questo modo è possibile vedere che entrambi i banchi della macchina sono utilizzati e i relativi tempi.
 
 .. image:: ../static/description/pianifica.png
     :alt: Pianifica
