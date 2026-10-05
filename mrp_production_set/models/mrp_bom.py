@@ -17,8 +17,7 @@ class MrpBom(models.Model):
                 lambda bo: bo.workcenter_id.mrp_set_position == "right"
             )
             all_template_operation_with_set_ids = (
-                operation_left_ids.template_id
-                | operation_right_ids.template_id
+                operation_left_ids.template_id | operation_right_ids.template_id
             )
             if (
                 len(operation_left_ids) > 1

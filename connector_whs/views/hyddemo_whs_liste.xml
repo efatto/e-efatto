@@ -7,6 +7,7 @@
         <field name="arch" type="xml">
             <search string="Liste prelievo, deposito e inventario">
                 <field name="num_lista" />
+                <field name="riga" />
                 <field name="stato" />
                 <field name="data_lista" />
                 <field name="riferimento" />
@@ -38,6 +39,7 @@
                 <field name="whs_list_multiple" />
                 <field name="whs_not_passed" />
                 <field name="num_lista" />
+                <field name="riga" />
                 <field name="stato" />
                 <field name="data_lista" />
                 <field name="riferimento" />
