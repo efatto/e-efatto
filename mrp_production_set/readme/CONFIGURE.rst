@@ -1,5 +1,6 @@
 Questo modulo crea un oggetto Set di produzioni per collegare due produzioni (oppure la stessa produzione vista come due) per inviarle in maniera coordinata ad una macchina operatrice. La produzione di sinistra sarà inviata al centro di lavoro che è impostato come "sinistro" mentre quella di destra come "destro".
 È anche possibile inviare solo la produzione di sinistra o la produzione di destra.
+N.B.: Possono essere utilizzate solo produzioni con una BOM composta di un solo componente, le altre non sono selezionabili dalla lista di produzioni da utilizzare.
 
 Dal menu si crea un nuovo record:
 
