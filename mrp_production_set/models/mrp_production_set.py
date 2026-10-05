@@ -18,7 +18,6 @@ class MrpProductionSet(models.Model):
         index=True,
         readonly=True,
         store=True,
-        required=True,
     )
     production_left_id = fields.Many2one(
         comodel_name="mrp.production",
