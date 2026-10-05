@@ -130,7 +130,7 @@ class MrpProductionSet(models.Model):
                 right=production_set.production_right_id.name or "n.a.",
             )
 
-    @api.depends("production_left_id", "production_right_id")
+    @api.depends("production_left_id.state", "production_right_id.state")
     def _compute_state(self):
         for production_set in self:
             if production_set.production_left_id:
