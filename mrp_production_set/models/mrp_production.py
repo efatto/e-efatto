@@ -1,4 +1,5 @@
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class MrpProduction(models.Model):
@@ -37,6 +38,30 @@ class MrpProduction(models.Model):
                 len(production.move_raw_ids.mapped("product_id")) == 1
                 and production.workorder_ids
             )
+
+    @api.constrains("workorder_ids")
+    def _check_workorder_ids(self):
+        for production in self:
+            # ensure only one workcenter per position, or only one operation have a
+            # mrp set position
+            workorder_left_ids = production.workorder_ids.filtered(
+                lambda wo: wo.workcenter_id.mrp_set_position == "left"
+            )
+            workorder_right_ids = production.workorder_ids.filtered(
+                lambda wo: wo.workcenter_id.mrp_set_position == "right"
+            )
+            all_template_workorder_with_set_ids = (
+                workorder_left_ids.operation_id.template_id
+                | workorder_right_ids.operation_id.template_id
+            )
+            if (
+                len(workorder_left_ids) > 1
+                or len(workorder_right_ids) > 1
+                or len(all_template_workorder_with_set_ids) > 1
+            ):
+                raise ValidationError(
+                    _("Workorders must be linked to only one mrp_set_position.")
+                )
 
     def _get_workcenter_id(self, workorder):
         workcenters = super()._get_workcenter_id(workorder)
@@ -91,9 +116,13 @@ class MrpProduction(models.Model):
         # force compute state of production set when they are added after a production
         # is already confirmed
         for production in self:
-            if production.production_left_set_ids or production.production_right_set_ids:
+            if (
+                production.production_left_set_ids
+                or production.production_right_set_ids
+            ):
                 (
-                    production.production_left_set_ids | production.production_right_set_ids
+                    production.production_left_set_ids
+                    | production.production_right_set_ids
                 )._compute_state()
         return res
 

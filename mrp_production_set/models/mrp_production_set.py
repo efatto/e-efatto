@@ -219,15 +219,16 @@ class MrpProductionSet(models.Model):
                 ]
             )
             if production_set.production_left_id:
-                raw_component_left_id = production_set.production_left_id.move_raw_ids.product_id
+                raw_component_left_id = (
+                    production_set.production_left_id.move_raw_ids.product_id
+                )
                 compatible_mrp_production_ids = compatible_mrp_production_ids.filtered(
-                    lambda p:
-                    p.state in ["draft", "confirmed", "progress"]
+                    lambda p: p.state in ["draft", "confirmed", "progress"]
                 )
                 if raw_component_left_id.is_not_compatible_in_set:
                     compatible_mrp_production_ids = compatible_mrp_production_ids.filtered(
-                        lambda p, raw_comp_left=raw_component_left_id:
-                        p.move_raw_ids.product_id == raw_comp_left
+                        lambda p, raw_comp_left=raw_component_left_id: p.move_raw_ids.product_id
+                        == raw_comp_left
                     )
             production_set.compatible_mrp_production_ids = compatible_mrp_production_ids
 
@@ -249,6 +250,8 @@ class MrpProductionSet(models.Model):
                 ):
                     if not production_set.production_left_id.workorder_ids.filtered(
                         lambda wo: wo != workorder
+                        and wo.operation_id.template_id
+                        == workorder.operation_id.template_id
                         and wo.workcenter_id.mrp_set_position
                         and wo.workcenter_id.mrp_set_position
                         != workorder.workcenter_id.mrp_set_position
