@@ -1097,8 +1097,12 @@ class TestConnectorWmsModula(CommonConnectorWMS):
 
         # simulate whs work: consume 25% of components to produce 5 finished product
         # consumed and finished product are sent to WMS for the consumed/produced qty
-        component_whs_lists = man_order.mapped("move_raw_ids.whs_list_ids")
-        finished_whs_lists = man_order.mapped("move_finished_ids.whs_list_ids")
+        component_whs_lists = man_order.mapped("move_raw_ids.whs_list_ids").filtered(
+            lambda whsl: whsl.stato != "3"
+        )
+        finished_whs_lists = man_order.mapped("move_finished_ids.whs_list_ids").filtered(
+            lambda whsl: whsl.stato != "3"
+        )
         self.simulate_wms_cron({x: x.qta * 0.25 for x in component_whs_lists})
         self.simulate_wms_cron({x: 5 for x in finished_whs_lists})
 
@@ -1186,8 +1190,12 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         )
 
         # simulate whs work: consume 100% of components to produce 20 finished products
-        component_whs_lists = man_order.mapped("move_raw_ids.whs_list_ids")
-        finished_whs_lists = man_order.mapped("move_finished_ids.whs_list_ids")
+        component_whs_lists = man_order.mapped("move_raw_ids.whs_list_ids").filtered(
+            lambda whsl: whsl.stato != "3"
+        )
+        finished_whs_lists = man_order.mapped("move_finished_ids.whs_list_ids").filtered(
+            lambda whsl: whsl.stato != "3"
+        )
         self.simulate_wms_cron(
             {x: x.qta for x in component_whs_lists | finished_whs_lists}
         )
