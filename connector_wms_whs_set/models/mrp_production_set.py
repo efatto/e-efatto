@@ -11,6 +11,7 @@ class MrpProductionSet(models.Model):
     )
 
     def button_send_to_whs(self):
+        self.ensure_one()
         if self.production_left_id and not self.split_production:
             if any(
                 [

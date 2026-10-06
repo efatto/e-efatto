@@ -98,9 +98,9 @@ class TestConnectorWmsWhsSet(TestConnectorWmsWhs):
         self.top_product.categ_id = self.categ_id
         self.assertNotEqual(self.top_product.categ_id.name, "CUSTOM")
         left_order = self._create_sale_order_with_mrp(self.top_product)
-        right_order = self._create_sale_order_with_mrp(self.top_product)
-        self._mrp_partial_from_sale_set(left_order, right_order, wrong_products=True)
+        self.assertFalse(left_order.is_compatible_for_set)
         left_order = self._create_sale_order_with_mrp(self.product_for_set)
+        self.assertTrue(left_order.is_compatible_for_set)
         right_order = self._create_sale_order_with_mrp(self.product_for_set)
         self.assertEqual(left_order.state, "confirmed")
         self.assertEqual(right_order.state, "confirmed")
