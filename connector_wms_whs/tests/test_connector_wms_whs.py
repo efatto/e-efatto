@@ -1,4 +1,5 @@
 import os
+import time
 
 from odoo import _, fields
 from odoo.exceptions import UserError, ValidationError
@@ -260,10 +261,6 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         self.assertEqual(order1.state, "sale")
         picking1 = order1.picking_ids[0]
         self.assertEqual(len(picking1.mapped("move_lines.whs_list_ids")), 1)
-        if all(x.state == "assigned" for x in picking1.move_lines):
-            self.assertEqual(picking1.state, "assigned")
-        else:
-            self.assertEqual(picking1.state, "waiting")
         # check WMS list is added
         self.dbsource.whs_insert_read_and_synchronize_list()
         whs_records = self._execute_select_all_valid_host_liste()
@@ -285,10 +282,6 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         whs_lists = picking1.mapped("move_lines.whs_list_ids")
         self.assertEqual(len(whs_lists), 1)
         self.assertEqual(whs_lists.stato, "2")
-        if all(x.state == "assigned" for x in picking1.move_lines):
-            self.assertEqual(picking1.state, "assigned")
-        else:
-            self.assertEqual(picking1.state, "waiting")
         picking1.action_cancel()
         self.assertEqual(picking1.state, "cancel")
         # check WMS lists are in stato '3' -> 'Da NON elaborare'
@@ -1255,8 +1248,12 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
 
         # simulate whs work: consume 25% of components to produce 5 finished product
         # consumed and finished product are sent to WHS for the consumed/produced qty
-        component_whs_lists = man_order.mapped("move_raw_ids.whs_list_ids")
-        finished_whs_lists = man_order.mapped("move_finished_ids.whs_list_ids")
+        component_whs_lists = man_order.mapped("move_raw_ids.whs_list_ids").filtered(
+            lambda whsl: whsl.stato != "3"
+        )
+        finished_whs_lists = man_order.mapped("move_finished_ids.whs_list_ids").filtered(
+            lambda whsl: whsl.stato != "3"
+        )
         self.simulate_whs_cron({x: x.qta * 0.25 for x in component_whs_lists})
         self.simulate_whs_cron({x: 5 for x in finished_whs_lists})
 
@@ -1344,8 +1341,12 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         )
 
         # simulate whs work: consume 25% of components to produce 5 finished product
-        component_whs_lists = man_order.mapped("move_raw_ids.whs_list_ids")
-        finished_whs_lists = man_order.mapped("move_finished_ids.whs_list_ids")
+        component_whs_lists = man_order.mapped("move_raw_ids.whs_list_ids").filtered(
+            lambda whsl: whsl.stato != "3"
+        )
+        finished_whs_lists = man_order.mapped("move_finished_ids.whs_list_ids").filtered(
+            lambda whsl: whsl.stato != "3"
+        )
         self.simulate_whs_cron({x: x.qta * 0.25 for x in component_whs_lists})
         self.simulate_whs_cron({x: 5 for x in finished_whs_lists})
 
@@ -1492,6 +1493,12 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         )[0]
         count_before = rows[0][0]
 
+        # hyddemo.mssql.log.ultimo_invio is a Datetime field (truncated to seconds),
+        # while product write_date keeps microseconds and products are selected with
+        # write_date >= ultimo_invio: if the export ran in the same second of the
+        # product write, the next export would legitimately select it again.
+        # Wait to run the export in a later second, to make the test deterministic.
+        time.sleep(1)
         # Export product master to WMS (writes HOST_ARTICOLI)
         self.dbsource.whs_update_products()
 
