@@ -245,7 +245,7 @@ class MrpProduction(models.Model):
         return self.env["ir.sequence"].next_by_code("hyddemo.whs.liste"), 0
 
     def _create_whs_list_raw_move(
-        self, move, num_lista, riga, is_custom, qty_producing=0
+        self, move, num_lista, is_custom, riga=0, qty_producing=0
     ):
         whsliste_obj = self.env["hyddemo.whs.liste"]
         if not qty_producing and (
@@ -349,7 +349,7 @@ class MrpProduction(models.Model):
                 # Location of raw material is linked to WMS
                 for move in production.move_raw_ids:
                     num_lista, riga = production._create_whs_list_raw_move(
-                        move, num_lista, riga, is_custom
+                        move, num_lista, is_custom, riga
                     )
 
             # Create WMS list for finished products
