@@ -15,16 +15,16 @@ class SaleReport(models.Model):
         readonly=True,
     )
 
-    def _query(self, with_clause="", fields=None, groupby="", from_clause=""):
-        fields = fields or {}
-        fields["generic_date"] = (
-            ", make_date(2000, "
-            "date_part('month', date_order)::int, "
-            "date_part('day', date_order)::int) as generic_date"
+    def _select_additional_fields(self):
+        res = super()._select_additional_fields()
+        res["generic_date"] = (
+            "make_date(2000, "
+            "date_part('month', s.date_order)::int, "
+            "date_part('day', s.date_order)::int)"
         )
-        fields["generic_confirmation_date"] = (
-            ", make_date(2000, "
-            "date_part('month', confirmation_date)::int, "
-            "date_part('day', confirmation_date)::int) as generic_confirmation_date"
+        res["generic_confirmation_date"] = (
+            "make_date(2000, "
+            "date_part('month', s.confirmation_date)::int, "
+            "date_part('day', s.confirmation_date)::int)"
         )
-        return super()._query(with_clause, fields, groupby, from_clause)
+        return res
