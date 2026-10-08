@@ -40,9 +40,11 @@ class WizardSyncStockWhsMssql(models.TransientModel):
         inventory = inventory_obj.browse()
         inventory_lines_data = []
         self.ensure_one()
-        wizard = self
         dbsource_obj = self.env["base.external.dbsource"]
         dbsource = dbsource_obj.browse(self._context["active_ids"])
+        if dbsource.company_id:
+            self = self.with_company(dbsource.company_id)
+        wizard = self
         hyddemo_mssql_log_obj = self.env["hyddemo.mssql.log"]
         connection = dbsource.connection_open_mssql()
         if not connection:
@@ -114,6 +116,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     ("type", "=", "consu"),
                     ("exclude_from_whs", "!=", True),
                     ("is_kits", "!=", True),
+                    ("company_id", "in", [dbsource.company_id.id, False]),
                 ]
             )
             # if it is a service, only log but do not create inventory line
@@ -124,6 +127,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         ("type", "!=", "consu"),
                         ("exclude_from_whs", "!=", True),
                         ("is_kits", "!=", True),
+                        ("company_id", "in", [dbsource.company_id.id, False]),
                     ]
                 )
                 if not product:
@@ -167,6 +171,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                         ("product_id", "=", product.id),
                         ("stato", "=", "4"),
                         ("move_id.state", "not in", ["done", "cancel"]),
+                        ("company_id", "=", dbsource.company_id.id),
                     ]
                 )
                 if open_whs_list_ids:
