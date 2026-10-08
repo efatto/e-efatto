@@ -359,6 +359,11 @@ class StockMove(models.Model):
                         "in",
                         self.mapped("picking_type_id").ids,
                     ),
+                    (
+                        "company_id",
+                        "in",
+                        self.mapped("company_id").ids + [False],
+                    ),
                 ]
             )
             or self.mapped("production_id")
