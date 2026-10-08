@@ -19,12 +19,13 @@ def pre_init_product_name(env):
             SELECT distinct(pt.id)
             FROM %(table)s pt
             INNER JOIN (
-                SELECT %(column)s, COUNT(*)
+                SELECT %(column)s, company_id, COUNT(*)
                 FROM %(table)s
-                GROUP BY %(column)s
+                GROUP BY %(column)s, company_id
                 HAVING COUNT(*)>1
             ) pt1
             on pt.%(column)s=pt1.%(column)s
+            and pt.company_id is not distinct from pt1.company_id
             or pt.%(column)s is NULL
             or LENGTH(pt.%(column)s) = 0)
         """,
