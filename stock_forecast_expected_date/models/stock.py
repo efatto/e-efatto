@@ -51,6 +51,7 @@ class StockMove(models.Model):
             [
                 ("state", "not in", ["cancel", "done"]),
                 ("product_id.type", "=", "consu"),
+                ("company_id", "=", self.env.company.id),
             ]
         )
         warehouse_by_location = {

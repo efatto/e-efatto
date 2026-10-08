@@ -147,7 +147,8 @@ class ProductProduct(models.Model):
         for product in self:
             if product.seller_ids:
                 product.direct_cost = product._get_price_unit_from_seller(
-                    direct_cost=True
+                    direct_cost=True,
+                    company_id=product.company_id.id,
                 )
             else:
                 product.direct_cost = 0
@@ -260,7 +261,9 @@ class ProductProduct(models.Model):
         )
         if bom.type == "subcontract" and self.seller_ids:
             # subcontract price is added only if bom is of subcontract type
-            subcontract_price = self._get_price_unit_from_seller()
+            subcontract_price = self._get_price_unit_from_seller(
+                company_id=bom.company_id.id,
+            )
             managed_replenishment_price += subcontract_price
             managed_standard_price += subcontract_price
             landed_price += subcontract_price
@@ -274,9 +277,12 @@ class ProductProduct(models.Model):
 
         return managed_replenishment_price, managed_standard_price, landed_price
 
-    def _get_price_unit_from_seller(self, direct_cost=False):
+    def _get_price_unit_from_seller(self, direct_cost=False, company_id=False):
         seller = self.seller_ids.filtered(
-            lambda s: not s.company_id or s.company_id == self.env.company
+            lambda s: not s.company_id
+            or company_id
+            and s.company_id.id == company_id
+            or s.company_id == self.env.company
         )[:1]
         price_unit = 0.0
         margin_percentage = 0.0
@@ -325,8 +331,13 @@ class ProductProduct(models.Model):
             landed_cost = 0
             direct_cost = 0
             if product.seller_ids and product.seller_ids[0].price:
-                direct_cost = product._get_price_unit_from_seller(direct_cost=True)
-                landed_cost = product._get_price_unit_from_seller()
+                direct_cost = product._get_price_unit_from_seller(
+                    direct_cost=True,
+                    company_id=product.company_id.id,
+                )
+                landed_cost = product._get_price_unit_from_seller(
+                    company_id=product.company_id.id,
+                )
                 # add adjustment and depreciation costs
                 depreciation_cost = product.seller_ids[0].depreciation_cost
                 managed_standard_price = (
@@ -346,6 +357,21 @@ class ProductProduct(models.Model):
 
         return products_without_seller_price
 
+    @api.model
+    def _get_buy_route_by_company(self):
+        buy_route = self.env.ref(
+            "purchase_stock.route_warehouse0_buy", raise_if_not_found=False
+        )
+        # Use sudo to check the route company even when the user cannot access it.
+        return (
+            buy_route.sudo()
+            .filtered(
+                lambda route: not route.company_id
+                or route.company_id == self.env.company
+            )
+            .ids
+        )
+
     def update_managed_replenishment_cost(self):
         update_standard_price = self.env.context.get("update_standard_price", False)
         update_managed_replenishment_cost = self.env.context.get(
@@ -362,7 +388,7 @@ class ProductProduct(models.Model):
         # update cost for products to be purchased first, then them to be manufactured
         # The produce route prevails on the buy route
         purchasable_products = self.filtered(
-            lambda p: p.product_tmpl_id._get_buy_route() in p.route_ids.ids
+            lambda p: set(p._get_buy_route_by_company()) & set(p.route_ids.ids)
             and self.env.ref("mrp.route_warehouse0_manufacture") not in p.route_ids
         )
         products_tobe_purchased = purchasable_products.filtered(lambda x: x.seller_ids)
@@ -370,7 +396,7 @@ class ProductProduct(models.Model):
             lambda x: not x.seller_ids
         )
         products_nottobe_purchased = self.filtered(
-            lambda p: p.product_tmpl_id._get_buy_route() not in p.route_ids.ids
+            lambda p: not set(p._get_buy_route_by_company()) & set(p.route_ids.ids)
         )
         # get product with bom as subcontracted haven't the manufacturing route
         products_tobe_manufactured = self.filtered(lambda x: x.bom_count)
