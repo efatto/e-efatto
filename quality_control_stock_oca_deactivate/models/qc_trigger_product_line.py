@@ -14,6 +14,9 @@ class QcTriggerProductLine(models.Model):
             partner=partner,
         )
         inspection_obj = self.env["qc.inspection"].sudo()
+        # a shared product has no company: use the company of the
+        # current context (the one processing the quality control)
+        company = product.company_id or self.env.company
         # deactivate trigger line when success number of tests is reached
         for trigger_line in trigger_lines:
             if (
@@ -26,6 +29,7 @@ class QcTriggerProductLine(models.Model):
                     ("product_id", "=", product.id),
                     ("test", "=", trigger_line.test.id),
                     ("state", "in", ["success", "failed"]),
+                    ("company_id", "=", company.id),
                 ],
                 order="date desc",
                 limit=trigger_line.success_number_to_deactivation,
@@ -49,6 +53,7 @@ class QcTriggerProductLine(models.Model):
                             fields.Date.today()
                             - relativedelta(days=trigger_line.trigger_activation_days),
                         ),
+                        ("company_id", "=", company.id),
                     ],
                     order="date desc",
                 )
@@ -67,6 +72,7 @@ class QcTriggerProductLine(models.Model):
                             ("picking_type_id", "=", trigger.picking_type_id.id),
                             ("move_ids.product_id", "=", product.id),
                             ("qc_inspections_ids", "!=", False),
+                            ("company_id", "=", company.id),
                         ],
                         order="date desc",
                         limit=1,
@@ -83,6 +89,7 @@ class QcTriggerProductLine(models.Model):
                                 ("qc_inspections_ids", "=", False),
                                 ("id", "not in", inspected_pickings.ids),
                                 ("date", ">=", inspected_pickings.date),
+                                ("company_id", "=", company.id),
                             ]
                         )
                     )
