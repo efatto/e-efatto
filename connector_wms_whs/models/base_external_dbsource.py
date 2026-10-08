@@ -105,6 +105,7 @@ class BaseExternalDbsource(models.Model):
             [
                 ("location_id", "=", location_id),
                 ("product_id", "=", product.id),
+                ("company_id", "in", [self.company_id.id, False]),
             ]
         )
         # if len(ops) > 1:
@@ -149,6 +150,7 @@ class BaseExternalDbsource(models.Model):
             whs_lists = self.env["hyddemo.whs.liste"].search(
                 [
                     ("stato", "in", ["1", "2"]),
+                    ("company_id", "in", [dbsource.company_id.id, False]),
                 ]
             )
             i = 0
