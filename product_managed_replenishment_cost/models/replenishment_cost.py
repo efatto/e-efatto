@@ -81,7 +81,9 @@ class ReplenishmentCost(models.Model):
             ]
             if repl.product_ctg_ids:
                 domain.append(("categ_id", "in", repl.product_ctg_ids.ids))
-            products = self.env["product.product"].search(domain)
+            products = (
+                self.env["product.product"].with_company(repl.company_id).search(domain)
+            )
             started_at = time.time()
             (
                 products_without_seller,
