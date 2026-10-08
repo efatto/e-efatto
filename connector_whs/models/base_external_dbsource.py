@@ -258,7 +258,10 @@ class BaseExternalDbsource(models.Model):
                         f"WHS LOG: synchronizing list {num_lista} row {num_riga} in db"
                     )
                     whs_lista = self.env["hyddemo.whs.liste"].search(
-                        [("num_lista", "=", num_lista)]
+                        [
+                            ("num_lista", "=", num_lista),
+                            ("company_id", "=", dbsource.company_id.id),
+                        ]
                     )
                     if not whs_lista:
                         _logger.info(
@@ -271,7 +274,11 @@ class BaseExternalDbsource(models.Model):
                         continue
                     else:
                         hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
-                            [("num_lista", "=", num_lista), ("riga", "=", num_riga)]
+                            [
+                                ("num_lista", "=", num_lista),
+                                ("riga", "=", num_riga),
+                                ("company_id", "=", dbsource.company_id.id),
+                            ]
                         )
                     if not hyddemo_whs_lists:
                         # ROADMAP: if the user want to create the list directly in WMS,
@@ -433,6 +440,7 @@ class BaseExternalDbsource(models.Model):
                 whs_lists = self.env["hyddemo.whs.liste"].search(
                     [
                         ("stato", "=", "1"),
+                        ("company_id", "=", dbsource.company_id.id),
                     ]
                 )
             # group and insert lists by num_lista
@@ -584,15 +592,17 @@ class BaseExternalDbsource(models.Model):
     @api.model
     def _cron_whs_synchronize(self):
         for dbsource in self.sudo().search([]):
-            dbsource.with_company(
-                dbsource.company_id
-            ).whs_insert_read_and_synchronize_list()
+            dbsource = dbsource.with_company(dbsource.company_id)
+            dbsource.whs_insert_read_and_synchronize_list()
 
     @api.model
     def _cron_whs_synchronize_stock(self, do_sync=False):
         for dbsource in self.sudo().search([]):
-            dbsource.with_company(dbsource.company_id).whs_update_products()
-            wizard_obj = self.env["wizard.sync.stock.whs.mssql"]
+            dbsource = dbsource.with_company(dbsource.company_id)
+            dbsource.whs_update_products()
+            wizard_obj = self.env["wizard.sync.stock.whs.mssql"].with_company(
+                dbsource.company_id
+            )
             wizard_vals = wizard_obj.default_get(["do_sync"])
             wizard_vals.update(do_sync=do_sync)
             wizard = wizard_obj.with_context(
@@ -603,9 +613,8 @@ class BaseExternalDbsource(models.Model):
     @api.model
     def _cron_whs_update_products(self, update_from_date=False):
         for dbsource in self.sudo().search([]):
-            dbsource.with_company(dbsource.company_id).whs_update_products(
-                update_from_date
-            )
+            dbsource = dbsource.with_company(dbsource.company_id)
+            dbsource.whs_update_products(update_from_date)
 
     def whs_sync_stock(self):
         self.ensure_one()
@@ -635,6 +644,7 @@ class BaseExternalDbsource(models.Model):
                 whs_lists = self.env["hyddemo.whs.liste"].search(
                     [
                         ("stato", "in", ["1", "2"]),
+                        ("company_id", "=", dbsource.company_id.id),
                     ]
                 )
             i = 0
@@ -696,6 +706,7 @@ class BaseExternalDbsource(models.Model):
             # 2.
             hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
                 [
+                    ("company_id", "in", [dbsource.company_id.id, False]),
                     ("move_id.state", "in", ["done", "cancel"]),
                     ("data_lista", "<", date_limit),
                 ]
@@ -704,6 +715,7 @@ class BaseExternalDbsource(models.Model):
             # 3.
             hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
                 [
+                    ("company_id", "in", [dbsource.company_id.id, False]),
                     ("move_id", "=", False),
                     ("data_lista", "<", date_limit),
                 ]
@@ -713,6 +725,7 @@ class BaseExternalDbsource(models.Model):
             date_limit_deactivated = fields.Datetime.now() - relativedelta(months=3)
             hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
                 [
+                    ("company_id", "in", [dbsource.company_id.id, False]),
                     ("stato", "=", "3"),
                     ("data_lista", "<", date_limit_deactivated),
                 ]
@@ -721,6 +734,7 @@ class BaseExternalDbsource(models.Model):
             # 1.
             hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
                 [
+                    ("company_id", "in", [dbsource.company_id.id, False]),
                     ("data_lista", "<", date_limit),
                 ],
                 limit=100,
@@ -730,6 +744,7 @@ class BaseExternalDbsource(models.Model):
             dbsource.whs_check_list_state(hyddemo_whs_lists)
             hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
                 [
+                    ("company_id", "in", [dbsource.company_id.id, False]),
                     ("data_lista", "<", date_limit),
                     ("whs_list_absent", "=", True),
                 ]
@@ -739,6 +754,7 @@ class BaseExternalDbsource(models.Model):
             date_limit_mrp = fields.Datetime.now() - relativedelta(days=30)
             hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
                 [
+                    ("company_id", "in", [dbsource.company_id.id, False]),
                     ("stato", "=", "2"),
                     ("tipo_mov", "in", ["mrpin", "mrpout"]),
                     ("move_id.state", "in", ["done", "cancel"]),
@@ -749,6 +765,7 @@ class BaseExternalDbsource(models.Model):
             # 6.
             hyddemo_whs_lists = self.env["hyddemo.whs.liste"].search(
                 [
+                    ("company_id", "in", [dbsource.company_id.id, False]),
                     ("stato", "=", "2"),
                     ("tipo_mov", "in", ["mrpin", "mrpout"]),
                     ("move_id.state", "=", "cancel"),

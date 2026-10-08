@@ -24,7 +24,10 @@ class StockBackorderConfirmation(models.TransientModel):
         res = super().process()
         for pick_id in self.pick_ids:
             backorder_picks = self.env["stock.picking"].search(
-                [("backorder_id", "=", pick_id.id)]
+                [
+                    ("backorder_id", "=", pick_id.id),
+                    ("company_id", "=", pick_id.company_id.id),
+                ]
             )
             for backorder_pick in backorder_picks:
                 warehouse = backorder_pick.picking_type_id.warehouse_id

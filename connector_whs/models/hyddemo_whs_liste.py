@@ -191,11 +191,17 @@ class HyddemoWhsListe(models.Model):
         for whs_list in self:
             if whs_list.move_id:
                 dbsource = self.env["base.external.dbsource"].search(
-                    [("location_id", "=", whs_list.move_id.location_id.id)]
+                    [
+                        ("location_id", "=", whs_list.move_id.location_id.id),
+                        ("company_id", "=", whs_list.move_id.company_id.id),
+                    ]
                 )
                 if not dbsource:
                     dbsource = self.env["base.external.dbsource"].search(
-                        [("location_id", "=", whs_list.move_id.location_dest_id.id)]
+                        [
+                            ("location_id", "=", whs_list.move_id.location_dest_id.id),
+                            ("company_id", "=", whs_list.move_id.company_id.id),
+                        ]
                     )
                 connection = dbsource.connection_open_mssql()
                 if not connection:

@@ -126,7 +126,10 @@ class MrpProduction(models.Model):
                     else whs_list_id.move_id.location_id
                 )
                 dbsource = self.env["base.external.dbsource"].search(
-                    [("location_id", "=", location.id)]
+                    [
+                        ("location_id", "=", location.id),
+                        ("company_id", "=", production.company_id.id),
+                    ]
                 )
                 if not dbsource:
                     _logger.info(

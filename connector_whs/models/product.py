@@ -42,5 +42,6 @@ class ProductProduct(models.Model):
                 ("type", "=", "consu"),
                 ("is_storable", "=", True),
                 ("exclude_from_whs", "!=", True),
+                ("company_id", "in", [self.env.company.id, False]),
             ]
         )
