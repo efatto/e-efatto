@@ -36,11 +36,16 @@ def assign_employee_id(env):
     productivities = env["mrp.workcenter.productivity"].search([], order="id")
     for productivity in productivities:
         user_id = productivity.user_id and productivity.user_id.id or SUPERUSER_ID
-        employee_id = env["hr.employee"].search([("user_id", "=", user_id)], limit=1)
+        company_domain = [
+            ("company_id", "in", [productivity.company_id.id, False]),
+        ]
+        employee_id = env["hr.employee"].search(
+            [("user_id", "=", user_id)] + company_domain, limit=1
+        )
         if not employee_id:
             employee_id = env["hr.employee"].search(
-                [("name", "=", "Administrator")], limit=1
+                [("name", "=", "Administrator")] + company_domain, limit=1
             )
         if not employee_id:
-            employee_id = env["hr.employee"].search([], limit=1)
+            employee_id = env["hr.employee"].search(company_domain, limit=1)
         productivity.employee_id = employee_id

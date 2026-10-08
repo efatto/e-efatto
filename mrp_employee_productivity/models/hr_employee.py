@@ -15,6 +15,10 @@ class HrEmployee(models.Model):
     def _compute_productivity_count(self):
         productivity_obj = self.env["mrp.workcenter.productivity"]
         for employee in self:
+            company_ids = employee.company_id.ids or self.env.companies.ids
             employee.productivity_count = productivity_obj.search_count(
-                [("employee_id", "=", employee.id)]
+                [
+                    ("employee_id", "=", employee.id),
+                    ("company_id", "in", company_ids + [False]),
+                ]
             )
