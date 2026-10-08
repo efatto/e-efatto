@@ -259,7 +259,8 @@ class ProductProduct(models.Model):
         landed_price = bom.product_uom_id._compute_price(
             total_landed / (bom.product_qty or 1), self.uom_id
         )
-        if bom.type == "subcontract" and self.seller_ids:
+        seller = self._get_seller(bom.company_id.id)
+        if bom.type == "subcontract" and seller:
             # subcontract price is added only if bom is of subcontract type
             subcontract_price = self._get_price_unit_from_seller(
                 company_id=bom.company_id.id,
@@ -269,21 +270,31 @@ class ProductProduct(models.Model):
             landed_price += subcontract_price
         managed_replenishment_price += self.testing_cost
         managed_standard_price += self.testing_cost
-        if self.seller_ids:
+        if seller:
             # depreciation cost is always added
-            managed_replenishment_price += self.seller_ids[0].depreciation_cost
-            managed_standard_price += self.seller_ids[0].depreciation_cost
+            managed_replenishment_price += seller.depreciation_cost
+            managed_standard_price += seller.depreciation_cost
         managed_replenishment_price += self.adjustment_cost
 
         return managed_replenishment_price, managed_standard_price, landed_price
 
-    def _get_price_unit_from_seller(self, direct_cost=False, company_id=False):
-        seller = self.seller_ids.filtered(
-            lambda s: not s.company_id
-            or company_id
-            and s.company_id.id == company_id
-            or s.company_id == self.env.company
+    def _get_seller(self, company_id=False):
+        company = (
+            self.env["res.company"].browse(company_id)
+            if company_id
+            else self.env.company
+        )
+        return self.seller_ids.filtered(
+            lambda s: not s.company_id or s.company_id == company
         )[:1]
+
+    def _get_price_unit_from_seller(self, direct_cost=False, company_id=False):
+        company = (
+            self.env["res.company"].browse(company_id)
+            if company_id
+            else self.env.company
+        )
+        seller = self._get_seller(company_id)
         price_unit = 0.0
         margin_percentage = 0.0
         if seller.price:
@@ -293,11 +304,11 @@ class ProductProduct(models.Model):
             if hasattr(seller, "discount2") and hasattr(seller, "discount3"):
                 price_unit = price_unit * (1 - seller.discount2 / 100.0)
                 price_unit = price_unit * (1 - seller.discount3 / 100.0)
-            if seller.currency_id != self.env.company.currency_id:
+            if seller.currency_id and seller.currency_id != company.currency_id:
                 price_unit = seller.currency_id._convert(
-                    seller.price,
-                    self.env.company.currency_id,
-                    self.env.company,
+                    price_unit,
+                    company.currency_id,
+                    company,
                     fields.Date.today(),
                     round=False,
                 )
@@ -330,7 +341,8 @@ class ProductProduct(models.Model):
             managed_standard_price = 0
             landed_cost = 0
             direct_cost = 0
-            if product.seller_ids and product.seller_ids[0].price:
+            seller = product._get_seller(product.company_id.id)
+            if seller and seller.price:
                 direct_cost = product._get_price_unit_from_seller(
                     direct_cost=True,
                     company_id=product.company_id.id,
@@ -339,7 +351,7 @@ class ProductProduct(models.Model):
                     company_id=product.company_id.id,
                 )
                 # add adjustment and depreciation costs
-                depreciation_cost = product.seller_ids[0].depreciation_cost
+                depreciation_cost = seller.depreciation_cost
                 managed_standard_price = (
                     landed_cost + product.testing_cost + depreciation_cost
                 )
@@ -357,18 +369,15 @@ class ProductProduct(models.Model):
 
         return products_without_seller_price
 
-    @api.model
     def _get_buy_route_by_company(self):
         buy_route = self.env.ref(
             "purchase_stock.route_warehouse0_buy", raise_if_not_found=False
         )
+        company = self.company_id or self.env.company
         # Use sudo to check the route company even when the user cannot access it.
         return (
             buy_route.sudo()
-            .filtered(
-                lambda route: not route.company_id
-                or route.company_id == self.env.company
-            )
+            .filtered(lambda route: not route.company_id or route.company_id == company)
             .ids
         )
 
@@ -391,9 +400,11 @@ class ProductProduct(models.Model):
             lambda p: set(p._get_buy_route_by_company()) & set(p.route_ids.ids)
             and self.env.ref("mrp.route_warehouse0_manufacture") not in p.route_ids
         )
-        products_tobe_purchased = purchasable_products.filtered(lambda x: x.seller_ids)
+        products_tobe_purchased = purchasable_products.filtered(
+            lambda x: x._get_seller(x.company_id.id)
+        )
         products_tobe_purchased_without_seller = purchasable_products.filtered(
-            lambda x: not x.seller_ids
+            lambda x: not x._get_seller(x.company_id.id)
         )
         products_nottobe_purchased = self.filtered(
             lambda p: not set(p._get_buy_route_by_company()) & set(p.route_ids.ids)
