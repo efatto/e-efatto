@@ -577,19 +577,21 @@ class BaseExternalDbsource(models.Model):
 
     @api.model
     def _cron_whs_clean_lists(self):
-        for dbsource in self.search([]):
-            dbsource.whs_clean_lists()
+        for dbsource in self.sudo().search([]):
+            dbsource.with_company(dbsource.company_id).whs_clean_lists()
         return True
 
     @api.model
     def _cron_whs_synchronize(self):
-        for dbsource in self.search([]):
-            dbsource.whs_insert_read_and_synchronize_list()
+        for dbsource in self.sudo().search([]):
+            dbsource.with_company(
+                dbsource.company_id
+            ).whs_insert_read_and_synchronize_list()
 
     @api.model
     def _cron_whs_synchronize_stock(self, do_sync=False):
-        for dbsource in self.search([]):
-            dbsource.whs_update_products()
+        for dbsource in self.sudo().search([]):
+            dbsource.with_company(dbsource.company_id).whs_update_products()
             wizard_obj = self.env["wizard.sync.stock.whs.mssql"]
             wizard_vals = wizard_obj.default_get(["do_sync"])
             wizard_vals.update(do_sync=do_sync)
@@ -600,8 +602,10 @@ class BaseExternalDbsource(models.Model):
 
     @api.model
     def _cron_whs_update_products(self, update_from_date=False):
-        for dbsource in self.search([]):
-            dbsource.whs_update_products(update_from_date)
+        for dbsource in self.sudo().search([]):
+            dbsource.with_company(dbsource.company_id).whs_update_products(
+                update_from_date
+            )
 
     def whs_sync_stock(self):
         self.ensure_one()

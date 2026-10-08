@@ -11,6 +11,7 @@ class ProductMrpPickTime(models.Model):
     maximum_qty = fields.Float(string="Maximum Quantity")
     duration = fields.Float(string="Duration (minutes:seconds) for unit")
     workcenter_id = fields.Many2one("mrp.workcenter", string="Workcenter")
+    company_id = fields.Many2one(related="workcenter_id.company_id")
 
     @api.depends("minimum_qty", "maximum_qty", "duration", "workcenter_id")
     def _compute_name(self):
