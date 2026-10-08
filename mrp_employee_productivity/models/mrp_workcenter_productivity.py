@@ -21,7 +21,15 @@ class MrpWorkcenterProductivity(models.Model):
         ):
             user_id = result.get("user_id", self.env.user.id)
             employee_id = (
-                self.env["hr.employee"].search([("user_id", "=", user_id)], limit=1).id
+                self.env["hr.employee"]
+                .search(
+                    [
+                        ("user_id", "=", user_id),
+                        ("company_id", "in", [self.env.company.id, False]),
+                    ],
+                    limit=1,
+                )
+                .id
             )
             if employee_id:
                 result["employee_id"] = employee_id
