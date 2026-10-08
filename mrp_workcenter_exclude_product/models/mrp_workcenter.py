@@ -5,5 +5,5 @@ class MrpWorkcenter(models.Model):
     _inherit = "mrp.workcenter"
 
     excluded_product_ids = fields.Many2many(
-        "product.product", string="Excluded Products"
+        "product.product", string="Excluded Products", check_company=True
     )
