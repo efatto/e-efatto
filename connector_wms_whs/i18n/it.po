@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-20 18:24+0000\n"
-"PO-Revision-Date: 2025-11-20 18:24+0000\n"
+"POT-Creation-Date: 2026-10-09 13:40+0000\n"
+"PO-Revision-Date: 2026-10-09 13:40+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,7 +18,7 @@ msgstr ""
 #. module: connector_wms_whs
 #: model:ir.model.fields,field_description:connector_wms_whs.field_base_external_dbsource__assigned_attachment_ids
 #: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_liste__assigned_attachment_ids
-#: model:ir.model.fields,field_description:connector_wms_whs.field_product_template__assigned_attachment_ids
+#: model:ir.model.fields,field_description:connector_wms_whs.field_product_product__assigned_attachment_ids
 #: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order__assigned_attachment_ids
 #: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order_line__assigned_attachment_ids
 #: model:ir.model.fields,field_description:connector_wms_whs.field_stock_move__assigned_attachment_ids
@@ -30,7 +30,7 @@ msgstr "Allegati assegnati"
 #. module: connector_wms_whs
 #: model:ir.model.fields,field_description:connector_wms_whs.field_base_external_dbsource__display_name
 #: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_liste__display_name
-#: model:ir.model.fields,field_description:connector_wms_whs.field_product_template__display_name
+#: model:ir.model.fields,field_description:connector_wms_whs.field_product_product__display_name
 #: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order__display_name
 #: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order_line__display_name
 #: model:ir.model.fields,field_description:connector_wms_whs.field_stock_move__display_name
@@ -45,12 +45,19 @@ msgid "External Database Sources"
 msgstr "Sorgenti Database Esterne"
 
 #. module: connector_wms_whs
+#: model:ir.model.fields.selection,name:connector_wms_whs.selection__sale_order__priority__3
+#: model:ir.model.fields.selection,name:connector_wms_whs.selection__sale_order_line__priority__3
+#: model:ir.model.fields.selection,name:connector_wms_whs.selection__stock_move__priority__3
+#: model:ir.model.fields.selection,name:connector_wms_whs.selection__stock_picking__priority__3
+msgid "Extremely Urgent"
+msgstr "Subito"
+
+#. module: connector_wms_whs
 #: code:addons/connector_wms_whs/models/base_external_dbsource.py:0
 #: code:addons/connector_wms_whs/models/hyddemo_whs_liste.py:0
 #: code:addons/connector_wms_whs/models/hyddemo_whs_liste.py:0
 #: code:addons/connector_wms_whs/models/hyddemo_whs_liste.py:0
 #: code:addons/connector_wms_whs/models/product.py:0
-#: code:addons/connector_wms_whs/wizard/wizard_sync_stock_whs_mssql.py:0
 #, python-format
 msgid "Failed to open connection!"
 msgstr "Connessione fallita!"
@@ -58,7 +65,7 @@ msgstr "Connessione fallita!"
 #. module: connector_wms_whs
 #: model:ir.model.fields,field_description:connector_wms_whs.field_base_external_dbsource__id
 #: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_liste__id
-#: model:ir.model.fields,field_description:connector_wms_whs.field_product_template__id
+#: model:ir.model.fields,field_description:connector_wms_whs.field_product_product__id
 #: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order__id
 #: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order_line__id
 #: model:ir.model.fields,field_description:connector_wms_whs.field_stock_move__id
@@ -70,7 +77,7 @@ msgstr ""
 #. module: connector_wms_whs
 #: model:ir.model.fields,field_description:connector_wms_whs.field_base_external_dbsource____last_update
 #: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_liste____last_update
-#: model:ir.model.fields,field_description:connector_wms_whs.field_product_template____last_update
+#: model:ir.model.fields,field_description:connector_wms_whs.field_product_product____last_update
 #: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order____last_update
 #: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order_line____last_update
 #: model:ir.model.fields,field_description:connector_wms_whs.field_stock_move____last_update
@@ -105,38 +112,41 @@ msgstr "Priorità"
 
 #. module: connector_wms_whs
 #: model:ir.model.fields,help:connector_wms_whs.field_sale_order__priority
-msgid ""
-"Priority for this sale order. Setting manually a value here would set it as "
-"priority for all the order lines"
-msgstr ""
-"Priorità di questo ordine di vendita. Impostando qui un valore, verrà "
-"impostato anche in tutte le righe"
-
-#. module: connector_wms_whs
-#: model:ir.model,name:connector_wms_whs.model_product_template
-msgid "Product Template (Multi-Company)"
-msgstr "Modello prodotto (Multi-Company)"
-
-#. module: connector_wms_whs
-#: code:addons/connector_wms_whs/models/product.py:0
-#, python-format
-msgid "Product is going to be synchronized with WHS with record: %s."
-msgstr "Il prodotto è in corso di sincronizzazione con WHS con record: %s."
-
-#. module: connector_wms_whs
-#: code:addons/connector_wms_whs/models/product.py:0
-#, python-format
-msgid "Product is going to be synchronized with WHS."
-msgstr "Il prodotto non è in corso di sincronizzazione con WHS."
-
-#. module: connector_wms_whs
+#: model:ir.model.fields,help:connector_wms_whs.field_sale_order_line__priority
+#: model:ir.model.fields,help:connector_wms_whs.field_stock_move__priority
 #: model:ir.model.fields,help:connector_wms_whs.field_stock_picking__priority
 msgid ""
-"Products will be reserved first for the transfers with the highest "
-"priorities."
+"Priority of the order:\n"
+"- Normal: within 3 working weeks\n"
+"- Urgent: within 2 working weeks\n"
+"- Very Urgent: within 1 working week\n"
+"- Extremely Urgent: within 24 hours"
 msgstr ""
-"Vengono prenotati per primi i prodotti di trasferimenti con le priorità più "
-"alte."
+"Priorità di questo ordine di vendita. Impostando qui un valore, verrà "
+"impostato anche in tutte le righe.\n"
+"- Normale: entro 3 settimane lavorative\n"
+"- Alta: entro 2 settimane lavorative\n"
+"- Urgente: entro 1 settimana lavorativa\n"
+"- Subito: entro 24 ore"
+
+#. module: connector_wms_whs
+#: model:ir.model,name:connector_wms_whs.model_product_product
+msgid "Product"
+msgstr "Prodotto"
+
+#. module: connector_wms_whs
+#: code:addons/connector_wms_whs/models/product.py:0
+#, python-format
+msgid ""
+"Product info in table HOST_ARTICOLI and HOST_GIACENZE: Description: %(description)s,\n"
+"Weights host_articoli: %(weight_host_articoli)s,\n"
+"Weight host giacenze: %(weight_host_giacenze)s,\n"
+" Quantity: %(quantity)s."
+msgstr ""
+"Informazioni prodotto nelle tabelle HOST_ARTICOLI e HOST_GIACENZE: Descrizione: %(description)s,\n"
+"Pesi host_articoli: %(weight_host_articoli)s,\n"
+"Peso host giacenze: %(weight_host_giacenze)s,\n"
+" Quantità: %(quantity)s."
 
 #. module: connector_wms_whs
 #: model:ir.model,name:connector_wms_whs.model_sale_order
@@ -147,6 +157,18 @@ msgstr "Ordine di vendita"
 #: model:ir.model,name:connector_wms_whs.model_sale_order_line
 msgid "Sales Order Line"
 msgstr "Riga ordine di vendita"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_base_external_dbsource__smart_search
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_liste__smart_search
+#: model:ir.model.fields,field_description:connector_wms_whs.field_product_product__smart_search
+#: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order__smart_search
+#: model:ir.model.fields,field_description:connector_wms_whs.field_sale_order_line__smart_search
+#: model:ir.model.fields,field_description:connector_wms_whs.field_stock_move__smart_search
+#: model:ir.model.fields,field_description:connector_wms_whs.field_stock_picking__smart_search
+#: model:ir.model.fields,field_description:connector_wms_whs.field_wizard_sync_stock_whs_mssql__smart_search
+msgid "Smart Search"
+msgstr "Ricerca intelligente"
 
 #. module: connector_wms_whs
 #: model:ir.model,name:connector_wms_whs.model_stock_move
