@@ -307,7 +307,11 @@ VALUES (
         for lista in self:
             if not execute_params_order.get(lista.num_lista):
                 execute_params_order[lista.num_lista] = {}
+            lang = lista.move_id._get_lang_from_move()
             product = lista.product_id
+            product_name = (
+                product.with_context(lang=lang).name if lang else product.name
+            )
             parent_product_id = (
                 lista.parent_product_id if lista.parent_product_id else False
             )
@@ -315,7 +319,11 @@ VALUES (
                 (
                     parent_product_id.default_code[:250]
                     if parent_product_id.default_code
-                    else parent_product_id.name[:250]
+                    else (
+                        parent_product_id.with_context(lang=lang).name
+                        if lang
+                        else parent_product_id.name
+                    )[:250]
                 )
                 if parent_product_id
                 else ""
@@ -346,8 +354,8 @@ VALUES (
                 "Articolo": product.default_code[:30]
                 if product.default_code
                 else "prodotto senza codice",  # char 30
-                "DescrizioneArticolo": product.name[:70]
-                if product.name
+                "DescrizioneArticolo": product_name[:70]
+                if product_name
                 else product.default_code[:70]
                 if product.default_code
                 else "prodotto senza nome",  # char 70
