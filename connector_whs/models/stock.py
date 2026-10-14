@@ -284,6 +284,17 @@ class StockMove(models.Model):
         for move in self:
             move.has_wms_lists = bool(move.whs_list_ids)
 
+    def _get_lang_from_move(self):
+        self.ensure_one()
+        partner = (
+            self.partner_id
+            or self.move_orig_ids.picking_id.partner_id[:1]
+            or self.purchase_line_id.order_id.partner_id
+            or self.sale_line_id.order_id.partner_id
+        )
+        lang = partner.lang or partner.commercial_partner_id.lang or self.env.context.get("lang")
+        return lang
+
     def action_show_wms_lists(self):
         self.ensure_one()
         domain = [("id", "in", self.whs_list_ids.ids)]
@@ -537,7 +548,7 @@ class StockMove(models.Model):
                         continue
                 partner_id = (
                     move.partner_id
-                    or move.move_orig_ids.picking_id.partner_id
+                    or move.move_orig_ids.picking_id.partner_id[:1]
                     or move.purchase_line_id.order_id.partner_id
                     or move.sale_line_id.order_id.partner_id
                 )
