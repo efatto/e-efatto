@@ -292,7 +292,11 @@ class StockMove(models.Model):
             or self.purchase_line_id.order_id.partner_id
             or self.sale_line_id.order_id.partner_id
         )
-        lang = partner.lang or partner.commercial_partner_id.lang or self.env.context.get("lang")
+        lang = (
+            partner.lang
+            or partner.commercial_partner_id.lang
+            or self.env.context.get("lang")
+        )
         return lang
 
     def action_show_wms_lists(self):

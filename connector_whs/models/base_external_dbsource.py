@@ -175,9 +175,7 @@ class BaseExternalDbsource(models.Model):
             # delete from HOST_ARTICOLI if already processed from WMS (Elaborato=2)
             # or interrupted (bad) records (Elaborato=0)
             dbsource._pre_insert_product_query()
-            log_data, last_date_dt = dbsource._get_product_sync_log(
-                update_from_date
-            )
+            log_data, last_date_dt = dbsource._get_product_sync_log(update_from_date)
             last_id = log_data and log_data[0]["ultimo_id"] or 0
             new_id = last_id + 1
             products = self.env["product.product"]._get_product_to_sync(
@@ -658,9 +656,7 @@ class BaseExternalDbsource(models.Model):
             "SELECT pg_try_advisory_lock(%s)", (self._WMS_STOCK_SYNC_LOCK_KEY,)
         )
         if not self.env.cr.fetchone()[0]:
-            _logger.warning(
-                "WMS LOG: stock synchronization already running, skipping"
-            )
+            _logger.warning("WMS LOG: stock synchronization already running, skipping")
             return False
         try:
             for dbsource in self.search([]):

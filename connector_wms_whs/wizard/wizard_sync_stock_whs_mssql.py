@@ -26,15 +26,12 @@ class WizardSyncStockWhsMssql(models.TransientModel):
         # overridable method
         # respect order of fields retrieved!
         # ``i`` is a 0-based offset: fetch rows i+1 .. i+PAGE_SIZE.
-        # The old BETWEEN i AND i+2000 overlapped by one row on every page and
-        # counted boundary rows twice.
         query = (
             "SELECT * FROM (SELECT row_number() OVER (ORDER BY Articolo) "
             "AS rownum, Articolo, Qta, Peso, "
             "Lotto, Lotto2, Lotto3, Lotto4, Lotto5 "
             "FROM HOST_GIACENZE) as A "
-            "WHERE A.rownum BETWEEN %s AND %s"
-            % (i + 1, i + WHS_STOCK_PAGE_SIZE)
+            "WHERE A.rownum BETWEEN %s AND %s" % (i + 1, i + WHS_STOCK_PAGE_SIZE)
         )
         return query
 
@@ -74,9 +71,9 @@ class WizardSyncStockWhsMssql(models.TransientModel):
         while True:
             giacenze_query = self._prepare_giacenze_query(i)
             if wizard.product_id:
-                wizard_product_code = (
-                    wizard.product_id.default_code or ""
-                ).replace("'", "''")
+                wizard_product_code = (wizard.product_id.default_code or "").replace(
+                    "'", "''"
+                )
                 giacenze_query = giacenze_query.replace(
                     "HOST_GIACENZE",
                     "HOST_GIACENZE WHERE Articolo = '%s'" % wizard_product_code,
@@ -158,9 +155,9 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 ]
             )
             for whs_list in open_lists:
-                open_lists_by_product.setdefault(
-                    whs_list.product_id.id, []
-                ).append(whs_list)
+                open_lists_by_product.setdefault(whs_list.product_id.id, []).append(
+                    whs_list
+                )
 
         # compare data with db and re-align values
         for stock_product in stock_product_dict:
@@ -406,15 +403,13 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     "company_id": dbsource.company_id.id,
                 }
             )
-            for line_chunk in _chunks(
-                inventory_lines_data, WHS_STOCK_INVENTORY_CHUNK
-            ):
+            for line_chunk in _chunks(inventory_lines_data, WHS_STOCK_INVENTORY_CHUNK):
                 inventory.write({"line_ids": [(0, 0, x) for x in line_chunk]})
                 # Commit each chunk when running from the cron: a single huge
                 # inventory line insert is what made this cron slow and memory
                 # hungry.  Manual/UI runs keep their transaction intact.
                 if self.env.context.get("whs_commit_chunks"):
-                    self._cr.commit()
+                    self._cr.commit()  # pylint: disable=invalid-commit
             inventory.action_start()
             inventory.action_validate()
 
@@ -436,7 +431,7 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                 ]
             )
             if self.env.context.get("whs_commit_chunks"):
-                self._cr.commit()
+                self._cr.commit()  # pylint: disable=invalid-commit
 
         return {
             "type": "ir.actions.act_window",
