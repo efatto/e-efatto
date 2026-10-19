@@ -12,6 +12,11 @@ from odoo.tools.date_utils import relativedelta
 
 _logger = logging.getLogger(__name__)
 
+# Maximum number of product rows stored in a single product synchronization log.
+# Keeping the log bounded avoids creating one huge transaction (and huge memory
+# usage) when the whole product catalogue is exported.
+WMS_PRODUCT_LOG_MAX_LINES = 5000
+
 
 def clean_sql_text(text):
     return sql_text(text.replace("\n", " "))
@@ -19,6 +24,11 @@ def clean_sql_text(text):
 
 class BaseExternalDbsource(models.Model):
     _inherit = "base.external.dbsource"
+
+    # Arbitrary key used for a PostgreSQL session-level advisory lock, so that
+    # only one stock synchronization can run at a time even when the ir_cron
+    # row lock is lost (e.g. because the lock connection was closed).
+    _WMS_STOCK_SYNC_LOCK_KEY = 0x57484D53  # "WMS"
 
     location_id = fields.Many2one("stock.location", "Location linked to WMS")
     conn_string_sandbox = fields.Text("Connection string sandbox")
@@ -103,6 +113,52 @@ class BaseExternalDbsource(models.Model):
         # overridable method done after _get_insert_product_query in the WMS database
         return ""
 
+    def _get_product_sync_log(self, update_from_date=False):
+        """Return the last product sync log and the date to sync from.
+
+        Only product synchronization logs are considered: the previous code
+        used the last log of *any* type, so a stock synchronization log could
+        be mistaken for a product log.  The 10-year fallback is now explicit
+        and logged instead of happening silently.
+        """
+        self.ensure_one()
+        log_obj = self.env["hyddemo.mssql.log"]
+        log_data = log_obj.search_read(
+            [
+                ("dbsource_id", "=", self.id),
+                ("sync_type", "=", "product"),
+            ],
+            ["ultimo_invio", "ultimo_id"],
+            order="ultimo_id desc, ultimo_invio desc, id desc",
+            limit=1,
+        )
+        if not log_data:
+            # Backward compatibility: logs created before sync_type existed
+            # have no value.  Fall back to the old behaviour for the first run
+            # after the upgrade, to avoid exporting the whole catalogue again.
+            log_data = log_obj.search_read(
+                [("dbsource_id", "=", self.id)],
+                ["ultimo_invio", "ultimo_id"],
+                order="ultimo_id desc, ultimo_invio desc, id desc",
+                limit=1,
+            )
+        _logger.info("WMS LOG: last product synchronization log: %s", log_data)
+        if update_from_date:
+            last_date_dt = fields.Datetime.from_string(update_from_date)
+        elif self.force_update_product_from_date:
+            last_date_dt = self.force_update_product_from_date
+            self.force_update_product_from_date = False
+        elif log_data and log_data[0]["ultimo_invio"]:
+            last_date_dt = log_data[0]["ultimo_invio"]
+        else:
+            _logger.info(
+                "WMS LOG: no previous product synchronization for %s: "
+                "exporting the whole product catalogue",
+                self.display_name,
+            )
+            last_date_dt = fields.Datetime.now() + relativedelta(years=-10)
+        return log_data, last_date_dt
+
     def whs_update_products(self, update_from_date=False):
         """
         Send to HOST_ARTICOLI table only the products changed from the last execution,
@@ -112,37 +168,27 @@ class BaseExternalDbsource(models.Model):
             connection = dbsource.connection_open_mssql()
             if not connection:
                 raise UserError(_("Failed to open connection!"))
+            # ``execute_mssql`` opens its own connection for every query: the
+            # connection above is only a connection test, so close it at once
+            # instead of leaking it for the whole (possibly long) export.
+            dbsource.connection_close_mssql(connection)
             # delete from HOST_ARTICOLI if already processed from WMS (Elaborato=2)
             # or interrupted (bad) records (Elaborato=0)
             dbsource._pre_insert_product_query()
-            log_data = self.env["hyddemo.mssql.log"].search_read(
-                [("dbsource_id", "=", dbsource.id)],
-                ["ultimo_invio", "ultimo_id"],
-                order="ultimo_id desc",
-                limit=1,
+            log_data, last_date_dt = dbsource._get_product_sync_log(
+                update_from_date
             )
-            _logger.info(log_data)
             last_id = log_data and log_data[0]["ultimo_id"] or 0
             new_id = last_id + 1
-            if update_from_date:
-                last_date_dt = fields.Datetime.from_string(update_from_date)
-            elif dbsource.force_update_product_from_date:
-                last_date_dt = dbsource.force_update_product_from_date
-                dbsource.force_update_product_from_date = False
-            else:
-                last_date_dt = (
-                    log_data
-                    and log_data[0]["ultimo_invio"]
-                    or (fields.Datetime.now() + relativedelta(years=-10))
-                )
-            last_date = fields.Datetime.to_string(last_date_dt)
-            products = self.env["product.product"]._get_product_to_sync(last_date)
+            products = self.env["product.product"]._get_product_to_sync(
+                fields.Datetime.to_string(last_date_dt)
+            )
             new_last_update = fields.Datetime.now()
+            insert_product_query = dbsource._get_insert_product_query()
             for product in products:
-                insert_product_params = self._prepare_host_articoli_values(
+                insert_product_params = dbsource._prepare_host_articoli_values(
                     product, dbsource.location_id.id, new_id
                 )
-                insert_product_query = dbsource._get_insert_product_query()
                 dbsource.with_context(no_return=True).execute_mssql(
                     sqlquery=clean_sql_text(insert_product_query),
                     sqlparams=insert_product_params,
@@ -151,30 +197,38 @@ class BaseExternalDbsource(models.Model):
                 new_id += 1
 
             dbsource._post_insert_product_query(new_id)
+            errori = "Added/Updated %s products" % len(products)
+            # One log line per product could be tens of thousands of lines in
+            # a single INSERT: keep the log bounded.
+            log_lines = [
+                (
+                    0,
+                    0,
+                    {
+                        "product_id": product.id,
+                        "type": "info",
+                        "product_name": product.name,
+                    },
+                )
+                for product in products[:WMS_PRODUCT_LOG_MAX_LINES]
+            ]
+            if WMS_PRODUCT_LOG_MAX_LINES < len(products):
+                errori += " (log lines limited to the first %s)" % (
+                    WMS_PRODUCT_LOG_MAX_LINES
+                )
             res = self.env["hyddemo.mssql.log"].create(
                 [
                     {
                         "ultimo_invio": new_last_update,
                         "ultimo_id": new_id,
-                        "errori": "Added/Updated %s products" % len(products),
+                        "errori": errori,
+                        "sync_type": "product",
                         "dbsource_id": dbsource.id,
-                        "hyddemo_mssql_log_line_ids": [
-                            (
-                                0,
-                                0,
-                                {
-                                    "product_id": product.id,
-                                    "type": "info",
-                                    "product_name": product.name,
-                                },
-                            )
-                            for product in products
-                        ],
+                        "hyddemo_mssql_log_line_ids": log_lines,
                     }
                 ]
             )
-            _logger.info(res)
-            dbsource.connection_close_mssql(connection)
+            _logger.info("WMS LOG: product synchronization log %s", res)
         return True
 
     def whs_read_and_synchronize_list(self, whs_lists=False):  # noqa: pylint C901
@@ -595,15 +649,42 @@ class BaseExternalDbsource(models.Model):
 
     @api.model
     def _cron_whs_synchronize_stock(self, do_sync=False):
-        for dbsource in self.search([]):
-            dbsource.whs_update_products()
-            wizard_obj = self.env["wizard.sync.stock.whs.mssql"]
-            wizard_vals = wizard_obj.default_get(["do_sync"])
-            wizard_vals.update(do_sync=do_sync)
-            wizard = wizard_obj.with_context(
-                active_ids=dbsource.ids, active_model="base.external.dbsource"
-            ).create(wizard_vals)
-            wizard.apply()
+        # Odoo locks the ir_cron row on a separate connection for the whole job
+        # duration.  If that connection is closed (idle-in-transaction timeout,
+        # proxy, network) the row lock is lost while this job is still running,
+        # so another worker could start the same synchronization.  A
+        # session-level advisory lock on the job connection prevents that.
+        self.env.cr.execute(
+            "SELECT pg_try_advisory_lock(%s)", (self._WMS_STOCK_SYNC_LOCK_KEY,)
+        )
+        if not self.env.cr.fetchone()[0]:
+            _logger.warning(
+                "WMS LOG: stock synchronization already running, skipping"
+            )
+            return False
+        try:
+            for dbsource in self.search([]):
+                dbsource.whs_update_products()
+                wizard_obj = self.env["wizard.sync.stock.whs.mssql"]
+                wizard_vals = wizard_obj.default_get(["do_sync"])
+                wizard_vals.update(do_sync=do_sync)
+                wizard = wizard_obj.with_context(
+                    active_ids=dbsource.ids,
+                    active_model="base.external.dbsource",
+                    whs_commit_chunks=True,
+                ).create(wizard_vals)
+                wizard.apply()
+        finally:
+            try:
+                self.env.cr.execute(
+                    "SELECT pg_advisory_unlock(%s)",
+                    (self._WMS_STOCK_SYNC_LOCK_KEY,),
+                )
+            except Exception:
+                _logger.exception(
+                    "WMS LOG: unable to release the stock synchronization lock"
+                )
+        return True
 
     @api.model
     def _cron_whs_update_products(self, update_from_date=False):
