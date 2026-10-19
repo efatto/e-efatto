@@ -7,6 +7,16 @@ from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_te
 
 _logger = logging.getLogger(__name__)
 
+WHS_STOCK_PAGE_SIZE = 2000
+WHS_STOCK_INVENTORY_CHUNK = 500
+WHS_STOCK_LOG_CHUNK = 1000
+WHS_STOCK_PRODUCT_CHUNK = 1000
+
+
+def _chunks(values, size):
+    for start in range(0, len(values), size):
+        yield values[start : start + size]
+
 
 class WizardSyncStockWhsMssql(models.TransientModel):
     _inherit = "wizard.sync.stock.whs.mssql"
@@ -15,12 +25,16 @@ class WizardSyncStockWhsMssql(models.TransientModel):
     def _prepare_giacenze_query(i):
         # overridable method
         # respect order of fields retrieved!
+        # ``i`` is a 0-based offset: fetch rows i+1 .. i+PAGE_SIZE.
+        # The old BETWEEN i AND i+2000 overlapped by one row on every page and
+        # counted boundary rows twice.
         query = (
             "SELECT * FROM (SELECT row_number() OVER (ORDER BY Articolo) "
             "AS rownum, Articolo, Qta, Peso, "
             "Lotto, Lotto2, Lotto3, Lotto4, Lotto5 "
             "FROM HOST_GIACENZE) as A "
-            "WHERE A.rownum BETWEEN %s AND %s" % (i, i + 2000)
+            "WHERE A.rownum BETWEEN %s AND %s"
+            % (i + 1, i + WHS_STOCK_PAGE_SIZE)
         )
         return query
 
@@ -48,6 +62,9 @@ class WizardSyncStockWhsMssql(models.TransientModel):
         if not connection:
             _logger.info("Failed to open connection!")
             return None
+        # ``execute_mssql`` opens its own connection for every query: do not
+        # keep this connection open for the whole synchronization.
+        dbsource.connection_close_mssql(connection)
         new_last_update = fields.Datetime.now()
         product_obj = self.env["product.product"]
         i = 0
@@ -57,12 +74,14 @@ class WizardSyncStockWhsMssql(models.TransientModel):
         while True:
             giacenze_query = self._prepare_giacenze_query(i)
             if wizard.product_id:
+                wizard_product_code = (
+                    wizard.product_id.default_code or ""
+                ).replace("'", "''")
                 giacenze_query = giacenze_query.replace(
                     "HOST_GIACENZE",
-                    "HOST_GIACENZE WHERE Articolo = '%s'"
-                    % wizard.product_id.default_code,
+                    "HOST_GIACENZE WHERE Articolo = '%s'" % wizard_product_code,
                 )
-            i += 2000
+            i += WHS_STOCK_PAGE_SIZE
             esiti_liste = dbsource.execute_mssql(
                 sqlquery=clean_sql_text(giacenze_query),
                 sqlparams=None,
@@ -102,46 +121,65 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     else:
                         stock_product_dict[articolo][lot_unique_ref]["qty"] += qty
 
+        # Resolve all products with a few searches instead of two searches for
+        # every WMS article.
+        products_by_code = {}
+        any_product_by_code = {}
+        codes = [code for code in stock_product_dict if code]
+        for code_chunk in _chunks(codes, WHS_STOCK_PRODUCT_CHUNK):
+            products = product_obj.search(
+                [
+                    ("default_code", "in", code_chunk),
+                    ("exclude_from_whs", "!=", True),
+                    ("is_kit", "!=", True),
+                ]
+            )
+            for product in products:
+                any_product_by_code.setdefault(product.default_code, product)
+                # Keep the storable product when a service shares the code, as
+                # the previous type='product' first search did.
+                current = products_by_code.get(product.default_code)
+                if not current or (
+                    product.type == "product" and current.type != "product"
+                ):
+                    products_by_code[product.default_code] = product
+
+        # Preload the open WMS lists for all products, instead of one search
+        # per product.
+        open_lists_by_product = {}
+        for product_id_chunk in _chunks(
+            [p.id for p in products_by_code.values()], WHS_STOCK_PRODUCT_CHUNK
+        ):
+            open_lists = self.env["hyddemo.whs.liste"].search(
+                [
+                    ("product_id", "in", product_id_chunk),
+                    ("stato", "=", "4"),
+                    ("move_id.state", "not in", ["done", "cancel"]),
+                ]
+            )
+            for whs_list in open_lists:
+                open_lists_by_product.setdefault(
+                    whs_list.product_id.id, []
+                ).append(whs_list)
+
         # compare data with db and re-align values
         for stock_product in stock_product_dict:
             whs_log_line = {
                 "name": stock_product,
             }
             product_lot = " ".join(stock_product_dict[stock_product].keys())
-            product = product_obj.search(
-                [
-                    ("default_code", "=", stock_product),
-                    ("type", "=", "product"),
-                    ("exclude_from_whs", "!=", True),
-                    ("is_kit", "!=", True),
-                ]
-            )
+            product = products_by_code.get(stock_product)
             # if it is a service, only log but do not create inventory line
             if not product:
-                product = product_obj.search(
-                    [
-                        ("default_code", "=", stock_product),
-                        ("type", "!=", "product"),
-                        ("exclude_from_whs", "!=", True),
-                        ("is_kit", "!=", True),
-                    ]
+                service = any_product_by_code.get(stock_product)
+                whs_log_line.update(
+                    {
+                        "type": "service" if service else "not_found",
+                        "lot": product_lot,
+                    }
                 )
-                if not product:
-                    whs_log_line.update(
-                        {
-                            "type": "not_found",
-                            "lot": product_lot,
-                        }
-                    )
-                    continue
-                else:
-                    whs_log_line.update(
-                        {
-                            "type": "service",
-                            "lot": product_lot,
-                        }
-                    )
-                    continue
+                whs_log_lines.append(whs_log_line)
+                continue
             # it is a product or consumable, create log and align only if qty is
             # different and do_sync is True
             else:
@@ -158,17 +196,12 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                             "type": "tracking",
                         }
                     )
+                    whs_log_lines.append(whs_log_line)
                     continue
                 # Remove from wms_product_qty stock.move which whs lists
                 # are on stato 'ricevuto esito' but not done in Odoo
                 ongoing_qty = 0
-                open_whs_list_ids = self.env["hyddemo.whs.liste"].search(
-                    [
-                        ("product_id", "=", product.id),
-                        ("stato", "=", "4"),
-                        ("move_id.state", "not in", ["done", "cancel"]),
-                    ]
-                )
+                open_whs_list_ids = open_lists_by_product.get(product.id, [])
                 if open_whs_list_ids:
                     # Neutralize the outgoing moves adding qty not completed in Odoo but
                     # completed in WHS, and viceversa for the incomings.
@@ -371,24 +404,39 @@ class WizardSyncStockWhsMssql(models.TransientModel):
                     + new_last_update.strftime("%Y-%m-%d"),
                     "location_ids": [(6, 0, dbsource.location_id.ids)],
                     "company_id": dbsource.company_id.id,
-                    "line_ids": [(0, 0, x) for x in inventory_lines_data],
                 }
             )
+            for line_chunk in _chunks(
+                inventory_lines_data, WHS_STOCK_INVENTORY_CHUNK
+            ):
+                inventory.write({"line_ids": [(0, 0, x) for x in line_chunk]})
+                # Commit each chunk when running from the cron: a single huge
+                # inventory line insert is what made this cron slow and memory
+                # hungry.  Manual/UI runs keep their transaction intact.
+                if self.env.context.get("whs_commit_chunks"):
+                    self._cr.commit()
             inventory.action_start()
             inventory.action_validate()
 
         hyddemo_mssql_log = hyddemo_mssql_log_obj.create(
-            [
-                {
-                    "errori": "Stock inventory %s"
-                    % ("sync" if wizard.do_sync else "check"),
-                    "ultimo_invio": new_last_update,
-                    "dbsource_id": dbsource.id,
-                    "inventory_id": inventory.id,
-                    "hyddemo_mssql_log_line_ids": [(0, 0, x) for x in whs_log_lines],
-                }
-            ]
+            {
+                "errori": "Stock inventory %s"
+                % ("sync" if wizard.do_sync else "check"),
+                "ultimo_invio": new_last_update,
+                "sync_type": "stock",
+                "dbsource_id": dbsource.id,
+                "inventory_id": inventory.id,
+            }
         )
+        for log_chunk in _chunks(whs_log_lines, WHS_STOCK_LOG_CHUNK):
+            self.env["hyddemo.mssql.log.line"].create(
+                [
+                    dict(line_vals, hyddemo_mssql_log_id=hyddemo_mssql_log.id)
+                    for line_vals in log_chunk
+                ]
+            )
+            if self.env.context.get("whs_commit_chunks"):
+                self._cr.commit()
 
         return {
             "type": "ir.actions.act_window",
