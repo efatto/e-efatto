@@ -22,11 +22,14 @@ class MrpProduction(models.Model):
         if production_set_ids:
             production_set_ids.ensure_one()
             num_lista = (
-                production_set_ids.production_left_id
-                | production_set_ids.production_right_id
-            ).mapped("move_raw_ids.whs_list_ids").filtered(
-                lambda whsl: whsl.stato != "3"
-            ).mapped("num_lista")[:1]
+                (
+                    production_set_ids.production_left_id
+                    | production_set_ids.production_right_id
+                )
+                .mapped("move_raw_ids.whs_list_ids")
+                .filtered(lambda whsl: whsl.stato != "3")
+                .mapped("num_lista")[:1]
+            )
             if num_lista:
                 num_lista = num_lista[0]
             else:
@@ -70,7 +73,9 @@ class MrpProduction(models.Model):
                             )
                         )
                 else:
-                    new_riga_numbers = set(self.move_raw_ids.mapped("whs_list_ids.riga")) - {1, 2}
+                    new_riga_numbers = set(
+                        self.move_raw_ids.mapped("whs_list_ids.riga")
+                    ) - {1, 2}
                     if new_riga_numbers:
                         raise ValidationError(
                             _(
