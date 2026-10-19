@@ -1100,9 +1100,9 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         component_whs_lists = man_order.mapped("move_raw_ids.whs_list_ids").filtered(
             lambda whsl: whsl.stato != "3"
         )
-        finished_whs_lists = man_order.mapped("move_finished_ids.whs_list_ids").filtered(
-            lambda whsl: whsl.stato != "3"
-        )
+        finished_whs_lists = man_order.mapped(
+            "move_finished_ids.whs_list_ids"
+        ).filtered(lambda whsl: whsl.stato != "3")
         self.simulate_wms_cron({x: x.qta * 0.25 for x in component_whs_lists})
         self.simulate_wms_cron({x: 5 for x in finished_whs_lists})
 
@@ -1193,9 +1193,9 @@ class TestConnectorWmsModula(CommonConnectorWMS):
         component_whs_lists = man_order.mapped("move_raw_ids.whs_list_ids").filtered(
             lambda whsl: whsl.stato != "3"
         )
-        finished_whs_lists = man_order.mapped("move_finished_ids.whs_list_ids").filtered(
-            lambda whsl: whsl.stato != "3"
-        )
+        finished_whs_lists = man_order.mapped(
+            "move_finished_ids.whs_list_ids"
+        ).filtered(lambda whsl: whsl.stato != "3")
         self.simulate_wms_cron(
             {x: x.qta for x in component_whs_lists | finished_whs_lists}
         )

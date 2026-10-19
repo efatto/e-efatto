@@ -222,11 +222,9 @@ class MrpProductionSet(models.Model):
                 raw_component_left_id = (
                     production_set.production_left_id.move_raw_ids.product_id
                 )
-                if len(raw_component_left_id)> 1:
+                if len(raw_component_left_id) > 1:
                     raise ValidationError(
-                        _(
-                            "In production set, components must be unique"
-                        )
+                        _("In production set, components must be unique")
                     )
                 compatible_mrp_production_ids = compatible_mrp_production_ids.filtered(
                     lambda p: p.state in ["draft", "confirmed", "progress"]
