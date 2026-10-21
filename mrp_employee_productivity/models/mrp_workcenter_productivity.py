@@ -13,6 +13,17 @@ class MrpWorkcenterProductivity(models.Model):
     duration = fields.Float(string="Duration (minutes)")
 
     @api.model
+    def _get_default_employee(self, user_id=None):
+        user_id = user_id or self.env.user.id
+        return self.env["hr.employee"].search(
+            [
+                ("user_id", "=", user_id),
+                ("company_id", "in", [self.env.company.id, False]),
+            ],
+            limit=1,
+        )
+
+    @api.model
     def default_get(self, field_list):
         result = super().default_get(field_list)
         if (
@@ -20,22 +31,16 @@ class MrpWorkcenterProductivity(models.Model):
             and "employee_id" in field_list
         ):
             user_id = result.get("user_id", self.env.user.id)
-            employee_id = (
-                self.env["hr.employee"]
-                .search(
-                    [
-                        ("user_id", "=", user_id),
-                        ("company_id", "in", [self.env.company.id, False]),
-                    ],
-                    limit=1,
-                )
-                .id
-            )
-            if employee_id:
-                result["employee_id"] = employee_id
+            employee = self._get_default_employee(user_id)
+            if employee:
+                result["employee_id"] = employee.id
         return result
 
-    employee_id = fields.Many2one("hr.employee", "Employee", required=True)
+    employee_id = fields.Many2one(
+        "hr.employee",
+        "Employee",
+        default=lambda self: self._get_default_employee(),
+    )
 
     @api.onchange("employee_id")
     def _onchange_employee_id(self):
