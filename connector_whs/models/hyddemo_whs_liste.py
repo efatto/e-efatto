@@ -80,10 +80,10 @@ class HyddemoWhsListe(models.Model):
         "product.product", string="Prodotto Padre", domain=[("type", "=", "consu")]
     )
     lotto = fields.Text()
-    lotto2 = fields.Char(size=20)
-    lotto3 = fields.Char(size=20)
-    lotto4 = fields.Char(size=20)
-    lotto5 = fields.Char(size=20)
+    lotto2 = fields.Char()
+    lotto3 = fields.Char()
+    lotto4 = fields.Char()
+    lotto5 = fields.Char()
     qta = fields.Float("Quantità")
     qtamov = fields.Float("Quantità movimentata", tracking=True)
     move_id = fields.Many2one(
@@ -113,7 +113,7 @@ class HyddemoWhsListe(models.Model):
                 raise UserError(_("Invalid tipo_mov value"))
 
     client_order_ref = fields.Text()  # size=50)
-    product_customer_code = fields.Char(size=250)
+    product_customer_code = fields.Char()
     whs_list_absent = fields.Boolean()
     whs_list_multiple = fields.Boolean()
     whs_not_passed = fields.Boolean(
