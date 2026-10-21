@@ -16,7 +16,6 @@
         "mrp_workorder_sequence",
         "web_timeline",
     ],
-    "external_dependencies": {"python": ["pandas"]},
     "data": [
         "security/ir.model.access.csv",
         "data/cron.xml",
