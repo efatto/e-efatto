@@ -7,6 +7,7 @@
     "website": "https://github.com/efatto/e-efatto",
     "license": "AGPL-3",
     "category": "other",
+    "development_status": "Alpha",
     "depends": [
         "mrp_routing",
         "mrp_subcontracting",
