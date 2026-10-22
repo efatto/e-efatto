@@ -253,3 +253,39 @@ class TestSerialMatrix(Common):
 
     def test_03_validate_removing_and_adding_component_starting_wo(self):
         self._test_validate_removing_and_adding_component(start_wo=True)
+
+    def test_04_validate_partial_production_and_resume(self):
+        """Validate only one serial, then resume the matrix on the backorder."""
+        production = self.production
+        self._confirm_production()
+        serial_matrix_wizard = self._init_matrix(production)
+        # Process only the first serial, leaving a backorder.
+        serial_matrix_wizard.write(
+            {"finished_lot_ids": [(6, 0, self.product_serials[:1].ids)]}
+        )
+        serial_matrix_wizard.button_validate()
+
+        remaining = production.procurement_group_id.mrp_production_ids.filtered(
+            lambda mo: mo.state not in ("done", "cancel")
+        )
+        self.assertEqual(len(remaining), 1)
+        self.assertEqual(remaining.product_qty, 2)
+        # Backorders must not be pre-filled with a quantity producing,
+        # otherwise the matrix refuses to process them.
+        self.assertEqual(remaining.qty_producing, 0)
+
+        # Resume the matrix on the remaining backorder.
+        wizard_form = Form(
+            self.env["mrp.production.serial.matrix"].with_context(
+                active_model=remaining._name,
+                active_id=remaining.id,
+            )
+        )
+        remaining_lot = self.product_serials[1]
+        wizard_form.finished_lot_ids.add(remaining_lot)
+        serial_matrix_wizard = wizard_form.save()
+        for line in serial_matrix_wizard.line_ids.filtered(
+            lambda line: line.finished_lot_id == remaining_lot
+        ):
+            line.component_lot_id = self.component_serials[1]
+        serial_matrix_wizard.button_validate()

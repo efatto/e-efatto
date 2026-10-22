@@ -94,9 +94,27 @@ class MrpProductionSerialMatrix(models.TransientModel):
         )
         return consume_warning_form.save().action_confirm()
 
-    def button_validate(self):
-        self.ensure_one()
-        if self.production_id.qty_producing != 0:
+    def _reset_qty_producing_if_not_started(self):
+        """Reset the qty producing left on a production that has not started yet.
+
+        A backorder created by a previous matrix run can have ``qty_producing``
+        pre-filled; this moves the production to ``progress`` and makes the
+        matrix unusable. The matrix sets the quantity again for each serial,
+        so it is safe to reset it when nothing has actually been produced.
+        """
+        production = self.production_id
+        if not production.qty_producing:
+            return
+        started = bool(
+            production.qty_produced
+            or production.workorder_ids.filtered(
+                lambda wo: wo.state in ("progress", "done") or wo.time_ids
+            )
+            or (production.move_raw_ids | production.move_finished_ids).filtered(
+                lambda move: move.state == "done"
+            )
+        )
+        if started:
             raise UserError(
                 _(
                     "Only productions with 0 qty_producing can be produced serially!\n"
@@ -104,6 +122,18 @@ class MrpProductionSerialMatrix(models.TransientModel):
                     " so force the production to 'confirmed' and then proceed."
                 )
             )
+        production.write({"qty_producing": 0})
+
+    def button_validate(self):
+        self.ensure_one()
+        # Store it before _set_parallel_production sets the parallel link:
+        # only the original production has to split the work times and use the
+        # "first production" quantity computation.
+        is_first_production = (
+            self.production_id.is_parallel_production
+            and self.production_id.backorder_sequence <= 1
+        )
+        self._reset_qty_producing_if_not_started()
         self.production_id._check_reserved_lot_qty()
         parallel_production = self._set_parallel_production()
         if self.lot_selection_warning_count > 0:
@@ -121,7 +151,7 @@ class MrpProductionSerialMatrix(models.TransientModel):
                 production_serial_matrix=True,
                 first_production_serial_matrix=False,
             )
-            if current_mo == self.production_id:
+            if is_first_production and current_mo == self.production_id:
                 # the first MO needs a different recomputation in quantities consumed
                 current_mo = current_mo.with_context(
                     first_production_serial_matrix=True
@@ -213,6 +243,16 @@ class MrpProductionSerialMatrix(models.TransientModel):
             "res_model": "mrp.production",
             "type": "ir.actions.act_window",
         }
-        if parallel_production:
+        group_mos = (
+            self.production_id.procurement_group_id.mrp_production_ids.filtered(
+                lambda mo: mo.state != "cancel"
+            )
+        )
+        times_already_split = any(
+            workorder.time_ids
+            for mo in group_mos - self.production_id
+            for workorder in mo.workorder_ids
+        )
+        if parallel_production and (is_first_production or not times_already_split):
             self._set_parallel_production_times(parallel_production)
         return res
