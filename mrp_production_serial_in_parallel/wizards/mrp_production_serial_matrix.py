@@ -243,10 +243,8 @@ class MrpProductionSerialMatrix(models.TransientModel):
             "res_model": "mrp.production",
             "type": "ir.actions.act_window",
         }
-        group_mos = (
-            self.production_id.procurement_group_id.mrp_production_ids.filtered(
-                lambda mo: mo.state != "cancel"
-            )
+        group_mos = self.production_id.procurement_group_id.mrp_production_ids.filtered(
+            lambda mo: mo.state != "cancel"
         )
         times_already_split = any(
             workorder.time_ids

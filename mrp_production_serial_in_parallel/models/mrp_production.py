@@ -117,9 +117,7 @@ class MrpProduction(models.Model):
         if self.parallel_production_id:
             # Keep every serial production linked to the same parallel production,
             # even when the matrix is interrupted before processing all of them.
-            backorders.write(
-                {"parallel_production_id": self.parallel_production_id.id}
-            )
+            backorders.write({"parallel_production_id": self.parallel_production_id.id})
         if self.env.context.get("backorder_serial_matrix"):
             # align moves of backorder if it's a serial matrix:
             # - create lines if added by hand
