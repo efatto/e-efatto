@@ -72,7 +72,6 @@ enable=anomalous-backslash-in-string,
     consider-merging-classes-inherited,
     deprecated-module,
     invalid-commit,
-    missing-readme,
     odoo-addons-relative-import,
     redefined-builtin,
     manifest-external-assets
