@@ -41,45 +41,32 @@ class MrpProductionSerialMatrix(models.TransientModel):
             new_unit_amount = (
                 time_id.unit_amount and (time_id.unit_amount / workorders_number) or 0
             )
-            date_start = False
+            date_start = time_id.date_start + relativedelta(minutes=new_duration)
             for backorder in backorder_ids:
                 back_workorder = match_workorder(workorder, backorder.workorder_ids)
-                if not date_start:
-                    date_start = time_id.date_start + relativedelta(
-                        minutes=new_duration
-                    )
-                new_workorder_time = time_id.copy(
+                date_end = date_start + relativedelta(minutes=new_duration)
+                time_id.copy(
                     default={
                         "workorder_id": back_workorder.id,
                         "date_start": date_start,
-                        "duration": new_duration,
+                        "date_end": date_end,
                         "unit_amount": new_unit_amount,
                     }
                 )
-                date_start = new_workorder_time.date_end
-
-        # Adjust time of original production that has become a backorder
-        # and in workorders
-        for workorder in production.workorder_ids:
-            workorder.write(
+                date_start = date_end
+            # duration is computed from date_start/date_end in Odoo 18
+            time_id.write(
                 {
-                    "duration": sum(workorder.time_ids.mapped("duration"))
-                    / workorders_number,
+                    "date_end": time_id.date_start
+                    + relativedelta(minutes=new_duration),
+                    "unit_amount": new_unit_amount,
                 }
             )
-            for workorder_time in workorder.time_ids:
-                workorder_time.write(
-                    {
-                        # duration is already modified writing in workorder
-                        # "duration": workorder_time.duration / workorders_number,
-                        "unit_amount": workorder_time.unit_amount
-                        and (workorder_time.unit_amount / workorders_number)
-                        or 0,
-                    }
-                )
 
     def _set_parallel_production(self):
         parallel_production = self.env["mrp.production"]
+        if self.production_id.parallel_production_id:
+            return self.production_id.parallel_production_id
         if self.production_id.is_parallel_production:
             parallel_production = self.production_id.copy(
                 default={
@@ -114,20 +101,56 @@ class MrpProductionSerialMatrix(models.TransientModel):
                 self.production_id, backorder_ids - self.production_id
             )
 
+    def _complete_consumption_wizard(self, res):
+        consume_warning = (
+            self.env["mrp.consumption.warning"]
+            .with_context(**res["context"])
+            .create({})
+        )
+        return consume_warning.action_confirm()
+
+    def _reset_qty_producing_if_not_started(self):
+        """Reset the qty producing left on a production that has not started yet.
+
+        A backorder created by a previous matrix run can have ``qty_producing``
+        pre-filled; this moves the production to ``progress`` and makes the
+        matrix unusable. The matrix sets the quantity again for each serial,
+        so it is safe to reset it when nothing has actually been produced.
+        """
+        production = self.production_id
+        if not production.qty_producing:
+            return
+        started = bool(
+            production.qty_produced
+            or production.workorder_ids.filtered(
+                lambda wo: wo.state in ("progress", "done") or wo.time_ids
+            )
+            or (production.move_raw_ids | production.move_finished_ids).filtered(
+                lambda move: move.state == "done"
+            )
+        )
+        if started:
+            raise UserError(
+                _(
+                    "Only productions with 0 qty_producing can be produced serially!\n"
+                    "This is a state normally not reachable with this module installed,"
+                    " so force the production to 'confirmed' and then proceed."
+                )
+            )
+        production.write({"qty_producing": 0})
+
     def button_validate(self):
         self.ensure_one()
+        # Store it before _set_parallel_production sets the parallel link:
+        # only the original production has to split the work times and use the
+        # "first production" quantity computation.
+        is_first_production = (
+            self.production_id.is_parallel_production
+            and self.production_id.backorder_sequence <= 1
+        )
+        self._reset_qty_producing_if_not_started()
         self.production_id._check_reserved_lot_qty()
         parallel_production = self._set_parallel_production()
-        res = super().button_validate()
-        if parallel_production:
-            self._set_parallel_production_times(parallel_production)
-        return res
-
-    def button_prepare(self):
-        self.ensure_one()
-        self.production_id._check_reserved_lot_qty()
-        parallel_production = self._set_parallel_production()
-        # Start copy/paste from super's button_validate
         if self.lot_selection_warning_count > 0:
             raise UserError(
                 _("Some issues has been detected in your selection: %s")
@@ -139,6 +162,15 @@ class MrpProductionSerialMatrix(models.TransientModel):
             # Apply selected lots in matrix and set the qty producing
             current_mo.lot_producing_id = fp_lot
             current_mo.qty_producing = 1.0
+            current_mo = current_mo.with_context(
+                production_serial_matrix=True,
+                first_production_serial_matrix=False,
+            )
+            if is_first_production and current_mo == self.production_id:
+                # the first MO needs a different recomputation in quantities consumed
+                current_mo = current_mo.with_context(
+                    first_production_serial_matrix=True
+                )
             current_mo._set_qty_producing()
             for move in current_mo.move_raw_ids:
                 rounding = move.product_id.uom_id.rounding
@@ -165,26 +197,60 @@ class MrpProductionSerialMatrix(models.TransientModel):
 
             # Complete MO and create backorder if needed.
             mos += current_mo
-            # Stop copy/paste from super's button_validate
-            # because then `super` marks the production as done.
-
-            backorders = []
-            if current_mo.product_qty > 1:
-                backorders = current_mo._split_productions()
-                current_mo.write({"product_qty": current_mo.qty_producing})
-            if backorders:
-                current_mo = backorders[0]
-                current_mo.write({"parallel_production_id": parallel_production.id})
+            res = current_mo.button_mark_done()
+            if isinstance(res, dict) and res.get("context"):
+                res["context"].update(
+                    production_serial_matrix=True,
+                )
+            # default backorder's wizard creates mos from selected bom, ignoring changes
+            # done by the user
+            backorder_wizard = self.env["mrp.production.backorder"].with_context(
+                backorder_serial_matrix=True
+            )
+            if (
+                isinstance(res, dict)
+                and res.get("res_model") == "mrp.consumption.warning"
+            ):
+                res = self._complete_consumption_wizard(res)
+            if isinstance(res, dict) and res.get("res_model") == backorder_wizard._name:
+                # create backorders...
+                lines = res.get("context", {}).get(
+                    "default_mrp_production_backorder_line_ids"
+                )
+                wizard = backorder_wizard.create(
+                    {
+                        "mrp_production_ids": current_mo.ids,
+                        "mrp_production_backorder_line_ids": lines,
+                    }
+                )
+                res = wizard.action_backorder()
+                if (
+                    isinstance(res, dict)
+                    and res.get("res_model") == "mrp.consumption.warning"
+                ):
+                    res["context"].update(
+                        production_serial_matrix=True,
+                    )
+                    self._complete_consumption_wizard(res)
+                backorder_ids = (
+                    current_mo.procurement_group_id.mrp_production_ids.filtered(
+                        lambda mo: mo.state not in ["done", "cancel"]
+                    )
+                )
+                current_mo = backorder_ids[0] if backorder_ids else False
+                if not current_mo:
+                    break
+                current_mo.parallel_production_id = parallel_production
             else:
                 break
 
-        # Return action copy/pasted from super's button_validate
         # TODO: not specified lots: auto create lots?
         if not mos:
             mos = self.production_id
         res = {
             "domain": [("id", "in", mos.ids)],
             "name": _("Manufacturing Orders"),
+            "src_model": "mrp.production.serial.matrix",
             "view_type": "form",
             "view_mode": "list,form",
             "view_id": False,
@@ -192,4 +258,14 @@ class MrpProductionSerialMatrix(models.TransientModel):
             "res_model": "mrp.production",
             "type": "ir.actions.act_window",
         }
+        group_mos = self.production_id.procurement_group_id.mrp_production_ids.filtered(
+            lambda mo: mo.state != "cancel"
+        )
+        times_already_split = any(
+            workorder.time_ids
+            for mo in group_mos - self.production_id
+            for workorder in mo.workorder_ids
+        )
+        if parallel_production and (is_first_production or not times_already_split):
+            self._set_parallel_production_times(parallel_production)
         return res

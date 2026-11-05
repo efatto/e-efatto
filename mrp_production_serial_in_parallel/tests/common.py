@@ -10,11 +10,40 @@ class Common(BaseCommon):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.stock_location = cls.env.ref("stock.stock_location_stock")  # noqa
+        cls.stock_location = cls.env.ref("stock.stock_location_stock")
+
+        cls.component = cls.env["product.product"].create(
+            {
+                "name": "Test Component",
+                "is_storable": True,
+                "tracking": "none",
+            }
+        )
+        cls.env["stock.quant"].create(
+            {
+                "product_id": cls.component.id,
+                "location_id": cls.stock_location.id,
+                "quantity": 15,
+            }
+        )
+        cls.other_component = cls.env["product.product"].create(
+            {
+                "name": "Test Other Component",
+                "is_storable": True,
+                "tracking": "none",
+            }
+        )
+        cls.env["stock.quant"].create(
+            {
+                "product_id": cls.other_component.id,
+                "location_id": cls.stock_location.id,
+                "quantity": 15,
+            }
+        )
 
         cls.serial_product = cls.env["product.product"].create(
             {
-                "name": "Test Product",
+                "name": "Test Serial Product",
                 "is_storable": True,
                 "tracking": "serial",
             }
@@ -25,12 +54,12 @@ class Common(BaseCommon):
                     "name": f"Test Serial {index} for Product",
                     "product_id": cls.serial_product.id,
                 }
-                for index in range(2)
+                for index in range(3)
             ]
         )
         cls.serial_component = cls.env["product.product"].create(
             {
-                "name": "Test Component",
+                "name": "Test Serial Component",
                 "is_storable": True,
                 "tracking": "serial",
             }
@@ -41,7 +70,7 @@ class Common(BaseCommon):
                     "name": f"Test Serial {index} for Component",
                     "product_id": cls.serial_component.id,
                 }
-                for index in range(2)
+                for index in range(3)
             ]
         )
         cls.env["stock.quant"].create(
@@ -50,7 +79,7 @@ class Common(BaseCommon):
                     "product_id": component_serial.product_id.id,
                     "lot_id": component_serial.id,
                     "location_id": cls.stock_location.id,
-                    "quantity": 10,
+                    "quantity": 1,
                 }
                 for component_serial in cls.component_serials
             ]
@@ -67,26 +96,21 @@ class Common(BaseCommon):
         bom_form.product_id = cls.serial_product
         with bom_form.bom_line_ids.new() as line:
             line.product_id = cls.serial_component
+        with bom_form.bom_line_ids.new() as line:
+            line.product_id = cls.component
+            line.product_qty = 2
+        with bom_form.operation_ids.new() as operation:
+            operation.name = "Test operation"
+            operation.workcenter_id = cls.workcenter
         cls.bom = bom_form.save()
-        cls.bom.write(
-            {
-                "operation_ids": [
-                    Command.create(
-                        {"name": "Test operation", "workcenter_id": cls.workcenter.id}
-                    )
-                ]
-            }
-        )
 
         production_form = tests.Form(cls.env["mrp.production"])
         production_form.product_id = cls.serial_product
-        production_form.product_qty = 2
-        production_form.reserved_lot_ids = cls.product_serials
+        production_form.product_qty = 3
         cls.production = production_form.save()
-        cls.production.action_confirm()
-        with tests.Form(cls.production) as production_form:
-            with production_form.workorder_ids.edit(0) as workorder:
-                workorder.duration = 10
+        cls.production.write(
+            {"reserved_lot_ids": [Command.set(cls.product_serials.ids)]}
+        )
 
     @classmethod
     def _init_matrix(cls, production):

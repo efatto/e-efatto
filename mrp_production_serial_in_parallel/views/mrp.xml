@@ -38,7 +38,7 @@
             >
                 <attribute
                     name="invisible"
-                >(((is_parallel_production or state not in ('confirmed', 'progress')) or qty_producing != 0) and state != 'to_close')</attribute>
+                >(((is_parallel_production or state not in ('confirmed', 'progress')) or qty_producing > 1) and state != 'to_close')</attribute>
             </xpath>
         </field>
     </record>

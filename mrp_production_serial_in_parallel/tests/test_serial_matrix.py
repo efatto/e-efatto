@@ -1,21 +1,33 @@
 # Copyright 2026 Simone Rubino - PyTech
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+from odoo import Command
+from odoo.exceptions import ValidationError
+from odoo.tests import Form
 
 from .common import Common
 
 
 class TestSerialMatrix(Common):
-    def test_validate(self):
+    def _confirm_production(self):
+        self.production.action_confirm()
+        with Form(self.production) as production_form:
+            with production_form.workorder_ids.edit(0) as workorder:
+                workorder.duration = 15
+        self.assertEqual(len(self.production.workorder_ids), 1)
+        self.assertTrue(self.production.state, "confirmed")
+
+    def test_00_validate(self):
         """
         When a serial production is produced with the matrix,
         the backorder productions are created as expected.
         """
         # Arrange
         production = self.production
+        self._confirm_production()
         serial_matrix_wizard = self._init_matrix(production)
         # pre-condition
         self.assertTrue(production.is_parallel_production)
-        self.assertTrue(production.workorder_ids.time_ids.duration, 10)
+        self.assertTrue(sum(production.workorder_ids.mapped("time_ids.duration")), 15)
 
         # Act
         serial_matrix_wizard.button_validate()
@@ -28,7 +40,7 @@ class TestSerialMatrix(Common):
             ]
         )
         self.assertRecordValues(
-            parallel_productions.workorder_ids.time_ids,
+            parallel_productions.workorder_ids,
             [
                 {
                     "duration": 5,
@@ -36,7 +48,130 @@ class TestSerialMatrix(Common):
                 {
                     "duration": 5,
                 },
+                {
+                    "duration": 5,
+                },
             ],
+        )
+        self.assertRecordValues(
+            parallel_productions.move_raw_ids,
+            [
+                {
+                    "quantity": 1,
+                    "product_id": self.serial_component.id,
+                },
+                {
+                    "quantity": 2,
+                    "product_id": self.component.id,
+                },
+                {
+                    "quantity": 1,
+                    "product_id": self.serial_component.id,
+                },
+                {
+                    "quantity": 2,
+                    "product_id": self.component.id,
+                },
+                {
+                    "quantity": 1,
+                    "product_id": self.serial_component.id,
+                },
+                {
+                    "quantity": 2,
+                    "product_id": self.component.id,
+                },
+            ],
+        )
+
+    def test_02_validate_changing_qty_done(self):
+        """
+        Modify the quantity of components to:
+        - component serial: untouched (3 total, 1 for each backorder)
+        - component: from 6 to 12 total, 4 for each backorder instead of 2
+          (they are split in 2 moves for 2 products each) IS FORBIDDEN!
+        """
+        # Arrange
+        production = self.production
+        self._confirm_production()
+        component_move = production.move_raw_ids.filtered(
+            lambda x: x.product_id == self.component
+        )
+        self.assertEqual(component_move.product_qty, 6)
+        component_move_form = Form(
+            component_move, view="mrp.view_stock_move_operations_raw"
+        )
+        with self.assertRaises(ValidationError):
+            with component_move_form.move_line_ids.new() as ml_form:
+                ml_form.quantity = 12
+
+    def _test_validate_removing_and_adding_component(
+        self, confirmed=False, start_wo=False
+    ):
+        """
+        Modify the quantity of components to:
+            - serial component: untouched (3 total, 1 for each backorder)
+            - component: from 6 to 0
+        Adding:
+            - new not tracked component: 9 total, 3 for each backorder
+        """
+        # Arrange
+        production = self.production
+        if confirmed:
+            self._confirm_production()
+        component_move = production.move_raw_ids.filtered(
+            lambda x: x.product_id == self.component
+        )
+        self.assertEqual(component_move.product_qty, 6)
+        if confirmed:
+            if production.is_locked:
+                production.action_toggle_is_locked()
+            self.assertFalse(production.is_locked)
+        production_form = Form(production)
+        with production_form.move_raw_ids.edit(1) as m_form:
+            m_form.product_uom_qty = 0
+        production = production_form.save()
+        self.assertEqual(
+            production.move_raw_ids.filtered(
+                lambda x: x.product_id == self.component
+            ).product_uom_qty,
+            0,
+        )
+        production_form = Form(production)
+        with production_form.move_raw_ids.new() as move_form:
+            move_form.product_id = self.other_component
+            move_form.product_uom_qty = 9
+        production_form.save()
+        if not confirmed:
+            self._confirm_production()
+        if start_wo:
+            production.button_plan()
+            production.workorder_ids[0].button_start()
+            production.workorder_ids[0].button_finish()
+        # check that is not possible to change production qty done
+        other_component_move = production.move_raw_ids.filtered(
+            lambda x: x.product_id == self.other_component
+        )
+        component_move_form = Form(
+            other_component_move, view="mrp.view_stock_move_operations_raw"
+        )
+        with self.assertRaises(ValidationError):
+            with component_move_form.move_line_ids.new() as ml_form:
+                ml_form.quantity = 17
+        self.assertEqual(other_component_move.product_uom_qty, 9)
+        serial_matrix_wizard = self._init_matrix(production)
+        # pre-condition
+        self.assertTrue(production.is_parallel_production)
+        self.assertTrue(sum(production.workorder_ids.mapped("time_ids.duration")), 15)
+
+        # Act
+        serial_matrix_wizard.button_validate()
+
+        # Assert
+        parallel_production = production.parallel_production_id
+        parallel_productions = production.search(
+            [
+                ("parallel_production_id", "=", parallel_production.id),
+            ]
         )
         self.assertRecordValues(
             parallel_productions.workorder_ids,
@@ -47,29 +182,80 @@ class TestSerialMatrix(Common):
                 {
                     "duration": 5,
                 },
+                {
+                    "duration": 5,
+                },
+            ],
+        )
+        self.assertRecordValues(
+            parallel_productions.move_raw_ids.filtered(lambda move: move.quantity),
+            [
+                {
+                    "product_id": self.serial_component.id,
+                    "quantity": 1,
+                },
+                {
+                    "product_id": self.other_component.id,
+                    "quantity": 3,
+                },
+                {
+                    "product_id": self.serial_component.id,
+                    "quantity": 1,
+                },
+                {
+                    "product_id": self.other_component.id,
+                    "quantity": 3,
+                },
+                {
+                    "product_id": self.serial_component.id,
+                    "quantity": 1,
+                },
+                {
+                    "product_id": self.other_component.id,
+                    "quantity": 3,
+                },
             ],
         )
 
-    def test_prepare(self):
-        """
-        When a serial production is prepared with the matrix,
-        the backorder productions are prepared as expected.
-        """
-        # Arrange
+    def test_03_validate_removing_and_adding_component_draft(self):
+        self._test_validate_removing_and_adding_component()
+
+    def test_03_validate_removing_and_adding_component_confirmed(self):
+        self._test_validate_removing_and_adding_component(confirmed=True)
+
+    def test_04_validate_partial_production_and_resume(self):
+        """Validate only one serial, then resume the matrix on the backorder."""
         production = self.production
+        self._confirm_production()
         serial_matrix_wizard = self._init_matrix(production)
-        # pre-condition
-        self.assertTrue(production.is_parallel_production)
-
-        # Act
-        prepared_mos_action = serial_matrix_wizard.button_prepare()
-
-        # Assert
-        prepared_mos = self._get_records_from_action(prepared_mos_action)
-        parallel_production = prepared_mos.parallel_production_id
-        parallel_productions = production.search(
-            [
-                ("parallel_production_id", "=", parallel_production.id),
-            ]
+        # Process only the first serial, leaving a backorder.
+        serial_matrix_wizard.write(
+            {"finished_lot_ids": [Command.set(self.product_serials[:1].ids)]}
         )
-        self.assertEqual(prepared_mos, parallel_productions)
+        serial_matrix_wizard.button_validate()
+
+        remaining = production.procurement_group_id.mrp_production_ids.filtered(
+            lambda mo: mo.state not in ("done", "cancel")
+        )
+        self.assertEqual(len(remaining), 1)
+        self.assertEqual(remaining.product_qty, 2)
+        # Backorders must not be pre-filled with a quantity producing,
+        # otherwise the matrix refuses to process them.
+        self.assertEqual(remaining.qty_producing, 0)
+
+        # Resume the matrix on the remaining backorder.
+        remaining_lot = self.product_serials[1]
+        serial_matrix_wizard = (
+            self.env["mrp.production.serial.matrix"]
+            .with_context(
+                active_model=remaining._name,
+                active_id=remaining.id,
+            )
+            .create({"finished_lot_ids": [Command.set([remaining_lot.id])]})
+        )
+        serial_matrix_wizard._onchange_finished_lot_ids()
+        for line in serial_matrix_wizard.line_ids.filtered(
+            lambda line: line.finished_lot_id == remaining_lot
+        ):
+            line.component_lot_id = self.component_serials[1]
+        serial_matrix_wizard.button_validate()
