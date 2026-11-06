@@ -1,6 +1,5 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
-from odoo.tests import Form
 
 
 class MrpProductionSet(models.Model):
@@ -24,7 +23,6 @@ class MrpProductionSet(models.Model):
         domain="[('is_compatible_for_set', '=', True), "
         "('state', 'in', ['draft', 'confirmed', 'progress']), "
         "('bom_id.type', '!=', 'subcontract')]",
-        states={"done": [("readonly", True)], "cancel": [("readonly", True)]},
         string="Production Left",
     )
     workcenter_left_ids = fields.Many2many(
@@ -44,7 +42,6 @@ class MrpProductionSet(models.Model):
         domain="[('is_compatible_for_set', '=', True), "
         "('state', 'in', ['draft', 'confirmed', 'progress']), "
         "('bom_id.type', '!=', 'subcontract')]",
-        states={"done": [("readonly", True)], "cancel": [("readonly", True)]},
         string="Production Right",
     )
     compatible_mrp_production_ids = fields.Many2many(
@@ -79,19 +76,15 @@ class MrpProductionSet(models.Model):
         string="Quantity Producing Left",
         digits="Product Unit of Measure",
         copy=False,
-        states={"done": [("readonly", True)], "cancel": [("readonly", True)]},
         help="Set the quantity producing in the left production.",
     )
     qty_producing_right = fields.Float(
         string="Quantity Producing Right",
         digits="Product Unit of Measure",
         copy=False,
-        states={"done": [("readonly", True)], "cancel": [("readonly", True)]},
         help="Set the quantity producing in the right production.",
     )
     split_production = fields.Boolean(
-        string="Split Production",
-        states={"done": [("readonly", True)], "cancel": [("readonly", True)]},
         help="If checked, the production will be splitted in two.",
     )
     is_planned = fields.Boolean(
@@ -125,9 +118,9 @@ class MrpProductionSet(models.Model):
     @api.depends("production_left_id", "production_right_id")
     def _compute_name(self):
         for production_set in self:
-            production_set.name = "%(left)s - %(right)s" % dict(
-                left=production_set.production_left_id.name or "n.a.",
-                right=production_set.production_right_id.name or "n.a.",
+            production_set.name = (
+                f"{production_set.production_left_id.name or 'n.a.'} - "
+                f"{production_set.production_right_id.name or 'n.a.'}"
             )
 
     @api.depends("production_left_id.state", "production_right_id.state")
@@ -230,10 +223,12 @@ class MrpProductionSet(models.Model):
                     lambda p: p.state in ["draft", "confirmed", "progress"]
                 )
                 if raw_component_left_id.is_not_compatible_in_set:
-                    compatible_mrp_production_ids = compatible_mrp_production_ids.filtered(
-                        lambda p,
-                        raw_comp_left=raw_component_left_id: p.move_raw_ids.product_id
-                        == raw_comp_left
+                    compatible_mrp_production_ids = (
+                        compatible_mrp_production_ids.filtered(
+                            lambda p, raw_comp_left=raw_component_left_id: (
+                                p.move_raw_ids.product_id == raw_comp_left
+                            )
+                        )
                     )
             production_set.compatible_mrp_production_ids = compatible_mrp_production_ids
 
@@ -254,9 +249,8 @@ class MrpProductionSet(models.Model):
                     "workcenter_id.alternative_workcenter_ids.mrp_set_position"
                 ):
                     if not production_set.production_left_id.workorder_ids.filtered(
-                        lambda wo: wo != workorder
-                        and wo.operation_id.template_id
-                        == workorder.operation_id.template_id
+                        lambda wo, workorder=workorder: wo != workorder
+                        and wo.operation_id == workorder.operation_id
                         and wo.workcenter_id.mrp_set_position
                         and wo.workcenter_id.mrp_set_position
                         != workorder.workcenter_id.mrp_set_position
@@ -283,22 +277,25 @@ class MrpProductionSet(models.Model):
     def button_update_qty_producing(self):
         for production_set in self:
             if production_set.split_production:
-                production_left_form = Form(production_set.production_left_id)
-                production_left_form.qty_producing = (
+                # the quantity is set on the only production of the set
+                production_set._update_qty_producing(
+                    production_set.production_left_id,
                     production_set.qty_producing_left
-                    + production_set.qty_producing_right
+                    + production_set.qty_producing_right,
                 )
-                production_left_form.save()
             else:
-                if production_set.production_left_id:
-                    production_left_form = Form(production_set.production_left_id)
-                    production_left_form.qty_producing = (
-                        production_set.qty_producing_left
-                    )
-                    production_left_form.save()
-                if production_set.production_right_id:
-                    production_right_form = Form(production_set.production_right_id)
-                    production_right_form.qty_producing = (
-                        production_set.qty_producing_right
-                    )
-                    production_right_form.save()
+                production_set._update_qty_producing(
+                    production_set.production_left_id,
+                    production_set.qty_producing_left,
+                )
+                production_set._update_qty_producing(
+                    production_set.production_right_id,
+                    production_set.qty_producing_right,
+                )
+
+    def _update_qty_producing(self, production, qty_producing):
+        if not production:
+            return
+        production.write({"qty_producing": qty_producing})
+        # `set_qty_producing` applies the same logic as the `qty_producing` onchange
+        production.set_qty_producing()

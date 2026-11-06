@@ -10,23 +10,23 @@
                 <field
                     name="production_left_set_ids"
                     widget="many2many_tags"
-                    attrs="{'invisible': True}"
+                    invisible="1"
                 />
                 <field
                     name="production_right_set_ids"
                     widget="many2many_tags"
-                    attrs="{'invisible': True}"
+                    invisible="1"
                 />
                 <label
                     for="has_production_set"
                     string=""
-                    attrs="{'invisible': [('has_production_set', '=', False)]}"
+                    invisible="not has_production_set"
                 />
                 <div
                     class="alert alert-info"
                     role="alert"
                     style="margin-bottom:0px;"
-                    attrs="{'invisible': [('has_production_set', '=', False)]}"
+                    invisible="not has_production_set"
                 >
                     This production is part of a Production SET
                 </div>

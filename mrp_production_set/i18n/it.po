@@ -131,6 +131,14 @@ msgid "Name"
 msgstr "Nome"
 
 #. module: mrp_production_set
+#: code:addons/mrp_production_set/models/mrp_bom.py:0
+#, python-format
+msgid "Operations must be linked to only one mrp_set_position."
+msgstr ""
+"Le operazioni devono essere collegate ad una sola posizione del set di "
+"produzione."
+
+#. module: mrp_production_set
 #: model_terms:ir.ui.view,arch_db:mrp_production_set.mrp_production_set_form
 msgid "Plan"
 msgstr "Pianifica"
@@ -213,7 +221,7 @@ msgstr "Ricerca intelligente"
 
 #. module: mrp_production_set
 #: model:ir.model.fields,field_description:mrp_production_set.field_mrp_production_set__split_production
-msgid "Split Production"
+msgid "Split production"
 msgstr "Suddividere la produzione"
 
 #. module: mrp_production_set
@@ -260,3 +268,11 @@ msgid ""
 msgstr ""
 "Un centro di lavoro con una posizione set di produzione può avere solo un "
 "centro di lavoro alternativo con una posizione set di produzione diversa."
+
+#. module: mrp_production_set
+#: code:addons/mrp_production_set/models/mrp_production.py:0
+#, python-format
+msgid "Workorders must be linked to only one mrp_set_position."
+msgstr ""
+"Gli ordini di lavoro devono essere collegati ad una sola posizione del set "
+"di produzione."
