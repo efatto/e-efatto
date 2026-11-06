@@ -231,7 +231,8 @@ class MrpProductionSet(models.Model):
                 )
                 if raw_component_left_id.is_not_compatible_in_set:
                     compatible_mrp_production_ids = compatible_mrp_production_ids.filtered(
-                        lambda p, raw_comp_left=raw_component_left_id: p.move_raw_ids.product_id
+                        lambda p,
+                        raw_comp_left=raw_component_left_id: p.move_raw_ids.product_id
                         == raw_comp_left
                     )
             production_set.compatible_mrp_production_ids = compatible_mrp_production_ids

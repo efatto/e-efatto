@@ -8,26 +8,26 @@
             <xpath expr="//field[@name='bom_id']" position="after">
                 <field name="has_production_set" invisible="1" />
                 <field
-          name="production_left_set_ids"
-          widget="many2many_tags"
-          attrs="{'invisible': True}"
-        />
+                    name="production_left_set_ids"
+                    widget="many2many_tags"
+                    attrs="{'invisible': True}"
+                />
                 <field
-          name="production_right_set_ids"
-          widget="many2many_tags"
-          attrs="{'invisible': True}"
-        />
+                    name="production_right_set_ids"
+                    widget="many2many_tags"
+                    attrs="{'invisible': True}"
+                />
                 <label
-          for="has_production_set"
-          string=""
-          attrs="{'invisible': [('has_production_set', '=', False)]}"
-        />
+                    for="has_production_set"
+                    string=""
+                    attrs="{'invisible': [('has_production_set', '=', False)]}"
+                />
                 <div
-          class="alert alert-info"
-          role="alert"
-          style="margin-bottom:0px;"
-          attrs="{'invisible': [('has_production_set', '=', False)]}"
-        >
+                    class="alert alert-info"
+                    role="alert"
+                    style="margin-bottom:0px;"
+                    attrs="{'invisible': [('has_production_set', '=', False)]}"
+                >
                     This production is part of a Production SET
                 </div>
             </xpath>
