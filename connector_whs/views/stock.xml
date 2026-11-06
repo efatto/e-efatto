@@ -13,7 +13,7 @@
                     name="action_show_wms_lists"
                     type="object"
                     icon="fa-list-alt"
-                    string=" "
+                    title="WMS Lists"
                     invisible="not has_wms_lists"
                 />
             </xpath>
