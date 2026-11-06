@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 14.0\n"
+"Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-08 13:18+0000\n"
-"PO-Revision-Date: 2025-10-08 13:18+0000\n"
+"POT-Creation-Date: 2026-11-06 10:30+0000\n"
+"PO-Revision-Date: 2026-11-06 10:30+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,32 +16,13 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: connector_wms_whs_set
-#: model:ir.model.fields,field_description:connector_wms_whs_set.field_hyddemo_whs_liste__assigned_attachment_ids
-#: model:ir.model.fields,field_description:connector_wms_whs_set.field_mrp_production__assigned_attachment_ids
-#: model:ir.model.fields,field_description:connector_wms_whs_set.field_mrp_production_set__assigned_attachment_ids
-msgid "Assigned Attachments"
-msgstr "Allegati assegnati"
-
-#. module: connector_wms_whs_set
-#: model:ir.model.fields,field_description:connector_wms_whs_set.field_hyddemo_whs_liste__display_name
-#: model:ir.model.fields,field_description:connector_wms_whs_set.field_mrp_production__display_name
-#: model:ir.model.fields,field_description:connector_wms_whs_set.field_mrp_production_set__display_name
-msgid "Display Name"
-msgstr "Nome visualizzato"
-
-#. module: connector_wms_whs_set
-#: model:ir.model.fields,field_description:connector_wms_whs_set.field_hyddemo_whs_liste__id
-#: model:ir.model.fields,field_description:connector_wms_whs_set.field_mrp_production__id
-#: model:ir.model.fields,field_description:connector_wms_whs_set.field_mrp_production_set__id
-msgid "ID"
+#. odoo-python
+#: code:addons/connector_wms_whs_set/models/mrp_production.py:0
+#, python-format
+msgid ""
+"In %(attr_name)s production whs list riga must be %(riga_number)s, but is "
+"%(new_riga_number)s"
 msgstr ""
-
-#. module: connector_wms_whs_set
-#: model:ir.model.fields,field_description:connector_wms_whs_set.field_hyddemo_whs_liste____last_update
-#: model:ir.model.fields,field_description:connector_wms_whs_set.field_mrp_production____last_update
-#: model:ir.model.fields,field_description:connector_wms_whs_set.field_mrp_production_set____last_update
-msgid "Last Modified on"
-msgstr "Ultima modifica il"
 
 #. module: connector_wms_whs_set
 #: model:ir.model.fields.selection,name:connector_wms_whs_set.selection__hyddemo_whs_liste__tipo__12
@@ -60,8 +41,42 @@ msgstr "Set Ordini Produzione"
 
 #. module: connector_wms_whs_set
 #: model:ir.model,name:connector_wms_whs_set.model_mrp_production
-msgid "Production Order"
+msgid "Manufacturing Order"
 msgstr "Ordine di produzione"
+
+#. module: connector_wms_whs_set
+#. odoo-python
+#: code:addons/connector_wms_whs_set/models/mrp_production_set.py:0
+#, python-format
+msgid "Only 'left' workcenter can be used in 'left' position"
+msgstr ""
+
+#. module: connector_wms_whs_set
+#. odoo-python
+#: code:addons/connector_wms_whs_set/models/mrp_production_set.py:0
+#, python-format
+msgid "Only 'right' workcenter can be used in 'right' position"
+msgstr ""
+
+#. module: connector_wms_whs_set
+#. odoo-python
+#: code:addons/connector_wms_whs_set/models/mrp_production.py:0
+#, python-format
+msgid ""
+"Only 1 and 2 are valid number in whs list riga linked to a production set, "
+"but are %(new_riga_numbers)s"
+msgstr ""
+
+#. module: connector_wms_whs_set
+#. odoo-python
+#: code:addons/connector_wms_whs_set/models/mrp_production_set.py:0
+#, python-format
+msgid ""
+"Only whs list with riga #1 can be used in 'left' position of not split "
+"production (maybe this production was split and then unsplit).\n"
+"Remove whs list with riga #2 and restore total qty in residual whs list to "
+"continue."
+msgstr ""
 
 #. module: connector_wms_whs_set
 #: model_terms:ir.ui.view,arch_db:connector_wms_whs_set.mrp_production_set_form
@@ -70,7 +85,7 @@ msgstr "Invia a WHS"
 
 #. module: connector_wms_whs_set
 #: model:ir.model.fields,field_description:connector_wms_whs_set.field_mrp_production_set__sent_to_whs
-msgid "Sent To Whs"
+msgid "Sent to WHS"
 msgstr "Inviato a WHS"
 
 #. module: connector_wms_whs_set
