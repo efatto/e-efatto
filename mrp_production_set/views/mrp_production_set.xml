@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-
     <record id="mrp_production_set_search" model="ir.ui.view">
         <field name="name">mrp.production.set.search</field>
         <field name="model">mrp.production.set</field>
@@ -35,42 +34,44 @@
                 <header>
                     <field name="is_planned" invisible="1" />
                     <button
-            name="action_confirm"
-            type="object"
-            string="Confirm"
-            class="oe_highlight"
-            attrs="{'invisible': [('state', '!=', 'draft')]}"
-          />
+                        name="action_confirm"
+                        type="object"
+                        string="Confirm"
+                        class="oe_highlight"
+                        attrs="{'invisible': [('state', '!=', 'draft')]}"
+                    />
                     <button
-            name="button_plan"
-            attrs="{'invisible': ['|', ('state', 'not in', ('confirmed', 'progress', 'to_close')), ('is_planned', '=', True)]}"
-            type="object"
-            string="Plan"
-            class="oe_highlight"
-          />
+                        name="button_plan"
+                        attrs="{'invisible': ['|', ('state', 'not in', ('confirmed', 'progress', 'to_close')), ('is_planned', '=', True)]}"
+                        type="object"
+                        string="Plan"
+                        class="oe_highlight"
+                    />
                     <button
-            name="button_unplan"
-            type="object"
-            string="Unplan"
-            attrs="{'invisible': [('is_planned', '=', False)]}"
-          />
+                        name="button_unplan"
+                        type="object"
+                        string="Unplan"
+                        attrs="{'invisible': [('is_planned', '=', False)]}"
+                    />
                     <button
-            name="button_update_qty_producing"
-            type="object"
-            string="Update qty producing"
-            class="oe_highlight"
-            attrs="{'invisible': ['|', ('state', 'not in', ['confirmed', 'progress']), '&amp;', ('production_left_id', '=', False), ('production_right_id', '=', False)]}"
-          />
+                        name="button_update_qty_producing"
+                        type="object"
+                        string="Update qty producing"
+                        class="oe_highlight"
+                        attrs="{'invisible': ['|', ('state', 'not in', ['confirmed', 'progress']), '&amp;', ('production_left_id', '=', False), ('production_right_id', '=', False)]}"
+                    />
                     <field
-            name="state"
-            widget="statusbar"
-            statusbar_visible="draft,confirmed,progress,done"
-          />
+                        name="state"
+                        widget="statusbar"
+                        statusbar_visible="draft,confirmed,progress,done"
+                    />
                 </header>
                 <sheet string="Production Set">
                     <div class="oe_title">
                         <label for="name" class="oe_edit_only" />
-                        <h1><field name="name" /></h1>
+                        <h1>
+                            <field name="name" />
+                        </h1>
                     </div>
                     <field name="compatible_mrp_production_ids" invisible="1" />
                     <group>
@@ -85,35 +86,35 @@
                     <group>
                         <group string="Production Left">
                             <field
-                name="production_left_id"
-                context="{'mrp_production_set_display_name': True}"
-              />
+                                name="production_left_id"
+                                context="{'mrp_production_set_display_name': True}"
+                            />
                             <field name="left_finished_product_id" readonly="1" />
                             <field name="workcenter_left_ids" widget="many2many_tags" />
                             <field name="qty_producing_left" />
                         </group>
                         <group string="Production Right">
                             <div
-                attrs="{'invisible': [('split_production', '!=', True)]}"
-                style="font-weight: bold;"
-              >
+                                attrs="{'invisible': [('split_production', '!=', True)]}"
+                                style="font-weight: bold;"
+                            >
                                 The same as Production Left
                             </div>
                             <field
-                name="production_right_id"
-                context="{'mrp_production_set_display_name': True}"
-                domain="[('id', 'in', compatible_mrp_production_ids)] "
-                attrs="{'invisible': [('split_production', '=', True)]}"
-              />
+                                name="production_right_id"
+                                context="{'mrp_production_set_display_name': True}"
+                                domain="[('id', 'in', compatible_mrp_production_ids)] "
+                                attrs="{'invisible': [('split_production', '=', True)]}"
+                            />
                             <field
-                name="right_finished_product_id"
-                readonly="1"
-                attrs="{'invisible': [('split_production', '=', True)]}"
-              />
+                                name="right_finished_product_id"
+                                readonly="1"
+                                attrs="{'invisible': [('split_production', '=', True)]}"
+                            />
                             <field
-                name="workcenter_right_ids"
-                widget="many2many_tags"
-              />
+                                name="workcenter_right_ids"
+                                widget="many2many_tags"
+                            />
                             <field name="qty_producing_right" />
                         </group>
                     </group>
@@ -130,10 +131,9 @@
     </record>
 
     <menuitem
-    action="action_mrp_production_set"
-    id="menu_mrp_production_set"
-    parent="mrp.menu_mrp_manufacturing"
-    sequence="2"
-  />
-
+        action="action_mrp_production_set"
+        id="menu_mrp_production_set"
+        parent="mrp.menu_mrp_manufacturing"
+        sequence="2"
+    />
 </odoo>

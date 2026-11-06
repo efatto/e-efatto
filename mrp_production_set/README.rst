@@ -1,7 +1,3 @@
-.. image:: https://odoo-community.org/readme-banner-image
-   :target: https://odoo-community.org/get-involved?utm_source=readme
-   :alt: Odoo Community Association
-
 ==================
 MRP Production Set
 ==================
@@ -14,19 +10,25 @@ MRP Production Set
    !! source digest: sha256:9bbdf2f182dee5ed60a35e3dba3480ffb2f3c8786fe08cd5a73b0214562efbae
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-.. |badge1| image:: https://img.shields.io/badge/maturity-Beta-yellow.png
+.. |badge1| image:: https://img.shields.io/badge/maturity-Alpha-red.png
     :target: https://odoo-community.org/page/development-status
-    :alt: Beta
+    :alt: Alpha
 .. |badge2| image:: https://img.shields.io/badge/license-AGPL--3-blue.png
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-efatto%2Fe--efatto-lightgray.png?logo=github
-    :target: https://github.com/efatto/e-efatto/tree/14.0/mrp_production_set
+    :target: https://github.com/efatto/e-efatto/tree/18.0/mrp_production_set
     :alt: efatto/e-efatto
 
 |badge1| |badge2| |badge3|
 
-This module add ability to link two production to send them to a machine.
+This module add ability to link two production to send them to a
+machine.
+
+.. IMPORTANT::
+   This is an alpha version, the data model and design can change at any time without warning.
+   Only for development or testing purpose, do not use in production.
+   `More details on development status <https://odoo-community.org/page/development-status>`_
 
 **Table of contents**
 
@@ -36,56 +38,76 @@ This module add ability to link two production to send them to a machine.
 Configuration
 =============
 
-Questo modulo crea un oggetto Set di produzioni per collegare due produzioni (oppure la stessa produzione vista come due) per inviarle in maniera coordinata ad una macchina operatrice. La produzione di sinistra sarà inviata al centro di lavoro che è impostato come "sinistro" mentre quella di destra come "destro".
-È anche possibile inviare solo la produzione di sinistra o la produzione di destra.
-N.B.: Possono essere utilizzate solo produzioni con una BOM composta di un solo componente, le altre non sono selezionabili dalla lista di produzioni da utilizzare.
+Questo modulo crea un oggetto Set di produzioni per collegare due
+produzioni (oppure la stessa produzione vista come due) per inviarle in
+maniera coordinata ad una macchina operatrice. La produzione di sinistra
+sarà inviata al centro di lavoro che è impostato come "sinistro" mentre
+quella di destra come "destro". È anche possibile inviare solo la
+produzione di sinistra o la produzione di destra. N.B.: Possono essere
+utilizzate solo produzioni con una BOM composta di un solo componente,
+le altre non sono selezionabili dalla lista di produzioni da utilizzare.
 
 Dal menu si crea un nuovo record:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_set/static/description/menu.png
-    :alt: Menu set produzioni
+|Menu set produzioni|
 
 in cui è possibile selezionare 2 distinte produzioni:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_set/static/description/produzioni.png
-    :alt: Produzioni
+|Produzioni|
 
-oppure 1 produzione e impostare il chech su "Suddividere la produzione" (in questo caso la produzione occuperà entrambi i centri di lavoro):
+oppure 1 produzione e impostare il chech su "Suddividere la produzione"
+(in questo caso la produzione occuperà entrambi i centri di lavoro):
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_set/static/description/produzione_suddivisa.png
-    :alt: Produzione suddivisa
+|Produzione suddivisa|
 
 oppure inviare la sola produzione destra o la sola produzione sinistra.
 
-Se una delle produzioni selezionate è in stato "Bozza", è visibile il bottone "Conferma" per confermarle:
+Se una delle produzioni selezionate è in stato "Bozza", è visibile il
+bottone "Conferma" per confermarle:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_set/static/description/conferma.png
-    :alt: Conferma
+|Conferma|
 
-Si può quindi procedere ad impostare la quantità da produrre delle singole produzioni selezionate:
+Si può quindi procedere ad impostare la quantità da produrre delle
+singole produzioni selezionate:
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_set/static/description/quantita_da_produrre.png
-    :alt: Quantità da produrre
+|Quantità da produrre|
 
-aggiornando la quantità nelle produzioni con il tasto "Aggiorna Q.tà in Produzione":
+aggiornando la quantità nelle produzioni con il tasto "Aggiorna Q.tà in
+Produzione":
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_set/static/description/aggiorna_quantita.png
-    :alt: Aggiorna quantità
+|Aggiorna quantità|
 
-È necessario quindi pianificare il set di produzioni, che andrà a impostare la data di avvio sugli ordini di lavoro delle produzioni collegate, verificando che siano correttamente impostati rispettivamente sul lato sinistro e sul lato destro. Se è una produzione splittata, la lavorazione verrà suddivisa su entrambi i centri di lavoro, creando un duplicato dell'ordine di lavoro sul centro di lavoro collegato ad una macchina operatrice sul banco non occupato (quindi destro se è occupato il sinistro e viceversa). In questo modo è possibile vedere che entrambi i banchi della macchina sono utilizzati e i relativi tempi.
+È necessario quindi pianificare il set di produzioni, che andrà a
+impostare la data di avvio sugli ordini di lavoro delle produzioni
+collegate, verificando che siano correttamente impostati rispettivamente
+sul lato sinistro e sul lato destro. Se è una produzione splittata, la
+lavorazione verrà suddivisa su entrambi i centri di lavoro, creando un
+duplicato dell'ordine di lavoro sul centro di lavoro collegato ad una
+macchina operatrice sul banco non occupato (quindi destro se è occupato
+il sinistro e viceversa). In questo modo è possibile vedere che entrambi
+i banchi della macchina sono utilizzati e i relativi tempi.
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_set/static/description/pianifica.png
-    :alt: Pianifica
+|Pianifica|
 
 È eventualmente possibile annullare la pianificazione e ripianificarla.
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_set/static/description/annulla_pianificazione.png
-    :alt: Annulla la pianificazione
+|Annulla la pianificazione|
 
-Si può infine inviare le produzioni al macchinario tramite il bottone aggiunto dal connettore installato (attualmente l'unico modulo esistente aggiunge il bottone sotto):
+Si può infine inviare le produzioni al macchinario tramite il bottone
+aggiunto dal connettore installato (attualmente l'unico modulo esistente
+aggiunge il bottone sotto):
 
-.. image:: https://raw.githubusercontent.com/efatto/e-efatto/14.0/mrp_production_set/static/description/invia.png
-    :alt: Invia
+|Invia|
+
+.. |Menu set produzioni| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_production_set/static/description/menu.png
+.. |Produzioni| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_production_set/static/description/produzioni.png
+.. |Produzione suddivisa| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_production_set/static/description/produzione_suddivisa.png
+.. |Conferma| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_production_set/static/description/conferma.png
+.. |Quantità da produrre| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_production_set/static/description/quantita_da_produrre.png
+.. |Aggiorna quantità| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_production_set/static/description/aggiorna_quantita.png
+.. |Pianifica| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_production_set/static/description/pianifica.png
+.. |Annulla la pianificazione| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_production_set/static/description/annulla_pianificazione.png
+.. |Invia| image:: https://raw.githubusercontent.com/efatto/e-efatto/18.0/mrp_production_set/static/description/invia.png
 
 Bug Tracker
 ===========
@@ -93,7 +115,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/efatto/e-efatto/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20mrp_production_set%0Aversion:%2014.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/efatto/e-efatto/issues/new?body=module:%20mrp_production_set%0Aversion:%2018.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -101,18 +123,18 @@ Credits
 =======
 
 Authors
-~~~~~~~
+-------
 
 * Sergio Corato
 
 Contributors
-~~~~~~~~~~~~
+------------
 
-* Sergio Corato <https://github.com/sergiocorato>
+-  Sergio Corato <https://github.com/sergiocorato>
 
 Maintainers
-~~~~~~~~~~~
+-----------
 
-This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/14.0/mrp_production_set>`_ project on GitHub.
+This module is part of the `efatto/e-efatto <https://github.com/efatto/e-efatto/tree/18.0/mrp_production_set>`_ project on GitHub.
 
 You are welcome to contribute.
