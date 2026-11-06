@@ -6,6 +6,7 @@ class MrpProductionSet(models.Model):
     _inherit = "mrp.production.set"
 
     sent_to_whs = fields.Boolean(
+        string="Sent to WHS",
         compute="_compute_sent_to_whs",
         store=True,
     )
@@ -14,11 +15,9 @@ class MrpProductionSet(models.Model):
         self.ensure_one()
         if self.production_left_id and not self.split_production:
             if any(
-                [
-                    wo.workcenter_id.mrp_set_position
-                    and wo.workcenter_id.mrp_set_position != "left"
-                    for wo in self.production_left_id.workorder_ids
-                ]
+                wo.workcenter_id.mrp_set_position
+                and wo.workcenter_id.mrp_set_position != "left"
+                for wo in self.production_left_id.workorder_ids
             ):
                 raise ValidationError(
                     _("Only 'left' workcenter can be used in 'left' position")
@@ -30,18 +29,16 @@ class MrpProductionSet(models.Model):
                 raise ValidationError(
                     _(
                         "Only whs list with riga #1 can be used in 'left' position of "
-                        "not split production (maybe this production was split and then "
-                        "unsplit).\nRemove whs list with riga #2 and restore total qty "
-                        "in residual whs list to continue."
+                        "not split production (maybe this production was split and then"
+                        " unsplit).\nRemove whs list with riga #2 and restore total qty"
+                        " in residual whs list to continue."
                     )
                 )
         if self.production_right_id and not self.split_production:
             if any(
-                [
-                    wo.workcenter_id.mrp_set_position
-                    and wo.workcenter_id.mrp_set_position != "right"
-                    for wo in self.production_right_id.workorder_ids
-                ]
+                wo.workcenter_id.mrp_set_position
+                and wo.workcenter_id.mrp_set_position != "right"
+                for wo in self.production_right_id.workorder_ids
             ):
                 raise ValidationError(
                     _("Only 'right' workcenter can be used in 'right' position")

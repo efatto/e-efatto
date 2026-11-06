@@ -2,9 +2,10 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 {
     "name": "Connector WMS and Production Set",
-    "version": "14.0.1.0.1",
+    "version": "18.0.1.0.0",
     "category": "Warehouse Management",
     "license": "AGPL-3",
+    "development_status": "Alpha",
     "summary": """
     Glue module when connector to WMS and Production Set are intalled.
     """,
