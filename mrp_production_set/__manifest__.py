@@ -2,14 +2,13 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     "name": "MRP Production Set",
-    "version": "14.0.1.0.0",
+    "version": "18.0.1.0.0",
     "author": "Sergio Corato",
     "website": "https://github.com/efatto/e-efatto",
     "license": "AGPL-3",
     "category": "other",
     "development_status": "Alpha",
     "depends": [
-        "mrp_routing",
         "mrp_subcontracting",
         "mrp_workcenter_exclude_product",
     ],

@@ -50,66 +50,17 @@ class MrpProduction(models.Model):
             workorder_right_ids = production.workorder_ids.filtered(
                 lambda wo: wo.workcenter_id.mrp_set_position == "right"
             )
-            all_template_workorder_with_set_ids = (
-                workorder_left_ids.operation_id.template_id
-                | workorder_right_ids.operation_id.template_id
+            all_operation_with_set_ids = (
+                workorder_left_ids.operation_id | workorder_right_ids.operation_id
             )
             if (
                 len(workorder_left_ids) > 1
                 or len(workorder_right_ids) > 1
-                or len(all_template_workorder_with_set_ids) > 1
+                or len(all_operation_with_set_ids) > 1
             ):
                 raise ValidationError(
                     _("Workorders must be linked to only one mrp_set_position.")
                 )
-
-    def _get_workcenter_id(self, workorder):
-        workcenters = super()._get_workcenter_id(workorder)
-        production_set_id = (
-            workorder.production_id.production_left_set_ids
-            | workorder.production_id.production_right_set_ids
-        )
-        if production_set_id:
-            # ensure that production left has only workcenter without or with left
-            # mrp_position_set and viceversa
-            # and that 2 workorders have different mrp position set workcenter
-            if production_set_id.split_production:
-                other_workorder_with_set_positions = (
-                    workorder.production_id.workorder_ids.filtered(
-                        lambda wo: wo != workorder and wo.workcenter_id.mrp_set_position
-                    )
-                )
-                workcenters = (
-                    workorder.workcenter_id
-                    | workorder.workcenter_id.alternative_workcenter_ids
-                ).filtered(
-                    lambda wc, product=self.product_id, wo=workorder: product
-                    not in wc.excluded_product_ids
-                    and wc.mrp_set_position
-                    not in other_workorder_with_set_positions.mapped(
-                        "workcenter_id.mrp_set_position"
-                    )
-                )
-            else:
-                workcenters = (
-                    workorder.workcenter_id
-                    | workorder.workcenter_id.alternative_workcenter_ids
-                ).filtered(
-                    lambda wc, product=self.product_id, wo=workorder: product
-                    not in wc.excluded_product_ids
-                    and wc.mrp_set_position == "left"
-                    if (
-                        wc.mrp_set_position
-                        and workorder.production_id.production_left_set_ids
-                    )
-                    else wc.mrp_set_position == "right"
-                    if (
-                        wc.mrp_set_position
-                        and workorder.production_id.production_right_set_ids
-                    )
-                    else True
-                )
-        return workcenters
 
     def action_confirm(self):
         res = super().action_confirm()
@@ -126,12 +77,13 @@ class MrpProduction(models.Model):
                 )._compute_state()
         return res
 
-    def name_get(self):
+    @api.depends("name", "product_id.name")
+    @api.depends_context("mrp_production_set_display_name")
+    def _compute_display_name(self):
+        res = super()._compute_display_name()
         if self.env.context.get("mrp_production_set_display_name"):
-            res = []
-            for record in self:
-                name = f"{record.name} - {record.product_id.name}"
-                res.append((record.id, name))
-            return res
-
-        return super().name_get()
+            for production in self:
+                production.display_name = (
+                    f"{production.name} - {production.product_id.name}"
+                )
+        return res
