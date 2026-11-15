@@ -1,0 +1,192 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* connector_wms_modula
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-09 17:29+0000\n"
+"PO-Revision-Date: 2025-01-09 17:29+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: connector_wms_modula
+#: model:ir.actions.server,name:connector_wms_modula.ir_cron_connector_wms_modula_error_ir_actions_server
+#: model:ir.cron,cron_name:connector_wms_modula.ir_cron_connector_wms_modula_error
+#: model:ir.cron,name:connector_wms_modula.ir_cron_connector_wms_modula_error
+msgid "Connector WMS Modula - check errors on import"
+msgstr "Connettore WMS Modula - controllo errori nell'importazione"
+
+#. module: connector_wms_modula
+#: code:addons/connector_wms_modula/models/product.py:82
+#, python-format
+msgid "Error importing product on WMS Modula: %s"
+msgstr "Errore importazione prodotto nel WMS Modula: %s"
+
+#. module: connector_wms_modula
+#: model:ir.model.fields,field_description:connector_wms_modula.field_hyddemo_whs_liste__wms_modula_error
+msgid "Error importing the list on WMS Modula"
+msgstr "Errore importazione lista nel WMS"
+
+#. module: connector_wms_modula
+#: model:ir.model.fields,field_description:connector_wms_modula.field_product_product__wms_modula_error
+#: model:ir.model.fields,field_description:connector_wms_modula.field_product_template__wms_modula_error
+msgid "Error importing the product on WMS Modula"
+msgstr "Errore importazione prodotto nel WMS"
+
+#. module: connector_wms_modula
+#: model:ir.model.fields,field_description:connector_wms_modula.field_hyddemo_whs_liste__wms_modula_riga_error
+msgid "Error importing the row on WMS Modula"
+msgstr "Errore importazione riga nel WMS"
+
+#. module: connector_wms_modula
+#: model:ir.model,name:connector_wms_modula.model_base_external_dbsource
+msgid "External Database Sources"
+msgstr "Origini database esterne"
+
+#. module: connector_wms_modula
+#: code:addons/connector_wms_modula/models/base_external_dbsource.py:198
+#: code:addons/connector_wms_modula/wizard/wizard_sync_stock_whs_mssql.py:30
+#, python-format
+msgid "Failed to open connection!"
+msgstr "Apertura connessione fallita!"
+
+#. module: connector_wms_modula
+#: code:addons/connector_wms_modula/wizard/wizard_sync_stock_whs_mssql.py:138
+#, python-format
+msgid "Inventory validation failed! Error is: %s"
+msgstr "Validazione inventario fallita! Errore: %s"
+
+#. module: connector_wms_modula
+#: model:ir.model,name:connector_wms_modula.model_hyddemo_whs_liste
+msgid "Lists to synchronize with WMS"
+msgstr "Liste da sincronizzare con WMS"
+
+#. module: connector_wms_modula
+#: selection:hyddemo.mssql.log.line,type:0
+msgid "Mismatch"
+msgstr "Squadrato"
+
+#. module: connector_wms_modula
+#: code:addons/connector_wms_modula/tests/test_connector_wms_modula.py:25
+#, python-format
+msgid "Missing connection string!"
+msgstr "Stringa di connessione mancante!"
+
+#. module: connector_wms_modula
+#: code:addons/connector_wms_modula/models/product.py:69
+#, python-format
+msgid "Missing product template ID: %s name"
+msgstr "Modello prodotto mancancte ID: %s name"
+
+#. module: connector_wms_modula
+#: model:ir.model,name:connector_wms_modula.model_hyddemo_mssql_log_line
+msgid "Mssql Log Line"
+msgstr "Linea Log Mssql"
+
+#. module: connector_wms_modula
+#: model:ir.model.fields,field_description:connector_wms_modula.field_product_product__is_name_too_long
+#: model:ir.model.fields,field_description:connector_wms_modula.field_product_template__is_name_too_long
+msgid "Name is too long"
+msgstr "Nome troppo lungo"
+
+#. module: connector_wms_modula
+#: selection:hyddemo.mssql.log.line,type:0
+msgid "Not found"
+msgstr "Non trovato"
+
+#. module: connector_wms_modula
+#: selection:hyddemo.mssql.log.line,type:0
+msgid "Ok"
+msgstr ""
+
+#. module: connector_wms_modula
+#: code:addons/connector_wms_modula/models/base_external_dbsource.py:82
+#, python-format
+msgid "Operation %s importing the list failed with error: '%s'"
+msgstr "Operazione %s di importazione della lista fallita con errore: '%s'"
+
+#. module: connector_wms_modula
+#: code:addons/connector_wms_modula/models/base_external_dbsource.py:48
+#, python-format
+msgid "Operation %s importing the product failed with error: '%s'"
+msgstr "Operazione %s di importazione del prodotto fallita con errore: '%s'"
+
+#. module: connector_wms_modula
+#: code:addons/connector_wms_modula/models/base_external_dbsource.py:86
+#, python-format
+msgid "Operation %s importing the row failed with error: '%s'"
+msgstr "Operazione %s di importazione della riga fallita con errore: '%s'"
+
+#. module: connector_wms_modula
+#: model:ir.model,name:connector_wms_modula.model_product_template
+msgid "Product Template"
+msgstr "Modello prodotto"
+
+#. module: connector_wms_modula
+#: code:addons/connector_wms_modula/models/product.py:46
+#, python-format
+msgid "Product default code max length is 50 char!"
+msgstr "La lunghezza massima del riferimento interno del prodotto è di 50 caratteri!"
+
+#. module: connector_wms_modula
+#: code:addons/connector_wms_modula/models/product.py:36
+#, python-format
+msgid "Product name for WMS Modula max lenght is 100 char!"
+msgstr "La lunghezza massima del nome prodotto per il WMS è di 100 caratteri!"
+
+#. module: connector_wms_modula
+#: code:addons/connector_wms_modula/models/product.py:76
+#, python-format
+msgid "Product name is too long!"
+msgstr "Il nome del prodotto è troppo lungo!"
+
+#. module: connector_wms_modula
+#: selection:hyddemo.mssql.log.line,type:0
+msgid "Service"
+msgstr "Servizio"
+
+#. module: connector_wms_modula
+#: model:ir.model,name:connector_wms_modula.model_wizard_sync_stock_whs_mssql
+msgid "Synchronize stock inventory from the Remote Mssql DB to Odoo"
+msgstr "Sincronizza inventario dal Database remoto Mssql verso Odoo"
+
+#. module: connector_wms_modula
+#: model:ir.model.fields,field_description:connector_wms_modula.field_product_product__custom_name_wms_modula
+#: model:ir.model.fields,field_description:connector_wms_modula.field_product_template__custom_name_wms_modula
+msgid "Technical field to store WMS Modula name"
+msgstr "Campo tecnico per salvare il nome prodotto WMS Modula"
+
+#. module: connector_wms_modula
+#: selection:hyddemo.mssql.log.line,type:0
+msgid "Tracking"
+msgstr "Tracciabile"
+
+#. module: connector_wms_modula
+#: code:addons/connector_wms_modula/models/hyddemo_whs_liste.py:113
+#, python-format
+msgid "Trying to cancel lists already marked to be deleted in Odoo, please wait for WMS cron synchronization or force it."
+msgstr "Tentativo di annullare liste già marcate da eliminare in Odoo, si prega di attendere il cron di sincronizzazione WMS o di forzarne l'avvio."
+
+#. module: connector_wms_modula
+#: code:addons/connector_wms_modula/models/hyddemo_whs_liste.py:101
+#, python-format
+msgid "Trying to cancel lists elaborated from WMS, please wait for cron synchronization or force it."
+msgstr "Tentativo di annullare liste elaborate da WMS, si prega di attendere il cron di sincronizzazione o di forzarne l'avvio."
+
+#. module: connector_wms_modula
+#: model:ir.model.fields,field_description:connector_wms_modula.field_hyddemo_mssql_log_line__type
+msgid "Type"
+msgstr "Tipo"
+
+#. module: connector_wms_modula
+#: model:ir.model.fields,field_description:connector_wms_modula.field_product_product__name_wms_modula
+#: model:ir.model.fields,field_description:connector_wms_modula.field_product_template__name_wms_modula
+msgid "WMS Modula Name"
+msgstr "Nome nel WMS"
+
