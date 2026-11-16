@@ -10,6 +10,17 @@ class MrpProductionSet(models.Model):
         compute="_compute_sent_to_whs",
         store=True,
     )
+    state = fields.Selection(
+        selection=lambda self: self._get_state_selection(),
+    )
+
+    def _get_state_selection(self):
+        selection = list(self.env["mrp.production"]._fields["state"].selection)
+        values = [value for value, _label in selection]
+        selection.insert(
+            values.index("progress") + 1, ("sent_to_whs", _("Sent to WHS"))
+        )
+        return selection
 
     def button_send_to_whs(self):
         self.ensure_one()
@@ -58,3 +69,11 @@ class MrpProductionSet(models.Model):
                 record.sent_to_whs = record.production_left_id.sent_to_whs
             else:
                 record.sent_to_whs = record.production_right_id.sent_to_whs
+
+    @api.depends("sent_to_whs")
+    def _compute_state(self):
+        res = super()._compute_state()
+        for record in self:
+            if record.sent_to_whs and record.state in ("progress", "consumed"):
+                record.state = "sent_to_whs"
+        return res

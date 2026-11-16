@@ -137,6 +137,7 @@ class TestConnectorWmsWhsSetGlue(TransactionCase):
             set((left | right).move_raw_ids.whs_list_ids.mapped("tipo")), {"12"}
         )
         self.assertTrue(production_set.sent_to_whs)
+        self.assertEqual(production_set.state, "sent_to_whs")
         self.assertTrue(left.sent_to_whs)
         self.assertTrue(right.sent_to_whs)
 
@@ -166,6 +167,7 @@ class TestConnectorWmsWhsSetGlue(TransactionCase):
         self.assertEqual(len(set(lists.mapped("num_lista"))), 1)
         self.assertEqual(set(lists.mapped("tipo")), {"12"})
         self.assertTrue(production_set.sent_to_whs)
+        self.assertEqual(production_set.state, "sent_to_whs")
 
     def test_12_wrong_left_workcenter(self):
         left = self._create_production("SET LEFT WC", self.workcenter_left)

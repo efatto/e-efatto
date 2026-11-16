@@ -5,6 +5,11 @@
         <field name="model">mrp.production.set</field>
         <field name="inherit_id" ref="mrp_production_set.mrp_production_set_form" />
         <field name="arch" type="xml">
+            <field name="state" position="attributes">
+                <attribute
+                    name="statusbar_visible"
+                >draft,confirmed,progress,sent_to_whs,done</attribute>
+            </field>
             <button name="button_update_qty_producing" position="after">
                 <field name="sent_to_whs" invisible="1" />
                 <button

@@ -75,6 +75,7 @@ class TestConnectorWmsWhsSet(TestConnectorWmsWhs):
         self.assertEqual(production_set.state, "progress")
         production_set.button_send_to_whs()
         self.assertEqual(production_set.sent_to_whs, True)
+        self.assertEqual(production_set.state, "sent_to_whs")
         self.assertEqual(left_order.sent_to_whs, True)
         self.assertEqual(right_order.sent_to_whs, True)
         self.assertEqual(left_order.qty_producing, production_set.qty_producing_left)
