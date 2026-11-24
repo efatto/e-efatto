@@ -1,13 +1,10 @@
-# Translation of Odoo Server.
-# This file contains the translation of the following modules:
-# 	* connector_wms_whs
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-05 10:15+0000\n"
-"PO-Revision-Date: 2026-11-05 10:15+0000\n"
+"POT-Creation-Date: 2026-11-17 07:18+0000\n"
+"PO-Revision-Date: 2026-11-17 07:18+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it\n"
@@ -15,6 +12,68 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: connector_wms_whs
+#: model:ir.model.constraint,message:connector_wms_whs.constraint_hyddemo_whs_packing_dbsource_name_uniq
+msgid "A packing with the same ID has already been read from this database."
+msgstr ""
+"Un confezionamento con lo stesso ID è già stato letto da questo database."
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package__company_id
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package_content__company_id
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_packing__company_id
+msgid "Company"
+msgstr "Azienda"
+
+#. module: connector_wms_whs
+#: model:ir.actions.server,name:connector_wms_whs.ir_cron_connector_wms_whs_read_packages_ir_actions_server
+msgid "Connector WMS - read packings from WMS (HOST_PACKING table)"
+msgstr ""
+"Connettore WMS - lettura confezionamenti da WMS (tabella HOST_PACKING)"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package__content_count
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_packing__content_count
+msgid "Content Count"
+msgstr "Numero contenuti"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package__content_ids
+#: model_terms:ir.ui.view,arch_db:connector_wms_whs.view_hyddemo_whs_package_form
+msgid "Contents"
+msgstr "Contenuti"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package__create_uid
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package_content__create_uid
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_packing__create_uid
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package__create_date
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package_content__create_date
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_packing__create_date
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package__depth_cm
+msgid "Depth (cm)"
+msgstr "Profondità (cm)"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package__display_name
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package_content__display_name
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_packing__display_name
+msgid "Display Name"
+msgstr "Nome visualizzato"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_packing__dbsource_id
+msgid "External DB Source"
+msgstr "Sorgente database esterna"
 
 #. module: connector_wms_whs
 #: model:ir.model,name:connector_wms_whs.model_base_external_dbsource
@@ -38,15 +97,159 @@ msgid "Failed to open connection!"
 msgstr "Connessione fallita!"
 
 #. module: connector_wms_whs
+#: model:ir.model.fields,help:connector_wms_whs.field_hyddemo_whs_package__package_type
+msgid "Free text package type chosen by the WMS operator (e.g. pallet, box)."
+msgstr ""
+"Tipo di collo a testo libero scelto dall'operatore WMS (es. pallet, "
+"scatola)."
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package__height_cm
+msgid "Height (cm)"
+msgstr "Altezza (cm)"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package__id
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package_content__id
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_packing__id
+msgid "ID"
+msgstr "ID"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package_content__item_code
+msgid "Item Code"
+msgstr "Codice articolo"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package__write_uid
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package_content__write_uid
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_packing__write_uid
+msgid "Last Updated by"
+msgstr "Ultima modifica di"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package__write_date
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package_content__write_date
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_packing__write_date
+msgid "Last Updated on"
+msgstr "Ultima modifica il"
+
+#. module: connector_wms_whs
 #: model:ir.model,name:connector_wms_whs.model_hyddemo_whs_liste
 msgid "Lists to synchronize with WMS"
 msgstr "Liste da sincronizzare con WMS"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,help:connector_wms_whs.field_hyddemo_whs_package_content__logistic_sn
+msgid ""
+"LogisticSN in the WMS payload: barcode of the package containing the "
+"material."
+msgstr ""
+"LogisticSN nel payload WMS: barcode del collo che contiene il materiale."
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package_content__lot
+msgid "Lot"
+msgstr "Lotto"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package_content__lot2
+msgid "Lot2"
+msgstr "Lotto 2"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package_content__lot3
+msgid "Lot3"
+msgstr "Lotto 3"
 
 #. module: connector_wms_whs
 #. odoo-python
 #: code:addons/connector_wms_whs/tests/test_connector_wms_whs.py:0
 msgid "Missing connection string!"
 msgstr "Stringa di connessione mancante!"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package_content__order_number
+msgid "Order Number"
+msgstr "Numero ordine"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,help:connector_wms_whs.field_hyddemo_whs_package_content__order_number
+msgid "Order for which the material has been picked, as sent by WMS."
+msgstr "Ordine per cui il materiale è stato prelevato, come inviato da WMS."
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,help:connector_wms_whs.field_hyddemo_whs_package_content__row_number
+msgid "Order row for which the material has been picked, as sent by WMS."
+msgstr ""
+"Riga ordine per cui il materiale è stato prelevato, come inviato da WMS."
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package_content__package_id
+#: model_terms:ir.ui.view,arch_db:connector_wms_whs.view_hyddemo_whs_packing_search
+msgid "Package"
+msgstr "Collo"
+
+#. module: connector_wms_whs
+#: model:ir.model,name:connector_wms_whs.model_hyddemo_whs_package
+msgid "Package (collo) received from WMS"
+msgstr "Collo ricevuto da WMS"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package_content__logistic_sn
+msgid "Package Barcode"
+msgstr "Barcode collo"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_packing__package_count
+msgid "Package Count"
+msgstr "Numero colli"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package__package_type
+msgid "Package Type"
+msgstr "Tipo collo"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,help:connector_wms_whs.field_hyddemo_whs_package__serial_code
+msgid "Package barcode (SerialCode in the WMS payload)."
+msgstr "Barcode del collo (SerialCode nel payload WMS)."
+
+#. module: connector_wms_whs
+#: model:ir.model,name:connector_wms_whs.model_hyddemo_whs_package_content
+msgid "Package content received from WMS"
+msgstr "Contenuto collo ricevuto da WMS"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_packing__package_ids
+#: model_terms:ir.ui.view,arch_db:connector_wms_whs.view_hyddemo_whs_packing_form
+msgid "Packages"
+msgstr "Colli"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package__packing_id
+msgid "Packing"
+msgstr "Confezionamento"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_packing__name
+msgid "Packing ID"
+msgstr "ID confezionamento"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,help:connector_wms_whs.field_hyddemo_whs_packing__name
+msgid "Packing identifier as written by WMS."
+msgstr "Identificativo del confezionamento come scritto da WMS."
+
+#. module: connector_wms_whs
+#: model:ir.model,name:connector_wms_whs.model_hyddemo_whs_packing
+msgid "Packing received from WMS"
+msgstr "Confezionamento ricevuto da WMS"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,help:connector_wms_whs.field_hyddemo_whs_packing__raw_json
+msgid "Payload received from WMS, kept for traceability."
+msgstr "Payload ricevuto da WMS, conservato per tracciabilità."
 
 #. module: connector_wms_whs
 #: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_liste__priorita
@@ -80,6 +283,11 @@ msgstr ""
 "- Subito: entro 24 ore"
 
 #. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package_content__product_id
+msgid "Product"
+msgstr "Prodotto"
+
+#. module: connector_wms_whs
 #: model:ir.model,name:connector_wms_whs.model_product_product
 msgid "Product Variant"
 msgstr "Variante prodotto"
@@ -99,6 +307,26 @@ msgstr ""
 " Quantità: %(quantity)s."
 
 #. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package_content__qty
+msgid "Quantity"
+msgstr "Quantità"
+
+#. module: connector_wms_whs
+#: model_terms:ir.ui.view,arch_db:connector_wms_whs.view_dbsource_form_read_packages
+msgid "Read Packages from WMS"
+msgstr "Leggi colli da WMS"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_packing__read_date
+msgid "Read on"
+msgstr "Letto il"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package_content__row_number
+msgid "Row Number"
+msgstr "Numero riga"
+
+#. module: connector_wms_whs
 #: model:ir.model,name:connector_wms_whs.model_sale_order
 msgid "Sales Order"
 msgstr "Ordine di vendita"
@@ -107,6 +335,11 @@ msgstr "Ordine di vendita"
 #: model:ir.model,name:connector_wms_whs.model_sale_order_line
 msgid "Sales Order Line"
 msgstr "Riga ordine di vendita"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package__serial_code
+msgid "Serial Code"
+msgstr "Codice seriale"
 
 #. module: connector_wms_whs
 #: model:ir.model,name:connector_wms_whs.model_stock_move
@@ -150,3 +383,36 @@ msgstr ""
 #: model:ir.model.fields.selection,name:connector_wms_whs.selection__stock_picking__priority__2
 msgid "Very Urgent"
 msgstr "Molto urgente"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_packing__raw_json
+#: model_terms:ir.ui.view,arch_db:connector_wms_whs.view_hyddemo_whs_packing_form
+msgid "WMS JSON payload"
+msgstr "Payload JSON WMS"
+
+#. module: connector_wms_whs
+#: model_terms:ir.ui.view,arch_db:connector_wms_whs.view_hyddemo_whs_package_form
+msgid "WMS Package"
+msgstr "Collo WMS"
+
+#. module: connector_wms_whs
+#: model_terms:ir.ui.view,arch_db:connector_wms_whs.view_hyddemo_whs_packing_form
+msgid "WMS Packing"
+msgstr "Confezionamento WMS"
+
+#. module: connector_wms_whs
+#: model:ir.actions.act_window,name:connector_wms_whs.action_hyddemo_whs_packing
+#: model:ir.ui.menu,name:connector_wms_whs.menu_hyddemo_whs_packing
+#: model_terms:ir.ui.view,arch_db:connector_wms_whs.view_hyddemo_whs_packing_search
+msgid "WMS Packings"
+msgstr "Confezionamenti WMS"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package__weight_kg
+msgid "Weight (kg)"
+msgstr "Peso (kg)"
+
+#. module: connector_wms_whs
+#: model:ir.model.fields,field_description:connector_wms_whs.field_hyddemo_whs_package__width_cm
+msgid "Width (cm)"
+msgstr "Larghezza (cm)"

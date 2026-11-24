@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo noupdate="1">
+    <record id="hyddemo_whs_packing_company_rule" model="ir.rule">
+        <field name="name">WHS Packing Multicompany</field>
+        <field name="model_id" ref="model_hyddemo_whs_packing" />
+        <field
+            name="domain_force"
+        >['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="hyddemo_whs_package_company_rule" model="ir.rule">
+        <field name="name">WHS Package Multicompany</field>
+        <field name="model_id" ref="model_hyddemo_whs_package" />
+        <field
+            name="domain_force"
+        >['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="hyddemo_whs_package_content_company_rule" model="ir.rule">
+        <field name="name">WHS Package Content Multicompany</field>
+        <field name="model_id" ref="model_hyddemo_whs_package_content" />
+        <field
+            name="domain_force"
+        >['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

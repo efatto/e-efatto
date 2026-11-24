@@ -1,3 +1,4 @@
+import json
 import os
 import time
 import unittest
@@ -1600,3 +1601,134 @@ class TestConnectorWmsWhs(CommonConnectorWMS):
         )[0]
         self.assertEqual(rows[0][0], count_mid)
         self._delete_all_sql_records()
+
+    def test_12_read_packages_from_wms(self):
+        # HOST_PACKING is provisioned by WMS when the packing export is enabled;
+        # create it here so the test can run on a WMS database where it is missing.
+        self.dbsource.with_context(no_return=True).execute_mssql(
+            sqlquery=clean_sql_text(
+                "IF OBJECT_ID('HOST_PACKING', 'U') IS NULL "
+                "CREATE TABLE HOST_PACKING ("
+                "PackingId int NOT NULL PRIMARY KEY, "
+                "JsonData nvarchar(max) NULL, "
+                "Elaborato int NOT NULL DEFAULT 0)"
+            ),
+            sqlparams=None,
+            metadata=None,
+        )
+        packing_id = 999001
+        item_code = self.product1.default_code
+        payload = {
+            "PackingId": packing_id,
+            "Packages": [
+                {
+                    "SerialCode": "BOX00000001",
+                    "PackageType": "EURO PALLET",
+                    "Dimension": {
+                        "WeightKg": 12.5,
+                        "WidthCm": 80.0,
+                        "HeightCm": 100.0,
+                        "DepthCm": 120.0,
+                    },
+                    "Contents": [
+                        {
+                            "LogisticSN": "SN00000004",
+                            "ItemId": item_code,
+                            "Lot": "2436",
+                            "Lot2": "",
+                            "Lot3": "9796",
+                            "Qty": 1.0,
+                            "OrderNumber": "M-176081",
+                            "RowNumber": "821965",
+                        },
+                        {
+                            "LogisticSN": "PK00000003",
+                            "ItemId": item_code,
+                            "Lot": "2436",
+                            "Lot2": "",
+                            "Lot3": "9796",
+                            "Qty": 9.0,
+                            "OrderNumber": "M-176082",
+                            "RowNumber": "821966",
+                        },
+                    ],
+                },
+                {
+                    "SerialCode": "BOX00000002",
+                    "PackageType": "SCATOLA",
+                    "Dimension": {},
+                    "Contents": [
+                        {
+                            "LogisticSN": "SN00000007",
+                            "ItemId": item_code,
+                            "Lot": "2436",
+                            "Qty": 1.0,
+                            "OrderNumber": "M-176081",
+                            "RowNumber": "821965",
+                        }
+                    ],
+                },
+            ],
+        }
+        delete_query = "DELETE FROM HOST_PACKING WHERE PackingId=:PackingId"
+        self.dbsource.with_context(no_return=True).execute_mssql(
+            sqlquery=clean_sql_text(delete_query),
+            sqlparams=dict(PackingId=packing_id),
+            metadata=None,
+        )
+        self.dbsource.with_context(no_return=True).execute_mssql(
+            sqlquery=clean_sql_text(
+                "INSERT INTO HOST_PACKING (PackingId, JsonData, Elaborato) "
+                "VALUES (:PackingId, :JsonData, 1)"
+            ),
+            sqlparams=dict(
+                PackingId=packing_id,
+                JsonData=json.dumps(payload),
+            ),
+            metadata=None,
+        )
+
+        self.dbsource.whs_read_packages()
+
+        packing = self.env["hyddemo.whs.packing"].search(
+            [
+                ("dbsource_id", "=", self.dbsource.id),
+                ("name", "=", str(packing_id)),
+            ]
+        )
+        self.assertEqual(len(packing), 1)
+        self.assertEqual(packing.company_id, self.dbsource.company_id)
+        self.assertEqual(packing.package_count, 2)
+        self.assertEqual(packing.content_count, 3)
+        box1 = packing.package_ids.filtered(
+            lambda package: package.serial_code == "BOX00000001"
+        )
+        self.assertEqual(box1.package_type, "EURO PALLET")
+        self.assertAlmostEqual(box1.weight_kg, 12.5)
+        self.assertAlmostEqual(box1.width_cm, 80.0)
+        self.assertAlmostEqual(box1.height_cm, 100.0)
+        self.assertAlmostEqual(box1.depth_cm, 120.0)
+        self.assertEqual(len(box1.content_ids), 2)
+        content = box1.content_ids.filtered(
+            lambda line: line.logistic_sn == "PK00000003"
+        )
+        self.assertEqual(content.product_id, self.product1)
+        self.assertAlmostEqual(content.qty, 9.0)
+        self.assertEqual(content.order_number, "M-176082")
+        self.assertEqual(content.row_number, "821966")
+
+        result = self.dbsource.execute_mssql(
+            sqlquery=clean_sql_text(
+                "SELECT Elaborato FROM HOST_PACKING WHERE PackingId=:PackingId"
+            ),
+            sqlparams=dict(PackingId=packing_id),
+            metadata=None,
+        )[0]
+        self.assertEqual(result[0][0], 2)
+
+        # cleanup the external row (the PostgreSQL transaction is rolled back)
+        self.dbsource.with_context(no_return=True).execute_mssql(
+            sqlquery=clean_sql_text(delete_query),
+            sqlparams=dict(PackingId=packing_id),
+            metadata=None,
+        )
