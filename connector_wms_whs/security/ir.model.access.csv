@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hyddemo_whs_packing_all,hyddemo_whs_packing all,model_hyddemo_whs_packing,base.group_user,1,0,0,0
+access_hyddemo_whs_packing_technic,hyddemo_whs_packing technic,model_hyddemo_whs_packing,base.group_no_one,1,1,1,1
+access_hyddemo_whs_packing_manager,hyddemo_whs_packing manager,model_hyddemo_whs_packing,base.group_erp_manager,1,1,1,1
+access_hyddemo_whs_package_all,hyddemo_whs_package all,model_hyddemo_whs_package,base.group_user,1,0,0,0
+access_hyddemo_whs_package_technic,hyddemo_whs_package technic,model_hyddemo_whs_package,base.group_no_one,1,1,1,1
+access_hyddemo_whs_package_manager,hyddemo_whs_package manager,model_hyddemo_whs_package,base.group_erp_manager,1,1,1,1
+access_hyddemo_whs_package_content_all,hyddemo_whs_package_content all,model_hyddemo_whs_package_content,base.group_user,1,0,0,0
+access_hyddemo_whs_package_content_technic,hyddemo_whs_package_content technic,model_hyddemo_whs_package_content,base.group_no_one,1,1,1,1
+access_hyddemo_whs_package_content_manager,hyddemo_whs_package_content manager,model_hyddemo_whs_package_content,base.group_erp_manager,1,1,1,1

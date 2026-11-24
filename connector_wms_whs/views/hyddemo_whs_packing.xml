@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_hyddemo_whs_packing_search" model="ir.ui.view">
+        <field name="name">hyddemo.whs.packing.search</field>
+        <field name="model">hyddemo.whs.packing</field>
+        <field name="arch" type="xml">
+            <search string="WMS Packings">
+                <field name="name" />
+                <field name="read_date" />
+                <field name="dbsource_id" />
+                <field name="company_id" groups="base.group_multi_company" />
+                <field
+                    name="package_ids"
+                    string="Package"
+                    filter_domain="[('package_ids.serial_code', 'ilike', self)]"
+                />
+            </search>
+        </field>
+    </record>
+
+    <record id="view_hyddemo_whs_packing_tree" model="ir.ui.view">
+        <field name="name">hyddemo.whs.packing.tree</field>
+        <field name="model">hyddemo.whs.packing</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" />
+                <field name="read_date" />
+                <field name="dbsource_id" />
+                <field
+                    name="company_id"
+                    groups="base.group_multi_company"
+                    optional="show"
+                />
+                <field name="package_count" />
+                <field name="content_count" />
+            </list>
+        </field>
+    </record>
+
+    <record id="view_hyddemo_whs_packing_form" model="ir.ui.view">
+        <field name="name">hyddemo.whs.packing.form</field>
+        <field name="model">hyddemo.whs.packing</field>
+        <field name="arch" type="xml">
+            <form string="WMS Packing">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="dbsource_id" />
+                            <field
+                                name="company_id"
+                                groups="base.group_multi_company"
+                            />
+                        </group>
+                        <group>
+                            <field name="read_date" />
+                            <field name="package_count" />
+                            <field name="content_count" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Packages" name="packages">
+                            <field name="package_ids">
+                                <list>
+                                    <field name="serial_code" />
+                                    <field name="package_type" />
+                                    <field name="weight_kg" />
+                                    <field name="width_cm" />
+                                    <field name="height_cm" />
+                                    <field name="depth_cm" />
+                                    <field name="content_count" />
+                                </list>
+                            </field>
+                        </page>
+                        <page string="WMS JSON payload" name="raw_data">
+                            <field name="raw_json" />
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_hyddemo_whs_package_form" model="ir.ui.view">
+        <field name="name">hyddemo.whs.package.form</field>
+        <field name="model">hyddemo.whs.package</field>
+        <field name="arch" type="xml">
+            <form string="WMS Package">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="serial_code" readonly="1" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="packing_id" />
+                            <field name="package_type" />
+                        </group>
+                        <group>
+                            <field name="weight_kg" />
+                            <field name="width_cm" />
+                            <field name="height_cm" />
+                            <field name="depth_cm" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Contents" name="contents">
+                            <field name="content_ids">
+                                <list>
+                                    <field name="logistic_sn" />
+                                    <field name="item_code" />
+                                    <field name="product_id" />
+                                    <field name="lot" />
+                                    <field name="lot2" />
+                                    <field name="lot3" />
+                                    <field name="qty" />
+                                    <field name="order_number" />
+                                    <field name="row_number" />
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_hyddemo_whs_packing" model="ir.actions.act_window">
+        <field name="name">WMS Packings</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hyddemo.whs.packing</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem
+        action="action_hyddemo_whs_packing"
+        id="menu_hyddemo_whs_packing"
+        parent="stock.menu_stock_warehouse_mgmt"
+        sequence="102"
+    />
+
+    <record id="view_dbsource_form_read_packages" model="ir.ui.view">
+        <field name="name">base.external.dbsource.form.read.packages</field>
+        <field name="model">base.external.dbsource</field>
+        <field name="inherit_id" ref="connector_whs.view_dbsource_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='whs_check_list_not_passed']" position="after">
+                <button
+                    name="whs_read_packages"
+                    string="Read Packages from WMS"
+                    type="object"
+                />
+            </xpath>
+        </field>
+    </record>
+</odoo>

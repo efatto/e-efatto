@@ -1,6 +1,7 @@
+import json
 import logging
 
-from odoo import _, models
+from odoo import _, api, models
 from odoo.exceptions import UserError
 
 from odoo.addons.connector_whs.models.base_external_dbsource import clean_sql_text
@@ -135,6 +136,80 @@ class BaseExternalDbsource(models.Model):
             "Id": new_id,
         }
         return execute_params
+
+    def whs_read_packages(self):
+        """Read the packings written by WMS in the HOST_PACKING table.
+
+        WMS writes one row per packing in HOST_PACKING (PackingId, JsonData,
+        Elaborato). Rows with Elaborato = 1 are ready to be read: the JSON
+        payload is stored in Odoo and the row is then marked with Elaborato = 2
+        so that it is not read again. A missing table or an invalid payload is
+        only logged, as the WMS side may still be in the process of enabling
+        the packing export.
+        """
+        packing_obj = self.env["hyddemo.whs.packing"]
+        for dbsource in self:
+            dbsource = dbsource.with_company(dbsource.company_id)
+            connection = dbsource.connection_open_mssql()
+            if not connection:
+                raise UserError(_("Failed to open connection!"))
+            try:
+                esiti_packing = dbsource.execute_mssql(
+                    sqlquery=clean_sql_text(
+                        "SELECT PackingId, JsonData FROM HOST_PACKING "
+                        "WHERE Elaborato = 1 ORDER BY PackingId"
+                    ),
+                    sqlparams=None,
+                    metadata=True,
+                )
+            except Exception as error:  # noqa: BLE001
+                _logger.warning("WMS LOG: unable to read HOST_PACKING table: %s", error)
+                continue
+            # esiti_packing[0] contains the result rows, [1] the column names
+            esiti_rows = esiti_packing[0] if esiti_packing else []
+            for esito in esiti_rows:
+                packing_id = esito[0]
+                json_data = esito[1]
+                if isinstance(json_data, bytes):
+                    json_data = json_data.decode("utf-8")
+                if not json_data:
+                    _logger.warning(
+                        "WMS LOG: empty JSON payload for packing %s, skipped",
+                        packing_id,
+                    )
+                    continue
+                try:
+                    payload = (
+                        json.loads(json_data)
+                        if isinstance(json_data, str | bytes)
+                        else json_data
+                    )
+                except ValueError:
+                    _logger.warning(
+                        "WMS LOG: invalid JSON payload for packing %s, skipped",
+                        packing_id,
+                    )
+                    continue
+                packing = packing_obj._create_from_wms_payload(
+                    dbsource, packing_id, payload, raw_json=json_data
+                )
+                if not packing:
+                    continue
+                dbsource.with_context(no_return=True).execute_mssql(
+                    sqlquery=clean_sql_text(
+                        "UPDATE HOST_PACKING SET Elaborato = 2 "
+                        "WHERE PackingId = :PackingId"
+                    ),
+                    sqlparams=dict(PackingId=packing_id),
+                    metadata=None,
+                )
+        return True
+
+    @api.model
+    def _cron_whs_read_packages(self):
+        for dbsource in self.sudo().search([]):
+            dbsource.with_company(dbsource.company_id).whs_read_packages()
+        return True
 
     def whs_check_lists(self):
         """
